@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('./partials/topmenu'); %>
+        </nav>
+
+
+        <!-- Page Content -->
+        <section class="page-section page-section-top-padded mb-0" id="about">
+            <div class="container navbar-interior font-weight-bold text-primary">
+                <%- include('./partials/welcome'); %>
+            </div>
+            <div class="container">
+                <!-- About Section Heading-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-school cherry-red-color"></i></div>
+                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                </div>
+
+                <!-- About Section Content-->
+                <!--
+                <div class="row">
+                    <div class="col-lg-4 ml-auto"><p class="lead">About the site</p></div>
+                    <div class="col-lg-4 mr-auto"><p class="lead">About me</p></div>
+                </div>
+                -->
+                <!-- About Section Button-->
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+                        <div class="col-lg-7 order-lg-1" >
+                            <h2>About The Coding Coach</h2>
+                            <p class="text-primary"><strong>Hello 👋 and thanks for stopping by!</strong></p>
+                            <p>There are always going to be ways to improve the way we learn. I believe online learning techniques can be better.</p>
+                            <p>The Coding Coach was founded as an experiment at the start of the global pandemic looking to find and apply the most effective ways to learn online. Over the past couple of years I have learned that building educational content without including practice, community, and feedback is unlikely to succeed. Most individuals respond much better to personalized experiences as part of a community of learners that <strong>inspires</strong> them everyday.</p>
+                            <p>The Coding Coach is a new online learning platform that is built from the ground up to fulfill and refine 2 goals I believe can drastically improve online learning: 1. My closed loop online teaching philosophy, 2. Be the ultimate practical teaching tool by using the development of the platform itself to help the students learn how to code.</p>
+                            <p>Specific methods we use:</p>
+                            <ol>
+                                <li>My closed loop online teaching philosophy</li>
+                                <ul>
+                                    <li>Users follow “paths” to learning goals by finishing discrete topics.</li>
+                                    <li>Students' knowledge is assessed before starting and after finishing a topic with a simple ungraded assessment consisting of the same questions both times. These are not a grade for the student, there are even "I do not know" options for all questions, the results however allow the content to be assessed and refined and outcomes measured. Results are also shared with the student along with feedback and recommendations for the student's path. The student can then review and adjust course so they are never in a topic feeling lost or unprepared.</li>
+                                    <li>All topics follow a fixed format consisting of an introduction, pre-assessment, learning resources, activity, post-assessment and outcome review.</li>
+                                    <li>A discussion platform is being built for the site that allows meaningful interactions curated to the students current context: goals, individual topics or general community.</li>
+                                    <li>Users can earn badges and rank via academic achievement and helping others in discussion forums and asking good questions.  These may be used for special Coding Coach products and special access such as office hours with instructors.</li>
+                                    <li><strong>Access to the system and the content is 100% free!</strong> Optionally users can support the site via membership which includes the ability to take unlimited topics simultaneously as well as office hours and email support. Or they can purchase individual tokens to take more than one topic at a time if desired. </li>
+                                </ul>
+                                <li>Using the development of this learning platform as the ultimate teaching tool</li>
+                                <ul>
+                                    <li>What better way to teach students how to program than using a modern, standards compliant, full-stack open source application?</li>
+                                    <li>Topics will incorporate and use examples from the development of this very site, students will be able review and experiment with the actual code via github.  They will then be tasked with similar but unique problems having a vetted reference to use.</li>
+                                    <li>Because the tool and the community are intertwined, students will feel that they are part of a development team having a common code base, problems to solve, and strategies to apply. Nothing helps motivate and promote great coding skills as well as a team environment.</li>
+                                </ul>
+                            </ul>
+                            
+                            <p>To join, <a href="/community">create an account</a> and explore free resources and get acquainted with our community. We look forward to seeing you! Please understand that this community is currently brand new and growing there will be plenty of dust around this construction site, please pardon it!</p>
+
+                        </div>
+                        <div class="col-lg-5 order-lg-2">
+                            <!--<img src="/assets/img/henry-ix-trans-circle-800x800.png" class="img-fluid" /> -->
+                            <div class="card" class="product-card">
+                                <a class="product-card" href="/community">
+                                <img class="product-img-overlay" src="/assets/img/nav-background.png" alt="Sign up today">
+                                <div class="card-body product-card-text-raised">
+                                    <h5 class="card-title text-secondary">Join our learning community</h5>
+                                    <p class="card-text"><strong>Ready for your first challenge? Creating an account is quick and we always keep your information private.</strong></p>
+                                   
+                                </div>
+                            </a>    
+                            </div>
+                            <img src="/assets/img/henry-ix/henry-ix-trans-circle-800x800.png" class="website-image website-image-95" />
+                            
+                        </div>
+                    </div>
+
+                    <div class="divider-custom">
+                        <div class="divider-custom-line cherry-red-bg-color"></div>
+                        <div class="divider-custom-icon"><i class="fas fa-user-secret cherry-red-color"></i></div>
+                        <div class="divider-custom-line cherry-red-bg-color"></div>
+                    </div>
+                    <div id="story2" class="row justify-content-left">
+                        <div class="col-lg-8 order-lg-4">
+                            <h2>About the Founder</h2>
+                            <p>My name is Brian Gormanly, I am an educator, researcher, computer scientist, and an open source practitioner. I am passionate about creating accessible high quality educational Computer Science content. As an individual whose life has been transformed by my own education, I have made it my mission to help provide every opportunity I can to others. I write software used in web applications, mobile devices, IoT (Internet of Things), and Robotics. I have spent a great deal of time developing full stack applications in the education sector (including this one!).</p>
+                            <p>I started programming computers in middle school, and in my early years I was completely self taught. Years went by, project complexity increased and I realized that there was a lot I did not understand. I knew heading back to school was the right path for me. Once there, I relished the deeper understanding I was gaining, number systems, algorithms, data structures, abstraction, user interface, databases, AI, and robotics. I also have been involved in many community and open source projects over the years. One such community had a big impact on my development. Combining my interests in software development and automobiles, I became very active in the early 2000’s in a grass roots community building "CarPCs". This community's efforts on understanding and creating driver interfaces foreshadowed every car's entertainment interface today, be it Apple CarPlay, Android Auto or an automaker's system like Ford's Sync.</p>
+                            <p>I believe that it is the combination of formal education, practice and community that inspires a student and creates a successful software engineer. Learning how to write and compile code is a necessary skill, but your ability to apply your skill in “out of the box” scenarios can be greatly increased when combined with a deep understanding of theory. At the same time, if you do not practice you will not succeed! I like to use playing a musical instrument as an analogy. I can promise you will never be a great guitarist without dedicating a significant amount of time to practicing it. The same is true of software engineering. Lastly, community not only helps bring out the best in the individual and promotes their growth, but inspires ideas and pushes your skills to the next level.</p>
+                            <p>My goal is to discover the best ways to effectively teach Computer Science over the web guided by these 3 fundamental values. This site will provide innovative and interactive opportunities to promote community, education and practice.</p>
+                            <p><a href="https://www.linkedin.com/in/gormanly/">Connect with me on LinkedIn</a></p>
+                        </div>
+                        <div class="col-lg-4 order-lg-3">
+                            <img src="/assets/img/about/brian-gormanly.jpg" class="website-image website-image-95" />
+                            <img src="/assets/img/about/car-pc.jpg" class="website-image website-image-95" />
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('./partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('./partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+
+
+        <%- include('./partials/jsincludes'); %>
+    </body>
+</html>

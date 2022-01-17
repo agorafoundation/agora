@@ -1,0 +1,134 @@
+
+<div class="pb-container">
+    <%
+    let pathHeight = 30;
+    if(user.topicEnrollments) {
+        let pathHeight = 70 * user.topicEnrollments.length + 30;
+    }
+    
+    let enrollId = 0;
+    let completed = [];
+    let inProgress = [];
+    let topicBaseLink = "/community/topic/" + goal.id + "/";
+
+    %>
+    <svg width="80" height="<%- pathHeight %>" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+
+            <g id="completed">
+                <line x1="45" y1="0" x2="45" y2="42.5" class="pb-line-complete" />
+                <circle class="pb-circle-complete" cx="45" cy="55" r="15" />
+            </g>
+            <g id="in_progress">
+                <line x1="45" y1="0" x2="45" y2="30" class="pb-line-in-progress" />
+                <circle class="pb-circle-in-progress" cx="45" cy="50" r="20" />
+            </g>
+            <g id="enroll">
+                <g class="arrows">
+                    <path class="a1" d="M0 0 L15 16 L30 0"></path>
+                    <path class="a2" d="M0 10 L15 26 L30 10"></path>
+                    <path class="a3" d="M0 20 L15 36 L30 20"></path>
+                </g>
+                
+                <circle class="pb-circle-enroll" cx="15" cy="55" r="15" />
+            </g>
+            <g id="not_complete">
+                <circle class="pb-circle" cx="15" cy="80" r="10" />
+            </g>
+            
+        </defs>
+        <%
+        let ycoord = 0;
+        let yinterval = 70;
+        let enrollTrigger = false;
+        
+        for(let i = 0; i < goal.topics.length; i++) {
+            let rendered = false;
+            if(user.topicEnrollments) {
+                for(let j=0; j < user.topicEnrollments.length; j++) {
+                    if(user.topicEnrollments[j].topicId == goal.topics[i].id) {
+                        
+                        if(user.topicEnrollments[j].isCompleted) {
+                            completed.push(goal.topics[i].id);
+                            %>
+                            <use x="10" y="<%- ycoord %>" xlink:href="#completed" />
+                            <%
+                        }
+                        else {
+                            inProgress.push(goal.topics[i].id);
+                            %>
+                            <use x="10" y="<%- ycoord %>" xlink:href="#in_progress" />
+                            <%
+                            enrollTrigger = true;
+                        }
+                        rendered = true;
+                        ycoord += yinterval;
+                    }
+                }
+            }
+
+            if(!rendered) {
+                if(!enrollTrigger) {
+                    // set the enrollId for later
+                    enrollId = goal.topics[i].id;
+                    %>
+                    
+                    <%
+                    enrollTrigger = true;
+                } else {
+                %>
+                
+                <%
+                }
+                ycoord += yinterval;
+            }
+        }
+        %>
+    </svg>
+</div>
+<div class="pb-text">
+    <ul>
+    <%
+    for(let i = 0; i < goal.topics.length; i++) {
+        
+        if(completed.includes(goal.topics[i].id)){
+            %>
+            <li class="pb-item"><a href='<%- topicBaseLink %><%- goal.topics[i].id %>'><%- goal.topics[i].topicName %></a></li>
+            <%
+        }
+        else if(inProgress.includes(goal.topics[i].id)){
+            %>
+            <i class="fas fa-map-marker-alt cherry-red-color fa-2x pb-item-icon"></i><li class="pb-item-in-progress"><span class=""><a href='<%- topicBaseLink %><%- goal.topics[i].id %>'><%- goal.topics[i].topicName %></a></span></li>
+            <%
+        }
+        else if(enrollId == goal.topics[i].id){
+            
+            %>
+            <li class="pb-item-enroll pb-button"><a type="submit" href='<%- topicBaseLink %><%- goal.topics[i].id %>' class="btn btn-primary">Enroll</a><span class="pb-item-text"><%- goal.topics[i].topicName %></span> </li>
+            <%
+        }
+        else {
+            %>
+            <li class="pb-item-enroll pb-button"><a type="submit" href='<%- topicBaseLink %><%- goal.topics[i].id %>' class="btn btn-secondary">Enroll</a><span class="pb-item-text"><%- goal.topics[i].topicName %></span></li>
+            <%
+        }
+        
+        if(user.topicEnrollments) {
+            for(let j=0; j < user.topicEnrollments.length; j++) {
+                if(user.topicEnrollments[j].topicId == goal.topics[i].id) {
+                    %>
+                    
+                    <%
+                }
+            }
+        }
+    }
+    %>
+    </ul>
+</div>
+
+
+    
+  
+    
+    

@@ -1,0 +1,19 @@
+<%
+    //console.log("events are happening! " + JSON.stringify(feed));
+%>
+
+<%
+if(feed) {
+    for(let i=0; i<feed.length; i++) {
+    %> 
+    <div class="card" style="width: 100%;">
+        
+        <div class="card-body product-card-text-raised">
+            <h5 class="card-title"><%- feed[i].eventTitle %></h5>
+            
+        </div>
+    </div> 
+    <%
+    }
+} 
+%>

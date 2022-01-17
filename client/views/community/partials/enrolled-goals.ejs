@@ -1,0 +1,39 @@
+
+<% 
+if(user.pathEnrollments) {
+    for(let i=0; i<user.pathEnrollments.length; i++) {
+        %>
+        <a class="card" style="width: 100%;" href="/community/goal/<%- user.pathEnrollments[i].id %>" id="topic_<%- user.pathEnrollments[i].id %>">
+            <div class="card-body-low-padding" name="enrolled_card">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                        <button class="btn" aria-expanded="false" aria-controls="collapseOne">
+                            <img class="img-supersmall" src="<%- user.pathEnrollments[i].goalImage %>" />
+                            <%- user.pathEnrollments[i].goalName %>
+                        </button>
+                        </h5>
+                    </div>
+                
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <%- user.pathEnrollments[i].goalDescription %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a> 
+        <%
+    }
+    
+}
+else {
+    %> 
+    <div class="card" style="width: 100%;">
+        <div class="card-body product-card-text-raised">
+            <h5 class="card-title">You have not yet Enrolled in any goals!</h5>
+        </div>
+    </div> 
+    <%
+}
+%>

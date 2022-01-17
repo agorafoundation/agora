@@ -1,0 +1,39 @@
+{
+  "name": "codingcoach",
+  "version": "1.0.0",
+  "description": "Coding coach website",
+  "main": "server/codingcoach.js",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "connect-pg-simple": "^7.0.0",
+    "cors": "^2.8.5",
+    "device-detector-js": "^3.0.0",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "multer": "^1.4.4",
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.7.2",
+    "pg": "^8.6.0",
+    "stripe": "^8.191.0",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "node ./server/codingcoach.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaristGormanly/codingcoach.git"
+  },
+  "keywords": [
+    "codingcoach"
+  ],
+  "author": "brian.gormanly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaristGormanly/codingcoach/issues"
+  },
+  "homepage": "https://github.com/MaristGormanly/codingcoach#readme"
+}
