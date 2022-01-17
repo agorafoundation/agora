@@ -1,3 +1,9 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2022 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
 
 function user(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
     mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens) {

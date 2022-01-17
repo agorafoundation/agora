@@ -1,3 +1,10 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2022 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
+
 function order(productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax) {
     this.id = -1;
     this.productId = productId;

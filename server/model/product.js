@@ -1,3 +1,10 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2022 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
+
 function product(productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage) {
     this.id = -1;
     this.productType = productType;
