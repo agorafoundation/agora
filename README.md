@@ -1,5 +1,5 @@
-# Agora - Open source user centric cloud based learning platform
-### Agora uses a closed loop teaching philosophy being researched by its author Brian Gormanly to ensure practice, community, and feedback are centerpieces of all topics. The platform uses uniform assessment tools which allow teachers to verify and improve the impact of their online material.  Agora makes everything measurable.  
+# Agora - Open source, closed loop, user centric, cloud based learning platform
+#### Agora uses a closed loop teaching philosophy being researched by its author Brian Gormanly to ensure that online content receives feedback from students and that practice and community are centerpieces of all learning topics. The platform uses uniform assessment tools which allow teachers to verify and improve the impact of their online material. Students are aware of their outcomes and teachers are aware how effective their content was for the student. Agora makes everything measurable.  
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
 
@@ -77,3 +77,4 @@ answers you seek
 
 ### And then?
 1. Web3 based decentralization! Own your academic record. (more on this soon).
+2. Remove the CodingCoach content from base Agora build
