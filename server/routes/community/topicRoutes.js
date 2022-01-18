@@ -17,6 +17,8 @@ const userService = require('../../service/userService');
 // models
 const TopicEnrollment = require('../../model/topicEnrollment');
 const CompletedAssessment = require('../../model/completedAssessment');
+const CompletedAssessmentQuestion = require('../../model/completedAssessmentQuestion');
+const CompletedActivity = require('../../model/completedActivity');
 
 
 const bodyParser = require('body-parser');
@@ -111,12 +113,25 @@ router.route('/update/:finishedStep')
         }
 
         if(finishedStep == 2) {
+            console.log("query string: " + req.query);
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
             ca.userId = req.session.user.id;
             ca.assessmentId = req.session.currentTopic.topic.assessmentId;
             ca.prePost = 1; // pre
-            ca.completedQuestions = null // TODO!!! must get the questions from the client side.
+
+            // go through all the questions and look for the anwser
+            for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                // create a completedQuestion to hold the answer
+                let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
+                cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
+                cq.assessmentQuestionOptionId = req.query[i];
+                ca.completedQuestions.push(cq);
+            }
+
+            console.log("testing teh ca and cq: " + JSON.stringify(ca));
+
+            //ca.completedQuestions = null // TODO!!! must get the questions from the client side.
 
             req.session.currentTopic.preAssessment = ca;
             
@@ -132,6 +147,60 @@ router.route('/update/:finishedStep')
 
             // reroute
             res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=4");
+        }
+
+        if(finishedStep == 4) {
+            let completedActivity = CompletedActivity.emptyCompletedActivity();
+            completedActivity.submissionText = req.query.submission_text;
+            completedActivity.userId = req.session.user.id;
+            completedActivity.activityId = req.session.currentTopic.topic.activityId;
+            req.session.currentTopic.completedActivity = completedActivity;
+
+            // save the data
+            req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+            console.log("did it save? " + JSON.stringify(req.session.currentTopic));
+            // reroute
+            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=5");
+
+        }
+
+        if(finishedStep == 5) {
+            console.log("query string: " + JSON.stringify(req.query));
+            // create the completed assessment 
+            let ca = CompletedAssessment.emptyCompletedAssessment();
+            ca.userId = req.session.user.id;
+            ca.assessmentId = req.session.currentTopic.topic.assessmentId;
+            ca.prePost = 2; // pre
+
+            // go through all the questions and look for the anwser
+            for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                // create a completedQuestion to hold the answer
+                let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
+                cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
+                for (var propName in req.query) {
+                    if (req.query.hasOwnProperty(propName)) {
+                        if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
+                            console.log(propName, req.query[propName]);
+                            cq.assessmentQuestionOptionId = req.query[propName];
+                        }
+                        
+                    }
+                }
+                
+                ca.completedQuestions.push(cq);
+            }
+
+            console.log("testing teh ca and cq: " + JSON.stringify(ca));
+
+            //ca.completedQuestions = null // TODO!!! must get the questions from the client side.
+
+            req.session.currentTopic.preAssessment = ca;
+            
+            // save the data
+            req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+            // reroute
+            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=6");
         }
     }
     else {

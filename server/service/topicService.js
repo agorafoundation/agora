@@ -177,7 +177,6 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
                             let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res4.rows[j]);
                             question.options.push(option);
                         }
-
                         assessment.questions.push(question);
                     }
                     topic.assessment = assessment;
@@ -209,9 +208,9 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             }
             topic.resources = resources;
 
-            //console.log("------------------------");
-            //console.log("Full Topic: " + JSON.stringify(topic));
-            //console.log("------------------------");
+            console.log("------------------------");
+            console.log("Full Topic: " + JSON.stringify(topic));
+            console.log("------------------------");
             return topic;
             client.release();
         }
@@ -308,10 +307,12 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             let res6 = await client.query(text, values);
             //let resources = [];
             for(let i=0; i < res6.rowCount; i++) {
+                console.log("check 1 : " + res6.rowCount + " this is " + res6.rows[i].id);
                 //resources.push(Resource.ormResource(res6.rows[i]));
                 text = "SELECT * from completed_resource where resource_id = $1 AND user_id = $2 and active = $3";
                 values = [ res6.rows[i].id, topicEnrollment.userId, true ];
                 let res7 = await client.query(text, values);
+
                 //let completedResources = [];
                 for(let i=0; i < res7.rowCount; i++) {
                     topicEnrollment.completedResources.push(CompletedResource.ormCompletedResource(res7.rows[i]));
@@ -326,6 +327,9 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 
         // success?  of course! release the pool!
         client.release();
+        console.log("------------------------");
+        console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
+        console.log("------------------------");
         return topicEnrollment;
     }
     catch(e) {
@@ -371,8 +375,9 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
                 let res = await client.query(text, values);
                 // last step, update the fk in topicEnrollment!
-                if(res.rowCount) {
+                if(res.rowCount > 0) {
                     topicEnrollment.preCompletedAssessmentId = res.rows[0].id;
+                    topicEnrollment.preAssessment.id = res.rows[0].id;
                     console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.preCompletedAssessmentId);
                 }
             }
@@ -390,14 +395,15 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post) VALUES ($1, $2, $3);"
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post) VALUES ($1, $2, $3) RETURNING id;"
                 values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2 ];
 
                 let res = await client.query(text, values);
 
                 // last step, update the fk in topicEnrollment!
-                if(res.rowCount) {
+                if(res.rowCount > 0) {
                     topicEnrollment.postCompletedAssessmentId = res.rows[0].id;
+                    topicEnrollment.postAssessment.id = res.rows[0].id;
                     console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
                 }
             }
@@ -409,29 +415,34 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
         // save activity data
         if(topicEnrollment.completedActivity && topicEnrollment.topic && topicEnrollment.topic.activity) {
+            console.log("pre flight 1");
             // check that this activity does not already exist
             // Activities can be updated
             if(topicEnrollment.completedActivityId > 0) {
+                console.log("pre flight 2");
                 // update to existing completed_activity
-                text = "UPDATE completed_activity submission_text = $1 update_time = NOW() WHERE id = $2;"
-                values = [ topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivityId ];
+                text = "UPDATE completed_activity SET submission_text = $1, active = $2, update_time = NOW() WHERE id = $3;"
+                values = [ topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active, topicEnrollment.completedActivityId ];
 
                 let res = await client.query(text, values);
 
                 //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_activity (activity_id, user_id, submission_text) VALUES ($1, $2, $3);"
-                values = [ topicEnrollment.topic.activity.id, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText ];
+                console.log("pre flight 3");
+                text = "INSERT INTO completed_activity (activity_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING id;"
+                values = [ topicEnrollment.topic.activity.id, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
 
                 let res = await client.query(text, values);
 
                 // last step, update the fk in topicEnrollment!
-                if(res.rowCount) {
+                if(res.rowCount > 0) {
+                    topicEnrollment.completedActivity.id = res.rows[0].id;
                     topicEnrollment.completedActivityId = res.rows[0].id;
-                    console.log("[DEBUG]: Checking that the fk is being added for the activityId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
+                    console.log("[DEBUG]: Checking that the fk is being added for the activityId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.completedActivityId);
                 }
             }
+            console.log("pre flight 4");
         }
         else {
             // missing assessment data, not able to save
@@ -495,13 +506,13 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
         }
         else {
             // INSERT 
-            text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 );";
+            text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 ) RETURNING id;";
             values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, currentTime, true ];
 
             let res = await client.query(text, values);
 
             // last step, update the topicEnrollment id!
-            if(res.rowCount) {
+            if(res.rowCount > 0) {
                 topicEnrollment.id = res.rows[0].id;
             }
         }

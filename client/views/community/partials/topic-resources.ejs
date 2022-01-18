@@ -1,6 +1,7 @@
 <span id="topic-resource-page"></span>
 <%
 if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) {
+    console.log("te output: " + JSON.stringify(topicEnrollment));
     for(let i=0; i < topicEnrollment.topic.resources.length; i++) {
         // see if this resource has already been marked as compeleted
         let resourceCompleted = false;
@@ -16,17 +17,35 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
         if(topicEnrollment.topic.resources[i].resourceImage) {
             %>
             
-            <a class="card" style="width: 100%;" href="<%- (!!topicEnrollment.topic.resources[i].resourceLink)?topicEnrollment.topic.resources[i].resourceLink:''; %>" target="_blank" id="resource_<%- topicEnrollment.topic.resources[i].id %>">
+            <a class="card" style="width: 100%;"  target="_blank" id="resource_<%- topicEnrollment.topic.resources[i].id %>">
                 <div class="card-body-low-padding" name="enrolled_card">
                     <div class="card">
-                        <div class="card-header" id="headingOne">
+                        <%
+                        if(topicEnrollment.topic.resources[i].resourceLink && topicEnrollment.topic.resources[i].resourceLink != '') {
+                            %>
+                            <a class="card-header" id="headingOne" href="<%- (!!topicEnrollment.topic.resources[i].resourceLink)?topicEnrollment.topic.resources[i].resourceLink:''; %>">
+                            <%
+                        }
+                        else {
+                            %>
+                            <a class="card-header" id="headingOne">
+                            <%
+                        }
+                        %>
+                        
                             <h5 class="mb-0">
                             <button class="btn" aria-expanded="false" aria-controls="collapseOne">
-                                <img class="img-supersmall" src="<%- (!!topicEnrollment.topic.resources[i].resourceImage)?topicEnrollment.topic.resources[i].resourceImage:''; %>" />
+                                <%
+                                if(topicEnrollment.topic.resources[i].resourceImage) {
+                                    %>
+                                    <img class="img-supersmall" src="<%- (!!topicEnrollment.topic.resources[i].resourceImage)?topicEnrollment.topic.resources[i].resourceImage:''; %>" />
+                                    <%
+                                }
+                                %>
                                 <%- topicEnrollment.topic.resources[i].resourceName %>
                             </button>
                             </h5>
-                        </div>
+                        </a>
                     
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                             <div class="card-body">
@@ -44,35 +63,6 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
             <hr />
             <%
         } 
-        else {
-            %>
-            <a class="card" style="width: 100%;" href="<%- (!!topicEnrollment.topic.resources[i].resourceLink)?topicEnrollment.topic.resources[i].resourceLink:''; %>" target="_blank" id="resource_<%- topicEnrollment.topic.resources[i].id %>">
-                <div class="card-body-low-padding" name="enrolled_card">
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                            <button class="btn" aria-expanded="false" aria-controls="collapseOne">
-                                <%- topicEnrollment.topic.resources[i].resourceName %>
-                            </button>
-                            </h5>
-                        </div>
-                    
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
-                                <%- topicEnrollment.topic.resources[i].resourceContentHtml %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <span class="resource-complete">
-                <span class="resource-complete-text">Completed: </span>
-                <input type="checkbox" class="resource-complete-checkbox" id="resource_complete_<%- topicEnrollment.topic.resources[i].id %>" name="resource-complete-ck" onclick="updateTopicResourceCompleteStatus(<%- topicEnrollment.topic.resources[i].id %>, 'testing')" <%- (resourceCompleted)?'checked':'t' %> />
-            </span>
-
-            <hr />      
-            <%
-        }
     }
     %>
     <button type="submit" onclick="window.location.href = '/community/topic/update/3';" class="btn btn-primary" id="resource_submit">Next Step</button>
