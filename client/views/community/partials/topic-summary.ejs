@@ -1,0 +1,56 @@
+<h4>Congradulations! Here is how you made out</h4>
+<p>Your Pre Assessment Answers:</p>
+<%
+if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
+
+    for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+        %>
+        <div class="assessment-question">
+            <h6><%- topicEnrollment.topic.assessment.questions[i].question %></h6>
+            <%
+            // get the matching completedQuestion
+            let completedQuestion = null;
+            if(topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions) {
+                for(k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++) {
+                    console.log("testing! " + topicEnrollment.preAssessment.completedQuestions[k].completedAssessmentId + "==" + topicEnrollment.topic.assessment.id + "&&" + topicEnrollment.preAssessment.completedQuestions[k].assessmentQuestionId + "==" + topicEnrollment.topic.assessment.questions[i].id);
+                    if(topicEnrollment.preAssessment.completedQuestions[k].completedAssessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.preAssessment.completedQuestions[k].assessmentQuestionId == topicEnrollment.topic.assessment.questions[i].id) {
+                        completedQuestion = topicEnrollment.preAssessment.completedQuestions[k];
+                    }
+                }
+            }
+
+            // iterate through the options mark the chosen one using the completedQuestion data
+            for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
+                if(completedQuestion && topicEnrollment.topic.assessment.questions[i].options[j].id == completedQuestion.assessmentQuestionOptionId) {
+                    // user chose this option
+                    console.log("chosen option!");
+                    %>
+                    <div>
+                        <input type="radio" id="option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" checked>
+                        <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                    </div>
+                    <%
+                }   
+                else {
+                    %>
+                    <div>
+                        <input type="radio" id="option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>">
+                        <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                    </div>
+                    <%
+                }             
+
+                
+            }
+            %>
+        </div>
+        <%
+    }
+}
+else {
+    // data missing?
+    %>
+    <p>Something went wrong displaying the assessment</p>
+    <%
+}
+%>
