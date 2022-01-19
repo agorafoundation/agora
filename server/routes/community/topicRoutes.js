@@ -113,7 +113,7 @@ router.route('/update/:finishedStep')
         }
 
         if(finishedStep == 2) {
-            console.log("query string: " + req.query);
+            console.log("query string: " + JSON.stringify(req.query));
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
             ca.userId = req.session.user.id;
@@ -125,13 +125,19 @@ router.route('/update/:finishedStep')
                 // create a completedQuestion to hold the answer
                 let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                 cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-                cq.assessmentQuestionOptionId = req.query[i];
+
+                for (var propName in req.query) {
+                    if (req.query.hasOwnProperty(propName)) {
+                        if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
+                            console.log(propName, req.query[propName]);
+                            cq.assessmentQuestionOptionId = req.query[propName];
+                        }
+                        
+                    }
+                }
+
                 ca.completedQuestions.push(cq);
             }
-
-            console.log("testing teh ca and cq: " + JSON.stringify(ca));
-
-            //ca.completedQuestions = null // TODO!!! must get the questions from the client side.
 
             req.session.currentTopic.preAssessment = ca;
             
@@ -190,11 +196,7 @@ router.route('/update/:finishedStep')
                 ca.completedQuestions.push(cq);
             }
 
-            console.log("testing teh ca and cq: " + JSON.stringify(ca));
-
-            //ca.completedQuestions = null // TODO!!! must get the questions from the client side.
-
-            req.session.currentTopic.preAssessment = ca;
+            req.session.currentTopic.postAssessment = ca;
             
             // save the data
             req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
@@ -268,7 +270,8 @@ router.route('/:goalId/:topicId')
                     }
                     else {
                         // topic complete?
-                        console.log("triggered topic complete!");
+                        currentStep = 6;
+                        console.log("triggered topic summary!");
                     }
 
 
@@ -329,6 +332,7 @@ router.route('/:goalId/:topicId')
                     }
                     else {
                         // topic complete?
+                        currentStep = 6;
                         console.log("triggered topic complete!");
                     }
 
@@ -370,6 +374,7 @@ router.route('/:goalId/:topicId')
                     }
                     else {
                         // topic complete?
+                        currentStep = 6;
                         console.log("triggered topic complete!");
                     }
 

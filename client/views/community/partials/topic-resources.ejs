@@ -1,7 +1,6 @@
 <span id="topic-resource-page"></span>
 <%
 if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) {
-    console.log("te output: " + JSON.stringify(topicEnrollment));
     for(let i=0; i < topicEnrollment.topic.resources.length; i++) {
         // see if this resource has already been marked as compeleted
         let resourceCompleted = false;
