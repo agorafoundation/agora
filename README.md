@@ -9,7 +9,6 @@ The perfect learning platform:
 - Is accessible: Free and open source and will remain so forever.
 - It assesses the content as much as the learner. Feedback is the missing component from online learning, Agora closes the loop.
 - User, not institution centric: Lifelong learners require a lifelong system that follows them.
-- Is flexible: So different types of learners can work however they do best
 - Is social: Opening a safe central hub of learning means collaboration and sharing of
 information can be easier than ever.
 - Is safe: Your data will never be used against you, only for you. it will not be sold or used
