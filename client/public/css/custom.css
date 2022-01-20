@@ -317,7 +317,7 @@ div.product-card a {
 }
 .pb-circle-complete {
     fill: #5de239; 
-    stroke-width:0;
+    stroke-width:1;
 }
 .pb-circle-enroll {
     fill: #826131; 
@@ -349,12 +349,13 @@ div.product-card a {
 
 .pb-item-icon {
     position: relative;
-    left:-1.15rem;
-    top:1.4rem;
+    left:-4.65rem;
+    top:.5rem;
 }
 .pb-item {
     position: relative;
-    left: 2.5rem;
+    left: 2.7rem;
+    padding-bottom: 2rem;
 }
 .pb-item-in-progress {
     position: relative;
@@ -758,3 +759,6 @@ input:checked + .slider:after {
     font-size: x-large;
 }
 
+.correct-background {
+    background-color: #04AA6D;
+}

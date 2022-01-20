@@ -61,7 +61,7 @@ window.addEventListener('load', () => {
             case "6":
                 let step6 = document.getElementById('step6');
                 let step6text = document.getElementById('step6-text');
-                let step6a = step5text.childNodes[0];
+                let step6a = step6text.childNodes[0];
 
                 step6.classList.add("grouping-background");
                 step6text.classList.remove('codingcoach-red');

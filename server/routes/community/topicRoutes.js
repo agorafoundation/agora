@@ -164,7 +164,6 @@ router.route('/update/:finishedStep')
 
             // save the data
             req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-            console.log("did it save? " + JSON.stringify(req.session.currentTopic));
             // reroute
             res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=5");
 
@@ -197,9 +196,20 @@ router.route('/update/:finishedStep')
             }
 
             req.session.currentTopic.postAssessment = ca;
-            
+
+            // mark the topic complete and return the users token
+            if(!req.session.currentTopic.isCompleted) {
+                req.session.currentTopic.isCompleted = true;
+                req.session.currentTopic.completedDate = "SET";
+
+                await userService.addAccessTokensToUserById(req.session.user.id, 1);
+            }
+
             // save the data
             req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+            // reload the user session
+            req.session.user = await userService.setUserSession(req.session.user.email);
 
             // reroute
             res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=6");
@@ -333,7 +343,6 @@ router.route('/:goalId/:topicId')
                     else {
                         // topic complete?
                         currentStep = 6;
-                        console.log("triggered topic complete!");
                     }
 
                     // add the enrollment to the session
@@ -375,7 +384,6 @@ router.route('/:goalId/:topicId')
                     else {
                         // topic complete?
                         currentStep = 6;
-                        console.log("triggered topic complete!");
                     }
 
                     // add the enrollment to the session

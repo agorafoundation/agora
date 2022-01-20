@@ -357,9 +357,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
     let currentTime = null;
     let text = "";
     let values = [];
-    if(topicEnrollment.isCompleted) {
-        currentTime = Date.now();
-    }
 
     try {
 
@@ -390,7 +387,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                             values = [ topicEnrollment.preAssessment.id, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await client.query(text, values);
-                            topicEnrollment.preAssessment.completedQuestions[j].id = res2.rows[0];
+                            topicEnrollment.preAssessment.completedQuestions[j].id = res2.rows[0].id;
                         }
                     }
                     
@@ -410,8 +407,8 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post) VALUES ($1, $2, $3) RETURNING id;"
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2 ];
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post, active) VALUES ($1, $2, $3, $4) RETURNING id;"
+                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2, true ];
 
                 let res = await client.query(text, values);
 
@@ -428,7 +425,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                             values = [ topicEnrollment.postAssessment.id, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await client.query(text, values);
-                            topicEnrollment.postAssessment.completedQuestions[j].id = res2.rows[0];
+                            topicEnrollment.postAssessment.completedQuestions[j].id = res2.rows[0].id;
                         }
                     }
                 }
@@ -512,32 +509,63 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
         // now that we have saved all the supporting data and assigned any new id's to there foreign keys we can save the topicEnrollement itself
         // first see if we are doing an udpate or insert based on whether we have an id already.
-        if(topicEnrollment && topicEnrollment.id > 0) {
-            // UPDATE
-            text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = $6, active = $7, update_time = NOW() WHERE id = $8;";
-            values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, currentTime, topicEnrollment.active, topicEnrollment.id ];
-            try { 
+        if(topicEnrollment.completedDate == "SET") {
+            if(topicEnrollment && topicEnrollment.id > 0) {
+                // UPDATE    
+                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = NOW(), active = $6, update_time = NOW() WHERE id = $7;";
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id ];
+                try { 
+                    let res = await client.query(text, values);
+    
+                }
+                catch(e) {
+                    console.log(e.stack);
+                    return false;
+                }
+    
+            }
+            else {
+                // INSERT 
+                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, NOW(), $8 ) RETURNING id;";
+                values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true ];
+    
                 let res = await client.query(text, values);
-
+    
+                // last step, update the topicEnrollment id!
+                if(res.rowCount > 0) {
+                    topicEnrollment.id = res.rows[0].id;
+                }
             }
-            catch(e) {
-                console.log(e.stack);
-                return false;
-            }
-
         }
         else {
-            // INSERT 
-            text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 ) RETURNING id;";
-            values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, currentTime, true ];
-
-            let res = await client.query(text, values);
-
-            // last step, update the topicEnrollment id!
-            if(res.rowCount > 0) {
-                topicEnrollment.id = res.rows[0].id;
+            if(topicEnrollment && topicEnrollment.id > 0) {
+                // UPDATE    
+                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, active = $5, update_time = NOW() WHERE id = $6;";
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.id ];
+                try { 
+                    let res = await client.query(text, values);
+    
+                }
+                catch(e) {
+                    console.log(e.stack);
+                    return false;
+                }
+    
+            }
+            else {
+                // INSERT 
+                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id;";
+                values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, true ];
+    
+                let res = await client.query(text, values);
+    
+                // last step, update the topicEnrollment id!
+                if(res.rowCount > 0) {
+                    topicEnrollment.id = res.rows[0].id;
+                }
             }
         }
+        
 
         client.release();
         return topicEnrollment;
