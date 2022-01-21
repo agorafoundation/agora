@@ -40,7 +40,18 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
                                     <img class="img-supersmall" src="<%- (!!topicEnrollment.topic.resources[i].resourceImage)?topicEnrollment.topic.resources[i].resourceImage:''; %>" />
                                     <%
                                 }
+                                if(topicEnrollment.topic.resources[i].isRequired) {
+                                    %>
+                                    <span class=""><strong>Required: </strong></span>
+                                    <%
+                                }
+                                else {
+                                    %>
+                                    <span class=""><strong>Optional: </strong></span>
+                                    <%
+                                }
                                 %>
+
                                 <%- topicEnrollment.topic.resources[i].resourceName %>
                             </button>
                             </h5>
@@ -55,8 +66,14 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
                 </div>
             </a> 
             <span class="resource-complete">
+                <%
+                if(topicEnrollment.topic.resources[i].isRequired) {
+                %>
                 <span class="resource-complete-text">Completed: </span>
                 <input type="checkbox" class="resource-complete-checkbox" id="resource_complete_<%- topicEnrollment.topic.resources[i].id %>" name="resource-complete-ck" onclick="updateTopicResourceCompleteStatus(<%- topicEnrollment.topic.resources[i].id %>, 'testing')" <%- (resourceCompleted)?'checked':'t' %> />
+                <%
+                }   
+                %>
             </span>
             
             <hr />

@@ -14,7 +14,8 @@ router.use(bodyParser.urlencoded({
   }));
 router.use(bodyParser.json());
 
-const stripe = require('stripe')(`${process.env.STRIPE_TEST_KEY}`);
+//const stripe = require('stripe')(`${process.env.STRIPE_TEST_KEY}`);
+const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
 const YOUR_DOMAIN = `${process.env.STRIPE_DOMAIN}`;
 
 // import services
@@ -35,23 +36,83 @@ const UserRole = require("../model/userRole");
  */
 router.post('/cb1-checkout-session', async (req, res) => {
     //console.log(req.session.user)
-    const session = await stripe.checkout.sessions.create({
-        customer: req.session.user.stripeId,
-        shipping_address_collection: {
-            allowed_countries: ['US'],
-        },
-        line_items: [
-            {
-                // Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
-                price: process.env.STRIPE_CB_PRICE,
-                quantity: 1,
-            },
-        ],
-        mode: 'payment',
-        success_url: `${YOUR_DOMAIN}/api/stripe/cb1-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${YOUR_DOMAIN}/api/stripe/cb1-cancel`,
-    });
-  res.redirect(303, session.url);
+    let coupon = req.body.checkoutcoupon;
+    console.log("coupon sent : " + coupon);
+    if(coupon) {
+        try {
+            const session = await stripe.checkout.sessions.create({
+                customer: req.session.user.stripeId,
+                automatic_tax: {
+                    enabled: true,
+                },
+                customer_update: {
+                    name: 'auto',
+                    shipping: 'auto',
+                },
+                shipping_address_collection: {
+                    allowed_countries: ['US'],
+                },
+                line_items: [
+                    {
+                        // Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
+                        price: process.env.STRIPE_CB_PRICE,
+                        quantity: 1,
+                    },
+                ],
+                mode: 'payment',
+                discounts: [{
+                    coupon: `${coupon}`,
+                }],
+                success_url: `${YOUR_DOMAIN}/api/stripe/cb1-success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${YOUR_DOMAIN}/api/stripe/cb1-cancel`,
+            });
+    
+            res.redirect(303, session.url);
+        }
+        catch(e) {
+            console.log("error: " + e);
+            
+            res.render('codebot', { message: "The Coupon code you enterd was invalid!"});
+        }
+    }
+    else {
+        try {
+            const session = await stripe.checkout.sessions.create({
+                customer: req.session.user.stripeId,
+                automatic_tax: {
+                    enabled: true,
+                },
+                customer_update: {
+                    name: 'auto',
+                    shipping: 'auto',
+                },
+                shipping_address_collection: {
+                    allowed_countries: ['US'],
+                },
+                line_items: [
+                    {
+                        // Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
+                        price: process.env.STRIPE_CB_PRICE,
+                        quantity: 1,
+                    },
+                ],
+                mode: 'payment',
+                success_url: `${YOUR_DOMAIN}/api/stripe/cb1-success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${YOUR_DOMAIN}/api/stripe/cb1-cancel`,
+            });
+    
+            res.redirect(303, session.url);
+        }
+        catch(e) {
+            console.log("error: " + e);
+            
+            res.render('codebot', { message: "There was a problem going to checkout."});
+        }
+    }
+    
+    
+
+  
 });
 
 router.post('/founders-checkout-session', async (req, res) => {

@@ -121,7 +121,7 @@
                         <div class="col-lg-5">
                             <section>
                                 <div class="product">
-                                    <img src="/assets/img/codebot/code-bot-parts.jpg" alt="Code Bot 3π+" class="w-100 shadow-1-strong rounded mb-4" />
+                                    <img src="/assets/img/codebot/code-bot-parts-sm.jpg" alt="Code Bot 3π+" class="w-100 shadow-1-strong rounded mb-4" />
                                     <div class="description">
                                     <h3>Purchase Code Bot 3π+ (includes USPS First class shipping in United States of America)</h3>
                                     <h5>$49.99</h5>
@@ -132,6 +132,16 @@
                                     if(process.env.STRPIE_TOGGLE == "true") {
                                 %>
                                 <form action="/api/stripe/cb1-checkout-session" method="POST">
+                                    <% if(!!locals.message){ %>
+                                        <div class="alert-message alert-message-warning" role="alert">
+                                            <h3 ><%= message %></h3>
+                                        </div>
+                                    <% } %>
+                                    <div class="">
+                                        <input type="text" id="checkoutcoupon" name="checkoutcoupon" value="" class="form-control form-control-sm" />
+                                        <label for="checkoutcoupon">Marist Student Coupon:</label>
+                                    </div>
+                                    
                                     <button type="submit" id="checkout-button" class="btn btn-primary btn-lg btn-block">Checkout</button>
                                 </form>
                                 

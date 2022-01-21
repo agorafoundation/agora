@@ -113,7 +113,6 @@ router.route('/update/:finishedStep')
         }
 
         if(finishedStep == 2) {
-            console.log("query string: " + JSON.stringify(req.query));
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
             ca.userId = req.session.user.id;
@@ -129,7 +128,6 @@ router.route('/update/:finishedStep')
                 for (var propName in req.query) {
                     if (req.query.hasOwnProperty(propName)) {
                         if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
-                            console.log(propName, req.query[propName]);
                             cq.assessmentQuestionOptionId = req.query[propName];
                         }
                         
@@ -170,7 +168,6 @@ router.route('/update/:finishedStep')
         }
 
         if(finishedStep == 5) {
-            console.log("query string: " + JSON.stringify(req.query));
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
             ca.userId = req.session.user.id;
@@ -185,7 +182,6 @@ router.route('/update/:finishedStep')
                 for (var propName in req.query) {
                     if (req.query.hasOwnProperty(propName)) {
                         if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
-                            console.log(propName, req.query[propName]);
                             cq.assessmentQuestionOptionId = req.query[propName];
                         }
                         
@@ -233,6 +229,7 @@ router.route('/:goalId/:topicId')
         if(req.query.nextStep) {
             nextStep = req.query.nextStep;
         }
+
         let access = false;
         if(req.session.user) {
             // check that the user is enrolled!
@@ -261,6 +258,8 @@ router.route('/:goalId/:topicId')
                     // get the current step
                     let currentStep = 1;
 
+                    //keep track of number of completed resources that are required
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
 
                     // determine the current step if different from Introduction
                     if(!topicEnrollment.isIntroComplete) {
@@ -269,7 +268,7 @@ router.route('/:goalId/:topicId')
                     else if(topicEnrollment.preCompletedAssessmentId < 1) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < topicEnrollment.topic.resources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
                         currentStep = 3;
                     }
                     else if(topicEnrollment.completedActivityId < 1) {
@@ -323,6 +322,10 @@ router.route('/:goalId/:topicId')
                     let topicEnrollment = req.session.currentTopic;
                     // get the current step
                     let currentStep = 1;
+
+                    //keep track of number of completed resources that are required
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
+                    console.log(" the number of required completed resources is: " + requiredCompletedResources.length);
                     
                     // determine the current step if different from Introduction
                     if(!topicEnrollment.isIntroComplete) {
@@ -331,7 +334,7 @@ router.route('/:goalId/:topicId')
                     else if(topicEnrollment.preCompletedAssessmentId < 1) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < topicEnrollment.topic.resources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
                         currentStep = 3;
                     }
                     else if(topicEnrollment.completedActivityId < 1) {
@@ -364,6 +367,9 @@ router.route('/:goalId/:topicId')
 
                     // get the current step
                     let currentStep = 1;
+
+                    //keep track of number of completed resources that are required
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
                     
                     // determine the current step if different from Introduction
                     if(!topicEnrollment.isIntroComplete) {
@@ -372,7 +378,7 @@ router.route('/:goalId/:topicId')
                     else if(topicEnrollment.preCompletedAssessmentId < 1) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < topicEnrollment.topic.resources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
                         currentStep = 3;
                     }
                     else if(topicEnrollment.completedActivityId < 1) {

@@ -1,8 +1,10 @@
 <%
 
-console.log("current step is: " + currentStep);
+//console.log("current step is: " + currentStep);
 let allComplete = true;
 let prevAllComplete = true;
+
+let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
 %>
 
 <div class="grouping" id="step1">
@@ -68,7 +70,7 @@ let prevAllComplete = true;
         }
         else {
             %>
-            <h5 class="codingcoach-red" id="step2-text">Introduction</h5>
+            <h5 class="codingcoach-red" id="step2-text">Pre-Assessment</h5>
             <%
         }
         prevAllComplete = allComplete;
@@ -88,7 +90,7 @@ let prevAllComplete = true;
                     }
                 }
             }
-            if(topicEnrollment.completedResources && topicEnrollment.topic && topicEnrollment.topic.resources && topicEnrollment.completedResources.length == topicEnrollment.topic.resources.length && allResourcesComplete) {
+            if(topicEnrollment.completedResources && topicEnrollment.topic && topicEnrollment.topic.resources && topicEnrollment.completedResources.length == requiredCompletedResources.length && allResourcesComplete) {
                 %>
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%
