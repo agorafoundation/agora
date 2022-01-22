@@ -366,9 +366,9 @@ exports.setUserSession = async function(email) {
     user.topicEnrollments = topics;
 
     // created session
-    // console.log("---------------------------------------------");
-    // console.log("Session created: " + JSON.stringify(user));
-    // console.log("---------------------------------------------");
+    console.log("---------------------------------------------");
+    console.log("Session created: " + JSON.stringify(user));
+    console.log("---------------------------------------------");
 
     return user;
 }
