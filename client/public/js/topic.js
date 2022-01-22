@@ -13,7 +13,7 @@ window.addEventListener('load', () => {
         let currentStep = document.getElementById('currentStepField').value;
         let goalId = document.getElementById('goalIdField').value;
         let topicId = document.getElementById('topicIdField').value;
-        console.log(currentStep);
+        //console.log(currentStep);
         switch(currentStep) {
             case "1":
                 let step1 = document.getElementById('step1');
@@ -73,7 +73,7 @@ window.addEventListener('load', () => {
     }
     
     if(document.querySelectorAll("iframe")) {
-        console.log("page has iframes!");
+        //console.log("page has iframes!");
         let frames = document.querySelectorAll("iframe");
         frames.forEach((frame) => {
             frame.classList.add('iframe-size-control');
@@ -171,12 +171,8 @@ window.addEventListener('load', () => {
 
 function resourceButtonAccess() {
     let boxes = document.getElementsByName('resource-complete-ck');
-    console.log("box 0: " + boxes[0].checked);
-    console.log("box 1: " + boxes[1].checked);
     let flag = true;
-    console.log("there are " + boxes.length + " boxes");
     for(let i=0; i < boxes.length; i++) {
-        console.log("checked status: " + boxes[i].checked );
         if(boxes[i].checked == false) {
             flag = false;
             break;
@@ -185,22 +181,17 @@ function resourceButtonAccess() {
     }
 
     if(flag) {
-        console.log("flag true");
         document.getElementById('resource_submit').disabled = false;
     }
     else {
-        console.log("flag false");
         document.getElementById('resource_submit').disabled = true;
     }
 }
 
 function updateTopicResourceCompleteStatus(resourceId, submittedText) {
-    console.log("js call ");
 
     // get the status of the checkbox
-    console.log("the id is: resource_complete_" + resourceId);
     let status = document.getElementById('resource_complete_' + resourceId).checked;
-    console.log("the status is: " + status);
 
     fetch('/api/topic/resource', {
         headers: {
@@ -210,6 +201,5 @@ function updateTopicResourceCompleteStatus(resourceId, submittedText) {
         method: 'PATCH',                                                              
         body: JSON.stringify( { resourceId: resourceId, status: status, submittedText: submittedText } )                                        
       }).then((res) => {
-        console.log("fetch returned! " + JSON.stringify(res));
     });
 }

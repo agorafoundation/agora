@@ -37,9 +37,9 @@ exports.saveUserRole = async function(record) {
             + 'VALUES($1, $2, $3, $4)';
     let values = [record.userId, record.roleId, record.active, record.endTime];
     try {
-        const client = await db().connect(); 
-        let response = await client.query(text, values);
-        client.release();
+         
+        let response = await db.query(text, values);
+        
         return true;
     }
     catch(e) {
@@ -54,9 +54,9 @@ exports.getActiveRoleById = async function(roleId) {
     let values = [true, roleId];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return Role.ormRole(res.rows[0]);
         }
@@ -74,9 +74,8 @@ exports.getActiveRoleByName = async function(name) {
     let values = [true, name];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
         if(res.rows.length > 0) {
             return Role.ormRole(res.rows[0]);
         }
@@ -96,9 +95,9 @@ exports.getActiveRolesForUserId = async function(userId) {
     let roles = [];
     try {
 
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
         for(let i=0; i<res.rows.length; i++) {
             let role = await exports.getActiveRoleById(res.rows[i].role_id);
@@ -119,9 +118,9 @@ exports.useAccessTokensById = async function(userId, numberOfTokens) {
         let values = [ numberOfTokens, userId ];
         //console.log("taking away a token");
         try {
-            const client = await db().connect(); 
-            let response = await client.query(text, values);
-            client.release();
+             
+            let response = await db.query(text, values);
+            
             return true;
         }
         catch(e) {
@@ -135,14 +134,14 @@ exports.useAccessTokensById = async function(userId, numberOfTokens) {
 }
 
 exports.addAccessTokensToUserById = async function(userId, numberOfTokens) {
-    console.log("adding tokens - userId : " + userId + " tokens: " + numberOfTokens);
+    //console.log("adding tokens - userId : " + userId + " tokens: " + numberOfTokens);
     if(userId > 0 && numberOfTokens > 0) {
         let text = "UPDATE user_data SET available_access_tokens=available_access_tokens + $1 WHERE id=$2";
         let values = [ numberOfTokens, userId ];
         try {
-            const client = await db().connect(); 
-            let response = await client.query(text, values);
-            client.release();
+             
+            let response = await db.query(text, values);
+            
             return true;
         }
         catch(e) {
@@ -187,9 +186,9 @@ exports.saveUser = async function(record) {
             record.noSqlDatabase, record.objectRelationalMapping, record.stripeId, 1];
 
         try {
-            const client = await db().connect(); 
-            let response = await client.query(text, values);
-            client.release();
+             
+            let response = await db.query(text, values);
+            
             
             // create the users role
             // get the new user
@@ -224,9 +223,9 @@ exports.saveUser = async function(record) {
             record.noSqlDatabase, record.objectRelationalMapping];
 
         try {
-            const client = await db().connect()
-            let response = await client.query(text, values);
-            client.release();
+            
+            let response = await db.query(text, values);
+            
         }
         catch(e) {
             console.log(e.stack);
@@ -248,9 +247,9 @@ exports.reValidateEmail = async function(email) {
     let values = [email, emailVerificationToken];
 
     try {
-        const client = await db().connect() 
-        let response = await client.query(text, values);
-        client.release();
+         
+        let response = await db.query(text, values);
+        
         response.rows[0];
     }
     catch(e) {
@@ -266,9 +265,9 @@ exports.getUserByUsername = async function(username) {
     let values = [username];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return User.ormUser(res.rows[0]);
         }
@@ -294,9 +293,9 @@ exports.getUserByUsername = async function(username) {
     
     let user = null;
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return User.ormUser(res.rows[0]);
         }
@@ -315,9 +314,9 @@ exports.getUserByEmail = async function(email) {
     let values = [email];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+        // 
+        let res = await db.query(text, values);
+        //
         if(res.rows.length > 0) {
             return User.ormUser(res.rows[0]);
         }
@@ -367,9 +366,9 @@ exports.setUserSession = async function(email) {
     user.topicEnrollments = topics;
 
     // created session
-    console.log("---------------------------------------------");
-    console.log("Session created: " + JSON.stringify(user));
-    console.log("---------------------------------------------");
+    // console.log("---------------------------------------------");
+    // console.log("Session created: " + JSON.stringify(user));
+    // console.log("---------------------------------------------");
 
     return user;
 }
@@ -384,9 +383,9 @@ exports.verifyEmail = async function(email) {
     let values = [email];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return true;
         }
@@ -410,9 +409,9 @@ exports.verifyUsername = async function(username) {
     let values = [username];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             // check case insensitive!
             return true;
@@ -444,8 +443,8 @@ exports.updateProfileFilename = async (email, filename) => {
             let text = "SELECT profile_filename FROM user_data WHERE email = $1";
             let values = [email];
 
-            const client = await db().connect() 
-            let res = await client.query(text, values);
+             
+            let res = await db.query(text, values);
             
             if(res.rows.length > 0) {
                 prevFileName = res.rows[0].profile_filename;
@@ -455,8 +454,8 @@ exports.updateProfileFilename = async (email, filename) => {
             values = [email, filename];
 
         
-            client.query(text, values);
-            client.release();
+            db.query(text, values);
+            
         }
         catch(e) {
             console.log(e.stack);
@@ -486,9 +485,9 @@ exports.createPasswordToken = async (email) => {
         let values = [email, resetPasswordToken, parseInt(resetPasswordTokenExpiration)];
 
         try {
-            const client = await db().connect() 
-            client.query(text, values);
-            client.release();
+             
+            db.query(text, values);
+            
         }
         catch(e) {
             console.log(e.stack);
@@ -508,31 +507,31 @@ exports.verifyEmailTokenVerifyCombo = async (email, token) => {
         let values = [email, token];
         
         try {
-            const client = await db().connect();
-            let res = await client.query(text, values);
+            
+            let res = await db.query(text, values);
             if(res.rows.length > 0) {
                 //update verify flag and cleanup
                 let text = "UPDATE user_data SET email_validated = $3, email_token = $4 WHERE LOWER(email) = LOWER($1) AND email_token = $2";
                 let values = [email, token, true, ""];
                 
                 try {
-                    let response = await client.query(text, values);
-                    client.release();
+                    let response = await db.query(text, values);
+                    
                     return true;
                 }
                 catch(e) {
-                    client.release();
+                    
                     console.log(e.stack);
                     return false;
                 }
             }
             else {
-                client.release();
+                
                 return false;
             }
         }
         catch(e) {
-            client.release();
+            
             console.log(e.stack);
             return false;
         }
@@ -548,9 +547,9 @@ exports.verifyEmailTokenResetCombo = async (email, token) => {
         let values = [email, token];
         
         try {
-            const client = await db().connect();
-            let res = await client.query(text, values);
-            client.release();
+            
+            let res = await db.query(text, values);
+            
             if(res.rows.length > 0) {
                 // check that the token has not expired
                 let tokenExp = res.rows[0].password_token_expiration;
@@ -583,9 +582,9 @@ exports.resetPassword = async (email, token, hashedPassword) => {
         let values = [email, token, hashedPassword, ""];
         
         try {
-            const client = await db().connect() 
-            let response = await client.query(text, values);
-            client.release();
+             
+            let response = await db.query(text, values);
+            
             return true;
         }
         catch(e) {
@@ -607,9 +606,9 @@ exports.checkPassword = async function(email, enteredPassword) {
     let values = [email];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
-        client.release();
+        
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             let hashedSaltedPass = res.rows[0].hashed_password;            
             let auth =  bcrypt.compareSync(enteredPassword, hashedSaltedPass);
@@ -636,10 +635,8 @@ exports.logUserSession = async function(userId, ipAddress, device) {
     let values = [userId, ipAddress, device.client.type, device.client.name, device.client.version, device.client.engine, device.client.engineVersion, device.os.name, device.os.version, device.os.platform, device.device.type, device.device.brand, device.device.model, device.bot];
 
     try {
-        const client = await db().connect() 
-        let response = await client.query(text, values);
-        client.release();
-        response.rows[0];
+         
+        let response = await db.query(text, values);
         return true;
     }
     catch(e) {
@@ -654,9 +651,9 @@ exports.getRecentNewUserEvents = async function(limit) {
     let values = [ limit ];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
-        client.release();
+        
+        let res = await db.query(text, values);
+        
         let recentUserEvents = [];
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {

@@ -280,7 +280,6 @@ router.route('/:goalId/:topicId')
                     else {
                         // topic complete?
                         currentStep = 6;
-                        console.log("triggered topic summary!");
                     }
 
 
@@ -325,7 +324,6 @@ router.route('/:goalId/:topicId')
 
                     //keep track of number of completed resources that are required
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
-                    console.log(" the number of required completed resources is: " + requiredCompletedResources.length);
                     
                     // determine the current step if different from Introduction
                     if(!topicEnrollment.isIntroComplete) {

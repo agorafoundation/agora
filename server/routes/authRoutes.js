@@ -33,13 +33,12 @@ router.use(function (req, res, next) {
 
 router.route('/')
     .get(async function (req, res) {
+        
         if(req.session.user) {
             const user = await userService.setUserSession(req.session.user.email);
-
             req.session.user = null;
             req.session.user = user;
             res.locals.user = req.session.user;
-
             // get user orders
             const orders = await productService.getOrdersByUserId(user.id);
 

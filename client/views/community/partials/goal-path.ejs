@@ -90,9 +90,7 @@
     <ul>
     <%
     for(let i = 0; i < goal.topics.length; i++) {
-        console.log("completed: " + JSON.stringify(completed));
         if(completed.includes(goal.topics[i].id)){
-            console.log("in a complete topic : " + goal.topics[i].id);
             %>
             <li class="pb-item"><a href='<%- topicBaseLink %><%- goal.topics[i].id %>'><%- goal.topics[i].topicName %></a></li>
             <%

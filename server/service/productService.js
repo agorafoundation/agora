@@ -28,9 +28,9 @@ exports.verifyOrderByStripePaymentIntentAndStripeStatus = async function(payment
     const values = [ payment_intent, status ];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return true;
         }
@@ -52,9 +52,9 @@ exports.createOrder = async function(order) {
                 + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19);';
             let values = [order.productId, order.quantity, order.userId, order.stripeSessionData, order.stripeCustomerData, order.mailAddress1, order.mailAddress2, order.mailCity, order.mailState, order.mailZip, order.mailCountry, order.orderStatus, order.paymentIntent, order.mode, order.stripeEmail, order.amount, order.subTotal, order.automaticTax, order.tax];
             try {
-                const client = await db().connect() 
-                let response = await client.query(text, values);
-                client.release();
+                 
+                let response = await db.query(text, values);
+                
                 return true;
             }
             catch(e) {
@@ -83,9 +83,9 @@ exports.createOrder = async function(order) {
     const values = [id];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return Order.ormOrder(res.rows[0]);
         }
@@ -109,9 +109,9 @@ exports.createOrder = async function(order) {
     let orders = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
         for(let i=0; i<res.rows.length; i++) {
             orders.push(Order.ormOrder(res.rows[i]));
@@ -138,9 +138,9 @@ exports.getAllActiveProducts = async function() {
     let products = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
         for(let i=0; i<res.rows.length; i++) {
             products.push(Product.ormProduct(res.rows[i]));
@@ -161,9 +161,9 @@ exports.getAllProductsWithImages = async function() {
     let products = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
         for(let i=0; i<res.rows.length; i++) {
             let product = Product.ormProduct(res.rows[i]);
@@ -188,9 +188,9 @@ exports.getAllActviteTokenAndMembershipProductsWithImages = async function() {
     let products = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
             for(let i=0; i<res.rows.length; i++) {
                 let product = Product.ormProduct(res.rows[i]);
@@ -221,9 +221,9 @@ exports.getProductByStripePriceId = async function(stripePriceId) {
     const values = [stripePriceId];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return Product.ormProduct(res.rows[0]);
         }
@@ -247,9 +247,9 @@ exports.getProductByStripePriceId = async function(stripePriceId) {
     const values = [id];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             return Product.ormProduct(res.rows[0]);
         }
@@ -273,9 +273,9 @@ exports.getActiveProductWithProductImagesById = async function(productId) {
     const values = [true, productId];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rows.length > 0) {
             Product.ormProduct(res.rows[0]);
         }
@@ -310,9 +310,9 @@ exports.getActiveProductWithProductImagesById = async function(productId) {
     let productImages = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         
         for(let i=0; i<res.rows.length; i++) {
             productImages.push(ProductImage.ormProductImage(res.rows[i]));

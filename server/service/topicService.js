@@ -115,9 +115,9 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
     let topics = [];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
-        client.release();
+        
+        let res = await db.query(text, values);
+        
 
         for(let i=0; i<res.rows.length; i++) {
             topics.push(Topic.ormTopic(res.rows[i]));
@@ -141,8 +141,8 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
     let values = [ true, topicId ];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
+        
+        let res = await db.query(text, values);
         let topic = null;
         
         if(res.rowCount > 0) {
@@ -152,7 +152,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             if(topic.assessmentId > 0) {
                 text = "SELECT * from assessments where id = $1 and active = $2";
                 values = [ topic.assessmentId, true ];
-                let res2 = await client.query(text, values);
+                let res2 = await db.query(text, values);
 
                 if(res2.rowCount > 0) {
                     // model it
@@ -161,7 +161,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
                     values = [ assessment.id, true ];
-                    let res3 = await client.query(text, values);
+                    let res3 = await db.query(text, values);
 
                     // attach the questions
                     for(let i=0; i < res3.rowCount; i++) {
@@ -170,7 +170,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
                         // populate the options for each question
                         text = "SELECT * from assessment_question_option where assessment_question_id = $1 and active = $2 ORDER BY option_number asc";
                         values = [ question.id, true ];
-                        let res4 = await client.query(text, values);
+                        let res4 = await db.query(text, values);
 
                         for(let j=0; j < res4.rowCount; j++) {
                             let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res4.rows[j]);
@@ -188,7 +188,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             if(topic.activityId > 0) {
                 text = "SELECT * from activities where id = $1 and active = $2";
                 values = [ topic.activityId, true ];
-                let res5 = await client.query(text, values);
+                let res5 = await db.query(text, values);
 
                 if(res5.rowCount > 0) {
                     // model it
@@ -200,7 +200,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             // get the resources
             text = "SELECT * from resources where topic_id = $1 and active = $2";
             values = [ topic.id, true ];
-            let res6 = await client.query(text, values);
+            let res6 = await db.query(text, values);
             let resources = [];
             for(let i=0; i < res6.rowCount; i++) {
                 resources.push(Resource.ormResource(res6.rows[i]));
@@ -211,7 +211,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             // console.log("Full Topic: " + JSON.stringify(topic));
             // console.log("------------------------");
             return topic;
-            client.release();
+            
         }
     }
     catch(e) {
@@ -236,24 +236,21 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     let values = [ true, userId, topicId ];
     let topicEnrollment = null;
     try {
-        const client = await db().connect(); 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
         if(res.rowCount > 0) {
             topicEnrollment = TopicEnrollment.ormTopicEnrollment(res.rows[0]);
-
-            console.log("---------- Toic check 1: " + JSON.stringify(topicEnrollment));
 
             // get the full topic?
             if(getFullTopic) {
                 topicEnrollment.topic = await exports.getActiveTopicWithEverythingById(topicEnrollment.topicId);
             }
-
-            console.log("---------- Toic check 2: " + JSON.stringify(topicEnrollment));
+            
             // get the completed pre assessment
             if(topicEnrollment.preCompletedAssessmentId > 0) {
                 text = "SELECT * from completed_assessment where id = $1 AND pre_post = $2 AND active = $3";
                 values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
-                let res2 = await client.query(text, values);
+                let res2 = await db.query(text, values);
 
                 if(res2.rowCount > 0) {
                     topicEnrollment.preAssessment = CompletedAssessment.ormCompletedAssessment(res2.rows[0]);
@@ -261,7 +258,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
                     values = [ topicEnrollment.preAssessment.id, true ];
-                    let res3 = await client.query(text, values);
+                    let res3 = await db.query(text, values);
                     // attach the completed questions
                     for(let i=0; i < res3.rowCount; i++) {
                         let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion(res3.rows[i]);
@@ -275,14 +272,14 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             if(topicEnrollment.postCompletedAssessmentId > 0) {
                 text = "SELECT * from completed_assessment where id = $1 AND pre_post = $2 AND active = $3";
                 values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
-                let res3 = await client.query(text, values);
+                let res3 = await db.query(text, values);
                 if(res3.rowCount > 0) {
                     topicEnrollment.postAssessment = CompletedAssessment.ormCompletedAssessment(res3.rows[0]);
 
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
                     values = [ topicEnrollment.postAssessment.id, true ];
-                    let res4 = await client.query(text, values);
+                    let res4 = await db.query(text, values);
                     // attach the completed questions
                     for(let i=0; i < res4.rowCount; i++) {
                         let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion(res4.rows[i]);
@@ -296,7 +293,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             if(topicEnrollment.completedActivityId > 0) {
                 text = "SELECT * from completed_activity where id = $1 and active = $2";
                 values = [ topicEnrollment.completedActivityId, true ];
-                let res5 = await client.query(text, values);
+                let res5 = await db.query(text, values);
                 if(res5.rowCount > 0) {
                     // model it
                     topicEnrollment.completedActivity = CompletedActivity.ormCompletedActivity(res5.rows[0]);
@@ -307,14 +304,13 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             // have to get the resources first then iterate through them
             text = "SELECT * from resources where topic_id = $1 and active = $2";
             values = [ topicEnrollment.topicId, true ];
-            let res6 = await client.query(text, values);
+            let res6 = await db.query(text, values);
             //let resources = [];
             for(let i=0; i < res6.rowCount; i++) {
-                console.log("check 1 : " + res6.rowCount + " this is " + res6.rows[i].id);
-                //resources.push(Resource.ormResource(res6.rows[i]));
+
                 text = "SELECT * from completed_resource where resource_id = $1 AND user_id = $2 and active = $3";
                 values = [ res6.rows[i].id, topicEnrollment.userId, true ];
-                let res7 = await client.query(text, values);
+                let res7 = await db.query(text, values);
 
                 //let completedResources = [];
                 for(let i=0; i < res7.rowCount; i++) {
@@ -324,18 +320,19 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         }
         else {
             // no record
-            client.release();
+            
             return false;
         }
 
         // success?  of course! release the pool!
-        client.release();
-        console.log("------------------------");
-        console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
-        console.log("------------------------");
+        
+        // console.log("------------------------");
+        // console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
+        // console.log("------------------------");
         return topicEnrollment;
     }
     catch(e) {
+        
         console.log(e.stack);
         return false;
     }
@@ -360,7 +357,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
     try {
 
-        const client = await db().connect();
+        
 
         // save pre assessment data
         if(topicEnrollment.preAssessment && topicEnrollment.topic && topicEnrollment.topic.assessment) {
@@ -373,12 +370,12 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                 values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 1, true ];
 
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
                 // last step, update the fk in topicEnrollment!
                 if(res.rowCount > 0) {
                     topicEnrollment.preCompletedAssessmentId = res.rows[0].id;
                     topicEnrollment.preAssessment.id = res.rows[0].id;
-                    console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.preCompletedAssessmentId);
+                    //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.preCompletedAssessmentId);
 
                     // save all the associated questions
                     if(topicEnrollment.preAssessment.completedQuestions) {
@@ -386,7 +383,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                             text = "INSERT INTO completed_assessment_question (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                             values = [ topicEnrollment.preAssessment.id, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
-                            let res2 = await client.query(text, values);
+                            let res2 = await db.query(text, values);
                             topicEnrollment.preAssessment.completedQuestions[j].id = res2.rows[0].id;
                         }
                     }
@@ -410,13 +407,13 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                 values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2, true ];
 
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
 
                 // last step, update the fk in topicEnrollment!
                 if(res.rowCount > 0) {
                     topicEnrollment.postCompletedAssessmentId = res.rows[0].id;
                     topicEnrollment.postAssessment.id = res.rows[0].id;
-                    console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
+                    //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
 
                     // save all the associated questions
                     if(topicEnrollment.postAssessment.completedQuestions) {
@@ -424,7 +421,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                             text = "INSERT INTO completed_assessment_question (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                             values = [ topicEnrollment.postAssessment.id, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
-                            let res2 = await client.query(text, values);
+                            let res2 = await db.query(text, values);
                             topicEnrollment.postAssessment.completedQuestions[j].id = res2.rows[0].id;
                         }
                     }
@@ -445,7 +442,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "UPDATE completed_activity SET submission_text = $1, active = $2, update_time = NOW() WHERE id = $3;"
                 values = [ topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active, topicEnrollment.completedActivityId ];
 
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
 
                 //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
@@ -453,7 +450,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "INSERT INTO completed_activity (activity_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                 values = [ topicEnrollment.topic.activity.id, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
 
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
 
                 // last step, update the fk in topicEnrollment!
                 if(res.rowCount > 0) {
@@ -487,14 +484,14 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                         text = "UPDATE completed_resource SET submission_text = $1, update_time = NOW() WHERE id = $2;";
                         values = [ topicEnrollment.completedResources[i].submissionText, topicEnrollment.completedResources[i].id];
 
-                        let res = await client.query(text, values);
+                        let res = await db.query(text, values);
                     }
                     else {
                         // insert
                         text = "INSERT INTO completed_resource (resource_id, user_id, submission_text ) VALUES ( $1, $2, $3 );";
                         values = [ resource.id, topicEnrollment.userId, topicEnrollment.completedResources[i].submissionText ];
 
-                        let res = await client.query(text, values);
+                        let res = await db.query(text, values);
                     }
                 }
                 else {
@@ -515,7 +512,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = NOW(), active = $6, update_time = NOW() WHERE id = $7;";
                 values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id ];
                 try { 
-                    let res = await client.query(text, values);
+                    let res = await db.query(text, values);
     
                 }
                 catch(e) {
@@ -529,7 +526,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, NOW(), $8 ) RETURNING id;";
                 values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true ];
     
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
     
                 // last step, update the topicEnrollment id!
                 if(res.rowCount > 0) {
@@ -543,7 +540,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, active = $5, update_time = NOW() WHERE id = $6;";
                 values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.id ];
                 try { 
-                    let res = await client.query(text, values);
+                    let res = await db.query(text, values);
     
                 }
                 catch(e) {
@@ -557,7 +554,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id;";
                 values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, true ];
     
-                let res = await client.query(text, values);
+                let res = await db.query(text, values);
     
                 // last step, update the topicEnrollment id!
                 if(res.rowCount > 0) {
@@ -567,13 +564,13 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
         }
         
 
-        client.release();
+        
         return topicEnrollment;
 
     }
     catch(e) {
         console.log(e.stack);
-        client.release();
+        
         return false;
     }
 }
@@ -592,18 +589,18 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
     let values = [ true, topicEnrollment.userId, topicEnrollment.topicId ];
 
     try {
-        const client = await db().connect(); 
-        let response = await client.query(text, values);
+         
+        let response = await db.query(text, values);
         if(!response.rowCount > 0) {
             text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 );";
             values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true ];
 
-            let response = await client.query(text, values);
+            let response = await db.query(text, values);
         }
         else {
             console.log("Duplicate enrollment not saved!!");
         }
-        client.release();
+        
         return true;
     }
     catch(e) {
@@ -618,10 +615,10 @@ exports.getCompletedResourceByResourceAndUserId = async function(resourceId, use
     let values = [ resourceId, userId ];
 
     try {
-        const client = await db().connect(); 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
 
-        client.release();
+        
         if(res.rowCount > 0) {
             return CompletedResource.ormCompletedResource(res.rows[0]);
         }
@@ -640,10 +637,10 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
         let text = "UPDATE completed_resource SET submission_text = $1, active = $2, update_time = NOW() where resource_id = $3 AND user_id = $4";
         let values = [ completedResource.submissionText, completedResource.active, completedResource.resourceId, completedResource.userId ];
         try {
-            const client = await db().connect(); 
-            let res = await client.query(text, values);
+             
+            let res = await db.query(text, values);
     
-            client.release();
+            
             return completedResource;
         }
         catch(e) {
@@ -656,19 +653,19 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
         let text = "INSERT INTO completed_resource (resource_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING id";
         let values = [ completedResource.resourceId, completedResource.userId, completedResource.submissionText, completedResource.active ];
         try {
-            const client = await db().connect(); 
-            let res = await client.query(text, values);
+             
+            let res = await db.query(text, values);
 
             if(res.rowCount > 0) {
                 completedResource.id = res.rows[0].id;
             }
     
-            client.release();
+            
             return completedResource;
         }
         catch(e) {
             console.log(e.stack);
-            client.release();
+            
             return false;
         }
     }
@@ -691,21 +688,21 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
     
     let topics = [];
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
+        
+        let res = await db.query(text, values);
         
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {
                 text = "SELECT * FROM topics WHERE active = $1 AND id = $2;";
                 values = [ true, res.rows[i].topic_id ];
 
-                let res2 = await client.query(text, values);
+                let res2 = await db.query(text, values);
                 if(res2.rows.length >0) {
                     topics.push(Topic.ormTopic(res2.rows[0]));
                 }
             }
         }
-        client.release();
+        
         return topics;
     }
     catch(e) {
@@ -728,8 +725,8 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
     let enrollments = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
         
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {
@@ -740,7 +737,7 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
                 text = "SELECT * FROM topics WHERE active = $1 AND id = $2 "
                 values = [true, res.rows[i].topic_id];
 
-                let res2 = await client.query(text, values);
+                let res2 = await db.query(text, values);
 
                 if(res2.rows.length > 0) {
                     enrollment.topic = Topic.ormTopic(res2.rows[0]);
@@ -751,10 +748,10 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 
         }
         else {
-            client.release();
+            
             return false;
         }
-        client.release();
+        
         return enrollments;
     }
     catch(e) {
@@ -770,9 +767,9 @@ exports.getRecentTopicEnrollmentEvents = async function(limit) {
     let values = [ limit ];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
-        client.release();
+        
+        let res = await db.query(text, values);
+        
         let enrollmentEvents = [];
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {

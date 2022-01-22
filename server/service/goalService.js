@@ -30,9 +30,9 @@ const Event = require('../model/event');
     let goals = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
 
         for(let i=0; i<res.rows.length; i++) {
             goals.push(Goal.ormGoal(res.rows[i]));
@@ -43,6 +43,9 @@ const Event = require('../model/event');
     }
     catch(e) {
         console.log(e.stack)
+    }
+    finally {
+        
     }
 }
 
@@ -59,19 +62,19 @@ exports.getAllActiveGoalsWithTopics = async function() {
     let goals = [];
     
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
         for(let i=0; i<res.rows.length; i++) {
             text = "select * from goal_path where active = $1 and goal_id = $2 and goal_version = $3 order by position;";
             values = [ true, res.rows[i].id, res.rows[i].goal_version ];
             let topics = [];
-            let res2 = await client.query(text, values);
+            let res2 = await db.query(text, values);
 
             for(let j=0; j<res2.rowCount; j++) {
                 text = "select * from topics where active = $1 and id = $2;";
                 values = [ true, res2.rows[j].topic_id];
 
-                let res3 = await client.query(text, values);
+                let res3 = await db.query(text, values);
                 if(res3.rows[0]) {
                     topics.push(Topic.ormTopic(res3.rows[0]));
                 }
@@ -83,7 +86,7 @@ exports.getAllActiveGoalsWithTopics = async function() {
             goals.push(goal);
         }
 
-        client.release();
+        
         return goals;
         
     }
@@ -104,19 +107,19 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
     let values = [ true, goalId ];
     try {
         let goal = "";
-        const client = await db().connect() 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
         if(res.rowCount > 0) {
             text = "select * from goal_path where active = $1 and goal_id = $2 and goal_version = $3 order by position;";
             values = [ true, res.rows[0].id, res.rows[0].goal_version ];
             let topics = [];
-            let res2 = await client.query(text, values);
+            let res2 = await db.query(text, values);
 
             for(let j=0; j<res2.rowCount; j++) {
                 text = "select * from topics where active = $1 and id = $2;";
                 values = [ true, res2.rows[j].topic_id];
 
-                let res3 = await client.query(text, values);
+                let res3 = await db.query(text, values);
                 if(res3.rowCount > 0) {
                     topics.push(Topic.ormTopic(res3.rows[0]));
                 }
@@ -126,8 +129,6 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
             goal.topics = topics;
                
         }
-
-        client.release();
         return goal;
         
     }
@@ -148,9 +149,9 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
     let values = [ goalId ];
 
     try {
-        const client = await db().connect(); 
-        let res = await client.query(text, values);
-        client.release();
+         
+        let res = await db.query(text, values);
+        
         if(res.rowCount > 0) {
             return exports.saveGoalEnrollment(userId, goalId, res.rows[0].version)
             
@@ -175,21 +176,21 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
     let values = [ true, userId, goalId, goalVersion ];
 
     try {
-        const client = await db().connect(); 
-        let response = await client.query(text, values);
+         
+        let response = await db.query(text, values);
 
         if(!response.rowCount > 0) {       
             text = 'INSERT INTO user_goal(goal_id, goal_version, user_id, active)'
                 + 'VALUES($1, $2, $3, $4)';
             values = [ goalId, goalVersion, userId, true ];
 
-            let response = await client.query(text, values);
+            let response = await db.query(text, values);
     
         }
         else {
             console.log("Duplicate user_goal not saved!!");
         }
-        client.release();
+        
         return true;
     }
     catch(e) {
@@ -213,8 +214,8 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
     
     let goals = [];
     try {
-        const client = await db().connect() 
-        let res = await client.query(text, values);
+         
+        let res = await db.query(text, values);
         
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {
@@ -222,7 +223,7 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
                 text = "SELECT * FROM goals WHERE active = $1 AND id = $2 "
                 values = [true, res.rows[i].goal_id];
 
-                let res2 = await client.query(text, values);
+                let res2 = await db.query(text, values);
 
                 if(res2.rows.length > 0) {
                     goals.push(Goal.ormGoal(res2.rows[0]));
@@ -231,10 +232,10 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
 
         }
         else {
-            client.release();
+            
             return false;
         }
-        client.release();
+        
         return goals;
     }
     catch(e) {
@@ -248,9 +249,9 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
     let values = [ limit ];
     
     try {
-        const client = await db().connect();
-        let res = await client.query(text, values);
-        client.release();
+        
+        let res = await db.query(text, values);
+        
         let enrollmentEvents = [];
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {

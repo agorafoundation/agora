@@ -108,7 +108,6 @@ router.route('/')
                     userService.saveUser(user).then((insertResult) => {
                         if(req.body.userEmail && insertResult) {
                             // send verification email
-                            console.log("the email switch is currently: " + process.env.EMAIL_TOGGLE);
                             if(process.env.EMAIL_TOGGLE == "true") {
                                 let secure = (process.env.EMAIL_SECURE === 'true');
                                 let transporter = nodemailer.createTransport({

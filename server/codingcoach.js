@@ -48,7 +48,7 @@ const db = require('./db/connection');
 
 let sess = {
     store: new pgSession({
-        pool : db(),                // Connection pool
+        pool : db.pool(),                // Connection pool
         tableName : 'session'   // Use another table-name than the default "session" one
         // Insert connect-pg-simple options here
     }),
@@ -272,28 +272,24 @@ app.post('/signIn', async (req, res) => {
                     user = await userService.setUserSession(req.body.signInEmail);
                     //console.log("full user output: " + JSON.stringify(user));
 
-                    const uRole = userService.getActiveRoleByName("User");
+                    const uRole = await userService.getActiveRoleByName("User");
+                    //console.log("uRole: " + JSON.stringify(uRole));
 
                     // decision on wether user has an authorized role
-                    if(!user.roles || user.roles == "false" || !user.roles.filter(role => role.role_id === uRole.id).length > 0) {
-                        res.render('sign-in', {
-                            redirect: req.query.redirect,
-                            passwordMessage: "You are not authorized!"});
-                    }
-                    else {
+                    if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
                         // assign the user to the session
                         req.session.user = user;
                         
                         // parse the UA data
                         const device = deviceDetector.parse(req.headers['user-agent']);
-                        //console.log(device);
+                        //console.log("device check: " + JSON.stringify(device));
 
                         var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
-                        //console.log(ip);
+                        //console.log("ip check: " + ip);
 
                         // log the data
                         if(user && device) {
-                            userService.logUserSession(user.id, ip, device);
+                            await userService.logUserSession(user.id, ip, device);
 
                         }
 
@@ -306,6 +302,11 @@ app.post('/signIn', async (req, res) => {
                         else {
                             res.redirect(303, '/auth');
                         }
+                    }
+                    else {
+                        res.render('sign-in', {
+                            redirect: req.query.redirect,
+                            passwordMessage: "You are not authorized!"});
                     }
 
                 }
