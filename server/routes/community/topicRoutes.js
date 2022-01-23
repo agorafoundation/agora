@@ -300,7 +300,7 @@ router.route('/:goalId/:topicId')
                     let topic = await topicService.getActiveTopicWithEverythingById(topicId);
                     //console.log("topic: " + JSON.stringify(topic) + " has access::::: " + access); 
                     // open the course
-
+                    console.log("checking 1");
                     // add the enrollment to the session
                     req.session.currentTopic = null;
                     res.locals.topicEnrollment = null;

@@ -17,9 +17,9 @@ else {
     }
 
     if(user.availableAccessTokens > 0) {
-        if(user.availableAccessTokens == 1) {
+        if(user.availableAccessTokens >= 1) {
             %>
-            <p><strong>You currently have <%- user.availableAccessTokens %> token.</strong></p>
+            <p><strong>You currently have <%- user.availableAccessTokens %> token<%-(user.availableAccessTokens > 1)?'s':''  %>.</strong></p>
             <p>To enroll in : <span class="text-secondary" ><%- topic.topicName %></span> click the enroll button</p>
             <p>Enrolling in a topic requires 1 token.  Finishing a course awards you 1 token.  If you wish to enroll in more than one topic at a time you may either<a href='/community/purchase'>purchase additional tokens or become a member of the site.</a></p>
             <a type="submit" href='/community/topic/enroll/<%- goalId %>/<%- topic.id %>' class="btn btn-primary">Enroll</a>
