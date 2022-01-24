@@ -28,22 +28,63 @@
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
 
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             
-                            <h4 class="text-secondary">Left Side</h4>
+                            <h4 class="text-secondary">Your Goals:</h4>
                             
-                            
-                            
+                            <%
+                            if(ownerGoals && ownerGoals.length > 0) {
+                                for(let i=0; i < ownerGoals.length; i++) {
+                                %>
+                                    <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a>
+                                    <br />
+                                <%
+                                }
+                            }
 
+                            %>
+                            
+                            <a class="text-primary" href="/a/goal/0" >Create a Goal</a>
                         </div>
-                        <div class="col-lg-7">
+                        <div class="col-lg-8">
                             
                             
                             <section>
 
-                                <h4 class="text-secondary">Right Side</h4>
-                                
+                                <h4 class="text-secondary">Goal</h4>
 
+                                <% if(!!locals.message){ %>
+                                    <div class="alert-message alert-message-warning" role="alert">
+                                        <h3 ><%= message %></h3>
+                                        <p><%= message2 %></p>
+                                    </div>
+                                <% } 
+                                
+                                if(goal) {
+                                    %>
+                                    <form action="/a/goal" enctype="multipart/form-data" method="POST">
+                                        <div class="form-group">
+                                            <input type="hidden" name="goalId" value="<%- goal.id %>" />
+                                            Version: <input type="input" class="form-control form-control-lg" name="goalVersion" value="<%- goal.goalVersion %>" id="goalVersion" placeholder="Version" disabled>
+                                            Name: <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Name" required>
+                                            Desciption: <input type="input" class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description">
+                                            Image: <img class="img-supersmall" src="<%- goal.goalImage %>" />
+                                            <div class="mb-2">
+                                                <label for="formFile" class="form-label">Upload an image for this goal (1MB Max size)</label>
+                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- goal.goalImage %>" name="goalImage">
+                                            </div>
+                                            Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
+                                            
+                                            
+                                        </div>
+                                        <button type="submit" id="goalButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
+                                        <br />
+                                    </form>
+                                    <%
+                                }
+                                %>
+
+                                
 
 
                             </section>

@@ -49,6 +49,37 @@ const Event = require('../model/event');
     }
 }
 
+/**
+ * Retrieves all active goals created by a particular owner with the highest version number
+ * @returns All active goals as a list
+ */
+ exports.getAllAcitveGoalsForOwner = async function(ownerId) {
+    const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and gl.owned_by = $2 order by gl.id;";
+    const values = [ true, ownerId ];
+
+    let goals = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+
+        for(let i=0; i<res.rows.length; i++) {
+            goals.push(Goal.ormGoal(res.rows[i]));
+        }
+
+        return goals;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
+
 
 /**
  * Returns all active goals including topics associated.
@@ -136,6 +167,93 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
         console.log(e.stack)
     }
 }
+
+/**
+ * Get the most recent version of an active goal by id
+ * @param {Integer} goalId 
+ * @returns goal
+ */
+ exports.getMostRecentActiveGoalById = async function(goalId) {
+    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
+    let values = [ true, goalId ];
+    try {
+        let goal = "";
+         
+        let res = await db.query(text, values);
+        let topics = [];
+        if(res.rowCount > 0) {
+            goal = Goal.ormGoal(res.rows[0]);
+                  
+        }
+        goal.topics = topics;
+        return goal;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+/**
+ * Saves a goal to the database, creates a new record if no id is assigned, updates existing record if there is an id.
+ * @param {Goal} goal 
+ * @returns Goal object with id 
+ */
+exports.saveGoal = async function(goal) {
+    // check to see if an id exists - insert / update check
+    if(goal) {
+        if(goal.id > 0) {
+            
+            // update
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, owned_by = $6 WHERE id = $7;";
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.ownedBy, goal.id ];
+    
+            try {
+                let res = await db.query(text, values);
+            }
+            catch(e) {
+                console.log("[ERR]: Error updating goal - " + e);
+                return false;
+            }
+            
+        }
+        else {
+            // get the current max goal id
+            let text = "select max(id) from goals;";
+            let values = [];
+            try {
+                let res = await db.query(text, values);
+                console.log("about to parse: " + res.rows[0].max + " which has a type of : " + typeof(res.rows[0].max));
+                goal.id = res.rows[0].max; 
+                goal.id++;
+                if(res.rowCount > 0) {
+                    // insert
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;";
+                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.ownedBy ];
+                    
+                    let res2 = await db.query(text, values);
+        
+                    if(res2.rows.rowCount > 0) {
+                        goal.id = res.rows2[0].id;
+                    }
+                }
+            }
+            catch(e) {
+                console.log("[ERR]: Error inserting goal - " + e);
+                return false;
+            }
+            
+
+            
+        }
+        return goal;
+    }
+    else {
+        return false;
+    }
+}
+
 
 /**
  * Add a user enrollment to the most recent version of a goal 

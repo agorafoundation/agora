@@ -340,7 +340,7 @@ CREATE INDEX IF NOT EXISTS idx_user_role_role_id ON user_role (role_id);
 
 -- goals and related <- goalService
 CREATE TABLE IF NOT EXISTS goals (
-    id INTEGER,
+    id SERIAL,
     goal_version INTEGER,       -- every time a goal or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     goal_name VARCHAR,
     goal_description VARCHAR,
@@ -351,6 +351,8 @@ CREATE TABLE IF NOT EXISTS goals (
 );
 
 GRANT ALL PRIVILEGES ON TABLE goals TO codingcoach;
+GRANT USAGE, SELECT ON SEQUENCE goals_id_seq TO codingcoach;
+
 
 
 

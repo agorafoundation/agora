@@ -59,8 +59,14 @@ router.use('/goal', adminGoalRoutes);
 /**
  * Admin Topic Routes
  */
- let adminTopicRoutes = require('./adminTopicRoutes')
- router.use('/topic', adminTopicRoutes);
+let adminTopicRoutes = require('./adminTopicRoutes')
+router.use('/topic', adminTopicRoutes);
+
+/**
+ * Admin Topic Routes
+ */
+let adminResourceRoutes = require('./adminResourceRoutes')
+router.use('/resource', adminResourceRoutes);
 
 
 module.exports = router;

@@ -198,18 +198,25 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             }
 
             // get the resources
-            text = "SELECT * from resources where topic_id = $1 and active = $2";
-            values = [ topic.id, true ];
+
+            // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
+            // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
+            text = "SELECT r.* FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
+            values = [ topic.id, true, true ];
             let res6 = await db.query(text, values);
+
             let resources = [];
+
             for(let i=0; i < res6.rowCount; i++) {
+
                 resources.push(Resource.ormResource(res6.rows[i]));
+
             }
             topic.resources = resources;
 
-            // console.log("------------------------");
-            // console.log("Full Topic: " + JSON.stringify(topic));
-            // console.log("------------------------");
+            console.log("------------------------");
+            console.log("Full Topic: " + JSON.stringify(topic));
+            console.log("------------------------");
             return topic;
             
         }
@@ -300,16 +307,15 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 }
             }
 
-            // get the completed resources, completed resources are queried by their corrosponding resource id so we 
-            // have to get the resources first then iterate through them
-            text = "SELECT * from resources where topic_id = $1 and active = $2";
+            // get the completed resources
+            text = "SELECT * FROM topic_resource WHERE topic_id = $1 and active = $2";
             values = [ topicEnrollment.topicId, true ];
             let res6 = await db.query(text, values);
             //let resources = [];
             for(let i=0; i < res6.rowCount; i++) {
 
                 text = "SELECT * from completed_resource where resource_id = $1 AND user_id = $2 and active = $3";
-                values = [ res6.rows[i].id, topicEnrollment.userId, true ];
+                values = [ res6.rows[i].resource_id, topicEnrollment.userId, true ];
                 let res7 = await db.query(text, values);
 
                 //let completedResources = [];
@@ -356,8 +362,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
     let values = [];
 
     try {
-
-        
 
         // save pre assessment data
         if(topicEnrollment.preAssessment && topicEnrollment.topic && topicEnrollment.topic.assessment) {
@@ -562,8 +566,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 }
             }
         }
-        
-
         
         return topicEnrollment;
 

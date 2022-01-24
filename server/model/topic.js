@@ -15,6 +15,7 @@ function topic() {
     this.activityId = -1;
     this.active = true;
     this.createTime;
+    this.ownedBy = -1;
 
     this.assessment = null;
     this.activity = null;
@@ -37,5 +38,6 @@ exports.ormTopic = function (row) {
     topic.activityId = row.activity_id;
     topic.active = row.active;
     topic.createTime = row.create_time;
+    topic.ownedBy = row.owned_by;
     return topic;
 }
