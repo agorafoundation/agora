@@ -108,7 +108,7 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
  * Retrieves all active topic 
  * @returns All active topics as a list
  */
- exports.getAllAcitveTopics = async function() {
+ exports.getAllActiveTopics = async function() {
     const text = "SELECT * FROM topics WHERE active = $1";
     const values = [ true ];
 
@@ -128,6 +128,59 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
     }
     catch(e) {
         console.log(e.stack)
+    }
+}
+
+/**
+ * Get an active topic by id
+ * @param {Integer} topicId 
+ * @returns topic
+ */
+ exports.getActiveTopicById = async function(topicId) {
+    let text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
+    let values = [ true, topicId ];
+    try {
+        let topic = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            topic = Topic.ormTopic(res.rows[0]);
+                  
+        }
+        return topic;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+/**
+ * Retrieves all active topics created by a particular owner with the highest version number
+ * @returns All active topics as a list
+ */
+ exports.getAllActiveTopicsForOwner = async function(ownerId) {
+    const text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by id;";
+    const values = [ true, ownerId ];
+
+    let topics = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            topics.push(Topic.ormTopic(res.rows[i]));
+        }
+
+        return topics;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
     }
 }
 
@@ -340,6 +393,60 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     catch(e) {
         
         console.log(e.stack);
+        return false;
+    }
+}
+
+
+
+/**
+ * Saves a topic to the database, creates a new record if no id is assigned, updates existing record if there is an id.
+ * @param {Topic} topic 
+ * @returns Topic object with id 
+ */
+ exports.saveTopic = async function(topic) {
+    // check to see if an id exists - insert / update check
+    if(topic) {
+        if(topic.id > 0) {
+            
+            // update
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy, topic.id ];
+    
+            try {
+                let res = await db.query(text, values);
+            }
+            catch(e) {
+                console.log("[ERR]: Error updating topic - " + e);
+                return false;
+            }
+            
+        }
+        else {
+            // get the current max topic id
+            let values = [];
+            try {
+                let res = await db.query(text, values);
+                if(res.rowCount > 0) {
+                    // insert
+                    text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
+                    values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
+                    
+                    let res2 = await db.query(text, values);
+        
+                    if(res2.rows.rowCount > 0) {
+                        topic.id = res.rows2[0].id;
+                    }
+                }
+            }
+            catch(e) {
+                console.log("[ERR]: Error inserting topic - " + e);
+                return false;
+            }
+        }
+        return topic;
+    }
+    else {
         return false;
     }
 }

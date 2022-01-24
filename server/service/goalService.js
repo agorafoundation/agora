@@ -22,7 +22,7 @@ const Event = require('../model/event');
  * Retrieves all active goals with the highest version number
  * @returns All active goals as a list
  */
- exports.getAllAcitveGoals = async function() {
+ exports.getAllActiveGoals = async function() {
     const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
     const values = [ true ];
@@ -53,7 +53,7 @@ const Event = require('../model/event');
  * Retrieves all active goals created by a particular owner with the highest version number
  * @returns All active goals as a list
  */
- exports.getAllAcitveGoalsForOwner = async function(ownerId) {
+ exports.getAllActiveGoalsForOwner = async function(ownerId) {
     const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and gl.owned_by = $2 order by gl.id;";
     const values = [ true, ownerId ];
@@ -181,12 +181,10 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
         let goal = "";
          
         let res = await db.query(text, values);
-        let topics = [];
         if(res.rowCount > 0) {
             goal = Goal.ormGoal(res.rows[0]);
                   
         }
-        goal.topics = topics;
         return goal;
         
     }

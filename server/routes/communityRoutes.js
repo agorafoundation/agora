@@ -43,7 +43,7 @@ router.route('/')
         //res.sendFile('edge-signup.html', {root: './client/views' })
         // get all the current goals and topics to display
         const availableGoals = await goalService.getAllActiveGoalsWithTopics();
-        //const availableTopics = await topicService.getAllAcitveTopics();
+        //const availableTopics = await topicService.getAllActiveTopics();
 
         //console.log(JSON.stringify(availableGoals));
 

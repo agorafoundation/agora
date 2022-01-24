@@ -28,22 +28,65 @@
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
 
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             
-                            <h4 class="text-secondary">Left Side</h4>
+                            <h4 class="text-secondary">Your Topics:</h4>
                             
-                            
-                            
+                            <%
+                            if(ownerTopics && ownerTopics.length > 0) {
+                                for(let i=0; i < ownerTopics.length; i++) {
+                                %>
+                                    <a class="text-primary" href="/a/topic/<%- ownerTopics[i].id %>" ><%- ownerTopics[i].topicName %></a>
+                                    <br />
+                                <%
+                                }
+                            }
 
+                            %>
+                            
+                            <a class="text-primary" href="/a/topic/0" >Create a Topic</a>
                         </div>
-                        <div class="col-lg-7">
+                        <div class="col-lg-8">
                             
                             
                             <section>
 
-                                <h4 class="text-secondary">Right Side</h4>
-                                
+                                <h4 class="text-secondary">Topic</h4>
 
+                                <% if(!!locals.message){ %>
+                                    <div class="alert-message alert-message-warning" role="alert">
+                                        <h3 ><%= message %></h3>
+                                        <p><%= message2 %></p>
+                                    </div>
+                                <% } 
+                                
+                                if(topic) {
+                                    %>
+                                    <form action="/a/topic" enctype="multipart/form-data" method="POST" id='creatorTopicForm'>
+                                        <div class="form-group">
+                                            <input type="hidden" name="topicId" value="<%- topic.id %>" />
+                                            Version: <input type="input" class="form-control form-control-lg" name="topicVersion" value="<%- topic.topicVersion %>" id="topicVersion" placeholder="Version" disabled>
+                                            Name: <input type="input" class="form-control form-control-lg" name="topicName" value="<%- topic.topicName %>" id="topicName" placeholder="Name" required>
+                                            Desciption: <input type="input" class="form-control form-control-lg" name="topicDescription" value="<%- topic.topicDescription %>" id="topicDescription" placeholder="Description">
+                                            Image: <img class="img-supersmall" src="<%- topic.topicImage %>" />
+                                            <div class="mb-2">
+                                                <label for="formFile" class="form-label">Upload an image for this topic (1MB Max size)</label>
+                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- topic.topicImage %>" name="topicImage">
+                                            </div>
+                                            Topic HTML: <div id="quill_editor"><%- topic.topicHtml %></div>
+                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                                            Active: <input type="checkbox" class="" id="topicActive" name="topicActive" <%- (topic.active)?'checked':'' %> />
+                                            
+                                            
+                                        </div>
+                                        <button type="submit" id="topicButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
+                                        <br />
+                                    </form>
+                                    <%
+                                }
+                                %>
+
+                                
 
 
                             </section>

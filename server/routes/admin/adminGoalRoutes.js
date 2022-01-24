@@ -59,7 +59,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllAcitveGoalsForOwner(req.session.user.id)
+        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id)
         //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
         let goal = null;
         
@@ -133,7 +133,7 @@ router.route('/:goalId')
         let goalId = req.params.goalId;
 
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllAcitveGoalsForOwner(req.session.user.id);
+        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id);
 
         let goal = Goal.emptyGoal();
         if(goalId > 0) {
