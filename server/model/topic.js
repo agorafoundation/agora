@@ -29,7 +29,6 @@ exports.emptyTopic = () => {
 exports.ormTopic = function (row) {
     let topic = exports.emptyTopic();
     topic.id = row.id;
-    topic.version = row.version;
     topic.topicName = row.topic_name;
     topic.topicDescription = row.topic_description;
     topic.topicImage = row.topic_image;

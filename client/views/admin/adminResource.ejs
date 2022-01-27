@@ -28,22 +28,116 @@
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
 
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             
-                            <h4 class="text-secondary">Left Side</h4>
+                            <h4 class="text-secondary">Your Resources:</h4>
                             
-                            
-                            
+                            <%
+                            if(ownerResources && ownerResources.length > 0) {
+                                for(let i=0; i < ownerResources.length; i++) {
+                                %>
+                                    <a class="text-primary" href="/a/resource/<%- ownerResources[i].id %>" ><%- ownerResources[i].resourceName %></a>
+                                    <br />
+                                <%
+                                }
+                            }
 
+                            %>
+                            
+                            <a class="text-primary" href="/a/resource/0" >Create a Resource</a>
                         </div>
-                        <div class="col-lg-7">
+                        <div class="col-lg-8">
                             
                             
                             <section>
 
-                                <h4 class="text-secondary">Right Side</h4>
-                                
+                                <h4 class="text-secondary">Resource</h4>
 
+                                <% if(!!locals.message){ %>
+                                    <div class="alert-message alert-message-warning" role="alert">
+                                        <h3 ><%= message %></h3>
+                                        <p><%= message2 %></p>
+                                    </div>
+                                <% } 
+                                
+                                if(resource) {
+                                    %>
+                                    <form action="/a/resource" enctype="multipart/form-data" method="POST" id='creatorResourceForm'>
+                                        <div class="form-group">
+                                            <input type="hidden" name="resourceId" value="<%- resource.id %>" />
+                                            <select name="resourceType" id="resourceType" class="form-control form-control-lg">
+                                                <%
+                                                if(resource.resourceType === 1) {
+                                                    %>
+                                                    <option value="1" selected>HTML</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="1">HTML</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.resourceType === 2) {
+                                                    %>
+                                                    <option value="2" selected>Link</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="2">Link</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.resourceType === 3) {
+                                                    %>
+                                                    <option value="3" selected>Video Embed</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="3">HTML</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.resourceType === 4) {
+                                                    %>
+                                                    <option value="4" selected>Google Slides</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="4">HTML</option>
+                                                    <%
+                                                }
+                                                %>
+                                            </select>
+                                            Name: <input type="input" class="form-control form-control-lg" name="resourceName" value="<%- resource.resourceName %>" id="resourceName" placeholder="Name" required>
+                                            Desciption: <input type="input" class="form-control form-control-lg" name="resourceDescription" value="<%- resource.resourceDescription %>" id="resourceDescription" placeholder="Description">
+                                            Image: <img class="img-supersmall" src="<%- resource.resourceImage %>" />
+                                            <div class="mb-2">
+                                                <label for="formFile" class="form-label">Upload an image for this resource (1MB Max size)</label>
+                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage">
+                                            </div>
+                                            Resource Content HTML: <div id="quill_editor"><%- resource.resourceContentHtml %></div>
+                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                                            Resource Link: <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">
+                                            Required? <input type="checkbox" class="" id="isRequired" name="isRequired" <%- (resource.isRequired)?'checked':'' %> />
+                                            Active: <input type="checkbox" class="" id="resourceActive" name="resourceActive" <%- (resource.active)?'checked':'' %> />
+                                            
+                                            
+                                        </div>
+                                        <button type="submit" id="resourceButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
+                                        <br />
+                                    </form>
+                                    <%
+                                }
+                                %>
+
+                                
 
 
                             </section>

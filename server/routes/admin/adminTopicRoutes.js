@@ -142,7 +142,6 @@ router.route('/:topicId')
         }
         else {
             topic.ownedBy = req.session.user.id;
-            topic.topicVersion = 1;
         }
       
         

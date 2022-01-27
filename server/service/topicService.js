@@ -156,7 +156,7 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 }
 
 /**
- * Retrieves all active topics created by a particular owner with the highest version number
+ * Retrieves all active topics created by a particular owner
  * @returns All active topics as a list
  */
  exports.getAllActiveTopicsForOwner = async function(ownerId) {
@@ -423,21 +423,19 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
         }
         else {
-            // get the current max topic id
-            let values = [];
+
+            // insert
+            let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
+
             try {
-                let res = await db.query(text, values);
-                if(res.rowCount > 0) {
-                    // insert
-                    text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
-                    values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
-                    
-                    let res2 = await db.query(text, values);
-        
-                    if(res2.rows.rowCount > 0) {
-                        topic.id = res.rows2[0].id;
-                    }
+
+                let res2 = await db.query(text, values);
+    
+                if(res2.rows.rowCount > 0) {
+                    topic.id = res.rows2[0].id;
                 }
+                
             }
             catch(e) {
                 console.log("[ERR]: Error inserting topic - " + e);
@@ -822,7 +820,7 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 
 
 /**
- * Get all topics that a user has an active enrollment in, returns the topic with the highest version number
+ * Get all topics that a user has an active enrollment in
  * if the user has more then one record for the same topic id.
  * @param {Integer} userId id of user enrolled
  * @returns List<topic> a list of the topic objects the user is enrolled in
