@@ -82,7 +82,21 @@
                                     </form>
                                     <%
                                 }
+                                
+                                // if the goal has been saved allow the user to link Topics
+                                if(goal && goal.id > 0) {
+                                    if(goal.topics && goal.topics.length > 0) {
+                                        for(let i=0; i < goal.topics.length; i++) {
+                                        %>
+                                            <a class="text-primary" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></a>
+                                            <br />
+                                        <%
+                                        }
+                                    }
+                                }
                                 %>
+
+                                
 
                                 
 

@@ -137,7 +137,7 @@ router.route('/:goalId')
 
         let goal = Goal.emptyGoal();
         if(goalId > 0) {
-            goal = await goalService.getMostRecentActiveGoalById(goalId);
+            goal = await goalService.getActiveGoalWithTopicsById(goalId);
         }
         else {
             goal.ownedBy = req.session.user.id;
