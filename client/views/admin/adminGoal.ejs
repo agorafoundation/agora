@@ -74,8 +74,46 @@
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- goal.goalImage %>" name="goalImage">
                                             </div>
                                             Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
-                                            
-                                            
+                                            <div id="pathway">
+                                                <div class="available-topics">
+                                                    <%
+                                                    // get all of the goals available that are not already assigned to the goal
+                                                    if(availableTopics) {
+                                                        %>
+                                                        <hr />
+                                                        <h4>Available Topics:</h4>
+                                                        <%
+                                                        for(let i=0; i < availableTopics.length; i++) {
+                                                            %>
+                                                                <a class="text-primary" href="/a/topic/<%- availableTopics[i].id %>" ><%- availableTopics[i].topicName %></a>
+                                                                <br />
+                                                            <%
+                                                        }
+                                                    }
+
+                                                    %>
+                                                </div>
+                                                <div class="chosen-topics">
+                                                    <%
+
+                                                    // if the goal has been saved allow the user to link Topics
+                                                    if(goal && goal.id > 0) {
+                                                        if(goal.topics && goal.topics.length > 0) {
+                                                            %>
+                                                            <hr />
+                                                            <h4>Selected topics:</h4>
+                                                            <%
+                                                            for(let i=0; i < goal.topics.length; i++) {
+                                                            %>
+                                                                <a class="text-primary" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></a>
+                                                                <br />
+                                                            <%
+                                                            }
+                                                        }
+                                                    }
+                                                    %>
+                                                </div>
+                                            </div>
                                         </div>
                                         <button type="submit" id="goalButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
                                         <br />
@@ -83,35 +121,7 @@
                                     <%
                                 }
                                 
-                                // if the goal has been saved allow the user to link Topics
-                                if(goal && goal.id > 0) {
-                                    if(goal.topics && goal.topics.length > 0) {
-                                        %>
-                                        <hr />
-                                        Goal topics:
-                                        <%
-                                        for(let i=0; i < goal.topics.length; i++) {
-                                        %>
-                                            <a class="text-primary" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></a>
-                                            <br />
-                                        <%
-                                        }
-                                    }
-                                }
-                                
-                                // get all of the goals available that are not already assigned to the goal
-                                if(availableGoals) {
-                                    %>
-                                    <hr />
-                                    Available Goals:
-                                    <%
-                                    for(let i=0; i < availableGoals.length; i++) {
-                                        %>
-                                            <a class="text-primary" href="/a/topic/<%- availableGoals[i].id %>" ><%- availableGoals[i].topicName %></a>
-                                            <br />
-                                        <%
-                                    }
-                                }
+                                %>
 
                             </section>
 

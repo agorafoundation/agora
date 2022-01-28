@@ -762,3 +762,12 @@ input:checked + .slider:after {
 .correct-background {
     background-color: #04AA6D;
 }
+
+.available-topics {
+    width: 50%;
+    float: left;
+}
+.chosen-topics {
+    width: 50%;
+    float: left;
+}

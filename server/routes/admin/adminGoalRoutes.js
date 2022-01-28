@@ -16,6 +16,7 @@ router.use(bodyParser.json());
 
 // service requires
 let goalService = require('../../service/goalService');
+let topicService = require('../../service/topicService');
 
 // model requires
 let Goal = require('../../model/goal');
@@ -135,19 +136,23 @@ router.route('/:goalId')
         // get all the goals for this owner
         let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id);
 
-        let availableTopics = [];
+        // get all the topics for this owner
+        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.user.id);
+        // start the available topics out with the full owner topic set
+        let availableTopics = ownerTopics;
 
         let goal = Goal.emptyGoal();
         if(goalId > 0) {
             goal = await goalService.getActiveGoalWithTopicsById(goalId);
 
-            // get all the topics for this owner
-            let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.user.id);
-
-            for(let i=0; i < ownerTopics.length; i++) {
-                availableTopics.push(goal.topics.filter((topic) => topic.id === ownerTopics[i].id).length === 0);
+            // iterate through the goals assigned topics, remove them from the available list
+            for(let i=0; i < goal.topics.length; i++) {
+                let redundantTopic = ownerTopics.map(ot => ot.id).indexOf(goal.topics[i].id);
+                
+                ~redundantTopic && availableTopics.splice(redundantTopic, 1);
             }
-            console.log("the missing set is: " + availableTopics);
+            
+            console.log("the missing set is: " + JSON.stringify(availableTopics));
             
             
             // get the topics that are not currently assigned to this goal
