@@ -135,9 +135,23 @@ router.route('/:goalId')
         // get all the goals for this owner
         let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id);
 
+        let availableTopics = [];
+
         let goal = Goal.emptyGoal();
         if(goalId > 0) {
             goal = await goalService.getActiveGoalWithTopicsById(goalId);
+
+            // get all the topics for this owner
+            let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.user.id);
+
+            for(let i=0; i < ownerTopics.length; i++) {
+                availableTopics.push(goal.topics.filter((topic) => topic.id === ownerTopics[i].id).length === 0);
+            }
+            console.log("the missing set is: " + availableTopics);
+            
+            
+            // get the topics that are not currently assigned to this goal
+
         }
         else {
             goal.ownedBy = req.session.user.id;
@@ -147,7 +161,7 @@ router.route('/:goalId')
         
         // make sure the user has access to this goal (is owner)
         if(goal.ownedBy === req.session.user.id) {
-            res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal});
+            res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics});
         }
         else {
             message = 'Access Denied';

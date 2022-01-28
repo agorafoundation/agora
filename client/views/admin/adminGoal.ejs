@@ -86,6 +86,10 @@
                                 // if the goal has been saved allow the user to link Topics
                                 if(goal && goal.id > 0) {
                                     if(goal.topics && goal.topics.length > 0) {
+                                        %>
+                                        <hr />
+                                        Goal topics:
+                                        <%
                                         for(let i=0; i < goal.topics.length; i++) {
                                         %>
                                             <a class="text-primary" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></a>
@@ -94,12 +98,20 @@
                                         }
                                     }
                                 }
-                                %>
-
                                 
-
-                                
-
+                                // get all of the goals available that are not already assigned to the goal
+                                if(availableGoals) {
+                                    %>
+                                    <hr />
+                                    Available Goals:
+                                    <%
+                                    for(let i=0; i < availableGoals.length; i++) {
+                                        %>
+                                            <a class="text-primary" href="/a/topic/<%- availableGoals[i].id %>" ><%- availableGoals[i].topicName %></a>
+                                            <br />
+                                        <%
+                                    }
+                                }
 
                             </section>
 
