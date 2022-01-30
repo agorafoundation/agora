@@ -763,11 +763,44 @@ input:checked + .slider:after {
     background-color: #04AA6D;
 }
 
-.available-topics {
+/* Code for goal pathway drag and drop */
+.available-container {
     width: 50%;
     float: left;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+}
+.chosen-container {
+    width: 50%;
+    float: left;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+}
+
+.available-topics {
+    
+    display: grid;
+    /*grid-template-rows: repeat(5, 1fr); */
+    gap: 10px;
+    min-height: 3rem;
 }
 .chosen-topics {
-    width: 50%;
-    float: left;
+    display: grid;
+    /*grid-template-rows: repeat(5, 1fr); */
+    gap: 10px;
+    min-height: 3rem;
+}
+
+/* to indicate an item is draggable */
+.draggable {
+    cursor: move;
+    user-select: none;
+    border: 3px solid #666;
+    background-color: #ddd;
+    border-radius: .5em;
+    padding: 10px;
+}
+
+.draggable.over {
+    border: 3px dotted #666;
 }

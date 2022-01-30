@@ -226,8 +226,118 @@ window.addEventListener('load', () => {
         });
     }
 
+    /**
+     * Drag and drop for pathway (topics related to goals) 
+     * 
+     */
+    if(document.getElementById('pathway-draggable')) {
+        console.log("testing !");
+        let dragSrcEl = null;
+      
+        function drag(e) {
+            this.style.opacity = '0.4';
+            dragSrcEl = this;
+            
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData("text", this.id);
+            
+        }
+      
+        function drop(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            console.log("about to drop!");
+            console.log("1: " + dragSrcEl);
+            console.log("2: " + this);
+
+            if (dragSrcEl !== this) {
+                let data = e.dataTransfer.getData("text");
+                console.log("data was: " + data);
+                this.appendChild(document.getElementById(data));
+            }
+
+            return false;
+        }
+        
+        function dragEnd(e) {
+            this.style.opacity = '1';
+
+            for(let i=0; i < draggables.length; i++) {
+                draggables[i].classList.remove('over');
+            }
+        }
+
+        function dragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+        
+            return false;
+        }
+        
+        function dragEnter(e) {
+            this.classList.add('over');
+        }
+        
+        function dragLeave(e) {
+            this.classList.remove('over');
+        }
+
+
+
+        let at = document.getElementById('available-topics');
+        let ct = document.getElementById('chosen-topics');
+
+        console.log("at is  : " + at);
+
+        at.addEventListener('drop', drop);
+        at.addEventListener('dragover', dragOver);
+
+        ct.addEventListener('drop', drop);
+        ct.addEventListener('dragover', dragOver);
+
+        let draggables = document.getElementsByClassName('draggable');
+        console.log("the number of draggables is: " + draggables.length);
+        for(let i=0; i < draggables.length; i++) {
+            draggables[i].addEventListener('dragstart', drag);
+            draggables[i].addEventListener('dragend', dragEnd);
+            draggables[i].addEventListener('dragover', dragOver);
+            draggables[i].addEventListener('dragenter', dragEnter);
+            draggables[i].addEventListener('dragleave', dragLeave);
+        }
+    }
+    
+    if(document.getElementById('goalButton')) {
+        /**
+         * Parses selected topics and creates list to send to server along with form data
+         */
+        document.getElementById('goalButton').addEventListener('click', () => {
+            
+            // get the field to add the list to
+            let pathway = document.getElementById('pathway');
+
+            // create the list
+            let chosenTopics = document.getElementById('chosen-topics').childNodes;
+            let topicList = "";
+            for(let i=0; i < chosenTopics.length; i++) {
+                if(chosenTopics[i].id && chosenTopics[i].id > 0) {
+                    (topicList.length > 0) ? topicList += ",":'';
+                    topicList += chosenTopics[i].id;
+                }
+            }
+            // set the list
+            pathway.value = topicList;
+            
+        });
+    }
 });
 
+
+function submitGoal() {
+
+    
+}
 
 // if(document.getElementById('step1')) {
     
@@ -292,3 +402,4 @@ function updateTopicResourceCompleteStatus(resourceId, submittedText) {
       }).then((res) => {
     });
 }
+

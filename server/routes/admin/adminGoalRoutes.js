@@ -84,6 +84,10 @@ router.route('/')
                 goal.goalName = req.body.goalName;
                 goal.goalDescription = req.body.goalDescription;
                 goal.active = (req.body.goalActive == "on") ? true : false;
+
+                
+                
+
             
                 // get the existing data
                 if(goal.id) {
@@ -99,6 +103,13 @@ router.route('/')
                         goal.ownedBy = req.session.user.id;
                         goalService.saveGoal(goal).then((savedGoal) => {
                             res.locals.message = "Goal Saved Successfully";
+
+                            // get the pathway
+                            let pathway = null;
+                            if(req.body.pathway) {
+                                pathway = req.body.pathway.split(",");
+                            }
+                            console.log("checkin that the pathway was recieved: " + JSON.stringify(pathway));
                         });
 
                     });
