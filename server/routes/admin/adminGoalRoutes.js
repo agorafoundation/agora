@@ -108,8 +108,9 @@ router.route('/')
                             let pathway = null;
                             if(req.body.pathway) {
                                 pathway = req.body.pathway.split(",");
+                                goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
                             }
-                            console.log("checkin that the pathway was recieved: " + JSON.stringify(pathway));
+                            //console.log("checkin that the pathway was recieved: " + JSON.stringify(pathway));
                         });
 
                     });

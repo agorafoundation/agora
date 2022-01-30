@@ -252,6 +252,61 @@ exports.saveGoal = async function(goal) {
     }
 }
 
+/**
+ * Will save or update pathway for goal.  Pathway represents the topics associated with a goal
+ * and is passed as an Array of integers.  This function will replace any existing pathway for
+ * the goal with the topics represented by the topic id's passed.
+ * @param {Integer} goalId id of the goal for the pathway
+ * @param {*} pathway Array of topic id's that make up the pathway
+ * @returns true for success / false for failure
+ */
+exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
+    // get the most recent version of the goal
+    let text = "SELECT MAX(goal_version) as version from goals where id = $1";
+    let values = [ goalId ];
+
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rowCount > 0) {
+            /**
+             * TODO: the idea behind the goal version was to keep track of changes to the pathway and not 
+             * just delete it and replace it.  This way if students finished a goal under with a particular 
+             * pathway and completed but then the pathway changed after they would not be "incomplete" because
+             * of the change.  This is will need to be explored, but for MVP I just want to work, as  it 
+             * matures this should be re-evaluated.
+             */
+            // first remove current goal enrollments
+            text = "DELETE FROM goal_path WHERE goal_id=$1";
+            let values = [ goalId ];
+
+            let res2 = await db.query(text, values);
+
+            // now loop through the array and add the new pathway
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            if(pathway && pathway.length > 0) {
+                for( let i=0; i < pathway.length; i++ ) {
+                    text = "INSERT INTO goal_path (goal_id, goal_version, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5, $6);";
+                    values = [ goalId, res.rows[0].version, pathway[i], (i + 1), true, true ];
+
+                    let res3 = await db.query(text, values);
+                }
+            }
+        }
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
+
+
+    return true
+}
+
 
 /**
  * Add a user enrollment to the most recent version of a goal 
