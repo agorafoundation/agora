@@ -138,7 +138,7 @@ router.route('/:topicId')
 
         let topic = Topic.emptyTopic();
         if(topicId > 0) {
-            topic = await topicService.getActiveTopicById(topicId);
+            topic = await topicService.getActiveTopicWithEverythingById(topicId);
         }
         else {
             topic.ownedBy = req.session.user.id;

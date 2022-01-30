@@ -28,7 +28,7 @@ else if(currentStep == 5 && topicEnrollment.postCompletedAssessmentId > 0) {
     <p>This assessment has already been submited you can see you results in the summary at the end of the topic.</p>
     <%
 }
-else if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
+else if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions) {
 
     for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
         %>

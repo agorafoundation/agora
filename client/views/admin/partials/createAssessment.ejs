@@ -1,0 +1,53 @@
+<%
+if(topic) {
+    if(topic.assessment) {
+        // 
+        %>
+        <div class="assessment-group">
+            <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.id %>" />
+            Name: <input type="input" class="form-control form-control-lg" name="topicAssessmentName" value="<%- topic.assessment.assessmentName %>" id="topicAssessmentName" placeholder="Assessment Title" required>
+            Desciption: <input type="input" class="form-control form-control-lg" name="topicAssessmentDescription" value="<%- topic.assessment.assessmentDescription %>" id="topicAssessmentDescription" placeholder="Description">
+            Active: <input type="checkbox" class="" id="topicAssessmentActive" name="topicAssessmentActive" <%- (topic.assessment.active)?'checked':'' %> />
+            
+        </div>
+        <%
+
+        // Assessment already exists - edit mode
+        if(topic.assessment.questions) {
+            // show existing questions
+            for(let i=0; i < topic.assessment.questions.length; i++) {
+                %>
+                <h6>Question <%- (i + 1) %>: </h6>
+                <p><%- topic.assessment.questions[i].question %></p>
+
+                <%
+                if(topic.assessment.questions[i].options) {
+                    for(let j=0; j < topic.assessment.questions[i].options.length; j++) {
+                        let correctFlag = false;
+                        if(topic.assessment.questions[i].correctOptionId == topic.assessment.questions[i].options[j].id) {
+                            // this is the correct answer
+                            correctFlag = true;
+                        }
+
+                        %>
+                        <div>
+                            <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="question-id-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
+                            <label for="dewey"><%- topic.assessment.questions[i].options[j].optionAnswer %></label>
+                        </div>
+                        <%
+                    }
+                }
+            }
+            // add additional question option
+
+        }
+        // add additional question
+
+    }
+    else {
+        // assessment has not been created yet - create mode
+
+    }
+}
+
+%>
