@@ -804,3 +804,17 @@ input:checked + .slider:after {
 .draggable.over {
     border: 3px dotted #666;
 }
+
+/* Create assessment */
+.question-border {
+    border: 3px solid #888;
+    background-color: #ddd;
+    border-radius: .5em;
+    padding: 10px;
+}
+.option-border {
+    border: 3px solid #aaa;
+    background-color: #eee;
+    border-radius: .5em;
+    padding: 10px;
+}

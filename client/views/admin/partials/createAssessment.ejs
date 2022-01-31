@@ -17,29 +17,39 @@ if(topic) {
             // show existing questions
             for(let i=0; i < topic.assessment.questions.length; i++) {
                 %>
-                <h6>Question <%- (i + 1) %>: </h6>
-                <p><%- topic.assessment.questions[i].question %></p>
+                <div class="question-border">
+                    <h6>Question <%- (i + 1) %>: </h6>
+                    <p></p>
+                    <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" placeholder="Assessment Title" required>
 
-                <%
-                if(topic.assessment.questions[i].options) {
-                    for(let j=0; j < topic.assessment.questions[i].options.length; j++) {
-                        let correctFlag = false;
-                        if(topic.assessment.questions[i].correctOptionId == topic.assessment.questions[i].options[j].id) {
-                            // this is the correct answer
-                            correctFlag = true;
+                    <%
+                    if(topic.assessment.questions[i].options) {
+                        for(let j=0; j < topic.assessment.questions[i].options.length; j++) {
+                            let correctFlag = false;
+                            if(topic.assessment.questions[i].correctOptionId == topic.assessment.questions[i].options[j].id) {
+                                // this is the correct answer
+                                correctFlag = true;
+                            }
+
+                            %>
+                            <div class="option-border">
+                                Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="question-<%- topic.assessment.questions[i].id %>-correct" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
+                                <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required>
+                                
+                            </div>
+                            <%
                         }
-
-                        %>
-                        <div>
-                            <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="question-id-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
-                            <label for="dewey"><%- topic.assessment.questions[i].options[j].optionAnswer %></label>
-                        </div>
-                        <%
                     }
-                }
+                    %>
+                    <input type="button" id="addQuestionOption" name="addQuestionOption" value="Add Option" class="btn-primary" onclick="addQuestionOption(<%- topic.assessment.questions[i].id %>, <%- j %>)"></input>
+                </div>
+                <%
             }
             // add additional question option
-
+            %>
+            
+            <%
+            
         }
         // add additional question
 

@@ -333,9 +333,18 @@ window.addEventListener('load', () => {
     }
 });
 
-
-function submitGoal() {
-
+/**
+ * 
+ * @param {Integer} questionId 
+ * @param {Integer} index
+ */
+function addQuestionOption(questionId, index) {
+    let base = document.getElementById('question-border');
+    let html = "<div class=\"option-border\">"
+    + "Option <%- (index + 1) %> : Mark Option Correct <input type=\"radio\" name=\"question-<%-" + questionId + "-correct\" value=\"\" />"
+    + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOption-new-" + index + "\" value=\"\" placeholder=\"Assessment Title\" required />"
+    + "</div>";
+    base.innerHTML += html;
     
 }
 
