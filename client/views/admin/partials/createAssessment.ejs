@@ -3,7 +3,7 @@ if(topic) {
     if(topic.assessment) {
         // 
         %>
-        <div class="assessment-group">
+        <div id="assesment-group" class="assessment-group">
             <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.id %>" />
             Name: <input type="input" class="form-control form-control-lg" name="topicAssessmentName" value="<%- topic.assessment.assessmentName %>" id="topicAssessmentName" placeholder="Assessment Title" required>
             Desciption: <input type="input" class="form-control form-control-lg" name="topicAssessmentDescription" value="<%- topic.assessment.assessmentDescription %>" id="topicAssessmentDescription" placeholder="Description">
@@ -17,14 +17,15 @@ if(topic) {
             // show existing questions
             for(let i=0; i < topic.assessment.questions.length; i++) {
                 %>
-                <div class="question-border">
+                <div id="question-border-<%- (i + 1) %>" class="question-border">
                     <h6>Question <%- (i + 1) %>: </h6>
                     <p></p>
                     <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" placeholder="Assessment Title" required>
 
                     <%
+                    let j = 0;      // we will want to track outside loop for new entries
                     if(topic.assessment.questions[i].options) {
-                        for(let j=0; j < topic.assessment.questions[i].options.length; j++) {
+                        while(j < topic.assessment.questions[i].options.length) {
                             let correctFlag = false;
                             if(topic.assessment.questions[i].correctOptionId == topic.assessment.questions[i].options[j].id) {
                                 // this is the correct answer
@@ -38,10 +39,11 @@ if(topic) {
                                 
                             </div>
                             <%
+                            j++;
                         }
                     }
                     %>
-                    <input type="button" id="addQuestionOption" name="addQuestionOption" value="Add Option" class="btn-primary" onclick="addQuestionOption(<%- topic.assessment.questions[i].id %>, <%- j %>)"></input>
+                    <input type="button" name="addQuestionOption" value="Add Option" class="btn-primary" value="<%- topic.assessment.questions[i].id %>" />
                 </div>
                 <%
             }

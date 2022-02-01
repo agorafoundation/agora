@@ -331,6 +331,23 @@ window.addEventListener('load', () => {
             
         });
     }
+
+    if(document.getElementById('assesment-group')) {
+        let optionAddButtons = document.getElementsByName('addQuestionOption');
+        for(let i=0; i < optionAddButtons.length; i++) {
+            optionAddButtons[i].addEventListener('click', () => {
+                console.log("hello!")
+                let index = 6;
+                console.log("testing : " + 'question-border-' + this.value)
+                let base = document.getElementById('question-border-' + this.value);
+                let html = "<div class=\"option-border\">"
+                + "Option " + index + " : Mark Option Correct <input type=\"radio\" name=\"question-<%-" + this.value + "-correct\" value=\"\" />"
+                + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOption-new-" + index + "\" value=\"\" placeholder=\"Assessment Title\" required />"
+                + "</div>";
+                base.innerHTML += html;
+            });
+        }
+    }
 });
 
 /**
@@ -338,13 +355,8 @@ window.addEventListener('load', () => {
  * @param {Integer} questionId 
  * @param {Integer} index
  */
-function addQuestionOption(questionId, index) {
-    let base = document.getElementById('question-border');
-    let html = "<div class=\"option-border\">"
-    + "Option <%- (index + 1) %> : Mark Option Correct <input type=\"radio\" name=\"question-<%-" + questionId + "-correct\" value=\"\" />"
-    + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOption-new-" + index + "\" value=\"\" placeholder=\"Assessment Title\" required />"
-    + "</div>";
-    base.innerHTML += html;
+function addQuestionOption() {
+    
     
 }
 
