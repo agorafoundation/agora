@@ -332,23 +332,38 @@ window.addEventListener('load', () => {
         });
     }
 
-    if(document.getElementById('assesment-group')) {
+    if(document.getElementById('addQuestionOption')) {
         let optionAddButtons = document.getElementsByName('addQuestionOption');
         for(let i=0; i < optionAddButtons.length; i++) {
             optionAddButtons[i].addEventListener('click', () => {
 
                 let questionId = optionAddButtons[i].id.split("-")[1];
                 console.log("question Id : " + questionId);
-                let index = 6;
                 let html = "<div class=\"option-border\">"
-                + "Option " + index + " : Mark Option Correct <input type=\"radio\" name=\"question-<%-" + this.value + "-correct\" value=\"\" />"
-                + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOption-new-" + index + "\" value=\"\" placeholder=\"Assessment Title\" required />"
+                + "New Option : Mark Option Correct <input type=\"radio\" name=\"topicAssessmentQuestionOptionsCorrect-" + questionId + "\" value=\"\" />"
+                + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOptions-" + questionId + "\" value=\"\" placeholder=\"Assessment Title\" required />"
                 + "</div>";
                 let el = 'optionsBorder' + questionId;
-                console.log("ob: " +el);
+                console.log("ob: " + el);
                 document.getElementById(el).innerHTML += html;
             });
         }
+    }
+
+    if(document.getElementById('addQuestionOption')) {
+        let topicAssessment = document.getElementsByName('topicAssessment');
+        let assessmentId = topicAssessment[0].id.split("-")[1];
+        console.log("assessment Id: " + assessmentId);
+        
+
+        document.getElementById('addQuestionToAssessment').addEventListener('click', () => {
+            
+            let html = "<h6>New Question : </h6><p></p>"
+            + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestion-" + assessmentId + "\" value==\"\" placeholder=\"Question\" required>"
+            + "<div class=\"options-border\"></div>";
+            let el = 'topicAssessment-' + assessmentId;
+            document.getElementById(el).innerHTML += html;
+        });
     }
 });
 

@@ -3,13 +3,13 @@ if(topic) {
     if(topic.assessment) {
         // 
         %>
-        <div id="assesment-group" class="assessment-group">
+        <div id="topicAssessment-<%- topic.assessment.id %>" name="topicAssessment" class="assessment-group">
             <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.id %>" />
             Name: <input type="input" class="form-control form-control-lg" name="topicAssessmentName" value="<%- topic.assessment.assessmentName %>" id="topicAssessmentName" placeholder="Assessment Title" required>
             Desciption: <input type="input" class="form-control form-control-lg" name="topicAssessmentDescription" value="<%- topic.assessment.assessmentDescription %>" id="topicAssessmentDescription" placeholder="Description">
             Active: <input type="checkbox" class="" id="topicAssessmentActive" name="topicAssessmentActive" <%- (topic.assessment.active)?'checked':'' %> />
             
-        </div>
+        
         <%
 
         // Assessment already exists - edit mode
@@ -34,8 +34,8 @@ if(topic) {
 
                                 %>
                                 <div class="option-border">
-                                    Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="question-<%- topic.assessment.questions[i].id %>-correct" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
-                                    <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required>
+                                    Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="topicAssessmentQuestionOptionsCorrect-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
+                                    <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOptions-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required>
                                     
                                 </div>
                                 <%
@@ -50,10 +50,13 @@ if(topic) {
             }
             // add additional question option
             %>
-            
+                <input type="button" name="addQuestion" value="Add Question" class="btn-primary" id="addQuestionToAssessment" />
             <%
             
         }
+        %>
+        </div>
+        <%
         // add additional question
 
     }
