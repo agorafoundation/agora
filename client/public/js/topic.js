@@ -108,6 +108,17 @@ function addQuestionOption(questionId) {
 
 window.addEventListener('load', () => {
     
+    // look for any accordions, apply click event to open
+    if(document.getElementsByClassName('accordion-container')) {
+        const accordion = document.getElementsByClassName('accordion-container');
+
+        for (i=0; i<accordion.length; i++) {
+            accordion[i].addEventListener('click', function () {
+                this.classList.toggle('active')
+            })
+        }
+
+    }
 
     if(document.getElementById('currentStepField')) {
         let currentStep = document.getElementById('currentStepField').value;
@@ -278,6 +289,50 @@ window.addEventListener('load', () => {
 
         document.getElementById('creatorTopicForm').addEventListener('submit', () => {
             document.getElementById("quill_html").value = quill.root.innerHTML;
+        });
+    }
+
+    // quill editor for creator topic-assessment form
+    if(document.getElementById('topicActivity')) {
+
+        hljs.configure({   // optionally configure hljs
+            languages: ['javascript', 'ruby', 'python']
+        });
+        
+        var toolbarOptions = [
+          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+          ['blockquote', 'code-block'],
+        
+          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+          [{ 'direction': 'rtl' }],                         // text direction
+        
+          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        
+          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+          [{ 'font': [] }],
+          [{ 'align': [] }],
+        
+          ['clean']                                         // remove formatting button
+        ];
+
+        var quillActivity = new Quill('#quill_editor_activity', {
+            modules: {
+                syntax: true,
+                toolbar: [
+                    [{ header: [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block']
+                ]
+            }, 
+            theme: 'snow'
+        });
+
+        document.getElementById('creatorTopicForm').addEventListener('submit', () => {
+            document.getElementById("quill_html_activity").value = quillActivity.root.innerHTML;
         });
     }
 

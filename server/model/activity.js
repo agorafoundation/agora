@@ -7,7 +7,7 @@
 
 function activity() {
     this.id = -1;
-    this.activityType = -1;
+    this.activityType = 1;
     this.activityName = "";
     this.activityDescription = "";
     this.activityHtml = "";
