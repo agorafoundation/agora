@@ -6,9 +6,113 @@
  */
 
 
+// keep track of running total of new questions for assessment
+let newQuestionNum = 0;
+
+
+/**
+ * Create an assessment question dynamically
+ * @param {*} questionId 
+ */
+function addQuestion(assessmentId) {
+    //e.stopPropagation();
+    console.log('Adding Question!');
+    let qdiv = document.createElement('div');
+    qdiv.setAttribute("id", "question-border-" + newQuestionNum);
+    qdiv.setAttribute("class", "question-border");
+
+    let qh = document.createElement('h6');
+    qh.textContent = "Question " + newQuestionNum + ":";
+    let qp = document.createElement('p');
+    let qin = document.createElement('input');
+    qin.setAttribute("type", "input");
+    qin.setAttribute("class", "form-control form-control-lg");
+    qin.setAttribute("name", "topicAssessmentQuestion-" + assessmentId);
+    qin.setAttribute("value", "");
+    qin.setAttribute("placeholder", "question");
+    qin.setAttribute("required", "required");
+
+    let optsb = document.createElement("div");
+    optsb.setAttribute("id", "options-border-" + newQuestionNum)
+    optsb.setAttribute("class", "options-border");
+    
+    qdiv.appendChild(qh);
+    qdiv.appendChild(qp);
+    qdiv.appendChild(qin);
+    qdiv.appendChild(optsb);
+
+
+
+
+
+    // add the question option button
+    let ob = document.createElement('input');
+    ob.setAttribute("id", "addQuestionOption-" + newQuestionNum);
+    ob.setAttribute("class", "btn-primary");
+    ob.setAttribute("type", "button");
+    ob.setAttribute("name", "addQuestionOption");
+    ob.setAttribute("value", "Add Option");
+
+    qdiv.appendChild(ob);
+
+    // set the question
+    document.getElementById('questions-border').appendChild(qdiv);
+    let localId = newQuestionNum;
+
+    // add an event listener for the new questions option button
+    ob.addEventListener('click', () => {
+        addQuestionOption(localId);
+    })
+    console.log("ob event: " + ob.onclick)
+
+    newQuestionNum++;
+
+}
+
+
+/**
+ * Create a assessment question option dynamically
+ * @param {Integer} questionId 
+ * @param {Integer} index
+ */
+function addQuestionOption(questionId) {
+    console.log('Adding Option!');
+    console.log("question Id : " + questionId);
+
+    let odiv = document.createElement("div");
+    odiv.setAttribute("class", "option-border");
+    let os = document.createElement("span");
+    os.textContent = "New Option : Mark Option Correct ";
+    let or = document.createElement("input");
+    or.setAttribute("type", "radio");
+    or.setAttribute("name", "topicAssessmentQuestionOptionsCorrect-" + questionId);
+    or.setAttribute("value", "");
+    let oi = document.createElement("input");
+    oi.setAttribute("type", "input");
+    oi.setAttribute("class", "form-control form-control-lg");
+    oi.setAttribute("name", "topicAssessmentQuestionOptions-" + questionId);
+    oi.setAttribute("value", "");
+    oi.setAttribute("placeholder", "option");
+    oi.setAttribute("required", "reqired");
+
+    odiv.appendChild(os);
+    odiv.appendChild(or);
+    odiv.appendChild(oi);
+
+    console.log("why?? " + questionId);
+    let optsBorder = document.getElementById('options-border-' + questionId);
+    console.log("optsBorder: " + optsBorder);
+    optsBorder.appendChild(odiv);
+    
+}
+
+
+
 
 
 window.addEventListener('load', () => {
+    
+
     if(document.getElementById('currentStepField')) {
         let currentStep = document.getElementById('currentStepField').value;
         let goalId = document.getElementById('goalIdField').value;
@@ -332,50 +436,49 @@ window.addEventListener('load', () => {
         });
     }
 
-    if(document.getElementById('addQuestionOption')) {
-        let optionAddButtons = document.getElementsByName('addQuestionOption');
-        for(let i=0; i < optionAddButtons.length; i++) {
-            optionAddButtons[i].addEventListener('click', () => {
 
-                let questionId = optionAddButtons[i].id.split("-")[1];
-                console.log("question Id : " + questionId);
-                let html = "<div class=\"option-border\">"
-                + "New Option : Mark Option Correct <input type=\"radio\" name=\"topicAssessmentQuestionOptionsCorrect-" + questionId + "\" value=\"\" />"
-                + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestionOptions-" + questionId + "\" value=\"\" placeholder=\"Assessment Title\" required />"
-                + "</div>";
-                let el = 'optionsBorder' + questionId;
-                console.log("ob: " + el);
-                document.getElementById(el).innerHTML += html;
-            });
-        }
-    }
 
-    if(document.getElementById('addQuestionOption')) {
+    // create event handler for clicking the button to add question
+    if(document.getElementById('addQuestionToAssessment')) {
+
+        // first we have to find out how many questions already existed so we can set the next question id
+        let questionBorders = document.getElementsByClassName('question-border');
+        newQuestionNum = questionBorders.length + 1;
+        console.log("newQuestionNum set to: " + newQuestionNum);
+
+        // next get the id of this assessment
         let topicAssessment = document.getElementsByName('topicAssessment');
         let assessmentId = topicAssessment[0].id.split("-")[1];
         console.log("assessment Id: " + assessmentId);
         
+        // find the button to add a question and attach the addquestion event.
+        document.getElementById('addQuestionToAssessment').addEventListener('click', (e) => {
+            addQuestion(assessmentId);
 
-        document.getElementById('addQuestionToAssessment').addEventListener('click', () => {
             
-            let html = "<h6>New Question : </h6><p></p>"
-            + "<input type=\"input\" class=\"form-control form-control-lg\" name=\"topicAssessmentQuestion-" + assessmentId + "\" value==\"\" placeholder=\"Question\" required>"
-            + "<div class=\"options-border\"></div>";
-            let el = 'topicAssessment-' + assessmentId;
-            document.getElementById(el).innerHTML += html;
         });
+    }
+
+    // create event handler to handle clicking any of the buttons to add options to questions
+    if(document.getElementsByName('addQuestionOption')) {
+        // find all of the existing buttons to add options to questions 
+        let optionAddButtons = document.getElementsByName('addQuestionOption');
+
+        // iterate through all the existing add option buttons, find the question id in the button id and attach the add addQuestionOption event
+        for(let i=0; i < optionAddButtons.length; i++) {
+            let questionId = optionAddButtons[i].id.split("-")[1];
+            optionAddButtons[i].addEventListener("click", () => {
+                addQuestionOption(questionId);
+            });
+            
+        }
+
     }
 });
 
-/**
- * 
- * @param {Integer} questionId 
- * @param {Integer} index
- */
-function addQuestionOption() {
-    
-    
-}
+
+
+
 
 // if(document.getElementById('step1')) {
     
