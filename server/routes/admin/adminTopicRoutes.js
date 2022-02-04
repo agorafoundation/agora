@@ -16,6 +16,7 @@ router.use(bodyParser.json());
 
 // service requires
 let topicService = require('../../service/topicService');
+let resourceService = require('../../service/resourceService')
 
 // model requires
 let Topic = require('../../model/topic');
@@ -136,6 +137,7 @@ router.route('/:topicId')
         // get all the topics for this owner
         let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.user.id);
 
+        // get the topic by id
         let topic = Topic.emptyTopic();
         if(topicId > 0) {
             topic = await topicService.getActiveTopicWithEverythingById(topicId);
@@ -143,11 +145,26 @@ router.route('/:topicId')
         else {
             topic.ownedBy = req.session.user.id;
         }
+
+        // get all the resources for this owner
+        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.user.id);
+
+        // start the available topics out with the full owner resource set
+        let availableResources = ownerResources;
+
+        // iterate through the resources already associated with the topic, remove them from the available list
+        if(topic.resources) {
+            for( let i=0; i < topic.resources; i++ ) {
+                let redundantResource = ownerResources.map(ot => ot.id).indexOf(topic.resources[i].id);
+                
+                ~redundantResource && availableResources.splice(redundantResource, 1);
+            }
+        }
       
         
         // make sure the user has access to this topic (is owner)
         if(topic.ownedBy === req.session.user.id) {
-            res.render('./admin/adminTopic', {ownerTopics: ownerTopics, topic: topic});
+            res.render('./admin/adminTopic', {ownerTopics: ownerTopics, topic: topic, availableResources: availableResources});
         }
         else {
             message = 'Access Denied';

@@ -1,5 +1,7 @@
 <%
 if(topic) {
+    
+    
     if(topic.assessment) {
         // 
         %>
@@ -57,13 +59,12 @@ if(topic) {
         // add additional question
         // add additional question option
         %>
+            <br />
             <input type="button" name="addQuestion" value="Add Question" class="btn-primary" id="addQuestionToAssessment" />
+            <p>&nbsp;</p>
         <%
     }
-    else {
-        // assessment has not been created yet - create mode
-
-    }
+    
 }
 
 %>

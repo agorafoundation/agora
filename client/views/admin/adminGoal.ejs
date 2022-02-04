@@ -76,51 +76,9 @@
                                             Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
                                             <br />
                                             <br />
-                                            <h3>Choose the topics that will make up the topic pathway</h3>
-                                            <p>Drag and drop from available topics and re-arrange the order of chosen topics</p>
-                                            <input type="hidden" name="pathway" id="pathway" value="" />
-                                            <div id="pathway-draggable">
-                                                <div class="available-container">
-                                                    <hr />
-                                                    <h4>Available Topics:</h4>
-                                                    <div id="available-topics" class="available-topics">
-                                                        
-                                                        <%
-                                                        // get all of the goals available that are not already assigned to the goal
-                                                        if(availableTopics) {
+                                            
+                                            <%- include('./partials/pathway') %>
 
-                                                            for(let i=0; i < availableTopics.length; i++) {
-                                                                %>
-                                                                    <div id="<%- availableTopics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- availableTopics[i].id %>" ><%- availableTopics[i].topicName %></div>
-                                                                <%
-                                                            }
-                                                        }
-
-                                                        %>
-                                                    </div>
-                                                </div>
-                                                <div class="chosen-container">
-                                                    <hr />
-                                                    <h4>Selected topics:</h4>
-                                                    <div id="chosen-topics" class="chosen-topics">
-                                                        
-                                                        <%
-
-                                                        // if the goal has been saved allow the user to link Topics
-                                                        if(goal && goal.id > 0) {
-                                                            if(goal.topics && goal.topics.length > 0) {
-
-                                                                for(let i=0; i < goal.topics.length; i++) {
-                                                                %>
-                                                                    <div id="<%- goal.topics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></div>
-                                                                <%
-                                                                }
-                                                            }
-                                                        }
-                                                        %>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                         <button type="submit" id="goalButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
                                         <br />

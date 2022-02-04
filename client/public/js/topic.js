@@ -41,10 +41,6 @@ function addQuestion(assessmentId) {
     qdiv.appendChild(qin);
     qdiv.appendChild(optsb);
 
-
-
-
-
     // add the question option button
     let ob = document.createElement('input');
     ob.setAttribute("id", "addQuestionOption-" + newQuestionNum);
@@ -390,8 +386,8 @@ window.addEventListener('load', () => {
 
 
 
-        let at = document.getElementById('available-topics');
-        let ct = document.getElementById('chosen-topics');
+        let at = document.getElementById('available-items');
+        let ct = document.getElementById('chosen-items');
 
         console.log("at is  : " + at);
 
@@ -422,7 +418,7 @@ window.addEventListener('load', () => {
             let pathway = document.getElementById('pathway');
 
             // create the list
-            let chosenTopics = document.getElementById('chosen-topics').childNodes;
+            let chosenTopics = document.getElementById('chosen-items').childNodes;
             let topicList = "";
             for(let i=0; i < chosenTopics.length; i++) {
                 if(chosenTopics[i].id && chosenTopics[i].id > 0) {
@@ -476,31 +472,6 @@ window.addEventListener('load', () => {
     }
 });
 
-
-
-
-
-// if(document.getElementById('step1')) {
-    
-//     document.getElementById('step1').addEventListener('click', () => {
-//         let currentStep = document.getElementById('currentStepField').value;
-//         let goalId = document.getElementById('goalIdField').value;
-//         let topicId = document.getElementById('topicIdField').value;
-//         window.location.assign('/community/topic/' + goalId + '/' + topicId +'?requestedStep=1');
-
-//     });
-// }
-
-// if(document.getElementById('switch1')) {
-    
-//     document.getElementById('switch1').addEventListener('click', () => {
-//         let currentStep = document.getElementById('currentStepField').value;
-//         let goalId = document.getElementById('goalIdField').value;
-//         let topicId = document.getElementById('topicIdField').value;
-//         window.location.assign('/community/topic/update/1');
-
-//     });
-// }
 
 
 

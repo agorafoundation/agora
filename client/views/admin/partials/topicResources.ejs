@@ -1,0 +1,62 @@
+<%
+if(topic) {
+    if(topic.resources) {
+        %>
+
+        <h3>Choose the resources that will associted with the topic</h3>
+        <p>Drag and drop from available resources and re-arrange the order of chosen resources</p>
+        <input type="hidden" name="pathway" id="pathway" value="" />
+        <div id="pathway-draggable">
+            <div class="available-container">
+                <hr />
+                <h4>Available Resources:</h4>
+                <div id="available-items" class="available-items">
+                    
+                    <%
+                    // get all of the resources available that are not already assigned to the topic
+                    if(availableResources) {
+
+                        for(let i=0; i < availableResources.length; i++) {
+                            %>
+                                <div id="<%- availableResources[i].id %>" class="text-primary draggable" draggable="true" ><%- availableResources[i].resourceName %></div>
+                            <%
+                        }
+                    }
+
+                    %>
+                </div>
+            </div>
+            <div class="chosen-container">
+                <hr />
+                <h4>Selected Resources:</h4>
+                <div id="chosen-items" class="chosen-items">
+                    
+                    <%
+
+                    // if the topic has been saved allow the user to link resources
+                    //if(goal && goal.id > 0) {
+                    
+                    //
+                    if(topic.resources && topic.resources.length > 0) {
+
+                        for(let i=0; i < topic.resources.length; i++) {
+                        %>
+                            <div id="<%- topic.resources[i].id %>" class="text-primary draggable" draggable="true" ><%- topic.resources[i].resourceName %></div>
+                        <%
+                        }
+                    }
+
+
+                    //}
+                    %>
+                </div>
+            </div>
+        </div>
+
+    <%
+
+
+
+    }
+}
+%>

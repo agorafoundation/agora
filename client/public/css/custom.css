@@ -777,14 +777,14 @@ input:checked + .slider:after {
     padding-bottom: 3rem;
 }
 
-.available-topics {
+.available-items {
     
     display: grid;
     /*grid-template-rows: repeat(5, 1fr); */
     gap: 10px;
     min-height: 3rem;
 }
-.chosen-topics {
+.chosen-items {
     display: grid;
     /*grid-template-rows: repeat(5, 1fr); */
     gap: 10px;

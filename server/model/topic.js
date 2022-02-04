@@ -5,6 +5,9 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+let Assessment = require('./assessment');
+let Activity = require('./activity');
+
 function topic() {
     this.id = -1;
     this.topicName = "";
@@ -17,8 +20,8 @@ function topic() {
     this.createTime;
     this.ownedBy = -1;
 
-    this.assessment = null;
-    this.activity = null;
+    this.assessment = Assessment.emptyAssessment();
+    this.activity = Activity.emptyActivity();
     this.resources = [];
 }
 
