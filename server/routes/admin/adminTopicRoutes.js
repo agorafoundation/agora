@@ -126,15 +126,17 @@ router.route('/')
                 if(req.body.activityDescription) {
                     topic.activity.activityDescription = req.body.activityDescription;
                 }
-                if(req.body.activity_submission_text) {
-                    topic.activity.activityHtml = req.body.activity_submission_text;
+                console.log("test activity_html: " + req.body.activity_html);
+                if(req.body.activity_html) {
+                    topic.activity.activityHtml = req.body.activity_html;
                 }
 
                 // save the activity
                 activityService.saveActivity(topic.activity).then((returnedActivity) => {
-                    topicService.activity = returnedActivity;
-
-                    console.log("topic check: " + JSON.stringify(topic));
+                    topic.activity = returnedActivity;
+                    topic.activityId = returnedActivity.id;
+                    
+                    console.log("topic check: " + JSON.stringify(returnedActivity));
                     // save the topic
                     topicService.saveTopic(topic).then((savedTopic) => {
 

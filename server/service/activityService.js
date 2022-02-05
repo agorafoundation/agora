@@ -48,6 +48,7 @@ exports.getActiveActivityById = async function(activityId) {
  exports.saveActivity = async function(activity) {
     // check to see if an id exists - insert / update check
     if(activity) {
+
         if(activity.id > 0) {
             
             // update
@@ -67,14 +68,16 @@ exports.getActiveActivityById = async function(activityId) {
             
             // insert
             let text = "INSERT INTO activities (activity_type, activity_name, activity_description, activity_html, is_required, active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;";
-            values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active ];
+            let values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active ];
 
             try {
-                let res2 = await db.query(text, values);
-    
-                if(res2.rows.rowCount > 0) {
-                    activity.id = res2.rows[0].id;
+                let res = await db.query(text, values);
+                console.log("res 2 : " + res + " row count : " + res.rowCount);
+                if(res.rowCount > 0) {
+                    console.log("about to append: " + res.rows[0].id)
+                    activity.id = res.rows[0].id;
                 }
+                console.log("activity id : " + activity.id);
                 
             }
             catch(e) {
@@ -82,6 +85,7 @@ exports.getActiveActivityById = async function(activityId) {
                 return false;
             }
         }
+        console.log("service departing id : " + JSON.stringify(activity));
         return activity;
     }
     else {

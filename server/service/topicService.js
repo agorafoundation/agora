@@ -407,8 +407,10 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
  exports.saveTopic = async function(topic) {
     // check to see if an id exists - insert / update check
     if(topic) {
+        console.log("incomming topicg: " + JSON.stringify(topic));
         if(topic.id > 0) {
             console.log("service 1");
+            
             // update
             let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy, topic.id ];

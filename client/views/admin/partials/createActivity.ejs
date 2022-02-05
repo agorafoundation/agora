@@ -30,8 +30,8 @@ if(topic && topic.activity) {
         </select>
         Name: <input type="input" class="form-control form-control-lg" name="activityName" value="<%- topic.activity.activityName %>" id="activityName" placeholder="Activity Name" required>
         Desciption: <input type="input" class="form-control form-control-lg" name="activityDescription" value="<%- topic.activity.activityDescription %>" id="activityDescription" placeholder="Activity Description">
-        <div id="quill_editor_activity"><%- topic.activityHtml %></div>
-        <input type="hidden" id="quill_html_activity" name="activity_submission_text" value=""></input>
+        <div id="quill_editor_activity"><%- topic.activity.activityHtml %></div>
+        <input type="hidden" id="activity_html" name="activity_html" value=""></input>
     </div>
     <%
 }

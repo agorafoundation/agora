@@ -294,7 +294,7 @@ window.addEventListener('load', () => {
         });
     }
 
-    // quill editor for creator TOPIC-assessment form
+    // quill editor for creator TOPIC-activity form
     if(document.getElementById('topicActivity')) {
 
         hljs.configure({   // optionally configure hljs
@@ -333,9 +333,9 @@ window.addEventListener('load', () => {
             theme: 'snow'
         });
 
-        document.getElementById('topicActivity').addEventListener('submit', () => {
+        document.getElementById('creatorTopicForm').addEventListener('submit', () => {
             console.log('quill check 2: ' + quillActivity.root.innerHTML);
-            document.getElementById("quill_html_activity").value = quillActivity.root.innerHTML;
+            document.getElementById("activity_html").value = quillActivity.root.innerHTML;
         });
     }
 
