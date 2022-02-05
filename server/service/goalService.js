@@ -222,7 +222,6 @@ exports.saveGoal = async function(goal) {
             let values = [];
             try {
                 let res = await db.query(text, values);
-                console.log("about to parse: " + res.rows[0].max + " which has a type of : " + typeof(res.rows[0].max));
                 goal.id = res.rows[0].max; 
                 goal.id++;
                 if(res.rowCount > 0) {
@@ -233,7 +232,7 @@ exports.saveGoal = async function(goal) {
                     let res2 = await db.query(text, values);
         
                     if(res2.rows.rowCount > 0) {
-                        goal.id = res.rows2[0].id;
+                        goal.id = res2.rows[0].id;
                     }
                 }
             }

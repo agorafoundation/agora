@@ -203,7 +203,7 @@ window.addEventListener('load', () => {
         });
     }
 
-    // quill editor for activity (set up for code)
+    // quill editor for taking an activity (set up for code)
     if(document.getElementById('activity-submit')) {
 
         hljs.configure({   // optionally configure hljs
@@ -249,7 +249,7 @@ window.addEventListener('load', () => {
         });
     }
 
-    // quill editor for creator topic form
+    // quill editor for creator TOPIC form
     if(document.getElementById('creatorTopicForm')) {
 
         hljs.configure({   // optionally configure hljs
@@ -276,7 +276,7 @@ window.addEventListener('load', () => {
           ['clean']                                         // remove formatting button
         ];
 
-        var quill = new Quill('#quill_editor', {
+        var quill = new Quill('#quill_editor_topic', {
             modules: {
                 syntax: true,
                 toolbar: [
@@ -289,11 +289,12 @@ window.addEventListener('load', () => {
         });
 
         document.getElementById('creatorTopicForm').addEventListener('submit', () => {
-            document.getElementById("quill_html").value = quill.root.innerHTML;
+            console.log('quill check 1: ' + quill.root.innerHTML);
+            document.getElementById("quill_html_topic").value = quill.root.innerHTML;
         });
     }
 
-    // quill editor for creator topic-assessment form
+    // quill editor for creator TOPIC-assessment form
     if(document.getElementById('topicActivity')) {
 
         hljs.configure({   // optionally configure hljs
@@ -332,7 +333,8 @@ window.addEventListener('load', () => {
             theme: 'snow'
         });
 
-        document.getElementById('creatorTopicForm').addEventListener('submit', () => {
+        document.getElementById('topicActivity').addEventListener('submit', () => {
+            console.log('quill check 2: ' + quillActivity.root.innerHTML);
             document.getElementById("quill_html_activity").value = quillActivity.root.innerHTML;
         });
     }
@@ -530,9 +532,6 @@ window.addEventListener('load', () => {
                 if(chosenResources[i].id) {
                     // find if the required box is checked
                     let required = chosenResources[i].querySelector('[name="resource-required"]').checked;
-
-                    console.log("id is : " + chosenResources[i].id);
-                    console.log("required : " + required);
 
                     let rId = chosenResources[i].id.split("-")[1];
 

@@ -31,7 +31,7 @@ if(topic && topic.activity) {
         Name: <input type="input" class="form-control form-control-lg" name="activityName" value="<%- topic.activity.activityName %>" id="activityName" placeholder="Activity Name" required>
         Desciption: <input type="input" class="form-control form-control-lg" name="activityDescription" value="<%- topic.activity.activityDescription %>" id="activityDescription" placeholder="Activity Description">
         <div id="quill_editor_activity"><%- topic.activityHtml %></div>
-        <input type="hidden" id="quill_html_activity" name="submission_text" value=""></input>
+        <input type="hidden" id="quill_html_activity" name="activity_submission_text" value=""></input>
     </div>
     <%
 }

@@ -254,7 +254,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
 
             // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
             // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
-            text = "SELECT r.* FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
+            text = "SELECT r.id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
             values = [ topic.id, true, true ];
             let res6 = await db.query(text, values);
 
@@ -463,13 +463,11 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     // get the most recent version of the topic
     let text = "SELECT * from topics where id = $1";
     let values = [ topicId ];
-    console.log("in 1 topic id : " + topicId);
     try {
          
         let res = await db.query(text, values);
         
         if(res.rowCount > 0) {
-            console.log("in 2");
 
             // first remove current resources associated with the topic
             text = "DELETE FROM topic_resource WHERE topic_id = $1";
@@ -482,11 +480,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
              * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
              * This probably means having the pathway be an array of objects containing id and isRequired
              */
-            console.log("almost 1");
             if(resourceIds && resourceIds.length > 0) {
-                console.log("almost 2");
                 for( let i=0; i < resourceIds.length; i++ ) {
-                    console.log("almost 3");
                     isRequired = true;
                     if(resourcesRequired.length > i) {
                         isRequired = resourcesRequired[i];
@@ -506,6 +501,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 
     return true
 }
+
 
 /**
  * Saves the users topic enrollment and all associated information such as completed assessments, activity and resources

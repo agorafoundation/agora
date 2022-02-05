@@ -72,8 +72,8 @@
                                                 <label for="formFile" class="form-label">Upload an image for this topic (1MB Max size)</label>
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- topic.topicImage %>" name="topicImage">
                                             </div>
-                                            Topic HTML: <div id="quill_editor"><%- topic.topicHtml %></div>
-                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                                            Topic HTML: <div id="quill_editor_topic"><%- topic.topicHtml %></div>
+                                            <input type="hidden" id="quill_html_topic" name="submission_text" value=""></input>
                                             Active: <input type="checkbox" class="" id="topicActive" name="topicActive" <%- (topic.active)?'checked':'' %> />
                                             
                                             

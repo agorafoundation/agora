@@ -106,7 +106,7 @@ exports.saveResource = async function(resource) {
                 let res2 = await db.query(text, values);
     
                 if(res2.rows.rowCount > 0) {
-                    resource.id = res.rows2[0].id;
+                    resource.id = res2.rows[0].id;
                 }
                 
             }

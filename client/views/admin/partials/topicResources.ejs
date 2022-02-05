@@ -42,10 +42,7 @@ if(topic) {
                         
                         <%
 
-                        // if the topic has been saved allow the user to link resources
-                        //if(goal && goal.id > 0) {
                         
-                        //
                         if(topic.resources && topic.resources.length > 0) {
 
                             for(let i=0; i < topic.resources.length; i++) {
@@ -53,6 +50,7 @@ if(topic) {
                                 <div id="tr-<%- topic.resources[i].id %>" class="text-primary draggable" draggable="true" >
                                     <%- topic.resources[i].resourceName %>
                                     <div class="custom-control custom-checkbox">
+                                        
                                         <% if(topic.resources[i].isRequired) { %>
                                             <input type="checkbox" class="custom-control-input" id="resource-required-<%- topic.resources[i].id %>" name="resource-required" checked>
                                         <% } else { %>
