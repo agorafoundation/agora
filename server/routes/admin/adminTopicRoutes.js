@@ -157,7 +157,6 @@ router.route('/')
                 
                 // assessment questions
                 let numQuestions = req.body.topicAssessmentQuestionId.length;
-                console.log("there were : " + numQuestions + " questions");
                 for( let i = 1; i <= numQuestions; i++ ) {
                     // create each question
                     let question = AssessmentQuestion.emptyAssessmentQuestion();
@@ -165,22 +164,21 @@ router.route('/')
                     question.assessmentId = -1;
                     question.question = req.body["topicAssessmentQuestionName-" + i ];
                     question.isRequired = true;
-                    question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
-
-
-                    console.log("question name field: " + req.body["topicAssessmentQuestionName-" + i ]);
-                    console.log("the correct option for this quesiton is: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ]);
-                    console.log("whole question: " + JSON.stringify(question));
 
                     // go through each option
-                    let questionOptions = req.body["topicAssessmentQuestionOptionId-" + i];
-                    for( let j = 0; j < questionOptions.length; j++ ) {
+                    let optionLength = req.body["topicAssessmentQuestionOptions-" + i].length;
+                    for( let j = 0; j < optionLength; j++ ) {
                         // create the option
                         let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
                         questionOption.active = true;
-                        console.log("testing : " + req.body["topicAssessmentQuestionOptions-" + i][j]);
                         questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
                         questionOption.optionNumber = (j + 1);
+                        // check to see if this is the checked option to set correct
+                        console.log("CHECK::: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ] + "==" + req.body["topicAssessmentQuestionOptionId-" + i ][j]);
+                        if(req.body["topicAssessmentQuestionOptionsCorrect-" + i ] == req.body["topicAssessmentQuestionOptionId-" + i ][j]) {
+                            question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
+                        }
+                        
                         questionOption.assessmentQuestionId = i;
 
                         question.options.push(questionOption);

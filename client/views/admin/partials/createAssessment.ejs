@@ -38,8 +38,8 @@ if(topic) {
 
                                     %>
                                     <div class="option-border">
-                                        <input type="hidden" name="topicAssessmentQuestionOptionId-<%- (i + 1) %>" value="<%- optionCounter %>" />
-                                        Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="topicAssessmentQuestionOptionsCorrect-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> />
+                                        <input type="hidden" name="topicAssessmentQuestionOptionId-<%- (i + 1) %>" value="<%- j %>" />
+                                        Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="topicAssessmentQuestionOptionsCorrect-<%- (i + 1) %>" value="<%- (j + 1) %>" <%- (!!correctFlag)?'checked':'' %> />
                                         <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOptions-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required />
                                         
                                     </div>

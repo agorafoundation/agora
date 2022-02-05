@@ -8,7 +8,10 @@
 
 // keep track of running total of new questions for assessment
 let newQuestionNum = 0;
-let newOptionNum = 0;
+//let newOptionNum = 0;
+
+// keep track of questions and options as a 2-demensional array
+let totalTracking = [];
 
 /**
  * Create an assessment question dynamically
@@ -82,11 +85,16 @@ function addQuestionOption(questionId) {
     console.log('Adding Option!');
     console.log("question Id : " + questionId);
 
+    // find out how many options exist now so we can number this one
+
+    let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
+    console.log('testing 4: ' + newOptionNum);
+
     let odiv = document.createElement("div");
     odiv.setAttribute("class", "option-border");
     let hqoid = document.createElement("input");
     hqoid.setAttribute("type", "hidden");
-    hqoid.setAttribute("name", "topicAssessmentQuestionOptionId-" + newQuestionNum);
+    hqoid.setAttribute("name", "topicAssessmentQuestionOptionId-" + questionId);
     hqoid.setAttribute("value", newOptionNum)
 
     let os = document.createElement("span");
@@ -112,8 +120,6 @@ function addQuestionOption(questionId) {
     let optsBorder = document.getElementById('options-border-' + questionId);
     console.log("optsBorder: " + optsBorder);
     optsBorder.appendChild(odiv);
-
-    newOptionNum++;
     
 }
 
@@ -574,9 +580,9 @@ window.addEventListener('load', () => {
         console.log("newQuestionNum set to: " + newQuestionNum);
         
         // now do the same for number of options on the page
-        let optionBorders = document.getElementsByClassName('option-border');
-        newOptionNum = optionBorders.length + 1;
-        console.log("newOptionNum set to: " + newOptionNum + " but this will likely need to change to per question.");
+        //let optionBorders = document.getElementsByClassName('option-border');
+        //newOptionNum = optionBorders.length + 1;
+        //console.log("newOptionNum set to: " + newOptionNum + " but this will likely need to change to per question.");
 
         // next get the id of this assessment
         let topicAssessment = document.getElementsByName('topicAssessment');
