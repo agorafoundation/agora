@@ -56,8 +56,9 @@ function addQuestion(assessmentId) {
     let localId = newQuestionNum;
 
     // add an event listener for the new questions option button
-    ob.addEventListener('click', () => {
+    ob.addEventListener('click', (e) => {
         addQuestionOption(localId);
+        e.stopPropagation();
     })
     console.log("ob event: " + ob.onclick)
 
@@ -110,11 +111,11 @@ window.addEventListener('load', () => {
     
     // look for any accordions, apply click event to open
     if(document.getElementsByClassName('accordion-container')) {
-        const accordion = document.getElementsByClassName('accordion-container');
-
-        for (i=0; i<accordion.length; i++) {
-            accordion[i].addEventListener('click', function () {
-                this.classList.toggle('active')
+        const accordion = document.getElementsByClassName('accordion');
+        const accordionLabel = document.getElementsByClassName('accordion-label');
+        for (i=0; i<accordionLabel.length; i++) {
+            accordionLabel[i].addEventListener('click', function () {
+                this.parentElement.classList.toggle('accordion-active')
             })
         }
 
@@ -439,6 +440,16 @@ window.addEventListener('load', () => {
             this.classList.remove('over');
         }
 
+        function checkboxClick(e) {
+            console.log("checkbox-clicked fired");
+            e.stopPropagation();
+            e.preventDefault();
+            console.dir("name is : " + e);
+
+            let elCheck = this.querySelector('.custom-control-input');
+            (elCheck.checked) ? elCheck.checked = false : elCheck.checked = true;
+
+        }
 
 
         let at = document.getElementById('available-items');
@@ -452,6 +463,8 @@ window.addEventListener('load', () => {
         ct.addEventListener('drop', drop);
         ct.addEventListener('dragover', dragOver);
 
+
+
         let draggables = document.getElementsByClassName('draggable');
         console.log("the number of draggables is: " + draggables.length);
         for(let i=0; i < draggables.length; i++) {
@@ -460,10 +473,18 @@ window.addEventListener('load', () => {
             draggables[i].addEventListener('dragover', dragOver);
             draggables[i].addEventListener('dragenter', dragEnter);
             draggables[i].addEventListener('dragleave', dragLeave);
+            if(document.getElementsByName('resource-required')) {
+                draggables[i].addEventListener('click', checkboxClick);
+                
+            }
         }
     }
     
-    if(document.getElementById('goalButton')) {
+    /**
+     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * so that the data can pass as part of the form.
+     */
+     if(document.getElementById('goalButton')) {
         /**
          * Parses selected topics and creates list to send to server along with form data
          */
@@ -487,6 +508,48 @@ window.addEventListener('load', () => {
         });
     }
 
+    /**
+     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * so that the data can pass as part of the form.
+     */
+     if(document.getElementById('topicButton')) {
+        /**
+         * Parses selected topics and creates list to send to server along with form data
+         */
+        document.getElementById('topicButton').addEventListener('click', () => {
+            
+            // get the field to add the list to
+            let chosen = document.getElementById('selectedTopicResources');
+            let chosenRequired = document.getElementById('selectedTopicResourcesRequired');
+
+            // create the list
+            let chosenResources = document.getElementById('chosen-items').childNodes;
+            let resourceList = "";
+            let requiredList = "";
+            for(let i=0; i < chosenResources.length; i++) {
+                if(chosenResources[i].id) {
+                    // find if the required box is checked
+                    let required = chosenResources[i].querySelector('[name="resource-required"]').checked;
+
+                    console.log("id is : " + chosenResources[i].id);
+                    console.log("required : " + required);
+
+                    let rId = chosenResources[i].id.split("-")[1];
+
+                    (resourceList.length > 0) ? resourceList += ",":'';
+                    resourceList += rId;
+
+                    (requiredList.length > 0) ? requiredList += ",":'';
+                    requiredList += required;
+
+                }
+            }
+            // set the list
+            chosen.value = resourceList;
+            chosenRequired.value = requiredList;
+            
+        });
+    }
 
 
     // create event handler for clicking the button to add question
@@ -505,9 +568,10 @@ window.addEventListener('load', () => {
         // find the button to add a question and attach the addquestion event.
         document.getElementById('addQuestionToAssessment').addEventListener('click', (e) => {
             addQuestion(assessmentId);
-
+            e.stopPropagation();
             
         });
+
     }
 
     // create event handler to handle clicking any of the buttons to add options to questions
@@ -516,15 +580,18 @@ window.addEventListener('load', () => {
         let optionAddButtons = document.getElementsByName('addQuestionOption');
 
         // iterate through all the existing add option buttons, find the question id in the button id and attach the add addQuestionOption event
-        for(let i=0; i < optionAddButtons.length; i++) {
+        for( let i=0; i < optionAddButtons.length; i++ ) {
             let questionId = optionAddButtons[i].id.split("-")[1];
-            optionAddButtons[i].addEventListener("click", () => {
+            optionAddButtons[i].addEventListener("click", (e) => {
                 addQuestionOption(questionId);
+                e.stopPropagation();
             });
             
         }
 
     }
+
+    
 });
 
 

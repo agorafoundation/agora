@@ -819,8 +819,6 @@ input:checked + .slider:after {
     padding: 10px;
 }
 
-
-
 /* accordion */
 
 /* Style the buttons that are used to open and close the accordion panel */
@@ -843,7 +841,7 @@ input:checked + .slider:after {
 
 /* Positions the labels relative to the .container. Adds padding to the top and bottom and increases font size. Also makes its cursor a pointer */
 
-.accordion .label {
+.accordion .accordion-label {
     position: relative;
     padding: 10px 0;
     font-size: 30px;
@@ -854,7 +852,7 @@ input:checked + .slider:after {
 
 /* Positions the plus sign 5px from the right. Centers it using the transform property. */
 
-.accordion .label::before {
+.accordion .accordion-label::before {
     content: '+';
     color: black;
     position: absolute;
@@ -868,11 +866,10 @@ input:checked + .slider:after {
   
 .accordion .content {
     position: relative;
-    background: white;
     height: 0;
     font-size: 20px;
     text-align: justify;
-    width: 780px;
+    width: 100%;
     overflow: hidden;
     transition: 0.5s;
 }
@@ -884,7 +881,21 @@ input:checked + .slider:after {
     margin-left: 0;
     border: 1px solid grey;
 }
-  
-/* END accordion */
+
+/* Unhides the content part when active. Sets the height */
+
+.accordion .accordion-container.accordion-active .content {
+    height: 100%;
+}
+
+/* Changes from plus sign to negative sign once active */
+
+.accordion .accordion-container.accordion-active .label::before {
+    content: '-';
+    font-size: 30px;
+}
 
 
+
+
+  /* END accordion */

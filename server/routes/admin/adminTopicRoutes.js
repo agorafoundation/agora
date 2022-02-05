@@ -85,10 +85,12 @@ router.route('/')
                 topic.topicDescription = req.body.topicDescription;
                 topic.topicHtml = req.body.submission_text;
                 topic.active = (req.body.topicActive == "on") ? true : false;
-            
-                // get the existing data
-                if(topic.id) {
 
+
+                // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
+                console.log("topic id check: " + topic.id);
+                if(topic.id > 0) {
+                    console.log("user id check 0 : " + req.session.user.id);
                     topicService.getActiveTopicById(topic.id).then((dbTopic) => {
                         topic.id = dbTopic.id;
                         topic.topicImage = dbTopic.topicImage
@@ -97,24 +99,43 @@ router.route('/')
                             topic.topicImage = baseTopicImageUrl + req.session.savedTopicFileName;
                         } 
 
+                        console.log("user id check 1 : " + req.session.user.id);
                         topic.ownedBy = req.session.user.id;
-                        topicService.saveTopic(topic).then((savedTopic) => {
-                            res.locals.message = "Topic Saved Successfully";
-                        });
-
+                        
                     });
                 }
                 else {
-                    
+                    console.log("user id check 2 : " + req.session.user.id);
                     topic.ownedBy = req.session.user.id; 
 
-                    topicService.saveTopic(topic).then((savedTopic) => {
-                        res.locals.message = "Topic Saved Successfully";
-                    });
+                    
 
                 }
+
+                console.log("topic check: " + JSON.stringify(topic));
+                // save the topic
+                topicService.saveTopic(topic).then((savedTopic) => {
+
+                    // get the pathway
+                    let selectedTopicResources = null;
+                    let selectedTopicResourcesRequired = null;
+                    console.log("selectedTopicResources: " + req.body.selectedTopicResources );
+                    console.log("selectedTopicResourcesRequired: " + req.body.selectedTopicResourcesRequired );
+                    console.log("the samved topic: " + JSON.stringify(savedTopic));
+                    if(req.body.selectedTopicResources) {
+                        if(req.body.selectedTopicResourcesRequired) {
+                            selectedTopicResourcesRequired = req.body.selectedTopicResourcesRequired.split(",");
+                        }
+                        selectedTopicResources = req.body.selectedTopicResources.split(",");
+                        console.log("saving!");
+                        topicService.saveResourcesForTopic(savedTopic.id, selectedTopicResources, selectedTopicResourcesRequired);
+                    }
+
+                    res.locals.message = "Topic Saved Successfully";
+                    res.redirect(303, '/a/topic/' + savedTopic.id);
+                });
                 
-                res.redirect(303, '/a/topic/' + topic.id);
+                //res.redirect(303, '/a/topic');
 
             }  
         });

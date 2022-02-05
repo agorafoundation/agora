@@ -86,9 +86,6 @@ router.route('/')
                 goal.active = (req.body.goalActive == "on") ? true : false;
 
                 
-                
-
-            
                 // get the existing data
                 if(goal.id) {
 

@@ -408,7 +408,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     // check to see if an id exists - insert / update check
     if(topic) {
         if(topic.id > 0) {
-            
+            console.log("service 1");
             // update
             let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy, topic.id ];
@@ -423,17 +423,18 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
         }
         else {
-
+            console.log("service 2");
             // insert
             let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
 
             try {
 
-                let res2 = await db.query(text, values);
-    
-                if(res2.rows.rowCount > 0) {
-                    topic.id = res.rows2[0].id;
+                let res = await db.query(text, values);
+                console.log("teh row is : " + res.rows[0]);
+                if(res.rowCount > 0) {
+                    
+                    topic.id = res.rows[0].id;
                 }
                 
             }
@@ -442,6 +443,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 return false;
             }
         }
+        console.log("service returning : " + JSON.stringify(topic));
         return topic;
     }
     else {
@@ -449,6 +451,61 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     }
 }
 
+/**
+ * Will save or update resources associted with a topic.  
+ * Resources are passed as an Array of integers.  This function will replace any existing resources for
+ * the topic with the resources represented by the resource id's passed.
+ * @param {Integer} topicId id of the topic 
+ * @param {*} resourceIds Array of resource id's to be associated with the topic
+ * @returns true for success / false for failure
+ */
+ exports.saveResourcesForTopic = async function(topicId, resourceIds, resourcesRequired) {
+    // get the most recent version of the topic
+    let text = "SELECT * from topics where id = $1";
+    let values = [ topicId ];
+    console.log("in 1 topic id : " + topicId);
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rowCount > 0) {
+            console.log("in 2");
+
+            // first remove current resources associated with the topic
+            text = "DELETE FROM topic_resource WHERE topic_id = $1";
+            values = [ topicId ];
+
+            let res2 = await db.query(text, values);
+
+            // now loop through the array and add the new resources
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            console.log("almost 1");
+            if(resourceIds && resourceIds.length > 0) {
+                console.log("almost 2");
+                for( let i=0; i < resourceIds.length; i++ ) {
+                    console.log("almost 3");
+                    isRequired = true;
+                    if(resourcesRequired.length > i) {
+                        isRequired = resourcesRequired[i];
+                    }
+                    text = "INSERT INTO topic_resource (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
+                    values = [ topicId, resourceIds[i], (i + 1), isRequired, true, res.rows[0].ownedBy ];
+
+                    let res3 = await db.query(text, values);
+                }
+            }
+        }
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
+
+    return true
+}
 
 /**
  * Saves the users topic enrollment and all associated information such as completed assessments, activity and resources
