@@ -20,9 +20,11 @@ let resourceService = require('../../service/resourceService')
 let activityService = require('../../service/activityService');
 
 // model requires
-let Topic = require('../../model/topic');
-let Activity = require('../../model/activity');
-const { localsName } = require('ejs');
+const Topic = require('../../model/topic');
+const Activity = require('../../model/activity');
+const Assessment = require('../../model/assessment');
+const AssessmentQuestion = require('../../model/assessmentQuestion');
+const AssessmentQuestionOption = require('../../model/assessmentQuestionOption'); 
 
 // import multer (file upload) and setup
 const fs = require('fs');
@@ -130,6 +132,63 @@ router.route('/')
                 if(req.body.activity_html) {
                     topic.activity.activityHtml = req.body.activity_html;
                 }
+
+                // assessment
+                if(!topic.assessmentId > 0) {
+                    if(!topic.assessment) {
+                        topic.assessment = Assessment.emptyAssessment();
+                    }
+                }
+
+                // TODO: is there anything to do with assessment type?? currently hard coding 1, isRequired is currently deemed to be true for all assessments.
+                topic.assessment.assessmentType = 1;
+                topic.assessment.isRequired = true;
+
+                if(req.body.topicAssessmentName) {
+                    topic.assessment.assessmentName = req.body.topicAssessmentName;
+                }
+
+                if(req.body.topicAssessmentDescription) {
+                    topic.assessment.assessmentDescription = req.body.topicAssessmentDescription;
+                }
+
+                topic.assessment.active = false;
+                (req.body.topicAssessmentActive == 'checked') ? topic.assessment.active = true : topic.assessment.active = false;
+                
+                // assessment questions
+                let numQuestions = req.body.topicAssessmentQuestionId.length;
+                console.log("there were : " + numQuestions + " questions");
+                for( let i = 1; i <= numQuestions; i++ ) {
+                    // create each question
+                    let question = AssessmentQuestion.emptyAssessmentQuestion();
+                    question.id = i;
+                    question.assessmentId = -1;
+                    question.question = req.body["topicAssessmentQuestionName-" + i ];
+                    question.isRequired = true;
+                    question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
+
+
+                    console.log("question name field: " + req.body["topicAssessmentQuestionName-" + i ]);
+                    console.log("the correct option for this quesiton is: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ]);
+                    console.log("whole question: " + JSON.stringify(question));
+
+                    // go through each option
+                    let questionOptions = req.body["topicAssessmentQuestionOptionId-" + i];
+                    for( let j = 0; j < questionOptions.length; j++ ) {
+                        // create the option
+                        let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
+                        questionOption.active = true;
+                        console.log("testing : " + req.body["topicAssessmentQuestionOptions-" + i][j]);
+                        questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
+                        questionOption.optionNumber = (j + 1);
+                        questionOption.assessmentQuestionId = i;
+
+                        question.options.push(questionOption);
+                    }
+                    topic.assessment.questions.push(question);
+                }
+
+                console.log("Checking the constructed assessment: \n" + JSON.stringify(topic.assessment) + "\n\n");
 
                 // save the activity
                 activityService.saveActivity(topic.activity).then((returnedActivity) => {

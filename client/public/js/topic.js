@@ -8,7 +8,7 @@
 
 // keep track of running total of new questions for assessment
 let newQuestionNum = 0;
-
+let newOptionNum = 0;
 
 /**
  * Create an assessment question dynamically
@@ -21,13 +21,18 @@ function addQuestion(assessmentId) {
     qdiv.setAttribute("id", "question-border-" + newQuestionNum);
     qdiv.setAttribute("class", "question-border");
 
+    let hqid = document.createElement('input');
+    hqid.setAttribute("type", "hidden");
+    hqid.setAttribute("name", "topicAssessmentQuestionId");
+    hqid.setAttribute("value", newQuestionNum);
+
     let qh = document.createElement('h6');
     qh.textContent = "Question " + newQuestionNum + ":";
     let qp = document.createElement('p');
     let qin = document.createElement('input');
     qin.setAttribute("type", "input");
     qin.setAttribute("class", "form-control form-control-lg");
-    qin.setAttribute("name", "topicAssessmentQuestion-" + assessmentId);
+    qin.setAttribute("name", "topicAssessmentQuestionName-" + newQuestionNum);
     qin.setAttribute("value", "");
     qin.setAttribute("placeholder", "question");
     qin.setAttribute("required", "required");
@@ -36,6 +41,7 @@ function addQuestion(assessmentId) {
     optsb.setAttribute("id", "options-border-" + newQuestionNum)
     optsb.setAttribute("class", "options-border");
     
+    qdiv.appendChild(hqid);
     qdiv.appendChild(qh);
     qdiv.appendChild(qp);
     qdiv.appendChild(qin);
@@ -78,12 +84,17 @@ function addQuestionOption(questionId) {
 
     let odiv = document.createElement("div");
     odiv.setAttribute("class", "option-border");
+    let hqoid = document.createElement("input");
+    hqoid.setAttribute("type", "hidden");
+    hqoid.setAttribute("name", "topicAssessmentQuestionOptionId-" + newQuestionNum);
+    hqoid.setAttribute("value", newOptionNum)
+
     let os = document.createElement("span");
     os.textContent = "New Option : Mark Option Correct ";
     let or = document.createElement("input");
     or.setAttribute("type", "radio");
     or.setAttribute("name", "topicAssessmentQuestionOptionsCorrect-" + questionId);
-    or.setAttribute("value", "");
+    or.setAttribute("value", newOptionNum);
     let oi = document.createElement("input");
     oi.setAttribute("type", "input");
     oi.setAttribute("class", "form-control form-control-lg");
@@ -92,6 +103,7 @@ function addQuestionOption(questionId) {
     oi.setAttribute("placeholder", "option");
     oi.setAttribute("required", "reqired");
 
+    odiv.appendChild(hqoid);
     odiv.appendChild(os);
     odiv.appendChild(or);
     odiv.appendChild(oi);
@@ -100,6 +112,8 @@ function addQuestionOption(questionId) {
     let optsBorder = document.getElementById('options-border-' + questionId);
     console.log("optsBorder: " + optsBorder);
     optsBorder.appendChild(odiv);
+
+    newOptionNum++;
     
 }
 
@@ -558,6 +572,11 @@ window.addEventListener('load', () => {
         let questionBorders = document.getElementsByClassName('question-border');
         newQuestionNum = questionBorders.length + 1;
         console.log("newQuestionNum set to: " + newQuestionNum);
+        
+        // now do the same for number of options on the page
+        let optionBorders = document.getElementsByClassName('option-border');
+        newOptionNum = optionBorders.length + 1;
+        console.log("newOptionNum set to: " + newOptionNum + " but this will likely need to change to per question.");
 
         // next get the id of this assessment
         let topicAssessment = document.getElementsByName('topicAssessment');

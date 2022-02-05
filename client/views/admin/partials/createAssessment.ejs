@@ -15,14 +15,16 @@ if(topic) {
             <%
 
             // Assessment already exists - edit mode
+            let optionCounter = 1;
             if(topic.assessment.questions) {
                 // show existing questions
                 for(let i=0; i < topic.assessment.questions.length; i++) {
                     %>
                     <div id="question-border-<%- topic.assessment.questions[i].id %>" class="question-border">
+                        <input type="hidden" name="topicAssessmentQuestionId" value="<%- (i + 1) %>" />
                         <h6>Question <%- (i + 1) %>: </h6>
                         <p></p>
-                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestion-<%- topic.assessment.questions[i].id %>" placeholder="Assessment Title" required>
+                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionName-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestionName-<%- topic.assessment.questions[i].id %>" placeholder="Assessment Title" required />
                         <div id="options-border-<%- topic.assessment.questions[i].id %>" class="options-border">
                             <%
                             let j = 0;      // we will want to track outside loop for new entries
@@ -36,12 +38,14 @@ if(topic) {
 
                                     %>
                                     <div class="option-border">
-                                        Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="topicAssessmentQuestionOptionsCorrect-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> >
-                                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOptions-<%- topic.assessment.questions[i].id %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required>
+                                        <input type="hidden" name="topicAssessmentQuestionOptionId-<%- (i + 1) %>" value="<%- optionCounter %>" />
+                                        Option <%- (j + 1) %> : Mark Option Correct <input type="radio" id="option-id-<%- topic.assessment.questions[i].options[j].id %>" name="topicAssessmentQuestionOptionsCorrect-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].options[j].id %>" <%- (!!correctFlag)?'checked':'' %> />
+                                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionOptions-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].options[j].optionAnswer %>" id="topicAssessmentQuestionOption-<%- topic.assessment.questions[i].options[j].id %>" placeholder="Assessment Title" required />
                                         
                                     </div>
                                     <%
                                     j++;
+                                    optionCounter++;
                                 }
                             }
                             %>
