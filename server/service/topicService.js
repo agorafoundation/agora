@@ -208,9 +208,10 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
                 let res2 = await db.query(text, values);
 
                 if(res2.rowCount > 0) {
+
                     // model it
                     assessment = Assessment.ormAssessment(res2.rows[0]);
-                    //console.log("assessment object: " + JSON.stringify(assessment))
+                    console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
                     values = [ assessment.id, true ];

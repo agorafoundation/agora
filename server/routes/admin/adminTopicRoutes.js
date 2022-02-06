@@ -18,6 +18,7 @@ router.use(bodyParser.json());
 let topicService = require('../../service/topicService');
 let resourceService = require('../../service/resourceService')
 let activityService = require('../../service/activityService');
+let assessmentService = require('../../service/assessmentService');
 
 // model requires
 const Topic = require('../../model/topic');
@@ -80,8 +81,7 @@ router.route('/')
                 res.redirect(303, '/auth');
             }
             else {
-                // save image          
-                    
+                // create topic        
                 let topic = Topic.emptyTopic();
                 topic.id = req.body.topicId;
 
@@ -96,6 +96,7 @@ router.route('/')
                         topic.id = dbTopic.id;
                         topic.topicImage = dbTopic.topicImage
 
+                        // save the image if one is provided
                         if(req.session.savedTopicFileName) {
                             topic.topicImage = baseTopicImageUrl + req.session.savedTopicFileName;
                         } 
@@ -199,24 +200,34 @@ router.route('/')
                     topic.activityId = returnedActivity.id;
                     
                     console.log("topic check: " + JSON.stringify(returnedActivity));
-                    // save the topic
-                    topicService.saveTopic(topic).then((savedTopic) => {
 
-                        // get the pathway
-                        let selectedTopicResources = null;
-                        let selectedTopicResourcesRequired = null;
-                        
-                        if(req.body.selectedTopicResources) {
-                            if(req.body.selectedTopicResourcesRequired) {
-                                selectedTopicResourcesRequired = req.body.selectedTopicResourcesRequired.split(",");
+                    // save the assessment
+                    assessmentService.saveAssessment(topic.assessment).then((returnedAssessment) => {
+                        topic.assessmentId = returnedAssessment.id;
+
+                        // save the topic
+                        topicService.saveTopic(topic).then((savedTopic) => {
+
+                            // get the pathway
+                            let selectedTopicResources = null;
+                            let selectedTopicResourcesRequired = null;
+                            
+                            if(req.body.selectedTopicResources) {
+                                if(req.body.selectedTopicResourcesRequired) {
+                                    selectedTopicResourcesRequired = req.body.selectedTopicResourcesRequired.split(",");
+                                }
+                                selectedTopicResources = req.body.selectedTopicResources.split(",");
+                                topicService.saveResourcesForTopic(savedTopic.id, selectedTopicResources, selectedTopicResourcesRequired);
                             }
-                            selectedTopicResources = req.body.selectedTopicResources.split(",");
-                            topicService.saveResourcesForTopic(savedTopic.id, selectedTopicResources, selectedTopicResourcesRequired);
-                        }
 
-                        res.locals.message = "Topic Saved Successfully";
-                        res.redirect(303, '/a/topic/' + savedTopic.id);
+                            // save the assessment
+
+                            res.locals.message = "Topic Saved Successfully";
+                            res.redirect(303, '/a/topic/' + savedTopic.id);
+                        });
                     });
+
+                    
                 });
 
                 
