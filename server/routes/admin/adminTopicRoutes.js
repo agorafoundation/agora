@@ -166,24 +166,29 @@ router.route('/')
                     question.isRequired = true;
 
                     // go through each option
-                    let optionLength = req.body["topicAssessmentQuestionOptions-" + i].length;
-                    for( let j = 0; j < optionLength; j++ ) {
-                        // create the option
-                        let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
-                        questionOption.active = true;
-                        questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
-                        questionOption.optionNumber = (j + 1);
-                        // check to see if this is the checked option to set correct
-                        console.log("CHECK::: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ] + "==" + req.body["topicAssessmentQuestionOptionId-" + i ][j]);
-                        if(req.body["topicAssessmentQuestionOptionsCorrect-" + i ] == req.body["topicAssessmentQuestionOptionId-" + i ][j]) {
-                            question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
+                    if(req.body["topicAssessmentQuestionOptions-" + i]) {
+                        let optionLength = req.body["topicAssessmentQuestionOptions-" + i].length;
+                        console.log("question num : " + i + " has length: " + optionLength);
+                        for( let j = 0; j < optionLength; j++ ) {
+                            // create the option
+                            let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
+                            questionOption.active = true;
+                            questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
+                            questionOption.optionNumber = (j + 1);
+                            // check to see if this is the checked option to set correct
+                            console.log("CHECK::: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ] + "==" + req.body["topicAssessmentQuestionOptionId-" + i ][j]);
+                            if(req.body["topicAssessmentQuestionOptionsCorrect-" + i ] == req.body["topicAssessmentQuestionOptionId-" + i ][j]) {
+                                question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
+                            }
+                            
+                            questionOption.assessmentQuestionId = i;
+
+                            question.options.push(questionOption);
                         }
                         
-                        questionOption.assessmentQuestionId = i;
-
-                        question.options.push(questionOption);
                     }
                     topic.assessment.questions.push(question);
+                    
                 }
 
                 console.log("Checking the constructed assessment: \n" + JSON.stringify(topic.assessment) + "\n\n");

@@ -26,19 +26,32 @@ function addQuestion(assessmentId) {
 
     let hqid = document.createElement('input');
     hqid.setAttribute("type", "hidden");
+    hqid.setAttribute('id', 'topicAssessmentQuestionId-' + newQuestionNum)
     hqid.setAttribute("name", "topicAssessmentQuestionId");
     hqid.setAttribute("value", newQuestionNum);
 
     let qh = document.createElement('h6');
-    qh.textContent = "Question " + newQuestionNum + ":";
+    qh.innerHTML = "Question <span id='question-number-" + newQuestionNum + "'>" + newQuestionNum + "</span>:";
     let qp = document.createElement('p');
     let qin = document.createElement('input');
+    qin.setAttribute('id', 'topicAssessmentQuestionName-' + newQuestionNum);
     qin.setAttribute("type", "input");
     qin.setAttribute("class", "form-control form-control-lg");
     qin.setAttribute("name", "topicAssessmentQuestionName-" + newQuestionNum);
     qin.setAttribute("value", "");
     qin.setAttribute("placeholder", "question");
     qin.setAttribute("required", "required");
+
+    //add the question delete button
+    let dSpan = document.createElement('span');
+    let dBut = document.createElement('button');
+    dBut.setAttribute('id', 'question-delete-' + newQuestionNum);
+    dBut.setAttribute('type', 'button');
+    dBut.setAttribute('class', 'btn btn-outline-danger');
+    dBut.setAttribute('onclick', 'removeOption(' + newQuestionNum + ');');
+    dBut.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path></svg>Delete';
+
+    dSpan.appendChild(dBut);
 
     let optsb = document.createElement("div");
     optsb.setAttribute("id", "options-border-" + newQuestionNum)
@@ -47,6 +60,7 @@ function addQuestion(assessmentId) {
     qdiv.appendChild(hqid);
     qdiv.appendChild(qh);
     qdiv.appendChild(qp);
+    qdiv.appendChild(dSpan);
     qdiv.appendChild(qin);
     qdiv.appendChild(optsb);
 
@@ -75,6 +89,89 @@ function addQuestion(assessmentId) {
 
 }
 
+function removeQuestion(questionId) {
+    let questionDiv = document.getElementById('question-border-' + questionId);
+    questionDiv.remove();
+
+    // get the total questions
+    let totalQuestions = parseInt(document.getElementsByName('topicAssessmentQuestionId').length) + 1;
+
+    // re-number the questions
+    console.log("total questions: " + totalQuestions);
+    for( let i = (questionId + 1); i <= totalQuestions; i++ ) {
+        let qDiv = document.getElementById('question-border-' + i);
+        qDiv.setAttribute('id', 'question-border-' + (i - 1));
+
+        // hidden question id div
+        let hdiv = document.getElementById('topicAssessmentQuestionId-' + i);
+        hdiv.setAttribute('id', 'topicAssessmentQuestionId-' + (i - 1));
+        hdiv.setAttribute('value', (i - 1));
+
+        // question number
+        let qNum = document.getElementById('question-number-' + i);
+        qNum.innerHTML = (i - 1);
+
+        // question 
+        let qIn = document.getElementById('topicAssessmentQuestionName-' + i);
+        qIn.setAttribute('id', 'topicAssessmentQuestionName-' + (i - 1));
+        qIn.setAttribute('name', 'topicAssessmentQuestionName-' + (i - 1));
+
+        //option delete button
+        let dBut = document.getElementById('question-delete-' + questionId);
+        dBut.setAttribute('id', 'question-delete-' + questionId + "-" + (i - 1));
+        dBut.setAttribute('onclick', 'removeOption(' + questionId + ');');
+
+        // add option button
+        let aBut = document.getElementById('addQuestionOption-' + i);
+        aBut.setAttribute('id', 'addQuestionOption-' + (i - 1));
+
+    }
+}
+
+function removeOption(questionId, optionId) {
+    console.log("removing: option-border-" + questionId + "-" + optionId);
+    let optionDiv = document.getElementById('option-border-' + questionId + "-" + optionId);
+    optionDiv.remove();
+
+    // re-number this questions options
+    // get the total number of options 
+    // let totalOptions = document.getElementsByClassName('option-border-' + questionId).length;
+    let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
+    console.log("total options: " + totalOptions)
+    for( let i = (optionId + 1); i <= totalOptions; i++ ) {
+        // option border
+        let oDiv = document.getElementById('option-border-' + questionId + "-" + i);
+        oDiv.setAttribute("id", "option-border-" + questionId + "-" + (i -1));
+        oDiv.setAttribute("class", "option-border-" + (i - 1));
+
+        // hidden id div
+        let hdiv = document.getElementById('topicAssessmentQuestionOptionId-' + questionId + "-" + i);
+        hdiv.setAttribute('id', 'topicAssessmentQuestionOptionId-' + questionId + "-" + (i - 1));
+        hdiv.setAttribute('value', (i -1))
+
+        // option number
+        let oSpan = document.getElementById('option-number-' + questionId + '-' + i);
+        oSpan.innerHTML = (i -1);
+        oSpan.setAttribute("id", "option-number-" + questionId + "-" + (i -1));
+
+        // radio value
+        let radio = document.getElementById('topicAssessmentQuestionOptionsCorrect-' + questionId + '-' + i);
+        radio.setAttribute('id', 'topicAssessmentQuestionOptionsCorrect-' + questionId + "-" + (i -1));
+        radio.setAttribute('value', (i - 1));
+
+        // question input
+        let qIn = document.getElementById('topicAssessmentQuestionOption-' + questionId + '-' + i);
+        qIn.setAttribute('id', 'topicAssessmentQuestionOption-' + questionId + "-" + (i - 1));
+
+        //option delete button
+        let dBut = document.getElementById('option-delete-' + questionId + '-' + i);
+        dBut.setAttribute('id', 'option-delete-' + questionId + "-" + (i - 1));
+        dBut.setAttribute('onclick', 'removeOption(' + questionId + ', ' + (i -1) + ');');
+
+        //console.log("working!");
+    }
+}
+
 
 /**
  * Create a assessment question option dynamically
@@ -85,25 +182,32 @@ function addQuestionOption(questionId) {
     console.log('Adding Option!');
     console.log("question Id : " + questionId);
 
+    // get the total number of options 
+    let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length + 1);
+
     // find out how many options exist now so we can number this one
 
-    let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
+    //let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
     console.log('testing 4: ' + newOptionNum);
 
     let odiv = document.createElement("div");
-    odiv.setAttribute("class", "option-border");
+    odiv.setAttribute('id', 'option-border-' + questionId + '-' + newOptionNum)
+    odiv.setAttribute("class", "option-border-" + newOptionNum);
     let hqoid = document.createElement("input");
+    hqoid.setAttribute('id', 'topicAssessmentQuestionOptionId-' + questionId + "-" + newOptionNum);
     hqoid.setAttribute("type", "hidden");
     hqoid.setAttribute("name", "topicAssessmentQuestionOptionId-" + questionId);
     hqoid.setAttribute("value", newOptionNum)
 
     let os = document.createElement("span");
-    os.textContent = "New Option : Mark Option Correct ";
+    os.innerHTML = "Option <span id='option-number-" + questionId + "-" + newOptionNum + "'>" + newOptionNum + "</span> : Mark Option Correct ";
     let or = document.createElement("input");
+    or.setAttribute('id', 'topicAssessmentQuestionOptionsCorrect-' + questionId + '-' + newOptionNum);
     or.setAttribute("type", "radio");
     or.setAttribute("name", "topicAssessmentQuestionOptionsCorrect-" + questionId);
     or.setAttribute("value", newOptionNum);
     let oi = document.createElement("input");
+    oi.setAttribute('id', 'topicAssessmentQuestionOption-' + questionId + '-' + newOptionNum);
     oi.setAttribute("type", "input");
     oi.setAttribute("class", "form-control form-control-lg");
     oi.setAttribute("name", "topicAssessmentQuestionOptions-" + questionId);
@@ -111,10 +215,25 @@ function addQuestionOption(questionId) {
     oi.setAttribute("placeholder", "option");
     oi.setAttribute("required", "reqired");
 
+    // create the delete button for this option
+    let dSpan = document.createElement('span');
+    dSpan.setAttribute('class', 'button-right');
+    let dBut = document.createElement('button');
+    dBut.setAttribute('id', 'option-delete-' + questionId + '-' + newOptionNum);
+    dBut.setAttribute('type', 'button');
+    dBut.setAttribute('class', 'btn btn-outline-danger');
+    dBut.setAttribute('onclick', 'removeOption(' + questionId + ', ' +  newOptionNum+ ');');
+    dBut.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path></svg>Delete';
+
+    dSpan.appendChild(dBut);
+    
+
     odiv.appendChild(hqoid);
     odiv.appendChild(os);
     odiv.appendChild(or);
+    odiv.appendChild(dSpan);
     odiv.appendChild(oi);
+    
 
     console.log("why?? " + questionId);
     let optsBorder = document.getElementById('options-border-' + questionId);

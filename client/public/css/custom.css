@@ -895,7 +895,10 @@ input:checked + .slider:after {
     font-size: 30px;
 }
 
-
-
-
   /* END accordion */
+
+
+
+  .button-right {
+      float:right;
+  }
