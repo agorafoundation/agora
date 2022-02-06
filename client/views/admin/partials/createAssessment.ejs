@@ -68,7 +68,7 @@ if(topic) {
                             }
                             %>
                         </div>
-                        <input type="button" name="addQuestionOption" value="Add Option" class="btn-primary" id="addQuestionOption-<%- topic.assessment.questions[i].id %>" />
+                        <input type="button" name="addQuestionOption" value="Add Option" class="btn-primary" id="addQuestionOption-<%- topic.assessment.questions[i].id %>" onclick="addOption(<%- (i + 1) %>);" />
                     </div>
                     <%
                 }

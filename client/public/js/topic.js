@@ -13,6 +13,8 @@ let newQuestionNum = 0;
 // keep track of questions and options as a 2-demensional array
 let totalTracking = [];
 
+
+
 /**
  * Create an assessment question dynamically
  * @param {*} questionId 
@@ -80,7 +82,7 @@ function addQuestion(assessmentId) {
 
     // add an event listener for the new questions option button
     ob.addEventListener('click', (e) => {
-        addQuestionOption(localId);
+        addOption(localId);
         e.stopPropagation();
     })
     console.log("ob event: " + ob.onclick)
@@ -103,9 +105,9 @@ function removeQuestion(questionId) {
         qDiv.setAttribute('id', 'question-border-' + (i - 1));
 
         // hidden question id div
-        let hdiv = document.getElementById('topicAssessmentQuestionId-' + i);
-        hdiv.setAttribute('id', 'topicAssessmentQuestionId-' + (i - 1));
-        hdiv.setAttribute('value', (i - 1));
+        let hqdiv = document.getElementById('topicAssessmentQuestionId-' + i);
+        hqdiv.setAttribute('id', 'topicAssessmentQuestionId-' + (i - 1));
+        hqdiv.setAttribute('value', (i - 1));
 
         // question number
         let qNum = document.getElementById('question-number-' + i);
@@ -117,13 +119,55 @@ function removeQuestion(questionId) {
         qIn.setAttribute('name', 'topicAssessmentQuestionName-' + (i - 1));
 
         //option delete button
-        let dBut = document.getElementById('question-delete-' + questionId);
-        dBut.setAttribute('id', 'question-delete-' + questionId + "-" + (i - 1));
-        dBut.setAttribute('onclick', 'removeOption(' + questionId + ');');
+        let qdBut = document.getElementById('question-delete-' + i);
+        qdBut.setAttribute('id', 'question-delete-' + questionId + "-" + (i - 1));
+        qdBut.setAttribute('onclick', 'removeOption(' + questionId + ');');
+
+        // update the options container
+        let osDiv = document.getElementById('options-border-' + i);
+        osDiv.setAttribute('id', 'options-border-' + (i - 1));
 
         // add option button
         let aBut = document.getElementById('addQuestionOption-' + i);
         aBut.setAttribute('id', 'addQuestionOption-' + (i - 1));
+        aBut.setAttribute('onclick', 'addOption(' + (i - 1) + ');');
+
+        // update the options for this question
+        let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + i).length) + 1;
+        for( let j = 1; j <= totalOptions; j++ ) {
+            // option border
+            console.log("odiv check: " + 'option-border-' + (i - 1) + "-" + j);
+            let oDiv = document.getElementById('option-border-' + i + "-" + j);
+            oDiv.setAttribute("id", "option-border-" + (i - 1) + "-" + j);
+            oDiv.setAttribute("class", "option-border-" + j);
+
+            // hidden id div
+            let hdiv = document.getElementById('topicAssessmentQuestionOptionId-' + i + "-" + j);
+            hdiv.setAttribute('id', 'topicAssessmentQuestionOptionId-' + (i - 1) + "-" + j);
+            hdiv.setAttribute('name', 'topicAssessmentQuestionOptionId-' + (i - 1));
+            hdiv.setAttribute('value', j)
+
+            // option number
+            let oSpan = document.getElementById('option-number-' + i + '-' + j);
+            oSpan.innerHTML = j;
+            oSpan.setAttribute("id", "option-number-" + (i - 1) + "-" + j);
+
+            // radio value
+            let radio = document.getElementById('topicAssessmentQuestionOptionsCorrect-' + i + '-' + j);
+            radio.setAttribute('id', 'topicAssessmentQuestionOptionsCorrect-' + (i - 1) + "-" + j);
+            radio.setAttribute('name', 'topicAssessmentQuestionOptionsCorrect-' + (i - 1));
+            radio.setAttribute('value', j);
+
+            // question input
+            let oIn = document.getElementById('topicAssessmentQuestionOption-' + i + '-' + j);
+            oIn.setAttribute('id', 'topicAssessmentQuestionOption-' + (i - 1) + "-" + j);
+            oIn.setAttribute('name', 'topicAssessmentQuestionOptions-' + (i - 1));
+
+            //option delete button
+            let dBut = document.getElementById('option-delete-' + i + '-' + j);
+            dBut.setAttribute('id', 'option-delete-' + (i - 1) + "-" + j);
+            dBut.setAttribute('onclick', 'removeOption(' + (i - 1) + ', ' + j + ');');
+        }
 
     }
 }
@@ -178,7 +222,7 @@ function removeOption(questionId, optionId) {
  * @param {Integer} questionId 
  * @param {Integer} index
  */
-function addQuestionOption(questionId) {
+function addOption(questionId) {
     console.log('Adding Option!');
     console.log("question Id : " + questionId);
 
@@ -237,7 +281,7 @@ function addQuestionOption(questionId) {
 
     console.log("why?? " + questionId);
     let optsBorder = document.getElementById('options-border-' + questionId);
-    console.log("optsBorder: " + optsBorder);
+    console.log("options-border-: " + optsBorder);
     optsBorder.appendChild(odiv);
     
 }
@@ -717,22 +761,22 @@ window.addEventListener('load', () => {
 
     }
 
-    // create event handler to handle clicking any of the buttons to add options to questions
-    if(document.getElementsByName('addQuestionOption')) {
-        // find all of the existing buttons to add options to questions 
-        let optionAddButtons = document.getElementsByName('addQuestionOption');
+    // // create event handler to handle clicking any of the buttons to add options to questions
+    // if(document.getElementsByName('addQuestionOption')) {
+    //     // find all of the existing buttons to add options to questions 
+    //     let optionAddButtons = document.getElementsByName('addQuestionOption');
 
-        // iterate through all the existing add option buttons, find the question id in the button id and attach the add addQuestionOption event
-        for( let i=0; i < optionAddButtons.length; i++ ) {
-            let questionId = optionAddButtons[i].id.split("-")[1];
-            optionAddButtons[i].addEventListener("click", (e) => {
-                addQuestionOption(questionId);
-                e.stopPropagation();
-            });
+    //     // iterate through all the existing add option buttons, find the question id in the button id and attach the add addQuestionOption event
+    //     for( let i=0; i < optionAddButtons.length; i++ ) {
+    //         let questionId = optionAddButtons[i].id.split("-")[1];
+    //         optionAddButtons[i].addEventListener("click", (e) => {
+    //             addQuestionOption(questionId);
+    //             e.stopPropagation();
+    //         });
             
-        }
+    //     }
 
-    }
+    // }
 
     
 });
