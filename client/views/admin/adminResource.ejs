@@ -122,19 +122,10 @@
                                                 <label for="formFile" class="form-label">Upload an image for this resource (1MB Max size)</label>
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage">
                                             </div>
-                                            <span id="quillWrapper" style="display:none;" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
-                                            <%
-                                            if(resource.resourceType === 3) {
-                                            %>
-                                                <input type="hidden" id="quill_html" name="submission_text" value=""></input>
-                                            <%
-                                            } else {
-                                            %>
-                                                Embedded HTML:
-                                                <textarea name="submission_text" rows="6" cols="75" />
-                                            <%
-                                            }
-                                            %>
+                                            <span id="quillWrapper" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
+                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                                            Embedded HTML:
+                                            <textarea name="submission_text2" id="submission_text2" rows="6" cols="75" ></textarea><br />
                                             Resource Link: <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">
                                             Required? <input type="checkbox" class="" id="isRequired" name="isRequired" <%- (resource.isRequired)?'checked':'' %> />
                                             Active: <input type="checkbox" class="" id="resourceActive" name="resourceActive" <%- (resource.active)?'checked':'' %> />

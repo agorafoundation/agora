@@ -268,9 +268,9 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             }
             topic.resources = resources;
 
-            // console.log("------------------------");
-            // console.log("Full Topic: " + JSON.stringify(topic));
-            // console.log("------------------------");
+            console.log("------------------------");
+            console.log("Full Topic: " + JSON.stringify(topic));
+            console.log("------------------------");
             return topic;
             
         }

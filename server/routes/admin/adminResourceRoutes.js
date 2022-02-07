@@ -83,7 +83,12 @@ router.route('/')
                 resource.resourceType = req.body.resourceType;
                 resource.resourceName = req.body.resourceName;
                 resource.resourceDescription = req.body.resourceDescription;
-                resource.resourceContentHtml = req.body.submission_text;
+                if(resource.resourceType == 3) {
+                    resource.resourceContentHtml = req.body.submission_text2;
+                }
+                else {
+                    resource.resourceContentHtml = req.body.submission_text;
+                }
                 // console.log("checking the resource: " + JSON.stringify(resource));
                 // console.log("now the req.body: " + JSON.stringify(req.body));
                 resource.active = (req.body.resourceActive == "on") ? true : false;

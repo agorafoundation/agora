@@ -272,7 +272,6 @@ function removeOption(questionId, optionId) {
 
 
 window.addEventListener('load', () => {
-    
     // look for any accordions, apply click event to open
     if(document.getElementsByClassName('accordion-container')) {
         const accordion = document.getElementsByClassName('accordion');
@@ -501,10 +500,8 @@ window.addEventListener('load', () => {
         });
     }
 
-
     // quill editor for creator resource form
-    if(document.getElementById('creatorResourceForm')) {
-
+    if(document.getElementById('resourceDescription')) {
         hljs.configure({   // optionally configure hljs
             languages: ['javascript', 'ruby', 'python']
         });
@@ -548,7 +545,7 @@ window.addEventListener('load', () => {
         toggleQuillEditor();
 
         document.getElementById('resourceType').addEventListener('change', () => {
-            resourceType();
+            toggleQuillEditor();
         })
     }
 
@@ -733,12 +730,21 @@ window.addEventListener('load', () => {
     
 });
 
+/**
+ * When toggling resource types set the correct editor in the UI
+ */
 function toggleQuillEditor() {
     if(document.getElementById('resourceType').value == "3") {
-        document.getElementById('quillWrapper').style.display = block;
+        document.getElementById('quillWrapper').style.display = 'none';
+        document.getElementById('submission_text2').style.display = 'block';
+    }
+    else if(document.getElementById('resourceType').value == "2") {
+        document.getElementById('quillWrapper').style.display = 'none';
+        document.getElementById('submission_text2').style.display = 'none';
     }
     else {
-        document.getElementById('quillWrapper').style.display = none;
+        document.getElementById('quillWrapper').style.display = 'block';
+        document.getElementById('submission_text2').style.display = 'none';
     }
 }
 
