@@ -77,15 +77,12 @@ exports.getActiveAssessmentById = async function(assessmentId) {
  exports.saveAssessment = async function(assessment) {
     // check to see if an id exists - insert / update check
     if(assessment) {
-
-
         if(assessment.id > 0) {
-            console.log(" ----- deleting the old the assesment -----");
+            //console.log(" ----- deleting the old the assesment -----");
             // delete all existing data for this assessment
 
             // get the existing db oldAssessment in order to delete it first
             let oldAssessment = await exports.getActiveAssessmentById(assessment.id);
-            console.log("Old assessment: \n" + JSON.stringify(oldAssessment) + "\n\n");
 
             // go through options, questions and the assessment and delete all of them
             if(oldAssessment && oldAssessment.questions) {
@@ -134,8 +131,8 @@ exports.getActiveAssessmentById = async function(assessmentId) {
             
         }
 
-        console.log(" ----- Saving the assesment -----");
-        console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");
+        // console.log(" ----- Saving the assesment -----");
+        // console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");
         
         // save the assessment
         if(assessment) {
@@ -174,9 +171,7 @@ exports.getActiveAssessmentById = async function(assessmentId) {
                                                     assessment.questions[i].options[j].id = res3.rows[0].id;
 
                                                     // update the correct option id with the actual id number and not the option index
-                                                    console.log("--- CHeck -- - " + ( j + 1 ) + "==" + assessment.questions[i].correctOptionId);
                                                     if( ( j + 1 ) == assessment.questions[i].correctOptionId) {
-                                                        console.log("------------------- updating the correct_option_id ------------------------")
                                                         text = "UPDATE assessment_question SET correct_option_id = $1 WHERE id = $2;"
                                                         values = [ assessment.questions[i].options[j].id, assessment.questions[i].id ];
 

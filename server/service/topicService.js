@@ -211,7 +211,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
 
                     // model it
                     assessment = Assessment.ormAssessment(res2.rows[0]);
-                    console.log("assessment object: " + JSON.stringify(assessment))
+                    //console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
                     values = [ assessment.id, true ];
@@ -268,9 +268,9 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             }
             topic.resources = resources;
 
-            console.log("------------------------");
-            console.log("Full Topic: " + JSON.stringify(topic));
-            console.log("------------------------");
+            // console.log("------------------------");
+            // console.log("Full Topic: " + JSON.stringify(topic));
+            // console.log("------------------------");
             return topic;
             
         }
@@ -408,9 +408,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
  exports.saveTopic = async function(topic) {
     // check to see if an id exists - insert / update check
     if(topic) {
-        console.log("incomming topicg: " + JSON.stringify(topic));
         if(topic.id > 0) {
-            console.log("service 1");
             
             // update
             let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
@@ -426,7 +424,6 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
         }
         else {
-            console.log("service 2");
             // insert
             let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
@@ -434,7 +431,6 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             try {
 
                 let res = await db.query(text, values);
-                console.log("teh row is : " + res.rows[0]);
                 if(res.rowCount > 0) {
                     
                     topic.id = res.rows[0].id;
@@ -446,7 +442,6 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 return false;
             }
         }
-        console.log("service returning : " + JSON.stringify(topic));
         return topic;
     }
     else {

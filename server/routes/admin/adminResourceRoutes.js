@@ -84,8 +84,8 @@ router.route('/')
                 resource.resourceName = req.body.resourceName;
                 resource.resourceDescription = req.body.resourceDescription;
                 resource.resourceContentHtml = req.body.submission_text;
-                console.log("checking the resource: " + JSON.stringify(resource));
-                console.log("now the req.body: " + JSON.stringify(req.body));
+                // console.log("checking the resource: " + JSON.stringify(resource));
+                // console.log("now the req.body: " + JSON.stringify(req.body));
                 resource.active = (req.body.resourceActive == "on") ? true : false;
                 resource.resourceLink = req.body.resourceLink;
                 resource.isRequired = req.body.isRequired;

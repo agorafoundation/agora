@@ -160,10 +160,7 @@ router.route('/:goalId')
                 
                 ~redundantTopic && availableTopics.splice(redundantTopic, 1);
             }
-            
-            console.log("the missing set is: " + JSON.stringify(availableTopics));
-            
-            
+
             // get the topics that are not currently assigned to this goal
 
         }

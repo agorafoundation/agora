@@ -13,15 +13,12 @@ let newQuestionNum = 0;
 // keep track of questions and options as a 2-demensional array
 let totalTracking = [];
 
-
-
 /**
  * Create an assessment question dynamically
  * @param {*} questionId 
  */
 function addQuestion(assessmentId) {
     //e.stopPropagation();
-    console.log('Adding Question!');
     let qdiv = document.createElement('div');
     qdiv.setAttribute("id", "question-border-" + newQuestionNum);
     qdiv.setAttribute("class", "question-border");
@@ -85,7 +82,6 @@ function addQuestion(assessmentId) {
         addOption(localId);
         e.stopPropagation();
     })
-    console.log("ob event: " + ob.onclick)
 
     newQuestionNum++;
 
@@ -99,7 +95,6 @@ function removeQuestion(questionId) {
     let totalQuestions = parseInt(document.getElementsByName('topicAssessmentQuestionId').length) + 1;
 
     // re-number the questions
-    console.log("total questions: " + totalQuestions);
     for( let i = (questionId + 1); i <= totalQuestions; i++ ) {
         let qDiv = document.getElementById('question-border-' + i);
         qDiv.setAttribute('id', 'question-border-' + (i - 1));
@@ -136,7 +131,6 @@ function removeQuestion(questionId) {
         let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + i).length) + 1;
         for( let j = 1; j <= totalOptions; j++ ) {
             // option border
-            console.log("odiv check: " + 'option-border-' + (i - 1) + "-" + j);
             let oDiv = document.getElementById('option-border-' + i + "-" + j);
             oDiv.setAttribute("id", "option-border-" + (i - 1) + "-" + j);
             oDiv.setAttribute("class", "option-border-" + j);
@@ -172,67 +166,17 @@ function removeQuestion(questionId) {
     }
 }
 
-function removeOption(questionId, optionId) {
-    console.log("removing: option-border-" + questionId + "-" + optionId);
-    let optionDiv = document.getElementById('option-border-' + questionId + "-" + optionId);
-    optionDiv.remove();
-
-    // re-number this questions options
-    // get the total number of options 
-    // let totalOptions = document.getElementsByClassName('option-border-' + questionId).length;
-    let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
-    console.log("total options: " + totalOptions)
-    for( let i = (optionId + 1); i <= totalOptions; i++ ) {
-        // option border
-        let oDiv = document.getElementById('option-border-' + questionId + "-" + i);
-        oDiv.setAttribute("id", "option-border-" + questionId + "-" + (i -1));
-        oDiv.setAttribute("class", "option-border-" + (i - 1));
-
-        // hidden id div
-        let hdiv = document.getElementById('topicAssessmentQuestionOptionId-' + questionId + "-" + i);
-        hdiv.setAttribute('id', 'topicAssessmentQuestionOptionId-' + questionId + "-" + (i - 1));
-        hdiv.setAttribute('value', (i -1))
-
-        // option number
-        let oSpan = document.getElementById('option-number-' + questionId + '-' + i);
-        oSpan.innerHTML = (i -1);
-        oSpan.setAttribute("id", "option-number-" + questionId + "-" + (i -1));
-
-        // radio value
-        let radio = document.getElementById('topicAssessmentQuestionOptionsCorrect-' + questionId + '-' + i);
-        radio.setAttribute('id', 'topicAssessmentQuestionOptionsCorrect-' + questionId + "-" + (i -1));
-        radio.setAttribute('value', (i - 1));
-
-        // question input
-        let qIn = document.getElementById('topicAssessmentQuestionOption-' + questionId + '-' + i);
-        qIn.setAttribute('id', 'topicAssessmentQuestionOption-' + questionId + "-" + (i - 1));
-
-        //option delete button
-        let dBut = document.getElementById('option-delete-' + questionId + '-' + i);
-        dBut.setAttribute('id', 'option-delete-' + questionId + "-" + (i - 1));
-        dBut.setAttribute('onclick', 'removeOption(' + questionId + ', ' + (i -1) + ');');
-
-        //console.log("working!");
-    }
-}
-
-
 /**
  * Create a assessment question option dynamically
  * @param {Integer} questionId 
  * @param {Integer} index
  */
 function addOption(questionId) {
-    console.log('Adding Option!');
-    console.log("question Id : " + questionId);
 
     // get the total number of options 
     let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length + 1);
 
     // find out how many options exist now so we can number this one
-
-    //let newOptionNum = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
-    console.log('testing 4: ' + newOptionNum);
 
     let odiv = document.createElement("div");
     odiv.setAttribute('id', 'option-border-' + questionId + '-' + newOptionNum)
@@ -279,14 +223,51 @@ function addOption(questionId) {
     odiv.appendChild(oi);
     
 
-    console.log("why?? " + questionId);
     let optsBorder = document.getElementById('options-border-' + questionId);
-    console.log("options-border-: " + optsBorder);
     optsBorder.appendChild(odiv);
     
 }
 
+function removeOption(questionId, optionId) {
+    let optionDiv = document.getElementById('option-border-' + questionId + "-" + optionId);
+    optionDiv.remove();
 
+    // re-number this questions options
+    // get the total number of options 
+    // let totalOptions = document.getElementsByClassName('option-border-' + questionId).length;
+    let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + questionId).length) + 1;
+    for( let i = (optionId + 1); i <= totalOptions; i++ ) {
+        // option border
+        let oDiv = document.getElementById('option-border-' + questionId + "-" + i);
+        oDiv.setAttribute("id", "option-border-" + questionId + "-" + (i -1));
+        oDiv.setAttribute("class", "option-border-" + (i - 1));
+
+        // hidden id div
+        let hdiv = document.getElementById('topicAssessmentQuestionOptionId-' + questionId + "-" + i);
+        hdiv.setAttribute('id', 'topicAssessmentQuestionOptionId-' + questionId + "-" + (i - 1));
+        hdiv.setAttribute('value', (i -1))
+
+        // option number
+        let oSpan = document.getElementById('option-number-' + questionId + '-' + i);
+        oSpan.innerHTML = (i -1);
+        oSpan.setAttribute("id", "option-number-" + questionId + "-" + (i -1));
+
+        // radio value
+        let radio = document.getElementById('topicAssessmentQuestionOptionsCorrect-' + questionId + '-' + i);
+        radio.setAttribute('id', 'topicAssessmentQuestionOptionsCorrect-' + questionId + "-" + (i -1));
+        radio.setAttribute('value', (i - 1));
+
+        // question input
+        let qIn = document.getElementById('topicAssessmentQuestionOption-' + questionId + '-' + i);
+        qIn.setAttribute('id', 'topicAssessmentQuestionOption-' + questionId + "-" + (i - 1));
+
+        //option delete button
+        let dBut = document.getElementById('option-delete-' + questionId + '-' + i);
+        dBut.setAttribute('id', 'option-delete-' + questionId + "-" + (i - 1));
+        dBut.setAttribute('onclick', 'removeOption(' + questionId + ', ' + (i -1) + ');');
+
+    }
+}
 
 
 
@@ -472,7 +453,6 @@ window.addEventListener('load', () => {
         });
 
         document.getElementById('creatorTopicForm').addEventListener('submit', () => {
-            console.log('quill check 1: ' + quill.root.innerHTML);
             document.getElementById("quill_html_topic").value = quill.root.innerHTML;
         });
     }
@@ -517,7 +497,6 @@ window.addEventListener('load', () => {
         });
 
         document.getElementById('creatorTopicForm').addEventListener('submit', () => {
-            console.log('quill check 2: ' + quillActivity.root.innerHTML);
             document.getElementById("activity_html").value = quillActivity.root.innerHTML;
         });
     }
@@ -565,6 +544,12 @@ window.addEventListener('load', () => {
         document.getElementById('creatorResourceForm').addEventListener('submit', () => {
             document.getElementById("quill_html").value = quill.root.innerHTML;
         });
+
+        toggleQuillEditor();
+
+        document.getElementById('resourceType').addEventListener('change', () => {
+            resourceType();
+        })
     }
 
     /**
@@ -572,7 +557,6 @@ window.addEventListener('load', () => {
      * 
      */
     if(document.getElementById('pathway-draggable')) {
-        console.log("testing !");
         let dragSrcEl = null;
       
         function drag(e) {
@@ -588,13 +572,8 @@ window.addEventListener('load', () => {
             e.stopPropagation();
             e.preventDefault();
 
-            console.log("about to drop!");
-            console.log("1: " + dragSrcEl);
-            console.log("2: " + this);
-
             if (dragSrcEl !== this) {
                 let data = e.dataTransfer.getData("text");
-                console.log("data was: " + data);
                 this.appendChild(document.getElementById(data));
             }
 
@@ -626,10 +605,8 @@ window.addEventListener('load', () => {
         }
 
         function checkboxClick(e) {
-            console.log("checkbox-clicked fired");
             e.stopPropagation();
             e.preventDefault();
-            console.dir("name is : " + e);
 
             let elCheck = this.querySelector('.custom-control-input');
             (elCheck.checked) ? elCheck.checked = false : elCheck.checked = true;
@@ -640,8 +617,6 @@ window.addEventListener('load', () => {
         let at = document.getElementById('available-items');
         let ct = document.getElementById('chosen-items');
 
-        console.log("at is  : " + at);
-
         at.addEventListener('drop', drop);
         at.addEventListener('dragover', dragOver);
 
@@ -651,7 +626,6 @@ window.addEventListener('load', () => {
 
 
         let draggables = document.getElementsByClassName('draggable');
-        console.log("the number of draggables is: " + draggables.length);
         for(let i=0; i < draggables.length; i++) {
             draggables[i].addEventListener('dragstart', drag);
             draggables[i].addEventListener('dragend', dragEnd);
@@ -740,17 +714,10 @@ window.addEventListener('load', () => {
         // first we have to find out how many questions already existed so we can set the next question id
         let questionBorders = document.getElementsByClassName('question-border');
         newQuestionNum = questionBorders.length + 1;
-        console.log("newQuestionNum set to: " + newQuestionNum);
-        
-        // now do the same for number of options on the page
-        //let optionBorders = document.getElementsByClassName('option-border');
-        //newOptionNum = optionBorders.length + 1;
-        //console.log("newOptionNum set to: " + newOptionNum + " but this will likely need to change to per question.");
 
         // next get the id of this assessment
         let topicAssessment = document.getElementsByName('topicAssessment');
         let assessmentId = topicAssessment[0].id.split("-")[1];
-        console.log("assessment Id: " + assessmentId);
         
         // find the button to add a question and attach the addquestion event.
         document.getElementById('addQuestionToAssessment').addEventListener('click', (e) => {
@@ -761,27 +728,19 @@ window.addEventListener('load', () => {
 
     }
 
-    // // create event handler to handle clicking any of the buttons to add options to questions
-    // if(document.getElementsByName('addQuestionOption')) {
-    //     // find all of the existing buttons to add options to questions 
-    //     let optionAddButtons = document.getElementsByName('addQuestionOption');
 
-    //     // iterate through all the existing add option buttons, find the question id in the button id and attach the add addQuestionOption event
-    //     for( let i=0; i < optionAddButtons.length; i++ ) {
-    //         let questionId = optionAddButtons[i].id.split("-")[1];
-    //         optionAddButtons[i].addEventListener("click", (e) => {
-    //             addQuestionOption(questionId);
-    //             e.stopPropagation();
-    //         });
-            
-    //     }
-
-    // }
 
     
 });
 
-
+function toggleQuillEditor() {
+    if(document.getElementById('resourceType').value == "3") {
+        document.getElementById('quillWrapper').style.display = block;
+    }
+    else {
+        document.getElementById('quillWrapper').style.display = none;
+    }
+}
 
 
 /**

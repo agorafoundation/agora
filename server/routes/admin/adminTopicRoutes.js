@@ -133,13 +133,11 @@ router.route('/')
                 if(req.body.activityDescription) {
                     topic.activity.activityDescription = req.body.activityDescription;
                 }
-                console.log("test activity_html: " + req.body.activity_html);
                 if(req.body.activity_html) {
                     topic.activity.activityHtml = req.body.activity_html;
                 }
 
                 // assessment
-                console.log('checking assessmentId ' + topic.assessmentId);
                 if(!topic.assessmentId > 0) {
                     if(!topic.assessment) {
                         topic.assessment = Assessment.emptyAssessment();
@@ -148,7 +146,6 @@ router.route('/')
                 else {
                     topic.assessment.id = topic.assessmentId;
                 }
-                console.log("assessmentId set to " + topic.assessment.id);
 
                 // TODO: is there anything to do with assessment type?? currently hard coding 1, isRequired is currently deemed to be true for all assessments.
                 topic.assessment.assessmentType = 1;
@@ -178,7 +175,6 @@ router.route('/')
                     // go through each option
                     if(req.body["topicAssessmentQuestionOptionId-" + i]) {
                         let optionLength = req.body["topicAssessmentQuestionOptionId-" + i].length;
-                        console.log("question num : " + i + " has length: " + optionLength);
                         for( let j = 0; j < optionLength; j++ ) {
                             // create the option
                             let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
@@ -194,7 +190,6 @@ router.route('/')
                             
                             questionOption.optionNumber = (j + 1);
                             // check to see if this is the checked option to set correct
-                            console.log("CHECK::: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ] + "==" + req.body["topicAssessmentQuestionOptionId-" + i ][j]);
                             if(req.body["topicAssessmentQuestionOptionsCorrect-" + i ] == req.body["topicAssessmentQuestionOptionId-" + i ][j]) {
                                 question.correctOptionId = req.body["topicAssessmentQuestionOptionsCorrect-" + i ];
                             }
@@ -209,15 +204,11 @@ router.route('/')
                     
                 }
 
-                console.log("Checking the constructed assessment: \n" + JSON.stringify(topic.assessment) + "\n\n");
-
                 // save the activity
                 activityService.saveActivity(topic.activity).then((returnedActivity) => {
                     topic.activity = returnedActivity;
                     topic.activityId = returnedActivity.id;
                     
-                    console.log("topic check: " + JSON.stringify(returnedActivity));
-
                     // save the assessment
                     assessmentService.saveAssessment(topic.assessment).then((returnedAssessment) => {
                         topic.assessmentId = returnedAssessment.id;

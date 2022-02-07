@@ -72,12 +72,9 @@ exports.getActiveActivityById = async function(activityId) {
 
             try {
                 let res = await db.query(text, values);
-                console.log("res 2 : " + res + " row count : " + res.rowCount);
                 if(res.rowCount > 0) {
-                    console.log("about to append: " + res.rows[0].id)
                     activity.id = res.rows[0].id;
                 }
-                console.log("activity id : " + activity.id);
                 
             }
             catch(e) {
@@ -85,7 +82,6 @@ exports.getActiveActivityById = async function(activityId) {
                 return false;
             }
         }
-        console.log("service departing id : " + JSON.stringify(activity));
         return activity;
     }
     else {
