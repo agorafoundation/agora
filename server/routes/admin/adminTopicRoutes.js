@@ -163,7 +163,11 @@ router.route('/')
                 (req.body.topicAssessmentActive == 'checked') ? topic.assessment.active = true : topic.assessment.active = false;
                 
                 // assessment questions
-                let numQuestions = req.body.topicAssessmentQuestionId.length;
+                let numQuestions = 0;
+                if(req.body.topicAssessmentQuestionId) {
+                    numQuestions = req.body.topicAssessmentQuestionId.length;
+                }
+                
                 for( let i = 1; i <= numQuestions; i++ ) {
                     // create each question
                     let question = AssessmentQuestion.emptyAssessmentQuestion();
