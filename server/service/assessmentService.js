@@ -43,15 +43,15 @@ exports.getActiveAssessmentById = async function(assessmentId) {
 
                     // find the options associated with each question
                     text = "SELECT * FROM assessment_question_option WHERE active = $1 AND assessment_question_id = $2";
-                    values = [ true, quesiton.id ];
+                    values = [ true, question.id ];
     
                     let res3 = await db.query(text, values);
                     if(res3.rowCount > 0) {
                         for( let j = 0; j < res3.rowCount; j++ ) {
-                            let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res3.rows[i]);
+                            let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res3.rows[j]);
+
+                            question.options.push(option);
                         }
-    
-                        question.options.push(option);
                     }
     
                     assessment.questions.push(question);
@@ -83,17 +83,17 @@ exports.getActiveAssessmentById = async function(assessmentId) {
             console.log(" ----- deleting the old the assesment -----");
             // delete all existing data for this assessment
 
-            // get the existing db oldassessment in order to delete it first
+            // get the existing db oldAssessment in order to delete it first
             let oldAssessment = await exports.getActiveAssessmentById(assessment.id);
             console.log("Old assessment: \n" + JSON.stringify(oldAssessment) + "\n\n");
 
             // go through options, questions and the assessment and delete all of them
-            if(oldAssessment.questions) {
-                for( let i = 0; i < oldassessment.questions.length; i++ ) {
-                    if(oldassessment.questions[i].options) {
-                        for( let i = 0; i < oldassessment.questions[i].options.length; i++ ) {
+            if(oldAssessment && oldAssessment.questions) {
+                for( let i = 0; i < oldAssessment.questions.length; i++ ) {
+                    if(oldAssessment.questions[i].options) {
+                        for( let i = 0; i < oldAssessment.questions[i].options.length; i++ ) {
                             let text = "DELETE FROM assessment_question_option WHERE id = $1;";
-                            let values = [ oldassessment.questions[i].options[j].id ];
+                            let values = [ oldAssessment.questions[i].options[j].id ];
                     
                             try {
                                 let res = await db.query(text, values);
@@ -107,7 +107,7 @@ exports.getActiveAssessmentById = async function(assessmentId) {
                     }
                     // delete the question
                     let text = "DELETE FROM assessment_question WHERE id = $1;";
-                    let values = [ oldassessment.questions[i].id ];
+                    let values = [ oldAssessment.questions[i].id ];
             
                     try {
                         let res = await db.query(text, values);
@@ -121,7 +121,7 @@ exports.getActiveAssessmentById = async function(assessmentId) {
 
             // delete the assessment
             let text = "DELETE FROM assessments WHERE id = $1;";
-            let values = [ oldassessment.id ];
+            let values = [ oldAssessment.id ];
     
             try {
                 let res = await db.query(text, values);
@@ -174,7 +174,8 @@ exports.getActiveAssessmentById = async function(assessmentId) {
                                                     assessment.questions[i].options[j].id = res3.rows[0].id;
 
                                                     // update the correct option id with the actual id number and not the option index
-                                                    if( ( j + 1 ) === assessment.questions[i].options[j].optionNumber) {
+                                                    console.log("--- CHeck -- - " + ( j + 1 ) + "==" + assessment.questions[i].correctOptionId);
+                                                    if( ( j + 1 ) == assessment.questions[i].correctOptionId) {
                                                         console.log("------------------- updating the correct_option_id ------------------------")
                                                         text = "UPDATE assessment_question SET correct_option_id = $1 WHERE id = $2;"
                                                         values = [ assessment.questions[i].options[j].id, assessment.questions[i].id ];

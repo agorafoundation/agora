@@ -90,6 +90,10 @@ router.route('/')
                 topic.topicHtml = req.body.submission_text;
                 topic.active = (req.body.topicActive == "on") ? true : false;
 
+                if(req.body.topicAssessmentId) {
+                    topic.assessmentId = req.body.topicAssessmentId;
+                }
+
                 // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
                 if(topic.id > 0) {
                     topicService.getActiveTopicById(topic.id).then((dbTopic) => {
@@ -135,11 +139,16 @@ router.route('/')
                 }
 
                 // assessment
+                console.log('checking assessmentId ' + topic.assessmentId);
                 if(!topic.assessmentId > 0) {
                     if(!topic.assessment) {
                         topic.assessment = Assessment.emptyAssessment();
                     }
                 }
+                else {
+                    topic.assessment.id = topic.assessmentId;
+                }
+                console.log("assessmentId set to " + topic.assessment.id);
 
                 // TODO: is there anything to do with assessment type?? currently hard coding 1, isRequired is currently deemed to be true for all assessments.
                 topic.assessment.assessmentType = 1;
@@ -167,14 +176,22 @@ router.route('/')
                     question.isRequired = true;
 
                     // go through each option
-                    if(req.body["topicAssessmentQuestionOptions-" + i]) {
-                        let optionLength = req.body["topicAssessmentQuestionOptions-" + i].length;
+                    if(req.body["topicAssessmentQuestionOptionId-" + i]) {
+                        let optionLength = req.body["topicAssessmentQuestionOptionId-" + i].length;
                         console.log("question num : " + i + " has length: " + optionLength);
                         for( let j = 0; j < optionLength; j++ ) {
                             // create the option
                             let questionOption = AssessmentQuestionOption.emptyAssessmentQuestionOption();
                             questionOption.active = true;
-                            questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
+
+                            // trying a fix for the issue where options have each letter saved as individual option
+                            if(optionLength > 1) {
+                                questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i][j];
+                            }
+                            else {
+                                questionOption.optionAnswer = req.body["topicAssessmentQuestionOptions-" + i];
+                            }
+                            
                             questionOption.optionNumber = (j + 1);
                             // check to see if this is the checked option to set correct
                             console.log("CHECK::: " + req.body["topicAssessmentQuestionOptionsCorrect-" + i ] + "==" + req.body["topicAssessmentQuestionOptionId-" + i ][j]);
