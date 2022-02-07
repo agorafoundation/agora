@@ -762,3 +762,143 @@ input:checked + .slider:after {
 .correct-background {
     background-color: #04AA6D;
 }
+
+/* Code for goal pathway drag and drop */
+.available-container {
+    width: 50%;
+    float: left;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+}
+.chosen-container {
+    width: 50%;
+    float: left;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+}
+
+.available-items {
+    
+    display: grid;
+    /*grid-template-rows: repeat(5, 1fr); */
+    gap: 10px;
+    min-height: 3rem;
+}
+.chosen-items {
+    display: grid;
+    /*grid-template-rows: repeat(5, 1fr); */
+    gap: 10px;
+    min-height: 3rem;
+}
+
+/* to indicate an item is draggable */
+.draggable {
+    cursor: move;
+    user-select: none;
+    border: 3px solid #666;
+    background-color: #ddd;
+    border-radius: .5em;
+    padding: 10px;
+}
+
+.draggable.over {
+    border: 3px dotted #666;
+}
+
+/* Create assessment */
+.question-border {
+    border: 3px solid #888;
+    background-color: #ddd;
+    border-radius: .5em;
+    padding: 10px;
+}
+.option-border {
+    border: 3px solid #aaa;
+    background-color: #eee;
+    border-radius: .5em;
+    padding: 10px;
+}
+
+/* accordion */
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.accordion .accordion-container {
+    position: relative;
+    margin: 10px 10px;
+}
+
+/* Positions the labels relative to the .container. Adds padding to the top and bottom and increases font size. Also makes its cursor a pointer */
+
+.accordion .accordion-label {
+    position: relative;
+    padding: 10px 0;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+}
+
+
+/* Positions the plus sign 5px from the right. Centers it using the transform property. */
+
+.accordion .accordion-label::before {
+    content: '+';
+    color: black;
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    font-size: 30px;
+    transform: translateY(-50%);
+}
+  
+/* Hides the content (height: 0), decreases font size, justifies text and adds transition */
+  
+.accordion .content {
+    position: relative;
+    height: 0;
+    font-size: 20px;
+    text-align: justify;
+    width: 100%;
+    overflow: hidden;
+    transition: 0.5s;
+}
+
+/* Adds a horizontal line between the contents */
+
+.accordion hr {
+    width: 100;
+    margin-left: 0;
+    border: 1px solid grey;
+}
+
+/* Unhides the content part when active. Sets the height */
+
+.accordion .accordion-container.accordion-active .content {
+    height: 100%;
+}
+
+/* Changes from plus sign to negative sign once active */
+
+.accordion .accordion-container.accordion-active .label::before {
+    content: '-';
+    font-size: 30px;
+}
+
+  /* END accordion */
+
+
+
+  .button-right {
+      float:right;
+  }

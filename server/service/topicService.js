@@ -108,7 +108,7 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
  * Retrieves all active topic 
  * @returns All active topics as a list
  */
- exports.getAllAcitveTopics = async function() {
+ exports.getAllActiveTopics = async function() {
     const text = "SELECT * FROM topics WHERE active = $1";
     const values = [ true ];
 
@@ -128,6 +128,59 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
     }
     catch(e) {
         console.log(e.stack)
+    }
+}
+
+/**
+ * Get an active topic by id
+ * @param {Integer} topicId 
+ * @returns topic
+ */
+ exports.getActiveTopicById = async function(topicId) {
+    let text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
+    let values = [ true, topicId ];
+    try {
+        let topic = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            topic = Topic.ormTopic(res.rows[0]);
+                  
+        }
+        return topic;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+/**
+ * Retrieves all active topics created by a particular owner
+ * @returns All active topics as a list
+ */
+ exports.getAllActiveTopicsForOwner = async function(ownerId) {
+    const text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by id;";
+    const values = [ true, ownerId ];
+
+    let topics = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            topics.push(Topic.ormTopic(res.rows[i]));
+        }
+
+        return topics;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
     }
 }
 
@@ -155,9 +208,10 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
                 let res2 = await db.query(text, values);
 
                 if(res2.rowCount > 0) {
+
                     // model it
                     assessment = Assessment.ormAssessment(res2.rows[0]);
-                    //console.log("assessment object: " + JSON.stringify(assessment))
+                    console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
                     values = [ assessment.id, true ];
@@ -198,18 +252,25 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
             }
 
             // get the resources
-            text = "SELECT * from resources where topic_id = $1 and active = $2";
-            values = [ topic.id, true ];
+
+            // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
+            // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
+            text = "SELECT r.id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
+            values = [ topic.id, true, true ];
             let res6 = await db.query(text, values);
+
             let resources = [];
+
             for(let i=0; i < res6.rowCount; i++) {
+
                 resources.push(Resource.ormResource(res6.rows[i]));
+
             }
             topic.resources = resources;
 
-            // console.log("------------------------");
-            // console.log("Full Topic: " + JSON.stringify(topic));
-            // console.log("------------------------");
+            console.log("------------------------");
+            console.log("Full Topic: " + JSON.stringify(topic));
+            console.log("------------------------");
             return topic;
             
         }
@@ -300,16 +361,15 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 }
             }
 
-            // get the completed resources, completed resources are queried by their corrosponding resource id so we 
-            // have to get the resources first then iterate through them
-            text = "SELECT * from resources where topic_id = $1 and active = $2";
+            // get the completed resources
+            text = "SELECT * FROM topic_resource WHERE topic_id = $1 and active = $2";
             values = [ topicEnrollment.topicId, true ];
             let res6 = await db.query(text, values);
             //let resources = [];
             for(let i=0; i < res6.rowCount; i++) {
 
                 text = "SELECT * from completed_resource where resource_id = $1 AND user_id = $2 and active = $3";
-                values = [ res6.rows[i].id, topicEnrollment.userId, true ];
+                values = [ res6.rows[i].resource_id, topicEnrollment.userId, true ];
                 let res7 = await db.query(text, values);
 
                 //let completedResources = [];
@@ -339,6 +399,113 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 }
 
 
+
+/**
+ * Saves a topic to the database, creates a new record if no id is assigned, updates existing record if there is an id.
+ * @param {Topic} topic 
+ * @returns Topic object with id 
+ */
+ exports.saveTopic = async function(topic) {
+    // check to see if an id exists - insert / update check
+    if(topic) {
+        console.log("incomming topicg: " + JSON.stringify(topic));
+        if(topic.id > 0) {
+            console.log("service 1");
+            
+            // update
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy, topic.id ];
+    
+            try {
+                let res = await db.query(text, values);
+            }
+            catch(e) {
+                console.log("[ERR]: Error updating topic - " + e);
+                return false;
+            }
+            
+        }
+        else {
+            console.log("service 2");
+            // insert
+            let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
+
+            try {
+
+                let res = await db.query(text, values);
+                console.log("teh row is : " + res.rows[0]);
+                if(res.rowCount > 0) {
+                    
+                    topic.id = res.rows[0].id;
+                }
+                
+            }
+            catch(e) {
+                console.log("[ERR]: Error inserting topic - " + e);
+                return false;
+            }
+        }
+        console.log("service returning : " + JSON.stringify(topic));
+        return topic;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Will save or update resources associted with a topic.  
+ * Resources are passed as an Array of integers.  This function will replace any existing resources for
+ * the topic with the resources represented by the resource id's passed.
+ * @param {Integer} topicId id of the topic 
+ * @param {*} resourceIds Array of resource id's to be associated with the topic
+ * @returns true for success / false for failure
+ */
+ exports.saveResourcesForTopic = async function(topicId, resourceIds, resourcesRequired) {
+    // get the most recent version of the topic
+    let text = "SELECT * from topics where id = $1";
+    let values = [ topicId ];
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rowCount > 0) {
+
+            // first remove current resources associated with the topic
+            text = "DELETE FROM topic_resource WHERE topic_id = $1";
+            values = [ topicId ];
+
+            let res2 = await db.query(text, values);
+
+            // now loop through the array and add the new resources
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            if(resourceIds && resourceIds.length > 0) {
+                for( let i=0; i < resourceIds.length; i++ ) {
+                    isRequired = true;
+                    if(resourcesRequired.length > i) {
+                        isRequired = resourcesRequired[i];
+                    }
+                    text = "INSERT INTO topic_resource (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
+                    values = [ topicId, resourceIds[i], (i + 1), isRequired, true, res.rows[0].ownedBy ];
+
+                    let res3 = await db.query(text, values);
+                }
+            }
+        }
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
+
+    return true
+}
+
+
 /**
  * Saves the users topic enrollment and all associated information such as completed assessments, activity and resources
  * You MUST pass the completely populated TopicEnrollment object with associated .topic and all completed objects populated 
@@ -356,8 +523,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
     let values = [];
 
     try {
-
-        
 
         // save pre assessment data
         if(topicEnrollment.preAssessment && topicEnrollment.topic && topicEnrollment.topic.assessment) {
@@ -563,8 +728,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
             }
         }
         
-
-        
         return topicEnrollment;
 
     }
@@ -713,7 +876,7 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 
 
 /**
- * Get all topics that a user has an active enrollment in, returns the topic with the highest version number
+ * Get all topics that a user has an active enrollment in
  * if the user has more then one record for the same topic id.
  * @param {Integer} userId id of user enrolled
  * @returns List<topic> a list of the topic objects the user is enrolled in

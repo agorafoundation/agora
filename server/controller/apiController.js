@@ -29,6 +29,11 @@ if(process.env.STRPIE_TOGGLE == "true") {
     router.use('/stripe', stripe);
 }
 
+/**
+ * Goal APIs
+ */
+let goalApi = require('./goalController');
+router.use('/goal', goalApi);
 
 /**
  * Topic APIs

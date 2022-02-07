@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('./partials/adminMenu'); %> 
+        </nav>
+
+        <!-- About Section-->
+       
+        <section class="page-section-top-padded mb-0" id="about">
+            <div class="container navbar-interior font-weight-bold text-primary">
+                
+                <%- include('../partials/welcome'); %>
+            </div>
+
+            <div class="container">
+                
+                <h3 class="text-secondary">Goals</h3>
+                
+                <div class="divider-custom">
+                </div>
+
+                
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+
+                        <div class="col-lg-3">
+                            <a class="btn btn-primary" href="/a/goal/0" >Create a Goal</a>
+                            <hr />
+                            <h4 class="text-secondary">Your Goals:</h4>
+                            
+                            <%
+                            if(ownerGoals && ownerGoals.length > 0) {
+                                for(let i=0; i < ownerGoals.length; i++) {
+                                %>
+                                    <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a>
+                                    <br />
+                                <%
+                                }
+                            }
+
+                            %>
+                            
+                            
+                        </div>
+                        <div class="col-lg-9">
+                            
+                            
+                            <section>
+
+                                <h4 class="text-secondary">Goal</h4>
+
+                                <% if(!!locals.message){ %>
+                                    <div class="alert-message alert-message-warning" role="alert">
+                                        <h3 ><%= message %></h3>
+                                        <p><%= message2 %></p>
+                                    </div>
+                                <% } 
+                                
+                                if(goal) {
+                                    %>
+                                    <form action="/a/goal" id="goalForm" enctype="multipart/form-data" method="POST">
+                                        <div class="form-group">
+                                            <input type="hidden" name="goalId" value="<%- goal.id %>" />
+                                            Version: <input type="input" class="form-control form-control-lg" name="goalVersion" value="<%- goal.goalVersion %>" id="goalVersion" placeholder="Version" disabled>
+                                            Name: <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Name" required>
+                                            Desciption: <input type="input" class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description">
+                                            Image: <img class="img-supersmall" src="<%- goal.goalImage %>" />
+                                            <div class="mb-2">
+                                                <label for="formFile" class="form-label">Upload an image for this goal (1MB Max size)</label>
+                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- goal.goalImage %>" name="goalImage">
+                                            </div>
+                                            Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
+                                            <br />
+                                            <br />
+                                            
+                                            <%- include('./partials/pathway') %>
+
+                                        </div>
+                                        <button type="submit" id="goalButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
+                                        <br />
+                                    </form>
+                                    <%
+                                }
+                                
+                                %>
+
+                            </section>
+
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('../partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('../partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <%- include('../partials/jsincludes'); %>
+    </body>
+</html>

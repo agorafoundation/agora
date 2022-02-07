@@ -7,7 +7,6 @@
 
 function resource() {
     this.id = -1;
-    this.topicId = -1;
     this.resourceType = 1;
     this.resourceName = "";
     this.resourceDescription = "";
@@ -17,6 +16,7 @@ function resource() {
     this.isRequired = -1;
     this.active = true;
     this.createTime;
+    this.ownedBy = -1;
 }
 
 exports.emptyResource = () => {
@@ -26,7 +26,6 @@ exports.emptyResource = () => {
 exports.ormResource = function (row) {
     let resource = exports.emptyResource();
     resource.id = row.id;
-    resource.topicId = row.topic_id;
     resource.resourceType = row.resource_type;
     resource.resourceName = row.resource_name;
     resource.resourceDescription = row.resource_description;
@@ -36,5 +35,6 @@ exports.ormResource = function (row) {
     resource.isRequired = row.is_required;
     resource.active = row.active;
     resource.createTime = row.create_time;
+    resource.ownedBy = row.owned_by;
     return resource;
 }

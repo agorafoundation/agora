@@ -22,10 +22,41 @@ const Event = require('../model/event');
  * Retrieves all active goals with the highest version number
  * @returns All active goals as a list
  */
- exports.getAllAcitveGoals = async function() {
+ exports.getAllActiveGoals = async function() {
     const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
     const values = [ true ];
+
+    let goals = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+
+        for(let i=0; i<res.rows.length; i++) {
+            goals.push(Goal.ormGoal(res.rows[i]));
+        }
+
+        return goals;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
+
+/**
+ * Retrieves all active goals created by a particular owner with the highest version number
+ * @returns All active goals as a list
+ */
+ exports.getAllActiveGoalsForOwner = async function(ownerId) {
+    const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and gl.owned_by = $2 order by gl.id;";
+    const values = [ true, ownerId ];
 
     let goals = [];
     
@@ -136,6 +167,145 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
         console.log(e.stack)
     }
 }
+
+/**
+ * Get the most recent version of an active goal by id
+ * @param {Integer} goalId 
+ * @returns goal
+ */
+ exports.getMostRecentActiveGoalById = async function(goalId) {
+    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
+    let values = [ true, goalId ];
+    try {
+        let goal = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            goal = Goal.ormGoal(res.rows[0]);
+                  
+        }
+        return goal;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+/**
+ * Saves a goal to the database, creates a new record if no id is assigned, updates existing record if there is an id.
+ * @param {Goal} goal 
+ * @returns Goal object with id 
+ */
+exports.saveGoal = async function(goal) {
+    // check to see if an id exists - insert / update check
+    if(goal) {
+        if(goal.id > 0) {
+            
+            // update
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, owned_by = $6 WHERE id = $7;";
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.ownedBy, goal.id ];
+    
+            try {
+                let res = await db.query(text, values);
+            }
+            catch(e) {
+                console.log("[ERR]: Error updating goal - " + e);
+                return false;
+            }
+            
+        }
+        else {
+            // get the current max goal id
+            let text = "select max(id) from goals;";
+            let values = [];
+            try {
+                let res = await db.query(text, values);
+                goal.id = res.rows[0].max; 
+                goal.id++;
+                if(res.rowCount > 0) {
+                    // insert
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;";
+                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.ownedBy ];
+                    
+                    let res2 = await db.query(text, values);
+        
+                    if(res2.rowCount > 0) {
+                        goal.id = res2.rows[0].id;
+                    }
+                }
+            }
+            catch(e) {
+                console.log("[ERR]: Error inserting goal - " + e);
+                return false;
+            }
+            
+
+            
+        }
+        return goal;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Will save or update pathway for goal.  Pathway represents the topics associated with a goal
+ * and is passed as an Array of integers.  This function will replace any existing pathway for
+ * the goal with the topics represented by the topic id's passed.
+ * @param {Integer} goalId id of the goal for the pathway
+ * @param {*} pathway Array of topic id's that make up the pathway
+ * @returns true for success / false for failure
+ */
+exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
+    // get the most recent version of the goal
+    let text = "SELECT MAX(goal_version) as version from goals where id = $1";
+    let values = [ goalId ];
+
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rowCount > 0) {
+            /**
+             * TODO: the idea behind the goal version was to keep track of changes to the pathway and not 
+             * just delete it and replace it.  This way if students finished a goal under with a particular 
+             * pathway and completed but then the pathway changed after they would not be "incomplete" because
+             * of the change.  This is will need to be explored, but for MVP I just want to work, as  it 
+             * matures this should be re-evaluated.
+             */
+            // first remove current goal enrollments
+            text = "DELETE FROM goal_path WHERE goal_id=$1";
+            let values = [ goalId ];
+
+            let res2 = await db.query(text, values);
+
+            // now loop through the array and add the new pathway
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            if(pathway && pathway.length > 0) {
+                for( let i=0; i < pathway.length; i++ ) {
+                    text = "INSERT INTO goal_path (goal_id, goal_version, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5, $6);";
+                    values = [ goalId, res.rows[0].version, pathway[i], (i + 1), true, true ];
+
+                    let res3 = await db.query(text, values);
+                }
+            }
+        }
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
+
+
+    return true
+}
+
 
 /**
  * Add a user enrollment to the most recent version of a goal 

@@ -29,12 +29,13 @@ const fs = require('fs');
 var path = require('path');
 var baseProfileUrl = process.env.AVATAR_BASE_URL;
 var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE);
-var UPLOAD_PATH_BASE = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE_BASE);
+var UPLOAD_PATH_BASE = path.resolve(__dirname, '..', process.env.STORAGE_BASE);
 var maxSize = 1 * 1024 * 1024;
 
 // import stripe controller
 const stripeService = require("../service/stripeService");
 
+// Start multer
 var multer = require('multer');
 
 const fileFilter = (req, file, cb) => {
@@ -56,7 +57,8 @@ var storage = multer.diskStorage({
         cb(null, filename);
     }
 })
-let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } }).single('profileImage')
+let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } }).single('profileImage');
+// end multer
 
 router.route('/')
     .patch(async function(req, res) {
@@ -369,7 +371,7 @@ router.post('/uploadProfilePicture', (req, res) => {
     if(req.session.uploadMessage) {
         req.session.uploadMessage = undefined;
     }
-    //console.log("starting upload!");
+    //call multer upload function defined near top
     upload(req, res, (err) => {
         if(err) {
             console.log("Error uploading profile picture : " + err);
@@ -394,9 +396,7 @@ router.post('/uploadProfilePicture', (req, res) => {
             })
 
             
-        }
-
-        
+        }  
     })
 });
 

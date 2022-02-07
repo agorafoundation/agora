@@ -363,6 +363,12 @@ app.use('/auth', auth);
 let api = require('./controller/apiController')
 app.use('/api', api);
 
+/**
+ * Admin
+ */
+let admin = require('./routes/admin/adminRoutes');
+app.use('/a', admin);
+
 
 
 // github api

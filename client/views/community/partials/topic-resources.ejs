@@ -70,7 +70,7 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
                 if(topicEnrollment.topic.resources[i].isRequired) {
                 %>
                 <span class="resource-complete-text">Completed: </span>
-                <input type="checkbox" class="resource-complete-checkbox" id="resource_complete_<%- topicEnrollment.topic.resources[i].id %>" name="resource-complete-ck" onclick="updateTopicResourceCompleteStatus(<%- topicEnrollment.topic.resources[i].id %>, 'testing')" <%- (resourceCompleted)?'checked':'t' %> />
+                <input type="checkbox" class="resource-complete-checkbox" id="resource_complete_<%- topicEnrollment.topic.resources[i].id %>" name="resource-complete-ck" onclick="updateTopicResourceCompleteStatus(<%- topicEnrollment.topic.resources[i].id %>, 'testing')" <%- (resourceCompleted)?'checked':'' %> />
                 <%
                 }   
                 %>

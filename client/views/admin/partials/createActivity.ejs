@@ -1,0 +1,38 @@
+<%
+if(topic && topic.activity) {
+    %>
+    <div id="topicActivity">
+        Type: <select name="activityType" id="activityType" class="form-control form-control-lg">
+            <%
+            if(topic.activity.activityType === 1) {
+                %>
+                <option value="1" selected>General Activity</option>
+                <%
+            }
+            else {
+                %>
+                <option value="1">General Activity</option>
+                <%
+            }
+            %>
+            <%
+            if(topic.activity.activityType === 2) {
+                %>
+                <option value="2" selected>Another Type (do not select yet!)</option>
+                <%
+            }
+            else {
+                %>
+                <option value="2">Another Type (do not select yet!)</option>
+                <%
+            }
+            %>
+        </select>
+        Name: <input type="input" class="form-control form-control-lg" name="activityName" value="<%- topic.activity.activityName %>" id="activityName" placeholder="Activity Name" required>
+        Desciption: <input type="input" class="form-control form-control-lg" name="activityDescription" value="<%- topic.activity.activityDescription %>" id="activityDescription" placeholder="Activity Description">
+        <div id="quill_editor_activity"><%- topic.activity.activityHtml %></div>
+        <input type="hidden" id="activity_html" name="activity_html" value=""></input>
+    </div>
+    <%
+}
+%>

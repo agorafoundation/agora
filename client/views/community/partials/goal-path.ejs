@@ -122,6 +122,12 @@
             }
         }
     }
+    if(goal.topics.length <= 0) {
+        %>
+        <p>This Goal does not have any topics assigned yet!</p>
+        <p>Back to <a href="/community">Community Home</a></p>
+        <%
+    }
     %>
     </ul>
 </div>

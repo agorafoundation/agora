@@ -198,11 +198,32 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary">Upload</button>
                             </form>
+                            
+
+                            <%
+                            console.log(JSON.stringify(user.roles));
+                            if(user.roles.filter(role => role.roleName === "Creator").length > 0) {
+                                %>
+                                <hr />
+                                <h2>Create Content</h2>
+
+                                <a class="card" style="width: 100%;" href="/a">
+                                    <img class="product-img-overlay" src="<%- locals.user.profileFilename %>" alt="Card image cap">
+                                    <div class="card-body product-card-text-raised">
+                                        <h5 class="card-title">Creator Panel</h5>
+                                        <p class="card-text">Manage, edit and create new goals, topics and resources</p>
+                                    </div>
+                                </a> 
+                                <%
+                            }
+                            %>
+
                             <div class="divider-custom">
                                 <div class="divider-custom-line cherry-red-bg-color"></div>
                                 <div class="divider-custom-icon"><i class="fas fa-chalkboard-teacher cherry-red-color"></i></div>
                                 <div class="divider-custom-line cherry-red-bg-color"></div>
                             </div>
+
                             <h2>Membership</h2>
 
                             <% 
