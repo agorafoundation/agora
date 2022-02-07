@@ -77,6 +77,9 @@ server/db/createTablesScript.sql
 server/db/codingcoach.sql
 server/db/codingcoach-v.2.sql
 
+# images
+client/public/assets/
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
