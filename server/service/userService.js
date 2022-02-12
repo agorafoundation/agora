@@ -260,6 +260,33 @@ exports.reValidateEmail = async function(email) {
 
 }
 
+/**
+ * Returns the active user matching a given id
+ * 
+ * @param {integer} id id to lookup
+ * @returns User associated with id with an active status or false in none found.
+ */
+ exports.getActiveUserById = async function(id) {
+    const text = "SELECT * FROM user_data WHERE id = $1 and active = $2";
+    const values = [ id, true ];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rows.length > 0) {
+            return User.ormUser(res.rows[0]);
+        }
+        else {
+            return false;
+        }
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
 exports.getUserByUsername = async function(username) {
     let text = "SELECT * FROM user_data WHERE LOWER(username) = LOWER($1)";
     let values = [username];
