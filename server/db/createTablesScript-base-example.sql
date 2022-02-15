@@ -2,7 +2,7 @@
 
 -- setup (as root / postgres)
 create database codingcoach;
--- create user codingcoach with encrypted password '...';
+create user codingcoach with encrypted password 'codingcoach';
 grant all privileges on database codingcoach to codingcoach;
 grant connect on database codingcoach to codingcoach;
 \c codingcoach codingcoach
