@@ -267,8 +267,8 @@ exports.reValidateEmail = async function(email) {
  * @returns User associated with id with an active status or false in none found.
  */
  exports.getActiveUserById = async function(id) {
-    const text = "SELECT * FROM user_data WHERE id = $1 and active = $2";
-    const values = [ id, true ];
+    const text = "SELECT * FROM user_data WHERE id = $1;";
+    const values = [ id ];
     
     try {
          
@@ -345,7 +345,15 @@ exports.getUserByEmail = async function(email) {
         let res = await db.query(text, values);
         //
         if(res.rows.length > 0) {
-            return User.ormUser(res.rows[0]);
+            let user = User.ormUser(res.rows[0]);
+
+            // note if the user is a member
+            user.member = await topicService.verifyUserHasMembershipAccessRole(user);
+
+            // note if the user is a creator
+            user.creator = await topicService.verifyUserHasMembershipAccessRole(creator);
+
+            return user;
         }
         else {
             return false;

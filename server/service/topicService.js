@@ -103,6 +103,22 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 }
 
 
+/**
+ * This is the authorative source on which roles qualify for creator membership.  Currently Administrators and Creators.
+ * @param {User (built by session creation)} userWithRoles 
+ * @returns 
+ */
+ exports.verifyUserHasCreatorAccessRole = async function(userWithRoles) {
+    if(userWithRoles && userWithRoles.roles && userWithRoles.roles.length > 0 && userWithRoles.roles.filter(role => role.roleName == "Administrator" || role.roleName == "Creator").length > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
+
+
 
 /**
  * Retrieves all active topic 

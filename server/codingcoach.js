@@ -352,6 +352,12 @@ let topicRoutes = require('./routes/community/topicRoutes');
 app.use('/community/topic', topicRoutes);
 
 /**
+ * User / Profile routes
+ */
+let userRoutes = require('./routes/userRoutes');
+app.use('/user', userRoutes);
+
+/**
  * Dashboard Routes
  */
 let auth = require('./routes/authRoutes');
@@ -368,6 +374,7 @@ app.use('/api', api);
  */
 let admin = require('./routes/admin/adminRoutes');
 app.use('/a', admin);
+
 
 
 

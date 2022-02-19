@@ -11,7 +11,7 @@
  
  // require services
  //const goalService = require('../../service/goalService');
- const userService = require('../../service/userService');
+ const userService = require('../service/userService');
  
  const bodyParser = require('body-parser');
  router.use(bodyParser.urlencoded({
@@ -25,9 +25,11 @@
  .get(async (req, res) => {
      // get the user data
      let userId = req.params.userId;
-     let user = await userService.getActiveUserById(userId);
+     let userData = await userService.getActiveUserById(userId);
+
+     console.log("returned user: " + userData);
      
-     res.render('community/user', {user: user});
+     res.render('community/user', {userData: userData});
  }
  
  );
