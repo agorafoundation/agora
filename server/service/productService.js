@@ -126,6 +126,32 @@ exports.createOrder = async function(order) {
 }
 
 
+/**
+ * This is the authorative source on which roles qualify for user membership.  Currently Administrators and Founders.
+ * @param {User (built by session creation)} userWithRoles 
+ * @returns 
+ */
+ exports.verifyUserCodeBotPurchase = async function(user) {
+    if(user) {
+        // get user orders
+        const orders = await exports.getOrdersByUserId(user.id);
+
+        // get all products ordered
+        let products = [];
+        for(let i=0; i<orders.length; i++) {
+            let product = await exports.getProductById(orders[i].productId);
+            if(product.productName == "Code Bot 3π+ Kit") {
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    else {
+        return false;
+    }
+
+}
 
 /**
  * Retrieve all products that are currently acvite from the database

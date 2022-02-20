@@ -340,6 +340,7 @@ CREATE INDEX IF NOT EXISTS idx_user_role_role_id ON user_role (role_id);
 
 -- insert into user_role_goal (user_id, role_id, active) values (1, 1, true);
 -- creator waiting for the first user
+insert into user_role (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
 insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
 

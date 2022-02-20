@@ -28,8 +28,45 @@
                 <div class="divider-custom">
                 </div>
                 
-                <h2><span class="text-primary" ><%- (!!userData)?userData.username:'' %></span>&nbsp;<%- (!!userData.member)?'[Supporter]':'' %></h2>
-                <img src="<%- (!!userData)?userData.profileFilename:'' %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                <h2><span class="text-primary" ><%- (!!userData)?userData.username:'' %></span>
+                    <img src="<%- (!!userData)?userData.profileFilename:'' %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                </h2>
+                <div id="user-badges">
+                    <h4>Badges:</h4>
+                    <%
+                    if(userData && userData.admin) {
+                        %>
+                        <img src="/assets/img/badges/admin-badge.png" title="Site Administrator" alt="Site Administrator" class="badge-image" />
+                        <%
+                    }
+                    %>
+
+                    <%
+                    if(userData && userData.member) {
+                        %>
+                        <img src="/assets/img/badges/founding-member-badge.png" title="Founding Supporter" alt="Founding Supporter" class="badge-image" />
+                        <%
+                    }
+                    %>
+
+                    <%
+                    if(userData && userData.creator) {
+                        %>
+                        <img src="/assets/img/badges/creator-badge.png" title="Creator" alt="Creator" class="badge-image" />
+                        <%
+                    }
+                    %>
+
+                    <%
+                    if(userData && userData.codebot) {
+                        %>
+                        <img src="/assets/img/badges/codebot-badge.png" title="Codebot" alt="Codebot" class="badge-image" />
+                        <%
+                    }
+                    %>
+
+                </div>
+                
 
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
@@ -151,8 +188,8 @@
                         
 
                         <div class="col-lg-8">
-                            
-                            
+                            <h4>Currently Enrolled In:</h4>
+                            <%- include('./partials/enrolled-goals') %>
 
                         </div>
                         

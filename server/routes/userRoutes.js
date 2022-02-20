@@ -25,11 +25,11 @@
  .get(async (req, res) => {
      // get the user data
      let userId = req.params.userId;
-     let userData = await userService.getActiveUserById(userId);
+     let user = await userService.getActiveUserById(userId);
 
-     console.log("returned user: " + userData);
+     console.log("returned user: " + JSON.stringify(user));
      
-     res.render('community/user', {userData: userData});
+     res.render('community/user', {user: user});
  }
  
  );
