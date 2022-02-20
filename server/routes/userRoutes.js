@@ -27,7 +27,7 @@
      let userId = req.params.userId;
      let user = await userService.getActiveUserById(userId);
 
-     console.log("returned user: " + JSON.stringify(user));
+     //console.log("returned user: " + JSON.stringify(user));
      
      res.render('community/user', {user: user});
  }

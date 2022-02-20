@@ -21,7 +21,7 @@ const productService = require("../service/productService");
 
 // check that the user is logged in!
 router.use(function (req, res, next) {
-    if(!req.session.user) {
+    if(!req.session.authUser) {
         res.redirect(303, '/signIn');
     }
     else {
@@ -34,13 +34,13 @@ router.use(function (req, res, next) {
 router.route('/')
     .get(async function (req, res) {
         
-        if(req.session.user) {
-            const user = await userService.setUserSession(req.session.user.email);
-            req.session.user = null;
-            req.session.user = user;
-            res.locals.user = req.session.user;
+        if(req.session.authUser) {
+            const authUser = await userService.setUserSession(req.session.authUser.email);
+            req.session.authUser = null;
+            req.session.authUser = authUser;
+            res.locals.authUser = req.session.authUser;
             // get user orders
-            const orders = await productService.getOrdersByUserId(user.id);
+            const orders = await productService.getOrdersByUserId(authUser.id);
 
             // get all products ordered
             let products = [];
@@ -53,10 +53,10 @@ router.route('/')
             if(req.session.uploadMessage) {
                 let message = req.session.uploadMessage;
                 req.session.uploadMessage = null;
-                res.render('./auth/dashboard', { firstName: req.session.firstName, uploadMessage: message, products: products });
+                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
             }
             else {
-                res.render('./auth/dashboard', { firstName: req.session.firstName, products: products });
+                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
             }
             
         }

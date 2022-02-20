@@ -21,12 +21,12 @@
 // Middleware to verify both that the user is logged in and that they have access to the 
 // admin dashboard
 router.use(function (req, res, next) {
-    if(!req.session.user) {
+    if(!req.session.authUser) {
         // user is not signed in
         res.redirect(303, '/signIn');
     }
-    else if(req.session.user.roles.filter(role => role.roleName === "Creator").length <= 0 
-        && req.session.user.roles.filter(role => role.roleName === "Administrator").length <=0) {
+    else if(req.session.authUser.roles.filter(role => role.roleName === "Creator").length <= 0 
+        && req.session.authUser.roles.filter(role => role.roleName === "Administrator").length <=0) {
         // user does not have an appropriate role
         // TODO: is community the best place? for now it works
         res.redirect(303, '/community');

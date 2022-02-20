@@ -91,7 +91,7 @@
                                                 </div>
                                             </div>
                                             <% 
-                                            if(locals.user) { 
+                                            if(locals.authUser) { 
                                                 if(process.env.STRPIE_TOGGLE == "true") {
                                             %>
                                             <form action="<%- membership.productUrl %>" method="POST">
@@ -147,7 +147,7 @@
                                                 </div>
                                             </div>
                                             <% 
-                                            if(locals.user) { 
+                                            if(locals.authUser) { 
                                                 if(process.env.STRPIE_TOGGLE == "true") {
                                             %>
                                             <form action="<%- token.productUrl %>" method="POST">

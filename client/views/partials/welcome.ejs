@@ -1,13 +1,13 @@
-<% if(locals.user) { 
-    if(user.member) {
+<% if(locals.authUser) { 
+    if(locals.authUser.member) {
         %>
-        <p class="welcome-text">Welcome, <%= (!!locals.user.firstName)?user.firstName:'' %>! <span>Thank you for being a member!</span><br />
+        <p class="welcome-text">Welcome, <%= (!!locals.authUser.firstName)?authUser.firstName:'' %>! <span>Thank you for being a member!</span><br />
         <span class="signout-link"><a href="/signOut">[ SIGN OUT ]</a></span></p>
         <% 
     } 
     else {
         %>
-        <p class="welcome-text">Welcome, <%= (!!locals.user.firstName)?user.firstName:'' %>!<span> - You have <%- user.availableAccessTokens %> tokens</span><br />
+        <p class="welcome-text">Welcome, <%= (!!locals.authUser.firstName)?authUser.firstName:'' %>!<span> - You have <%- authUser.availableAccessTokens %> tokens</span><br />
         <span class="signout-link"><a href="/signOut">[ SIGN OUT ]</a></span></p>
         <% 
     }    

@@ -296,6 +296,19 @@ exports.reValidateEmail = async function(email) {
             // note if the user bought a 3pi
             user.codebot = await productService.verifyUserCodeBotPurchase(user);
 
+            // get enrolled paths for user, 
+            let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id);
+
+            // get enrolled topics for user
+            let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
+
+            // note if the user is a member
+            user.member = await topicService.verifyUserHasMembershipAccessRole(user);
+
+            //append enrolled topics
+            user.pathEnrollments = paths;
+            user.topicEnrollments = topics;
+
             return user;
         }
         else {

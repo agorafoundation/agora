@@ -22,7 +22,7 @@ router.use(bodyParser.json());
 
 // check that the user is logged in!
 router.use(function (req, res, next) {
-    if(!req.session.user) {
+    if(!req.session.authUser) {
         if(req.query.redirect) {
             res.locals.redirect = req.query.redirect;
         }
@@ -43,7 +43,7 @@ router.route('/:goalId')
     let goalId = req.params.goalId;
     let goal = await goalService.getActiveGoalWithTopicsById(goalId);
     //console.log("goal: " + JSON.stringify(goal));
-    res.render('community/goal', {goal: goal});
+    res.render('community/goal', {user: req.session.authUser, goal: goal});
 }
 
 );
@@ -52,16 +52,16 @@ router.route('/:goalId')
 router.route('/enroll/:goalId')
 .get(async (req, res) => {
     let goalId = req.params.goalId;
-    if(req.session.user) {
+    if(req.session.authUser) {
 
         // save the enrollment for the user in the goal
-        await goalService.saveGoalEnrollmentMostRecentGoalVersion(req.session.user.id, goalId);
+        await goalService.saveGoalEnrollmentMostRecentGoalVersion(req.session.authUser.id, goalId);
 
         // reset the session
-        const rUser = await userService.setUserSession(req.session.user.email);
+        const rUser = await userService.setUserSession(req.session.authUser.email);
 
-        req.session.user = null;
-        req.session.user = rUser;
+        req.session.authUser = null;
+        req.session.authUser = rUser;
 
         // send them to the course
         res.redirect('/community/goal/' + goalId);

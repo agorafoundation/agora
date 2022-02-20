@@ -60,7 +60,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id)
+        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.authUser.id)
         //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
         let goal = null;
         
@@ -97,7 +97,7 @@ router.route('/')
                             goal.goalImage = baseGoalImageUrl + req.session.savedGoalFileName;
                         } 
 
-                        goal.ownedBy = req.session.user.id;
+                        goal.ownedBy = req.session.authUser.id;
                         goalService.saveGoal(goal).then((savedGoal) => {
                             res.locals.message = "Goal Saved Successfully";
 
@@ -114,7 +114,7 @@ router.route('/')
                 }
                 else {
                     
-                    goal.ownedBy = req.session.user.id; 
+                    goal.ownedBy = req.session.authUser.id; 
 
                     goalService.saveGoal(goal).then((savedGoal) => {
                         res.locals.message = "Goal Saved Successfully";
@@ -143,10 +143,10 @@ router.route('/:goalId')
         let goalId = req.params.goalId;
 
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.user.id);
+        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.authUser.id);
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.user.id);
+        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id);
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
@@ -165,13 +165,13 @@ router.route('/:goalId')
 
         }
         else {
-            goal.ownedBy = req.session.user.id;
+            goal.ownedBy = req.session.authUser.id;
             goal.goalVersion = 1;
         }
       
         
         // make sure the user has access to this goal (is owner)
-        if(goal.ownedBy === req.session.user.id) {
+        if(goal.ownedBy === req.session.authUser.id) {
             res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics});
         }
         else {

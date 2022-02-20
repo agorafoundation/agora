@@ -128,7 +128,7 @@
                                     </div>
                                 </div>
                                 <% 
-                                if(locals.user) { 
+                                if(locals.authUser) { 
                                     if(process.env.STRPIE_TOGGLE == "true") {
                                 %>
                                 <form action="/api/stripe/cb1-checkout-session" method="POST">

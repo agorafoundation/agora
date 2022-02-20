@@ -25,47 +25,51 @@
 
             <div class="container">
 
-                <div class="divider-custom">
+                <div class="user-page-top">
+                    
+                        <img src="<%- (!!user)?user.profileFilename:'' %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                        
+                        <div id="user-badges">
+                            <h2><span class="text-primary" ><%- (!!user)?user.username:'' %></span></h2>
+                            <h4>Badges:</h4>
+                            <%
+                            if(user && user.admin) {
+                                %>
+                                <img src="/assets/img/badges/admin-badge.png" title="Site Administrator" alt="Site Administrator" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.member) {
+                                %>
+                                <img src="/assets/img/badges/founding-member-badge.png" title="Founding Supporter" alt="Founding Supporter" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.creator) {
+                                %>
+                                <img src="/assets/img/badges/creator-badge.png" title="Creator" alt="Creator" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.codebot) {
+                                %>
+                                <img src="/assets/img/badges/codebot-badge.png" title="Codebot" alt="Codebot" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                        </div>
+                   
                 </div>
                 
-                <h2><span class="text-primary" ><%- (!!userData)?userData.username:'' %></span>
-                    <img src="<%- (!!userData)?userData.profileFilename:'' %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
-                </h2>
-                <div id="user-badges">
-                    <h4>Badges:</h4>
-                    <%
-                    if(userData && userData.admin) {
-                        %>
-                        <img src="/assets/img/badges/admin-badge.png" title="Site Administrator" alt="Site Administrator" class="badge-image" />
-                        <%
-                    }
-                    %>
-
-                    <%
-                    if(userData && userData.member) {
-                        %>
-                        <img src="/assets/img/badges/founding-member-badge.png" title="Founding Supporter" alt="Founding Supporter" class="badge-image" />
-                        <%
-                    }
-                    %>
-
-                    <%
-                    if(userData && userData.creator) {
-                        %>
-                        <img src="/assets/img/badges/creator-badge.png" title="Creator" alt="Creator" class="badge-image" />
-                        <%
-                    }
-                    %>
-
-                    <%
-                    if(userData && userData.codebot) {
-                        %>
-                        <img src="/assets/img/badges/codebot-badge.png" title="Codebot" alt="Codebot" class="badge-image" />
-                        <%
-                    }
-                    %>
-
-                </div>
+                
+                
                 
 
                 <div class="text-left mt-4">
@@ -73,9 +77,9 @@
 
                         <div class="col-lg-4">
                             
-                            <h5><%- (!!userData)?userData.username:'' %>'s Interests</h5>
+                            <h5><%- (!!user)?user.username:'' %>'s Interests</h5>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.beginningProgramming) { %>
+                                <% if(user.beginningProgramming) { %>
                                     <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" disabled />
@@ -84,7 +88,7 @@
                                 <label class="custom-control-label" for="beginningProgramming">Beginning Programming</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.intermediateProgramming) { %>
+                                <% if(user.intermediateProgramming) { %>
                                     <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" disabled />
@@ -93,7 +97,7 @@
                                 <label class="custom-control-label" for="intermediateProgramming">Intermediate Programming</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.advancedProgramming) { %>
+                                <% if(user.advancedProgramming) { %>
                                     <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" disabled />
@@ -102,7 +106,7 @@
                                 <label class="custom-control-label" for="advancedProgramming">Advanced Programming</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.mobileDevelopment) { %>
+                                <% if(user.mobileDevelopment) { %>
                                     <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" disabled />
@@ -111,7 +115,7 @@
                                 <label class="custom-control-label" for="mobileDevelopment">Mobile Development</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.roboticsProgramming) { %>
+                                <% if(user.roboticsProgramming) { %>
                                     <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" disabled />
@@ -120,7 +124,7 @@
                                 <label class="custom-control-label" for="roboticsProgramming">Robotics Programming</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.webApplications) { %>
+                                <% if(user.webApplications) { %>
                                     <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" disabled />
@@ -129,7 +133,7 @@
                                 <label class="custom-control-label" for="webApplications">Web Applications</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.web3) { %>
+                                <% if(user.web3) { %>
                                     <input type="checkbox" class="custom-control-input" id="web3" name="web3" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="web3" name="web3" disabled />
@@ -138,7 +142,7 @@
                                 <label class="custom-control-label" for="web3">Web 3 / Blockchain</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.iotProgramming) { %>
+                                <% if(user.iotProgramming) { %>
                                     <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" disabled />
@@ -147,7 +151,7 @@
                                 <label class="custom-control-label" for="iotProgramming">Internet of Things (IoT) Programming</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.databaseDesign) { %>
+                                <% if(user.databaseDesign) { %>
                                     <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" disabled />
@@ -156,7 +160,7 @@
                                 <label class="custom-control-label" for="databaseDesign">Database Design</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.relationalDatabase) { %>
+                                <% if(user.relationalDatabase) { %>
                                     <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" disabled />
@@ -165,7 +169,7 @@
                                 <label class="custom-control-label" for="relationalDatabase">Relational Databases</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.noSqlDatabase) { %>
+                                <% if(user.noSqlDatabase) { %>
                                     <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" disabled />
@@ -174,7 +178,7 @@
                                 <label class="custom-control-label" for="noSqlDatabase">NoSQL Databases</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <% if(userData.objectRelationalMapping) { %>
+                                <% if(user.objectRelationalMapping) { %>
                                     <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" checked disabled />
                                 <% } else { %>
                                     <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" disabled />
