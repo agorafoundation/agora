@@ -17,6 +17,7 @@ const Event = require('../model/event');
 // import services
 const goalService = require("./goalService")
 const topicService = require("./topicService");
+const productService = require("./productService");
 
 
 // bcrypt
@@ -259,6 +260,68 @@ exports.reValidateEmail = async function(email) {
     return emailVerificationToken;
 
 }
+
+/**
+ * Returns the active user matching a given id
+ * 
+ * @param {integer} id id to lookup
+ * @returns User associated with id with an active status or false in none found.
+ */
+ exports.getActiveUserById = async function(id) {
+    const text = "SELECT * FROM user_data WHERE id = $1;";
+    const values = [ id ];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        if(res.rows.length > 0) {
+            let user = User.ormUser(res.rows[0]);
+
+            // get roles for the user
+            let userRoles = await exports.getActiveRolesForUserId(user.id);
+
+            // append the roles
+            user.roles = userRoles;
+
+            // note if the user is an admin 
+            user.admin = await topicService.verifyUserHasAdminRole(user);
+
+            // note if the user is a member
+            user.member = await topicService.verifyUserHasMembershipAccessRole(user);
+
+            // note if the user is a creator
+            user.creator = await topicService.verifyUserHasCreatorAccessRole(user);
+
+            // note if the user bought a 3pi
+            user.codebot = await productService.verifyUserCodeBotPurchase(user);
+
+            // get enrolled paths for user, 
+            let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id);
+
+            // get enrolled topics for user
+            let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
+
+            // note if the user is a member
+            user.member = await topicService.verifyUserHasMembershipAccessRole(user);
+
+            //append enrolled topics
+            user.pathEnrollments = paths;
+            user.topicEnrollments = topics;
+
+            return user;
+        }
+        else {
+            return false;
+        }
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
+
 
 exports.getUserByUsername = async function(username) {
     let text = "SELECT * FROM user_data WHERE LOWER(username) = LOWER($1)";

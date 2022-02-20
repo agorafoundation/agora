@@ -35,13 +35,13 @@ const UserRole = require("../model/userRole");
  * Stripe checkout sessions
  */
 router.post('/cb1-checkout-session', async (req, res) => {
-    //console.log(req.session.user)
+    //console.log(req.session.authUser)
     let coupon = req.body.checkoutcoupon;
     console.log("coupon sent : " + coupon);
     if(coupon) {
         try {
             const session = await stripe.checkout.sessions.create({
-                customer: req.session.user.stripeId,
+                customer: req.session.authUser.stripeId,
                 automatic_tax: {
                     enabled: true,
                 },
@@ -78,7 +78,7 @@ router.post('/cb1-checkout-session', async (req, res) => {
     else {
         try {
             const session = await stripe.checkout.sessions.create({
-                customer: req.session.user.stripeId,
+                customer: req.session.authUser.stripeId,
                 automatic_tax: {
                     enabled: true,
                 },
@@ -116,9 +116,9 @@ router.post('/cb1-checkout-session', async (req, res) => {
 });
 
 router.post('/founders-checkout-session', async (req, res) => {
-    //console.log(req.session.user)
+    //console.log(req.session.authUser)
     const session = await stripe.checkout.sessions.create({
-        customer: req.session.user.stripeId,
+        customer: req.session.authUser.stripeId,
         shipping_address_collection: {
             allowed_countries: ['US'],
         },
@@ -140,9 +140,9 @@ router.route('/')
 module.exports = router;
 
 router.post('/access-token-checkout-session', async (req, res) => {
-    //console.log(req.session.user)
+    //console.log(req.session.authUser)
     const session = await stripe.checkout.sessions.create({
-        customer: req.session.user.stripeId,
+        customer: req.session.authUser.stripeId,
         shipping_address_collection: {
             allowed_countries: ['US'],
         },
@@ -235,10 +235,10 @@ router.get('/founders-success', async function (req, res) {
                 await userService.saveUserRole(userRole);
 
                 // reset the session
-                const rUser = await userService.setUserSession(req.session.user.email);
+                const rUser = await userService.setUserSession(req.session.authUser.email);
 
-                req.session.user = null;
-                req.session.user = rUser;
+                req.session.authUser = null;
+                req.session.authUser = rUser;
             }
 
             res.locals.stripeSession = session;
@@ -274,11 +274,11 @@ router.get('/access-token-success', async function (req, res) {
                 await userService.addAccessTokensToUserById(user.id, order.quantity);
             }
             // reset the session
-            const rUser = await userService.setUserSession(req.session.user.email);
+            const rUser = await userService.setUserSession(req.session.authUser.email);
 
             // the new user has x tokens
-            req.session.user = null;
-            req.session.user = rUser;
+            req.session.authUser = null;
+            req.session.authUser = rUser;
 
             res.locals.stripeSession = session;
             res.locals.customer = customer;

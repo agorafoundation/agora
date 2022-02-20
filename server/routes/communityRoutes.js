@@ -24,7 +24,7 @@ router.use(bodyParser.json());
 
 // check that the user is logged in!
 router.use(function (req, res, next) {
-    if(!req.session.user) {
+    if(!req.session.authUser) {
         if(req.query.redirect) {
             res.locals.redirect = req.query.redirect;
         }
@@ -50,7 +50,7 @@ router.route('/')
         // get the events feed
         const feed = await eventController.communityEventFeed(10);
 
-        res.render('community/community', {availableGoals: availableGoals, feed: feed})
+        res.render('community/community', {user: req.session.authUser, availableGoals: availableGoals, feed: feed})
     }
 );
 
@@ -76,7 +76,7 @@ router.route('/join')
         const products = await productService.getAllActviteTokenAndMembershipProductsWithImages();
 
         // user does not currently have membership or tokens, redirct to join
-        res.render('community/join', {products: products, user:req.session.user});
+        res.render('community/join', {products: products, user:req.session.authUser});
 
     })
 
@@ -87,8 +87,8 @@ router.route('/join')
 
 router.route('/purchase')
     .get(async (req, res) => {
-        if(req.session.user) {
-            let user = req.session.user;
+        if(req.session.authUser) {
+            let user = req.session.authUser;
             
             // get products to send to page (founders membership and tokens)
             const products = await productService.getAllActviteTokenAndMembershipProductsWithImages();

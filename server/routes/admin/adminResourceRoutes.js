@@ -59,7 +59,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.user.id)
+        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.authUser.id)
         //console.log("------------- owner resources: " + JSON.stringify(ownerResources));
         let resource = null;
         
@@ -106,7 +106,7 @@ router.route('/')
                             resource.resourceImage = baseResourceImageUrl + req.session.savedResourceFileName;
                         } 
 
-                        resource.ownedBy = req.session.user.id;
+                        resource.ownedBy = req.session.authUser.id;
                         resourceService.saveResource(resource).then((savedResource) => {
                             res.locals.message = "Resource Saved Successfully";
                         });
@@ -115,7 +115,7 @@ router.route('/')
                 }
                 else {
                     
-                    resource.ownedBy = req.session.user.id; 
+                    resource.ownedBy = req.session.authUser.id; 
 
                     resourceService.saveResource(resource).then((savedResource) => {
                         res.locals.message = "Resource Saved Successfully";
@@ -144,19 +144,19 @@ router.route('/:resourceId')
         let resourceId = req.params.resourceId;
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.user.id);
+        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.authUser.id);
 
         let resource = Resource.emptyResource();
         if(resourceId > 0) {
             resource = await resourceService.getActiveResourceById(resourceId);
         }
         else {
-            resource.ownedBy = req.session.user.id;
+            resource.ownedBy = req.session.authUser.id;
         }
       
         
         // make sure the user has access to this resource (is owner)
-        if(resource.ownedBy === req.session.user.id) {
+        if(resource.ownedBy === req.session.authUser.id) {
             res.render('./admin/adminResource', {ownerResources: ownerResources, resource: resource});
         }
         else {

@@ -87,13 +87,45 @@ exports.enrollUserWithMembershipOrToken = async function(userWithRoles, topicId)
 }
 
 
+
+/**
+ * This is the authorative source on which roles qualify for user membership.  Currently Administrators and Founders.
+ * @param {User (built by session creation)} userWithRoles 
+ * @returns 
+ */
+ exports.verifyUserHasAdminRole = async function(userWithRoles) {
+    if(userWithRoles && userWithRoles.roles && userWithRoles.roles.length > 0 && userWithRoles.roles.filter(role => role.roleName == "Administrator").length > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
+
 /**
  * This is the authorative source on which roles qualify for user membership.  Currently Administrators and Founders.
  * @param {User (built by session creation)} userWithRoles 
  * @returns 
  */
 exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
-    if(userWithRoles && userWithRoles.roles && userWithRoles.roles.length > 0 && userWithRoles.roles.filter(role => role.roleName == "Administrator" || role.roleName == "Founder").length > 0) {
+    if(userWithRoles && userWithRoles.roles && userWithRoles.roles.length > 0 && userWithRoles.roles.filter(role => role.roleName == "Founder").length > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
+
+
+/**
+ * This is the authorative source on which roles qualify for creator membership.  Currently Administrators and Creators.
+ * @param {User (built by session creation)} userWithRoles 
+ * @returns 
+ */
+ exports.verifyUserHasCreatorAccessRole = async function(userWithRoles) {
+    if(userWithRoles && userWithRoles.roles && userWithRoles.roles.length > 0 && userWithRoles.roles.filter(role => role.roleName == "Administrator" || role.roleName == "Creator").length > 0) {
         return true;
     }
     else {

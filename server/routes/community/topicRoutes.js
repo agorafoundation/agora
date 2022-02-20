@@ -30,7 +30,7 @@ router.use(bodyParser.json());
 
 // check that the user is logged in!
 router.use(function (req, res, next) {
-    if(!req.session.user) {
+    if(!req.session.authUser) {
         if(req.query.redirect) {
             res.locals.redirect = req.query.redirect;
         }
@@ -55,9 +55,9 @@ router.route('/override/:goalId/:topicId/:step')
     let stepOverride = req.params.step;
 
     let access = false;
-    if(req.session.user) {
+    if(req.session.authUser) {
         // check that the user is enrolled!
-        access = await topicService.verifyTopicAccess(req.session.user.id, topicId);
+        access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
 
         if(access) {
             
@@ -71,7 +71,7 @@ router.route('/override/:goalId/:topicId/:step')
             }
             else {
                 // there is no current topic or a new topic has been choosen
-                currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.user.id, topicId, true);
+                currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
                 currentTopic = currentEnrollment.topic;
 
                 // set the session
@@ -83,7 +83,7 @@ router.route('/override/:goalId/:topicId/:step')
             res.locals.topic = currentTopic;
 
             // open the course
-            res.render('community/topic', {goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride});
+            res.render('community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride});
 
         }
         else {
@@ -115,7 +115,7 @@ router.route('/update/:finishedStep')
         if(finishedStep == 2) {
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
-            ca.userId = req.session.user.id;
+            ca.userId = req.session.authUser.id;
             ca.assessmentId = req.session.currentTopic.topic.assessmentId;
             ca.prePost = 1; // pre
 
@@ -156,7 +156,7 @@ router.route('/update/:finishedStep')
         if(finishedStep == 4) {
             let completedActivity = CompletedActivity.emptyCompletedActivity();
             completedActivity.submissionText = req.query.submission_text;
-            completedActivity.userId = req.session.user.id;
+            completedActivity.userId = req.session.authUser.id;
             completedActivity.activityId = req.session.currentTopic.topic.activityId;
             req.session.currentTopic.completedActivity = completedActivity;
 
@@ -170,7 +170,7 @@ router.route('/update/:finishedStep')
         if(finishedStep == 5) {
             // create the completed assessment 
             let ca = CompletedAssessment.emptyCompletedAssessment();
-            ca.userId = req.session.user.id;
+            ca.userId = req.session.authUser.id;
             ca.assessmentId = req.session.currentTopic.topic.assessmentId;
             ca.prePost = 2; // pre
 
@@ -198,14 +198,14 @@ router.route('/update/:finishedStep')
                 req.session.currentTopic.isCompleted = true;
                 req.session.currentTopic.completedDate = "SET";
 
-                await userService.addAccessTokensToUserById(req.session.user.id, 1);
+                await userService.addAccessTokensToUserById(req.session.authUser.id, 1);
             }
 
             // save the data
             req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
 
             // reload the user session
-            req.session.user = await userService.setUserSession(req.session.user.email);
+            req.session.authUser = await userService.setUserSession(req.session.authUser.email);
 
             // reroute
             res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=6");
@@ -231,28 +231,28 @@ router.route('/:goalId/:topicId')
         }
 
         let access = false;
-        if(req.session.user) {
+        if(req.session.authUser) {
             // check that the user is enrolled!
-            access = await topicService.verifyTopicAccess(req.session.user.id, topicId);
+            access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
             if(!access) {
                 // check to see if the user is a member and grant access if they are
-                if(req.session.user.member) {
+                if(req.session.authUser.member) {
                     // save the enrollment for the user in the goal
                     let te = TopicEnrollment.emptyTopicEnrollment();
                     te.topicId = topicId;
-                    te.userId = req.session.user.id;
+                    te.userId = req.session.authUser.id;
                     await topicService.saveTopicEnrollment(te);
                     // reset the session
-                    const rUser = await userService.setUserSession(req.session.user.email);
+                    const rUser = await userService.setUserSession(req.session.authUser.email);
 
-                    req.session.user = null;
-                    req.session.user = rUser;
+                    req.session.authUser = null;
+                    req.session.authUser = rUser;
                     access = true;
 
                     // user has access set the page up with enrollment data
                     // user is not a member and does not currently have access setup page to allow them to enroll
                     // get the topic data
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.user.id, topicId, true);
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step
@@ -290,7 +290,7 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
 
                 }
                 else {
@@ -306,7 +306,7 @@ router.route('/:goalId/:topicId')
                     res.locals.topic = topic;
                     req.session.goalId = goalId;
 
-                    res.render('community/topic', {goalId: goalId, hasAccess:access, currentStep:0});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0});
                 }
 
                 
@@ -352,14 +352,14 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
                 }
                 else {
 
                     // user has access set the page up with enrollment data
                     // user is not a member and does not currently have access setup page to allow them to enroll
                     // get the topic data
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.user.id, topicId, true);
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step
@@ -396,7 +396,7 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
                 }
 
             }
@@ -415,9 +415,9 @@ router.route('/enroll/:goalId/:topicId')
 .get(async (req, res) => {
     let goalId = req.params.goalId;
     let topicId = req.params.topicId;
-    if(req.session.user) {
+    if(req.session.authUser) {
         // see if the user has a token
-        let user = req.session.user;
+        let user = req.session.authUser;
         // verify the user has access, first check membership:
         let access = await topicService.verifyTopicAccess(user.id, topicId);
         if(access) {
@@ -429,10 +429,10 @@ router.route('/enroll/:goalId/:topicId')
         if(enrollment) { 
 
             // reset the session
-            const rUser = await userService.setUserSession(req.session.user.email);
+            const rUser = await userService.setUserSession(req.session.authUser.email);
 
-            req.session.user = null;
-            req.session.user = rUser;
+            req.session.authUser = null;
+            req.session.authUser = rUser;
 
             // send them to the course
             res.redirect('/community/topic/' + goalId + "/" + topicId);
@@ -443,7 +443,7 @@ router.route('/enroll/:goalId/:topicId')
             const products = await productService.getAllActviteTokenAndMembershipProductsWithImages();
 
             // user does not currently have membership or tokens, redirct to join
-            res.render('community/join', {products: products, user:user, message:"You did not have a membership or token to use!", message2:"Choose an option below to obtain access to additional topics"});
+            res.render('community/join', {products: products, user: user, message:"You did not have a membership or token to use!", message2:"Choose an option below to obtain access to additional topics"});
         }
     }
     else {

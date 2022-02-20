@@ -44,12 +44,12 @@ const CompletedResource = require('../model/completedResource');
         let submittedText = req.body.submittedText;
 
 
-        if(req.session.currentTopic && req.session.user) {
+        if(req.session.currentTopic && req.session.authUser) {
             // call service?
-            let completedResource = await topicService.getCompletedResourceByResourceAndUserId(resourceId, req.session.user.id);
+            let completedResource = await topicService.getCompletedResourceByResourceAndUserId(resourceId, req.session.authUser.id);
             if(!completedResource) {
                 completedResource = CompletedResource.emptyCompletedResource();
-                completedResource.userId = req.session.user.id;
+                completedResource.userId = req.session.authUser.id;
                 completedResource.resourceId = resourceId;
             }
             completedResource.active = status;

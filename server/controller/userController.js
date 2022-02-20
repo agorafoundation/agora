@@ -248,7 +248,7 @@ async function updateUser (req, res) {
         // save the user to the database!
         userService.saveUser(user).then(() => {
             req.session.reload(() => {
-                req.session.user = user;
+                req.session.authUser = user;
 
                 res.redirect(303, "/auth");
             })
@@ -268,8 +268,8 @@ async function updateUser (req, res) {
 router.route('/revalidate/:email')
     .get(async function(req, res) {
         // check to see that user is logged in with matching email address
-        if(req.session.user.email && req.params.email === req.session.user.email) {
-            let newToken = await userService.reValidateEmail(req.session.user.email);
+        if(req.session.authUser.email && req.params.email === req.session.authUser.email) {
+            let newToken = await userService.reValidateEmail(req.session.authUser.email);
 
             if(process.env.EMAIL_TOGGLE == "true") {
                 // send verification email
@@ -286,11 +286,11 @@ router.route('/revalidate/:email')
 
                 const mailOptions = {
                     from: process.env.EMAIL_FROM, // sender address
-                    to: req.session.user.email,
+                    to: req.session.authUser.email,
                     subject: "Verify your email", // Subject line
                     html: "<p>Hello, we hope this email finds you well!</p>"
                         + "<p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community."
-                        + "Complete the process by <strong><a href='http://codingcoach.net/verifyEmail/" + req.session.user.email + "/" + newToken + "'>clicking this link!</a></strong></p>"
+                        + "Complete the process by <strong><a href='http://codingcoach.net/verifyEmail/" + req.session.authUser.email + "/" + newToken + "'>clicking this link!</a></strong></p>"
                         + "<p>Carpe Diem!</p>"
                         + "<p>The Coding Coach Team</p>", // plain text body
                 };
@@ -380,7 +380,7 @@ router.post('/uploadProfilePicture', (req, res) => {
         }
         else {
             // save image            
-            userService.updateProfileFilename(req.session.user.email, baseProfileUrl + req.session.savedProfileFileName).then((rValue) => {
+            userService.updateProfileFilename(req.session.authUser.email, baseProfileUrl + req.session.savedProfileFileName).then((rValue) => {
                 // if we get a valid return value it is the file we should delete
                 if(rValue) {
                     // don't delete the default pic!

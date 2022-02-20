@@ -126,9 +126,31 @@
 .profile-large-image {
     width: 12rem;
     height: 12rem;
-    margin-left: 10rem;
-    float: right;
+    margin-left: 3rem;
+    margin-right: 3rem;
+    float: left;
+
 }
+
+/* badge image */
+.badge-image {
+    position: relative;
+    clear:left;
+    left: 1px;
+    width: 6rem;
+    height: 6rem;
+    margin-left: 3rem;
+}
+
+.user-page-top {
+    margin: 1.25rem 0 1.5rem;
+    width: 100%;
+    display: flex;
+    z-index: 2;
+    justify-content: left;
+    align-items: left;
+  }
+
 .product-img-overlay {
     position: absolute;
     top: 0;

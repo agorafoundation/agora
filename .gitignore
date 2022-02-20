@@ -129,3 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# grade
+.gradle/
+
+#intellij
+.idea/

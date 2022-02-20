@@ -83,7 +83,7 @@ app.use(function (req, res, next) {
         next();
     }
     else {
-        res.locals.user = req.session.user;
+        res.locals.authUser = req.session.authUser;
         next();
     }
     
@@ -278,7 +278,7 @@ app.post('/signIn', async (req, res) => {
                     // decision on wether user has an authorized role
                     if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
                         // assign the user to the session
-                        req.session.user = user;
+                        req.session.authUser = user;
                         
                         // parse the UA data
                         const device = deviceDetector.parse(req.headers['user-agent']);
@@ -296,7 +296,7 @@ app.post('/signIn', async (req, res) => {
                         if(req.query.redirect) {
                             res.redirect(303, req.query.redirect);
                         }
-                        else if(req.session.user.emailValidated) {
+                        else if(req.session.authUser.emailValidated) {
                             res.redirect(303, '/community');
                         }
                         else {
@@ -352,6 +352,12 @@ let topicRoutes = require('./routes/community/topicRoutes');
 app.use('/community/topic', topicRoutes);
 
 /**
+ * User / Profile routes
+ */
+let userRoutes = require('./routes/userRoutes');
+app.use('/user', userRoutes);
+
+/**
  * Dashboard Routes
  */
 let auth = require('./routes/authRoutes');
@@ -368,6 +374,7 @@ app.use('/api', api);
  */
 let admin = require('./routes/admin/adminRoutes');
 app.use('/a', admin);
+
 
 
 
