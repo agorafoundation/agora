@@ -33,8 +33,6 @@ router.use(function (req, res, next) {
 
 router.route('/')
     .get(async function (req, res) {
-        console.log("0");
-        console.log(req.session.authUser)
         if(req.session.authUser) {
             const authUser = await userService.setUserSession(req.session.authUser.email);
             req.session.authUser = null;
@@ -54,11 +52,9 @@ router.route('/')
             if(req.session.uploadMessage) {
                 let message = req.session.uploadMessage;
                 req.session.uploadMessage = null;
-                console.log("1");
                 res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
             }
             else {
-                console.log("2");
                 res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
             }
             
