@@ -1,0 +1,32 @@
+<div class="gc-container">
+    <%
+    let unfinishedFlag = false;
+
+    let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == goal.id && enrollment.isCompleted).length > 0 : false;
+    if(user.topicEnrollments) {
+        // check to see if any of the topics are in-complete if so, set the flag
+        for(let i=0; i < user.topicEnrollments.length; i++) {
+            if(!user.topicEnrollments[i].isCompleted) {
+                unfinishedFlag = true;
+            }
+        }    
+    }
+    else {
+        // there were no topicEnrollments, so mark unfinnished
+        unfinishedFlag = true;
+    }
+
+    // If the unfinishedFlag is still false but the goal is not yet finihed, give the user the ability to set it as finished
+    //console.log("goal:: " + JSON.stringify(goal));
+    if(!unfinishedFlag && !completed) {
+        %>
+        <h3>The Goal is ready to be finished!</h3>
+        <form id="goal-form" action="/community/goal" method="POST">
+            <input type="hidden" value="<%- goal.id %>" class="form-control form-control-lg" name="goalId" id="goalId" required>
+            <input type="hidden" value="<%- goal.version %>" class="form-control form-control-lg" name="goalVersion" id="goalVersion" required>
+            <button type="submit" id="goal-submit" class="btn btn-primary btn-lg">Mark Completed</button>
+        </form>
+        <%
+    }
+    %>
+</div>

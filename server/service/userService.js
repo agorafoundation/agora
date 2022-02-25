@@ -297,10 +297,12 @@ exports.reValidateEmail = async function(email) {
             user.codebot = await productService.verifyUserCodeBotPurchase(user);
 
             // get enrolled paths for user, 
-            let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, false);
+            //let paths = await goalService.getActiveEnrolledGoalsForUserId(user.id, false);
 
             // get completed paths for the user
-            let completedPaths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, true);
+            //let completedPaths = await goalService.getActiveEnrolledGoalsForUserId(user.id, true);
+
+            let enrollments = await goalService.getActiveEnrollmentsForUserId(user.id);
 
             // get enrolled topics for user
             let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
@@ -309,8 +311,8 @@ exports.reValidateEmail = async function(email) {
             user.member = await topicService.verifyUserHasMembershipAccessRole(user);
 
             //append enrolled topics
-            user.pathEnrollments = paths;
-            user.completedEnrollments = completedPaths;
+            user.enrollments = enrollments;
+            console.log("service enrollments: " + JSON.stringify(user.enrollments));
             user.topicEnrollments = topics;
 
             return user;
@@ -420,10 +422,12 @@ exports.setUserSession = async function(email) {
     user.roles = userRoles;
 
     // get enrolled paths for user, 
-    let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, false);
+    //let paths = await goalService.getActiveEnrolledGoalsForUserId(user.id, false);
 
     // get completed paths for the user
-    let completedPaths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, true);
+    //let completedPaths = await goalService.getActiveEnrolledGoalsForUserId(user.id, true);
+
+    let enrollments = await goalService.getActiveEnrollmentsForUserId(user.id);
 
     // get enrolled topics for user
     let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
@@ -432,8 +436,7 @@ exports.setUserSession = async function(email) {
     user.member = await topicService.verifyUserHasMembershipAccessRole(user);
 
     //append enrolled topics
-    user.pathEnrollments = paths;
-    user.completedEnrollments = completedPaths;
+    user.enrollments = enrollments;
     user.topicEnrollments = topics;
 
     // created session

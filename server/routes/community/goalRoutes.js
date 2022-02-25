@@ -31,46 +31,68 @@ router.use(function (req, res, next) {
     else {
         next();
     }
-    
-})
+});
 
+/**
+ * Route called from the mark goal complete form
+ */
+router.route('/')
+    .post(async (req, res) => {
+        let goalId = req.body.goalId;
+        let goalVersion = req.body.goalVersion;
 
+        if(req.session && req.session.authUser && goalId && goalVersion) {
+            // verify that the user is enrolled in the goal and that the goals topics are complete
+            let userGoal = await goalService.getEnrolledGoalByUserAndGoalIds(req.session.authUser.id, goalId, goalVersion);
+
+            if(userGoal) {
+                await goalService.completeGoalEnrollment(req.session.authUser.id, goalId, goalVersion);
+
+                // reset the session
+                const rUser = await userService.setUserSession(req.session.authUser.email);
+
+                req.session.authUser = null;
+                req.session.authUser = rUser;
+            }
+        }
+        // send them to the course
+        res.redirect('/community/goal/' + goalId);
+    }
+);
 
 router.route('/:goalId')
-
-.get(async (req, res) => {
-    // get the topic data
-    let goalId = req.params.goalId;
-    let goal = await goalService.getActiveGoalWithTopicsById(goalId);
-    //console.log("goal: " + JSON.stringify(goal));
-    res.render('community/goal', {user: req.session.authUser, goal: goal});
-}
-
+    .get(async (req, res) => {
+        // get the topic data
+        let goalId = req.params.goalId;
+        let goal = await goalService.getActiveGoalWithTopicsById(goalId);
+        //console.log("goal: " + JSON.stringify(goal));
+        res.render('community/goal', {user: req.session.authUser, goal: goal});
+    }
 );
 
 
 router.route('/enroll/:goalId')
-.get(async (req, res) => {
-    let goalId = req.params.goalId;
-    if(req.session.authUser) {
+    .get(async (req, res) => {
+        let goalId = req.params.goalId;
+        if(req.session.authUser) {
 
-        // save the enrollment for the user in the goal
-        await goalService.saveGoalEnrollmentMostRecentGoalVersion(req.session.authUser.id, goalId);
+            // save the enrollment for the user in the goal
+            await goalService.saveGoalEnrollmentMostRecentGoalVersion(req.session.authUser.id, goalId);
 
-        // reset the session
-        const rUser = await userService.setUserSession(req.session.authUser.email);
+            // reset the session
+            const rUser = await userService.setUserSession(req.session.authUser.email);
 
-        req.session.authUser = null;
-        req.session.authUser = rUser;
+            req.session.authUser = null;
+            req.session.authUser = rUser;
 
-        // send them to the course
-        res.redirect('/community/goal/' + goalId);
-        
+            // send them to the course
+            res.redirect('/community/goal/' + goalId);
+            
+        }
+        else {
+            res.render('user-signup');
+        }
     }
-    else {
-        res.render('user-signup');
-    }
-}
 );
 
 

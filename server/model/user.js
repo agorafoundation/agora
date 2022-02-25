@@ -35,8 +35,8 @@ function user(email, username, profileFilename, emailValidated, firstName, lastN
     // populate with user_role
     this.roles = [];
 
-    // populate with enrolled paths
-    this.pathEnrollments = [];
+    // populate with enrolled goal paths
+    this.enrollments = [];
 
     // populate with enrolled Topics
     this.topicEnrollments = [];
