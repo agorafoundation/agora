@@ -103,7 +103,8 @@ router.route('/override/:goalId/:topicId/:step')
  * topic-assessment
  * topic-resource
  * topic-activity
- * passing the finished step so data can be saved and the user sent to the next step
+ * passing the finished step so data can be saved and the user sent to the next step using
+ * /community/topic/goalId/topicId
  * 
  */
 router.route('/update/:finishedStep')
@@ -206,6 +207,7 @@ router.route('/update/:finishedStep')
 
                 // mark the topic complete and return the users token
                 if(!req.session.currentTopic.isCompleted) {
+                    console.log("setting complete!");
                     req.session.currentTopic.isCompleted = true;
                     req.session.currentTopic.completedDate = "SET";
 

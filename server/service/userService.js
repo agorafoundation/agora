@@ -297,7 +297,10 @@ exports.reValidateEmail = async function(email) {
             user.codebot = await productService.verifyUserCodeBotPurchase(user);
 
             // get enrolled paths for user, 
-            let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id);
+            let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, false);
+
+            // get completed paths for the user
+            let completedPaths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, true);
 
             // get enrolled topics for user
             let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
@@ -307,6 +310,7 @@ exports.reValidateEmail = async function(email) {
 
             //append enrolled topics
             user.pathEnrollments = paths;
+            user.completedEnrollments = completedPaths;
             user.topicEnrollments = topics;
 
             return user;
@@ -416,7 +420,10 @@ exports.setUserSession = async function(email) {
     user.roles = userRoles;
 
     // get enrolled paths for user, 
-    let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id);
+    let paths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, false);
+
+    // get completed paths for the user
+    let completedPaths = await goalService.getActiveGoalEnrollmentsForUserId(user.id, true);
 
     // get enrolled topics for user
     let topics = await topicService.getActiveTopicEnrollmentsForUserId(user.id);    
@@ -426,6 +433,7 @@ exports.setUserSession = async function(email) {
 
     //append enrolled topics
     user.pathEnrollments = paths;
+    user.completedEnrollments = completedPaths;
     user.topicEnrollments = topics;
 
     // created session

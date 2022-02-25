@@ -371,16 +371,18 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
 
 
 /**
- * Get all goals that a user has an active enrollment in, returns the goal with the highest version number
+ * Get all goals that a user has an active enrollment in either completed or incomplete
+ * Returns the goal with the highest version number
  * if the user has more then one record for the same goal id.
+ * @param {boolean} isCompleted whether or not the function should return completed enrollements
  * @param {Integer} userId id of user enrolled
  * @returns List<goal> a list of the goal objects the user is enrolled in
  */
- exports.getActiveGoalEnrollmentsForUserId = async function(userId) {
+ exports.getActiveGoalEnrollmentsForUserId = async function(userId, isCompleted) {
     let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
         + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
-        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
-    let values = [true, userId];
+        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version and ug.is_completed = $3;";
+    let values = [ true, userId , isCompleted ];
     
     let goals = [];
     try {
