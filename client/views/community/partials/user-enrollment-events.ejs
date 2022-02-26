@@ -9,7 +9,12 @@ if(feed) {
     <div class="card" style="width: 100%;">
         
         <div class="card-body product-card-text-raised">
-            <h5 class="card-title"><%- feed[i].eventTitle %></h5>
+            <h5 class="card-title">
+                <a class="profile-top-image" href="/user/<%- feed[i].eventUserId %>">
+                    <img src="<%- feed[i].eventImage %>" alt="User Profile" title="User Profile" class="profile-top-image" />
+                </a>
+                <%- feed[i].eventTitle %>
+            </h5>
             
         </div>
     </div> 

@@ -2,7 +2,6 @@
 let availableCount = 0;
 if(availableGoals) {
     for(let i=0; i<availableGoals.length; i++) {
-        console.log("path enrollments: " + JSON.stringify(user.enrollments));
         let enrolled = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == availableGoals[i].id && enrollment.isCompleted == false).length > 0 : false;
         let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == availableGoals[i].id && enrollment.isCompleted == true).length > 0 : false;
     

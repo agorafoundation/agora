@@ -28,5 +28,11 @@
         </form>
         <%
     }
+    else if(!unfinishedFlag && completed) {
+        %>
+        <h3>You have completed this goal!</h3>
+        <a href="/community/">Back to Community Home</a>
+        <%
+    }
     %>
 </div>
