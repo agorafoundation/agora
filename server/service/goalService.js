@@ -342,7 +342,7 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  */
  exports.saveGoalEnrollment = async function(userId, goalId, goalVersion) {
     // check this userId and goalId combination does not already exist
-    text = "SELECT * FROM user_goal WHERE active = $1 AND user_id = $2 AND goal_id = $3 AND goal_version = $4";
+    let text = "SELECT * FROM user_goal WHERE active = $1 AND user_id = $2 AND goal_id = $3 AND goal_version = $4";
     let values = [ true, userId, goalId, goalVersion ];
 
     try {
@@ -350,9 +350,9 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
         let response = await db.query(text, values);
 
         if(!response.rowCount > 0) {       
-            text = 'INSERT INTO user_goal(goal_id, goal_version, user_id, active)'
-                + 'VALUES($1, $2, $3, $4)';
-            values = [ goalId, goalVersion, userId, true ];
+            text = 'INSERT INTO user_goal(goal_id, goal_version, user_id, active, is_completed)'
+                + 'VALUES($1, $2, $3, $4, $5)';
+            values = [ goalId, goalVersion, userId, true, false ];
 
             let response = await db.query(text, values);
     
@@ -369,29 +369,93 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
     }
 }
 
+/**
+ * Update the user goal enrollment and mark completed.
+ * @param {Integer} userId 
+ * @param {Integer} goalId 
+ * @param {Integer} goalVersion 
+ * @returns true if successful
+ */
+exports.completeGoalEnrollment = async function(userId, goalId, goalVersion) {
+    let text = "UPDATE user_goal SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND goal_id = $4 AND goal_version = $5;"
+    let values = [ true, true, userId, goalId, goalVersion ];
+
+    try {
+        let response = await db.query(text, values);
+        return true;
+    }
+    catch(e) {
+        console.log("[ERR]: Error updating goal enrollment - " + e);
+        return false;
+    }
+}
 
 /**
- * Get all goals that a user has an active enrollment in, returns the goal with the highest version number
+ * Gets a goal by goal id and version if the user id passed is currently enrolled in the goal.
+ * @param {Integer} userId 
+ * @param {Integer} goalId 
+ * @param {Integer} goalVersion 
+ * @returns goal if the user is actively enrolled
+ */
+exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVersion) {
+    let text = "SELECT ug.* FROM user_goal ug where ug.user_id = $1 AND ug.goal_id = $2 and ug.goal_version = $3 and active = $4;" 
+    let values = [ userId, goalId , goalVersion, true ];
+    
+    let goal;
+    try {
+         
+        let res = await db.query(text, values);
+        if(res.rows.length > 0) {
+            for(let i=0; i<res.rows.length; i++) {
+                // get the goal for each user_goal
+                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 AND goal_version = $3;"
+                values = [true, res.rows[i].goal_id, res.rows[i].goal_version ];
+
+                let res2 = await db.query(text, values);
+
+                if(res2.rows.length > 0) {
+                    goal = Goal.ormGoal(res2.rows[0]);
+                }     
+            }
+
+        }
+        else {
+            return false;
+        }
+        return goal ;
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+/**
+ * Get all goals that a user has an active enrollment in either completed or incomplete
+ * Returns the goal with the highest version number
  * if the user has more then one record for the same goal id.
+ * @param {boolean} isCompleted whether or not the function should return completed enrollements
  * @param {Integer} userId id of user enrolled
  * @returns List<goal> a list of the goal objects the user is enrolled in
- */
- exports.getActiveGoalEnrollmentsForUserId = async function(userId) {
+ *
+ * @deprecated testing
+ * This was replaced using getActiveEnrollmentsForUserId which returns the users enrollment in the goal path with an attached goal
+ * this way the enrollment provides the completion data.
+ * 
+ exports.getActiveEnrolledGoalsForUserId = async function(userId, isCompleted) {
     let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
         + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
-        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
-    let values = [true, userId];
+        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version and ug.is_completed = $3;";
+    let values = [ true, userId , isCompleted ];
     
     let goals = [];
     try {
          
         let res = await db.query(text, values);
-        
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {
                 // get the goal for each user_goal
-                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 "
-                values = [true, res.rows[i].goal_id];
+                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 AND goal_version = $3;"
+                values = [true, res.rows[i].goal_id, res.rows[i].goal_version ];
 
                 let res2 = await db.query(text, values);
 
@@ -402,16 +466,61 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
 
         }
         else {
-            
             return false;
         }
-        
         return goals;
     }
     catch(e) {
         console.log(e.stack)
     }
 }
+*/
+
+/**
+ * Get all enrollments (goal is accessable enrollment.goal) that a user is actively enrolled in
+ * Returns the goal with the highest version number
+ * if the user has more then one record for the same goal id.
+ * @param {Integer} userId id of user enrolled
+ * @returns List<goal> a list of the goal objects the user is enrolled in
+ */
+ exports.getActiveEnrollmentsForUserId = async function(userId) {
+    let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
+        + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
+        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
+    let values = [ true, userId ];
+    
+    let enrollments = [];
+    try {
+         
+        let res = await db.query(text, values);
+        if(res.rows.length > 0) {
+            for(let i=0; i<res.rows.length; i++) {
+                let enrollment = GoalEnrollment.ormGoalEnrollment(res.rows[i]);
+
+                // get the goal for each user_goal
+                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 AND goal_version = $3;"
+                values = [true, res.rows[i].goal_id, res.rows[i].goal_version ];
+
+                let res2 = await db.query(text, values);
+
+                if(res2.rows.length > 0) {
+                    enrollment.goal = Goal.ormGoal(res2.rows[0]);
+                } 
+                
+                enrollments.push(enrollment);
+            }
+
+        }
+        else {
+            return false;
+        }
+        return enrollments;
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
 
 exports.getRecentGoalEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
@@ -432,7 +541,43 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
                 event.eventType = "Goal Enrollment";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].create_time;
-                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> Enrolled in <a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> <span style='color:darkblue'>Enrolled in <img src='" + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> </span><a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventImage = res.rows[i].user_image;
+                event.eventImage2 = res.rows[i].goal_image;
+                enrollmentEvents.push(event);
+            }
+        }
+        else {
+            return false;
+        }
+        return enrollmentEvents;
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }  
+}
+
+exports.getRecentGoalCompletionEvents = async function(limit) {
+    limit = (!limit) ? 10 : limit;
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true AND mod.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let values = [ limit ];
+    
+    try {
+        
+        let res = await db.query(text, values);
+        
+        let enrollmentEvents = [];
+        if(res.rows.length > 0) {
+            for(let i=0; i<res.rows.length; i++) {
+                let event = Event.emptyEvent();
+                event.eventUserId = res.rows[i].user_id;
+                event.eventItemId = res.rows[i].goal_id;
+                event.eventItem = "Goal Completion!";
+                event.eventType = "Goal Completion!";
+                event.eventUsername = res.rows[i].username;
+                event.eventTime = res.rows[i].completed_date;
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a><span style='color:darkgreen'><strong> completed </strong></span> <img src='" + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> <a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
                 event.eventImage = res.rows[i].user_image;
                 event.eventImage2 = res.rows[i].goal_image;
                 enrollmentEvents.push(event);

@@ -43,197 +43,221 @@ router.use(function (req, res, next) {
 })
 
 
-
-
-
-
-
+/**
+ * Called by topic-navigation when the user manually navigates 
+ * to a specific place within the topic components.
+ * 
+ * This is not used to save data, just override current screen and change to another.
+ * 
+ */
 router.route('/override/:goalId/:topicId/:step')
-.get(async (req, res) => {
-    let goalId = req.params.goalId;
-    let topicId = req.params.topicId;
-    let stepOverride = req.params.step;
-
-    let access = false;
-    if(req.session.authUser) {
-        // check that the user is enrolled!
-        access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
-
-        if(access) {
-            
-            let currentTopic = null;
-            let currentEnrollment = null;
-            
-            if(req.session.currentTopic && req.session.currentTopic.topicId == topicId) {
-                // we have the current topic in the session already
-                currentTopic = req.session.currentTopic.topic;
-                currentEnrollment = req.session.currentTopic;
-            }
-            else {
-                // there is no current topic or a new topic has been choosen
-                currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
-                currentTopic = currentEnrollment.topic;
-
-                // set the session
-                req.session.currentTopic = topicEnrollment;
-            }
-
-
-            res.locals.topicEnrollment = currentEnrollment;
-            res.locals.topic = currentTopic;
-
-            // open the course
-            res.render('community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride});
-
-        }
-        else {
-            // user does not have access send to community page
-            res.redirect(303, '/community');
-        }
-    }
-
-}
-);
-
-router.route('/update/:finishedStep')
-.get(async (req, res) => {
-    if(req.session.currentTopic) {
-        let goalId = req.session.goalId;
-        let topicId = req.session.currentTopic.topicId;
-        let finishedStep = req.params.finishedStep;
-
-        if(finishedStep == 1) {
-            req.session.currentTopic.isIntroComplete =true;
-            
-            // save the data
-            topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-
-            // reroute
-            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=2");
-        }
-
-        if(finishedStep == 2) {
-            // create the completed assessment 
-            let ca = CompletedAssessment.emptyCompletedAssessment();
-            ca.userId = req.session.authUser.id;
-            ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-            ca.prePost = 1; // pre
-
-            // go through all the questions and look for the anwser
-            for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
-                // create a completedQuestion to hold the answer
-                let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
-                cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-
-                for (var propName in req.query) {
-                    if (req.query.hasOwnProperty(propName)) {
-                        if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
-                            cq.assessmentQuestionOptionId = req.query[propName];
-                        }
-                        
-                    }
-                }
-
-                ca.completedQuestions.push(cq);
-            }
-
-            req.session.currentTopic.preAssessment = ca;
-            
-            // save the data
-            req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-
-            // reroute
-            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=3");
-        }
-
-        if(finishedStep == 3) {
-            
-
-            // reroute
-            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=4");
-        }
-
-        if(finishedStep == 4) {
-            let completedActivity = CompletedActivity.emptyCompletedActivity();
-            completedActivity.submissionText = req.query.submission_text;
-            completedActivity.userId = req.session.authUser.id;
-            completedActivity.activityId = req.session.currentTopic.topic.activityId;
-            req.session.currentTopic.completedActivity = completedActivity;
-
-            // save the data
-            req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-            // reroute
-            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=5");
-
-        }
-
-        if(finishedStep == 5) {
-            // create the completed assessment 
-            let ca = CompletedAssessment.emptyCompletedAssessment();
-            ca.userId = req.session.authUser.id;
-            ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-            ca.prePost = 2; // pre
-
-            // go through all the questions and look for the anwser
-            for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
-                // create a completedQuestion to hold the answer
-                let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
-                cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-                for (var propName in req.query) {
-                    if (req.query.hasOwnProperty(propName)) {
-                        if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
-                            cq.assessmentQuestionOptionId = req.query[propName];
-                        }
-                        
-                    }
-                }
-                
-                ca.completedQuestions.push(cq);
-            }
-
-            req.session.currentTopic.postAssessment = ca;
-
-            // mark the topic complete and return the users token
-            if(!req.session.currentTopic.isCompleted) {
-                req.session.currentTopic.isCompleted = true;
-                req.session.currentTopic.completedDate = "SET";
-
-                await userService.addAccessTokensToUserById(req.session.authUser.id, 1);
-            }
-
-            // save the data
-            req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-
-            // reload the user session
-            req.session.authUser = await userService.setUserSession(req.session.authUser.email);
-
-            // reroute
-            res.redirect(303, '/community/topic/' + goalId + "/" + topicId + "?nextStep=6");
-        }
-    }
-    else {
-        // update not able to take place
-        res.redirect(303, '/community')
-    }
-    
-
-    
-}
-);
-
-router.route('/:goalId/:topicId')
     .get(async (req, res) => {
         let goalId = req.params.goalId;
         let topicId = req.params.topicId;
-        let nextStep = null;
-        if(req.query.nextStep) {
-            nextStep = req.query.nextStep;
-        }
+        let stepOverride = req.params.step;
 
         let access = false;
         if(req.session.authUser) {
             // check that the user is enrolled!
             access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
+
+            if(access) {
+                
+                let currentTopic = null;
+                let currentEnrollment = null;
+                
+                if(req.session.currentTopic && req.session.currentTopic.topicId == topicId) {
+                    // we have the current topic in the session already
+                    currentTopic = req.session.currentTopic.topic;
+                    currentEnrollment = req.session.currentTopic;
+                }
+                else {
+                    // there is no current topic or a new topic has been choosen
+                    currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
+                    currentTopic = currentEnrollment.topic;
+
+                    // set the session
+                    req.session.currentTopic = topicEnrollment;
+                }
+
+
+                res.locals.topicEnrollment = currentEnrollment;
+                res.locals.topic = currentTopic;
+
+                // open the course
+                res.render('community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride});
+
+            }
+            else {
+                // user does not have access send to community page
+                res.redirect(303, '/community');
+            }
+        }
+
+    }
+);
+
+/**
+ * Called by 
+ * topic-introuction
+ * topic-assessment
+ * topic-resource
+ * topic-activity
+ * passing the finished step so data can be saved and the user sent to the next step using
+ * /community/topic/goalId/topicId
+ * 
+ */
+router.route('/update/:finishedStep')
+    .get(async (req, res) => {
+        if(req.session.currentTopic) {
+            let goalId = req.session.goalId;
+            let topicId = req.session.currentTopic.topicId;
+            let finishedStep = req.params.finishedStep;
+
+            if(finishedStep == 1) {
+                req.session.currentTopic.isIntroComplete =true;
+                
+                // save the data
+                topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+                // reroute
+                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+            }
+
+            if(finishedStep == 2) {
+                // create the completed assessment 
+                let ca = CompletedAssessment.emptyCompletedAssessment();
+                ca.userId = req.session.authUser.id;
+                ca.assessmentId = req.session.currentTopic.topic.assessmentId;
+                ca.prePost = 1; // pre
+
+                // go through all the questions and look for the anwser
+                for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                    // create a completedQuestion to hold the answer
+                    let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
+                    cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
+
+                    for (var propName in req.query) {
+                        if (req.query.hasOwnProperty(propName)) {
+                            if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
+                                cq.assessmentQuestionOptionId = req.query[propName];
+                            }
+                            
+                        }
+                    }
+
+                    ca.completedQuestions.push(cq);
+                }
+
+                req.session.currentTopic.preAssessment = ca;
+                
+                // save the data
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+                // reroute
+                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+            }
+
+            if(finishedStep == 3) {
+                
+
+                // reroute
+                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+            }
+
+            if(finishedStep == 4) {
+                let completedActivity = CompletedActivity.emptyCompletedActivity();
+                completedActivity.submissionText = req.query.submission_text;
+                completedActivity.userId = req.session.authUser.id;
+                completedActivity.activityId = req.session.currentTopic.topic.activityId;
+                req.session.currentTopic.completedActivity = completedActivity;
+
+                // save the data
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+                // reroute
+                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+
+            }
+
+            if(finishedStep == 5) {
+                // create the completed assessment 
+                let ca = CompletedAssessment.emptyCompletedAssessment();
+                ca.userId = req.session.authUser.id;
+                ca.assessmentId = req.session.currentTopic.topic.assessmentId;
+                ca.prePost = 2; // pre
+
+                // go through all the questions and look for the anwser
+                for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                    // create a completedQuestion to hold the answer
+                    let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
+                    cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
+                    for (var propName in req.query) {
+                        if (req.query.hasOwnProperty(propName)) {
+                            if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
+                                cq.assessmentQuestionOptionId = req.query[propName];
+                            }
+                            
+                        }
+                    }
+                    
+                    ca.completedQuestions.push(cq);
+                }
+
+                req.session.currentTopic.postAssessment = ca;
+
+                // mark the topic complete and return the users token
+                if(!req.session.currentTopic.isCompleted) {
+                    console.log("setting complete!");
+                    req.session.currentTopic.isCompleted = true;
+                    req.session.currentTopic.completedDate = "SET";
+
+                    await userService.addAccessTokensToUserById(req.session.authUser.id, 1);
+                }
+
+                // save the data
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+                // reload the user session
+                req.session.authUser = await userService.setUserSession(req.session.authUser.email);
+
+                // reroute
+                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+            }
+        }
+        else {
+            // update not able to take place
+            res.redirect(303, '/community')
+        }
+        
+
+        
+    }
+);
+
+/**
+ * Renders the community/topic ejs file.
+ * Verifies that the user is logged in and has access.
+ * If the user does not have access then it offers them the option to enroll
+ * If the user has access it checks to see if there is an existing session containing 
+ * the topic as the current topic. If so it skips the db load other wise it queries.
+ */
+router.route('/:goalId/:topicId')
+    .get(async (req, res) => {
+        let goalId = req.params.goalId;
+        let topicId = req.params.topicId;
+
+        // why is this here??? 
+        // let nextStep = null;
+        // if(req.query.nextStep) {
+        //     nextStep = req.query.nextStep;
+        // }
+        // end why
+
+        let access = false;
+        if(req.session.authUser) {
+            // check that the user is enrolled!
+            access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
+            // if the user is not, see if we can enroll them
             if(!access) {
                 // check to see if the user is a member and grant access if they are
                 if(req.session.authUser.member) {
@@ -250,7 +274,6 @@ router.route('/:goalId/:topicId')
                     access = true;
 
                     // user has access set the page up with enrollment data
-                    // user is not a member and does not currently have access setup page to allow them to enroll
                     // get the topic data
                     let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
@@ -312,10 +335,11 @@ router.route('/:goalId/:topicId')
                 
             }
             else {
-
-                //console.log("compare: " + req.session.currentTopic + " && " + req.session.currentTopic.topicId +" == "+ topicId +" && "+ req.session.currentTopic.goalId +" == "+ goalId);
+                // user has access 
                 if(req.session.currentTopic && req.session.currentTopic.topicId == topicId) {
-                    // already have data (have to make sure it is up to date for this optimazation to work!)
+                    // already have data in the session save some cycles and don't call it again for now reason
+                    // TODO: (have to make sure it is up to date for this optimazation to work!) in others words, make
+                    // sure the session is kept up to date when changes are made!
                     
                     let topicEnrollment = req.session.currentTopic;
                     // get the current step
@@ -356,9 +380,7 @@ router.route('/:goalId/:topicId')
                 }
                 else {
 
-                    // user has access set the page up with enrollment data
-                    // user is not a member and does not currently have access setup page to allow them to enroll
-                    // get the topic data
+                    // the user has access but the session does not have the topic enrollment data yet
                     let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
@@ -410,7 +432,9 @@ router.route('/:goalId/:topicId')
 );
 
 
-
+/** 
+ * Enroll in a topic
+ */
 router.route('/enroll/:goalId/:topicId')
 .get(async (req, res) => {
     let goalId = req.params.goalId;

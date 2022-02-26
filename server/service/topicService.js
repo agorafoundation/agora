@@ -698,11 +698,13 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
         // now that we have saved all the supporting data and assigned any new id's to there foreign keys we can save the topicEnrollement itself
         // first see if we are doing an udpate or insert based on whether we have an id already.
+        console.log("checking for SET: " + topicEnrollment.completedDate);
         if(topicEnrollment.completedDate == "SET") {
+            topicEnrollment.completedDate = new Date(Date.now()+(1000*60*(-(new Date()).getTimezoneOffset()))).toISOString().replace('T',' ').replace('Z','');
             if(topicEnrollment && topicEnrollment.id > 0) {
                 // UPDATE    
-                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = NOW(), active = $6, update_time = NOW() WHERE id = $7;";
-                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id ];
+                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = $8, active = $6, update_time = NOW() WHERE id = $7;";
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id, topicEnrollment.completedDate ];
                 try { 
                     let res = await db.query(text, values);
     
@@ -715,8 +717,8 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
             }
             else {
                 // INSERT 
-                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, NOW(), $8 ) RETURNING id;";
-                values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true ];
+                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $9, $8 ) RETURNING id;";
+                values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true, topicEnrollment.completedDate ];
     
                 let res = await db.query(text, values);
     
@@ -754,6 +756,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 }
             }
         }
+        
         
         return topicEnrollment;
 

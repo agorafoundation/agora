@@ -33,7 +33,6 @@ router.use(function (req, res, next) {
 
 router.route('/')
     .get(async function (req, res) {
-        
         if(req.session.authUser) {
             const authUser = await userService.setUserSession(req.session.authUser.email);
             req.session.authUser = null;

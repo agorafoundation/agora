@@ -16,16 +16,20 @@ exports.communityEventFeed = async function(limit) {
 
     // get the new user events
     let list1 = await userService.getRecentNewUserEvents(limit);
-    //let list2 = await topicService.getRecentTopicEnrollmentEvents(limit);
+
+    // get recent enrollments
     let list2 = await goalService.getRecentGoalEnrollmentEvents(limit);
 
-    // get new enrollment events
-    eventList = list1.concat(list2);
+    // get recent goal completions
+    let list3 = await goalService.getRecentGoalCompletionEvents(limit);
+
+    // put the lists together
+    eventList = list1.concat(list2).concat(list3);
 
     // sort the events desc
     eventList.sort((a, b) => {
         return b.eventTime - a.eventTime;
-    })
+    });
 
     return eventList;
 }

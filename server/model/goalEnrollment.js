@@ -10,10 +10,13 @@ function goalEnrollment() {
     this.goalId = -1;
     this.goalVersion = -1;
     this.userId = -1;
-    this.isCompleted = true;
+    this.isCompleted = false;
     this.completedDate = null;
     this.active = true;
     this.createTime;
+
+    // put the goal object here for easy access to name, desc, img, etc
+    this.goal = null;
 }
 
 exports.emptyGoalEnrollment = () => {

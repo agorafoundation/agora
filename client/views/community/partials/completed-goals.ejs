@@ -1,9 +1,7 @@
 <% 
-let enrolledFlag = false;
 if(user.enrollments) {
     for(let i=0; i<user.enrollments.length; i++) {
-        if(!user.enrollments[i].isCompleted) {
-            enrolledFlag = true;
+        if(user.enrollments[i].isCompleted) {
             %>
             <a class="card" style="width: 100%;" href="/community/goal/<%- user.enrollments[i].goal.id %>" id="topic_<%- user.enrollments[i].goal.id %>">
                 <div class="card-body-low-padding" name="enrolled_card">
@@ -26,14 +24,16 @@ if(user.enrollments) {
                 </div>
             </a> 
             <%
-        }   
+        }
+        
     }
+    
 }
-if(!enrolledFlag) {
+else {
     %> 
     <div class="card" style="width: 100%;">
         <div class="card-body product-card-text-raised">
-            <h5 class="card-title">You have not yet Enrolled in any goals!</h5>
+            <h5 class="card-title">You have not yet completed any goals!</h5>
         </div>
     </div> 
     <%
