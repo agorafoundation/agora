@@ -31,7 +31,14 @@
                         
                         <div id="user-badges">
                             <h2><span class="text-primary" ><%- (!!user)?user.username:'' %></span></h2>
-                            <h4>Badges:</h4>
+                            <%
+                            if( user && (user.admin || user.member || user.creator || user.codebot) ) {
+                                %>
+                                <h4>Membership Badges:</h4>
+                                <%
+                            }
+                            %>
+                            
                             <%
                             if(user && user.admin) {
                                 %>
@@ -63,6 +70,20 @@
                                 <%
                             }
                             %>
+                            <h4>Goals Completed:</h4>
+                            <%
+                            if(user.enrollments) {
+                                for( let i=0; i < user.enrollments.length; i++ ) {
+                                    if( user.enrollments[i].isCompleted ) {
+                                        %>
+                                        <img src="<%- user.enrollments[i].goal.goalImage %>" title="<%- user.enrollments[i].goal.goalName %>" alt="<%- user.enrollments[i].goal.goalName %>" class="badge-image" />
+                                        <%
+                                    }
+                                }
+                            }
+
+                            %>
+
         
                         </div>
                    
