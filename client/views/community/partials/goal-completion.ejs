@@ -6,7 +6,7 @@
     if(user.topicEnrollments) {
         // check to see if any of the topics are in-complete if so, set the flag
         for( let i=0; i < user.topicEnrollments.length; i++ ) {
-            if(!user.topicEnrollments[i].isCompleted) {
+            if(user.topicEnrollments[i].isCompleted) {
                 finishedTopics++;
             }
         }    
@@ -17,7 +17,6 @@
     }
 
     // If the unfinishedFlag is still false but the goal is not yet finihed, give the user the ability to set it as finished
-    //console.log("goal:: " + JSON.stringify(goal));
     if( user.topicEnrollments && finishedTopics == user.topicEnrollments.length && !completed ) {
         %>
         <h3>The Goal is ready to be finished!</h3>
