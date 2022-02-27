@@ -281,16 +281,19 @@ router.route('/:topicId')
 
         // start the available topics out with the full owner resource set
         let availableResources = ownerResources;
+        console.log("Topic resources: " + JSON.stringify(topic.resources));
+        console.log("Available resources: " + JSON.stringify(availableResources));
 
         // iterate through the resources already associated with the topic, remove them from the available list
         if(topic.resources) {
-            for( let i=0; i < topic.resources; i++ ) {
+            for( let i=0; i < topic.resources.length; i++ ) {
                 let redundantResource = ownerResources.map(ot => ot.id).indexOf(topic.resources[i].id);
-                
+
                 ~redundantResource && availableResources.splice(redundantResource, 1);
             }
         }
       
+        console.log("Resources after removal: " + JSON.stringify(availableResources));
         
         // make sure the user has access to this topic (is owner)
         if(topic.ownedBy === req.session.authUser.id) {

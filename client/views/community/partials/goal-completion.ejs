@@ -3,9 +3,8 @@
     let finishedTopics = 0;
 
     // get the total number of topics for this goal
-    console.log("goal: " + JSON.stringify(goal));
-
     let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == goal.id && enrollment.isCompleted).length > 0 : false;
+    
     if(user.topicEnrollments) {
         // check to see if any of the topics are complete if so, increment the number
         // first iterate through all the topics in the selected goal
