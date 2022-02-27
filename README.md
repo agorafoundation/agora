@@ -63,9 +63,9 @@ answers you seek
     1. Introduction
     2. Pre Assessment
     3. Resources
-    4. Activity        [in progress]
-    5. Post Assessment [in progress]
-    6. Summary         [in progress]
+    4. Activity        
+    5. Post Assessment 
+    6. Summary         
 7. Fully responsive UI based on Bootstrap
 
 
