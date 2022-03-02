@@ -23,8 +23,11 @@ exports.communityEventFeed = async function(limit) {
     // get recent goal completions
     let list3 = await goalService.getRecentGoalCompletionEvents(limit);
 
+    // get recent supporters
+    let list4 = await userService.getRecentSupportingMembers(limit);
+
     // put the lists together
-    eventList = list1.concat(list2).concat(list3);
+    eventList = list1.concat(list2).concat(list3).concat(list4);
 
     // sort the events desc
     eventList.sort((a, b) => {

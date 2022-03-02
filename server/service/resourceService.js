@@ -39,6 +39,31 @@ exports.getActiveResourceById = async function(resourceId) {
     }
 }
 
+/**
+ * Get an resource by id regardless of active status
+ * @param {Integer} resourceId 
+ * @returns resource
+ */
+ exports.getResourceById = async function(resourceId) {
+    let text = "SELECT * FROM resources WHERE id = $1";
+    let values = [ resourceId ];
+    try {
+        let resource = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            resource = Resource.ormResource(res.rows[0]);
+                  
+        }
+        return resource;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
 
 /**
  * Retrieves all active resources created by a particular owner
@@ -47,6 +72,35 @@ exports.getActiveResourceById = async function(resourceId) {
 exports.getAllActiveResourcesForOwner = async function(ownerId) {
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
+
+    let resources = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
+        }
+
+        return resources;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
+
+/**
+ * Retrieves all resources created by a particular owner regardless of active status
+ * @returns All resources as a list
+ */
+ exports.getAllResourcesForOwner = async function(ownerId) {
+    const text = "SELECT * FROM resources WHERE owned_by = $1 order by id;";
+    const values = [ ownerId ];
 
     let resources = [];
     

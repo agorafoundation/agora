@@ -13,39 +13,61 @@
         <!-- About Section-->
        
         <section class="page-section-top-padded mb-0" id="about">
-            <div class="container navbar-interior font-weight-bold text-primary">
-                <%- include('../partials/community-menu') %>
-                <%- include('../partials/welcome'); %>
-            </div>
-
-            <div class="container">
-
-                <div class="divider-custom">
-                </div>
-                <a href="/community/">Back to Community Home</a>
-                <h2>Goal: <span class="text-primary" ><%- goal.goalName %></span></h2>
-                
-                <div class="text-left mt-4">
-                    <div id="story1" class="row justify-content-left">
-                        
-                        <div class="col-lg-5">
-                            
-                            <h4 class="text-secondary">Path to goal completion</h4>
-                            <%- include('./partials/goal-path'); %>
-
-                            
-                        </div>
-
-                        <div class="col-lg-7">
-                            <%- include('./partials/goal-completion'); %>
-                            
-
-                        </div>
-                        
+            <%
+            // check to see that the goal is active
+            if(goal.active) {
+                // check to see that the user is enrolled!
+                if(user && user.enrollments && user.enrollments.filter(enrollment => enrollment.goal.id == goal.id).length > 0) {
+                %>
+                    <div class="container navbar-interior font-weight-bold text-primary">
+                        <%- include('../partials/community-menu') %>
+                        <%- include('../partials/welcome'); %>
                     </div>
-                </div>
-            
-            </div>
+
+                    <div class="container">
+
+                        <div class="divider-custom">
+                        </div>
+                        <a href="/community/">Back to Community Home</a>
+                        <h2>Goal: <span class="text-primary" ><%- goal.goalName %></span></h2>
+                        
+                        <div class="text-left mt-4">
+                            <div id="story1" class="row justify-content-left">
+
+                                <div class="col-lg-5">
+                                    
+                                    <h4 class="text-secondary">Path to goal completion</h4>
+                                    <%- include('./partials/goal-path'); %>
+
+                                    
+                                </div>
+
+                                <div class="col-lg-7">
+                                    <%- include('./partials/goal-completion'); %>
+                                    
+
+                                </div>
+                                
+                            </div>
+                        </div>
+                    
+                    </div>
+                <%
+                }
+                else {
+                    %>
+                    <h2>User not enrolled!</h2>
+                    <a href="/community/">Back to Community Home</a>
+                    <%
+                }
+            }
+            else {
+                %>
+                <h2>Inactive Goal</h2>
+                <a href="/community/">Back to Community Home</a>
+                <%
+            }
+            %>
 
         </section>
 

@@ -320,7 +320,7 @@ router.route('/:goalId/:topicId')
                     // user is not a member and does not currently have access setup page to allow them to enroll
                     // get the topic data
                     
-                    let topic = await topicService.getActiveTopicWithEverythingById(topicId);
+                    let topic = await topicService.getTopicWithEverythingById(topicId, true);
                     //console.log("topic: " + JSON.stringify(topic) + " has access::::: " + access); 
                     // open the course
                     // add the enrollment to the session

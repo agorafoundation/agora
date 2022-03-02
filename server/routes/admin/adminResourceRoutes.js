@@ -59,7 +59,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.authUser.id)
+        let ownerResources = await resourceService.getAllResourcesForOwner(req.session.authUser.id)
         //console.log("------------- owner resources: " + JSON.stringify(ownerResources));
         let resource = null;
         
@@ -98,7 +98,7 @@ router.route('/')
                 // get the existing data
                 if(resource.id) {
 
-                    resourceService.getActiveResourceById(resource.id).then((dbResource) => {
+                    resourceService.getResourceById(resource.id).then((dbResource) => {
                         resource.id = dbResource.id;
                         resource.resourceImage = dbResource.resourceImage
 
@@ -144,11 +144,11 @@ router.route('/:resourceId')
         let resourceId = req.params.resourceId;
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner(req.session.authUser.id);
+        let ownerResources = await resourceService.getAllResourcesForOwner(req.session.authUser.id);
 
         let resource = Resource.emptyResource();
         if(resourceId > 0) {
-            resource = await resourceService.getActiveResourceById(resourceId);
+            resource = await resourceService.getResourceById(resourceId);
         }
         else {
             resource.ownedBy = req.session.authUser.id;

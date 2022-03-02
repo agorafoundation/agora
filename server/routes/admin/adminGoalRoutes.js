@@ -60,7 +60,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.authUser.id)
+        let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false )
         //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
         let goal = null;
         
@@ -89,7 +89,7 @@ router.route('/')
                 // get the existing data
                 if(goal.id) {
 
-                    goalService.getMostRecentActiveGoalById(goal.id).then((dbGoal) => {
+                    goalService.getMostRecentGoalById(goal.id).then((dbGoal) => {
                         goal.id = dbGoal.id;
                         goal.goalImage = dbGoal.goalImage
 
@@ -143,16 +143,16 @@ router.route('/:goalId')
         let goalId = req.params.goalId;
 
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.authUser.id);
+        let ownerGoals = await goalService.getAllGoalsForOwner(req.session.authUser.id, false );
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id);
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, true);
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
         let goal = Goal.emptyGoal();
         if(goalId > 0) {
-            goal = await goalService.getActiveGoalWithTopicsById(goalId);
+            goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
 
             // iterate through the goals assigned topics, remove them from the available list
             for(let i=0; i < goal.topics.length; i++) {

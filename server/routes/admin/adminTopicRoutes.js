@@ -65,7 +65,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id)
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id)
         //console.log("------------- owner topics: " + JSON.stringify(ownerTopics));
         let topic = null;
         
@@ -78,7 +78,7 @@ router.route('/')
             if(err) {
                 console.log("Error uploading picture : " + err);
                 req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-                res.redirect(303, '/auth');
+                res.redirect(303, '/a/topic');
             }
             else {
                 // create topic        
@@ -95,8 +95,9 @@ router.route('/')
                 }
 
                 // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
+                console.log("cheking the id: " + topic.id);
                 if(topic.id > 0) {
-                    topicService.getActiveTopicById(topic.id).then((dbTopic) => {
+                    topicService.getTopicById(topic.id).then((dbTopic) => {
                         topic.id = dbTopic.id;
                         topic.topicImage = dbTopic.topicImage
 
@@ -265,12 +266,12 @@ router.route('/:topicId')
         let topicId = req.params.topicId;
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id);
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, false);
 
         // get the topic by id
         let topic = Topic.emptyTopic();
         if(topicId > 0) {
-            topic = await topicService.getActiveTopicWithEverythingById(topicId);
+            topic = await topicService.getTopicWithEverythingById(topicId, false);
         }
         else {
             topic.ownedBy = req.session.authUser.id;
@@ -281,16 +282,19 @@ router.route('/:topicId')
 
         // start the available topics out with the full owner resource set
         let availableResources = ownerResources;
+        //console.log("Topic resources: " + JSON.stringify(topic));
+        //console.log("Available resources: " + JSON.stringify(availableResources));
 
         // iterate through the resources already associated with the topic, remove them from the available list
         if(topic.resources) {
-            for( let i=0; i < topic.resources; i++ ) {
+            for( let i=0; i < topic.resources.length; i++ ) {
                 let redundantResource = ownerResources.map(ot => ot.id).indexOf(topic.resources[i].id);
-                
+
                 ~redundantResource && availableResources.splice(redundantResource, 1);
             }
         }
       
+        //console.log("Resources after removal: " + JSON.stringify(availableResources));
         
         // make sure the user has access to this topic (is owner)
         if(topic.ownedBy === req.session.authUser.id) {

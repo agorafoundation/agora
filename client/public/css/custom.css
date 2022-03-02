@@ -924,3 +924,11 @@ input:checked + .slider:after {
   .button-right {
       float:right;
   }
+
+  /*  EVENT founder */
+  .founder-event-card {
+    background-color: #04AA6D;
+    color: white;
+    font-size: 1.4rem;
+    padding: 7px 10px;
+}

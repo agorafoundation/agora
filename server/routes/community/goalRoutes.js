@@ -64,7 +64,7 @@ router.route('/:goalId')
     .get(async (req, res) => {
         // get the topic data
         let goalId = req.params.goalId;
-        let goal = await goalService.getActiveGoalWithTopicsById(goalId);
+        let goal = await goalService.getActiveGoalWithTopicsById( goalId, true );
         //console.log("goal: " + JSON.stringify(goal));
         res.render('community/goal', {user: req.session.authUser, goal: goal});
     }

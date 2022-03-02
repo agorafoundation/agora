@@ -50,13 +50,26 @@ const Event = require('../model/event');
 }
 
 /**
- * Retrieves all active goals created by a particular owner with the highest version number
+ * Retrieves all goals created by a particular owner with the highest version number
+ * @param {Integer} ownerId - Id of the topic owner
+ * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns All active goals as a list
  */
- exports.getAllActiveGoalsForOwner = async function(ownerId) {
-    const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
+ exports.getAllGoalsForOwner = async function(ownerId, isActive) {
+
+    let text = "";
+    let values = [];
+    if( !isActive ) {
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and gl.owned_by = $1 order by gl.id;";
+        values = [ ownerId ];
+    }
+    else {
+        // default to only retreiving active topics
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and gl.owned_by = $2 order by gl.id;";
-    const values = [ true, ownerId ];
+        values = [ true, ownerId ];
+    }
 
     let goals = [];
     
@@ -130,12 +143,26 @@ exports.getAllActiveGoalsWithTopics = async function() {
 /**
  * Get an active goal by id including associated topics
  * @param {Integer} goalId 
+ * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns goal with topics
  */
-exports.getActiveGoalWithTopicsById = async function(goalId) {
-    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
+
+    let text = "";
+    let values = [];
+    if( !isActive ) {
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-    let values = [ true, goalId ];
+        values = [ goalId ];
+    }
+    else {
+        // default to only retreiving active topics
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
+        values = [ true, goalId ];
+    }
+
+
     try {
         let goal = "";
          
@@ -169,14 +196,14 @@ exports.getActiveGoalWithTopicsById = async function(goalId) {
 }
 
 /**
- * Get the most recent version of an active goal by id
+ * Get the most recent version of an goal by id
  * @param {Integer} goalId 
  * @returns goal
  */
- exports.getMostRecentActiveGoalById = async function(goalId) {
-    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+ exports.getMostRecentGoalById = async function(goalId) {
+    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-    let values = [ true, goalId ];
+    let values = [ goalId ];
     try {
         let goal = "";
          
@@ -487,6 +514,16 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
     let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
         + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
         + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
+    
+    // get active enrollments, also check the the goal itself is active!
+    // let text = "SELECT ug.*, g.active as g_active, g.id as g_id FROM user_goal ug "
+    //     + "INNER JOIN (SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) "
+    //     + "groupedug ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version "
+    //     + "INNER JOIN goals AS g ON ug.goal_id = g.id AND ug.goal_version = groupedug.max_version AND g.active = $1;"
+    // note this is historical, upon testing I realized that implementing this code meant that completed goals were not showing up in users profiles and in feeds
+    // so the approach taken was to have all active / inactive goals returned if the user has been enrolled and use goal.active to filter in the views where showing
+    // the goal is not desirable 
+
     let values = [ true, userId ];
     
     let enrollments = [];
@@ -498,8 +535,8 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
                 let enrollment = GoalEnrollment.ormGoalEnrollment(res.rows[i]);
 
                 // get the goal for each user_goal
-                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 AND goal_version = $3;"
-                values = [true, res.rows[i].goal_id, res.rows[i].goal_version ];
+                text = "SELECT * FROM goals WHERE  id = $1 AND goal_version = $2;"
+                values = [ res.rows[i].goal_id, res.rows[i].goal_version ];
 
                 let res2 = await db.query(text, values);
 
@@ -524,7 +561,7 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
 
 exports.getRecentGoalEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -560,7 +597,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
 
 exports.getRecentGoalCompletionEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true AND mod.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {

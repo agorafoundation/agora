@@ -164,13 +164,13 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 }
 
 /**
- * Get an active topic by id
+ * Get a topic by id
  * @param {Integer} topicId 
  * @returns topic
  */
- exports.getActiveTopicById = async function(topicId) {
-    let text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
-    let values = [ true, topicId ];
+ exports.getTopicById = async function(topicId) {
+    let text = "SELECT * FROM topics WHERE id = $1";
+    let values = [ topicId ];
     try {
         let topic = "";
          
@@ -188,12 +188,23 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 }
 
 /**
- * Retrieves all active topics created by a particular owner
+ * Retrieves all topics created by a particular owner
+ * @param {Integer} ownerId - Id of the topic owner
+ * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns All active topics as a list
  */
- exports.getAllActiveTopicsForOwner = async function(ownerId) {
-    const text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by id;";
-    const values = [ true, ownerId ];
+ exports.getAllTopicsForOwner = async function(ownerId, isActive) {
+    let text = "";
+    let values = [];
+    if( !isActive ) {
+        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";
+        values = [ ownerId ];
+    }
+    else {
+        // default to only retreiving active topics
+        text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by id;";
+        values = [ true, ownerId ];
+    }
 
     let topics = [];
     
@@ -219,12 +230,23 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 /**
  * Gets an active topic by topic Id with all resources, activity and assessments attached
  * @param {Integer} topicId 
+ * @param {Integer} isActive - True if only active topic should be returned, false will return topic, active or not.
  * @returns Topic
  */
-exports.getActiveTopicWithEverythingById = async function(topicId) {
-    let text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
-    let values = [ true, topicId ];
-    
+exports.getTopicWithEverythingById = async function(topicId, isActive) {
+    let text = "";
+    let values = [];
+    if( !isActive ) {
+        text = "SELECT * FROM topics WHERE id = $1";
+        values = [ topicId ];
+    }   
+    else {
+        // default to true (require active)
+        text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
+        values = [ true, topicId ];
+
+    }
+
     try {
         
         let res = await db.query(text, values);
@@ -321,7 +343,7 @@ exports.getActiveTopicWithEverythingById = async function(topicId) {
  * @param {Integer} userId Id of user
  * @param {Integer} topicId Id of topic
  * @param {Boolean} getFullTopic True if you wish the returned TopicEnrollment.topic to be populated 
- *                               along with all supporting data (calls getActiveTopicWithEverythingById())
+ *                               along with all supporting data (calls getTopicWithEverythingById())
  * @returns TopicEnrollment with supporting data
  */
 exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function(userId, topicId, getFullTopic) {
@@ -336,7 +358,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 
             // get the full topic?
             if(getFullTopic) {
-                topicEnrollment.topic = await exports.getActiveTopicWithEverythingById(topicEnrollment.topicId);
+                topicEnrollment.topic = await exports.getTopicWithEverythingById(topicEnrollment.topicId, true);
             }
             
             // get the completed pre assessment
@@ -440,6 +462,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
  exports.saveTopic = async function(topic) {
     // check to see if an id exists - insert / update check
     if(topic) {
+        console.log("saving topic: " + JSON.stringify(topic));
         if(topic.id > 0) {
             
             // update
