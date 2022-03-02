@@ -19,7 +19,7 @@ function assessment() {
 
     // completed assessments (by userId) must only be used for the current user! 
     // and of course this assessmentId (pre and post mean more then one often, hense the array)
-    // TODO: impletement this, in getActiveTopicWithEverythingById? other places?
+    // TODO: impletement this, in getTopicWithEverythingById? other places?
     this.completedAssessments = [];
     
 }

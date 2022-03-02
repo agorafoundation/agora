@@ -146,7 +146,7 @@ router.route('/:goalId')
         let ownerGoals = await goalService.getAllActiveGoalsForOwner(req.session.authUser.id);
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id);
+        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id, true);
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 

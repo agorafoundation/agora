@@ -36,10 +36,19 @@
                             <%
                             if(ownerTopics && ownerTopics.length > 0) {
                                 for(let i=0; i < ownerTopics.length; i++) {
-                                %>
-                                    <a class="text-primary" href="/a/topic/<%- ownerTopics[i].id %>" ><%- ownerTopics[i].topicName %></a>
-                                    <br />
-                                <%
+                                    if(ownerTopics[i].active) {
+                                        %>
+                                        <a class="text-primary" href="/a/topic/<%- ownerTopics[i].id %>" ><%- ownerTopics[i].topicName %></a>
+                                        <br />
+                                        <%
+                                    }
+                                    else {
+                                        %>
+                                        <span style="color: red;">{Inactive}</span>
+                                        <a class="text-primary" href="/a/topic/<%- ownerTopics[i].id %>" ><%- ownerTopics[i].topicName %></a>
+                                        <br />
+                                        <%
+                                    }
                                 }
                             }
 
