@@ -65,7 +65,7 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 router.route('/')
     .get(async function (req, res) {
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id)
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id)
         //console.log("------------- owner topics: " + JSON.stringify(ownerTopics));
         let topic = null;
         
@@ -266,7 +266,7 @@ router.route('/:topicId')
         let topicId = req.params.topicId;
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllActiveTopicsForOwner(req.session.authUser.id, false);
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, false);
 
         // get the topic by id
         let topic = Topic.emptyTopic();

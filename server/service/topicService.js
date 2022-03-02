@@ -188,12 +188,12 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 }
 
 /**
- * Retrieves all active topics created by a particular owner
+ * Retrieves all topics created by a particular owner
  * @param {Integer} ownerId - Id of the topic owner
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns All active topics as a list
  */
- exports.getAllActiveTopicsForOwner = async function(ownerId, isActive) {
+ exports.getAllTopicsForOwner = async function(ownerId, isActive) {
     let text = "";
     let values = [];
     if( !isActive ) {

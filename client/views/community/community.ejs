@@ -53,6 +53,25 @@
                                 <div class="divider-custom-line cherry-red-bg-color"></div>
                             </div>
 
+                            <%
+                            if(locals.authUser.member) {
+                                %>
+                                <div class="alert-message alert-message-success" role="document">
+                                    <h5>Thank you for supporting the coding coach!!!</h5>
+                                    <p>Our educational efforts are completely supported by users like you!</p>
+                                </div>
+                                <% 
+                            } 
+                            else {
+                                %>    
+                                <div class="alert-message alert-message-info" role="document">
+                                    <h5>Need Tokens? Want to learn more about supporting the Coding Coach and the benefits of becoming a member?</h5>
+                                    <p><a href="/community/purchase">Learn more about tokens and membership</a></p>
+                                </div>
+                                <% 
+                            }
+                            %>
+
                             <% if(!user.emailValidated){ %>
                                 <div class="alert-message alert-message-warning" role="alert">
                                     <h3 >Email not verified!</h3>

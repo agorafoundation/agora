@@ -737,7 +737,50 @@ exports.getRecentNewUserEvents = async function(limit) {
                 event.eventType = "New User";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].create_time;
-                event.eventTitle = "<a href='/user/" + res.rows[i].id + "'>" + res.rows[i].username + "</a> Just signed up! Say hello < TODO: STUB>!";
+                event.eventTitle = "<a href='/user/" + res.rows[i].id + "'>" + res.rows[i].username + "</a> Just signed up!"; // TODO Say hello < TODO: STUB>! Add a link so that a user can use disscussions to say hi!
+                event.eventImage = res.rows[i].profile_filename;
+
+                recentUserEvents.push(event);
+
+            }
+        }
+        else {
+            return false;
+        }
+        return recentUserEvents;
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
+    
+}
+
+/**
+ * Returns a list of the most recent supporting members of the site
+ * @param {numer of entries from this list to include in the feed} limit 
+ * @returns 
+ */
+exports.getRecentSupportingMembers = async function(limit) {
+    limit = (!limit) ? 10 : limit;
+    let text = "select ur.id as user_role_id, r.id as role_id, ud.id as user_data_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.id as id "
+     + "from user_role ur inner join user_data as ud on ur.user_id = ud.id inner join roles as r on ur.role_id = r.id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
+    let values = [ limit ];
+    
+    try {
+        
+        let res = await db.query(text, values);
+        
+        let recentUserEvents = [];
+        if(res.rows.length > 0) {
+            for(let i=0; i<res.rows.length; i++) {
+                let event = Event.emptyEvent();
+                event.eventUserId = res.rows[i].id;
+                event.eventItem = "supporter";
+                event.eventType = "New Founding Member";
+                event.eventUsername = res.rows[i].username;
+                event.eventTime = res.rows[i].create_time;
+                event.eventTitle = "<a href='/user/" + res.rows[i].id + "'>" + res.rows[i].username + "</a> <span class='founder-event-card'>Became a Founding Member!!! Thank you for your support! &#127881;&#127881;</span>"; // TODO Say hello < TODO: STUB>! Add a link so that a user can use disscussions to say hi!
                 event.eventImage = res.rows[i].profile_filename;
 
                 recentUserEvents.push(event);
