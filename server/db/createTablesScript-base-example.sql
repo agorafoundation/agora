@@ -353,6 +353,7 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_description VARCHAR,
     goal_image VARCHAR,
     active BOOLEAN,
+    completable BOOLEAN,
     create_time TIMESTAMP default current_timestamp,
     owned_by INTEGER,
     PRIMARY KEY(id, goal_version)

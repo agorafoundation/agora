@@ -83,7 +83,8 @@
                                                 <label for="formFile" class="form-label">Upload an image for this goal (1MB Max size)</label>
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- goal.goalImage %>" name="goalImage">
                                             </div>
-                                            Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
+                                            Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> /><br />
+                                            Completable: <input type="checkbox" class="" id="goalCompletable" name="goalCompletable" <%- (goal.completable)?'checked':'' %> />
                                             <br />
                                             <br />
                                             

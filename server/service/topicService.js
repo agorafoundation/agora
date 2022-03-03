@@ -322,9 +322,9 @@ exports.getTopicWithEverythingById = async function(topicId, isActive) {
             }
             topic.resources = resources;
 
-            console.log("------------------------");
-            console.log("Full Topic: " + JSON.stringify(topic));
-            console.log("------------------------");
+            // console.log("------------------------");
+            // console.log("Full Topic: " + JSON.stringify(topic));
+            // console.log("------------------------");
             return topic;
             
         }
@@ -437,8 +437,6 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
             return false;
         }
-
-        // success?  of course! release the pool!
         
         // console.log("------------------------");
         // console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
@@ -721,7 +719,6 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
         // now that we have saved all the supporting data and assigned any new id's to there foreign keys we can save the topicEnrollement itself
         // first see if we are doing an udpate or insert based on whether we have an id already.
-        console.log("checking for SET: " + topicEnrollment.completedDate);
         if(topicEnrollment.completedDate == "SET") {
             topicEnrollment.completedDate = new Date(Date.now()+(1000*60*(-(new Date()).getTimezoneOffset()))).toISOString().replace('T',' ').replace('Z','');
             if(topicEnrollment && topicEnrollment.id > 0) {

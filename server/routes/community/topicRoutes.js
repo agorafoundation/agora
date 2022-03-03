@@ -207,7 +207,6 @@ router.route('/update/:finishedStep')
 
                 // mark the topic complete and return the users token
                 if(!req.session.currentTopic.isCompleted) {
-                    console.log("setting complete!");
                     req.session.currentTopic.isCompleted = true;
                     req.session.currentTopic.completedDate = "SET";
 
