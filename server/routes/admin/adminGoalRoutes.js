@@ -83,8 +83,8 @@ router.route('/')
 
                 goal.goalName = req.body.goalName;
                 goal.goalDescription = req.body.goalDescription;
-                goal.active = (req.body.goalActive == "on") ? true : false;
-
+                goal.active = ( req.body.goalActive == "on" ) ? true : false;
+                goal.completable = ( req.body.goalCompletable == "on") ? true : false;
                 
                 // get the existing data
                 if(goal.id) {

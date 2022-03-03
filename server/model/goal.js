@@ -12,6 +12,7 @@ function goal() {
     this.goalDescription = "";
     this.goalImage = "";
     this.active = true;
+    this.completable = false;
     this.createTime;
     this.ownedBy = -1;
 
@@ -30,6 +31,7 @@ exports.ormGoal = function (row) {
     goal.goalDescription = row.goal_description;
     goal.goalImage = row.goal_image;
     goal.active = row.active;
+    goal.completable = row.completable;
     goal.createTime = row.create_time;
     goal.ownedBy = row.owned_by;
     return goal;
