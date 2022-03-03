@@ -501,6 +501,8 @@ CREATE TABLE IF NOT EXISTS assessments (
     assessment_type INTEGER,   -- ?? 1-pre/post eval, 2.. quiz?, etc not sure if this is needed depends on how tests are done outside of pre/post assessments
     assessment_name VARCHAR,  
     assessment_description VARCHAR,
+    pre_threshold INTEGER,
+    post_threshold INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
     create_time TIMESTAMP default current_timestamp

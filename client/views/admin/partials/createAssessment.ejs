@@ -9,6 +9,8 @@ if(topic) {
             <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.id %>" />
             Name: <input type="input" class="form-control form-control-lg" name="topicAssessmentName" value="<%- topic.assessment.assessmentName %>" id="topicAssessmentName" placeholder="Assessment Title" required>
             Desciption: <input type="input" class="form-control form-control-lg" name="topicAssessmentDescription" value="<%- topic.assessment.assessmentDescription %>" id="topicAssessmentDescription" placeholder="Description">
+            Pre Assessment Threshold: <input type="input" class="form-control form-control-lg" name="topicAssessmentPreThreshold" value="<%- topic.assessment.preThreshold %>" id="topicAssessmentPreThreshold" placeholder="90" required>
+            Post Assessment Threshold: <input type="input" class="form-control form-control-lg" name="topicAssessmentPostThreshold" value="<%- topic.assessment.postThreshold %>" id="topicAssessmentPostThreshold" placeholder="70" required>
             Active: <input type="checkbox" class="" id="topicAssessmentActive" name="topicAssessmentActive" <%- (topic.assessment.active)?'checked':'' %> />
             
             <div id="questions-border">

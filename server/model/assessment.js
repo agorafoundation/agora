@@ -10,6 +10,8 @@ function assessment() {
     this.assessmentType = -1;
     this.assessmentName = "";
     this.assessmentDescription = "";
+    this.preThreshold = 90;             // default value that if acheived in pre assessment allows a student to "test-out" of topic
+    this.postThreshold = 70;            // default value that if acheived in post assessment means a user can "move-on" from a topic
     this.isRequired = "";
     this.active = true;
     this.createTime;
@@ -34,6 +36,8 @@ exports.ormAssessment = function (row) {
     assessment.assessmentType = row.assessment_type;
     assessment.assessmentName = row.assessment_name;
     assessment.assessmentDescription = row.assessment_description;
+    assessment.preThreshold = row.pre_threshold;
+    assessment.postThreshold = row.post_threshold;
     assessment.isRequired = row.is_required;
     assessment.active = row.active;
     assessment.createTime = row.create_time;

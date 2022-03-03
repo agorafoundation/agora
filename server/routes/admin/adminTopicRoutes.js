@@ -95,7 +95,7 @@ router.route('/')
                 }
 
                 // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
-                console.log("cheking the id: " + topic.id);
+                //console.log("cheking the id: " + topic.id);
                 if(topic.id > 0) {
                     topicService.getTopicById(topic.id).then((dbTopic) => {
                         topic.id = dbTopic.id;
@@ -158,6 +158,14 @@ router.route('/')
 
                 if(req.body.topicAssessmentDescription) {
                     topic.assessment.assessmentDescription = req.body.topicAssessmentDescription;
+                }
+
+                if(req.body.topicAssessmentPreThreshold) {
+                    topic.assessment.preThreshold = req.body.topicAssessmentPreThreshold;
+                }
+
+                if(req.body.topicAssessmentPostThreshold) {
+                    topic.assessment.postThreshold = req.body.topicAssessmentPostThreshold;
                 }
 
                 topic.assessment.active = false;

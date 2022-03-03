@@ -136,8 +136,8 @@ exports.getActiveAssessmentById = async function(assessmentId) {
         
         // save the assessment
         if(assessment) {
-            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, is_required, active) VALUES ($1, $2, $3, $4, $5) RETURNING id;"
-            let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.isRequired, true ];
+            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;"
+            let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.preThreshold, assessment.postThreshold, assessment.isRequired, true ];
 
             try {
                 let res = await db.query(text, values);
