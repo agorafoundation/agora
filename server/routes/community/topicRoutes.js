@@ -13,6 +13,7 @@ var router = express.Router();
 const topicService = require('../../service/topicService');
 const productService = require('../../service/productService');
 const userService = require('../../service/userService');
+const assessmentService = require('../../service/assessmentService');
 
 // models
 const TopicEnrollment = require('../../model/topicEnrollment');
@@ -186,8 +187,9 @@ router.route('/update/:finishedStep')
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
 
                 // get the next topicAssessmentNumber
-                ca.topicAssessmentNumber = assessmentService.getNextTopicAssessmentNumber(req.session.currentTopic.topic.assessmentId, req.session.authUser.id);
+                ca.topicAssessmentNumber = await assessmentService.getNextTopicAssessmentNumber(req.session.currentTopic.topic.assessmentId, req.session.authUser.id);
                 ca.topicAssessmentNumber++;     // increment to next unused number
+                console.log("thee ca.topicAssessmentNumber is: " + ca.topicAssessmentNumber);
 
                 // go through all the questions and look for the anwser
                 for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {

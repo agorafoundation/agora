@@ -77,15 +77,17 @@ exports.getActiveAssessmentById = async function(assessmentId) {
 exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
     if( assessmentId ) {
         // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
+        console.log("finding unmber for : " + assessmentId + " and " + userId)
         let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
         let values = [ assessmentId, userId ];
 
         try {
-            let assessment = "";
              
             let res = await db.query(text, values);
+            console.log(" the res was: " + JSON.stringify(res));
             if(res.rowCount > 0) {
-                return res.rows[0].num_assessments
+                console.log(" here : " + res.rows[0].num_assessments);
+                return res.rows[0].num_assessments;
             }
 
         }
@@ -97,50 +99,41 @@ exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
 }
 
 /**
- * INPROGRESS!
- * @param {} assessment 
+ * Determines the number of correct answers a student had on an assessment.
+ * Pass in the assessment and the completedAssessment. Function will return a decimal representing the percentage correct
+ * range ( .000 -> 1.000 )
+ * @param {Assessment} assessment 
+ * @param {CompletedAssessment} completedAssessment 
+ * @returns decimal representing the percentage correct range ( .000 -> 1.000 )
  */
-exports.evaluateAssessment = async function( assessment ) {
+exports.evaluateAssessment = async function( assessment, completedAssessment ) {
     let totalQuestions = 0;
     let totalCorrect = 0;
 
-
-    if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
-        for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+    if(assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.id == completedAssessment.assessmentId ) {
+        for( let i=0; i < assessment.questions.length; i++ ) {
+            
             totalQuestions++;
-    
-            // get the matching completedQuestion
-            let completedQuestion = null;
-            if(topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions) {
-                for(k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++) {
-                    if(topicEnrollment.preAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.preAssessment.completedQuestions[k].assessmentQuestionId == topicEnrollment.topic.assessment.questions[i].id) {
-                        completedQuestion = topicEnrollment.preAssessment.completedQuestions[k];
-                    }
-                }
-            }
-    
-            // iterate through the options mark the chosen one using the completedQuestion data
-            for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
-                let correctFlag = false;
-                if(topicEnrollment.topic.assessment.questions[i].correctOptionId == topicEnrollment.topic.assessment.questions[i].options[j].id) {
-                    correctFlag = true;
-                }
-                if(completedQuestion && topicEnrollment.topic.assessment.questions[i].options[j].id == completedQuestion.assessmentQuestionOptionId) {
-                    // user chose this option
-                    if(correctFlag) {
-                        totalCorrect++;
-                    }
-    
-                }   
-                else {
-                }
-            }
-    
-        }
-    }
 
-    ((totalQuestions > 0)?(totalCorrect / totalQuestions):0).toFixed(1)
-    
+            let completedQuestion = null;
+            for( j=0; j < completedAssessment.completedQuestions.length; j++ ) {
+                if( assessment.questions[i].id === completedAssessment.completedQuestions[j].id ) {
+
+                    // see if the user had the right answer
+                    console.log("checking for correct answer: 1: " + assessment.questions[i].correctOptionId + " === " + completedAssessment.completedQuestions[j].assessmentQuestionOptionId);
+                    if( assessment.questions[i].correctOptionId === completedAssessment.completedQuestions[j].assessmentQuestionOptionId ) {
+                        // user selected the correct option
+                        totalCorrect++;
+                        console.log("total correct: " + totalCorrect);
+                    }
+                }
+            }
+
+        }
+
+        // return the % correct as a decimal (range .000 -> 1.000)
+        return ((totalQuestions > 0)?(totalCorrect / totalQuestions):0);
+    }
 }
 
 

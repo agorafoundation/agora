@@ -25,7 +25,7 @@ const CompletedResource = require('../model/completedResource');
 
 // any cross services required
 const userService = require('../service/userService');
-
+const assessmentService = require('../service/assessmentService');
 
 
 /**
@@ -576,12 +576,17 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
         if(topicEnrollment.preAssessment && topicEnrollment.topic && topicEnrollment.topic.assessment) {
             // check that this assessment does not already exist, we only save assessments once! An id will not be
             // assigned if the data has not been save previously
+
+            // determine if the students score
+            let score = await assessmentService.evaluateAssessment(topicEnrollment.topic.assessment, topicEnrollment.preAssessment);
+            console.log("pre assessment score determined to be: " + score);
+            console.log("pre topicEnrollment.preAssessment.topicAssessmentNumber is: " + topicEnrollment.preAssessment.topicAssessmentNumber);
             if(topicEnrollment.preCompletedAssessmentId > 0) {
                 console.log("[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, true ];
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING id;"
+                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, score, true ];
 
                 let res = await db.query(text, values);
                 // last step, update the fk in topicEnrollment!
@@ -613,12 +618,18 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
         if(topicEnrollment.postAssessment && topicEnrollment.topic && topicEnrollment.topic.assessment) {
             // check that this assessment does not already exist, we only save assessments once! An id will not be
             // assigned if the data has not been save previously
+
+            // determine if the students score
+            let score = await assessmentService.evaluateAssessment(topicEnrollment.topic.assessment, topicEnrollment.postAssessment);
+            console.log("post assessment score determined to be: " + score);
+            console.log("post topicEnrollment.postAssessment.topicAssessmentNumber is: " + topicEnrollment.postAssessment.topicAssessmentNumber);
             if(topicEnrollment.postCompletedAssessmentId > 0) {
                 console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, true ];
+
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING id;"
+                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, score, true ];
 
                 let res = await db.query(text, values);
 
