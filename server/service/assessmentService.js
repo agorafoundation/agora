@@ -96,6 +96,53 @@ exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
     }
 }
 
+/**
+ * INPROGRESS!
+ * @param {} assessment 
+ */
+exports.evaluateAssessment = async function( assessment ) {
+    let totalQuestions = 0;
+    let totalCorrect = 0;
+
+
+    if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
+        for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+            totalQuestions++;
+    
+            // get the matching completedQuestion
+            let completedQuestion = null;
+            if(topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions) {
+                for(k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++) {
+                    if(topicEnrollment.preAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.preAssessment.completedQuestions[k].assessmentQuestionId == topicEnrollment.topic.assessment.questions[i].id) {
+                        completedQuestion = topicEnrollment.preAssessment.completedQuestions[k];
+                    }
+                }
+            }
+    
+            // iterate through the options mark the chosen one using the completedQuestion data
+            for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
+                let correctFlag = false;
+                if(topicEnrollment.topic.assessment.questions[i].correctOptionId == topicEnrollment.topic.assessment.questions[i].options[j].id) {
+                    correctFlag = true;
+                }
+                if(completedQuestion && topicEnrollment.topic.assessment.questions[i].options[j].id == completedQuestion.assessmentQuestionOptionId) {
+                    // user chose this option
+                    if(correctFlag) {
+                        totalCorrect++;
+                    }
+    
+                }   
+                else {
+                }
+            }
+    
+        }
+    }
+
+    ((totalQuestions > 0)?(totalCorrect / totalQuestions):0).toFixed(1)
+    
+}
+
 
 /**
  * Saves a assessment to the database, creates a new record if no id is assigned, updates existing record if there is an id.
