@@ -581,7 +581,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
             }
             else {
                 text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 1, true ];
+                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, true ];
 
                 let res = await db.query(text, values);
                 // last step, update the fk in topicEnrollment!
@@ -618,7 +618,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
             }
             else {
                 text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2, true ];
+                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, true ];
 
                 let res = await db.query(text, values);
 

@@ -129,7 +129,7 @@ router.route('/update/:finishedStep')
                 let ca = CompletedAssessment.emptyCompletedAssessment();
                 ca.userId = req.session.authUser.id;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-                ca.prePost = 1; // pre
+                ca.topicAssessmentNumber = 1; // pre is always #1 (there is only one and it is always first)
 
                 // go through all the questions and look for the anwser
                 for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
@@ -184,7 +184,10 @@ router.route('/update/:finishedStep')
                 let ca = CompletedAssessment.emptyCompletedAssessment();
                 ca.userId = req.session.authUser.id;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-                ca.prePost = 2; // pre
+
+                // get the next topicAssessmentNumber
+                ca.topicAssessmentNumber = assessmentService.getNextTopicAssessmentNumber(req.session.currentTopic.topic.assessmentId, req.session.authUser.id);
+                ca.topicAssessmentNumber++;     // increment to next unused number
 
                 // go through all the questions and look for the anwser
                 for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {

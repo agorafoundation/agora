@@ -67,6 +67,35 @@ exports.getActiveAssessmentById = async function(assessmentId) {
     }
 }
 
+/**
+ * Returns the last topic_assessment_number in the database for the passed assessment and user Ids. Used to determine the post assessment  
+ * topic_assessment_number as there may be multiple post assessments. 
+ * @param {*} assessmentId assessment Id
+ * @param {*} userId user Id
+ * @returns the last topic assessment_number saved or false if query fails
+ */
+exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
+    if( assessmentId ) {
+        // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
+        let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
+        let values = [ assessmentId, userId ];
+
+        try {
+            let assessment = "";
+             
+            let res = await db.query(text, values);
+            if(res.rowCount > 0) {
+                return res.rows[0].num_assessments
+            }
+
+        }
+        catch(e) {
+            console.log(e.stack)
+        }
+        return false;
+    }
+}
+
 
 /**
  * Saves a assessment to the database, creates a new record if no id is assigned, updates existing record if there is an id.
