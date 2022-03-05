@@ -363,7 +363,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
             // get the completed pre assessment
             if(topicEnrollment.preCompletedAssessmentId > 0) {
-                text = "SELECT * from completed_assessment where id = $1 AND pre_post = $2 AND active = $3";
+                text = "SELECT * from completed_assessment where id = $1 AND topic_assessment_number = $2 AND active = $3";
                 values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
                 let res2 = await db.query(text, values);
 
@@ -385,7 +385,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
             // get the post assessment
             if(topicEnrollment.postCompletedAssessmentId > 0) {
-                text = "SELECT * from completed_assessment where id = $1 AND pre_post = $2 AND active = $3";
+                text = "SELECT * from completed_assessment where id = $1 AND topic_assessment_number = $2 AND active = $3";
                 values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
                 let res3 = await db.query(text, values);
                 if(res3.rowCount > 0) {
@@ -580,7 +580,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 console.log("[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post, active) VALUES ($1, $2, $3, $4) RETURNING id;"
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                 values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 1, true ];
 
                 let res = await db.query(text, values);
@@ -617,7 +617,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
                 console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, pre_post, active) VALUES ($1, $2, $3, $4) RETURNING id;"
+                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, active) VALUES ($1, $2, $3, $4) RETURNING id;"
                 values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, 2, true ];
 
                 let res = await db.query(text, values);
