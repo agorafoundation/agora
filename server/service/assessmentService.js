@@ -77,16 +77,13 @@ exports.getActiveAssessmentById = async function(assessmentId) {
 exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
     if( assessmentId ) {
         // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
-        console.log("finding unmber for : " + assessmentId + " and " + userId)
         let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
         let values = [ assessmentId, userId ];
 
         try {
              
             let res = await db.query(text, values);
-            console.log(" the res was: " + JSON.stringify(res));
             if(res.rowCount > 0) {
-                console.log(" here : " + res.rows[0].num_assessments);
                 return res.rows[0].num_assessments;
             }
 
@@ -117,14 +114,12 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
 
             let completedQuestion = null;
             for( j=0; j < completedAssessment.completedQuestions.length; j++ ) {
-                if( assessment.questions[i].id === completedAssessment.completedQuestions[j].id ) {
+                if( assessment.questions[i].id === completedAssessment.completedQuestions[j].assessmentQuestionId ) {
 
                     // see if the user had the right answer
-                    console.log("checking for correct answer: 1: " + assessment.questions[i].correctOptionId + " === " + completedAssessment.completedQuestions[j].assessmentQuestionOptionId);
-                    if( assessment.questions[i].correctOptionId === completedAssessment.completedQuestions[j].assessmentQuestionOptionId ) {
+                    if( assessment.questions[i].correctOptionId == completedAssessment.completedQuestions[j].assessmentQuestionOptionId ) {
                         // user selected the correct option
                         totalCorrect++;
-                        console.log("total correct: " + totalCorrect);
                     }
                 }
             }
@@ -132,6 +127,9 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
         }
 
         // return the % correct as a decimal (range .000 -> 1.000)
+        // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
+        // console.log("tq: " + totalQuestions + " tc: " + totalCorrect + " eq: " + (totalQuestions > 0) + " res: " + (totalCorrect / totalQuestions));
+        // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
         return ((totalQuestions > 0)?(totalCorrect / totalQuestions):0);
     }
 }

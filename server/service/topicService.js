@@ -578,9 +578,13 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
             // assigned if the data has not been save previously
 
             // determine if the students score
+            // console.log("------------------------------------------");
+            // console.log(JSON.stringify(topicEnrollment.topic.assessment));
+            // console.log("--------");
+            // console.log(JSON.stringify(topicEnrollment.preAssessment));
+            // console.log("------------------------------------------");
             let score = await assessmentService.evaluateAssessment(topicEnrollment.topic.assessment, topicEnrollment.preAssessment);
-            console.log("pre assessment score determined to be: " + score);
-            console.log("pre topicEnrollment.preAssessment.topicAssessmentNumber is: " + topicEnrollment.preAssessment.topicAssessmentNumber);
+            
             if(topicEnrollment.preCompletedAssessmentId > 0) {
                 console.log("[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
@@ -621,8 +625,7 @@ exports.saveTopicEnrollmentWithEverything = async function(topicEnrollment) {
 
             // determine if the students score
             let score = await assessmentService.evaluateAssessment(topicEnrollment.topic.assessment, topicEnrollment.postAssessment);
-            console.log("post assessment score determined to be: " + score);
-            console.log("post topicEnrollment.postAssessment.topicAssessmentNumber is: " + topicEnrollment.postAssessment.topicAssessmentNumber);
+            
             if(topicEnrollment.postCompletedAssessmentId > 0) {
                 console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
             }
