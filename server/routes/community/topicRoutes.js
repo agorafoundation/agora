@@ -155,8 +155,50 @@ router.route('/update/:finishedStep')
                 // save the data
                 req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
 
-                // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                // check to see if the user "tested out" by exceeding the pre-topic threshold
+                console.log("------------ pre check for requirements --------------");
+                console.log(req.session.currentTopic);
+                console.log("-------------------------------------------");
+                console.log(req.session.currentTopic.topic.assessment.preThreshold);
+                console.log(parseFloat(req.session.currentTopic.topic.assessment.preThreshold));
+                console.log(parseFloat( req.session.currentTopic.topic.assessment.preThreshold / 100));
+                console.log(req.session.currentTopic.preAssessment.percentageCorrect + " >= " + parseFloat( req.session.currentTopic.topic.assessment.preThreshold / 100 ));
+                console.log(req.session.currentTopic.preAssessment.percentageCorrect >= parseFloat( req.session.currentTopic.topic.assessment.preThreshold / 100 ));
+                if(req.session.currentTopic.preAssessment && req.session.currentTopic.preAssessment.percentageCorrect >= parseFloat( req.session.currentTopic.topic.assessment.preThreshold / 100 ) ) {
+
+                    console.log("met the requirements");
+                    
+                    // the user has "tested out" offer option to move on
+                    req.session.currentTopic.isCompleted = true;
+                    req.session.currentTopic.completedDate = "SET";
+
+                    await userService.addAccessTokensToUserById(req.session.authUser.id, 1);
+
+                    // add a message
+                    req.session.messageTitle = 'You are ready to move on!';
+                    req.session.messageBody = 'Congratulations! Your pre assessment shows that you are already comforable with this topics material. This topic has been marked completed and you may move ahead. You can still always review any material in this topic.';
+
+                    // about to re-save
+                    console.log("------------ about to resave --------------");
+                    console.log(req.session.currentTopic);
+                    console.log("-------------------------------------------");
+                    // save the data
+                    req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+
+                    console.log("------------ ////// resaved /////// --------------");
+                    console.log(req.session.currentTopic);
+                    console.log("-------------------------------------------");
+
+                    res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                    req.session.error = 'Incorrect username or password';
+                    
+                }
+                else {
+                    // reroute
+                    res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                }
+
+                
             }
 
             if(finishedStep == 3) {
@@ -288,19 +330,20 @@ router.route('/:goalId/:topicId')
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
 
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if(topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 5;
                     }
                     else {
@@ -316,7 +359,7 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
 
                 }
                 else {
@@ -332,7 +375,7 @@ router.route('/:goalId/:topicId')
                     res.locals.topic = topic;
                     req.session.goalId = goalId;
 
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody});
                 }
 
                 
@@ -352,19 +395,20 @@ router.route('/:goalId/:topicId')
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
                     
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if(topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 5;
                     }
                     else {
@@ -379,7 +423,7 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
                 }
                 else {
 
@@ -394,19 +438,20 @@ router.route('/:goalId/:topicId')
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
                     
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if(topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 5;
                     }
                     else {
@@ -421,7 +466,7 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
                 }
 
             }

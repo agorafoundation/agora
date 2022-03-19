@@ -30,7 +30,13 @@
                         </div>
                         <a href="/community/">Back to Community Home</a>
                         <h2>Goal: <span class="text-primary" ><%- goal.goalName %></span></h2>
-                        
+                        <% if(!!locals.message){ %>
+                            <div class="alert-message alert-message-success" role="alert">
+                                <h3 ><%= message %></h3>
+                                <p><%= (!!locals.message2)?message2:'' %></p>
+                            </div>
+                            
+                        <% } %>
                         <div class="text-left mt-4">
                             <div id="story1" class="row justify-content-left">
 
