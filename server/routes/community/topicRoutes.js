@@ -198,7 +198,7 @@ router.route( '/update/:finishedStep' )
 
                 // reroute
                 res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
-                
+
             }
 
             if( finishedStep == 4 ) {
@@ -258,8 +258,19 @@ router.route( '/update/:finishedStep' )
                 //keep track of number of completed resources that are required
                 let requiredCompletedResources = ct.topic.resources.filter( ( resource ) => resource.isRequired == true );
 
-                console.log();
-                if ( ct.isIntroComplete === true && ct.preAssessment && ct.completedResources.length == requiredCompletedResources.length && ct.postAssessment ) {
+                if( ct.isCompleted ) {
+                    // user already completed (most likely by testing out)
+                    // reload the user session
+                    req.session.authUser = await userService.setUserSession( req.session.authUser.email );
+
+                    // set the message
+                    req.session.messageTitle = 'Nice Work!';
+                    req.session.messageBody = 'You completed ' + ct.topic.topicName + '!';
+
+
+                    res.redirect( 303, '/community/goal/' + goalId );
+                }
+                else if ( ct.isIntroComplete === true && ct.preAssessment && ct.completedResources.length == requiredCompletedResources.length && ct.postAssessment ) {
                     // mark the topic complete and return the users token
                     if( !req.session.currentTopic.isCompleted ) {
                         req.session.currentTopic.isCompleted = true;
@@ -284,12 +295,19 @@ router.route( '/update/:finishedStep' )
                 }
                 else {
                     // not all requirements met
+
+                    req.session.messageTitle = 'All requirements were not completed!';
+                    req.session.messageBody = 'You are not able to finish a topic until all required parts are completed';
+
+                    console.log('incomplete topic submitted');
+
                     res.redirect( 303, '/community/topic/' + goalId + '/' + topicId );
                 }
                 
             }
         }
         else {
+            console.log("checking here");
             // update not able to take place
             res.redirect(303, '/community')
         }
@@ -324,6 +342,9 @@ router.route( '/reset' )
             // remove the completed assessment from the sesssion
             req.session.currentTopic.postAssessment = [ ];
             req.session.currentTopic.postCompletedAssessmentId = -1;
+
+            // reload the user session
+            req.session.authUser = await userService.setUserSession( req.session.authUser.email );
 
             // reroute
             res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
@@ -399,7 +420,7 @@ router.route( '/:goalId/:topicId' )
                     else if( topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted ) {
                         currentStep = 3;
                     }
-                    else if( topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted ) {
+                    else if( topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted ) {
                         currentStep = 4;
                     }
                     else if( topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
@@ -473,7 +494,7 @@ router.route( '/:goalId/:topicId' )
                     else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted) {
+                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
                     else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
@@ -519,7 +540,7 @@ router.route( '/:goalId/:topicId' )
                     else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1 && !topicEnrollment.isCompleted) {
+                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
                     else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {

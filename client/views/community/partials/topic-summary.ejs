@@ -1,4 +1,4 @@
-<h4>Congratulations! Here is how you made out</h4>
+<h4>Here is your topic summary</h4>
 <br />
 <div class="results-left">
     <h5 class="text-secondary">Your Pre Assessment Answers:</h5>
@@ -11,31 +11,31 @@
 
     let postPercentCorrect = 0.0;
     
-    if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
+    if( topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions ) {
     
-        for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+        for( let i=0; i < topicEnrollment.topic.assessment.questions.length; i++ ) {
             preTotalQuestions++;
             %>
             <div class="assessment-question">
-                <h6><%- topicEnrollment.topic.assessment.questions[i].question %></h6>
+                <h6><%- topicEnrollment.topic.assessment.questions[ i ].question %></h6>
                 <%
                 // get the matching completedQuestion
                 let completedQuestion = null;
-                if(topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions) {
-                    for(k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++) {
-                        if(topicEnrollment.preAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.preAssessment.completedQuestions[k].assessmentQuestionId == topicEnrollment.topic.assessment.questions[i].id) {
-                            completedQuestion = topicEnrollment.preAssessment.completedQuestions[k];
+                if( topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions ) {
+                    for( k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++ ) {
+                        if( topicEnrollment.preAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.preAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.topic.assessment.questions[ i ].id ) {
+                            completedQuestion = topicEnrollment.preAssessment.completedQuestions[ k ];
                         }
                     }
                 }
     
                 // iterate through the options mark the chosen one using the completedQuestion data
-                for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
+                for( let j=0; j < topicEnrollment.topic.assessment.questions[ i ].options.length; j++ ) {
                     let correctFlag = false;
-                    if(topicEnrollment.topic.assessment.questions[i].correctOptionId == topicEnrollment.topic.assessment.questions[i].options[j].id) {
+                    if(topicEnrollment.topic.assessment.questions[ i ].correctOptionId == topicEnrollment.topic.assessment.questions[ i ].options[ j ].id) {
                         correctFlag = true;
                     }
-                    if(completedQuestion && topicEnrollment.topic.assessment.questions[i].options[j].id == completedQuestion.assessmentQuestionOptionId) {
+                    if(completedQuestion && topicEnrollment.topic.assessment.questions[ i ].options[ j ].id == completedQuestion.assessmentQuestionOptionId) {
                         // user chose this option
                         if(correctFlag) {
                             preTotalCorrect++;
@@ -43,7 +43,7 @@
                         %>
                         <div class="<%- (!!correctFlag)?'correct-background':'incorrect-background' %>">
                             <input type="radio" id="pre_option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="pre_question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" checked>
-                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[ i ].options[ j ].optionAnswer %></label>
                         </div>
                         <%
                     }   
@@ -51,7 +51,7 @@
                         %>
                         <div class="<%- (!!correctFlag)?'correct-background':'' %>">
                             <input type="radio" id="pre_option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="pre_question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>">
-                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[ i ].options[ j ].optionAnswer %></label>
                         </div>
                         <%
                     }             
@@ -66,7 +66,7 @@
         }
         %>
         <div>
-            <h6>Total Questions: <%- preTotalQuestions %> - Total correct: <%- preTotalCorrect %> - Percent Correct: <%- ((preTotalQuestions > 0)?(preTotalCorrect / preTotalQuestions)*100:0).toFixed(1) %>%</h6>
+            <h6>Total Questions: <%- preTotalQuestions %> - Total correct: <%- preTotalCorrect %> - Percent Correct: <%- ( ( preTotalQuestions > 0 ) ? ( preTotalCorrect / preTotalQuestions ) * 100:0 ).toFixed( 1 ) %>%</h6>
         </div>
         <%
     }
@@ -82,39 +82,39 @@
 <div class="results-right">
     <h5 class="text-secondary">Your Post Assessment Answers:</h5>
     <%
-    if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions && topicEnrollment.postAssessment) {
+    if( topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions && topicEnrollment.postAssessment ) {
 
-        for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+        for( let i=0; i < topicEnrollment.topic.assessment.questions.length; i++ ) {
             postTotalQuestions++;
             %>
             <div class="assessment-question">
-                <h6><%- topicEnrollment.topic.assessment.questions[i].question %></h6>
+                <h6><%- topicEnrollment.topic.assessment.questions[ i ].question %></h6>
                 <%
                 // get the matching completedQuestion
                 let completedQuestion = null;
-                if(topicEnrollment.postAssessment && topicEnrollment.postAssessment.completedQuestions) {
-                    for(k=0; k < topicEnrollment.postAssessment.completedQuestions.length; k++) {
-                        if(topicEnrollment.postAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.postAssessment.completedQuestions[k].assessmentQuestionId == topicEnrollment.topic.assessment.questions[i].id) {
-                            completedQuestion = topicEnrollment.postAssessment.completedQuestions[k];
+                if( topicEnrollment.postAssessment && topicEnrollment.postAssessment.completedQuestions ) {
+                    for( k=0; k < topicEnrollment.postAssessment.completedQuestions.length; k++ ) {
+                        if( topicEnrollment.postAssessment.assessmentId == topicEnrollment.topic.assessment.id && topicEnrollment.postAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.topic.assessment.questions[ i ].id ) {
+                            completedQuestion = topicEnrollment.postAssessment.completedQuestions[ k ];
                         }
                     }
                 }
 
                 // iterate through the options mark the chosen one using the completedQuestion data
-                for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
+                for( let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++ ) {
                     let correctFlag = false;
-                    if(topicEnrollment.topic.assessment.questions[i].correctOptionId == topicEnrollment.topic.assessment.questions[i].options[j].id) {
+                    if( topicEnrollment.topic.assessment.questions[ i ].correctOptionId == topicEnrollment.topic.assessment.questions[ i ].options[ j ].id ) {
                         correctFlag = true;
                     }
-                    if(completedQuestion && topicEnrollment.topic.assessment.questions[i].options[j].id == completedQuestion.assessmentQuestionOptionId) {
+                    if( completedQuestion && topicEnrollment.topic.assessment.questions[ i ].options[ j ].id == completedQuestion.assessmentQuestionOptionId ) {
                         // user chose this option
-                        if(correctFlag) {
+                        if( correctFlag ) {
                             postTotalCorrect++;
                         }
                         %>
                         <div class="<%- (!!correctFlag)?'correct-background':'incorrect-background' %>">
                             <input type="radio" id="post_option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="post_question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" checked>
-                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[ i ].options[ j ].optionAnswer %></label>
                         </div>
                         <%
                     }   
@@ -122,7 +122,7 @@
                         %>
                         <div class="<%- (!!correctFlag)?'correct-background':'' %>">
                             <input type="radio" id="post_option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="post_question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>">
-                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                            <label for="dewey"><%- topicEnrollment.topic.assessment.questions[ i ].options[ j ].optionAnswer %></label>
                         </div>
                         <%
                     }             
@@ -135,7 +135,7 @@
             <%
             
         }
-        postPercentCorrect = ((postTotalQuestions > 0)?(postTotalCorrect / postTotalQuestions)*100:0).toFixed(1);
+        postPercentCorrect = ( ( postTotalQuestions > 0 ) ? ( postTotalCorrect / postTotalQuestions ) * 100:0 ).toFixed( 1 );
         %>
         <div>
             <h6>Total Questions: <%- postTotalQuestions %> - Total correct: <%- postTotalCorrect %> - Percent Correct: <%- postPercentCorrect %>%</h6>
@@ -144,7 +144,7 @@
         <br />
         <%
     }
-    else if(topicEnrollment.isCompleted) {
+    else if( topicEnrollment.isCompleted ) {
         %>
         <div class="alert-message alert-message-success" role="alert">
             <h3>Post Assessment Not Taken</h3>
@@ -214,6 +214,17 @@ if(topicEnrollment.postAssessment) {
         <%
     }
     
+}
+else {
+    // user tested out
+    %>
+    <div style="float:left;">
+    <h5>Congratulations! You have successfully completed this topic and are ready to move on! </h5>    
+    <a class="btn-lg btn-primary" href="/community/topic/update/6">Back to Goal</a>
+    <br />
+    <br />
+    </div>
+    <%
 }
 
 %>
