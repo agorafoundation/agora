@@ -464,8 +464,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         if(topic.id > 0) {
             
             // update
-            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, activity_id=$6, active = $7, owned_by = $8 WHERE id = $9;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy, topic.id ];
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6 activity_id=$7, active = $8, owned_by = $9 WHERE id = $10;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id ];
     
             try {
                 let res = await db.query(text, values);
@@ -478,8 +478,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         }
         else {
             // insert
-            let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.activityId, topic.active, topic.ownedBy ];
+            let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy ];
 
             try {
 

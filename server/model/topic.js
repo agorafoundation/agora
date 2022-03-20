@@ -15,6 +15,7 @@ function topic() {
     this.topicImage = "";
     this.topicHtml = "";
     this.assessmentId = -1;
+    this.hasActivity = true;
     this.activityId = -1;
     this.active = true;
     this.createTime;
@@ -37,6 +38,7 @@ exports.ormTopic = function (row) {
     topic.topicImage = row.topic_image;
     topic.topicHtml = row.topic_html;
     topic.assessmentId = row.assessment_id;
+    topic.hasActivity = row.has_activity;
     topic.activityId = row.activity_id;
     topic.active = row.active;
     topic.createTime = row.create_time;
