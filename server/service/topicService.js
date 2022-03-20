@@ -464,7 +464,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         if(topic.id > 0) {
             
             // update
-            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6 activity_id=$7, active = $8, owned_by = $9 WHERE id = $10;";
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9 WHERE id = $10;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id ];
     
             try {

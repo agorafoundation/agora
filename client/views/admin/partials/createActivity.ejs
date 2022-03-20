@@ -1,6 +1,7 @@
 <%
 if(topic && topic.activity) {
     %>
+    Include Activity for this Topic? <input type="checkbox" class="" id="topicHasActivity" name="topicHasActivity" <%- (topic.hasActivity)?'checked':'' %> />
     <div id="topicActivity">
         Type: <select name="activityType" id="activityType" class="form-control form-control-lg">
             <%

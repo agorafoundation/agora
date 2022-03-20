@@ -128,6 +128,10 @@ router.route('/')
                     }   
                 }
 
+                // check to see if the activty should be included in the topic
+                topic.hasActivity = true;
+                (req.body.topicHasActivity == 'checked') ? topic.hasActivity = true : topic.hasActivity = false;
+
                 if(req.body.activityName) {
                     topic.activity.activityName = req.body.activityName;
                 }
