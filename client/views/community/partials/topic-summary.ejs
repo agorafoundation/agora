@@ -8,6 +8,8 @@
     
     let postTotalQuestions = 0;
     let postTotalCorrect = 0;
+
+    let postPercentCorrect = 0.0;
     
     if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions && topicEnrollment.topic.assessment.questions) {
     
@@ -133,9 +135,10 @@
             <%
             
         }
+        postPercentCorrect = ((postTotalQuestions > 0)?(postTotalCorrect / postTotalQuestions)*100:0).toFixed(1);
         %>
         <div>
-            <h6>Total Questions: <%- postTotalQuestions %> - Total correct: <%- postTotalCorrect %> - Percent Correct: <%- ((postTotalQuestions > 0)?(postTotalCorrect / postTotalQuestions)*100:0).toFixed(1) %>%</h6>
+            <h6>Total Questions: <%- postTotalQuestions %> - Total correct: <%- postTotalCorrect %> - Percent Correct: <%- postPercentCorrect %>%</h6>
         </div>
 
         <br />
@@ -167,24 +170,50 @@
 <br />
 <%
 if(topicEnrollment.postAssessment) {
-    if(postTotalCorrect > preTotalCorrect) {
+    // check to see if the user exceeded the threshold to move on from the topic
+    console.log("postPercentCorrect: " + postPercentCorrect + " and topicEnrollment.topic.assessment.postThreshold: " + topicEnrollment.topic.assessment.postThreshold);
+    if(postPercentCorrect < topicEnrollment.topic.assessment.postThreshold) {
+        // user did not meet the threshold
+        console.log("score under threshold");
+
         %>
-        <h5>Congratulations! Your score improved by <%- ((postTotalQuestions > 0)?( ( postTotalCorrect - preTotalCorrect) / postTotalQuestions)*100:0).toFixed(1) %>%</h5>    
-        <%
-    }
-    else if(postTotalCorrect < preTotalCorrect) {
-        %>
-        <h5>So sad!</h5>    
+        <div style="float:left;">
+            <h5>You did not reach the threshold (<%- topicEnrollment.topic.assessment.postThreshold %>%) for completing this topic. Please review and re-take the post-assessment!</h5>
+            <button type="submit" onclick="window.location.href = '/community/topic/reset';" class="btn btn-primary" id="resource_submit">Return</button>
+            <br />
+            <br />
+        </div>
+        
         <%
     }
     else {
         %>
-        <h5>Same</h5>    
+        <div style="float:left;">
+        <%
+        if(postTotalCorrect > preTotalCorrect) {
+            %>
+            <h5>Congratulations! You have successfully completed this topic and are ready to move on! You also achieved a better score on your post-assessment than on your pre-assessment. Your score improved by <%- ((postTotalQuestions > 0)?( ( postTotalCorrect - preTotalCorrect) / postTotalQuestions)*100:0).toFixed(1) %>%</h5>    
+            <%
+        }
+        else if(postTotalCorrect < preTotalCorrect) {
+            %>
+            <h5>Congratulations! You have successfully completed this topic and are ready to move on! You did however miss more questions on the post-assessement then the pre-assessment. Make sure to review any related content.</h5>    
+            <%
+        }
+        else {
+            %>
+            <h5>Congratulations! You have successfully completed this topic and are ready to move on! Your scores on the pre-assessment and the post-assessment were the same.</h5>    
+            <%
+        }
+
+        %>
+            <a class="btn-lg btn-primary" href="/community/topic/update/6">Back to Goal</a>
+            <br />
+            <br />
+        </div>
         <%
     }
+    
 }
 
 %>
-<a class="btn-lg btn-primary" href="/community/goal/<%- goalId %>">Back to Goal</a>
-<br />
-<br />

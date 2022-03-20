@@ -134,6 +134,47 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
     }
 }
 
+/**
+ * Updates the completed resource with the matching id to status of false.
+ * This marks the assessment so that it is not retrieved for the topic enrollment but leaves the history intact
+ * @param {Integer} completedAssessmentId 
+ * @returns true if successful, false otherwise.
+ */
+exports.removeCompletedAssessmentFromEnrollment = async function ( completedAssessmentId, enrollmentId ) {
+    if( completedAssessmentId > 0 ) {
+
+        // update
+        let text = "UPDATE completed_assessment SET active = $1 WHERE id = $2;";
+        let values = [ false, completedAssessmentId ];
+        console.log( "about to update resource for id: " + completedAssessmentId );
+
+        try {
+            await db.query( text, values );
+            
+            // also remove the completed assessment id from the enrollment table
+            text = "UPDATE user_topic SET post_completed_assessment_id = $1 WHERE id = $2;";
+            values = [ -1, enrollmentId ];
+            console.log( "about to update enrollment for id: " + enrollmentId );
+
+            try {
+                await db.query( text, values );
+                return true;
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error updating completedAssessment - " + e );
+                return false;
+            }
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error updating completedAssessment - " + e );
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
 
 /**
  * Saves a assessment to the database, creates a new record if no id is assigned, updates existing record if there is an id.
