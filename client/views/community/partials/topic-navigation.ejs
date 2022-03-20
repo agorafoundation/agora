@@ -95,6 +95,11 @@ let requiredCompletedResources = topicEnrollment.topic.resources.filter((resourc
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%
             }
+            else if(topicEnrollment.isCompleted) {
+                %>
+                <input type="checkbox" id="togBtn" checked disabled>
+                <%
+            }
             else {
                 allComplete = false;
                 %>
@@ -130,6 +135,11 @@ let requiredCompletedResources = topicEnrollment.topic.resources.filter((resourc
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%
             }
+            else if(topicEnrollment.isCompleted) {
+                %>
+                <input type="checkbox" id="togBtn" checked disabled>
+                <%
+            }
             else {
                 allComplete = false;
                 %>
@@ -161,6 +171,11 @@ let requiredCompletedResources = topicEnrollment.topic.resources.filter((resourc
         <label class="switch">
             <%
             if(topicEnrollment.postCompletedAssessmentId > 0) {
+                %>
+                <input type="checkbox" id="togBtn" checked disabled>
+                <%
+            }
+            else if(topicEnrollment.isCompleted) {
                 %>
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%

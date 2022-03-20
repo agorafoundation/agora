@@ -189,6 +189,9 @@ router.route('/update/:finishedStep')
                     console.log(req.session.currentTopic);
                     console.log("-------------------------------------------");
 
+                    // reload the user session
+                    req.session.authUser = await userService.setUserSession(req.session.authUser.email);
+
                     res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
                     req.session.error = 'Incorrect username or password';
                     
@@ -360,6 +363,8 @@ router.route('/:goalId/:topicId')
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
 
                 }
                 else {
@@ -376,6 +381,8 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
                 }
 
                 
@@ -424,6 +431,8 @@ router.route('/:goalId/:topicId')
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
                 }
                 else {
 
@@ -467,6 +476,8 @@ router.route('/:goalId/:topicId')
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
                 }
 
             }
