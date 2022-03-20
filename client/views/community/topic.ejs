@@ -30,6 +30,13 @@
                 </div>
                 <a href="/community/goal/<%- goalId %>">Back to Goal</a> <%- (!!hasAccess)?'<span style="color:green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Enrolled]</span>':'' %>
                 <h2>Topic: <span class="text-primary" ><%- (!!topic)?topic.topicName:'' %></span></h2>
+                <% if(!!locals.message){ %>
+                    <div class="alert-message alert-message-success" role="alert">
+                        <h3 ><%= message %></h3>
+                        <p><%= (!!locals.message2)?message2:'' %></p>
+                    </div>
+                    
+                <% } %>
 
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">

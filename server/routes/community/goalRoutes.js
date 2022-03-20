@@ -36,51 +36,59 @@ router.use(function (req, res, next) {
 /**
  * Route called from the mark goal complete form
  */
-router.route('/')
-    .post(async (req, res) => {
+router.route( '/' )
+    .post( async ( req, res ) => {
         let goalId = req.body.goalId;
         let goalVersion = req.body.goalVersion;
 
-        if(req.session && req.session.authUser && goalId && goalVersion) {
+        if( req.session && req.session.authUser && goalId && goalVersion ) {
             // verify that the user is enrolled in the goal and that the goals topics are complete
-            let userGoal = await goalService.getEnrolledGoalByUserAndGoalIds(req.session.authUser.id, goalId, goalVersion);
+            let userGoal = await goalService.getEnrolledGoalByUserAndGoalIds( req.session.authUser.id, goalId, goalVersion );
 
             if(userGoal) {
-                await goalService.completeGoalEnrollment(req.session.authUser.id, goalId, goalVersion);
+                await goalService.completeGoalEnrollment( req.session.authUser.id, goalId, goalVersion );
 
                 // reset the session
-                const rUser = await userService.setUserSession(req.session.authUser.email);
+                const rUser = await userService.setUserSession( req.session.authUser.email );
 
                 req.session.authUser = null;
                 req.session.authUser = rUser;
             }
         }
         // send them to the course
-        res.redirect('/community/goal/' + goalId);
+        res.redirect( '/community/goal/' + goalId );
+        if( req.session.messageTitle ) delete req.session.messageTitle;
+        if( req.session.messageBody ) delete req.session.messageBody;
+        req.session.save();
     }
 );
 
 router.route('/:goalId')
     .get(async (req, res) => {
+        
         // get the topic data
         let goalId = req.params.goalId;
         let goal = await goalService.getActiveGoalWithTopicsById( goalId, true );
         //console.log("goal: " + JSON.stringify(goal));
-        res.render('community/goal', {user: req.session.authUser, goal: goal});
+        
+        res.render( 'community/goal', { user: req.session.authUser, goal: goal, message:req.session.messageTitle, message2:req.session.messageBody } );
+        if( req.session.messageTitle ) delete req.session.messageTitle;
+        if( req.session.messageBody ) delete req.session.messageBody;
+        req.session.save();
     }
 );
 
 
-router.route('/enroll/:goalId')
-    .get(async (req, res) => {
+router.route( '/enroll/:goalId' )
+    .get( async ( req, res ) => {
         let goalId = req.params.goalId;
-        if(req.session.authUser) {
+        if( req.session.authUser ) {
 
             // save the enrollment for the user in the goal
-            await goalService.saveGoalEnrollmentMostRecentGoalVersion(req.session.authUser.id, goalId);
+            await goalService.saveGoalEnrollmentMostRecentGoalVersion( req.session.authUser.id, goalId );
 
             // reset the session
-            const rUser = await userService.setUserSession(req.session.authUser.email);
+            const rUser = await userService.setUserSession( req.session.authUser.email );
 
             req.session.authUser = null;
             req.session.authUser = rUser;

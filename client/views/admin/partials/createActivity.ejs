@@ -1,6 +1,7 @@
 <%
 if(topic && topic.activity) {
     %>
+    Include Activity for this Topic? <input type="checkbox" class="" id="topicHasActivity" name="topicHasActivity" <%- (topic.hasActivity)?'checked':'' %> />
     <div id="topicActivity">
         Type: <select name="activityType" id="activityType" class="form-control form-control-lg">
             <%
@@ -28,7 +29,7 @@ if(topic && topic.activity) {
             }
             %>
         </select>
-        Name: <input type="input" class="form-control form-control-lg" name="activityName" value="<%- topic.activity.activityName %>" id="activityName" placeholder="Activity Name" required>
+        Name: <input type="input" class="form-control form-control-lg" name="activityName" value="<%- topic.activity.activityName %>" id="activityName" placeholder="Activity Name">
         Desciption: <input type="input" class="form-control form-control-lg" name="activityDescription" value="<%- topic.activity.activityDescription %>" id="activityDescription" placeholder="Activity Description">
         <div id="quill_editor_activity"><%- topic.activity.activityHtml %></div>
         <input type="hidden" id="activity_html" name="activity_html" value=""></input>

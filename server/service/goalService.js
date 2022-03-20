@@ -535,7 +535,7 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
                 let enrollment = GoalEnrollment.ormGoalEnrollment(res.rows[i]);
 
                 // get the goal for each user_goal
-                text = "SELECT * FROM goals WHERE  id = $1 AND goal_version = $2;"
+                text = "SELECT * FROM goals WHERE id = $1 AND goal_version = $2;"
                 values = [ res.rows[i].goal_id, res.rows[i].goal_version ];
 
                 let res2 = await db.query(text, values);

@@ -95,6 +95,11 @@ let requiredCompletedResources = topicEnrollment.topic.resources.filter((resourc
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%
             }
+            else if(topicEnrollment.isCompleted) {
+                %>
+                <input type="checkbox" id="togBtn" checked disabled>
+                <%
+            }
             else {
                 allComplete = false;
                 %>
@@ -121,46 +126,64 @@ let requiredCompletedResources = topicEnrollment.topic.resources.filter((resourc
         %>
     </span>
 </div>
-<div class="grouping" id="step4">
-    <span class="float-left">
-        <label class="switch">
-            <%
-            if(topicEnrollment.completedActivityId > 0) {
+
+<%
+if( topicEnrollment.topic.hasActivity ) {
+    %>
+    <div class="grouping" id="step4">
+        <span class="float-left">
+            <label class="switch">
+                <%
+                if(topicEnrollment.completedActivityId > 0) {
+                    %>
+                    <input type="checkbox" id="togBtn" checked disabled>
+                    <%
+                }
+                else if(topicEnrollment.isCompleted) {
+                    %>
+                    <input type="checkbox" id="togBtn" checked disabled>
+                    <%
+                }
+                else {
+                    allComplete = false;
+                    %>
+                    <input type="checkbox" id="togBtn" disabled>
+                    <%
+                }
                 %>
-                <input type="checkbox" id="togBtn" checked disabled>
+                <div class="slider round"></div>
+            </label>
+        </span>
+        <span class="float-right">
+            <%
+            if(prevAllComplete) {
+                %>
+                <h5 class="codingcoach-red" id="step4-text"><a href="/community/topic/override/<%- goalId %>/<%- topicEnrollment.topic.id %>/4">Activity</a></h5>
                 <%
             }
             else {
-                allComplete = false;
                 %>
-                <input type="checkbox" id="togBtn" disabled>
+                <h5 class="codingcoach-red" id="step4-text">Activity</h5>
                 <%
             }
+            prevAllComplete = allComplete;
             %>
-            <div class="slider round"></div>
-        </label>
-    </span>
-    <span class="float-right">
-        <%
-        if(prevAllComplete) {
-            %>
-            <h5 class="codingcoach-red" id="step4-text"><a href="/community/topic/override/<%- goalId %>/<%- topicEnrollment.topic.id %>/4">Activity</a></h5>
-            <%
-        }
-        else {
-            %>
-            <h5 class="codingcoach-red" id="step4-text">Activity</h5>
-            <%
-        }
-        prevAllComplete = allComplete;
-        %>
-    </span>
-</div>
+        </span>
+    </div>
+    <%
+}
+%>
+
 <div class="grouping" id="step5">
     <span class="float-left">
         <label class="switch">
             <%
             if(topicEnrollment.postCompletedAssessmentId > 0) {
+                %>
+                <input type="checkbox" id="togBtn" checked disabled>
+                <%
+            }
+            else if(topicEnrollment.isCompleted) {
                 %>
                 <input type="checkbox" id="togBtn" checked disabled>
                 <%

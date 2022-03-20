@@ -1,32 +1,33 @@
 <%
-if(currentStep == 1) {
+//console.log( "the currentstep is : " + currentStep );
+if( currentStep == 1 ) {
     %>
-    <%- include('./topic-introduction') %>
+    <%- include( './topic-introduction' ) %>
     <%
 }
-else if(currentStep == 2) {
+else if( currentStep == 2 ) {
     %>
-    <%- include('./topic-assessment') %>
+    <%- include( './topic-assessment' ) %>
     <%
 }
-else if(currentStep == 3) {
+else if( currentStep == 3 ) {
     %>
-    <%- include('./topic-resources') %>
+    <%- include( './topic-resources' ) %>
     <%
 }
-else if(currentStep == 4) {
+else if( currentStep == 4 ) {
     %>
     <%- include('./topic-activity') %>
     <%
 }
-else if(currentStep == 5) {
+else if( currentStep == 5 ) {
     %>
-    <%- include('./topic-assessment') %>
+    <%- include( './topic-assessment' ) %>
     <%
 }
-else if(currentStep == 6) {
+else if( currentStep == 6 ) {
     %>
-    <%- include('./topic-summary') %>
+    <%- include( './topic-summary' ) %>
     <%
 }
 else {

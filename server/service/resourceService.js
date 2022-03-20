@@ -123,8 +123,33 @@ exports.getAllActiveResourcesForOwner = async function(ownerId) {
     }
 }
 
+/**
+ * Marks the users completed resource inactive which affectively marks it in-complete, but retains the history that they 
+ * marked it complete at some point.
+ * This is designed to be used when the user does not meet the post-assessment threshold and needs to re-review topic
+ * @param {Integer} completedResourceId 
+ * @returns true for success / false on failure
+ */
+exports.markUserTopicCompletedResourcesInactive = async function( completedResourceId ) {
+    if( completedResourceId > 0 ) {
+        // update
+        let text = "UPDATE completed_resource SET active = $1, update_time = NOW() WHERE id = $2;";
+        let values = [ false, completedResourceId ];
 
-
+        try {
+            let res = await db.query(text, values);
+            return true;
+        }
+        catch(e) {
+            console.log("[ERR]: Error updating completedResource - " + e);
+            return false;
+        }
+        
+    }
+    else {
+        return false;
+    }
+}
 
 
 /**

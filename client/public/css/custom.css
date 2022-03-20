@@ -785,6 +785,10 @@ input:checked + .slider:after {
     background-color: #04AA6D;
 }
 
+.incorrect-background {
+    background-color: #c25730;
+}
+
 /* Code for goal pathway drag and drop */
 .available-container {
     width: 50%;
@@ -839,6 +843,17 @@ input:checked + .slider:after {
     background-color: #eee;
     border-radius: .5em;
     padding: 10px;
+}
+
+.results-left {
+    float: left;
+    width: 48%;
+    padding-right: 1rem;
+}
+.results-right {
+    float: left;
+    width: 48%;
+    
 }
 
 /* accordion */

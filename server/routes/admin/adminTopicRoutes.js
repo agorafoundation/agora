@@ -95,7 +95,7 @@ router.route('/')
                 }
 
                 // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
-                console.log("cheking the id: " + topic.id);
+                //console.log("cheking the id: " + topic.id);
                 if(topic.id > 0) {
                     topicService.getTopicById(topic.id).then((dbTopic) => {
                         topic.id = dbTopic.id;
@@ -128,6 +128,10 @@ router.route('/')
                     }   
                 }
 
+                // check to see if the activty should be included in the topic
+                topic.hasActivity = true;
+                (req.body.topicHasActivity == 'checked') ? topic.hasActivity = true : topic.hasActivity = false;
+
                 if(req.body.activityName) {
                     topic.activity.activityName = req.body.activityName;
                 }
@@ -158,6 +162,14 @@ router.route('/')
 
                 if(req.body.topicAssessmentDescription) {
                     topic.assessment.assessmentDescription = req.body.topicAssessmentDescription;
+                }
+
+                if(req.body.topicAssessmentPreThreshold) {
+                    topic.assessment.preThreshold = req.body.topicAssessmentPreThreshold;
+                }
+
+                if(req.body.topicAssessmentPostThreshold) {
+                    topic.assessment.postThreshold = req.body.topicAssessmentPostThreshold;
                 }
 
                 topic.assessment.active = false;

@@ -67,6 +67,112 @@ exports.getActiveAssessmentById = async function(assessmentId) {
     }
 }
 
+/**
+ * Returns the last topic_assessment_number in the database for the passed assessment and user Ids. Used to determine the post assessment  
+ * topic_assessment_number as there may be multiple post assessments. 
+ * @param {*} assessmentId assessment Id
+ * @param {*} userId user Id
+ * @returns the last topic assessment_number saved or false if query fails
+ */
+exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
+    if( assessmentId ) {
+        // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
+        let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
+        let values = [ assessmentId, userId ];
+
+        try {
+             
+            let res = await db.query(text, values);
+            if(res.rowCount > 0) {
+                return res.rows[0].num_assessments;
+            }
+
+        }
+        catch(e) {
+            console.log(e.stack)
+        }
+        return false;
+    }
+}
+
+/**
+ * Determines the number of correct answers a student had on an assessment.
+ * Pass in the assessment and the completedAssessment. Function will return a decimal representing the percentage correct
+ * range ( .000 -> 1.000 )
+ * @param {Assessment} assessment 
+ * @param {CompletedAssessment} completedAssessment 
+ * @returns decimal representing the percentage correct range ( .000 -> 1.000 )
+ */
+exports.evaluateAssessment = async function( assessment, completedAssessment ) {
+    let totalQuestions = 0;
+    let totalCorrect = 0;
+
+    if(assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.id == completedAssessment.assessmentId ) {
+        for( let i=0; i < assessment.questions.length; i++ ) {
+            
+            totalQuestions++;
+
+            let completedQuestion = null;
+            for( j=0; j < completedAssessment.completedQuestions.length; j++ ) {
+                if( assessment.questions[i].id === completedAssessment.completedQuestions[j].assessmentQuestionId ) {
+
+                    // see if the user had the right answer
+                    if( assessment.questions[i].correctOptionId == completedAssessment.completedQuestions[j].assessmentQuestionOptionId ) {
+                        // user selected the correct option
+                        totalCorrect++;
+                    }
+                }
+            }
+
+        }
+
+        // return the % correct as a decimal (range .000 -> 1.000)
+        // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
+        // console.log("tq: " + totalQuestions + " tc: " + totalCorrect + " eq: " + (totalQuestions > 0) + " res: " + (totalCorrect / totalQuestions));
+        // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
+        return ((totalQuestions > 0)?(totalCorrect / totalQuestions):0);
+    }
+}
+
+/**
+ * Updates the completed resource with the matching id to status of false.
+ * This marks the assessment so that it is not retrieved for the topic enrollment but leaves the history intact
+ * @param {Integer} completedAssessmentId 
+ * @returns true if successful, false otherwise.
+ */
+exports.removeCompletedAssessmentFromEnrollment = async function ( completedAssessmentId, enrollmentId ) {
+    if( completedAssessmentId > 0 ) {
+
+        // update
+        let text = "UPDATE completed_assessment SET active = $1 WHERE id = $2;";
+        let values = [ false, completedAssessmentId ];
+
+        try {
+            await db.query( text, values );
+            
+            // also remove the completed assessment id from the enrollment table
+            text = "UPDATE user_topic SET post_completed_assessment_id = $1 WHERE id = $2;";
+            values = [ -1, enrollmentId ];
+
+            try {
+                await db.query( text, values );
+                return true;
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error updating completedAssessment - " + e );
+                return false;
+            }
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error updating completedAssessment - " + e );
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
 
 /**
  * Saves a assessment to the database, creates a new record if no id is assigned, updates existing record if there is an id.
@@ -136,8 +242,8 @@ exports.getActiveAssessmentById = async function(assessmentId) {
         
         // save the assessment
         if(assessment) {
-            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, is_required, active) VALUES ($1, $2, $3, $4, $5) RETURNING id;"
-            let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.isRequired, true ];
+            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;"
+            let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.preThreshold, assessment.postThreshold, assessment.isRequired, true ];
 
             try {
                 let res = await db.query(text, values);

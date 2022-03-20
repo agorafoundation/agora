@@ -13,6 +13,8 @@ var router = express.Router();
 const topicService = require('../../service/topicService');
 const productService = require('../../service/productService');
 const userService = require('../../service/userService');
+const assessmentService = require('../../service/assessmentService');
+const resourceService = require('../../service/resourceService');
 
 // models
 const TopicEnrollment = require('../../model/topicEnrollment');
@@ -77,7 +79,7 @@ router.route('/override/:goalId/:topicId/:step')
                     currentTopic = currentEnrollment.topic;
 
                     // set the session
-                    req.session.currentTopic = topicEnrollment;
+                    req.session.currentTopic = currentTopic;
                 }
 
 
@@ -107,29 +109,29 @@ router.route('/override/:goalId/:topicId/:step')
  * /community/topic/goalId/topicId
  * 
  */
-router.route('/update/:finishedStep')
-    .get(async (req, res) => {
-        if(req.session.currentTopic) {
+router.route( '/update/:finishedStep' )
+    .get( async ( req, res ) => {
+        if( req.session.currentTopic ) {
             let goalId = req.session.goalId;
             let topicId = req.session.currentTopic.topicId;
             let finishedStep = req.params.finishedStep;
 
-            if(finishedStep == 1) {
-                req.session.currentTopic.isIntroComplete =true;
+            if( finishedStep == 1 ) {
+                req.session.currentTopic.isIntroComplete = true;
                 
                 // save the data
-                topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+                topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
 
                 // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
             }
 
-            if(finishedStep == 2) {
+            if( finishedStep == 2 ) {
                 // create the completed assessment 
                 let ca = CompletedAssessment.emptyCompletedAssessment();
                 ca.userId = req.session.authUser.id;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-                ca.prePost = 1; // pre
+                ca.topicAssessmentNumber = 1; // pre is always #1 (there is only one and it is always first)
 
                 // go through all the questions and look for the anwser
                 for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
@@ -137,35 +139,69 @@ router.route('/update/:finishedStep')
                     let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
 
-                    for (var propName in req.query) {
-                        if (req.query.hasOwnProperty(propName)) {
-                            if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
+                    for ( var propName in req.query ) {
+                        if ( req.query.hasOwnProperty( propName ) ) {
+                            if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[propName];
                             }
-                            
                         }
                     }
 
-                    ca.completedQuestions.push(cq);
+                    ca.completedQuestions.push( cq );
                 }
 
                 req.session.currentTopic.preAssessment = ca;
                 
                 // save the data
-                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
 
-                // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
-            }
+                // check to see if the user "tested out" by exceeding the pre-topic threshold
+                if( req.session.currentTopic.preAssessment && req.session.currentTopic.preAssessment.percentageCorrect >= parseFloat( req.session.currentTopic.topic.assessment.preThreshold / 100 ) ) {
+                    
+                    // the user has "tested out" offer option to move on
+                    req.session.currentTopic.isCompleted = true;
+                    req.session.currentTopic.completedDate = "SET";
 
-            if(finishedStep == 3) {
+                    await userService.addAccessTokensToUserById( req.session.authUser.id, 1 );
+
+                    // add a message
+                    req.session.messageTitle = 'You are ready to move on!';
+                    req.session.messageBody = 'Congratulations! Your pre assessment shows that you are already comforable with this topics material. This topic has been marked completed and you may move ahead. You can still always review any material in this topic.';
+
+                    // about to re-save
+                    // console.log("------------ about to resave --------------");
+                    // console.log(req.session.currentTopic);
+                    // console.log("-------------------------------------------");
+                    // save the data
+                    req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
+
+                    // console.log("------------ ////// resaved /////// --------------");
+                    // console.log(req.session.currentTopic);
+                    // console.log("-------------------------------------------");
+
+                    // reload the user session
+                    req.session.authUser = await userService.setUserSession( req.session.authUser.email );
+
+                    res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                    req.session.error = 'Incorrect username or password';
+                    
+                }
+                else {
+                    // reroute
+                    res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                }
+
                 
+            }
+
+            if( finishedStep == 3 ) {
 
                 // reroute
                 res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+
             }
 
-            if(finishedStep == 4) {
+            if( finishedStep == 4 ) {
                 let completedActivity = CompletedActivity.emptyCompletedActivity();
                 completedActivity.submissionText = req.query.submission_text;
                 completedActivity.userId = req.session.authUser.id;
@@ -173,57 +209,105 @@ router.route('/update/:finishedStep')
                 req.session.currentTopic.completedActivity = completedActivity;
 
                 // save the data
-                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
                 // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
 
             }
 
-            if(finishedStep == 5) {
+            if( finishedStep == 5 ) {
                 // create the completed assessment 
                 let ca = CompletedAssessment.emptyCompletedAssessment();
                 ca.userId = req.session.authUser.id;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
-                ca.prePost = 2; // pre
+
+                // get the next topicAssessmentNumber
+                ca.topicAssessmentNumber = await assessmentService.getNextTopicAssessmentNumber( req.session.currentTopic.topic.assessmentId, req.session.authUser.id );
+                ca.topicAssessmentNumber++;     // increment to next unused number
 
                 // go through all the questions and look for the anwser
-                for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                for( let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++ ) {
                     // create a completedQuestion to hold the answer
                     let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-                    for (var propName in req.query) {
-                        if (req.query.hasOwnProperty(propName)) {
-                            if(propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id) {
-                                cq.assessmentQuestionOptionId = req.query[propName];
+                    for ( var propName in req.query ) {
+                        if ( req.query.hasOwnProperty( propName ) ) {
+                            if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
+                                cq.assessmentQuestionOptionId = req.query[ propName ];
                             }
                             
                         }
                     }
                     
-                    ca.completedQuestions.push(cq);
+                    ca.completedQuestions.push( cq );
                 }
 
                 req.session.currentTopic.postAssessment = ca;
 
-                // mark the topic complete and return the users token
-                if(!req.session.currentTopic.isCompleted) {
-                    req.session.currentTopic.isCompleted = true;
-                    req.session.currentTopic.completedDate = "SET";
-
-                    await userService.addAccessTokensToUserById(req.session.authUser.id, 1);
-                }
-
                 // save the data
-                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything(req.session.currentTopic);
-
-                // reload the user session
-                req.session.authUser = await userService.setUserSession(req.session.authUser.email);
+                req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
 
                 // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+            }
+            if( finishedStep == 6 ) {
+
+                // check that everything has been completed
+                let ct = req.session.currentTopic;
+
+                //keep track of number of completed resources that are required
+                let requiredCompletedResources = ct.topic.resources.filter( ( resource ) => resource.isRequired == true );
+
+                if( ct.isCompleted ) {
+                    // user already completed (most likely by testing out)
+                    // reload the user session
+                    req.session.authUser = await userService.setUserSession( req.session.authUser.email );
+
+                    // set the message
+                    req.session.messageTitle = 'Nice Work!';
+                    req.session.messageBody = 'You completed ' + ct.topic.topicName + '!';
+
+
+                    res.redirect( 303, '/community/goal/' + goalId );
+                }
+                else if ( ct.isIntroComplete === true && ct.preAssessment && ct.completedResources.length == requiredCompletedResources.length && ct.postAssessment ) {
+                    // mark the topic complete and return the users token
+                    if( !req.session.currentTopic.isCompleted ) {
+                        req.session.currentTopic.isCompleted = true;
+                        req.session.currentTopic.completedDate = "SET";
+
+                        await userService.addAccessTokensToUserById( req.session.authUser.id, 1 );
+                    }
+
+                    // save the data
+                    req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
+
+                    // reload the user session
+                    req.session.authUser = await userService.setUserSession( req.session.authUser.email );
+
+                    // set the message
+                    req.session.messageTitle = 'Nice Work!';
+                    req.session.messageBody = 'You completed ' + ct.topic.topicName + '!';
+
+
+                    res.redirect( 303, '/community/goal/' + goalId );
+                    
+                }
+                else {
+                    // not all requirements met
+
+                    req.session.messageTitle = 'All requirements were not completed!';
+                    req.session.messageBody = 'You are not able to finish a topic until all required parts are completed';
+
+                    console.log('incomplete topic submitted');
+
+                    res.redirect( 303, '/community/topic/' + goalId + '/' + topicId );
+                }
+                
             }
         }
         else {
+            console.log("checking here");
             // update not able to take place
             res.redirect(303, '/community')
         }
@@ -233,6 +317,48 @@ router.route('/update/:finishedStep')
     }
 );
 
+
+router.route( '/reset' )
+    .get( async ( req, res ) => {
+        
+        if( req.session.currentTopic ) {
+            let goalId = req.session.goalId;
+            let topicId = req.session.currentTopic.topicId;
+
+            /* 
+             * set the user up to review the topic and complete another post assessment
+             */
+            // mark the users completed resources in-active for this topic
+            for( let i=0; i < req.session.currentTopic.completedResources.length; i++ ) {
+                await resourceService.markUserTopicCompletedResourcesInactive( req.session.currentTopic.completedResources[i].id );
+            }
+
+            // remove the resources from the current session
+            req.session.currentTopic.completedResources = [ ];
+
+            // mark the post assessment inactive so it not considered for the topic enrollment
+            await assessmentService.removeCompletedAssessmentFromEnrollment( req.session.currentTopic.postCompletedAssessmentId, req.session.currentTopic.id );
+
+            // remove the completed assessment from the sesssion
+            req.session.currentTopic.postAssessment = [ ];
+            req.session.currentTopic.postCompletedAssessmentId = -1;
+
+            // reload the user session
+            req.session.authUser = await userService.setUserSession( req.session.authUser.email );
+
+            // reroute
+            res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+
+        }
+        else {
+            // reroute
+            res.redirect( 303, '/community' );
+        }
+        
+    }
+);
+
+
 /**
  * Renders the community/topic ejs file.
  * Verifies that the user is logged in and has access.
@@ -240,8 +366,8 @@ router.route('/update/:finishedStep')
  * If the user has access it checks to see if there is an existing session containing 
  * the topic as the current topic. If so it skips the db load other wise it queries.
  */
-router.route('/:goalId/:topicId')
-    .get(async (req, res) => {
+router.route( '/:goalId/:topicId' )
+    .get( async ( req, res ) => {
         let goalId = req.params.goalId;
         let topicId = req.params.topicId;
 
@@ -253,20 +379,20 @@ router.route('/:goalId/:topicId')
         // end why
 
         let access = false;
-        if(req.session.authUser) {
+        if( req.session.authUser ) {
             // check that the user is enrolled!
-            access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
+            access = await topicService.verifyTopicAccess( req.session.authUser.id, topicId );
             // if the user is not, see if we can enroll them
-            if(!access) {
+            if( !access ) {
                 // check to see if the user is a member and grant access if they are
-                if(req.session.authUser.member) {
+                if( req.session.authUser.member ) {
                     // save the enrollment for the user in the goal
                     let te = TopicEnrollment.emptyTopicEnrollment();
                     te.topicId = topicId;
                     te.userId = req.session.authUser.id;
-                    await topicService.saveTopicEnrollment(te);
+                    await topicService.saveTopicEnrollment( te );
                     // reset the session
-                    const rUser = await userService.setUserSession(req.session.authUser.email);
+                    const rUser = await userService.setUserSession( req.session.authUser.email );
 
                     req.session.authUser = null;
                     req.session.authUser = rUser;
@@ -274,29 +400,30 @@ router.route('/:goalId/:topicId')
 
                     // user has access set the page up with enrollment data
                     // get the topic data
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.id, topicId, true );
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step
                     let currentStep = 1;
 
                     //keep track of number of completed resources that are required
-                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter(( resource ) => resource.isRequired == true);
 
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if( !topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted ) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if( topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if( topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted ) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if( topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted ) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if( topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 5;
                     }
                     else {
@@ -312,7 +439,10 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
+                    req.session.save();
 
                 }
                 else {
@@ -328,7 +458,10 @@ router.route('/:goalId/:topicId')
                     res.locals.topic = topic;
                     req.session.goalId = goalId;
 
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
+                    req.session.save();
                 }
 
                 
@@ -341,6 +474,9 @@ router.route('/:goalId/:topicId')
                     // sure the session is kept up to date when changes are made!
                     
                     let topicEnrollment = req.session.currentTopic;
+                    // console.log("----------------------- te check ------------------------");
+                    // console.log(JSON.stringify(topicEnrollment));
+                    // console.log("--------------------- end te check ----------------------");
                     // get the current step
                     let currentStep = 1;
 
@@ -348,19 +484,20 @@ router.route('/:goalId/:topicId')
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
                     
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 5;
                     }
                     else {
@@ -375,7 +512,10 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
+                    req.session.save();
                 }
                 else {
 
@@ -390,19 +530,20 @@ router.route('/:goalId/:topicId')
                     let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
                     
                     // determine the current step if different from Introduction
-                    if(!topicEnrollment.isIntroComplete) {
+                    // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
+                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length) {
+                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1) {
+                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1) {
+                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
                         currentStep = 5;
                     }
                     else {
@@ -417,7 +558,10 @@ router.route('/:goalId/:topicId')
                     req.session.goalId = goalId;
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep});
+                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    if( req.session.messageTitle ) delete req.session.messageTitle;
+                    if( req.session.messageBody ) delete req.session.messageBody;
+                    req.session.save();
                 }
 
             }

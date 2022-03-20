@@ -9,7 +9,9 @@ function completedAssessment() {
     this.id = -1;
     this.assessmentId = -1;
     this.userId = -1;
-    this.prePost = -1;
+    this.topicAssessmentNumber = -1;
+    this.percentageCorrect = .000;
+    this.completionTime;
     this.createTime;
 
     // add the completed questions here
@@ -25,7 +27,9 @@ exports.ormCompletedAssessment = function (row) {
     completedAssessment.id = row.id;
     completedAssessment.assessmentId = row.assessment_id;
     completedAssessment.userId = row.user_id;
-    completedAssessment.prePost = row.pre_post;
+    completedAssessment.topicAssessmentNumber = row.topic_assessment_number;
+    completedAssessment.percentageCorrect = row.percentage_correct;
+    completedAssessment.completionTime = row.completion_time;
     completedAssessment.createTime = row.create_time;
     return completedAssessment;
 }
