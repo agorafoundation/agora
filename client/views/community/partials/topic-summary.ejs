@@ -147,6 +147,8 @@
             <h3>Post Assessment Not Taken</h3>
             <p>Your pre-assessment showed you understood this topic. You may browse the resources and activity if you wish</p>
         </div>
+
+        <br />
         <%    
     }
     else {
@@ -164,21 +166,24 @@
 
 <br />
 <%
-if(postTotalCorrect > preTotalCorrect) {
-    %>
-    <h5>Congratulations! Your score improved by <%- ((postTotalQuestions > 0)?( ( postTotalCorrect - preTotalCorrect) / postTotalQuestions)*100:0).toFixed(1) %>%</h5>    
-    <%
+if(topicEnrollment.postAssessment) {
+    if(postTotalCorrect > preTotalCorrect) {
+        %>
+        <h5>Congratulations! Your score improved by <%- ((postTotalQuestions > 0)?( ( postTotalCorrect - preTotalCorrect) / postTotalQuestions)*100:0).toFixed(1) %>%</h5>    
+        <%
+    }
+    else if(postTotalCorrect < preTotalCorrect) {
+        %>
+        <h5>So sad!</h5>    
+        <%
+    }
+    else {
+        %>
+        <h5>Same</h5>    
+        <%
+    }
 }
-else if(postTotalCorrect < preTotalCorrect) {
-    %>
-    <h5>So sad!</h5>    
-    <%
-}
-else {
-    %>
-    <h5>Same</h5>    
-    <%
-}
+
 %>
 <a class="btn-lg btn-primary" href="/community/goal/<%- goalId %>">Back to Goal</a>
 <br />
