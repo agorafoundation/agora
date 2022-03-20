@@ -171,11 +171,9 @@
 <%
 if(topicEnrollment.postAssessment) {
     // check to see if the user exceeded the threshold to move on from the topic
-    console.log("postPercentCorrect: " + postPercentCorrect + " and topicEnrollment.topic.assessment.postThreshold: " + topicEnrollment.topic.assessment.postThreshold);
+    //console.log("postPercentCorrect: " + postPercentCorrect + " and topicEnrollment.topic.assessment.postThreshold: " + topicEnrollment.topic.assessment.postThreshold);
     if(postPercentCorrect < topicEnrollment.topic.assessment.postThreshold) {
         // user did not meet the threshold
-        console.log("score under threshold");
-
         %>
         <div style="float:left;">
             <h5>You did not reach the threshold (<%- topicEnrollment.topic.assessment.postThreshold %>%) for completing this topic. Please review and re-take the post-assessment!</h5>

@@ -474,9 +474,9 @@ router.route( '/:goalId/:topicId' )
                     // sure the session is kept up to date when changes are made!
                     
                     let topicEnrollment = req.session.currentTopic;
-                    console.log("----------------------- te check ------------------------");
-                    console.log(JSON.stringify(topicEnrollment));
-                    console.log("--------------------- end te check ----------------------");
+                    // console.log("----------------------- te check ------------------------");
+                    // console.log(JSON.stringify(topicEnrollment));
+                    // console.log("--------------------- end te check ----------------------");
                     // get the current step
                     let currentStep = 1;
 
