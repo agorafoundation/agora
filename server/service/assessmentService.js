@@ -146,7 +146,6 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
         // update
         let text = "UPDATE completed_assessment SET active = $1 WHERE id = $2;";
         let values = [ false, completedAssessmentId ];
-        console.log( "about to update resource for id: " + completedAssessmentId );
 
         try {
             await db.query( text, values );
@@ -154,7 +153,6 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
             // also remove the completed assessment id from the enrollment table
             text = "UPDATE user_topic SET post_completed_assessment_id = $1 WHERE id = $2;";
             values = [ -1, enrollmentId ];
-            console.log( "about to update enrollment for id: " + enrollmentId );
 
             try {
                 await db.query( text, values );

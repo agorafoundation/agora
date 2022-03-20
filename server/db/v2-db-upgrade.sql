@@ -9,3 +9,6 @@ ALTER TABLE assessments ADD COLUMN post_threshold INTEGER DEFAULT 70;
 ALTER TABLE completed_assessment RENAME COLUMN pre_post TO topic_assessment_number;
 ALTER TABLE completed_assessment ADD COLUMN percentage_correct DECIMAL(4,3);            -- existing rows will need to be computed as they are already saved (maybe leave null then have code respond to null and show message?)
 ALTER TABLE completed_assessment ADD COLUMN completion_time TIMESTAMP;                  -- existing rows should be set to match create_time (or leave null, see above)
+
+-- #45 https://github.com/briangormanly/agora/issues/45
+ALTER TABLE topics ADD COLUMN has_activity BOOLEAN DEFAULT true;

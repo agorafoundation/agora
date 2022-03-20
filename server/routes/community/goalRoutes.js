@@ -65,7 +65,7 @@ router.route( '/' )
 
 router.route('/:goalId')
     .get(async (req, res) => {
-        console.log("messageTitle: " + req.session.messageTitle);
+        
         // get the topic data
         let goalId = req.params.goalId;
         let goal = await goalService.getActiveGoalWithTopicsById( goalId, true );

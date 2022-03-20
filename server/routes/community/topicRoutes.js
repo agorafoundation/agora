@@ -144,7 +144,6 @@ router.route( '/update/:finishedStep' )
                             if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[propName];
                             }
-                            
                         }
                     }
 
@@ -196,10 +195,10 @@ router.route( '/update/:finishedStep' )
             }
 
             if( finishedStep == 3 ) {
-                
 
                 // reroute
                 res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                
             }
 
             if( finishedStep == 4 ) {

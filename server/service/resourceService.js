@@ -135,11 +135,9 @@ exports.markUserTopicCompletedResourcesInactive = async function( completedResou
         // update
         let text = "UPDATE completed_resource SET active = $1, update_time = NOW() WHERE id = $2;";
         let values = [ false, completedResourceId ];
-        console.log("about to update for id: " + completedResourceId);
 
         try {
             let res = await db.query(text, values);
-            console.log("ran query:  " + text);
             return true;
         }
         catch(e) {

@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS user_data (
     hashed_password VARCHAR,
     password_token VARCHAR,
     password_token_expiration BIGINT,
-    role_id INTEGER default 0,
+    role_id INTEGER DEFAULT 0,
     subscription_active BOOLEAN,
     beginning_programming BOOLEAN,
     intermediate_programming BOOLEAN,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS user_data (
     object_relational_mapping BOOLEAN,
     stripe_id VARCHAR,
     available_access_tokens INTEGER,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE user_data TO codingcoach;
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS products (
     product_url VARCHAR,
     product_static_image VARCHAR,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE products TO codingcoach;
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS product_images (
     image_description_2 VARCHAR,
     image_url VARCHAR, 
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_intent VARCHAR,
     mode VARCHAR,
     stripe_email VARCHAR,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     amount INTEGER,
     sub_total INTEGER, 
     automatic_tax jsonb, 
@@ -281,7 +281,7 @@ GRANT USAGE, SELECT ON SEQUENCE orders_id_seq TO codingcoach;
 CREATE TABLE IF NOT EXISTS user_sessions (
     id SERIAL,
     user_id INTEGER,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     ip_address VARCHAR,
     client_type VARCHAR,
     client_name VARCHAR,
@@ -309,7 +309,7 @@ CREATE TABLE IF NOT EXISTS roles (
     role_name VARCHAR,
     role_description VARCHAR,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE roles TO codingcoach;
@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS user_role (
     user_id INTEGER,
     role_id INTEGER,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     end_time TIMESTAMP
 );
 GRANT ALL PRIVILEGES ON TABLE user_role TO codingcoach;
@@ -354,7 +354,7 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER,
     PRIMARY KEY(id, goal_version)
 );
@@ -370,9 +370,10 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     topic_image VARCHAR,
     topic_html VARCHAR,
     assessment_id INTEGER, -- id of assessment given both at the begining (pre) and end (post) of a topic for each user.  This is always the same assessment.
+    has_activity BOOLEAN DEFAULT true,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
@@ -387,7 +388,7 @@ CREATE TABLE IF NOT EXISTS goal_path (
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 GRANT ALL PRIVILEGES ON TABLE goal_path TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO codingcoach;
@@ -407,7 +408,7 @@ CREATE TABLE IF NOT EXISTS user_goal (
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 GRANT ALL PRIVILEGES ON TABLE user_goal TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO codingcoach;
@@ -433,7 +434,7 @@ CREATE TABLE IF NOT EXISTS user_topic (
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
 GRANT ALL PRIVILEGES ON TABLE user_topic TO codingcoach;
@@ -453,7 +454,7 @@ CREATE TABLE IF NOT EXISTS resources (
     resource_link VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
@@ -467,7 +468,7 @@ CREATE TABLE IF NOT EXISTS topic_resource (
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by integer
 );
 GRANT ALL PRIVILEGES ON TABLE topic_resource TO codingcoach;
@@ -486,7 +487,7 @@ CREATE TABLE IF NOT EXISTS completed_resource (
     user_id INTEGER,
     submission_text VARCHAR, -- is the user going to actually submit something here ever?
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
 GRANT ALL PRIVILEGES ON TABLE completed_resource TO codingcoach;
@@ -505,7 +506,7 @@ CREATE TABLE IF NOT EXISTS assessments (
     post_threshold INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE assessments TO codingcoach;
@@ -520,7 +521,7 @@ CREATE TABLE IF NOT EXISTS assessment_question (
     is_required BOOLEAN,
     correct_option_id INTEGER,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE assessment_question TO codingcoach;
@@ -533,7 +534,7 @@ CREATE TABLE IF NOT EXISTS assessment_question_option (
     option_number INTEGER,
     option_answer VARCHAR,  
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE assessment_question_option TO codingcoach;
@@ -548,7 +549,7 @@ CREATE TABLE IF NOT EXISTS completed_assessment (
     percentage_correct DECIMAL(4,3),    -- ex: .923 (92.3%), 1.000 (100%)
     completion_time TIMESTAMP           -- Incase computation of corrcect percentage is different or re-done from intial record create
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 GRANT ALL PRIVILEGES ON TABLE completed_assessment TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE completed_assessment_id_seq TO codingcoach;
@@ -562,7 +563,7 @@ CREATE TABLE IF NOT EXISTS completed_assessment_question (
     assessment_question_id INTEGER,
     assessment_question_option_id INTEGER,  -- this is the users chosen answer
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 GRANT ALL PRIVILEGES ON TABLE completed_assessment_question TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE completed_assessment_question_id_seq TO codingcoach;
@@ -579,7 +580,7 @@ CREATE TABLE IF NOT EXISTS activities (
     activity_html VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE activities TO codingcoach;
@@ -591,7 +592,7 @@ CREATE TABLE IF NOT EXISTS completed_activity (
     user_id INTEGER,
     submission_text VARCHAR,
     active BOOLEAN,
-    create_time TIMESTAMP default current_timestamp,
+    create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
 GRANT ALL PRIVILEGES ON TABLE completed_activity TO codingcoach;
