@@ -182,13 +182,26 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
  */
  exports.saveAssessment = async function(assessment) {
     // check to see if an id exists - insert / update check
+    
     if(assessment) {
+        /*
+         * Working on #35 and #37 
+         * #35 showed that getActiveAssessmentById was not returning anything 
+         * In considering #37 in the mix however, fixing #35 might cause the loss of history regarding modified assessments that have 
+         * already been completed.  So for now, I am commenting the section out that was aiming to delete the historial assessment, as
+         * we want to retain the correct version that the user completed.
+         *
         if(assessment.id > 0) {
             //console.log(" ----- deleting the old the assesment -----");
             // delete all existing data for this assessment
 
             // get the existing db oldAssessment in order to delete it first
             let oldAssessment = await exports.getActiveAssessmentById(assessment.id);
+
+            console.log("old assessment -------------------");
+            console.log("looking for assessment with id : " + assessment.id)
+            console.log(JSON.stringify(oldAssessment));
+            console.log("-----------------------------------");
 
             // go through options, questions and the assessment and delete all of them
             if(oldAssessment && oldAssessment.questions) {
@@ -236,6 +249,7 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
 
             
         }
+        */
 
         // console.log(" ----- Saving the assesment -----");
         // console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");
