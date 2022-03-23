@@ -88,11 +88,13 @@ function addQuestion(assessmentId) {
 }
 
 function removeQuestion(questionId) {
+    console.log("removing qusetion: " + questionId);
     let questionDiv = document.getElementById('question-border-' + questionId);
     questionDiv.remove();
 
     // get the total questions
     let totalQuestions = parseInt(document.getElementsByName('topicAssessmentQuestionId').length) + 1;
+    console.log("total Questions: " + totalQuestions);
 
     // re-number the questions
     for( let i = (questionId + 1); i <= totalQuestions; i++ ) {
