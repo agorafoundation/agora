@@ -547,7 +547,7 @@ CREATE TABLE IF NOT EXISTS completed_assessment (
     user_id INTEGER,
     topic_assessment_number INTEGER,    -- 1-Pre, 2-Post, 3-Post-retake 1, 4-post-retake 2, etc
     percentage_correct DECIMAL(4,3),    -- ex: .923 (92.3%), 1.000 (100%)
-    completion_time TIMESTAMP           -- Incase computation of corrcect percentage is different or re-done from intial record create
+    completion_time TIMESTAMP,          -- Incase computation of corrcect percentage is different or re-done from intial record create
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
