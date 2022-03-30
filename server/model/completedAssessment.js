@@ -5,6 +5,9 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+let Assessment = require('./assessment');
+
+
 function completedAssessment() {
     this.id = -1;
     this.assessmentId = -1;
@@ -16,6 +19,9 @@ function completedAssessment() {
 
     // add the completed questions here
     this.completedQuestions = [];
+
+    // object representation for the assessment tied to this completedAssessment
+    this.assessment = Assessment.emptyAssessment();
 }
 
 exports.emptyCompletedAssessment = () => {

@@ -347,6 +347,7 @@ exports.getTopicWithEverythingById = async function(topicId, isActive) {
  * @returns TopicEnrollment with supporting data
  */
 exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function(userId, topicId, getFullTopic) {
+    console.log(0);
     let text = "SELECT * FROM user_topic WHERE active = $1 AND user_id = $2 AND topic_id = $3";
     let values = [ true, userId, topicId ];
     let topicEnrollment = null;
@@ -354,22 +355,34 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
+            console.log(1 + "sp");
             topicEnrollment = TopicEnrollment.ormTopicEnrollment(res.rows[0]);
 
             // get the full topic?
             if(getFullTopic) {
+                console.log(2);
                 topicEnrollment.topic = await exports.getTopicWithEverythingById(topicEnrollment.topicId, true);
             }
             
             // get the completed pre assessment
             if(topicEnrollment.preCompletedAssessmentId > 0) {
+                console.log(3);
                 text = "SELECT * from completed_assessment where id = $1 AND topic_assessment_number = $2 AND active = $3";
                 values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
                 let res2 = await db.query(text, values);
 
                 if(res2.rowCount > 0) {
-                    topicEnrollment.preAssessment = CompletedAssessment.ormCompletedAssessment(res2.rows[0]);
+                    console.log(4);
+                    topicEnrollment.preAssessment = await CompletedAssessment.ormCompletedAssessment(res2.rows[0]);
 
+                    // populate the assessment for this completedAssessment
+                    console.log("checking assessment Id for pre assessment: " + topicEnrollment.preAssessment.assessmentId);
+                    if(topicEnrollment.preAssessment.assessmentId) {
+                        console.log(5 + " assesment id : " + topicEnrollment.preAssessment.assessmentId);
+                        topicEnrollment.preAssessment.assessment = await assessmentService.getAssessmentById(topicEnrollment.preAssessment.assessmentId, false);
+                        console.log("returned assessment: " + topicEnrollment.preAssessment.assessment);
+                    }
+                    console.log(6);
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
                     values = [ topicEnrollment.preAssessment.id, true ];
@@ -389,7 +402,16 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
                 let res3 = await db.query(text, values);
                 if(res3.rowCount > 0) {
-                    topicEnrollment.postAssessment = CompletedAssessment.ormCompletedAssessment(res3.rows[0]);
+                    topicEnrollment.postAssessment = await CompletedAssessment.ormCompletedAssessment(res3.rows[0]);
+
+                    // populate the assessment for this completedAssessment
+                    console.log("checking assessment Id for post assessment: " + topicEnrollment.postAssessment.assessmentId);
+
+                    // populate the assessment for this completedAssessment
+                    if(topicEnrollment.postAssessment.assessmentId) {
+                        topicEnrollment.postAssessment.assessment = await assessmentService.getAssessmentById(topicEnrollment.postAssessment.assessmentId, false);
+                        console.log("returned assessment: " + topicEnrollment.postAssessment.assessment);
+                    }
 
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
