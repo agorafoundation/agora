@@ -88,13 +88,13 @@ function addQuestion(assessmentId) {
 }
 
 function removeQuestion(questionId) {
-    console.log("removing qusetion: " + questionId);
+    //console.log("removing qusetion: " + questionId);
     let questionDiv = document.getElementById('question-border-' + questionId);
     questionDiv.remove();
 
     // get the total questions
     let totalQuestions = parseInt(document.getElementsByName('topicAssessmentQuestionId').length) + 1;
-    console.log("total Questions: " + totalQuestions);
+    //console.log("total Questions: " + totalQuestions);
 
     // re-number the questions
     for( let i = (questionId + 1); i <= totalQuestions; i++ ) {
@@ -108,17 +108,18 @@ function removeQuestion(questionId) {
 
         // question number
         let qNum = document.getElementById('question-number-' + i);
+        qNum.setAttribute('id', 'question-number-' + (i - 1));
         qNum.innerHTML = (i - 1);
 
-        // question 
+        // question     
         let qIn = document.getElementById('topicAssessmentQuestionName-' + i);
         qIn.setAttribute('id', 'topicAssessmentQuestionName-' + (i - 1));
         qIn.setAttribute('name', 'topicAssessmentQuestionName-' + (i - 1));
 
-        //option delete button
+        //question delete button
         let qdBut = document.getElementById('question-delete-' + i);
-        qdBut.setAttribute('id', 'question-delete-' + questionId + "-" + (i - 1));
-        qdBut.setAttribute('onclick', 'removeOption(' + questionId + ');');
+        qdBut.setAttribute('id', 'question-delete-' + (i - 1));
+        qdBut.setAttribute('onclick', 'removeQuestion(' + (i - 1) + ');');
 
         // update the options container
         let osDiv = document.getElementById('options-border-' + i);
@@ -131,7 +132,7 @@ function removeQuestion(questionId) {
 
         // update the options for this question
         let totalOptions = parseInt(document.getElementsByName('topicAssessmentQuestionOptionId-' + i).length) + 1;
-        for( let j = 1; j <= totalOptions; j++ ) {
+        for( let j = 1; j < totalOptions; j++ ) {
             // option border
             let oDiv = document.getElementById('option-border-' + i + "-" + j);
             oDiv.setAttribute("id", "option-border-" + (i - 1) + "-" + j);
@@ -166,6 +167,9 @@ function removeQuestion(questionId) {
         }
 
     }
+
+    // decrement the new question number so that new questions adjust for the removed one
+    newQuestionNum--;
 }
 
 /**
