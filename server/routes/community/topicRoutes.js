@@ -476,17 +476,6 @@ router.route( '/:goalId/:topicId' )
                     res.locals.topic = topic;
                     req.session.goalId = goalId;
 
-                    console.log("2----------------------------------------------------------------------");
-                    console.log(topicEnrollment.preCompletedAssessmentId);
-                    console.log(topicEnrollment.preAssessment);
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.postCompletedAssessmentId);
-                    console.log(topicEnrollment.postAssessment)
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.topic.assessmentId);
-                    console.log(topicEnrollment.topic.assessment);
-                    console.log("----------------------------------------------------------------------");
-
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody});
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;

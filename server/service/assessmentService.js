@@ -16,7 +16,6 @@ const AssessmentQuestionOption = require('../model/assessmentQuestionOption');
 // any cross services required
 
 
-
 /**
  * Get an assessment with questions and options by id
  * @param {Integer} assessmentId 
@@ -32,7 +31,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
         values = [ true, parseInt(assessmentId) ];
     }
     else {
-        text = "SELECT * FROM assessments WHERE id = $2";
+        text = "SELECT * FROM assessments WHERE id = $1";
         values = [ parseInt(assessmentId) ];
     }
     
@@ -43,7 +42,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
             console.log("1-1");
-            let assessment = Assessment.ormAssessment(res.rows[0]);
+            assessment = Assessment.ormAssessment(res.rows[0]);
 
             // find the questions associated with the assessment
             if( active ) {
@@ -51,7 +50,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
                 values = [ true, assessment.id ];
             }
             else {
-                text = "SELECT * FROM assessment_question WHERE assessment_id = $2";
+                text = "SELECT * FROM assessment_question WHERE assessment_id = $1";
                 values = [ assessment.id ];
             }
             
@@ -69,7 +68,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
                         values = [ true, question.id ];
                     }
                     else {
-                        text = "SELECT * FROM assessment_question_option WHERE assessment_question_id = $2";
+                        text = "SELECT * FROM assessment_question_option WHERE assessment_question_id = $1";
                         values = [ question.id ];
                     }
                     
