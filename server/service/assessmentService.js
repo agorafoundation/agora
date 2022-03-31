@@ -23,7 +23,6 @@ const AssessmentQuestionOption = require('../model/assessmentQuestionOption');
  * @returns assessment
  */
 exports.getAssessmentById = async function(assessmentId, active) {
-    console.log("1-00");
     let text = "";
     let values = [];
     if( active ) {
@@ -36,12 +35,10 @@ exports.getAssessmentById = async function(assessmentId, active) {
     }
     
     try {
-        console.log("1-0");
         let assessment = "";
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
-            console.log("1-1");
             assessment = Assessment.ormAssessment(res.rows[0]);
 
             // find the questions associated with the assessment
@@ -57,9 +54,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
 
             let res2 = await db.query(text, values);
             if( res2.rowCount > 0 ) {
-                console.log( "1-3" );
                 for( let i = 0; i < res2.rowCount; i++ ) {
-                    console.log( "1-4" );
                     let question = AssessmentQuestion.ormAssessmentQuestion(res2.rows[i]);
 
                     // find the options associated with each question
@@ -75,7 +70,6 @@ exports.getAssessmentById = async function(assessmentId, active) {
     
                     let res3 = await db.query(text, values);
                     if(res3.rowCount > 0) {
-                        console.log( "1-5" );
                         for( let j = 0; j < res3.rowCount; j++ ) {
                             let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res3.rows[j]);
 

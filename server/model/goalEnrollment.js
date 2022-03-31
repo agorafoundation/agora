@@ -7,8 +7,7 @@
 
 function goalEnrollment() {
     this.id = -1;
-    this.goalId = -1;
-    this.goalVersion = -1;
+    this.goalRid = -1;
     this.userId = -1;
     this.isCompleted = false;
     this.completedDate = null;
@@ -26,7 +25,7 @@ exports.emptyGoalEnrollment = () => {
 exports.ormGoalEnrollment = function (row) {
     let goalEnrollment = exports.emptyGoalEnrollment();
     goalEnrollment.id = row.id;
-    goalEnrollment.goalId = row.goal_id;
+    goalEnrollment.goalRid = row.goal_rid;
     goalEnrollment.goalVersion = row.goal_version;
     goalEnrollment.userId = row.user_id;
     goalEnrollment.isCompleted = row.is_completed;

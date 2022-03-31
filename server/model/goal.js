@@ -6,6 +6,7 @@
  */
 
 function goal() {
+    this.rid = -1;
     this.id = -1;
     this.goalVersion = 1;
     this.goalName = "";
@@ -25,6 +26,7 @@ exports.emptyGoal = () => {
 
 exports.ormGoal = function (row) {
     let goal = exports.emptyGoal();
+    goal.rid = row.rid;
     goal.id = row.id;
     goal.version = row.goal_version;
     goal.goalName = row.goal_name;

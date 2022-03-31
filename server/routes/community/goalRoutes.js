@@ -39,14 +39,16 @@ router.use(function (req, res, next) {
 router.route( '/' )
     .post( async ( req, res ) => {
         let goalId = req.body.goalId;
+        let goalRid = await goalService.getMostRecentGoalById( goalId );
+
         let goalVersion = req.body.goalVersion;
 
-        if( req.session && req.session.authUser && goalId && goalVersion ) {
+        if( req.session && req.session.authUser && goalRid && goalVersion ) {
             // verify that the user is enrolled in the goal and that the goals topics are complete
-            let userGoal = await goalService.getEnrolledGoalByUserAndGoalIds( req.session.authUser.id, goalId, goalVersion );
+            let userGoal = await goalService.getEnrolledGoalByUserAndGoalRid( req.session.authUser.id, goalRid.rid );
 
             if(userGoal) {
-                await goalService.completeGoalEnrollment( req.session.authUser.id, goalId, goalVersion );
+                await goalService.completeGoalEnrollment( req.session.authUser.id, goalRid.rid );
 
                 // reset the session
                 const rUser = await userService.setUserSession( req.session.authUser.email );

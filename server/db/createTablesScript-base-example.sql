@@ -10,7 +10,7 @@ grant connect on database codingcoach to codingcoach;
 -- create and inserts
 
 CREATE TABLE IF NOT EXISTS cc_sponsors (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     gh_action VARCHAR,
     gh_sponsorship_id VARCHAR,
     gh_sponsorship_created_at VARCHAR,
@@ -37,7 +37,7 @@ GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_id_seq TO codingcoach;
 
 CREATE TABLE IF NOT EXISTS user_data (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     email VARCHAR,
     username VARCHAR,
     profile_filename VARCHAR,
@@ -84,7 +84,7 @@ GRANT ALL PRIVILEGES ON TABLE session TO codingcoach;
 CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session ("expire");
 
 CREATE TABLE IF NOT EXISTS products (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     product_type VARCHAR,
     product_name VARCHAR,
     product_description_1 VARCHAR,
@@ -104,7 +104,7 @@ GRANT USAGE, SELECT ON SEQUENCE products_id_seq TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS product_images (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
     image_description_1 VARCHAR,
@@ -250,7 +250,7 @@ VALUES (
 
 
 CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER,
     user_id INTEGER,
@@ -279,7 +279,7 @@ GRANT USAGE, SELECT ON SEQUENCE orders_id_seq TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS user_sessions (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER,
     create_time TIMESTAMP DEFAULT current_timestamp,
     ip_address VARCHAR,
@@ -305,7 +305,7 @@ GRANT USAGE, SELECT ON SEQUENCE user_sessions_id_seq TO codingcoach;
 
 -- Roles and related <- userService?
 CREATE TABLE IF NOT EXISTS roles (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     role_name VARCHAR,
     role_description VARCHAR,
     active BOOLEAN,
@@ -325,7 +325,7 @@ insert into roles (role_name, role_description, active) values ('Creator', 'Cont
 
 
 CREATE TABLE IF NOT EXISTS user_role (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER,
     role_id INTEGER,
     active BOOLEAN,
@@ -347,6 +347,7 @@ insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, '
 
 -- goals and related <- goalService
 CREATE TABLE IF NOT EXISTS goals (
+    rid SERIAL PRIMARY KEY,
     id INTEGER,
     goal_version INTEGER,       -- every time a goal or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     goal_name VARCHAR,
@@ -355,8 +356,7 @@ CREATE TABLE IF NOT EXISTS goals (
     active BOOLEAN,
     completable BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
-    owned_by INTEGER,
-    PRIMARY KEY(id, goal_version)
+    owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE goals TO codingcoach;
@@ -364,7 +364,7 @@ GRANT ALL PRIVILEGES ON TABLE goals TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     topic_name VARCHAR,
     topic_description VARCHAR,
     topic_image VARCHAR,
@@ -381,9 +381,8 @@ GRANT ALL PRIVILEGES ON TABLE topics TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS goal_path (
-    id SERIAL,
-    goal_id INTEGER,
-    goal_version INTEGER,
+    id SERIAL PRIMARY KEY,
+    goal_rid INTEGER,
     topic_id INTEGER,
     position INTEGER,
     is_required BOOLEAN,
@@ -393,17 +392,15 @@ CREATE TABLE IF NOT EXISTS goal_path (
 GRANT ALL PRIVILEGES ON TABLE goal_path TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO codingcoach;
 
-CREATE INDEX IF NOT EXISTS idx_goal_path_goal_id ON goal_path (goal_id);
-CREATE INDEX IF NOT EXISTS idx_goal_path_goal_version ON goal_path (goal_version);
+CREATE INDEX IF NOT EXISTS idx_goal_path_goal_rid ON goal_path (goal_rid);
 
 
 
 -- used to track a users interest in completing a goal (and at a specific goal version so the correct path can be identified)
 -- also tracks actually completion of a goal.
 CREATE TABLE IF NOT EXISTS user_goal (
-    id SERIAL,
-    goal_id INTEGER,
-    goal_version INTEGER,
+    id SERIAL PRIMARY KEY,
+    goal_rid INTEGER,
     user_id INTEGER,
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
@@ -413,7 +410,7 @@ CREATE TABLE IF NOT EXISTS user_goal (
 GRANT ALL PRIVILEGES ON TABLE user_goal TO codingcoach;
 GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO codingcoach;
 
-CREATE INDEX IF NOT EXISTS idx_user_goal_goal_id ON user_goal (goal_id);
+CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
 CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
 
 
@@ -424,7 +421,7 @@ CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
 -- would not actually be recorded anywhere in the db. Further if the path 
 -- changed 
 CREATE TABLE IF NOT EXISTS user_topic (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     topic_id INTEGER,
     user_id INTEGER,
     is_intro_complete BOOLEAN,
@@ -445,7 +442,7 @@ CREATE INDEX IF NOT EXISTS idx_user_topic_user_id ON user_topic (user_id);
 
 
 CREATE TABLE IF NOT EXISTS resources (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
     resource_description VARCHAR,
@@ -462,7 +459,7 @@ GRANT ALL PRIVILEGES ON TABLE resources TO codingcoach;
 
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resource (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     topic_id INTEGER,
     resource_id INTEGER,
     position INTEGER,
@@ -482,7 +479,7 @@ CREATE INDEX IF NOT EXISTS idx_topic_resource_owned_by ON topic_resource (owned_
 -- maintains a record of resources reviewed by the user within a topic
 -- when combined with user_topic (pre_completed_assessment_id, post_completed_assessment_id and completed_activity_id) denotes completed topic
 CREATE TABLE IF NOT EXISTS completed_resource (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     resource_id INTEGER,
     user_id INTEGER,
     submission_text VARCHAR, -- is the user going to actually submit something here ever?
@@ -498,7 +495,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_resource_user_id ON completed_resource 
 
 
 CREATE TABLE IF NOT EXISTS assessments (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     assessment_type INTEGER,   -- ?? 1-pre/post eval, 2.. quiz?, etc not sure if this is needed depends on how tests are done outside of pre/post assessments
     assessment_name VARCHAR,  
     assessment_description VARCHAR,
@@ -515,7 +512,7 @@ GRANT ALL PRIVILEGES ON TABLE assessments TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS assessment_question (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     assessment_id INTEGER,   
     question VARCHAR,  
     is_required BOOLEAN,
@@ -529,7 +526,7 @@ CREATE INDEX IF NOT EXISTS idx_assessment_question_assessment_id ON assessment_q
 
 
 CREATE TABLE IF NOT EXISTS assessment_question_option (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     assessment_question_id INTEGER,   
     option_number INTEGER,
     option_answer VARCHAR,  
@@ -542,7 +539,7 @@ CREATE INDEX IF NOT EXISTS idx_assessment_question_option_assessment_question_id
 
 
 CREATE TABLE IF NOT EXISTS completed_assessment (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     assessment_id INTEGER,
     user_id INTEGER,
     topic_assessment_number INTEGER,    -- 1-Pre, 2-Post, 3-Post-retake 1, 4-post-retake 2, etc
@@ -558,7 +555,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_assessment_assessment_id ON completed_a
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_user_id ON completed_assessment (user_id);
 
 CREATE TABLE IF NOT EXISTS completed_assessment_question (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     completed_assessment_id INTEGER,
     assessment_question_id INTEGER,
     assessment_question_option_id INTEGER,  -- this is the users chosen answer
@@ -573,7 +570,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_assessment_question_completed_assessmen
 
 
 CREATE TABLE IF NOT EXISTS activities (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     activity_type INTEGER,   -- ?? TODO: what types will there be, do i need this? activities currently a design STUB
     activity_name VARCHAR,  
     activity_description VARCHAR,
@@ -587,7 +584,7 @@ GRANT ALL PRIVILEGES ON TABLE activities TO codingcoach;
 
 
 CREATE TABLE IF NOT EXISTS completed_activity (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     activity_id INTEGER,
     user_id INTEGER,
     submission_text VARCHAR,

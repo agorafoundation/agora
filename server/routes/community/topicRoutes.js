@@ -445,16 +445,16 @@ router.route( '/:goalId/:topicId' )
                     res.locals.topic = topicEnrollment.topic;
                     req.session.goalId = goalId;
 
-                    console.log("1----------------------------------------------------------------------");
-                    console.log(topicEnrollment.preCompletedAssessmentId);
-                    console.log(topicEnrollment.preAssessment);
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.postCompletedAssessmentId);
-                    console.log(topicEnrollment.postAssessment)
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.topic.assessmentId);
-                    console.log(topicEnrollment.topic.assessment);
-                    console.log("----------------------------------------------------------------------");
+                    // console.log("1----------------------------------------------------------------------");
+                    // console.log(topicEnrollment.preCompletedAssessmentId);
+                    // console.log(topicEnrollment.preAssessment);
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.postCompletedAssessmentId);
+                    // console.log(topicEnrollment.postAssessment)
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.topic.assessmentId);
+                    // console.log(topicEnrollment.topic.assessment);
+                    // console.log("----------------------------------------------------------------------");
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
@@ -529,16 +529,16 @@ router.route( '/:goalId/:topicId' )
                     res.locals.topic = topicEnrollment.topic;
                     req.session.goalId = goalId;
 
-                    console.log("3----------------------------------------------------------------------");
-                    console.log(topicEnrollment.preCompletedAssessmentId);
-                    console.log(topicEnrollment.preAssessment);
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.postCompletedAssessmentId);
-                    console.log(topicEnrollment.postAssessment)
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.topic.assessmentId);
-                    console.log(topicEnrollment.topic.assessment);
-                    console.log("----------------------------------------------------------------------");
+                    // console.log("3----------------------------------------------------------------------");
+                    // console.log(topicEnrollment.preCompletedAssessmentId);
+                    // console.log(topicEnrollment.preAssessment);
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.postCompletedAssessmentId);
+                    // console.log(topicEnrollment.postAssessment)
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.topic.assessmentId);
+                    // console.log(topicEnrollment.topic.assessment);
+                    // console.log("----------------------------------------------------------------------");
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
@@ -586,16 +586,16 @@ router.route( '/:goalId/:topicId' )
                     res.locals.topic = topicEnrollment.topic;
                     req.session.goalId = goalId;
 
-                    console.log("4----------------------------------------------------------------------");
-                    console.log(topicEnrollment.preCompletedAssessmentId);
-                    console.log(topicEnrollment.preAssessment);
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.postCompletedAssessmentId);
-                    console.log(topicEnrollment.postAssessment)
-                    console.log("-----------------------");
-                    console.log(topicEnrollment.topic.assessmentId);
-                    console.log(topicEnrollment.topic.assessment);
-                    console.log("----------------------------------------------------------------------");
+                    // console.log("4----------------------------------------------------------------------");
+                    // console.log(topicEnrollment.preCompletedAssessmentId);
+                    // console.log(topicEnrollment.preAssessment);
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.postCompletedAssessmentId);
+                    // console.log(topicEnrollment.postAssessment)
+                    // console.log("-----------------------");
+                    // console.log(topicEnrollment.topic.assessmentId);
+                    // console.log(topicEnrollment.topic.assessment);
+                    // console.log("----------------------------------------------------------------------");
 
                     // open the course
                     res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
