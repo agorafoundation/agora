@@ -34,3 +34,5 @@ CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
 -- #48 https://github.com/briangormanly/agora/issues/48 
 -- I don't see any difference in the database between the tables created with just SERIAL and the ones with SERIAL PRIMARY KEY, I just made the change for the create scripts.
 
+-- end production https://github.com/briangormanly/agora/pull/50
+
