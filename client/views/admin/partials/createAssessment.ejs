@@ -35,7 +35,7 @@ if(topic) {
                             </button>
                         </span>
                         <p></p>
-                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionName-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestionName-<%- topic.assessment.questions[i].id %>" placeholder="Assessment Title" required />
+                        <input type="input" class="form-control form-control-lg" name="topicAssessmentQuestionName-<%- (i + 1) %>" value="<%- topic.assessment.questions[i].question %>" id="topicAssessmentQuestionName-<%- (i + 1) %>" placeholder="Assessment Title" required />
                         <div id="options-border-<%- (i + 1) %>" class="options-border">
                             <%
                             let j = 0;      // we will want to track outside loop for new entries
@@ -70,7 +70,7 @@ if(topic) {
                             }
                             %>
                         </div>
-                        <input type="button" name="addQuestionOption" value="Add Option" class="btn-primary" id="addQuestionOption-<%- topic.assessment.questions[i].id %>" onclick="addOption(<%- (i + 1) %>);" />
+                        <input type="button" name="addQuestionOption" value="Add Option" class="btn-primary" id="addQuestionOption-<%- (i + 1) %>" onclick="addOption(<%- (i + 1) %>);" />
                     </div>
                     <%
                 }

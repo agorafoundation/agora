@@ -16,34 +16,57 @@ const AssessmentQuestionOption = require('../model/assessmentQuestionOption');
 // any cross services required
 
 
-
 /**
- * Get an active assessment with questions and options by id
+ * Get an assessment with questions and options by id
  * @param {Integer} assessmentId 
+ * @param {boolean} active
  * @returns assessment
  */
-exports.getActiveAssessmentById = async function(assessmentId) {
-    let text = "SELECT * FROM assessments WHERE active = $1 AND id = $2";
-    let values = [ true, assessmentId ];
+exports.getAssessmentById = async function(assessmentId, active) {
+    let text = "";
+    let values = [];
+    if( active ) {
+        text = "SELECT * FROM assessments WHERE active = $1 AND id = $2";
+        values = [ true, parseInt(assessmentId) ];
+    }
+    else {
+        text = "SELECT * FROM assessments WHERE id = $1";
+        values = [ parseInt(assessmentId) ];
+    }
+    
     try {
         let assessment = "";
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
-            let assessment = Assessment.ormAssessment(res.rows[0]);
+            assessment = Assessment.ormAssessment(res.rows[0]);
 
             // find the questions associated with the assessment
-            text = "SELECT * FROM assessment_question WHERE active = $1 AND assessment_id = $2";
-            values = [ true, assessment.id ];
+            if( active ) {
+                text = "SELECT * FROM assessment_question WHERE active = $1 AND assessment_id = $2";
+                values = [ true, assessment.id ];
+            }
+            else {
+                text = "SELECT * FROM assessment_question WHERE assessment_id = $1";
+                values = [ assessment.id ];
+            }
+            
 
             let res2 = await db.query(text, values);
-            if(res2.rowCount > 0) {
+            if( res2.rowCount > 0 ) {
                 for( let i = 0; i < res2.rowCount; i++ ) {
                     let question = AssessmentQuestion.ormAssessmentQuestion(res2.rows[i]);
 
                     // find the options associated with each question
-                    text = "SELECT * FROM assessment_question_option WHERE active = $1 AND assessment_question_id = $2";
-                    values = [ true, question.id ];
+                    if( active ) {
+                        text = "SELECT * FROM assessment_question_option WHERE active = $1 AND assessment_question_id = $2";
+                        values = [ true, question.id ];
+                    }
+                    else {
+                        text = "SELECT * FROM assessment_question_option WHERE assessment_question_id = $1";
+                        values = [ question.id ];
+                    }
+                    
     
                     let res3 = await db.query(text, values);
                     if(res3.rowCount > 0) {
@@ -182,13 +205,26 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
  */
  exports.saveAssessment = async function(assessment) {
     // check to see if an id exists - insert / update check
+    
     if(assessment) {
+        /*
+         * Working on #35 and #37 
+         * #35 showed that getActiveAssessmentById now getAssessmentById was not returning anything 
+         * In considering #37 in the mix however, fixing #35 might cause the loss of history regarding modified assessments that have 
+         * already been completed.  So for now, I am commenting the section out that was aiming to delete the historial assessment, as
+         * we want to retain the correct version that the user completed.
+         *
         if(assessment.id > 0) {
             //console.log(" ----- deleting the old the assesment -----");
             // delete all existing data for this assessment
 
             // get the existing db oldAssessment in order to delete it first
-            let oldAssessment = await exports.getActiveAssessmentById(assessment.id);
+            let oldAssessment = await exports.getActiveAssessmentById(assessment.id); // now getAssessmentById
+
+            console.log("old assessment -------------------");
+            console.log("looking for assessment with id : " + assessment.id)
+            console.log(JSON.stringify(oldAssessment));
+            console.log("-----------------------------------");
 
             // go through options, questions and the assessment and delete all of them
             if(oldAssessment && oldAssessment.questions) {
@@ -236,6 +272,7 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
 
             
         }
+        */
 
         // console.log(" ----- Saving the assesment -----");
         // console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");

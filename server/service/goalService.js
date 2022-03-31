@@ -109,8 +109,8 @@ exports.getAllActiveGoalsWithTopics = async function() {
          
         let res = await db.query(text, values);
         for(let i=0; i<res.rows.length; i++) {
-            text = "select * from goal_path where active = $1 and goal_id = $2 and goal_version = $3 order by position;";
-            values = [ true, res.rows[i].id, res.rows[i].goal_version ];
+            text = "select * from goal_path where active = $1 and goal_rid = $2 order by position;";
+            values = [ true, res.rows[i].rid ];
             let topics = [];
             let res2 = await db.query(text, values);
 
@@ -168,8 +168,8 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
-            text = "select * from goal_path where active = $1 and goal_id = $2 and goal_version = $3 order by position;";
-            values = [ true, res.rows[0].id, res.rows[0].goal_version ];
+            text = "select * from goal_path where active = $1 and goal_rid = $2 order by position;";
+            values = [ true, res.rows[0].rid ];
             let topics = [];
             let res2 = await db.query(text, values);
 
@@ -288,7 +288,7 @@ exports.saveGoal = async function(goal) {
  */
 exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
     // get the most recent version of the goal
-    let text = "SELECT MAX(goal_version) as version from goals where id = $1";
+    let text = "SELECT rid, MAX(goal_version) as version from goals where id = $1 group by rid";
     let values = [ goalId ];
 
     try {
@@ -304,8 +304,8 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
              * matures this should be re-evaluated.
              */
             // first remove current goal enrollments
-            text = "DELETE FROM goal_path WHERE goal_id=$1";
-            let values = [ goalId ];
+            text = "DELETE FROM goal_path WHERE goal_rid=$1";
+            let values = [ res.rows[0].rid ];
 
             let res2 = await db.query(text, values);
 
@@ -316,8 +316,8 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
              */
             if(pathway && pathway.length > 0) {
                 for( let i=0; i < pathway.length; i++ ) {
-                    text = "INSERT INTO goal_path (goal_id, goal_version, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5, $6);";
-                    values = [ goalId, res.rows[0].version, pathway[i], (i + 1), true, true ];
+                    text = "INSERT INTO goal_path (goal_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                    values = [ res.rows[0].rid, pathway[i], (i + 1), true, true ];
 
                     let res3 = await db.query(text, values);
                 }
@@ -342,7 +342,7 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  */
  exports.saveGoalEnrollmentMostRecentGoalVersion = async function(userId, goalId) {
     // get the most recent version of the goal
-    let text = "SELECT MAX(goal_version) as version from goals where id = $1";
+    let text = "SELECT rid, MAX(goal_version) as version from goals where id = $1 group by rid";
     let values = [ goalId ];
 
     try {
@@ -367,19 +367,19 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  * @param {Integer} goalVersion version of goal
  * @returns true for successful operation or false if enrollment fails
  */
- exports.saveGoalEnrollment = async function(userId, goalId, goalVersion) {
-    // check this userId and goalId combination does not already exist
-    let text = "SELECT * FROM user_goal WHERE active = $1 AND user_id = $2 AND goal_id = $3 AND goal_version = $4";
-    let values = [ true, userId, goalId, goalVersion ];
+ exports.saveGoalEnrollment = async function(userId, goalRid, goalVersion) {
+    // check this userId and goalRid combination does not already exist
+    let text = "SELECT * FROM user_goal WHERE active = $1 AND user_id = $2 AND goal_rid = $3";
+    let values = [ true, userId, goalRid ];
 
     try {
          
         let response = await db.query(text, values);
 
         if(!response.rowCount > 0) {       
-            text = 'INSERT INTO user_goal(goal_id, goal_version, user_id, active, is_completed)'
-                + 'VALUES($1, $2, $3, $4, $5)';
-            values = [ goalId, goalVersion, userId, true, false ];
+            text = 'INSERT INTO user_goal(goal_rid, user_id, active, is_completed)'
+                + 'VALUES($1, $2, $3, $4)';
+            values = [ goalRid, userId, true, false ];
 
             let response = await db.query(text, values);
     
@@ -403,12 +403,12 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  * @param {Integer} goalVersion 
  * @returns true if successful
  */
-exports.completeGoalEnrollment = async function(userId, goalId, goalVersion) {
-    let text = "UPDATE user_goal SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND goal_id = $4 AND goal_version = $5;"
-    let values = [ true, true, userId, goalId, goalVersion ];
+exports.completeGoalEnrollment = async function( userId, goalRid ) {
+    let text = "UPDATE user_goal SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND goal_rid = $4;"
+    let values = [ true, true, userId, goalRid ];
 
     try {
-        let response = await db.query(text, values);
+        let response = await db.query( text, values );
         return true;
     }
     catch(e) {
@@ -424,9 +424,10 @@ exports.completeGoalEnrollment = async function(userId, goalId, goalVersion) {
  * @param {Integer} goalVersion 
  * @returns goal if the user is actively enrolled
  */
-exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVersion) {
-    let text = "SELECT ug.* FROM user_goal ug where ug.user_id = $1 AND ug.goal_id = $2 and ug.goal_version = $3 and active = $4;" 
-    let values = [ userId, goalId , goalVersion, true ];
+exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
+    console.log("params: userId " + userId + " goalRid: " + goalRid );
+    let text = "SELECT ug.* FROM user_goal ug where ug.user_id = $1 AND ug.goal_rid = $2 and active = $3;" 
+    let values = [ userId, goalRid , true ];
     
     let goal;
     try {
@@ -435,8 +436,8 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
         if(res.rows.length > 0) {
             for(let i=0; i<res.rows.length; i++) {
                 // get the goal for each user_goal
-                text = "SELECT * FROM goals WHERE active = $1 AND id = $2 AND goal_version = $3;"
-                values = [true, res.rows[i].goal_id, res.rows[i].goal_version ];
+                text = "SELECT * FROM goals WHERE active = $1 AND rid = $2;"
+                values = [ true, res.rows[i].goal_rid ];
 
                 let res2 = await db.query(text, values);
 
@@ -511,10 +512,17 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
  * @returns List<goal> a list of the goal objects the user is enrolled in
  */
  exports.getActiveEnrollmentsForUserId = async function(userId) {
-    let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
-        + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
-        + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
-    
+
+    let text = "select * from user_goal where user_id = $1 and active = $2;";
+    let values = [ userId, true ];
+
+    // this one was the last query used when goal_version was part of the goals key and part of the foriegn key of user_goal.
+
+    // let text = "SELECT ug.* FROM user_goal ug INNER JOIN " 
+    //     + "(SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) groupedug " 
+    //     + " ON ug.user_id = groupedug.user_id AND ug.goal_id = groupedug.goal_id AND ug.goal_version = groupedug.max_version;";
+    // ---- end last one used
+
     // get active enrollments, also check the the goal itself is active!
     // let text = "SELECT ug.*, g.active as g_active, g.id as g_id FROM user_goal ug "
     //     + "INNER JOIN (SELECT user_id, goal_id, MAX(goal_version) AS max_version FROM user_goal where user_id = $2 and active = $1 GROUP BY user_id, goal_id) "
@@ -523,8 +531,6 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
     // note this is historical, upon testing I realized that implementing this code meant that completed goals were not showing up in users profiles and in feeds
     // so the approach taken was to have all active / inactive goals returned if the user has been enrolled and use goal.active to filter in the views where showing
     // the goal is not desirable 
-
-    let values = [ true, userId ];
     
     let enrollments = [];
     try {
@@ -535,8 +541,8 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
                 let enrollment = GoalEnrollment.ormGoalEnrollment(res.rows[i]);
 
                 // get the goal for each user_goal
-                text = "SELECT * FROM goals WHERE id = $1 AND goal_version = $2;"
-                values = [ res.rows[i].goal_id, res.rows[i].goal_version ];
+                text = "SELECT * FROM goals WHERE rid = $1;"
+                values = [ res.rows[i].goal_rid ];
 
                 let res2 = await db.query(text, values);
 
@@ -561,7 +567,7 @@ exports.getEnrolledGoalByUserAndGoalIds = async function(userId, goalId, goalVer
 
 exports.getRecentGoalEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -573,7 +579,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
             for(let i=0; i<res.rows.length; i++) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
-                event.eventItemId = res.rows[i].goal_id;
+                event.eventItemId = res.rows[i].goal_rid;
                 event.eventItem = "Goal Enrollment";
                 event.eventType = "Goal Enrollment";
                 event.eventUsername = res.rows[i].username;
@@ -597,7 +603,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
 
 exports.getRecentGoalCompletionEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_id = mod.id and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -609,7 +615,7 @@ exports.getRecentGoalCompletionEvents = async function(limit) {
             for(let i=0; i<res.rows.length; i++) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
-                event.eventItemId = res.rows[i].goal_id;
+                event.eventItemId = res.rows[i].goal_rid;
                 event.eventItem = "Goal Completion!";
                 event.eventType = "Goal Completion!";
                 event.eventUsername = res.rows[i].username;
