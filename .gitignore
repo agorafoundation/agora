@@ -81,7 +81,7 @@ server/db/codingcoach.sql
 server/db/codingcoach-v.2.sql
 
 # images
-client/public/assets/img/
+#client/public/assets/img/
 client/public/assets/mail/
 client/public/assets/topics/
 
