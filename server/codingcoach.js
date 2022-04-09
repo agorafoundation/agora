@@ -30,11 +30,16 @@ app.use(cors({
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../client/views'));
+
+// get the view path for the front end configured
+let viewPath = '../client/' + process.env.FRONT_END_NAME + '/views';
+let publicPath = 'client' + process.env.FRONT_END_NAME + '/public';
+
+app.set('views', path.join(__dirname, viewPath));
 //app.set('views',[path.join(__dirname, '../client/views'), path.join(__dirname, '../client/views/auth')]);
 
 // open up the resources publically 
-app.use(express.static('client/public'));
+app.use(express.static(publicPath));
 
 // import uuid generator
 const { v4: uuidv4 } = require('uuid');
