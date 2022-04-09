@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('../partials/topmenu'); %> 
+        </nav>
+
+
+        <!-- About Section-->
+       
+        <section class="page-section-top-padded mb-0" id="about">
+            <div class="container navbar-interior font-weight-bold text-primary">
+                <%- include('../partials/community-menu'); %>
+                <%- include('../partials/welcome'); %>
+            </div>
+
+
+            <div class="container">
+                
+                
+                <div class="divider-custom">
+                </div>
+
+                
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+
+                        <div class="col-lg-5">
+                            
+                            <h4 class="text-secondary">Learning Goals</h4>
+                            
+                            
+                            <div class="divider-custom">
+                                <div class="divider-custom-line cherry-red-bg-color"></div>
+                                <div class="divider-custom-icon"><i class="fas fa-book-reader cherry-red-color"></i></div>
+                                <div class="divider-custom-line cherry-red-bg-color"></div>
+                            </div>
+                            
+                            <h4 class="text-secondary">Currently Enrolled</h4>
+                            <%- include('./partials/enrolled-goals'); %>
+
+                            <h4 class="text-secondary">Completed</h4>
+                            <%- include('./partials/completed-goals'); %>
+                            
+                            
+                            <div class="divider-custom">
+                                <div class="divider-custom-line cherry-red-bg-color"></div>
+                                <div class="divider-custom-icon"><i class="fas fa-bell cherry-red-color"></i></div>
+                                <div class="divider-custom-line cherry-red-bg-color"></div>
+                            </div>
+
+                            <%
+                            if(locals.authUser.member) {
+                                %>
+                                <div class="alert-message alert-message-success" role="document">
+                                    <h5>Thank you for supporting the coding coach!!!</h5>
+                                    <p>Our educational efforts are completely supported by users like you!</p>
+                                </div>
+                                <% 
+                            } 
+                            else {
+                                %>    
+                                <div class="alert-message alert-message-info" role="document">
+                                    <h5>Need Tokens? Want to learn more about supporting the Coding Coach and the benefits of becoming a member?</h5>
+                                    <p><a href="/community/purchase">Learn more about tokens and membership</a></p>
+                                </div>
+                                <% 
+                            }
+                            %>
+
+                            <% if(!user.emailValidated){ %>
+                                <div class="alert-message alert-message-warning" role="alert">
+                                    <h3 >Email not verified!</h3>
+                                    <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/api/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
+                                </div>
+                            <% } %>
+
+                        </div>
+                        <div class="col-lg-7">
+
+                            <section>
+
+                                <h4 class="text-secondary">Goals</h4>
+                                <%- include('./partials/available-goals'); %>
+
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-chalkboard-teacher cherry-red-color"></i></div>
+                                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                                </div>
+                                
+                                <h4 class="text-secondary">Recent New Users and Enrollments</h4>
+                                <%- include('./partials/user-enrollment-events'); %>
+
+                            </section>
+
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('../partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('../partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <%- include('../partials/jsincludes'); %>
+    </body>
+</html>

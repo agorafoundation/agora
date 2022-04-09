@@ -1,0 +1,48 @@
+<div class="gc-container">
+    <%
+    let finishedTopics = 0;
+
+    // get the total number of topics for this goal
+    let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == goal.id && enrollment.isCompleted).length > 0 : false;
+    
+    if(user.topicEnrollments) {
+        // check to see if any of the topics are complete if so, increment the number
+        // first iterate through all the topics in the selected goal
+        for( let i=0; i < goal.topics.length; i++ ) {
+            // next iterate through all of the topics the user has enrolled in.
+            for( let j=0; j < user.topicEnrollments.length; j++ ) {
+                // see if this topic is part of the selected goal and if it has been completed
+                if( goal.topics[i].id == user.topicEnrollments[j].topicId && user.topicEnrollments[j].isCompleted ) {
+                    // all conditions met, add to completed total
+                    finishedTopics++;
+                }
+            }
+        }
+    }
+
+    // If the finishedTopics total matches the total topics of the goal, and the user has not already set as finished,
+    // give the user the ability to set it as finished
+    if( user.topicEnrollments && finishedTopics == goal.topics.length && goal.completable && !completed ) {
+        %>
+        <h3>The Goal is ready to be finished!</h3>
+        <form id="goal-form" action="/community/goal" method="POST">
+            <input type="hidden" value="<%- goal.id %>" class="form-control form-control-lg" name="goalId" id="goalId" required>
+            <input type="hidden" value="<%- goal.version %>" class="form-control form-control-lg" name="goalVersion" id="goalVersion" required>
+            <button type="submit" id="goal-submit" class="btn btn-primary btn-lg">Mark Completed</button>
+        </form>
+        <%
+    }
+    if( user.topicEnrollments && finishedTopics == goal.topics.length && !goal.completable && !completed ) {
+        %>
+        <h3>You have completed all the topics currently available!</h3>
+        <h4>This Goal is still in progress however, there are more topics coming soon. Please check back soon!</h4>
+        <%
+    }
+    else if( user.topicEnrollments && finishedTopics == goal.topics.length && completed ) {
+        %>
+        <h3>You have completed this goal!</h3>
+        <a href="/community/">Back to Community Home</a>
+        <%
+    }
+    %>
+</div>

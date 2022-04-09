@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('./partials/topmenu'); %>
+        </nav>
+
+
+        <!-- Page Content -->
+        <section class="page-section page-section-top-padded mb-0" id="about">
+            <%- include('./partials/welcome'); %>
+            <div class="container">
+                
+                <!-- About Section Heading-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-school cherry-red-color"></i></div>
+                    <div class="divider-custom-line cherry-red-bg-color"></div>
+                </div>
+
+                <!-- About Section Content-->
+                <!--
+                <div class="row">
+                    <div class="col-lg-4 ml-auto"><p class="lead">About the site</p></div>
+                    <div class="col-lg-4 mr-auto"><p class="lead">About me</p></div>
+                </div>
+                -->
+                <!-- About Section Button-->
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+                        <div class="col-lg-5">
+                            <p>Already a member?&nbsp;&nbsp; <a class="text-primary text-uppercase tag-line-you" href="/signIn?redirect=<%- locals.currentUrl %>">SIGN IN</a> </p>
+                            <h2>Join the Coding Coach!</h2>
+                            <h5>Join our community and gain access to exclusive additional resources, personal notes on topics, musings on new technologies such as Web 3 and more!</h5>
+                            <img src="/assets/img/robot-fun.png" class="img-fluid" />
+                            <p></p>
+                        </div>
+                        <div class="col-lg-7">
+                            <!--<img src="/assets/img/henry-ix-trans-circle-800x800.png" class="img-fluid" /> -->
+                            
+                            <section>
+
+                                <% if(locals.redirect) { %>
+                                <form action="/api/user?redirect=<%- locals.redirect %>" method="POST">
+                                <% } else { %>
+                                <form action="/api/user" method="POST">
+                                <% } %>
+                                    <% if(!!locals.error_message){ %>
+                                        <div class="alert-message alert-message-notice" role="alert">
+                                            <h3 ><%= error_message %></h3>
+                                        </div>
+                                        
+                                    <% } %>
+                                
+                                    <div class="form-group">
+                                        <h5>To get started we need your email and name</h5>
+                                        <small id="emailHelp" class="form-text text-muted">We'll never share your information with anyone else.</small>
+                                        <input type="email" class="form-control form-control-lg" name="userEmail" id="userEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+                                        <small id="usernameHelp" class="form-text text-muted">Username must be unique</small>
+                                        <input type="input" class="form-control form-control-lg" name="userUsername" id="userUsername" aria-describedby="usernameHelp" placeholder="Enter Username" required>
+                                        <br />
+
+                                        <input type="input" class="form-control form-control-lg" name="firstName" id="firstName" placeholder="First Name" required>
+                                        <input type="input" class="form-control form-control-lg" name="lastName" id="lastName" placeholder="Last Name" required>
+                                        <br />
+                                        <input type="password" class="form-control form-control-lg" id="psw" name="psw" placeholder="Password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="passwordToggle">
+                                            <label class="custom-control-label" for="passwordToggle">Show Password</label>
+                                        </div>
+                                        <div id="passwordRequirementsMessage" class="alert-message alert-message-success">
+                                            <h3>Password must contain the following:</h3>
+                                            <span id="letter" class="invalid">A <b>lowercase</b> letter</span><br />
+                                            <span id="capital" class="invalid">A <b>capital (uppercase)</b> letter</span><br />
+                                            <span id="special" class="invalid">A <b>special character</b> ($@$!%*#?&)</span><br />
+                                            <span id="number" class="invalid">A <b>number</b></span><br />
+                                            <span id="length" class="invalid">Minimum <b>8 characters</b></span>
+                                        </div>
+                                        <br />  
+                                        <h5>Letting us know which topics your are most intested in helps us find you the most helpful material! (optional)</h5>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming">
+                                            <label class="custom-control-label" for="beginningProgramming">Beginning Programming</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming">
+                                            <label class="custom-control-label" for="intermediateProgramming">Intermediate Programming</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming">
+                                            <label class="custom-control-label" for="advancedProgramming">Advanced Programming</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment">
+                                            <label class="custom-control-label" for="mobileDevelopment">Mobile Development</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming">
+                                            <label class="custom-control-label" for="roboticsProgramming">Robotics Programming</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications">
+                                            <label class="custom-control-label" for="webApplications">Web Applications</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="web3" name="web3">
+                                            <label class="custom-control-label" for="web3">Web 3 / Blockchain</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming">
+                                            <label class="custom-control-label" for="iotProgramming">Internet of Things (IoT) Programming</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign">
+                                            <label class="custom-control-label" for="databaseDesign">Database Design</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase">
+                                            <label class="custom-control-label" for="relationalDatabase">Relational Databases</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase">
+                                            <label class="custom-control-label" for="noSqlDatabase">NoSQL Databases</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping">
+                                            <label class="custom-control-label" for="objectRelationalMapping">Object Relational Mapping</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="userButton" class="btn btn-primary btn-lg btn-block" disabled>Join the Coding Coach Community!</button>
+                                    <br />
+                                    
+                                </form>
+                                <br />
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('./partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('./partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <%- include('./partials/jsincludes'); %>
+        
+    </body>
+</html>

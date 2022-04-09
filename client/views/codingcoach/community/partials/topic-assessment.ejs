@@ -1,0 +1,61 @@
+<%
+let assessment = null;
+
+if(currentStep == 2) {
+    // pre assessment
+    %>
+    <h5 class="text-primary">Pre-Assessment</h5>
+    <form action="/community/topic/update/2" method="GET">
+    <%
+
+}
+else if(currentStep == 5) {
+    // post assessment
+    %>
+    <h5 class="text-primary">Post-Assessment</h5>
+    <form action="/community/topic/update/5" method="GET">
+    <%
+
+}
+
+if(currentStep == 2 && topicEnrollment.preCompletedAssessmentId > 0) {
+    %>
+    <p>This assessment has already been submited you can see you results in the summary at the end of the topic.</p>
+    <%
+}
+else if(currentStep == 5 && topicEnrollment.postCompletedAssessmentId > 0) {
+    %>
+    <p>This assessment has already been submited you can see you results in the summary at the end of the topic.</p>
+    <%
+}
+else if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.assessment && topicEnrollment.topic.assessment.questions) {
+
+    for(let i=0; i < topicEnrollment.topic.assessment.questions.length; i++) {
+        %>
+        <div class="assessment-question">
+            <h6><%- topicEnrollment.topic.assessment.questions[i].question %></h6>
+            <%
+            for(let j=0; j < topicEnrollment.topic.assessment.questions[i].options.length; j++) {
+                %>
+                <div>
+                    <input type="radio" id="option-id-<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>" name="question-id-<%- topicEnrollment.topic.assessment.questions[i].id %>" value="<%- topicEnrollment.topic.assessment.questions[i].options[j].id %>">
+                    <label for="dewey"><%- topicEnrollment.topic.assessment.questions[i].options[j].optionAnswer %></label>
+                </div>
+                <%
+            }
+            %>
+        </div>
+        <hr />
+        <%
+    }
+}
+else {
+    // data missing?
+    %>
+    <p>Something went wrong displaying the assessment</p>
+    <%
+}
+%>
+    <button type="submit" class="btn btn-primary">Next Step</a>
+</form>
+

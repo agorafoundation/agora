@@ -1,0 +1,41 @@
+<% 
+if(user.enrollments) {
+    for(let i=0; i<user.enrollments.length; i++) {
+        if(user.enrollments[i].isCompleted) {
+            %>
+            <a class="card" style="width: 100%;" href="/community/goal/<%- user.enrollments[i].goal.id %>" id="topic_<%- user.enrollments[i].goal.id %>">
+                <div class="card-body-low-padding" name="enrolled_card">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                            <button class="btn" aria-expanded="false" aria-controls="collapseOne">
+                                <img class="img-supersmall" src="<%- user.enrollments[i].goal.goalImage %>" />
+                                <%- user.enrollments[i].goal.goalName %>
+                            </button>
+                            </h5>
+                        </div>
+                    
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <%- user.enrollments[i].goal.goalDescription %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a> 
+            <%
+        }
+        
+    }
+    
+}
+else {
+    %> 
+    <div class="card" style="width: 100%;">
+        <div class="card-body product-card-text-raised">
+            <h5 class="card-title">You have not yet completed any goals!</h5>
+        </div>
+    </div> 
+    <%
+}
+%>
