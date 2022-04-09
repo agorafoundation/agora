@@ -82,8 +82,11 @@ server/db/codingcoach-v.2.sql
 
 # images
 #client/public/assets/img/
-client/public/assets/mail/
-client/public/assets/topics/
+client/public/agora/assets/mail/
+client/public/agora/assets/topics/
+
+client/public/codingcoach/assets/mail/
+client/public/codingcoach/assets/topics/
 
 
 # parcel-bundler cache (https://parceljs.org/)
