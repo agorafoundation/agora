@@ -80,13 +80,13 @@ server/db/createTablesScript.sql
 server/db/codingcoach.sql
 server/db/codingcoach-v.2.sql
 
-# images
+# images NEEDS TO BE REDONE when theming directories are set
 #client/public/assets/img/
-client/public/agora/assets/mail/
-client/public/agora/assets/topics/
+# client/public/agora/assets/mail/
+# client/public/agora/assets/topics/
 
-client/public/codingcoach/assets/mail/
-client/public/codingcoach/assets/topics/
+# client/public/codingcoach/assets/mail/
+# client/public/codingcoach/assets/topics/
 
 
 # parcel-bundler cache (https://parceljs.org/)

@@ -26,17 +26,20 @@ const nodemailer = require("nodemailer");
 
 // import multer (file upload)
 const fs = require('fs');
-var path = require('path');
-var baseProfileUrl = process.env.AVATAR_BASE_URL;
-var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE);
-var UPLOAD_PATH_BASE = path.resolve(__dirname, '..', process.env.STORAGE_BASE);
-var maxSize = 1 * 1024 * 1024;
+let path = require('path');
+
+// set up file paths for user profile images
+let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
+let FRONT_END = process.env.FRONT_END_NAME;
+let IMAGE_PATH = process.env.AVATAR_IMAGE_PATH;
+
+let maxSize = 1 * 1024 * 1024;
 
 // import stripe controller
 const stripeService = require("../service/stripeService");
 
 // Start multer
-var multer = require('multer');
+let multer = require('multer');
 
 const fileFilter = (req, file, cb) => {
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
@@ -47,9 +50,9 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, UPLOAD_PATH)
+      cb(null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH)
     },
     filename: function (req, file, cb) {
         let filename = Date.now() + file.originalname;
@@ -102,7 +105,7 @@ router.route('/')
 
                     let hashedPassword = await userService.passwordHasher(req.body.psw);
 
-                    user = User.createUser(email, username, '/assets/uploads/profile/profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive,
+                    user = User.createUser(email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive,
                         beginningProgramming, intermediateProgramming, advancedProgramming, mobileDevelopment, roboticsProgramming,
                         webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, 0);
 
@@ -380,15 +383,18 @@ router.post('/uploadProfilePicture', (req, res) => {
         }
         else {
             // save image            
-            userService.updateProfileFilename(req.session.authUser.email, baseProfileUrl + req.session.savedProfileFileName).then((rValue) => {
+            userService.updateProfileFilename(req.session.authUser.email, req.session.savedProfileFileName).then((rValue) => {
                 // if we get a valid return value it is the file we should delete
                 if(rValue) {
                     // don't delete the default pic!
                     //console.log("[FIX-DEBUG]: comparing default profile images as to not delete it, these should match! : " + rValue + " and /assets/uploads/profile/profile-default.png");
-                    if(rValue != '/assets/uploads/profile/profile-default.png') {
+                    if(rValue != 'profile-default.png') {
                         // Delete the old file asynchronously
-                        fs.unlink(UPLOAD_PATH_BASE + rValue, (err) => {
-                            console.log("file delete error status: " + err);
+                        fs.unlink(UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH + rValue, (err) => {
+                            if(err) {
+                                console.log("file delete error status: " + err);
+                            }
+                            
                         });
                     }
                 }

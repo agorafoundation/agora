@@ -1,0 +1,87 @@
+<span id="topic-resource-page"></span>
+<%
+if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) {
+    for(let i=0; i < topicEnrollment.topic.resources.length; i++) {
+        // see if this resource has already been marked as compeleted
+        let resourceCompleted = false;
+        if(topicEnrollment.completedResources.length > 0) {
+            for(let j=0; j < topicEnrollment.completedResources.length; j++) {
+                if(topicEnrollment.completedResources[j].resourceId == topicEnrollment.topic.resources[i].id && topicEnrollment.completedResources[j].userId == user.id && topicEnrollment.completedResources[j].active) {
+                    resourceCompleted = true;
+                    break;
+                }
+            }
+        }
+
+        if(topicEnrollment.topic.resources) {
+            %>
+            
+            <a class="card" style="width: 100%;"  target="_blank" id="resource_<%- topicEnrollment.topic.resources[i].id %>">
+                <div class="card-body-low-padding" name="enrolled_card">
+                    <div class="card">
+                        <%
+                        if(topicEnrollment.topic.resources[i].resourceLink && topicEnrollment.topic.resources[i].resourceLink != '') {
+                            %>
+                            <a class="card-header" id="headingOne" href="<%- (!!topicEnrollment.topic.resources[i].resourceLink)?topicEnrollment.topic.resources[i].resourceLink:''; %>">
+                            <%
+                        }
+                        else {
+                            %>
+                            <a class="card-header" id="headingOne">
+                            <%
+                        }
+                        %>
+                        
+                            <h5 class="mb-0">
+                            <button class="btn" aria-expanded="false" aria-controls="collapseOne">
+                                <%
+                                if(topicEnrollment.topic.resources[i].resourceImage) {
+                                    %>
+                                    <img class="img-supersmall" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH%><%- topicEnrollment.topic.resources[i].resourceImage %>" />
+                                    <%
+                                }
+                                if(topicEnrollment.topic.resources[i].isRequired) {
+                                    %>
+                                    <span class=""><strong>Required: </strong></span>
+                                    <%
+                                }
+                                else {
+                                    %>
+                                    <span class=""><strong>Optional: </strong></span>
+                                    <%
+                                }
+                                %>
+
+                                <%- topicEnrollment.topic.resources[i].resourceName %>
+                            </button>
+                            </h5>
+                        </a>
+                    
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <%- topicEnrollment.topic.resources[i].resourceContentHtml %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a> 
+            <span class="resource-complete">
+                <%
+                if(topicEnrollment.topic.resources[i].isRequired) {
+                %>
+                <span class="resource-complete-text">Completed: </span>
+                <input type="checkbox" class="resource-complete-checkbox" id="resource_complete_<%- topicEnrollment.topic.resources[i].id %>" name="resource-complete-ck" onclick="updateTopicResourceCompleteStatus(<%- topicEnrollment.topic.resources[i].id %>, 'testing')" <%- (resourceCompleted)?'checked':'' %> />
+                <%
+                }   
+                %>
+            </span>
+            
+            <hr />
+            <%
+        } 
+    }
+    %>
+    <button type="submit" onclick="window.location.href = '/community/topic/update/3';" class="btn btn-primary" id="resource_submit">Next Step</button>
+    <%
+}
+%>

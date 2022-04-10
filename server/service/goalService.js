@@ -584,7 +584,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
                 event.eventType = "Goal Enrollment";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].create_time;
-                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> <span style='color:darkblue'>Enrolled in <img src='" + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> </span><a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> <span style='color:darkblue'>Enrolled in <img src='" + process.env.GOAL_IMAGE_WEB_PATH + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> </span><a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
                 event.eventImage = res.rows[i].user_image;
                 event.eventImage2 = res.rows[i].goal_image;
                 enrollmentEvents.push(event);
@@ -620,7 +620,7 @@ exports.getRecentGoalCompletionEvents = async function(limit) {
                 event.eventType = "Goal Completion!";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].completed_date;
-                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a><span style='color:darkgreen'><strong> completed </strong></span> <img src='" + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> <a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a><span style='color:darkgreen'><strong> completed </strong></span> <img src='" + process.env.GOAL_IMAGE_WEB_PATH + res.rows[i].goal_image + "' alt='Goal Badge' title='Goal Badge' class='profile-top-image' /> <a href='/community/goal/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
                 event.eventImage = res.rows[i].user_image;
                 event.eventImage2 = res.rows[i].goal_image;
                 enrollmentEvents.push(event);

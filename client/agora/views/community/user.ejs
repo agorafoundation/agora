@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body id="page-top">
+        <%
+
+        %>
+
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('../partials/topmenu'); %> 
+        </nav>
+
+
+        <!-- About Section-->
+
+        <section class="page-section-top-padded mb-0" id="about">
+            <div class="container navbar-interior font-weight-bold text-primary">
+                <%- include('../partials/community-menu') %>
+                <%- include('../partials/welcome'); %>
+            </div>
+
+
+            <div class="container">
+
+                <div class="user-page-top">
+                    <% 
+                    if(user) {
+                    %> 
+                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                    <%
+                    }
+                    else {
+                    %> 
+                        <img src="" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                    <%
+                    }
+                    %>
+                    
+                        
+                        
+                        <div id="user-badges">
+                            <h2><span class="text-primary" ><%- (!!user)?user.username:'' %></span></h2>
+                            <%
+                            if( user && (user.admin || user.member || user.creator || user.codebot) ) {
+                                %>
+                                <h4>Membership Badges:</h4>
+                                <%
+                            }
+                            %>
+                            
+                            <%
+                            if(user && user.admin) {
+                                %>
+                                <img src="/assets/badges/admin-badge.png" title="Site Administrator" alt="Site Administrator" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.member) {
+                                %>
+                                <img src="/assets/badges/founding-member-badge.png" title="Founding Supporter" alt="Founding Supporter" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.creator) {
+                                %>
+                                <img src="/assets/badges/creator-badge.png" title="Creator" alt="Creator" class="badge-image" />
+                                <%
+                            }
+                            %>
+        
+                            <%
+                            if(user && user.codebot) {
+                                %>
+                                <img src="/assets/badges/codebot-badge.png" title="Codebot" alt="Codebot" class="badge-image" />
+                                <%
+                            }
+                            %>
+                            <h4>Goals Completed:</h4>
+                            <%
+                            if(user.enrollments) {
+                                for( let i=0; i < user.enrollments.length; i++ ) {
+                                    if( user.enrollments[i].isCompleted ) {
+                                        %>
+                                        <img src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].goal.goalImage %>" title="<%- user.enrollments[i].goal.goalName %>" alt="<%- user.enrollments[i].goal.goalName %>" class="badge-image" />
+                                        <%
+                                    }
+                                }
+                            }
+
+                            %>
+
+        
+                        </div>
+                   
+                </div>
+                
+                
+                
+                
+
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+
+                        <div class="col-lg-4">
+                            
+                            <h5><%- (!!user)?user.username:'' %>'s Interests</h5>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.beginningProgramming) { %>
+                                    <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" disabled />
+                                <% } %>
+
+                                <label class="custom-control-label" for="beginningProgramming">Beginning Programming</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.intermediateProgramming) { %>
+                                    <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="intermediateProgramming">Intermediate Programming</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.advancedProgramming) { %>
+                                    <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="advancedProgramming">Advanced Programming</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.mobileDevelopment) { %>
+                                    <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="mobileDevelopment">Mobile Development</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.roboticsProgramming) { %>
+                                    <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="roboticsProgramming">Robotics Programming</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.webApplications) { %>
+                                    <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="webApplications">Web Applications</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.web3) { %>
+                                    <input type="checkbox" class="custom-control-input" id="web3" name="web3" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="web3" name="web3" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="web3">Web 3 / Blockchain</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.iotProgramming) { %>
+                                    <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" disabled />
+                                <% } %>
+
+                                <label class="custom-control-label" for="iotProgramming">Internet of Things (IoT) Programming</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.databaseDesign) { %>
+                                    <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="databaseDesign">Database Design</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.relationalDatabase) { %>
+                                    <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" disabled />
+                                <% } %>
+
+                                <label class="custom-control-label" for="relationalDatabase">Relational Databases</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.noSqlDatabase) { %>
+                                    <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="noSqlDatabase">NoSQL Databases</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <% if(user.objectRelationalMapping) { %>
+                                    <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" checked disabled />
+                                <% } else { %>
+                                    <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" disabled />
+                                <% } %>
+                                
+                                <label class="custom-control-label" for="objectRelationalMapping">Object Relational Mapping</label>
+                            </div>
+                            
+                            
+                        </div>
+                        
+
+                        <div class="col-lg-8">
+                            <h4>Currently Enrolled In:</h4>
+                            <%- include('./partials/enrolled-goals') %>
+
+                        </div>
+                        
+                    </div>
+                </div>
+            
+            
+            
+            
+            </div>
+
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('../partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('../partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <%- include('../partials/jsincludes'); %>
+    </body>
+</html>

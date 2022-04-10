@@ -33,7 +33,7 @@ app.set('view engine', 'ejs');
 
 // get the view path for the front end configured
 let viewPath = '../client/' + process.env.FRONT_END_NAME + '/views';
-let publicPath = 'client' + process.env.FRONT_END_NAME + '/public';
+let publicPath = 'client/' + process.env.FRONT_END_NAME + '/public';
 
 app.set('views', path.join(__dirname, viewPath));
 //app.set('views',[path.join(__dirname, '../client/views'), path.join(__dirname, '../client/views/auth')]);
