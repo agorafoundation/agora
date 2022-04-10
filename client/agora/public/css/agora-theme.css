@@ -1,35 +1,48 @@
 /*
 
-CC - Custom
+Agora - Custom CSS
+Modify this CSS file to create your own look and feel for your front end.
+
+Agora colors:
+Primary: #534741
+Complementary: #414d53
+Complementary (light): #a9c6d4
+Harmony: #6d4f40
+Analogous: #534c41, #534341
+Split Complementary: #444153, #415347
+Triadic: #4d4153, #475341
+Tetradic: #414d53, #4d4153, #535041
+
+Masthead background: #414d53
 
 */
 .agora-font {
     font-family: 'Luxurious Roman', cursive !important;
-  }
-  .agora-font-3em {
+}
+.agora-font-3em {
     font-family: 'Luxurious Roman', cursive !important;
     font-size:3em !important
-  }
+}
   
-  .agora-font-large {
+.agora-font-large {
     font-family: 'Luxurious Roman', cursive !important;
     font-size:4em !important
-  }
-  @media (min-width: 992px) {
+}
+@media (min-width: 992px) {
     .agora-font-large {
       font-family: 'Luxurious Roman', cursive !important;
       font-size:5em !important
     }
-  }
+}
 
 
 /* Header background image */
 .navbar {
     background-position-x:10rem;
     background-size: cover;
-  }
+}
   
-  .navbar::before {
+.navbar::before {
     content: "";
     position: absolute;
     top: 0;
@@ -37,22 +50,25 @@ CC - Custom
     height: 100%;
     width: 100%;
     background-color: #FFF !important;
-  }
+}
   
-  .navbar-interior {
+.navbar-interior {
     z-index: 2;
-  }
+}
   
   
   
-  /* Header background image */
-  .footer {
+/* Header background image */
+.footer {
     position: relative;
     height: 100%;
     background-image: url('/assets/img/logos/agora-logo-bwn-1600.png');
     background-position-x:10rem;
     background-size: cover;
-  }
+}
+.copyright {
+    background-color: #475341;
+}
   
   .footer::before {
     content: "";
@@ -64,38 +80,48 @@ CC - Custom
     background-color: #414d53ad !important;
   }
 
-  a {
-    color: #FFF;
+a {
+    color: #534741;
     text-decoration: none;
     background-color: transparent;
-  }
-  a:hover {
+}
+a:hover {
     color: #415347;
     text-decoration: underline;
-  }
+}
+
+.a-light {
+    color: #FFF !important;
+    text-decoration: none !important;
+    background-color: transparent !important;
+} 
+.a-light:hover {
+    color: #a9c6d4 !important;
+    text-decoration: underline !important;
+}
 
 
-  .masthead {
+.masthead {
     padding-top: calc(6rem + 104px);
     padding-bottom: 6rem;
-  }
-  @media (min-width: 576px) {
+}
+@media (min-width: 576px) {
     .masthead {
       background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:5em;
       background-size: cover;
       height: 750px;
     }
-  }
-  @media (min-width: 768px) {
+}
+@media (min-width: 768px) {
     .masthead {
       background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:10rem;
       background-size: cover;
       height: 750px;
     }
-  }
-  @media (min-width: 992px) {
+}
+@media (min-width: 992px) {
     .masthead {
       background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:13rem;  
@@ -103,45 +129,45 @@ CC - Custom
       height: 750px;
     }
   }
-  @media (min-width: 1200px) {
+@media (min-width: 1200px) {
     .masthead {
       background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:20rem;
       background-size: cover;
       height: 750px;
     }
-  }
+}
   
   
-  #mainNav {
+#mainNav {
     padding-top: 1rem;
     padding-bottom: 1rem;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-weight: 700;
-  }
-  #mainNav .navbar-brand {
+}
+#mainNav .navbar-brand {
     color: #fff;
-  }
-  #mainNav .navbar-nav {
+}
+#mainNav .navbar-nav {
     margin-top: 1rem;
-  }
-  #mainNav .navbar-nav li.nav-item a.nav-link {
+}
+#mainNav .navbar-nav li.nav-item a.nav-link {
     color: #333;
-  }
-  #mainNav .navbar-nav li.nav-item a.nav-link:hover {
+}
+#mainNav .navbar-nav li.nav-item a.nav-link:hover {
     color: #534741;
-  }
-  #mainNav .navbar-nav li.nav-item a.nav-link:active, #mainNav .navbar-nav li.nav-item a.nav-link:focus {
+}
+#mainNav .navbar-nav li.nav-item a.nav-link:active, #mainNav .navbar-nav li.nav-item a.nav-link:focus {
     color: #fff;
-  }
-  #mainNav .navbar-nav li.nav-item a.nav-link.active {
+}
+#mainNav .navbar-nav li.nav-item a.nav-link.active {
     color: #534741;
-  }
-  #mainNav .navbar-toggler {
+}
+#mainNav .navbar-toggler {
     font-size: 80%;
     padding: 0.8rem;
-  }
-  @media (min-width: 992px) {
+}
+@media (min-width: 992px) {
     #mainNav {
       padding-top: 1.5rem;
       padding-bottom: 1.5rem;
@@ -170,9 +196,9 @@ CC - Custom
     #mainNav.navbar-shrink .navbar-brand {
       font-size: 1.5em;
     }
-  }
+}
 
-  .masthead::before {
+.masthead::before {
     content: "";
     position: absolute;
     top: 0;
@@ -185,15 +211,22 @@ CC - Custom
     /* background-color: rgba(97, 95, 77, 0.85); */
     /* background-color: rgba(121, 6, 4, .85) !important; */
     background-color: #414d53;
-  }
+}
   
-  .cherry-red-color {
+.cherry-red-color {
     color: rgba(99, 19, 18) !important;
-  }
+}
   
-  .cherry-red-bg-color {
+.cherry-red-bg-color {
     background-color: rgba(99, 19, 18) !important;
-  }
+}
+
+.divider-color {
+    color: #475341
+}
+.divider-bg-color {
+    color: #475341
+}
   
   .masthead .masthead-heading {
     z-index: 2;
