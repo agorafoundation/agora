@@ -6,10 +6,22 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto agora-font">
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/about">ABOUT</a></li>
+            <%
+            if( process.env.AGORA_ABOUT_PAGE == 'true' ) {
+            %>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/about">ABOUT</a></li>
+            <%
+            }
+            %>
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/community">COMMUNITY</a></li>
-            <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/projects">Projects</a></li> -->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/codebot">CODE BOT 3π+</a></li>
+            <%
+            if( process.env.AGORA_PRODUCT_PAGE == 'true' ) {
+            %>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/codebot">Products</a></li>
+            <%
+            }
+            %>
+
             <% if(!locals.authUser) { %>
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/signIn">SIGN IN</a></li>
             <% } else { %>
