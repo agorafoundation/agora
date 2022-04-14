@@ -265,42 +265,50 @@
                                 <div class="divider-custom-icon"><i class="fas fa-laptop-code divider-color"></i></div>
                                 <div class="divider-custom-line divider-bg-color"></div>
                             </div>
-                            <h2>Products</h2>
-                            
-                            
-                            <% 
 
-                            if(products && products.length > 0) {
-                                let nonMemberships = products.filter(product => product.productType === 'product');
-                                nonMemberships.forEach(product => {
-                                    
-                                    let tempStatus = product.status;
-                                    if(product.status === 'complete') {
-                                        tempStatus = 'Paid - Awaiting Shipping'
-                                    }
-                                    
-                                    %>
+                            <%
+                            if( process.env.AGORA_PRODUCT_PAGE == 'true' ) {
+                            %>
+                                <h2>Products</h2>
+                                
+                                
+                                <% 
+
+                                if(products && products.length > 0) {
+                                    let nonMemberships = products.filter(product => product.productType === 'product');
+                                    nonMemberships.forEach(product => {
+                                        
+                                        let tempStatus = product.status;
+                                        if(product.status === 'complete') {
+                                            tempStatus = 'Paid - Awaiting Shipping'
+                                        }
+                                        
+                                        %>
+                                        <div class="card" style="width: 100%;">
+                                            <img class="product-img-overlay" src="<%- product.productStaticImage %>" alt="Card image cap">
+                                            <div class="card-body product-card-text-raised">
+                                                <h5 class="card-title"><%- product.productName %></h5>
+                                                <p class="card-text"><%- product.productDescription1 %></p>
+                                                <p class="card-text">Status: <%- tempStatus %></p>
+                                            </div>
+                                        </div> 
+                                        <%
+                                    })
+                                }
+                                else {
+                                    %> 
                                     <div class="card" style="width: 100%;">
-                                        <img class="product-img-overlay" src="<%- product.productStaticImage %>" alt="Card image cap">
+                                        
                                         <div class="card-body product-card-text-raised">
-                                            <h5 class="card-title"><%- product.productName %></h5>
-                                            <p class="card-text"><%- product.productDescription1 %></p>
-                                            <p class="card-text">Status: <%- tempStatus %></p>
+                                            <h5 class="card-title">You have no purchases so far,</h5>
+                                            <p>Check out the <a href="/codebot">Code Bot 3π+</a></p>
                                         </div>
                                     </div> 
                                     <%
-                                })
-                            }
-                            else {
-                                %> 
-                                <div class="card" style="width: 100%;">
-                                    
-                                    <div class="card-body product-card-text-raised">
-                                        <h5 class="card-title">You have no purchases so far,</h5>
-                                        <p>Check out the <a href="/codebot">Code Bot 3π+</a></p>
-                                    </div>
-                                </div> 
-                                <%
+                                }
+                                %>
+
+                            <%
                             }
                             %>
                         </div>
