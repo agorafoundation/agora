@@ -164,7 +164,7 @@ a:hover {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-weight: 700;
     background: rgb(255,255,255);
-    background: linear-gradient(180deg, rgba(255,255,255,1) 40%, rgba(65,77,83,1) 98%);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 94%, rgba(65,77,83,1) 98%);
 }
 #mainNav .navbar-brand {
 }
