@@ -31,16 +31,31 @@
 
                         <div class="col-lg-5">
                             
-                            <h4 class="text-secondary">Learning Goals</h4>
                             
+
+                            <h3 class="text-secondary">Resources</h3>
+
+                            <a class="card" style="width: 100%;" name="unenrolled_card" href="#" id="placeholder">
+                                <div class="card-body">
+                                    <img class="product-img-overlay" src="/assets/img/logos/agora-logo-bwn-200.png" alt="Card image cap">
+                                    <div class="card-body product-card-text-raised">
+                                        <h6><input type=button class="btn-secondary btn-block" value="placeholder" /></h6>
+                                        <p class="card-text">This is the description</p>
+                                    </div>
+                                </div>
+                            </a>
                             
                             <div class="divider-custom">
                                 <div class="divider-custom-line divider-bg-color"></div>
                                 <div class="divider-custom-icon"><i class="fas fa-book-reader divider-color"></i></div>
                                 <div class="divider-custom-line divider-bg-color"></div>
                             </div>
+
+                            <h3 class="text-secondary">Courses</h3>
+                            <h4 class="text-secondary">Available</h4>
+                            <%- include('./partials/available-goals'); %>
                             
-                            <h4 class="text-secondary">Currently Enrolled</h4>
+                            <h4 class="text-secondary">Enrolled</h4>
                             <%- include('./partials/enrolled-goals'); %>
 
                             <h4 class="text-secondary">Completed</h4>
@@ -84,16 +99,11 @@
 
                             <section>
 
-                                <h4 class="text-secondary">Goals</h4>
-                                <%- include('./partials/available-goals'); %>
-
-                                <div class="divider-custom">
-                                    <div class="divider-custom-line divider-bg-color"></div>
-                                    <div class="divider-custom-icon"><i class="fas fa-chalkboard-teacher divider-color"></i></div>
-                                    <div class="divider-custom-line divider-bg-color"></div>
-                                </div>
                                 
-                                <h4 class="text-secondary">Recent New Users and Enrollments</h4>
+
+                                
+                                
+                                <h4 class="text-secondary">Feed</h4>
                                 <%- include('./partials/user-enrollment-events'); %>
 
                             </section>

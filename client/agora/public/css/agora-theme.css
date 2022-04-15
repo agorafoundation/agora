@@ -35,6 +35,10 @@ Masthead background: #414d53
     }
 }
 
+.agora-text-dark {
+    color: #414d53;
+}
+
 
 /* Header background image */
 .navbar {
@@ -49,7 +53,6 @@ Masthead background: #414d53
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: #FFF !important;
 }
   
 .navbar-interior {
@@ -69,8 +72,8 @@ Masthead background: #414d53
 .copyright {
     background-color: #475341;
 }
-  
-  .footer::before {
+
+.footer::before {
     content: "";
     position: absolute;
     top: 0;
@@ -78,7 +81,7 @@ Masthead background: #414d53
     height: 100%;
     width: 100%;
     background-color: #414d53ad !important;
-  }
+}
 
 a {
     color: #534741;
@@ -100,11 +103,27 @@ a:hover {
     text-decoration: underline !important;
 }
 
-
+/* home page masthead */
 .masthead {
     padding-top: calc(6rem + 104px);
     padding-bottom: 6rem;
 }
+
+.masthead::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 750px;
+    width: 100%;
+    /* background-color: rgba(106,143,156,0.9); */
+    /* background-color: rgba(77, 59, 47, .85); */
+    /* background-color: rgba(70, 47, 77, .85); */
+    /* background-color: rgba(97, 95, 77, 0.85); */
+    /* background-color: rgba(121, 6, 4, .85) !important; */
+    background-color: #414d53;
+}
+
 @media (min-width: 576px) {
     .masthead {
       background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
@@ -138,15 +157,16 @@ a:hover {
     }
 }
   
-  
+/* navigation */
 #mainNav {
     padding-top: 1rem;
     padding-bottom: 1rem;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-weight: 700;
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 40%, rgba(65,77,83,1) 98%);
 }
 #mainNav .navbar-brand {
-    color: #fff;
 }
 #mainNav .navbar-nav {
     margin-top: 1rem;
@@ -198,20 +218,15 @@ a:hover {
     }
 }
 
-.masthead::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 750px;
-    width: 100%;
-    /* background-color: rgba(106,143,156,0.9); */
-    /* background-color: rgba(77, 59, 47, .85); */
-    /* background-color: rgba(70, 47, 77, .85); */
-    /* background-color: rgba(97, 95, 77, 0.85); */
-    /* background-color: rgba(121, 6, 4, .85) !important; */
+/* Primary pages (Community, Resources, Goals, etc) */
+.primary-page-background {
     background-color: #414d53;
 }
+
+
+
+
+
   
 .cherry-red-color {
     color: rgba(99, 19, 18) !important;
@@ -221,26 +236,69 @@ a:hover {
     background-color: rgba(99, 19, 18) !important;
 }
 
+/* Divider */
+.divider-custom {
+    margin: 1.25rem 0 1.5rem;
+    width: 100%;
+    display: flex;
+    z-index: 2;
+    justify-content: center;
+    align-items: center;
+}
+.divider-custom .divider-custom-line {
+    width: 100%;
+    max-width: 7rem;
+    height: 0.25rem;
+    background-color: #2c3e50;
+    border-radius: 1rem;
+    border-color: #2c3e50 !important;
+}
+.divider-custom .divider-custom-line:first-child {
+    margin-right: 1rem;
+}
+.divider-custom .divider-custom-line:last-child {
+    margin-left: 1rem;
+}
+.divider-custom .divider-custom-icon {
+    color: #2c3e50 !important;
+    font-size: 2rem;
+}
+.divider-custom .divider-light .divider-custom-line {
+    background-color: #fff;
+}
+.divider-custom .divider-light .divider-custom-icon {
+    color: #fff !important;
+}
+
 .divider-color {
     color: #475341
 }
 .divider-bg-color {
     color: #475341
 }
-  
-  .masthead .masthead-heading {
+
+.divider-color-light {
+    color: #FFF
+}
+.divider-bg-color-light {
+    color: #FFF
+}
+
+.masthead .masthead-heading {
     z-index: 2;
     font-size: 2.75rem;
     line-height: 2.75rem;
-  }
-  .masthead .masthead-subheading {
+}
+.masthead .masthead-subheading {
     z-index: 2;
     font-size: 1.25rem;
-  }
-  .masthead .masthead-avatar {
+}
+.masthead .masthead-avatar {
     z-index: 2;
     width: 15rem;
-  }
+}
+
+
 
 
 /* Tag line style */
