@@ -16,8 +16,61 @@ Tetradic: #414d53, #4d4153, #535041
 Masthead background: #414d53
 
 */
+
+.primary {
+    color: #534741;
+}
+.complementary {
+    color: #414d53;
+}
+.complementary-light {
+    color: #a9c6d4;
+}
+.harmony {
+    color: #6d4f40;
+}
+.analogous {
+    color: #534c41;
+}
+.analogous2 {
+    color: #534341;
+}
+.split-complementary {
+    color: #444153;
+}
+.split-complementary2 {
+    color: #415347;
+}
+.triadic {
+    color: #4d4153;
+}
+.triadic2 {
+    color: #475341;
+}
+.tetradic {
+    color: #414d53;
+}
+.tetradic2 {
+    color: #4d4153;
+}
+.tetradic3 {
+    color: #535041;
+}
+
 .agora-font {
     font-family: 'Luxurious Roman', cursive !important;
+}
+.agora-font-1em {
+    font-family: 'Luxurious Roman', cursive !important;
+    font-size:1em !important
+}
+.agora-font-1p5em {
+    font-family: 'Luxurious Roman', cursive !important;
+    font-size:1.5em !important
+}
+.agora-font-2em {
+    font-family: 'Luxurious Roman', cursive !important;
+    font-size:2em !important
 }
 .agora-font-3em {
     font-family: 'Luxurious Roman', cursive !important;
@@ -37,6 +90,12 @@ Masthead background: #414d53
 
 .agora-text-dark {
     color: #414d53;
+}
+
+/* make containers content centered */
+.center {
+    display: inline-block; 
+    text-align: center;
 }
 
 
