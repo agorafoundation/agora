@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+            <%- include('./partials/topmenu'); %>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <!-- Masthead Avatar Image-->
+                <!-- <img class="masthead-avatar mb-5" src="assets/img/avataaars.svg" alt="" /> -->
+                <img class="masthead-avatar mb-5" src="/assets/img/logos/agora-logo-a-bw-400.png" alt="" />
+                <!-- Masthead Heading-->
+                <h1 class="masthead-heading text-uppercase mb-0 agora-font-large">Agora</h1>
+                <!-- Icon Divider-->
+                <p>&nbsp;</p>
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Masthead Subheading-->
+                <p class="masthead-subheading font-weight-light mb-0 agora-font">“We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free”.  - Epictetus</p>
+            </div>
+        </header>
+        <!-- Portfolio Section-->
+        <section class="page-section portfolio" id="portfolio">
+            <div class="container harmony">
+                
+                <div class="row">
+                    <div class="col-sm-3 center">
+                        <i class="fas fa-clipboard fa-8x"></i>
+                        <h4 class="agora-font">Research</h4>
+                        <p class="agora-font-1p5em analogous2">Collect notes, papers, links, references, citations, videos and more. Organize all of your research, study material in one place.</p>
+                    </div>
+                    <div class="col-sm-3 center">
+                        <i class="fas fa-chalkboard-teacher fa-8x"></i>
+                        <h4 class="agora-font">Learn</h4>
+                        <p class="agora-font-1p5em analogous2">A distributed cloud learning platform allowing structured learning experiences not owned by institutions, but by its users.</p>
+                    </div>
+                    <div class="col-sm-3 center">
+                        <i class="fas fa-comments fa-8x"></i>
+                        <h4 class="agora-font">Collaborate</h4>
+                        <p class="agora-font-1p5em analogous2">Connect in completely new ways when institutional walled gardens fall away. Agora will suggest related research, courses, collaborators and more.</p>
+                    </div>
+                    <div class="col-sm-3 center">
+                        <i class="fas fa-key fa-8x"></i>
+                        <h4 class="agora-font">IaaPS</h4>
+                        <p class="agora-font-1p5em analogous2">Infrastructure as a Public Service: The Agora Foundation will be the nonprofit organization charged with protecting user data.</p>
+                    </div>
+                </div>
+                
+                
+                <div class="divider-custom">
+                    <div class="divider-custom-line divider-bg-color"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-code-branch divider-color"></i></div>
+                    <div class="divider-custom-line divider-bg-color"></div>
+                </div>
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0"><a href="/community">Create your account</a> and explore our online learning community!</h2>
+                <!-- Icon Divider-->
+                
+
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('./partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('./partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        
+        <%- include('./partials/jsincludes'); %>
+    </body>
+</html>

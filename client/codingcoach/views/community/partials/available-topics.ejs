@@ -1,0 +1,29 @@
+
+
+
+
+
+
+<%
+if(user.member) {
+    %>
+    <div class="card-hover">
+        <div class="card-hover-text">Enroll</div>
+    </div>
+    <%
+}
+else if(user.availableAccessTokens > 0) {
+    %>
+    <div class="card-hover">
+        <div class="card-hover-text">Enroll</div>
+    </div>
+    <%
+}
+else {
+    %>
+    <div class="card-hover">
+        <div class="card-hover-text">Purchase Access</div>
+    </div>
+    <%
+}
+%>

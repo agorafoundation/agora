@@ -1,0 +1,35 @@
+
+<%
+if( topicEnrollment.topic.hasActivity ) {
+    %>
+    <h5 class="text-primary"><%- topicEnrollment.topic.activity.activityName %></h5>
+    <%- topicEnrollment.topic.activity.activityDescription %>
+    <hr />
+    <%- topicEnrollment.topic.activity.activityHtml %>
+    <hr />
+
+    <h3>Submit Activity</h3>
+
+    <form id="activity-form" action="/community/topic/update/4" method="GET">
+
+        <div id="quill_editor"><%- (!!topicEnrollment.completedActivity)?topicEnrollment.completedActivity.submissionText:'' %></div>
+        <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+
+        <br />
+        <button type="submit" id="activity-submit" class="btn btn-primary btn-lg">submit</button>
+        <br />
+        <br />  
+    </form>
+    <%
+}
+else {
+    %>
+    <h3>Activity</h3>
+
+    <p>This Topic has no activity</p>
+    <%
+    
+}
+%>
+
+

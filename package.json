@@ -1,8 +1,8 @@
 {
-  "name": "codingcoach",
+  "name": "agora",
   "version": "1.0.0",
-  "description": "Coding coach website",
-  "main": "server/codingcoach.js",
+  "description": "Agora: Open, decentralized learning system",
+  "main": "server/agora.js",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-pg-simple": "^7.0.0",
@@ -21,20 +21,20 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "node ./server/codingcoach.js",
+    "start": "node ./server/agora.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaristGormanly/codingcoach.git"
+    "url": "git+https://github.com/briangormanly/agora.git"
   },
   "keywords": [
-    "codingcoach"
+    "agora"
   ],
   "author": "brian.gormanly",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/MaristGormanly/codingcoach/issues"
+    "url": "https://github.com/briangormanly/agora/issues"
   },
-  "homepage": "https://github.com/MaristGormanly/codingcoach#readme"
+  "homepage": "https://github.com/briangormanly/agora#readme"
 }

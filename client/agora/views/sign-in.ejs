@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+            <%- include('./partials/nomenu'); %>
+        </nav>
+
+
+        <!-- About Section-->
+        
+        <section class="page-section-top-padded mb-0" id="signin">
+            
+            <div class="container">
+                
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+                        <div class="col-lg-7">
+                            <% if(!!locals.message){ %>
+                                <div class="alert-message alert-message-success" role="alert">
+                                    <h3 ><%= message %></h3>
+                                    <p><%= (!!locals.message2)?message2:'' %></p>
+                                </div>
+                                
+                            <% } %>
+                            <% if(!!locals.passwordMessage){ %>
+                                <div class="alert-message alert-message-warning" role="alert">
+                                    <h3 ><%= passwordMessage %></h3>
+                                    <p>Remember passwords are case sensitive.<br />Forgot your password? <a href='/forgotPass'>Reset Password</a></p>
+                                </div>
+                                <h3 ><%= passwordMessage %></h3>
+                            <% } %>
+                            
+                            <h2>Sign In</h2>
+                            <p>Enter your email and password</p>
+                            <section>
+                                <% if(locals.redirect) { %>
+                                <form action="/signIn?redirect=<%- locals.redirect %>" method="POST">
+                                <% } else { %>
+                                <form action="/signIn" method="POST">
+                                <% } %>
+                                    <div class="form-group">
+
+                                        <input type="email" class="form-control form-control-lg" name="signInEmail" id="signInEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+                                        <input type="password" class="form-control form-control-lg" id="siPassword" name="siPassword" placeholder="Password" title="Enter Password" required>
+                                        
+                                    </div>
+                                    <button type="submit" id="userManageButton" class="btn btn-primary btn-lg btn-block">Sign In</button>
+                                    <br />
+                                    
+                                </form>
+                                <br />
+                            </section>
+
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="divider-custom">
+                                <div class="divider-custom-line divider-bg-color"></div>
+                                <div class="divider-custom-icon"><i class="fas fa-user-secret divider-color"></i></div>
+                                <div class="divider-custom-line divider-bg-color"></div>
+                            </div>
+                            <h4>New User?</h4>
+                            <h5><a href='/community'>Create Account</a></h5>
+                            <h4>Forgotten Password?</h4>
+                            <h5><a href='/forgotPass'>Reset Password</a></h5>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <%- include('./partials/footer'); %>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <%- include('./partials/copyright'); %>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <%- include('./partials/jsincludes'); %>
+    </body>
+</html>

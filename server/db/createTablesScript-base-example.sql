@@ -1,11 +1,11 @@
 -- production coding coach database setup
 
 -- setup (as root / postgres)
-create database codingcoach;
-create user codingcoach with encrypted password 'codingcoach';
-grant all privileges on database codingcoach to codingcoach;
-grant connect on database codingcoach to codingcoach;
-\c codingcoach codingcoach
+create database agora;
+create user agora with encrypted password 'agora';
+grant all privileges on database agora to agora;
+grant connect on database agora to agora;
+\c agora agora
 
 -- create and inserts
 
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS cc_sponsors (
     gh_repo_fork boolean
 );
 
-GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO agora;
+GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_id_seq TO agora;
 
 CREATE TABLE IF NOT EXISTS user_data (
     id SERIAL PRIMARY KEY,
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS user_data (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE user_data TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE user_data_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE user_data TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_data_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_user_data_username ON user_data (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_user_data_email ON user_data (LOWER(email));
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS session (
   CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
 );
 
-GRANT ALL PRIVILEGES ON TABLE session TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE session TO agora;
 CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session ("expire");
 
 CREATE TABLE IF NOT EXISTS products (
@@ -99,8 +99,8 @@ CREATE TABLE IF NOT EXISTS products (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE products TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE products_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE products TO agora;
+GRANT USAGE, SELECT ON SEQUENCE products_id_seq TO agora;
 
 
 CREATE TABLE IF NOT EXISTS product_images (
@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS product_images (
 );
 
 
-GRANT ALL PRIVILEGES ON TABLE product_images TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE product_images_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
+GRANT USAGE, SELECT ON SEQUENCE product_images_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
 
 
@@ -273,9 +273,9 @@ CREATE TABLE IF NOT EXISTS orders (
     tax INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE orders TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE orders TO agora;
 CREATE INDEX IF NOT EXISTS idx_orders_product_id ON orders (product_id);
-GRANT USAGE, SELECT ON SEQUENCE orders_id_seq TO codingcoach;
+GRANT USAGE, SELECT ON SEQUENCE orders_id_seq TO agora;
 
 
 CREATE TABLE IF NOT EXISTS user_sessions (
@@ -298,9 +298,9 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 
 );
 
-GRANT ALL PRIVILEGES ON TABLE user_sessions TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE user_sessions TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions (user_id);
-GRANT USAGE, SELECT ON SEQUENCE user_sessions_id_seq TO codingcoach;
+GRANT USAGE, SELECT ON SEQUENCE user_sessions_id_seq TO agora;
 
 
 -- Roles and related <- userService?
@@ -312,8 +312,8 @@ CREATE TABLE IF NOT EXISTS roles (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE roles TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE roles_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE roles TO agora;
+GRANT USAGE, SELECT ON SEQUENCE roles_id_seq TO agora;
 
 insert into roles (role_name, role_description, active) values ('Administrator', 'Administrator', true);
 insert into roles (role_name, role_description, active) values ('User', 'General authenticated access', true);
@@ -332,8 +332,8 @@ CREATE TABLE IF NOT EXISTS user_role (
     create_time TIMESTAMP DEFAULT current_timestamp,
     end_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE user_role TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE user_role_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE user_role TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_role_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_user_role_user_id ON user_role (user_id);
 CREATE INDEX IF NOT EXISTS idx_user_role_role_id ON user_role (role_id);
@@ -359,7 +359,7 @@ CREATE TABLE IF NOT EXISTS goals (
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE goals TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE goals TO agora;
 
 
 
@@ -377,7 +377,7 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE topics TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE topics TO agora;
 
 
 CREATE TABLE IF NOT EXISTS goal_path (
@@ -389,8 +389,8 @@ CREATE TABLE IF NOT EXISTS goal_path (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE goal_path TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE goal_path TO agora;
+GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_goal_path_goal_rid ON goal_path (goal_rid);
 
@@ -407,8 +407,8 @@ CREATE TABLE IF NOT EXISTS user_goal (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE user_goal TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE user_goal TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
 CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
@@ -434,8 +434,8 @@ CREATE TABLE IF NOT EXISTS user_topic (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE user_topic TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE user_topic_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE user_topic TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_topic_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_user_topic_topic_id ON user_topic (topic_id);
 CREATE INDEX IF NOT EXISTS idx_user_topic_user_id ON user_topic (user_id);
@@ -455,7 +455,7 @@ CREATE TABLE IF NOT EXISTS resources (
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE resources TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE resources TO agora;
 
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resource (
@@ -468,8 +468,8 @@ CREATE TABLE IF NOT EXISTS topic_resource (
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by integer
 );
-GRANT ALL PRIVILEGES ON TABLE topic_resource TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE topic_resource_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE topic_resource TO agora;
+GRANT USAGE, SELECT ON SEQUENCE topic_resource_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_topic_resource_topic_id ON topic_resource (topic_id);
 CREATE INDEX IF NOT EXISTS idx_topic_resource_resource_id ON topic_resource (resource_id);
@@ -487,8 +487,8 @@ CREATE TABLE IF NOT EXISTS completed_resource (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE completed_resource TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE completed_resource_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE completed_resource TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_resource_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_resource_resource_id ON completed_resource (resource_id);
 CREATE INDEX IF NOT EXISTS idx_completed_resource_user_id ON completed_resource (user_id);
@@ -506,7 +506,7 @@ CREATE TABLE IF NOT EXISTS assessments (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE assessments TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE assessments TO agora;
 
 
 
@@ -521,7 +521,7 @@ CREATE TABLE IF NOT EXISTS assessment_question (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE assessment_question TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE assessment_question TO agora;
 CREATE INDEX IF NOT EXISTS idx_assessment_question_assessment_id ON assessment_question (assessment_id);
 
 
@@ -534,7 +534,7 @@ CREATE TABLE IF NOT EXISTS assessment_question_option (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE assessment_question_option TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE assessment_question_option TO agora;
 CREATE INDEX IF NOT EXISTS idx_assessment_question_option_assessment_question_id ON assessment_question_option (assessment_question_id);
 
 
@@ -548,8 +548,8 @@ CREATE TABLE IF NOT EXISTS completed_assessment (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE completed_assessment TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE completed_assessment_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE completed_assessment TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_assessment_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_assessment_id ON completed_assessment (assessment_id);
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_user_id ON completed_assessment (user_id);
@@ -562,8 +562,8 @@ CREATE TABLE IF NOT EXISTS completed_assessment_question (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE completed_assessment_question TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE completed_assessment_question_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE completed_assessment_question TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_assessment_question_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_question_assessment_question_id ON completed_assessment_question (assessment_question_id);
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_question_completed_assessment_id ON completed_assessment_question (completed_assessment_id);
@@ -580,7 +580,7 @@ CREATE TABLE IF NOT EXISTS activities (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE activities TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE activities TO agora;
 
 
 CREATE TABLE IF NOT EXISTS completed_activity (
@@ -592,8 +592,8 @@ CREATE TABLE IF NOT EXISTS completed_activity (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE completed_activity TO codingcoach;
-GRANT USAGE, SELECT ON SEQUENCE completed_activity_id_seq TO codingcoach;
+GRANT ALL PRIVILEGES ON TABLE completed_activity TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_activity_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activity (activity_id);
 

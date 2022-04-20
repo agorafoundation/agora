@@ -193,7 +193,7 @@ router.get('/cb1-success', async function (req, res) {
         
     }
     
-    res.render('purchase/codebot1-success', {root: './client/views' })
+    res.render('purchase/codebot1-success');
 });
 
 router.get('/founders-success', async function (req, res) {
@@ -247,7 +247,8 @@ router.get('/founders-success', async function (req, res) {
         
     }
     
-    res.render('purchase/founders-success', {root: './client/views' })
+    //res.render('purchase/founders-success', {root: './client/views' });
+    res.render('purchase/founders-success');
 });
 
 router.get('/access-token-success', async function (req, res) {
@@ -286,7 +287,8 @@ router.get('/access-token-success', async function (req, res) {
         
     }
     
-    res.render('purchase/access-token-success', {root: './client/views' })
+    //res.render('purchase/access-token-success', {root: './client/views' })
+    res.render('purchase/access-token-success');
 });
 
 
@@ -294,15 +296,18 @@ router.get('/access-token-success', async function (req, res) {
  * Failure Routes
  */
 router.get('/cb1-cancel', function (req, res) {
-    res.render('purchase/codebot1-cancel', {root: './client/views' })
+    //res.render('purchase/codebot1-cancel', {root: './client/views' });
+    res.render('purchase/codebot1-cancel');
 });
 
 router.get('/founders-cancel', function (req, res) {
-    res.render('purchase/founders-cancel', {root: './client/views' })
+    //res.render('purchase/founders-cancel', {root: './client/views' });
+    res.render('purchase/founders-cancel');
 });
 
 router.get('/access-token-cancel', function (req, res) {
-    res.render('purchase/access-token-cancel', {root: './client/views' })
+    //res.render('purchase/access-token-cancel', {root: './client/views' });
+    res.render('purchase/access-token-cancel');
 });
 
 

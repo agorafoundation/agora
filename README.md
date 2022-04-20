@@ -28,30 +28,32 @@ answers you seek
  * That's it!
 
 ## Database setup
-* Create a postgres user for the application, the script provided uses codingcoach
 * You can either run /server/db/CreateTablesScript-base-example.sql or create a copy and modify / comment out default data to your liking
-* Run the script to create the database.  Note depending on how your database is configured you may have to create the database with the root / postgres user and then create the tables and run inserts as the database user
+>  psql -U postgres -f server/db/createTablesScript-base-example.sql (from the project's root directory, default agora password is 'agora')
+* Run the script to create the database.  If you run the script with postgres / root user it will create a database and user named 'agora', then connect to the new database and create the schema using the agora user.
 
 ### Quick start setup
 1. After installing and configuring Node.js and Postgres clone this git repo
 > git clone https://github.com/briangormanly/agora.git
 > cd agora
-2. Make a copy of the .env.example file called .env in the project home directory, 
-3. In the .env file, edit Postgres settings to connect to your database server
-4. Set a random session secret string 
-> SESSION_SECRET = EUOee33unt5haEAOUOMAKE_THIS_YOUR_OWNa34uei58355
-5. You can set email, stripe and github integrations off by setting the following:
-> EMAIL_TOGGLE = false
-> STRPIE_TOGGLE = false
-> GITHUB_TOGGLE = false
-6. To use any of these integrations (email is a good one as you will need it for user email verification and password reset) set the parameter to 'true' (lowercase without the single quotes). You must also then set all the affiliated settings for that integration.
-7. Save your .env file
-8. Install dependencies 
+2. *Make a copy of the .env.example file called .env in the project home directory* 
+3. In the .env file: 
+    1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme 
+    2. Edit Postgres settings to connect to your database server
+    3. Set a random session secret string 
+    > SESSION_SECRET = EUOee33unt5haEAOUOMAKE_THIS_YOUR_OWNa34uei58355
+    4. You can set email, stripe and github integrations off by setting the following:
+    > EMAIL_TOGGLE = false  
+    > STRPIE_TOGGLE = false  
+    > GITHUB_TOGGLE = false  
+    5. To use any of these integrations (email is a good one as you will need it for user email verification and password reset) set the parameter to 'true' (lowercase without the single quotes). You must also then set all the affiliated settings for that integration.
+4. Save your .env file
+5. Install dependencies 
 > npm i
-9. Start the service
+6. Start the service
 > npm start
-10. Navigate your web browser to http://localhost:2633 if you are running on your local machine.
-11. Nice!
+7. Navigate your web browser to http://localhost:2633 if you are running on your local machine.
+8. Nice!
 
 
 ### Current Features

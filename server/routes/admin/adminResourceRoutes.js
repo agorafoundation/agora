@@ -5,10 +5,10 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
- var express = require('express');
- var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
- const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 router.use(bodyParser.urlencoded({
     extended: true
   }));
@@ -23,14 +23,17 @@ const { localsName } = require('ejs');
 
 // import multer (file upload) and setup
 const fs = require('fs');
-var path = require('path');
-var baseResourceImageUrl = process.env.RESOURCE_IMAGE_BASE_URL;
-var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.RESOURCE_STORAGE);
-var UPLOAD_PATH_BASE = path.resolve(__dirname, '..', process.env.STORAGE_BASE);
-var maxSize = 1 * 1024 * 1024;
+let path = require('path');
+
+// set up file paths for user profile images
+let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
+let FRONT_END = process.env.FRONT_END_NAME;
+let IMAGE_PATH = process.env.RESOURCE_IMAGE_PATH;
+
+let maxSize = 1 * 1024 * 1024;
 
 // Start multer
-var multer = require('multer');
+let multer = require('multer');
 
 const fileFilter = (req, file, cb) => {
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
@@ -41,9 +44,9 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, UPLOAD_PATH)
+      cb(null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH)
     },
     filename: function (req, file, cb) {
         let filename = Date.now() + file.originalname;
@@ -103,7 +106,7 @@ router.route('/')
                         resource.resourceImage = dbResource.resourceImage
 
                         if(req.session.savedResourceFileName) {
-                            resource.resourceImage = baseResourceImageUrl + req.session.savedResourceFileName;
+                            resource.resourceImage = req.session.savedResourceFileName;
                         } 
 
                         resource.ownedBy = req.session.authUser.id;

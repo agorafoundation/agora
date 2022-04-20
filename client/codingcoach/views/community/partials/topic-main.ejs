@@ -1,0 +1,37 @@
+<%
+//console.log( "the currentstep is : " + currentStep );
+if( currentStep == 1 ) {
+    %>
+    <%- include( './topic-introduction' ) %>
+    <%
+}
+else if( currentStep == 2 ) {
+    %>
+    <%- include( './topic-assessment' ) %>
+    <%
+}
+else if( currentStep == 3 ) {
+    %>
+    <%- include( './topic-resources' ) %>
+    <%
+}
+else if( currentStep == 4 ) {
+    %>
+    <%- include('./topic-activity') %>
+    <%
+}
+else if( currentStep == 5 ) {
+    %>
+    <%- include( './topic-assessment' ) %>
+    <%
+}
+else if( currentStep == 6 ) {
+    %>
+    <%- include( './topic-summary' ) %>
+    <%
+}
+else {
+    // done?
+
+}
+%>

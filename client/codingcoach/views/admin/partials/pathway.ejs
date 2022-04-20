@@ -1,0 +1,47 @@
+<h3>Choose the topics that will make up the topic pathway</h3>
+<p>Drag and drop from available topics and re-arrange the order of chosen topics</p>
+<input type="hidden" name="pathway" id="pathway" value="" />
+<div id="pathway-draggable">
+    <div class="available-container">
+        
+        <h4>Available Topics:</h4>
+        <hr />
+        <div id="available-items" class="available-items">
+            
+            <%
+            // get all of the goals available that are not already assigned to the goal
+            if(availableTopics) {
+
+                for(let i=0; i < availableTopics.length; i++) {
+                    %>
+                        <div id="<%- availableTopics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- availableTopics[i].id %>" ><%- availableTopics[i].topicName %></div>
+                    <%
+                }
+            }
+
+            %>
+        </div>
+    </div>
+    <div class="chosen-container">
+        
+        <h4>Selected topics:</h4>
+        <hr />
+        <div id="chosen-items" class="chosen-items">
+            
+            <%
+
+            // if the goal has been saved allow the user to link Topics
+            if(goal && goal.id > 0) {
+                if(goal.topics && goal.topics.length > 0) {
+
+                    for(let i=0; i < goal.topics.length; i++) {
+                    %>
+                        <div id="<%- goal.topics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></div>
+                    <%
+                    }
+                }
+            }
+            %>
+        </div>
+    </div>
+</div>
