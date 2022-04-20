@@ -16,7 +16,7 @@ router.use(bodyParser.json());
 
 //const stripe = require('stripe')(`${process.env.STRIPE_TEST_KEY}`);
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
-const YOUR_DOMAIN = `${process.env.STRIPE_DOMAIN}`;
+const YOUR_DOMAIN = `${process.env.STRIPE_DOMAIN}:${process.env.PORT}`;
 
 // import services
 const userService = require("../service/userService");

@@ -28,6 +28,9 @@ app.use(cors({
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
+// get the port
+const PORT = process.env.PORT;
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -397,4 +400,4 @@ if(process.env.GITHUB_TOGGLE == 'true') {
 
 
 
-app.listen(2633, () => console.log('Agora running... {localhost:2633}'));
+app.listen(PORT, () => console.log('Agora running... {localhost:' + PORT + '}'));
