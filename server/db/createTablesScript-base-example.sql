@@ -124,31 +124,24 @@ INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active
 )
 VALUES (
-    'Code Bot 3π+ Kit', 
+    'Some physical product', 
     'product',
-    '<p>The code bot kit is a complete kit that when added to a Polulu 3π+ robot enables to you build and follow along with the Robotics Programing video series.</p><p><strong>Please Note: In addition to this kit you also need to <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchase a Polulu 3π+ robot.</a>  We recommend the <a href="https://www.pololu.com/product/4976">turtle edition</a>, but any of the 3 editions [hyper, standard, turtle] will work.</strong></p>', 
-    '<p>This kit contains the following:</p>
+    '<p>This product is really cool, you should buy it :)</p>', 
+    '<p>It contains the following:</p>
                             <ul>
-                                <li>Custom chassis piece to mount servo and breadboard</li>
-                                <li>Micro Servo</li>
-                                <li>Ultrasonic Sensor [2cm - 400cm / 1 inch - 13 foot] range</li>
-                                <li>Custom low profile ultrasonic mount</li>
-                                <li>Custom rear mounted counter weight</li>
-                                <li>Micro Breadboard [25 hole]</li>
-                                <li>4 F-M jumper wires [10 cm]</li>
-                                <li>3 M-M jumper wires [10 cm]</li>
-                                <li>Capacitor [100uf or larger]</li>
-                                <li>Easy to follow instructions</li>
+                                <li>Thing one that it includes</li>
+                                <li>Micro Servo <- woah!</li>
+                                <li>Another thing</li>
+                                <li>Easy to follow instructions (meh)</li>
                             </ul>
-                            <p>The Code Bot 3π+ kit custom chassis design allows all hardware to be securely mounted to the robot and allows wires to be routed so that they do not get snagged or tangled. The innovative chassis design clips to the 3π+ robot without fasteners or glue but will stay in place even if the robot is completely upside down!</p>
-                            <p>The in-house designed components of the Code Bot 3π+ kit [Chassis, low profile ultrasonic mount, counterweight] are all constructed from thermoplastic polymer made strictly from renewable resources.  These pieces have been painstakingly engineered to fit perfectly to the robot and ensure durability while remaining light-weight. Assembly instructions are well documented and clear, assembly takes about 15 minutes!</p>
-                            <p>The ultrasonic sensor has a 2cm - 400cm / 1 meter [1 inch - 13 foot] range and can be rotated by the servo to provide the robot with a wide view of the world, the servo rotates more than 180 degrees. The servo has very low power consumption allowing it to be powered by the 4 AAA batteries powering the 3π+ robot [not included]. The custom designed sensor mount is exclusive to the Code Bot 3π+ kit and allows the ultrasonic sensor to be kept as low as possible allowing the robot to better see objects in the path of the robot, reducing blind spots low to the ground.</p>
-                            <p><strong>The Code Bot 3π+ is the ultimate platform to learn robotics programming for the individual, K-12 school, or higher education institution!</strong></p>
+                            <p>This will contain additional useful information! (or not)</p>
+                            <p>This is also fun, fun with words, fun with HTML in databases, fun, fun fun.  I am having fun! I really mean it.  Do you believe me?</p>
+                            <p><strong>Buy me!</strong></p>
                             <p>If you have any questions please email:
-                                <a href="mailto:orders@codingcoach.net">orders@codingcoach.net</a>.
+                                <a href="mailto:some@email.com">some@email.com</a>.
                             </p>',
-    'Purchase Code Bot 3π+ [includes USPS First class shipping in United States of America]',
-    'prod_L0DApx1FHftZzX', 'price_1KKCkEEfcKzaTpMsR0N8jZ6G', '49.99', '/api/stripe/cb1-checkout-session', '/assets/img/codebot/code-bot-parts.jpg', true
+    'Purchase this! [includes USPS First class shipping to nowhere]',
+    'prod_XXXXXX', 'price_XXXXX', '49.99', '/api/stripe/cb1-checkout-session', '/assets/img/codebot/code-bot-parts.jpg', true
 );
 
 INSERT INTO products (
@@ -157,7 +150,7 @@ INSERT INTO products (
 VALUES (
     'Founders Membership',
     'membership', 
-    '<p>Membership to the coding coach allows you unlimited access to all course content. You also receive special access to weekly office hours and additional content based on your goals and the topics you are taking.  Membership is your all access pass!</p>', 
+    '<p></p>', 
     '<p>The Founders Membership is a limited time early adopter membership opportunity! As a thank you for being an early believer you can keep the same benefits as full membership with a permanent lower rate!</p>',
     'Become a founding member!',
     'prod_L0DJYbRxyOF5pv', 'price_1KKCt4EfcKzaTpMs1vmvCDyX', '14.99', '/api/stripe/founders-checkout-session', '/assets/img/background-art-square.png', true
