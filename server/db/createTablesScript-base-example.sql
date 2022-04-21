@@ -1,4 +1,4 @@
--- production coding coach database setup
+-- Agora base database setup
 
 -- setup (as root / postgres)
 create database agora;
@@ -151,9 +151,9 @@ VALUES (
     'Founders Membership',
     'membership', 
     '<p></p>', 
-    '<p>The Founders Membership is a limited time early adopter membership opportunity! As a thank you for being an early believer you can keep the same benefits as full membership with a permanent lower rate!</p>',
+    '<p>The Founders Membership is a limited time early adopter membership opportunity! Founders will always be offered first access to new features and their input will help direct the project. Thank you for helping bring the vision of Agora to reality!</p>',
     'Become a founding member!',
-    'prod_L0DJYbRxyOF5pv', 'price_1KKCt4EfcKzaTpMs1vmvCDyX', '14.99', '/api/stripe/founders-checkout-session', '/assets/img/background-art-square.png', true
+    'prod_xxxxxx', 'price_xxxxxx', '14.99', '/api/stripe/founders-checkout-session', '/assets/img/logos/agora-logo-a-bwn-1600.png', true
 );
 
 INSERT INTO products (
@@ -162,10 +162,10 @@ INSERT INTO products (
 VALUES (
     'Topic Access Token',
     'topic_access', 
-    '<p>Tokens can be purchased to allow access a course topic. Each token allows full access to the material in one topic.</p>', 
+    '<p>Tokens can be purchased to allow access a to additional topics. Each token allows full access to the material in one topic.</p>', 
     '',
     'Purchase a Topic Access Token',
-    'prod_L0DKZxZVLsu8Jx', 'price_1KKCu5EfcKzaTpMsJXY0wosi', '9.99', '/api/stripe/access-token-checkout-session', '/assets/img/robot-fun.png', true
+    'prod_xxxxxx', 'price_xxxxxx', '9.99', '/api/stripe/access-token-checkout-session', '/assets/img/robots-bg/balboa.png', true
 );
 
 INSERT INTO product_images (
@@ -178,7 +178,7 @@ VALUES (
                                     <p>
                                         <strong>Note: </strong>The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>.
                                     </p>', 
-    '', '/assets/img/codebot/assembled-kit-off-robot.jpg'
+    '', '/assets/img/robots-bg/henry-ix.png'
 );
 
 INSERT INTO product_images (
@@ -188,57 +188,7 @@ VALUES (
     1, 'Code Bot 3π+', '<p class="mb-5 text-left">
                                         All assembled components of the Code Bot 3π+ kit are shown here including the rear counterweight. The in-house designed components of the Code Bot 3π+ kit (Chassis, low profile ultrasonic mount, counterweight) are all constructed from thermoplastic polymer made strictly from renewable resources.  These pieces have been painstakingly engineered to fit perfectly to the robot and ensure durability while remaining light-weight. Assembly instructions are well documented and clear, assembly takes about 15 minutes!
                                     </p>', 
-    '', '/assets/img/codebot/assembled-kit-no-robot.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', 'p class="mb-5 text-left">
-                                        Code Bot 3π+ ultrasonic sensor, specially crafted low profile servo mount, and micro low power servo. The ultrasonic sensor has a 2cm - 400cm / 1 meter [1 inch - 13 foot] range and can be rotated by the servo to provide the robot with a wide view of the world, the servo rotates more than 180 degrees. The servo has very low power consumption allowing it to be powered by the 4 AAA batteries powering the 3π+ robot (not included). The custom designed sensor mount is exclusive to the Code Bot 3π+ kit and allows the ultrasonic sensor to be kept as low as possible allowing the robot to better see objects in the path of the robot, reducing blind spots low to the ground.
-                                    </p>', 
-    '', '/assets/img/codebot/parts-servo-horn-sensor.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', '<p class="mb-5">
-                                        Included Parts list (Numbers are referenced throughout individual steps in instruction booklet).
-                                        </p><ol>
-                                            <li>Code Bot chassis - servo and breadboard mount</li>
-                                            <li>Code Bot low profile servo horn mount</li>
-                                            <li>Code Bot counter weight</li>
-                                            <li>Ultrasonic sensor</li>
-                                            <li>Male - Female jumper wires (4)</li>
-                                            <li>Male - Male jumper wires (3)</li>
-                                            <li>Capacitor (100uf or greater)</li>
-                                            <li>Male - Male coupler</li>
-                                            <li>Servo mount screw</li>
-                                            <li>Servo horn screw</li>
-                                            <li>Micro 180 degree servo</li>
-                                            <li>Micro breadboard (25 hole)</li>
-                                        </ol>
-                                    <p></p>', 
-    '', '/assets/img/codebot/parts-diagram.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', '<p class="mb-5 text-left">
-                                        This image shows a close-up of the rear counter-weight. You can order yours with a custom engraving, click on the "Name your bot" option to learn more. <strong>Note: </strong>This image shows Code Bot 3π+ components assembled on a Polulu 3π+ robot.  The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>
-                                    </p>', 
-    '', '/assets/img/codebot/codebot1-back.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', 'p class="mb-5 text-left">
-                                        Hello Code Bot! This robot is ready to navigate the world using the brain you provide it! <strong>Note: </strong>This image shows Code Bot 3π+ components assembled on a Polulu 3π+ robot.  The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>
-                                    </p>', 
-    '', '/assets/img/codebot/codebot1-front.jpg'
+    '', '/assets/img/robots-bg/custom-2-wheel.png'
 );
 
 
