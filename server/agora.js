@@ -106,9 +106,6 @@ app.get('/about', function (req, res) {
   res.render('about')
 });
 
-app.get('/sponsor', function (req, res) {
-  res.render('sponsor')
-});
 
 // TODO: temp test of products this will be moved into it's own controller when dynamic product pages are built out
 //let productService = require('./service/productService');
