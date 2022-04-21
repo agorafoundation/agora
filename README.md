@@ -1,12 +1,12 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/agora-logo-bwn-1200.png?raw=true)
 # Agora - Open source, closed loop, user centric, cloud based learning platform
-#### Agora uses a closed loop teaching philosophy being researched by its author Brian Gormanly to ensure that online content receives feedback from students and that practice and community are centerpieces of all learning topics. The platform uses uniform assessment tools which allow teachers to verify and improve the impact of their online material. Students are aware of their outcomes and teachers are aware how effective their content was for the student. Agora makes everything measurable.  
+### Research, Learn and Collaborate in a protected user-centric environment.
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
 
 The goals behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
 
-The perfect learning platform:
+The perfect research and learning platform:
 - Is accessible: Free and open source and will remain so forever.
 - Provides feedback to both the learner and teacher. Learners can see what they have learned and what need more attention.  Teachers can see how well lessons are recieved and how well content is working. Agora closes the loop.
 - User, not institution centric: Lifelong learners require a lifelong system that follows them.
