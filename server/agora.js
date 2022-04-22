@@ -358,6 +358,12 @@ let topicRoutes = require('./routes/community/topicRoutes');
 app.use('/community/topic', topicRoutes);
 
 /**
+ * Dashboard routes
+ */
+ let dashboardRoutes = require('./routes/dashboardRoutes');
+ app.use('/dashboard', dashboardRoutes);
+
+/**
  * User / Profile routes
  */
 let userRoutes = require('./routes/userRoutes');
