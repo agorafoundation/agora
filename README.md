@@ -1,6 +1,6 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/agora-logo-bwn-1200.png?raw=true)
 # Agora - Open source, closed loop, user centric, cloud based learning platform
-### The Agora project is building a free space to Research, Learn and Collaborate.
+## The Agora project is building a free space to Research, Learn and Collaborate.
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
 
