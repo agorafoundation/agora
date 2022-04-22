@@ -7,7 +7,7 @@
 
 //const stripe = require('stripe')(`${process.env.STRIPE_TEST_KEY}`);
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
-const YOUR_DOMAIN = `${process.env.STRIPE_DOMAIN}:${process.env.PORT}`;
+const YOUR_DOMAIN = `${process.env.SITE_PROTOCOL}${process.env.SITE_HOST}:${process.env.SITE_PORT}`;
 
 module.exports.createStripeCustomer = async function (email, fullname) {
     let id = "";

@@ -29,7 +29,8 @@ app.use(cors({
 }));
 
 // get the port
-const PORT = process.env.PORT;
+
+const PORT = process.env.SITE_PORT;
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -171,7 +172,7 @@ app.post('/resetPass', async (req, res) => {
                     to: req.body.forgotPasswordEmail,
                     subject: "Reset your password", // Subject line
                     html: "<p>Hello, we hope this email finds you well!</p>"
-                        + "<p>You can reset your Coding Coach password by clicking on "
+                        + "<p>You can reset your password by clicking on "
                         + "<strong><a href='http://codingcoach.net/resetPass/" + req.body.forgotPasswordEmail + "/" + token + "'>this link!</a></strong></p>"
                         + "<p>This link will expire in 24 hours!</p>"
                         + "<p>Carpe Diem!</p>"
@@ -397,4 +398,4 @@ if(process.env.GITHUB_TOGGLE == 'true') {
 
 
 
-app.listen(PORT, () => console.log('Agora running... {localhost:' + PORT + '}'));
+app.listen(PORT, () => console.log('Agora running... {' + process.env.SITE_PROTOCOL + process.env.SITE_HOST + ':' + PORT + '}'));
