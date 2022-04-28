@@ -1,0 +1,28 @@
+<div class="">
+    <a class="btn btn-primary" href="/a/goal/0" >Create a Goal</a>
+    <hr />
+    <h4 class="text-secondary">Your Goals:</h4>
+    
+    <%
+    if(ownerGoals && ownerGoals.length > 0) {
+        for(let i=0; i < ownerGoals.length; i++) {
+            if(ownerGoals[i].active) {
+                %>
+                <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a>
+                <br />
+                <%
+            }
+            else {
+                %>
+                <span style="color: red;">{Inactive}
+                <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a></span>
+                <br />
+                <%
+            }
+        }
+    }
+
+    %>
+    
+    
+</div>

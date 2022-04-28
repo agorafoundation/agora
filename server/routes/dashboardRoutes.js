@@ -40,9 +40,12 @@
  router.route('/')
      .get(async function (req, res) {
          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+
+         // get goals associated with the user
+         let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false )
          
  
-         res.render('dashboard/dashboard', {user: req.session.authUser})
+         res.render('dashboard/dashboard', {user: req.session.authUser, ownerGoals: ownerGoals})
      }
  );
 

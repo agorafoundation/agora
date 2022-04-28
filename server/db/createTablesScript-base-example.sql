@@ -265,8 +265,6 @@ insert into roles (role_name, role_description, active) values ('Creator', 'Cont
 
 
 
-
-
 CREATE TABLE IF NOT EXISTS user_role (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -298,12 +296,13 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE goals TO agora;
-
+CREATE INDEX IF NOT EXISTS idx_goals_visibility ON goals (visibility);
 
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
@@ -316,11 +315,13 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     has_activity BOOLEAN DEFAULT true,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE topics TO agora;
+CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 
 CREATE TABLE IF NOT EXISTS goal_path (
@@ -394,11 +395,13 @@ CREATE TABLE IF NOT EXISTS resources (
     resource_link VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora;
+CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
 
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resource (
