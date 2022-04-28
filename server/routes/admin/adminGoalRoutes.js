@@ -31,6 +31,7 @@ let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_P
 let FRONT_END = process.env.FRONT_END_NAME;
 let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
 
+// set the max image size for avatars and resource, topic and goal icons
 let maxSize = 1 * 1024 * 1024;
 
 // Start multer

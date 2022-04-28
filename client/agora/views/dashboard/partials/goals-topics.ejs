@@ -1,5 +1,9 @@
 <div class="">
-    <a class="btn btn-primary" href="/a/goal/0" >Create a Goal</a>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-goal-modal">
+        Create a Goal
+    </button>
+
+    <%- include('./create-goal') %>
     <hr />
     <h4 class="text-secondary">Your Goals:</h4>
     
@@ -24,5 +28,6 @@
 
     %>
     
+
     
 </div>
