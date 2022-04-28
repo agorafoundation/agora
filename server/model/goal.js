@@ -15,6 +15,7 @@ function goal() {
     this.active = true;
     this.completable = false;
     this.createTime;
+    this.visibility = 2;
     this.ownedBy = -1;
 
     this.topics = [];
@@ -35,6 +36,7 @@ exports.ormGoal = function (row) {
     goal.active = row.active;
     goal.completable = row.completable;
     goal.createTime = row.create_time;
+    goal.visibility = row.visibility;
     goal.ownedBy = row.owned_by;
     return goal;
 }
