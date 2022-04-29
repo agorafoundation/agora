@@ -14,13 +14,6 @@ router.use(bodyParser.urlencoded({
   }));
 router.use(bodyParser.json());
 
-// service requires
-let goalService = require('../../service/goalService');
-let topicService = require('../../service/topicService');
-
-// model requires
-let Goal = require('../../model/goal');
-const { localsName } = require('ejs');
 
 // import multer (file upload) and setup
 const fs = require('fs');
@@ -61,15 +54,78 @@ let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSiz
 
 
 
-router.route('/')
+ // require services
+const goalService = require('../service/goalService');
+const topicService = require('../service/topicService');
+ 
+ // controllers
+const eventController = require('../controller/eventController');
+
+ // models
+const Goal = require('../model/goal');
+ 
+ 
+ // check that the user is logged in!
+ router.use(function (req, res, next) {
+     if(!req.session.authUser) {
+         if(req.query.redirect) {
+             res.locals.redirect = req.query.redirect;
+         }
+         res.render('user-signup');
+     }
+     else {
+         next();
+     }
+     
+ })
+ 
+ 
+ router.route('/')
     .get(async function (req, res) {
-        // get all the goals for this owner
-        let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
-        //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
-        let goal = null;
+        let message = '';
+        if(req.locals && req.locals.message) {
+            message = req.locals.message;
+        }
         
-        res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal});
+        let goalId = req.params.goalId;
+
+        // get all the goals for this owner
+        let ownerGoals = await goalService.getAllGoalsForOwner(req.session.authUser.id, false );
+
+        // get all the topics for this owner
+        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, true);
+        // start the available topics out with the full owner topic set
+        let availableTopics = ownerTopics;
+
+        let goal = Goal.emptyGoal();
+        if(goalId > 0) {
+            goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
+
+            // iterate through the goals assigned topics, remove them from the available list
+            for(let i=0; i < goal.topics.length; i++) {
+                let redundantTopic = ownerTopics.map(ot => ot.id).indexOf(goal.topics[i].id);
+                
+                ~redundantTopic && availableTopics.splice(redundantTopic, 1);
+            }
+
+            // get the topics that are not currently assigned to this goal
+
+        }
+        else {
+            goal.ownedBy = req.session.authUser.id;
+            goal.goalVersion = 1;
+        }
       
+        
+        // make sure the user has access to this goal (is owner)
+        if(goal.ownedBy === req.session.authUser.id) {
+            res.render('dashboard/dashboard', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics});
+        }
+        else {
+            message = 'Access Denied';
+            message2 = 'You do not have access to the requested resource';
+            res.render('dashboard/dashboard', {ownerGoals: ownerGoals, goal: null, message: message, message2: message2});
+        } 
     })
     .post(async function(req, res) {
         upload(req, res, (err) => {
@@ -85,6 +141,7 @@ router.route('/')
                 let goal = Goal.emptyGoal();
                 goal.id = req.body.goalId;
 
+                goal.visibility = req.body.goalVisibility;
                 goal.goalName = req.body.goalName;
                 goal.goalDescription = req.body.goalDescription;
                 goal.active = ( req.body.goalActive == "on" ) ? true : false;
@@ -126,7 +183,7 @@ router.route('/')
 
                 }
                 
-                res.redirect(303, '/a/goal/' + goal.id);
+                res.redirect(303, '/dashboard');
 
             }  
         });
@@ -134,56 +191,7 @@ router.route('/')
 
         
     }
-);
+ );
 
-
-router.route('/:goalId')
-    .get(async function (req, res) {
-        let message = '';
-        if(req.locals && req.locals.message) {
-            message = req.locals.message;
-        }
-        
-        let goalId = req.params.goalId;
-
-        // get all the goals for this owner
-        let ownerGoals = await goalService.getAllGoalsForOwner(req.session.authUser.id, false );
-
-        // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, true);
-        // start the available topics out with the full owner topic set
-        let availableTopics = ownerTopics;
-
-        let goal = Goal.emptyGoal();
-        if(goalId > 0) {
-            goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
-
-            // iterate through the goals assigned topics, remove them from the available list
-            for(let i=0; i < goal.topics.length; i++) {
-                let redundantTopic = ownerTopics.map(ot => ot.id).indexOf(goal.topics[i].id);
-                
-                ~redundantTopic && availableTopics.splice(redundantTopic, 1);
-            }
-
-            // get the topics that are not currently assigned to this goal
-
-        }
-        else {
-            goal.ownedBy = req.session.authUser.id;
-            goal.goalVersion = 1;
-        }
-      
-        
-        // make sure the user has access to this goal (is owner)
-        if(goal.ownedBy === req.session.authUser.id) {
-            res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics});
-        }
-        else {
-            message = 'Access Denied';
-            message2 = 'You do not have access to the requested resource';
-            res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: null, message: message, message2: message2});
-        }
-    }
-);
-
-module.exports = router;
+ 
+ module.exports = router;

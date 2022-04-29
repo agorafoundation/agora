@@ -231,8 +231,8 @@ exports.saveGoal = async function(goal) {
         if(goal.id > 0) {
             
             // update
-            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7 WHERE id = $8;";
-            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.id ];
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7, visibility = $9 WHERE id = $8;";
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.id, goal.visibility ];
     
             try {
                 let res = await db.query(text, values);
@@ -253,8 +253,8 @@ exports.saveGoal = async function(goal) {
                 goal.id++;
                 if(res.rowCount > 0) {
                     // insert
-                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
-                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy ];
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;";
+                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
                     
                     let res2 = await db.query(text, values);
         

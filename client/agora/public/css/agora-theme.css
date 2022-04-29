@@ -237,7 +237,7 @@ a:hover {
     color: #534741;
 }
 #mainNav .navbar-nav li.nav-item a.nav-link:active, #mainNav .navbar-nav li.nav-item a.nav-link:focus {
-    color: #fff;
+    color: #a9c6d4;
 }
 #mainNav .navbar-nav li.nav-item a.nav-link.active {
     color: #534741;
@@ -265,7 +265,7 @@ a:hover {
     }
     #mainNav .navbar-nav > li.nav-item > a.nav-link.active:active, #mainNav .navbar-nav > li.nav-item > a.nav-link.active:focus, #mainNav .navbar-nav > li.nav-item > a.nav-link.active:hover {
       color: #fff;
-      background: #534741;
+      background: #a9c6d4;
     }
   
     #mainNav.navbar-shrink {

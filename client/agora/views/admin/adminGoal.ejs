@@ -75,6 +75,25 @@
                                     <form action="/a/goal" id="goalForm" enctype="multipart/form-data" method="POST">
                                         <div class="form-group">
                                             <input type="hidden" name="goalId" value="<%- goal.id %>" />
+                                            <fieldset class="form-group row">
+                                                <legend class="col-form-legend col-sm-2">Visibility</legend>
+                                                <div class="col-sm-10 form-check">
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="Private" id="goalVisibilityPrivate" />
+                                                        <label class="form-check-label" for="inlineRadio1">Private</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="Shared" id="goalVisibilityShared" />
+                                                        <label class="form-check-label" for="inlineRadio2">Shared</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="goalVisibilityPublic" id="goalVisibilityPublic" checked />
+                                                        <label class="form-check-label" for="inlineRadio3">Public</label>
+                                                    </div>
+                                                </div>
+                                                
+                                            </fieldset>
+
                                             Version: <input type="input" class="form-control form-control-lg" name="goalVersion" value="<%- goal.goalVersion %>" id="goalVersion" placeholder="Version" disabled>
                                             Name: <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Name" required>
                                             Desciption: <input type="input" class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description">

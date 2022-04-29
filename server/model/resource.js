@@ -15,6 +15,7 @@ function resource() {
     this.resourceLink = "";
     this.isRequired = -1;
     this.active = true;
+    this.visibility = 2;
     this.createTime;
     this.ownedBy = -1;
 }
@@ -34,6 +35,7 @@ exports.ormResource = function (row) {
     resource.resourceLink = row.resource_link;
     resource.isRequired = row.is_required;
     resource.active = row.active;
+    resource.visibility = row.visibility;
     resource.createTime = row.create_time;
     resource.ownedBy = row.owned_by;
     return resource;

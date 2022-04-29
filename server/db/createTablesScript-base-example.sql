@@ -1,4 +1,4 @@
--- production coding coach database setup
+-- Agora base database setup
 
 -- setup (as root / postgres)
 create database agora;
@@ -124,31 +124,24 @@ INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active
 )
 VALUES (
-    'Code Bot 3π+ Kit', 
+    'Some physical product', 
     'product',
-    '<p>The code bot kit is a complete kit that when added to a Polulu 3π+ robot enables to you build and follow along with the Robotics Programing video series.</p><p><strong>Please Note: In addition to this kit you also need to <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchase a Polulu 3π+ robot.</a>  We recommend the <a href="https://www.pololu.com/product/4976">turtle edition</a>, but any of the 3 editions [hyper, standard, turtle] will work.</strong></p>', 
-    '<p>This kit contains the following:</p>
+    '<p>This product is really cool, you should buy it :)</p>', 
+    '<p>It contains the following:</p>
                             <ul>
-                                <li>Custom chassis piece to mount servo and breadboard</li>
-                                <li>Micro Servo</li>
-                                <li>Ultrasonic Sensor [2cm - 400cm / 1 inch - 13 foot] range</li>
-                                <li>Custom low profile ultrasonic mount</li>
-                                <li>Custom rear mounted counter weight</li>
-                                <li>Micro Breadboard [25 hole]</li>
-                                <li>4 F-M jumper wires [10 cm]</li>
-                                <li>3 M-M jumper wires [10 cm]</li>
-                                <li>Capacitor [100uf or larger]</li>
-                                <li>Easy to follow instructions</li>
+                                <li>Thing one that it includes</li>
+                                <li>Micro Servo <- woah!</li>
+                                <li>Another thing</li>
+                                <li>Easy to follow instructions (meh)</li>
                             </ul>
-                            <p>The Code Bot 3π+ kit custom chassis design allows all hardware to be securely mounted to the robot and allows wires to be routed so that they do not get snagged or tangled. The innovative chassis design clips to the 3π+ robot without fasteners or glue but will stay in place even if the robot is completely upside down!</p>
-                            <p>The in-house designed components of the Code Bot 3π+ kit [Chassis, low profile ultrasonic mount, counterweight] are all constructed from thermoplastic polymer made strictly from renewable resources.  These pieces have been painstakingly engineered to fit perfectly to the robot and ensure durability while remaining light-weight. Assembly instructions are well documented and clear, assembly takes about 15 minutes!</p>
-                            <p>The ultrasonic sensor has a 2cm - 400cm / 1 meter [1 inch - 13 foot] range and can be rotated by the servo to provide the robot with a wide view of the world, the servo rotates more than 180 degrees. The servo has very low power consumption allowing it to be powered by the 4 AAA batteries powering the 3π+ robot [not included]. The custom designed sensor mount is exclusive to the Code Bot 3π+ kit and allows the ultrasonic sensor to be kept as low as possible allowing the robot to better see objects in the path of the robot, reducing blind spots low to the ground.</p>
-                            <p><strong>The Code Bot 3π+ is the ultimate platform to learn robotics programming for the individual, K-12 school, or higher education institution!</strong></p>
+                            <p>This will contain additional useful information! (or not)</p>
+                            <p>This is also fun, fun with words, fun with HTML in databases, fun, fun fun.  I am having fun! I really mean it.  Do you believe me?</p>
+                            <p><strong>Buy me!</strong></p>
                             <p>If you have any questions please email:
-                                <a href="mailto:orders@codingcoach.net">orders@codingcoach.net</a>.
+                                <a href="mailto:some@email.com">some@email.com</a>.
                             </p>',
-    'Purchase Code Bot 3π+ [includes USPS First class shipping in United States of America]',
-    'prod_L0DApx1FHftZzX', 'price_1KKCkEEfcKzaTpMsR0N8jZ6G', '49.99', '/api/stripe/cb1-checkout-session', '/assets/img/codebot/code-bot-parts.jpg', true
+    'Purchase this! [includes USPS First class shipping to nowhere]',
+    'prod_XXXXXX', 'price_XXXXX', '49.99', '/api/stripe/cb1-checkout-session', '/assets/img/codebot/code-bot-parts.jpg', true
 );
 
 INSERT INTO products (
@@ -157,10 +150,10 @@ INSERT INTO products (
 VALUES (
     'Founders Membership',
     'membership', 
-    '<p>Membership to the coding coach allows you unlimited access to all course content. You also receive special access to weekly office hours and additional content based on your goals and the topics you are taking.  Membership is your all access pass!</p>', 
-    '<p>The Founders Membership is a limited time early adopter membership opportunity! As a thank you for being an early believer you can keep the same benefits as full membership with a permanent lower rate!</p>',
+    '<p></p>', 
+    '<p>The Founders Membership is a limited time early adopter membership opportunity! Founders will always be offered first access to new features and their input will help direct the project. Thank you for helping bring the vision of Agora to reality!</p>',
     'Become a founding member!',
-    'prod_L0DJYbRxyOF5pv', 'price_1KKCt4EfcKzaTpMs1vmvCDyX', '14.99', '/api/stripe/founders-checkout-session', '/assets/img/background-art-square.png', true
+    'prod_xxxxxx', 'price_xxxxxx', '14.99', '/api/stripe/founders-checkout-session', '/assets/img/logos/agora-logo-a-bwn-1600.png', true
 );
 
 INSERT INTO products (
@@ -169,10 +162,10 @@ INSERT INTO products (
 VALUES (
     'Topic Access Token',
     'topic_access', 
-    '<p>Tokens can be purchased to allow access a course topic. Each token allows full access to the material in one topic.</p>', 
+    '<p>Tokens can be purchased to allow access a to additional topics. Each token allows full access to the material in one topic.</p>', 
     '',
     'Purchase a Topic Access Token',
-    'prod_L0DKZxZVLsu8Jx', 'price_1KKCu5EfcKzaTpMsJXY0wosi', '9.99', '/api/stripe/access-token-checkout-session', '/assets/img/robot-fun.png', true
+    'prod_xxxxxx', 'price_xxxxxx', '9.99', '/api/stripe/access-token-checkout-session', '/assets/img/robots-bg/balboa.png', true
 );
 
 INSERT INTO product_images (
@@ -185,7 +178,7 @@ VALUES (
                                     <p>
                                         <strong>Note: </strong>The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>.
                                     </p>', 
-    '', '/assets/img/codebot/assembled-kit-off-robot.jpg'
+    '', '/assets/img/robots-bg/henry-ix.png'
 );
 
 INSERT INTO product_images (
@@ -195,57 +188,7 @@ VALUES (
     1, 'Code Bot 3π+', '<p class="mb-5 text-left">
                                         All assembled components of the Code Bot 3π+ kit are shown here including the rear counterweight. The in-house designed components of the Code Bot 3π+ kit (Chassis, low profile ultrasonic mount, counterweight) are all constructed from thermoplastic polymer made strictly from renewable resources.  These pieces have been painstakingly engineered to fit perfectly to the robot and ensure durability while remaining light-weight. Assembly instructions are well documented and clear, assembly takes about 15 minutes!
                                     </p>', 
-    '', '/assets/img/codebot/assembled-kit-no-robot.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', 'p class="mb-5 text-left">
-                                        Code Bot 3π+ ultrasonic sensor, specially crafted low profile servo mount, and micro low power servo. The ultrasonic sensor has a 2cm - 400cm / 1 meter [1 inch - 13 foot] range and can be rotated by the servo to provide the robot with a wide view of the world, the servo rotates more than 180 degrees. The servo has very low power consumption allowing it to be powered by the 4 AAA batteries powering the 3π+ robot (not included). The custom designed sensor mount is exclusive to the Code Bot 3π+ kit and allows the ultrasonic sensor to be kept as low as possible allowing the robot to better see objects in the path of the robot, reducing blind spots low to the ground.
-                                    </p>', 
-    '', '/assets/img/codebot/parts-servo-horn-sensor.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', '<p class="mb-5">
-                                        Included Parts list (Numbers are referenced throughout individual steps in instruction booklet).
-                                        </p><ol>
-                                            <li>Code Bot chassis - servo and breadboard mount</li>
-                                            <li>Code Bot low profile servo horn mount</li>
-                                            <li>Code Bot counter weight</li>
-                                            <li>Ultrasonic sensor</li>
-                                            <li>Male - Female jumper wires (4)</li>
-                                            <li>Male - Male jumper wires (3)</li>
-                                            <li>Capacitor (100uf or greater)</li>
-                                            <li>Male - Male coupler</li>
-                                            <li>Servo mount screw</li>
-                                            <li>Servo horn screw</li>
-                                            <li>Micro 180 degree servo</li>
-                                            <li>Micro breadboard (25 hole)</li>
-                                        </ol>
-                                    <p></p>', 
-    '', '/assets/img/codebot/parts-diagram.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', '<p class="mb-5 text-left">
-                                        This image shows a close-up of the rear counter-weight. You can order yours with a custom engraving, click on the "Name your bot" option to learn more. <strong>Note: </strong>This image shows Code Bot 3π+ components assembled on a Polulu 3π+ robot.  The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>
-                                    </p>', 
-    '', '/assets/img/codebot/codebot1-back.jpg'
-);
-INSERT INTO product_images (
-    product_id, image_name, image_description_1, image_description_2, image_url
-)
-VALUES (
-    1, 'Code Bot 3π+', 'p class="mb-5 text-left">
-                                        Hello Code Bot! This robot is ready to navigate the world using the brain you provide it! <strong>Note: </strong>This image shows Code Bot 3π+ components assembled on a Polulu 3π+ robot.  The robot is not incuded in this kit and must be <a href="https://www.pololu.com/category/280/3pi-plus-32u4-oled-robot">purchased separately.</a>
-                                    </p>', 
-    '', '/assets/img/codebot/codebot1-front.jpg'
+    '', '/assets/img/robots-bg/custom-2-wheel.png'
 );
 
 
@@ -322,8 +265,6 @@ insert into roles (role_name, role_description, active) values ('Creator', 'Cont
 
 
 
-
-
 CREATE TABLE IF NOT EXISTS user_role (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -355,12 +296,13 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE goals TO agora;
-
+CREATE INDEX IF NOT EXISTS idx_goals_visibility ON goals (visibility);
 
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
@@ -373,11 +315,13 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     has_activity BOOLEAN DEFAULT true,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE topics TO agora;
+CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 
 CREATE TABLE IF NOT EXISTS goal_path (
@@ -451,11 +395,13 @@ CREATE TABLE IF NOT EXISTS resources (
     resource_link VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora;
+CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
 
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resource (

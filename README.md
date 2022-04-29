@@ -51,7 +51,11 @@ answers you seek
 > npm i
 6. Start the service
 > npm start
-7. Navigate your web browser to http://localhost:2633 if you are running on your local machine.
+
+----- output ------
+>
+> Agora running... {localhost:4200}
+7. Navigate your web browser to http://localhost:PORT (default port is 4200) if you are running on your local machine.
 8. Nice!
 
 
@@ -65,17 +69,18 @@ answers you seek
     1. Introduction
     2. Pre Assessment
     3. Resources
-    4. Activity        
+    4. Activity (optional)       
     5. Post Assessment 
     6. Summary         
 7. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
-1. Discussions (At global, goal and topic level)
-2. Teacher / Administrator roles and backend to create content without having to insert into database directly
-3. Github repository integration so students can create / integrate github repo into topic activities.
+1. Remove the CodingCoach content from base Agora build (In progress)
+2. Expansion of Resources to included non course (goal / topic) related use. For organizing person research and notes.
+3. Discussions (At global, goal and topic level)
+4. Teacher / Administrator roles and backend to create content without having to insert into database directly
+5. Github repository integration so students can create / integrate github repo into topic activities.
 
 ### And then?
 1. Web3 based decentralization! Own your academic record. (more on this soon).
-2. Remove the CodingCoach content from base Agora build
