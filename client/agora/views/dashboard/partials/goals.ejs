@@ -1,0 +1,28 @@
+<div class="">
+
+    <%
+    if(ownerGoals && ownerGoals.length > 0) {
+        for(let i=0; i < ownerGoals.length; i++) {
+            %>
+            <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(ownerGoals[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; <a class="fas fa-trash redColor" onclick='deleteGoal();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'><%- ownerGoals[i].goalName %></a>
+            <%
+            if(!ownerGoals[i].active) {
+                %>
+                <span class="redColor">{Inactive}</span>
+                <%
+            }
+            %>
+                <br />
+            <%
+        }
+    }
+
+    %>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(goal).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' >
+        Create a Goal
+    </button>
+
+    <%- include('./edit-goal') %>
+    
+</div>

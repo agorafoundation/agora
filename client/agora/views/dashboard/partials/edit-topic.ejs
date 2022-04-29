@@ -1,0 +1,93 @@
+<div class="modal fade" id="create-topic-modal" tabindex="-1" role="dialog" aria-labelledby="create-topic-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="create-topic-modal-label">Create a new topic:</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+            <section>
+
+                <h4 class="text-secondary">Edit topic</h4>
+
+                <% if(!!locals.message){ %>
+                    <div class="alert-message alert-message-warning" role="alert">
+                        <h3 ><%= message %></h3>
+                        <p><%= message2 %></p>
+                    </div>
+                <% } 
+                
+                if(topic) {
+                    %>
+                    <form action="/dashboard" id="topicForm" enctype="multipart/form-data" method="POST">
+                        <div class="form-group">
+                            <input type="hidden" name="topicId" id="topicId" value="<%- topic.id %>" />
+                            <fieldset class="form-group row">
+                                <legend class="col-form-legend col-sm-2">Visibility</legend>
+                                <div class="col-sm-10 form-check">
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="topicVisibility" value="0" id="topicVisibilityPrivate" />
+                                        <label class="form-check-label" for="inlineRadio1">Private</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="topicVisibility" value="1" id="topicVisibilityShared" />
+                                        <label class="form-check-label" for="inlineRadio2">Shared</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="topicVisibility" value="2" id="topicVisibilityPublic" checked />
+                                        <label class="form-check-label" for="inlineRadio3">Public</label>
+                                    </div>
+                                </div>
+                                
+                            </fieldset>
+
+                            Name: <input type="input" class="form-control form-control-lg" name="topicName" value="<%- topic.topicName %>" id="topicName" placeholder="Name" required>
+                            Desciption: <input type="input" class="form-control form-control-lg" name="topicDescription" value="<%- topic.topicDescription %>" id="topicDescription" placeholder="Description">
+                            <%
+                            if( topic.topicImage ) {
+                                %>
+                                Image: <img class="img-supersmall" src="<%= process.env.TOPIC_IMAGE_WEB_PATH %><%- topic.topicImage %>" id="topicImage" />
+                                <%
+                            }
+                            else {
+                                %>
+                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" id="topicImage" />
+                                <%
+                            }
+                            %>
+                            
+                            <div class="mb-2">
+                                <label for="formFile" class="form-label">Upload an image for this topic (1MB Max size)</label>
+                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- topic.topicImage %>" name="topicImage">
+                            </div>
+
+                            Topic HTML: <div id="quill_editor_topic"><%- topic.topicHtml %></div>
+                            <input type="hidden" id="quill_html_topic" name="submission_text" value=""></input>
+
+                            Active: <input type="checkbox" class="" id="topicActive" name="topicActive" <%- (topic.active)?'checked':'' %> /><br />
+                            Completable: <input type="checkbox" class="" id="topicCompletable" name="topicCompletable" <%- (topic.completable)?'checked':'' %> />
+                            <br />
+                            <br />
+                            
+                            <%- include('../../admin/partials/pathway') %>
+
+                        </div>
+                        <button type="submit" id="topicButton" class="btn btn-primary btn-lg btn-block">Save Topic</button>
+                    </form>
+                    <%
+                }
+                
+                %>
+
+            </section>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+</div>

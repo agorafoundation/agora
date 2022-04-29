@@ -57,6 +57,10 @@ Masthead background: #414d53
     color: #535041;
 }
 
+.redColor {
+    color: #d9534f;
+}
+
 .agora-font {
     font-family: 'Luxurious Roman', cursive !important;
 }

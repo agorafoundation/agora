@@ -52,3 +52,18 @@ function updateGoalModal( goal, goalImagePath ) {
         }
     }
 }
+
+/**
+ * 
+ */
+function deleteGoal() {
+    // double check the user is sure!!
+    console.log( "stub to delete goal ");
+}
+
+/**
+ * 
+ */
+function addFilter() {
+    console.log( "this will add a filter" );
+}
