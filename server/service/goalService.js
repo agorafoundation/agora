@@ -231,7 +231,7 @@ exports.saveGoal = async function(goal) {
         if(goal.id > 0) {
             
             // update
-            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7, visiblity = $9 WHERE id = $8;";
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7, visibility = $9 WHERE id = $8;";
             let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.id, goal.visibility ];
     
             try {

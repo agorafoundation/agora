@@ -128,7 +128,6 @@ const Goal = require('../model/goal');
         } 
     })
     .post(async function(req, res) {
-        console.log("testing!")
         upload(req, res, (err) => {
 
             if(err) {
@@ -142,6 +141,7 @@ const Goal = require('../model/goal');
                 let goal = Goal.emptyGoal();
                 goal.id = req.body.goalId;
 
+                goal.visibility = req.body.goalVisibility;
                 goal.goalName = req.body.goalName;
                 goal.goalDescription = req.body.goalDescription;
                 goal.active = ( req.body.goalActive == "on" ) ? true : false;
@@ -183,7 +183,7 @@ const Goal = require('../model/goal');
 
                 }
                 
-                res.redirect(303, '/a/goal/' + goal.id);
+                res.redirect(303, '/dashboard');
 
             }  
         });

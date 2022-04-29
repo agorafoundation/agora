@@ -1,25 +1,18 @@
 <div class="">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-goal-modal">
-        Create a Goal
-    </button>
 
-    <%- include('./create-goal') %>
-    <hr />
-    <h4 class="text-secondary">Your Goals:</h4>
-    
     <%
     if(ownerGoals && ownerGoals.length > 0) {
         for(let i=0; i < ownerGoals.length; i++) {
             if(ownerGoals[i].active) {
                 %>
-                <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a>
+                <a class="text-primary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(ownerGoals[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' ><%- ownerGoals[i].goalName %></a>
                 <br />
                 <%
             }
             else {
                 %>
                 <span style="color: red;">{Inactive}
-                <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a></span>
+                <a class="text-primary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(ownerGoals[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");'><%- ownerGoals[i].goalName %></a></span>
                 <br />
                 <%
             }
@@ -27,6 +20,15 @@
     }
 
     %>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(goal).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' >
+        Create a Goal
+    </button>
+
+    <%- include('./edit-goal') %>
+    <hr />
+    
+   
     
 
     
