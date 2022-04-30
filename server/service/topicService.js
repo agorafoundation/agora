@@ -478,8 +478,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         if(topic.id > 0) {
             
             // update
-            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11 WHERE id = $10;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id, topic.visibility ];
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE id = $10;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id, topic.visibility, topic.topicType, topic.hasAssessment ];
     
             try {
                 let res = await db.query(text, values);
@@ -492,8 +492,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
         }
         else {
             // insert
-            let text = "INSERT INTO topics (topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility ];
+            let text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) RETURNING id;";
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility, topic.topicType, topic.hasAssessment ];
 
             try {
 

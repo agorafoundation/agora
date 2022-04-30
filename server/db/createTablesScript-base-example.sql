@@ -312,10 +312,12 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     topic_image VARCHAR,
     topic_html VARCHAR,
     assessment_id INTEGER, -- id of assessment given both at the begining (pre) and end (post) of a topic for each user.  This is always the same assessment.
-    has_activity BOOLEAN DEFAULT true,
+    has_activity BOOLEAN DEFAULT false,
+    has_assessment BOOLEAN DEFAULT false,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
     visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
+    topic_type INTEGER,     -- Enumeration -> 0 = Research, 1 = Educational
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
