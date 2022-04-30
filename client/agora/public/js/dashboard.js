@@ -1,4 +1,56 @@
 
+
+if(document.getElementsByName( 'topicType' ) ) {
+
+    if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
+        console.log('1');
+        document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
+        document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
+    }
+    else {
+        console.log('2');
+        document.getElementById( 'acivity-accordion-group' ).style.display = 'none';
+        document.getElementById( 'assessment-accordion-group' ).style.display = 'none';
+    }
+
+    // attach the event to make them editible 
+    document.querySelectorAll('[name="topicType"]').forEach( ( topicTypeBox ) => {
+        topicTypeBox.addEventListener( 'click', ( ) => { 
+            console.log("clicked: " + document.querySelector('input[name="topicType"]:checked').value);
+            if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
+                console.log('1');
+                document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
+                document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
+            }
+            else {
+                console.log('2');
+                document.getElementById( 'acivity-accordion-group' ).style.display = 'none';
+                document.getElementById( 'assessment-accordion-group' ).style.display = 'none';
+            }
+        } );
+    } );
+
+}
+
+/**
+ * The following two functions show or hide the assessment and activity panels and check the hasAssessment / hasAcitvity
+ * checkbox based on whether the user interacts with the accordion
+ * These areas only show if the topicType = educational 
+ */
+if(document.getElementById('assessment-accordion')) {
+    document.getElementById('assessment-accordion').addEventListener( 'click', () => { 
+        document.getElementById('topicHasAssessment').checked = !document.getElementById('topicHasAssessment').checked;
+    } );
+}
+
+if(document.getElementById('activity-accordion')) {
+    document.getElementById('activity-accordion').addEventListener( 'click', () => { 
+        document.getElementById('topicHasActivity').checked = !document.getElementById('topicHasActivity').checked;
+    } );
+}
+
+
+
 /**
  * When user selects an existing goal that they wish to edit this function will populate the DOM
  * using the passed goal so the form is ready for modification of the object.
