@@ -543,10 +543,18 @@ window.addEventListener('load', () => {
             }, 
             theme: 'snow'
         });
+        if(document.getElementById('creatorResourceForm')) {
+            document.getElementById('creatorResourceForm').addEventListener('submit', () => {
+                document.getElementById("quill_html").value = quill.root.innerHTML;
+            });
+        }
 
-        document.getElementById('creatorResourceForm').addEventListener('submit', () => {
-            document.getElementById("quill_html").value = quill.root.innerHTML;
-        });
+        if(document.getElementById('resourceForm')) {
+            document.getElementById('resourceForm').addEventListener('submit', () => {
+                document.getElementById("quill_html").value = quill.root.innerHTML;
+            });
+        }
+        
 
         toggleQuillEditor();
 

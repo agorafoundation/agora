@@ -174,6 +174,69 @@ function updateTopicModal( topic, topicImagePath ) {
     }
 }
 
+
+/**
+ * When user selects an existing resource that they wish to edit this function will populate the DOM
+ * using the passed resource so the form is ready for modification of the object.
+ * @param {*} resource <- resource used to popluate the form
+ * @param {*} resourceImagePath <- base path for the image url
+ */
+ function updateResourceModal( resource, resourceImagePath ) {
+    if(document.getElementById( 'create-resource-modal' ) && resource ) {
+
+        document.getElementById( 'resourceId' ).value = resource.id;
+
+        console.log( resource.visibility );
+        if( resource.visibility === 0 ) {
+            document.getElementById( 'resourceVisibilityPrivate' ).checked = true;
+            document.getElementById( 'resourceVisibilityShared' ).checked = false;
+            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
+        }
+        else if( resource.visibility === 1 ) {
+            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
+            document.getElementById( 'resourceVisibilityShared' ).checked = true;
+            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
+        }
+        else if( resource.visibility === 2 ) {
+            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
+            document.getElementById( 'resourceVisibilityShared' ).checked = false;
+            document.getElementById( 'resourceVisibilityPublic' ).checked = true;
+        }
+
+        document.getElementById( 'resourceType' ).value = resource.resourceType;
+        document.getElementById( 'resourceName' ).value = resource.resourceName;
+        document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
+
+        if( resource.resourceImage ) {
+            document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
+        }
+        else {
+            document.getElementById( 'resourceImage' ).src = "data:,";
+            document.getElementById( 'formFile' ).value = "";
+        }
+
+        document.getElementById( 'quill_html' ).value = resource.resourceContentHtml;
+        document.getElementById( 'quill_editor' ).value = resource.resourceContentHtml;
+        
+
+        if( resource.active ) {
+            document.getElementById( 'resourceActive' ).checked = true;
+        }
+        else {
+            document.getElementById( 'resourceActive' ).checked = false;
+        }
+        
+        if( resource.isRequired ) {
+            document.getElementById( 'isRequired' ).checked = true;
+        }
+        else {
+            document.getElementById( 'isRequired' ).checked = false;
+        }
+    }
+}
+
+
+
 /**
  * 
  */

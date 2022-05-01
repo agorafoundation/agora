@@ -83,7 +83,7 @@ router.use(function ( req, res, next ) {
 })
  
  
- router.route('/')
+router.route('/')
     .get( async function ( req, res ) {
         let message = '';
         if( req.locals && req.locals.message ) {
@@ -126,11 +126,11 @@ router.use(function ( req, res, next ) {
         // get all the resources for this owner
         let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.id );
         
-
+        let resource = Resource.emptyResource();
         
         // make sure the user has access to this goal (is owner)
         if(goal.ownedBy === req.session.authUser.id) {
-            res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources });
+            res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource });
         }
         else {
             message = 'Access Denied';
@@ -202,7 +202,7 @@ router.use(function ( req, res, next ) {
 
         
     }
- );
+);
 
  
  module.exports = router;
