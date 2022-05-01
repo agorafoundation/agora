@@ -5,19 +5,19 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
+var express = require( 'express' );
 var router = express.Router();
 
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
+const bodyParser = require( 'body-parser' );
+router.use( bodyParser.urlencoded( {
     extended: true
-  }));
-router.use(bodyParser.json());
+  } ) );
+router.use( bodyParser.json() );
 
 
 // import multer (file upload) and setup
-const fs = require('fs');
-let path = require('path');
+const fs = require( 'fs' );
+let path = require( 'path' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
@@ -28,84 +28,88 @@ let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
 let maxSize = 1 * 1024 * 1024;
 
 // Start multer
-let multer = require('multer');
+let multer = require( 'multer' );
 
-const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
-        cb(null, true);
+const fileFilter = ( req, file, cb ) => {
+    if( file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png' ) {
+        cb( null, true );
     }
     else {
-        cb(null, false);
+        cb( null, false );
     }
 }
 
 let storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH)
+    destination: function ( req, file, cb ) {
+      cb( null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH )
     },
-    filename: function (req, file, cb) {
-        let filename = Date.now() + file.originalname;
+    filename: function ( req, file, cb ) {
+        let filename = Date.now( ) + file.originalname;
         req.session.savedGoalFileName = filename;
-        cb(null, filename);
+        cb( null, filename );
     }
 })
-let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } }).single('goalImage');
+let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'goalImage' );
 // end multer
 
 
 
  // require services
-const goalService = require('../service/goalService');
-const topicService = require('../service/topicService');
+const goalService = require( '../service/goalService' );
+const topicService = require( '../service/topicService' );
+const resourceService = require( '../service/resourceService' );
  
  // controllers
-const eventController = require('../controller/eventController');
+const eventController = require( '../controller/eventController' );
 
  // models
-const Goal = require('../model/goal');
+const Goal = require( '../model/goal' );
+const Topic = require( '../model/topic' );
+const Resource = require( '../model/resource' );
  
  
- // check that the user is logged in!
- router.use(function (req, res, next) {
-     if(!req.session.authUser) {
-         if(req.query.redirect) {
+// check that the user is logged in!
+router.use(function ( req, res, next ) {
+    if( !req.session.authUser ) {
+        if( req.query.redirect ) {
              res.locals.redirect = req.query.redirect;
-         }
-         res.render('user-signup');
-     }
-     else {
-         next();
-     }
+        }
+        res.render('user-signup');
+    }
+    else {
+        next( );
+    }
      
- })
+})
  
  
- router.route('/')
-    .get(async function (req, res) {
+router.route('/')
+    .get( async function ( req, res ) {
         let message = '';
-        if(req.locals && req.locals.message) {
+        if( req.locals && req.locals.message ) {
             message = req.locals.message;
         }
         
         let goalId = req.params.goalId;
 
         // get all the goals for this owner
-        let ownerGoals = await goalService.getAllGoalsForOwner(req.session.authUser.id, false );
+        let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.id, true);
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
+        // create an empty goal to use if the user creates a new one
         let goal = Goal.emptyGoal();
-        if(goalId > 0) {
+        if( goalId > 0 ) {
             goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
 
             // iterate through the goals assigned topics, remove them from the available list
             for(let i=0; i < goal.topics.length; i++) {
-                let redundantTopic = ownerTopics.map(ot => ot.id).indexOf(goal.topics[i].id);
+                let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( goal.topics[i].id );
                 
-                ~redundantTopic && availableTopics.splice(redundantTopic, 1);
+                ~redundantTopic && availableTopics.splice( redundantTopic, 1 );
             }
 
             // get the topics that are not currently assigned to this goal
@@ -115,16 +119,23 @@ const Goal = require('../model/goal');
             goal.ownedBy = req.session.authUser.id;
             goal.goalVersion = 1;
         }
-      
+
+        // create an empty topic to use if the user creates a new one
+        let topic = Topic.emptyTopic( );
+
+        // get all the resources for this owner
+        let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.id );
+        
+        let resource = Resource.emptyResource();
         
         // make sure the user has access to this goal (is owner)
         if(goal.ownedBy === req.session.authUser.id) {
-            res.render('dashboard/dashboard', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics});
+            res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource });
         }
         else {
             message = 'Access Denied';
             message2 = 'You do not have access to the requested resource';
-            res.render('dashboard/dashboard', {ownerGoals: ownerGoals, goal: null, message: message, message2: message2});
+            res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, message: message, message2: message2 });
         } 
     })
     .post(async function(req, res) {
@@ -191,7 +202,7 @@ const Goal = require('../model/goal');
 
         
     }
- );
+);
 
  
  module.exports = router;

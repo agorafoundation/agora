@@ -1,0 +1,33 @@
+<div id="">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- JSON.stringify(resource).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");' >
+        Create a Resource
+    </button>
+
+    <%- include( './resource/edit-resource' ) %>
+
+    <hr />
+    <h4 class="text-secondary">Your Resources:</h4>
+
+    <%
+    if(availableResources && availableResources.length > 0) {
+        for(let i=0; i < availableResources.length; i++) {
+            if(availableResources[i].active) {
+                %>
+                <a class="text-primary" href="/a/resource/<%- availableResources[i].id %>" ><%- availableResources[i].resourceName %></a>
+                <br />
+                <%
+            }
+            else {
+                %>
+                <span style="color: red;">{Inactive}
+                <a class="text-primary" href="/a/resource/<%- availableResources[i].id %>" ><%- availableResources[i].resourceName %></a></span>
+                <br />
+                <%
+            }
+        
+        }
+    }
+
+    %>
+
+</div>

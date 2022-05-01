@@ -1,0 +1,136 @@
+<div class="modal fade" id="create-resource-modal" tabindex="-1" role="dialog" aria-labelledby="create-resource-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="create-resource-modal-label">Create a new resource:</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+            <section>
+
+                <h4 class="text-secondary">Edit resource</h4>
+
+                <% if(!!locals.message){ %>
+                    <div class="alert-message alert-message-warning" role="alert">
+                        <h3 ><%= message %></h3>
+                        <p><%= message2 %></p>
+                    </div>
+                <% } 
+                
+                if(resource) {
+                    %>
+                    <form action="/dashboard" id="resourceForm" enctype="multipart/form-data" method="POST">
+                        <div class="form-group">
+                            <input type="hidden" name="resourceId" id="resourceId" value="<%- resource.id %>" />
+                            <fieldset class="form-group row">
+                                <legend class="col-form-legend col-sm-2">Visibility</legend>
+                                <div class="col-sm-10 form-check">
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="resourceVisibility" value="0" id="resourceVisibilityPrivate" />
+                                        <label class="form-check-label" for="inlineRadio1">Private</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="resourceVisibility" value="1" id="resourceVisibilityShared" />
+                                        <label class="form-check-label" for="inlineRadio2">Shared</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="radio-inline" name="resourceVisibility" value="2" id="resourceVisibilityPublic" checked />
+                                        <label class="form-check-label" for="inlineRadio3">Public</label>
+                                    </div>
+                                </div>
+                                
+                            </fieldset>
+
+                            <select name="resourceType" id="resourceType" class="form-control form-control-lg">
+                                <%
+                                if(resource.resourceType === 1) {
+                                    %>
+                                    <option value="1" selected>Editor</option>
+                                    <%
+                                }
+                                else {
+                                    %>
+                                    <option value="1">Editor</option>
+                                    <%
+                                }
+                                %>
+                                <%
+                                if(resource.resourceType === 2) {
+                                    %>
+                                    <option value="2" selected>Link Only</option>
+                                    <%
+                                }
+                                else {
+                                    %>
+                                    <option value="2">Link Only</option>
+                                    <%
+                                }
+                                %>
+                                <%
+                                if(resource.resourceType === 3) {
+                                    %>
+                                    <option value="3" selected>Embed HTML (Including iFrames)</option>
+                                    <%
+                                }
+                                else {
+                                    %>
+                                    <option value="3">Embed HTML (Including iFrames)</option>
+                                    <%
+                                }
+                                %>
+                            </select>
+
+                            Name: <input type="input" class="form-control form-control-lg" name="resourceName" value="<%- resource.resourceName %>" id="resourceName" placeholder="Name" required>
+                            Desciption: <input type="input" class="form-control form-control-lg" name="resourceDescription" value="<%- resource.resourceDescription %>" id="resourceDescription" placeholder="Description">
+                            <%
+                            if( resource.resourceImage ) {
+                                %>
+                                Image: <img class="img-supersmall" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH %><%- resource.resourceImage %>" id="resourceImage" />
+                                <%
+                            }
+                            else {
+                                %>
+                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" id="resourceImage" />
+                                <%
+                            }
+                            %>
+                            
+                            <div class="mb-2">
+                                <label for="formFile" class="form-label">Upload an image for this resource (1MB Max size)</label>
+                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage">
+                            </div>
+
+                            <span id="quillWrapper" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
+                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                            Embedded HTML:
+                            <textarea name="submission_text2" id="submission_text2" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />
+                            Resource Link: <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">
+
+                            Required? <input type="checkbox" class="" id="isRequired" name="isRequired" <%- (resource.isRequired)?'checked':'' %> />
+                            Active: <input type="checkbox" class="" id="resourceActive" name="resourceActive" <%- (resource.active)?'checked':'' %> />
+                            
+                            <br />
+                            <br />
+                            
+                            
+
+                        </div>
+                        <button type="submit" id="resourceButton" class="btn btn-primary btn-lg btn-block">Save Resource</button>
+                    </form>
+                    <%
+                }
+                
+                %>
+
+            </section>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+</div>
