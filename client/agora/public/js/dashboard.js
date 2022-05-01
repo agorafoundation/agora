@@ -24,8 +24,17 @@ if(document.getElementsByName( 'topicType' ) ) {
             }
             else {
                 console.log('2');
+                // make sure option were not selected by cleaning them
+                if( document.getElementById('topicHasAssessment').checked ) {
+                    document.getElementById('assessment-accordion').click();
+                } 
+                if( document.getElementById('topicHasActivity').checked ) {
+                    document.getElementById('activity-accordion').click();
+                }
+
                 document.getElementById( 'acivity-accordion-group' ).style.display = 'none';
                 document.getElementById( 'assessment-accordion-group' ).style.display = 'none';
+                
             }
         } );
     } );
