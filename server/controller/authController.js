@@ -6,13 +6,18 @@
  */
 
 // dependencies
+// nodemailer / email
 const nodemailer = require("nodemailer");
+
+// import UA parsing library
+const DeviceDetector = require("device-detector-js");
+const deviceDetector = new DeviceDetector();
 
 // services
 const userService = require( '../service/userService' );
 
 
-exports.signIn = function( req, res ) {
+exports.signIn = async function( req, res ) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     
     if(req && req.body) {
@@ -97,7 +102,7 @@ exports.signIn = function( req, res ) {
 }
 
 
-exports.generateResetPasswordEmail = function( req, res ) {
+exports.generateResetPasswordEmail = async function( req, res ) {
     if(req.body.forgotPasswordEmail) {
         // generate and save the token
         let exeration = process.env.PW_TOKEN_EXPIRATION;
@@ -153,7 +158,7 @@ exports.generateResetPasswordEmail = function( req, res ) {
 }
 
 
-exports.verifyResetPasswordToken = function ( req, res ) {
+exports.verifyResetPasswordToken = async function ( req, res ) {
     let userEmail = req.params.email;
     let userToken = req.params.token;
     //console.log("user email: " + userEmail + " user Token: " + userToken);
@@ -167,7 +172,7 @@ exports.verifyResetPasswordToken = function ( req, res ) {
     }
 }
 
-exports.verifyEmailWithToken = function( req, res ) {
+exports.verifyEmailWithToken = async function( req, res ) {
     let userEmail = req.params.email;
     let emailToken = req.params.token;
     //console.log("user email: " + userEmail + " email Token: " + emailToken);
@@ -194,7 +199,7 @@ exports.verifyEmailWithToken = function( req, res ) {
  * @param {*} req 
  * @param {*} res 
  */
-exports.resetPassword = function ( req, res ) {
+exports.resetPassword = async function ( req, res ) {
     let userEmail = req.body.pwResetEmail;
     let userToken = req.body.pwResetToken;
     let hashedPassword = await userService.passwordHasher(req.body.psw);

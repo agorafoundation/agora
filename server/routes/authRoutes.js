@@ -5,10 +5,12 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
- var express = require( 'express' );
- var router = express.Router( );
+var express = require( 'express' );
+var router = express.Router( );
 
+// controllers
 const authController = require( '../controller/authController' );
+
 
 
 router.route( '/signIn' )
@@ -24,7 +26,7 @@ router.route( '/signIn' )
     }
 )
 
-app.route( '/signOut' )
+router.route( '/signOut' )
     .get( ( req, res ) => {
         req.session.destroy((error) => {
             if (error) throw error;
@@ -33,37 +35,37 @@ app.route( '/signOut' )
     }
 )
 
-app.route( '/forgotPass' )
+router.route( '/forgotPass' )
     .get( ( req, res ) => {
         res.render('user-forgot-password');
     }
 )
 
-app.route( '/userError' )
+router.route( '/userError' )
     .get( ( req, res ) => {
         res.render('user-error');
     }
 )
 
-app.route( '/resetPass' )
+router.route( '/resetPass' )
     .post( ( req, res ) => {
         authController.generateResetPasswordEmail( req, res );
     }
 )
 
-app.route( '/resetPass/:email/:token' )
+router.route( '/resetPass/:email/:token' )
     .get( ( req, res ) => {
         authController.verifyResetPasswordToken( req, res );
     }
 )
 
-app.route( '/newPass' )
+router.route( '/newPass' )
     .get( ( req, res ) => {
         authController.resetPassword( req, res );
     }
 )
 
-app.route( '/verifyEmail/:email/:token' )
+router.route( '/verifyEmail/:email/:token' )
     .get( ( req, res ) => {
         authController.verifyEmailWithToken( req, res );
     }
