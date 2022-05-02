@@ -69,41 +69,5 @@ app.route( '/verifyEmail/:email/:token' )
     }
 )
 
-app.route( '/signOut' )
-    .get( ( req, res ) => {
-        
-    }
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.get('', async (req, res) => {
-    
-}
-);
-
-
-
-
-
-
-
 
 module.exports = router;
