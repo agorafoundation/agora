@@ -57,6 +57,18 @@ app.route( '/resetPass/:email/:token' )
     }
 )
 
+app.route( '/newPass' )
+    .get( ( req, res ) => {
+        authController.resetPassword( req, res );
+    }
+)
+
+app.route( '/verifyEmail/:email/:token' )
+    .get( ( req, res ) => {
+        authController.verifyEmailWithToken( req, res );
+    }
+)
+
 app.route( '/signOut' )
     .get( ( req, res ) => {
         
@@ -82,43 +94,8 @@ app.route( '/signOut' )
 
 
 
-
-app.post('/newPass', async (req, res) => {
-    let userEmail = req.body.pwResetEmail;
-    let userToken = req.body.pwResetToken;
-    let hashedPassword = await userService.passwordHasher(req.body.psw);
-
-    if(userEmail && userToken && hashedPassword) {
-        let result = await userService.resetPassword(userEmail, userToken, hashedPassword);
-        if(result) {
-            res.render('sign-in', { message: "Your Password has been successfully changed!", message2: "You may now sign in." });
-        }
-        else {
-            res.redirect(303, '/userError');
-        }
-    }
-})
-
-app.get('/verifyEmail/:email/:token', async (req, res) => {
-    let userEmail = req.params.email;
-    let emailToken = req.params.token;
-    //console.log("user email: " + userEmail + " email Token: " + emailToken);
-    if(userEmail && emailToken) {
-        // verify email and token match
-        let ready = await userService.verifyEmailTokenVerifyCombo(userEmail, emailToken);
-        if(ready) {
-            req.session.destroy((error) => {
-                if (error) throw error;
-                res.render('sign-in', { message: "Your email address has been successfully verified!", message2: "Thank you for verifying your email! Please sign in." });
-            });
-        }
-        else {
-            res.redirect(303, '/userError');
-        }
-    }
-    else {
-        res.redirect(303, '/userError');
-    }
+app.get('', async (req, res) => {
+    
 }
 );
 

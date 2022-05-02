@@ -166,3 +166,46 @@ exports.verifyResetPasswordToken = function ( req, res ) {
         }
     }
 }
+
+exports.verifyEmailWithToken = function( req, res ) {
+    let userEmail = req.params.email;
+    let emailToken = req.params.token;
+    //console.log("user email: " + userEmail + " email Token: " + emailToken);
+    if(userEmail && emailToken) {
+        // verify email and token match
+        let ready = await userService.verifyEmailTokenVerifyCombo(userEmail, emailToken);
+        if(ready) {
+            req.session.destroy((error) => {
+                if (error) throw error;
+                res.render('sign-in', { message: "Your email address has been successfully verified!", message2: "Thank you for verifying your email! Please sign in." });
+            });
+        }
+        else {
+            res.redirect(303, '/userError');
+        }
+    }
+    else {
+        res.redirect(303, '/userError');
+    }
+}
+
+/**
+ * Changes the users password based on the token sent and email address
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.resetPassword = function ( req, res ) {
+    let userEmail = req.body.pwResetEmail;
+    let userToken = req.body.pwResetToken;
+    let hashedPassword = await userService.passwordHasher(req.body.psw);
+
+    if(userEmail && userToken && hashedPassword) {
+        let result = await userService.resetPassword(userEmail, userToken, hashedPassword);
+        if(result) {
+            res.render('sign-in', { message: "Your Password has been successfully changed!", message2: "You may now sign in." });
+        }
+        else {
+            res.redirect(303, '/userError');
+        }
+    }
+}
