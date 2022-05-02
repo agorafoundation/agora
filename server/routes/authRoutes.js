@@ -5,65 +5,128 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
-var router = express.Router();
+ var express = require( 'express' );
+ var router = express.Router( );
 
-const bodyParser = require('body-parser');
-const session = require('express-session');
-router.use(bodyParser.urlencoded({
-    extended: true
-  }));
-router.use(bodyParser.json());
+const authController = require( '../controller/authController' );
 
-// include services
-const userService = require("../service/userService");
-const productService = require("../service/productService");
 
-// check that the user is logged in!
-router.use(function (req, res, next) {
-    if(!req.session.authUser) {
-        res.redirect(303, '/signIn');
+router.route( '/signIn' )
+    .get( ( req, res ) => {
+        // see if a redirect parameter was passed and pass it through to the view to include in the sign in post.
+        if( req.query.redirect ) {
+            res.locals.redirect = req.query.redirect;
+        }
+        res.render( 'sign-in', {redirect: req.query.redirect} );
+    } )
+    .post( ( req, res ) => {
+        authController.signIn( req, res );
     }
-    else {
-        next();
+)
+
+app.route( '/signOut' )
+    .get( ( req, res ) => {
+        req.session.destroy((error) => {
+            if (error) throw error;
+            res.render('sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." });
+        });
     }
-    
-})
+)
+
+app.route( '/forgotPass' )
+    .get( ( req, res ) => {
+        res.render('user-forgot-password');
+    }
+)
+
+app.route( '/userError' )
+    .get( ( req, res ) => {
+        res.render('user-error');
+    }
+)
+
+app.route( '/resetPass' )
+    .post( ( req, res ) => {
+        authController.generateResetPasswordEmail( req, res );
+    }
+)
+
+app.route( '/resetPass/:email/:token' )
+    .get( ( req, res ) => {
+        authController.verifyResetPasswordToken( req, res );
+    }
+)
+
+app.route( '/signOut' )
+    .get( ( req, res ) => {
+        
+    }
+)
 
 
-router.route('/')
-    .get(async function (req, res) {
-        if(req.session.authUser) {
-            const authUser = await userService.setUserSession(req.session.authUser.email);
-            req.session.authUser = null;
-            req.session.authUser = authUser;
-            res.locals.authUser = req.session.authUser;
-            // get user orders
-            const orders = await productService.getOrdersByUserId(authUser.id);
 
-            // get all products ordered
-            let products = [];
-            for(let i=0; i<orders.length; i++) {
-                let product = await productService.getProductById(orders[i].productId);
-                product.status = orders[i].orderStatus;
-                products.push(product);
-            }
-            
-            if(req.session.uploadMessage) {
-                let message = req.session.uploadMessage;
-                req.session.uploadMessage = null;
-                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
-            }
-            else {
-                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
-            }
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/newPass', async (req, res) => {
+    let userEmail = req.body.pwResetEmail;
+    let userToken = req.body.pwResetToken;
+    let hashedPassword = await userService.passwordHasher(req.body.psw);
+
+    if(userEmail && userToken && hashedPassword) {
+        let result = await userService.resetPassword(userEmail, userToken, hashedPassword);
+        if(result) {
+            res.render('sign-in', { message: "Your Password has been successfully changed!", message2: "You may now sign in." });
         }
         else {
-            res.redirect(303, '/signIn');
+            res.redirect(303, '/userError');
         }
     }
+})
+
+app.get('/verifyEmail/:email/:token', async (req, res) => {
+    let userEmail = req.params.email;
+    let emailToken = req.params.token;
+    //console.log("user email: " + userEmail + " email Token: " + emailToken);
+    if(userEmail && emailToken) {
+        // verify email and token match
+        let ready = await userService.verifyEmailTokenVerifyCombo(userEmail, emailToken);
+        if(ready) {
+            req.session.destroy((error) => {
+                if (error) throw error;
+                res.render('sign-in', { message: "Your email address has been successfully verified!", message2: "Thank you for verifying your email! Please sign in." });
+            });
+        }
+        else {
+            res.redirect(303, '/userError');
+        }
+    }
+    else {
+        res.redirect(303, '/userError');
+    }
+}
 );
 
-    
+
+
+
+
+
+
+
 module.exports = router;
