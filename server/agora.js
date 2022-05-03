@@ -125,6 +125,17 @@ const dashboardRoutes = require( './routes/dashboardRoutes' );
 app.use( '/dashboard', dashboardRoutes );
 
 
+/**
+ * API Routes
+ * API master route file, requires each individual API routing file
+ */
+const apiRoutes = require( './routes/apiRoutes' );
+app.use( '/api', apiRoutes );
+
+
+
+
+
 // // goal
 // let goalRoutes = require('./routes/community/goalRoutes');
 // app.use('/community/goal', goalRoutes);
@@ -139,12 +150,6 @@ app.use( '/dashboard', dashboardRoutes );
 
 
 
-
-// /**
-//  * apis
-//  */
-// let api = require('./controller/apiController')
-// app.use('/api', api);
 
 // /**
 //  * Admin

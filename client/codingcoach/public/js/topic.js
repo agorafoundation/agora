@@ -772,24 +772,24 @@ function resourceButtonAccess() {
     }
 
     if(flag) {
-        document.getElementById('resource_submit').disabled = false;
+        document.getElementById( 'resource_submit' ).disabled = false;
     }
     else {
-        document.getElementById('resource_submit').disabled = true;
+        document.getElementById( 'resource_submit' ).disabled = true;
     }
 }
 
-function updateTopicResourceCompleteStatus(resourceId, submittedText) {
+function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
 
     // get the status of the checkbox
-    let status = document.getElementById('resource_complete_' + resourceId).checked;
+    let status = document.getElementById( 'resource_complete_' + resourceId ).checked;
 
-    fetch('/api/topic/resource', {
+    fetch( '/api/resource/completed', {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        method: 'PATCH',                                                              
+        method: 'POST',                                                              
         body: JSON.stringify( { resourceId: resourceId, status: status, submittedText: submittedText } )                                        
       }).then((res) => {
     });
