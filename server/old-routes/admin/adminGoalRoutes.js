@@ -77,7 +77,7 @@ router.route('/')
             if(err) {
                 console.log("Error uploading picture : " + err);
                 req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-                res.redirect(303, '/auth');
+                res.redirect(303, '/manageProfile');
             }
             else {
                 // save image          

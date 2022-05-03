@@ -20,17 +20,7 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 
-router.route('/:userId')
-    .get(async (req, res) => {
-        // get the user data
-        let userId = req.params.userId;
-        let user = await userService.getActiveUserById(userId);
 
-        //console.log("returned user: " + JSON.stringify(user));
-        
-        res.render('community/user', {user: user});
-    }
-);
  
 
 

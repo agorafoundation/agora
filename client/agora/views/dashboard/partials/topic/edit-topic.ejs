@@ -22,7 +22,7 @@
                 
                 if(topic) {
                     %>
-                    <form action="/dashboard" id="creatorTopicForm" enctype="multipart/form-data" method="POST">
+                    <form action="/dashboard/topic" id="creatorTopicForm" enctype="multipart/form-data" method="POST">
                         <div class="form-group">
                             <!-- topic visibility radio group -->
                             <input type="hidden" name="topicId" id="topicId" value="<%- topic.id %>" />

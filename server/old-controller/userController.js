@@ -253,7 +253,7 @@ async function updateUser (req, res) {
             req.session.reload(() => {
                 req.session.authUser = user;
 
-                res.redirect(303, "/auth");
+                res.redirect(303, "/manageProfile");
             })
 
 
@@ -379,7 +379,7 @@ router.post('/uploadProfilePicture', (req, res) => {
         if(err) {
             console.log("Error uploading profile picture : " + err);
             req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-            res.redirect(303, '/auth');
+            res.redirect(303, '/manageProfile');
         }
         else {
             // save image            
@@ -398,7 +398,7 @@ router.post('/uploadProfilePicture', (req, res) => {
                         });
                     }
                 }
-                res.redirect(303, '/auth');
+                res.redirect(303, '/manageProfile');
             })
 
             

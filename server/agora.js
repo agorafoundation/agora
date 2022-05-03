@@ -36,7 +36,6 @@ let viewPath = '../client/' + process.env.FRONT_END_NAME + '/views';
 let publicPath = 'client/' + process.env.FRONT_END_NAME + '/public';
 
 app.set('views', path.join(__dirname, viewPath));
-//app.set('views',[path.join(__dirname, '../client/views'), path.join(__dirname, '../client/views/auth')]);
 
 // open up the resources publically 
 app.use(express.static(publicPath));
@@ -107,25 +106,24 @@ app.use( '/', pageRoutes );
 const authRoutes = require( './routes/authRoutes' );
 app.use( '/', authRoutes );
 
-
-
-// /**
-//  * Authorization / Login Routes
-//  */
-// let auth = require('./routes/authRoutes');
-// app.use('/auth', auth);
-
-
-
-
-
-
 /**
  * Community routes
  */
-// base and sign-up
-// let communityRoutes = require('./routes/communityRoutes');
-// app.use('/community', communityRoutes);
+const communityRoutes = require( './routes/communityRoutes' );
+app.use( '/community', communityRoutes );
+
+/**
+ * Profile routes
+ */
+const profileRoutes = require( './routes/profileRoutes' );
+app.use( '/profile', profileRoutes );
+
+/**
+ * User Dashboard routes
+ */
+const dashboardRoutes = require( './routes/dashboardRoutes' );
+app.use( '/dashboard', dashboardRoutes );
+
 
 // // goal
 // let goalRoutes = require('./routes/community/goalRoutes');
@@ -135,17 +133,10 @@ app.use( '/', authRoutes );
 // let topicRoutes = require('./routes/community/topicRoutes');
 // app.use('/community/topic', topicRoutes);
 
-// /**
-//  * Dashboard routes
-//  */
-//  let dashboardRoutes = require('./routes/dashboardRoutes');
-//  app.use('/dashboard', dashboardRoutes);
 
-// /**
-//  * User / Profile routes
-//  */
-// let userRoutes = require('./routes/userRoutes');
-// app.use('/user', userRoutes);
+
+
+
 
 
 
