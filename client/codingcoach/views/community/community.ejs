@@ -75,7 +75,7 @@
                             <% if(!user.emailValidated){ %>
                                 <div class="alert-message alert-message-warning" role="alert">
                                     <h3 >Email not verified!</h3>
-                                    <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/api/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
+                                    <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
                                 </div>
                             <% } %>
 

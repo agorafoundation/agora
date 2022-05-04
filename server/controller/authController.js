@@ -66,7 +66,7 @@ exports.signIn = async function( req, res ) {
                             res.redirect(303, '/community');
                         }
                         else {
-                            res.redirect(303, '/manageProfile');
+                            res.redirect(303, '/profile/manageProfile');
                         }
                     }
                     else {

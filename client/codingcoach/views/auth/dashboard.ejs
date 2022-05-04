@@ -36,11 +36,11 @@
                             <% if(!user.emailValidated){ %>
                                 <div class="alert-message alert-message-warning" role="alert">
                                     <h3 >Email not verified!</h3>
-                                    <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/api/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
+                                    <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
                                 </div>
                             <% } %>
                             <section>
-                                <form action="/api/user" method="POST">
+                                <form action="/user" method="POST">
                                     <div class="form-group">
                                         <input type="hidden" name="_method" value="PATCH" />
                                         Email: <strong><%- user.email %></strong> 
@@ -191,7 +191,7 @@
                                     <p><%= uploadMessage %></p>
                                 </div>
                             <% } %>
-                            <form action="/api/user/uploadProfilePicture" method="POST" enctype="multipart/form-data" style="width: 100%;">
+                            <form action="/user/uploadProfilePicture" method="POST" enctype="multipart/form-data" style="width: 100%;">
                                 <div class="mb-2">
                                     <label for="formFile" class="form-label">Upload a profile picture (1MB Max size)</label>
                                     <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" name="profileImage">

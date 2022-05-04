@@ -14,7 +14,7 @@ const profileController = require( '../controller/profileController' );
 /**
  * Show user profile
  */
-router.route( '/:userId' )
+router.route( '/user/:userId' )
     .get(async ( req, res ) => {
         profileController.getProfile( req, res );
     }

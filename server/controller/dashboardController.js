@@ -54,6 +54,7 @@ const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
+
     let message = '';
 
     if( req.locals && req.locals.message ) {
@@ -115,7 +116,7 @@ exports.saveGoal = async function( req, res ) {
         if(err) {
             console.log("Error uploading picture : " + err);
             req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-            res.redirect(303, '/manageProfile');
+            res.redirect(303, '/profile/manageProfile');
         }
         else {
             // save image          

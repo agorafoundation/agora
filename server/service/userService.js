@@ -119,7 +119,6 @@ exports.useAccessTokensById = async function(userId, numberOfTokens) {
         let values = [ numberOfTokens, userId ];
         //console.log("taking away a token");
         try {
-             
             let response = await db.query(text, values);
             
             return true;
@@ -312,7 +311,6 @@ exports.reValidateEmail = async function(email) {
 
             //append enrolled topics
             user.enrollments = enrollments;
-            console.log("service enrollments: " + JSON.stringify(user.enrollments));
             user.topicEnrollments = topics;
 
             return user;

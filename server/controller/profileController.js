@@ -10,13 +10,14 @@
 
 // services
 const productService = require ( '../service/productService' );
-
+const userService = require( '../service/userService' );
 
 exports.getProfile = async function( req, res ) {
     // get the user data
     let userId = req.params.userId;
+    let user = null;
     if( userId >= 0 ) {
-        let user = await userService.getActiveUserById(userId);
+        user = await userService.getActiveUserById(userId);
     }
     else {
 
@@ -30,6 +31,7 @@ exports.getProfile = async function( req, res ) {
 
 
 exports.manageProfile = async function ( req, res ) {
+
     if(req.session.authUser) {
         const authUser = await userService.setUserSession(req.session.authUser.email);
         req.session.authUser = null;
