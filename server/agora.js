@@ -107,6 +107,12 @@ const authRoutes = require( './routes/authRoutes' );
 app.use( '/', authRoutes );
 
 /**
+ * User routes
+ */
+const userRoutes = require( './routes/userRoutes' );
+app.use( '/user', userRoutes )
+
+/**
  * Community routes
  */
 const communityRoutes = require( './routes/communityRoutes' );
@@ -131,6 +137,13 @@ app.use( '/dashboard', dashboardRoutes );
  */
 const apiRoutes = require( './routes/apiRoutes' );
 app.use( '/api', apiRoutes );
+
+/**
+ * Un-authorized / un-secure API Routes
+ * API master route file for open APIs, requires each individual API routing file
+ */
+ const apiUnauthRoutes = require( './routes/apiUnauthRoutes' );
+ app.use( '/open', apiUnauthRoutes );
 
 
 

@@ -27,33 +27,32 @@ router.use(function (req, res, next) {
 /**
  * Goal APIs
  */
- const goalRoutes = require('./apis/goalRoutes')
- router.use('/goal', goalRoutes);
+// const goalRoutes = require('./apis/goalRoutes')
+// router.use('/goal', goalRoutes);
 
 /**
  * Topic APIs
  */
-const topicRoutes = require('./apis/topicRoutes')
-router.use('/topic', topicRoutes);
+// const topicRoutes = require('./apis/topicRoutes')
+// router.use('/topic', topicRoutes);
 
 /**
  * Resource APIs
  */
-const resourceRoutes = require('./apis/resourceRoutes')
-router.use('/resource', resourceRoutes);
+// const resourceRoutes = require('./apis/resourceRoutes')
+// router.use('/resource', resourceRoutes);
  
 /**
  * User APIs
  */
 const userRoutes = require('./apis/userRoutes')
-router.use('/resource', userRoutes);
+router.use('/user', userRoutes);
 
-module.exports = router;
 
 /**
  * Stripe APIs
  */
 const stripeRoutes = require('./apis/stripeRoutes')
-router.use('/resource', stripeRoutes);
+router.use('/stripe', stripeRoutes);
 
 module.exports = router;
