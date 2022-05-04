@@ -60,7 +60,7 @@ router.route( '/resetPass/:email/:token' )
 )
 
 router.route( '/newPass' )
-    .get( ( req, res ) => {
+    .post( ( req, res ) => {
         authController.resetPassword( req, res );
     }
 )

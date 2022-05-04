@@ -19,7 +19,12 @@
                     <div class="divider-custom-icon"><i class="fas fa-school divider-color"></i></div>
                     <div class="divider-custom-line divider-bg-color"></div>
                 </div>
-
+                <% if(!!locals.error_message){ %>
+                    <div class="alert-message alert-message-danger" role="alert">
+                        <h3 ><%= error_message %></h3>
+                    </div>
+                    
+                <% } %>
                 <!-- About Section Content-->
                 <!--
                 <div class="row">

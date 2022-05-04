@@ -120,6 +120,14 @@ exports.generateResetPasswordEmail = async function( req, res ) {
                         pass: process.env.EMAIL_PASSWORD,
                     },
                 });
+
+                let siteUrl = "";
+                if(process.env.SITE_PORT && process.env.SITE_PORT > 0) {
+                    siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST + ':' +process.env.SITE_PORT;
+                }
+                else {
+                    siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST
+                }
     
                 const mailOptions = {
                     from: process.env.EMAIL_FROM, // sender address
@@ -127,10 +135,10 @@ exports.generateResetPasswordEmail = async function( req, res ) {
                     subject: "Reset your password", // Subject line
                     html: "<p>Hello, we hope this email finds you well!</p>"
                         + "<p>You can reset your password by clicking on "
-                        + "<strong><a href='http://codingcoach.net/resetPass/" + req.body.forgotPasswordEmail + "/" + token + "'>this link!</a></strong></p>"
+                        + "<strong><a href='" + siteUrl + "/resetPass/" + req.body.forgotPasswordEmail + "/" + token + "'>this link!</a></strong></p>"
                         + "<p>This link will expire in 24 hours!</p>"
                         + "<p>Carpe Diem!</p>"
-                        + "<p>The Coding Coach Team</p>", // plain text body
+                        + "<p>The Agora Team</p>", // plain text body
                 };
     
                 await transporter.sendMail(mailOptions, function(err, info) {
@@ -161,7 +169,6 @@ exports.generateResetPasswordEmail = async function( req, res ) {
 exports.verifyResetPasswordToken = async function ( req, res ) {
     let userEmail = req.params.email;
     let userToken = req.params.token;
-    //console.log("user email: " + userEmail + " user Token: " + userToken);
     if(userEmail && userToken) {
         // verify email and token match
         let ready = await userService.verifyEmailTokenResetCombo(userEmail, userToken);
@@ -169,13 +176,15 @@ exports.verifyResetPasswordToken = async function ( req, res ) {
             // show reset page
             res.render('user-reset-password', {email: userEmail, token: userToken});
         }
+        else {
+            res.render('user-error', {error_message: "Token was not valid."});
+        }
     }
 }
 
 exports.verifyEmailWithToken = async function( req, res ) {
     let userEmail = req.params.email;
     let emailToken = req.params.token;
-    //console.log("user email: " + userEmail + " email Token: " + emailToken);
     if(userEmail && emailToken) {
         // verify email and token match
         let ready = await userService.verifyEmailTokenVerifyCombo(userEmail, emailToken);
