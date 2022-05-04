@@ -10,6 +10,7 @@
 // services
 const goalService = require( '../service/goalService' );
 const eventService = require( '../service/eventService' );
+const productService = require ( '../service/productService' );
 
 exports.getCommunityDashboard = async function( req, res ) {
 
