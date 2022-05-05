@@ -40,12 +40,7 @@ router.route( '/' )
     }
 );
 
-// should this just be an API call (not a page route) (or make one?? )
-router.route( '/goal' )
-    .post( ( req, res ) => { 
-        dashboardController.saveGoal( req, res );
-    }
-)
+
 
 
 

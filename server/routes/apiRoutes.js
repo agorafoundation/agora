@@ -27,8 +27,8 @@ router.use(function (req, res, next) {
 /**
  * Goal APIs
  */
-// const goalRoutes = require('./apis/goalRoutes')
-// router.use('/goal', goalRoutes);
+const goalRoutes = require('./apis/goalRoutes')
+router.use('/goal', goalRoutes);
 
 /**
  * Topic APIs
