@@ -11,7 +11,7 @@ var router = express.Router( );
 //dependencies 
  
 // controllers
-const goalController = require( '../../controller/goalController' );
+const goalController = require( '../../controller/apis/goalController' );
 
 
 // should this just be an API call (not a page route) (or make one?? )

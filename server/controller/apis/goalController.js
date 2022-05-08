@@ -13,6 +13,9 @@ let path = require( 'path' );
 // import models
 const Goal = require( '../../model/goal' );
 
+// import util Models
+const ApiResponse = require( '../../model/util/ApiResonse' );
+
 // import services
 const goalService = require( '../../service/goalService' );
 
@@ -49,13 +52,28 @@ let storage = multer.diskStorage({
 let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'goalImage' );
 // end multer
 
+
+exports.getAllGoals( req, res ) {
+    // get all the goals for this owner
+    let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
+    //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
+    let goal = null;
+    
+    //res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal});
+}
+
 exports.saveGoal = async function( req, res ) {
     upload(req, res, (err) => {
+        let messageTitle = null;
+        let messageBody = null;
+        let errorTitle = null;
+        let errorBody = null;
 
         if(err) {
             console.log("Error uploading picture : " + err);
-            req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-            res.redirect(303, '/profile/manageProfile');
+            errorTitle += "Error Uploading Image <br />";
+            errorBody += "File size was larger the 1MB, please use a smaller file. <br />";
+            //res.redirect(303, '/profile/manageProfile');
         }
         else {
             // save image          
@@ -72,40 +90,54 @@ exports.saveGoal = async function( req, res ) {
             // get the existing data
             if(goal.id) {
 
-                goalService.getMostRecentGoalById(goal.id).then((dbGoal) => {
-                    goal.id = dbGoal.id;
-                    goal.goalImage = dbGoal.goalImage
+                let mostRecentGoal = await goalService.getMostRecentGoalById( goal.id );
 
-                    if(req.session.savedGoalFileName) {
-                        goal.goalImage = req.session.savedGoalFileName;
-                    } 
+                goal.id = mostRecentGoal.id;
+                goal.goalImage = mostRecentGoal.goalImage
 
-                    goal.ownedBy = req.session.authUser.id;
-                    goalService.saveGoal(goal).then((savedGoal) => {
-                        res.locals.message = "Goal Saved Successfully";
+                if(req.session.savedGoalFileName) {
+                    goal.goalImage = req.session.savedGoalFileName;
+                } 
 
-                        // get the pathway
-                        let pathway = null;
-                        if(req.body.pathway) {
-                            pathway = req.body.pathway.split(",");
-                            goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
-                        }
-                        //console.log("checkin that the pathway was recieved: " + JSON.stringify(pathway));
-                    });
-
-                });
+                goal.ownedBy = req.session.authUser.id;
+                let goal = await goalService.saveGoal( );
+                if( goal ) {
+                    messageTitle = "Goal Updated";
+                    messageBody = "Goal " + goal.goalName + " updated successfully!";
+                }
+                else {
+                    errorTitle += "Error updating Goal <br />";
+                    errorBody += "There was a problem updating the goal. <br />";
+                }
+                
+                // get the pathway
+                let pathway = null;
+                if(req.body.pathway) {
+                    pathway = req.body.pathway.split(",");
+                    goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
+                }
             }
             else {
                 
                 goal.ownedBy = req.session.authUser.id; 
 
-                goalService.saveGoal(goal).then((savedGoal) => {
-                    res.locals.message = "Goal Saved Successfully";
-                });
+                let goal = await goalService.saveGoal( goal );
+                if( goal ) {
+                    messageTitle = "Goal Saved";
+                    messageBody = "Goal " + goal.goalName + " saved successfully!";
+                }
+                else {
+                    errorTitle += "Error saving Goal <br />";
+                    errorBody += "There was a problem saving the goal. <br />";
+                }
 
             }
             
-            res.redirect(303, '/dashboard');
+            //res.redirect(303, '/dashboard');
+
+            // create the ApiResponse
+            const apiRes = ApiResponse.createApiResponse( goal, )
+            res.send(JSON.stringify())
 
         }  
     });
