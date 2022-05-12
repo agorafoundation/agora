@@ -53,7 +53,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 // end multer
 
 
-exports.getAllGoals( req, res ) {
+exports.getAllGoals = async function ( req, res ) {
     // get all the goals for this owner
     let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
     //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
@@ -62,12 +62,30 @@ exports.getAllGoals( req, res ) {
     //res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal});
 }
 
+/**
+ * Saves a goal
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.saveGoal = async function( req, res ) {
+    let messageTitle = null;
+    let messageBody = null;
+    let errorTitle = null;
+    let errorBody = null;
+
+    let goal = Goal.emptyGoal();
+    goal.id = req.body.goalId;
+
+    goal.visibility = req.body.goalVisibility;
+    goal.goalName = req.body.goalName;
+    goal.goalDescription = req.body.goalDescription;
+    goal.active = ( req.body.goalActive == "on" ) ? true : false;
+    goal.completable = ( req.body.goalCompletable == "on") ? true : false;
+    
+    let mostRecentGoal = await goalService.getMostRecentGoalById( goal.id );
+
     upload(req, res, (err) => {
-        let messageTitle = null;
-        let messageBody = null;
-        let errorTitle = null;
-        let errorBody = null;
+        
 
         if(err) {
             console.log("Error uploading picture : " + err);
@@ -78,19 +96,9 @@ exports.saveGoal = async function( req, res ) {
         else {
             // save image          
                 
-            let goal = Goal.emptyGoal();
-            goal.id = req.body.goalId;
-
-            goal.visibility = req.body.goalVisibility;
-            goal.goalName = req.body.goalName;
-            goal.goalDescription = req.body.goalDescription;
-            goal.active = ( req.body.goalActive == "on" ) ? true : false;
-            goal.completable = ( req.body.goalCompletable == "on") ? true : false;
             
             // get the existing data
             if(goal.id) {
-
-                let mostRecentGoal = await goalService.getMostRecentGoalById( goal.id );
 
                 goal.id = mostRecentGoal.id;
                 goal.goalImage = mostRecentGoal.goalImage
@@ -100,37 +108,41 @@ exports.saveGoal = async function( req, res ) {
                 } 
 
                 goal.ownedBy = req.session.authUser.id;
-                let goal = await goalService.saveGoal( );
-                if( goal ) {
-                    messageTitle = "Goal Updated";
-                    messageBody = "Goal " + goal.goalName + " updated successfully!";
-                }
-                else {
-                    errorTitle += "Error updating Goal <br />";
-                    errorBody += "There was a problem updating the goal. <br />";
-                }
+                //let goal = await goalService.saveGoal( );
+                goalService.saveGoal( goal ).then( (goal ) => {
+                    if( goal ) {
+                        messageTitle = "Goal Updated";
+                        messageBody = "Goal " + goal.goalName + " updated successfully!";
+                    }
+                    else {
+                        errorTitle += "Error updating Goal <br />";
+                        errorBody += "There was a problem updating the goal. <br />";
+                    }
+                    
+                    // get the pathway
+                    let pathway = null;
+                    if(req.body.pathway) {
+                        pathway = req.body.pathway.split(",");
+                        goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
+                    }
+                })
                 
-                // get the pathway
-                let pathway = null;
-                if(req.body.pathway) {
-                    pathway = req.body.pathway.split(",");
-                    goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
-                }
             }
             else {
                 
                 goal.ownedBy = req.session.authUser.id; 
 
-                let goal = await goalService.saveGoal( goal );
-                if( goal ) {
-                    messageTitle = "Goal Saved";
-                    messageBody = "Goal " + goal.goalName + " saved successfully!";
-                }
-                else {
-                    errorTitle += "Error saving Goal <br />";
-                    errorBody += "There was a problem saving the goal. <br />";
-                }
-
+                // let goal = await goalService.saveGoal( goal );
+                goalService.saveGoal( goal ).then( ( goal ) => {
+                    if( goal ) {
+                        messageTitle = "Goal Saved";
+                        messageBody = "Goal " + goal.goalName + " saved successfully!";
+                    }
+                    else {
+                        errorTitle += "Error saving Goal <br />";
+                        errorBody += "There was a problem saving the goal. <br />";
+                    }
+                }) ;
             }
             
             //res.redirect(303, '/dashboard');

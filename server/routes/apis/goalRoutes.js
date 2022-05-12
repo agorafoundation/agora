@@ -16,7 +16,13 @@ const goalController = require( '../../controller/apis/goalController' );
 
 // should this just be an API call (not a page route) (or make one?? )
 router.route( '/goal' )
+    .get(async function (req, res) {
+        goalController.getAllGoals( req, res );
+    
+    })    
     .post( ( req, res ) => { 
         goalController.saveGoal( req, res );
     }
 )
+
+module.exports = router;
