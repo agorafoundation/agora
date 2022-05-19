@@ -1,4 +1,22 @@
 /**
+ * This file is a massive TODO 
+ * This was all the logic originally in Coding Coach's topicRoutes.js
+ * It handled all of the routing and controller code (was not broken out)
+ * for the lesson process.  At this time this was simply called Topic
+ * as the primary purpose for topic was to enroll and take as a class
+ * now topics are stand alone and make just represent an organizational 
+ * structure
+ * 
+ * This should be re-visited when I get to re-implementing the process of 
+ * enrolling in a goal and taking a topic.
+ * 
+ * One of the first questions should be to determine if this is actually an
+ * API router / controller or a page router / controller or some combination
+ * thereof. I think this will be more clear once the actual goal, toic and
+ * resource API routes and controllers are built out.
+ */
+
+/**
  * Agora - Close the loop
  * © 2021-2022 Brian Gormanly
  * BSD 3-Clause License
@@ -30,19 +48,7 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 
-// check that the user is logged in!
-router.use(function (req, res, next) {
-    if(!req.session.authUser) {
-        if(req.query.redirect) {
-            res.locals.redirect = req.query.redirect;
-        }
-        res.render('user-signup');
-    }
-    else {
-        next();
-    }
-    
-})
+
 
 
 /**

@@ -1,4 +1,13 @@
 /**
+ * This file is another TODO to return to when there is time to recollect on how to 
+ * build out GitHub API integration.  This file currently contains what would be 
+ * broken out into a GitHubRoute and GitHubController for the API calls.
+ * 
+ * This will likely be the last one addressed. There are no current concrete needs for this
+ * in the MVP. So this is really historical for context when getting back into it.
+ */
+
+/**
  * Agora - Close the loop
  * © 2021-2022 Brian Gormanly
  * BSD 3-Clause License
@@ -10,8 +19,8 @@ console.log(process.env.GITHUB_COLLABORATORS);
 const fetch = require('node-fetch');
 const crypto = require('crypto');
 
-const service = require("../service/sponsorship");
-const sponsor = require("../model/ghSponsor");
+const service = require("../../service/sponsorship");
+const sponsor = require("../../model/ghSponsor");
 
 exports.sponsorship = async function(req, res) {
 	console.log("Request Recieved");

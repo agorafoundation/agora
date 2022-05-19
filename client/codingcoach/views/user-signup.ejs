@@ -45,9 +45,9 @@
                             <section>
 
                                 <% if(locals.redirect) { %>
-                                <form action="/api/user?redirect=<%- locals.redirect %>" method="POST">
+                                <form action="/user?redirect=<%- locals.redirect %>" method="POST">
                                 <% } else { %>
-                                <form action="/api/user" method="POST">
+                                <form action="/user" method="POST">
                                 <% } %>
                                     <% if(!!locals.error_message){ %>
                                         <div class="alert-message alert-message-notice" role="alert">

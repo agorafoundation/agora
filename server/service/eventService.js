@@ -5,8 +5,13 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// database connection
+
+// import models
+
+
+// any cross services required
 const userService = require('../service/userService');
-//const topicService = require('../service/topicService');
 const goalService = require('../service/goalService');
 
 exports.communityEventFeed = async function(limit) {

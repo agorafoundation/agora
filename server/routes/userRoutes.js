@@ -5,33 +5,44 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
-var router = express.Router();
- 
- 
- // require services
- //const goalService = require('../../service/goalService');
-const userService = require('../service/userService');
- 
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
-    extended: true
-}));
-router.use(bodyParser.json());
+const express = require( 'express' );
+const router = express.Router( );
 
 
-router.route('/:userId')
-    .get(async (req, res) => {
-        // get the user data
-        let userId = req.params.userId;
-        let user = await userService.getActiveUserById(userId);
+// const bodyParser = require('body-parser');
+// router.use(bodyParser.urlencoded({
+//     extended: true
+//   }));
+// router.use(bodyParser.json());
 
-        //console.log("returned user: " + JSON.stringify(user));
+// controllers
+const userController = require( '../controller/userController');
+
+
+router.route( '/' )
+    .patch( async function( req, res ) {
+        userController.updateUser( req, res );
+    })
+
+    .post( async function( req, res ) {
+        userController.createUser( req, res );
         
-        res.render('community/user', {user: user});
     }
 );
- 
+
+// verify email existence
+router.route( '/revalidate/:email' )
+    .get(async function(req, res) {
+        userController.reValidateEmail( req, res );
+    }
+);
+
+router.route( '/uploadProfilePicture' )
+    .post( ( req, res ) => {
+        userController.uploadProfileImage( req, res );
+    }
+)
+
 
 
 module.exports = router;

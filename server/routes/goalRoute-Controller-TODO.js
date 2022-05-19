@@ -1,4 +1,19 @@
 /**
+ * This file is a massive TODO 
+ * This was all the logic originally in Coding Coach's goalRoutes.js
+ * It handled all of the routing and controller code (was not broken out)
+ * for the goal lesson process.  Now goals are stand alone and make just 
+ * represent an organizational structure. The "enrollment" process will
+ * have to be re-thoughtout as part of the merger with Agora, at which
+ * time I should revisit this code.
+ * 
+ * One of the first questions should be to determine if this is actually an
+ * API router / controller or a page router / controller or some combination
+ * thereof. I think this will be more clear once the actual goal, toic and
+ * resource API routes and controllers are built out.
+ */
+
+/**
  * Agora - Close the loop
  * © 2021-2022 Brian Gormanly
  * BSD 3-Clause License

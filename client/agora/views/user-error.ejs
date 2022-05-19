@@ -19,7 +19,12 @@
                     <div class="divider-custom-icon"><i class="fas fa-school divider-color"></i></div>
                     <div class="divider-custom-line divider-bg-color"></div>
                 </div>
-
+                <% if(!!locals.error_message){ %>
+                    <div class="alert-message alert-message-danger" role="alert">
+                        <h3 ><%= error_message %></h3>
+                    </div>
+                    
+                <% } %>
                 <!-- About Section Content-->
                 <!--
                 <div class="row">
@@ -32,7 +37,7 @@
                     <div id="story1" class="row justify-content-left">
                         <div class="col-lg-7">
                             <h2>oops!! Something went wrong... :(</h2>
-                            <p>If you are looking to manage your account check here: <a href='/auth'>Manage Account</a></p>
+                            <p>If you are looking to manage your account check here: <a href='/profile/manageProfile'>Manage Account</a></p>
                             <p>If you are trying to create an account click here: <a href='/community'>Create Account</a></p>
                         </div>
                         <div class="col-lg-5">

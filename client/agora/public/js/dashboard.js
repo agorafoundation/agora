@@ -1,6 +1,6 @@
 
 
-if(document.getElementsByName( 'topicType' ) ) {
+if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'topicType' ).length > 0 ) {
 
     if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
         console.log('1');

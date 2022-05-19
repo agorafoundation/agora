@@ -5,65 +5,71 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
-var router = express.Router();
+var express = require( 'express' );
+var router = express.Router( );
 
-const bodyParser = require('body-parser');
-const session = require('express-session');
-router.use(bodyParser.urlencoded({
-    extended: true
-  }));
-router.use(bodyParser.json());
-
-// include services
-const userService = require("../service/userService");
-const productService = require("../service/productService");
-
-// check that the user is logged in!
-router.use(function (req, res, next) {
-    if(!req.session.authUser) {
-        res.redirect(303, '/signIn');
-    }
-    else {
-        next();
-    }
-    
-})
+// controllers
+const authController = require( '../controller/authController' );
 
 
-router.route('/')
-    .get(async function (req, res) {
-        if(req.session.authUser) {
-            const authUser = await userService.setUserSession(req.session.authUser.email);
-            req.session.authUser = null;
-            req.session.authUser = authUser;
-            res.locals.authUser = req.session.authUser;
-            // get user orders
-            const orders = await productService.getOrdersByUserId(authUser.id);
 
-            // get all products ordered
-            let products = [];
-            for(let i=0; i<orders.length; i++) {
-                let product = await productService.getProductById(orders[i].productId);
-                product.status = orders[i].orderStatus;
-                products.push(product);
-            }
-            
-            if(req.session.uploadMessage) {
-                let message = req.session.uploadMessage;
-                req.session.uploadMessage = null;
-                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
-            }
-            else {
-                res.render('./auth/dashboard', { authUser: authUser, user: authUser, products: products });
-            }
-            
+router.route( '/signIn' )
+    .get( ( req, res ) => {
+        // see if a redirect parameter was passed and pass it through to the view to include in the sign in post.
+        if( req.query.redirect ) {
+            res.locals.redirect = req.query.redirect;
         }
-        else {
-            res.redirect(303, '/signIn');
-        }
+        res.render( 'sign-in', {redirect: req.query.redirect} );
+    } )
+    .post( ( req, res ) => {
+        authController.signIn( req, res );
     }
-);
+)
 
-    
+router.route( '/signOut' )
+    .get( ( req, res ) => {
+        req.session.destroy((error) => {
+            if (error) throw error;
+            res.render('sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." });
+        });
+    }
+)
+
+router.route( '/forgotPass' )
+    .get( ( req, res ) => {
+        res.render('user-forgot-password');
+    }
+)
+
+router.route( '/userError' )
+    .get( ( req, res ) => {
+        res.render('user-error');
+    }
+)
+
+router.route( '/resetPass' )
+    .post( ( req, res ) => {
+        authController.generateResetPasswordEmail( req, res );
+    }
+)
+
+router.route( '/resetPass/:email/:token' )
+    .get( ( req, res ) => {
+        authController.verifyResetPasswordToken( req, res );
+    }
+)
+
+router.route( '/newPass' )
+    .post( ( req, res ) => {
+        authController.resetPassword( req, res );
+    }
+)
+
+router.route( '/verifyEmail/:email/:token' )
+    .get( ( req, res ) => {
+        authController.verifyEmailWithToken( req, res );
+    }
+)
+
+
 module.exports = router;

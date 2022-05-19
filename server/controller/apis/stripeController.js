@@ -5,36 +5,23 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
-var router = express.Router();
-
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
-    extended: true
-  }));
-router.use(bodyParser.json());
-
 //const stripe = require('stripe')(`${process.env.STRIPE_TEST_KEY}`);
 const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
 const YOUR_DOMAIN = `${process.env.SITE_PROTOCOL}${process.env.SITE_HOST}:${process.env.SITE_PORT}`;
 
 // import services
-const userService = require("../service/userService");
-const productService = require("../service/productService");
-const stripeService = require("../service/stripeService");
+const userService = require("../../service/userService");
+const productService = require("../../service/productService");
+const stripeService = require("../../service/stripeService");
 
 // import models
-const Order = require("../model/order");
-const UserRole = require("../model/userRole");
+const Order = require("../../model/order");
+const UserRole = require("../../model/userRole");
 
-/**
- * Stripe API calls and related routes
- */
 
-/**
- * Stripe checkout sessions
- */
-router.post('/cb1-checkout-session', async (req, res) => {
+
+
+exports.checkoutCb1 = async function( res, req ) {
     //console.log(req.session.authUser)
     let coupon = req.body.checkoutcoupon;
     console.log("coupon sent : " + coupon);
@@ -109,13 +96,9 @@ router.post('/cb1-checkout-session', async (req, res) => {
             res.render('codebot', { message: "There was a problem going to checkout."});
         }
     }
-    
-    
+}
 
-  
-});
-
-router.post('/founders-checkout-session', async (req, res) => {
+exports.checkoutFounders = async function( req, res ) {
     //console.log(req.session.authUser)
     const session = await stripe.checkout.sessions.create({
         customer: req.session.authUser.stripeId,
@@ -134,12 +117,9 @@ router.post('/founders-checkout-session', async (req, res) => {
         cancel_url: `${YOUR_DOMAIN}/api/stripe/founders-cancel`,
     });
   res.redirect(303, session.url);
-});
+}
 
-router.route('/')
-module.exports = router;
-
-router.post('/access-token-checkout-session', async (req, res) => {
+exports.checkoutToken = async function( req, res ) {
     //console.log(req.session.authUser)
     const session = await stripe.checkout.sessions.create({
         customer: req.session.authUser.stripeId,
@@ -157,15 +137,12 @@ router.post('/access-token-checkout-session', async (req, res) => {
         success_url: `${YOUR_DOMAIN}/api/stripe/access-token-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${YOUR_DOMAIN}/api/stripe/access-token-cancel`,
     });
-  res.redirect(303, session.url);
-});
+    res.redirect(303, session.url);
+}
 
 
-/**
- * Success routes
- */
-router.get('/cb1-success', async function (req, res) {
 
+exports.successCb1 = async function( req, res ) {
     if(req.query.session_id) {
         const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
         const customer = await stripe.customers.retrieve(session.customer);
@@ -194,10 +171,9 @@ router.get('/cb1-success', async function (req, res) {
     }
     
     res.render('purchase/codebot1-success');
-});
+}
 
-router.get('/founders-success', async function (req, res) {
-
+exports.successFounders = async function( req, res ) {
     if(req.query.session_id) {
         const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
         const customer = await stripe.customers.retrieve(session.customer);
@@ -249,10 +225,9 @@ router.get('/founders-success', async function (req, res) {
     
     //res.render('purchase/founders-success', {root: './client/views' });
     res.render('purchase/founders-success');
-});
+}
 
-router.get('/access-token-success', async function (req, res) {
-
+exports.successToken = async function( req, res ) {
     if(req.query.session_id) {
         const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
         const customer = await stripe.customers.retrieve(session.customer);
@@ -289,30 +264,4 @@ router.get('/access-token-success', async function (req, res) {
     
     //res.render('purchase/access-token-success', {root: './client/views' })
     res.render('purchase/access-token-success');
-});
-
-
-/**
- * Failure Routes
- */
-router.get('/cb1-cancel', function (req, res) {
-    //res.render('purchase/codebot1-cancel', {root: './client/views' });
-    res.render('purchase/codebot1-cancel');
-});
-
-router.get('/founders-cancel', function (req, res) {
-    //res.render('purchase/founders-cancel', {root: './client/views' });
-    res.render('purchase/founders-cancel');
-});
-
-router.get('/access-token-cancel', function (req, res) {
-    //res.render('purchase/access-token-cancel', {root: './client/views' });
-    res.render('purchase/access-token-cancel');
-});
-
-
-
-
-
-router.route('/')
-module.exports = router;
+}

@@ -1,0 +1,45 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2022 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
+
+// dependencies
+
+// services
+const goalService = require( '../service/goalService' );
+const eventService = require( '../service/eventService' );
+const productService = require ( '../service/productService' );
+
+exports.getCommunityDashboard = async function( req, res ) {
+
+    res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
+    // get all the current goals and topics to display
+    const availableGoals = await goalService.getAllActiveGoalsWithTopics( );
+
+    // get the events feed
+    const feed = await eventService.communityEventFeed( 10 );
+
+    res.render( 'community/community', {user: req.session.authUser, availableGoals: availableGoals, feed: feed} );
+}
+
+exports.joinPage = async function( req, res ) {
+    if(req.session.authUser) {
+        let user = req.session.authUser;
+        
+        // get products to send to page (founders membership and tokens)
+        const products = await productService.getAllActviteTokenAndMembershipProductsWithImages( );
+
+        // user does not currently have membership or tokens, redirct to join
+        res.render( 'community/join', { products: products, user:user } );
+    }
+    else {
+        // get products to send to page (founders membership and tokens)
+        const products = await productService.getAllActviteTokenAndMembershipProductsWithImages( );
+
+        // user does not currently have membership or tokens, redirct to join
+        res.render( 'community/join', { products: products });
+    }
+}
