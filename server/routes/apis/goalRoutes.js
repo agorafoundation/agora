@@ -25,12 +25,20 @@ router.route( '/' )
     }
 )
 
-// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
-router.route( '/authUser' )
+// goals /api/v1/auth/goals
+router.route( '/:id' )
     .get(async function (req, res) {
-        goalController.getAllGoalsForAuthUser( req, res );
+        goalController.getGoalById( req, res );
     
     }
 );
+
+// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
+// router.route( '/authUser' )
+//     .get(async function (req, res) {
+//         goalController.getAllGoalsForAuthUser( req, res );
+    
+//     }
+// );
 
 module.exports = router;

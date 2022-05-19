@@ -64,13 +64,21 @@ exports.getAllActiveGoals = async function ( req, res ) {
 }
 
 exports.getGoalById = async function ( req, res ) {
-    // get all the active goals
-    let goals = await goalService.getAllActiveGoals();
+    // get all the active goals by user 
+    let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
+    if(goal) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned goal by id" );
+        res.status( 200 ).json( goal );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Goal not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Goal not found" );
+        res.status( 404 ).json( message );
+    }
     
-    const message = ApiMessage.createApiMessage( 200, "Success", "getAllGoals call" );
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all goals" );
-    res.status( 200 ).json( goals );
+    
 }
 
 exports.getAllGoalsForAuthUser = async function ( req, res ) {

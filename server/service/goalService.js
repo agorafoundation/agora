@@ -16,8 +16,6 @@ const GoalEnrollment = require("../model/goalEnrollment");
 const Event = require('../model/event');
 
 
-
-
 /**
  * Retrieves all active goals with the highest version number
  * @returns All active goals as a list
@@ -164,7 +162,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
 
 
     try {
-        let goal = "";
+        let goal = null;
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
@@ -187,6 +185,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
             goal.topics = topics;
                
         }
+
         return goal;
         
     }
