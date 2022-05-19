@@ -135,15 +135,15 @@ app.use( '/dashboard', dashboardRoutes );
  * API Routes
  * API master route file, requires each individual API routing file
  */
-const apiRoutes = require( './routes/apiRoutes' );
-app.use( '/api', apiRoutes );
+const apiAuthRoutes = require( './routes/apiAuthRoutes' );
+app.use( '/api/v1/auth', apiAuthRoutes );
 
 /**
  * Un-authorized / un-secure API Routes
  * API master route file for open APIs, requires each individual API routing file
  */
  const apiUnauthRoutes = require( './routes/apiUnauthRoutes' );
- app.use( '/open', apiUnauthRoutes );
+ app.use( '/api/v1/open', apiUnauthRoutes );
 
 
 

@@ -14,7 +14,7 @@ let path = require( 'path' );
 const Goal = require( '../../model/goal' );
 
 // import util Models
-const ApiResponse = require( '../../model/util/ApiResonse' );
+const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import services
 const goalService = require( '../../service/goalService' );
@@ -53,13 +53,34 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 // end multer
 
 
-exports.getAllGoals = async function ( req, res ) {
+exports.getAllActiveGoals = async function ( req, res ) {
+    // get all the active goals
+    let goals = await goalService.getAllActiveGoalsWithTopics();
+    
+    const message = ApiMessage.createApiMessage( 200, "Success", "getAllGoals call" );
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+exports.getGoalById = async function ( req, res ) {
+    // get all the active goals
+    let goals = await goalService.getAllActiveGoals();
+    
+    const message = ApiMessage.createApiMessage( 200, "Success", "getAllGoals call" );
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+exports.getAllGoalsForAuthUser = async function ( req, res ) {
     // get all the goals for this owner
     let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
-    //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
-    let goal = null;
-    
-    //res.render('./admin/adminGoal', {ownerGoals: ownerGoals, goal: goal});
+
+    const message = ApiMessage.createApiMessage( 200, "Success", "getAllGoalsForAuthUser call" );
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals for user" );
+    res.status( 200 ).json( ownerGoals );
 }
 
 /**
@@ -147,9 +168,11 @@ exports.saveGoal = async function( req, res ) {
             
             //res.redirect(303, '/dashboard');
 
-            // create the ApiResponse
-            const apiRes = ApiResponse.createApiResponse( goal, )
-            res.send(JSON.stringify())
+            // create the ApiMessage
+            const apiRes = ApiMessage.createApiMessage( goal, 200, "Success", "Goal Saved");
+
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.send(JSON.stringify(apiRes));
 
         }  
     });

@@ -8,27 +8,33 @@
 var express = require('express');
 var router = express.Router();
 
+// import util Models
+const ApiMessage = require( '../model/util/ApiMessage' );
+
 // check that the user is logged in!
 // Currently by being here all APIs should require an athenicated user to work
 router.use(function (req, res, next) {
     if(!req.session.authUser) {
-        if(req.query.redirect) {
-            res.locals.redirect = req.query.redirect;
-        }
-        res.render('user-signup');
+        // create the ApiMessage
+        const apiRes = ApiMessage.createApiMessage( 401, "Unauthorized", "API requires authentication");
+        
+        res.set("x-agora-message-title", "Unauthorized");
+        res.set("x-agora-message-detail", "API requires authentication");
+        res.status(401).json(apiRes);
+        //res.send();
     }
     else {
         next();
     }
     
-})
+});
 
 
 /**
  * Goal APIs
  */
 const goalRoutes = require('./apis/goalRoutes')
-router.use('/goal', goalRoutes);
+router.use('/goals', goalRoutes);
 
 /**
  * Topic APIs

@@ -14,15 +14,23 @@ var router = express.Router( );
 const goalController = require( '../../controller/apis/goalController' );
 
 
-// should this just be an API call (not a page route) (or make one?? )
-router.route( '/goal' )
+// goals /api/v1/auth/goals
+router.route( '/' )
     .get(async function (req, res) {
-        goalController.getAllGoals( req, res );
+        goalController.getAllActiveGoals( req, res );
     
     })    
     .post( ( req, res ) => { 
         goalController.saveGoal( req, res );
     }
 )
+
+// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
+router.route( '/authUser' )
+    .get(async function (req, res) {
+        goalController.getAllGoalsForAuthUser( req, res );
+    
+    }
+);
 
 module.exports = router;

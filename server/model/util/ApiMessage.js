@@ -9,16 +9,14 @@
  * Wrapper for Agora API responses. Payload contains data to be transported, message and error provide unified 
  * mechanism for communnication with UI or API client.
  */
-class ApiResponse {
-    constructor ( payload, messageTitle, messageBody, errorTitle, errorBody ) {
-        this.payload = payload;
+class ApiMessage {
+    constructor ( statusCode, messageTitle, messageBody ) {
+        this.statusCode = statusCode;
         this.messageTitle = messageTitle;
         this.messageBody = messageBody;
-        this.errorTitle = errorTitle;
-        this.errorBody = errorBody;
     }
 }
 
-exports.createApiResponse = ( payload, messageTitle, messageBody, errorTitle, errorBody ) => {
-    return new ApiResponse( payload, messageTitle, messageBody, errorTitle, errorBody );
+exports.createApiMessage = ( statusCode, messageTitle, messageBody ) => {
+    return new ApiMessage( statusCode, messageTitle, messageBody );
 }
