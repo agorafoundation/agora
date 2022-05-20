@@ -94,7 +94,7 @@ if(manageEmail) {
 
 function validateCheckExistsMain(email, username, runOnce) {
     if(validateEmail(email)) {
-        fetch('/open/verifyEmail/' + email).then((res) => {
+        fetch('/api/v1/open/verifyEmail/' + email).then((res) => {
             //console.log("2: sending email: " + email);
             res.json().then((data) => {
                 //console.log("3: email returned: " + data);
@@ -127,7 +127,7 @@ function validateCheckExistsMain(email, username, runOnce) {
 
 function validateCheckExistsUsername(username, email, runOnce) {
     if(validateUsername(username)) {
-        fetch('/open/verifyUsername/' + username).then((res) => {
+        fetch('/api/v1/open/verifyUsername/' + username).then((res) => {
             res.json().then((data) => {
                 if(data) {
                     //console.log("data returned: " + data);
