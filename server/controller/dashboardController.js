@@ -19,7 +19,7 @@ const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
-
+    console.log("Loading Dashboard");
     let message = '';
 
     if( req.locals && req.locals.message ) {
@@ -75,7 +75,66 @@ exports.getDashboard = async function( req, res ) {
     }
 }
 
-exports.saveGoal = async function( req, res ) {
+// exports.saveGoal = async function( req, res ) {
     
+//     upload(req, res, (err) => {
 
-}
+//         if(err) {
+//             console.log("Error uploading picture : " + err);
+//             req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
+//             res.redirect(303, '/profile/manageProfile');
+//         }
+//         else {
+//             // save image          
+                
+//             let goal = Goal.emptyGoal();
+//             goal.id = req.body.goalId;
+
+//             goal.goalName = req.body.goalName;
+//             goal.goalDescription = req.body.goalDescription;
+//             goal.active = ( req.body.goalActive == "on" ) ? true : false;
+//             goal.completable = ( req.body.goalCompletable == "on") ? true : false;
+            
+//             // get the existing data
+//             if(goal.id) {
+
+//                 goalService.getMostRecentGoalById(goal.id).then((dbGoal) => {
+//                     goal.id = dbGoal.id;
+//                     goal.goalImage = dbGoal.goalImage
+
+//                     if(req.session.savedGoalFileName) {
+//                         goal.goalImage = req.session.savedGoalFileName;
+//                     } 
+
+//                     goal.ownedBy = req.session.authUser.id;
+//                     goalService.saveGoal(goal).then((savedGoal) => {
+//                         res.locals.message = "Goal Saved Successfully";
+
+//                         // get the pathway
+//                         let pathway = null;
+//                         if(req.body.pathway) {
+//                             pathway = req.body.pathway.split(",");
+//                             goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
+//                         }
+//                         //console.log("checkin that the pathway was recieved: " + JSON.stringify(pathway));
+//                     });
+
+//                 });
+//             }
+//             else {
+                
+//                 goal.ownedBy = req.session.authUser.id; 
+
+//                 goalService.saveGoal(goal).then((savedGoal) => {
+//                     res.locals.message = "Goal Saved Successfully";
+//                 });
+
+//             }
+            
+//             res.redirect(303, '/a/goal/' + goal.id);
+
+//         }  
+//     });
+
+
+// }

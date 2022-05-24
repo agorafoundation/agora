@@ -20,7 +20,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 const goalService = require( '../../service/goalService' );
 
 // set up file paths for user profile images
-let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
+let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
 let FRONT_END = process.env.FRONT_END_NAME;
 let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
 
@@ -96,7 +96,9 @@ exports.getAllGoalsForAuthUser = async function ( req, res ) {
  * @param {*} req 
  * @param {*} res 
  */
-exports.saveGoal = async function( req, res ) {
+exports.saveGoal = async function( req, res, redirect ) {
+    console.log("saving goal");
+    console.log( " body has: " + JSON.stringify(req.body) );
     let messageTitle = null;
     let messageBody = null;
     let errorTitle = null;
@@ -111,7 +113,9 @@ exports.saveGoal = async function( req, res ) {
     goal.active = ( req.body.goalActive == "on" ) ? true : false;
     goal.completable = ( req.body.goalCompletable == "on") ? true : false;
     
-    let mostRecentGoal = await goalService.getMostRecentGoalById( goal.id );
+    let existingGoal = await goalService.getMostRecentGoalById( goal.id );
+    console.log( "most recent goal:" + JSON.stringify(existingGoal) + " goal: " + JSON.stringify( goal ) );
+    console.log( "image path: " + UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH );
 
     upload(req, res, (err) => {
         
@@ -127,18 +131,21 @@ exports.saveGoal = async function( req, res ) {
                 
             
             // get the existing data
-            if(goal.id) {
+            if(existingGoal) {
+                console.log("1");
+                goal.id = existingGoal.id;
+                goal.goalImage = existingGoal.goalImage
 
-                goal.id = mostRecentGoal.id;
-                goal.goalImage = mostRecentGoal.goalImage
-
+                // save the image if one is provided
                 if(req.session.savedGoalFileName) {
-                    goal.goalImage = req.session.savedGoalFileName;
+                    goal.topicImage = req.session.savedGoalFileName;
                 } 
+
 
                 goal.ownedBy = req.session.authUser.id;
                 //let goal = await goalService.saveGoal( );
                 goalService.saveGoal( goal ).then( (goal ) => {
+                    console.log("1-1");
                     if( goal ) {
                         messageTitle = "Goal Updated";
                         messageBody = "Goal " + goal.goalName + " updated successfully!";
@@ -152,17 +159,23 @@ exports.saveGoal = async function( req, res ) {
                     let pathway = null;
                     if(req.body.pathway) {
                         pathway = req.body.pathway.split(",");
-                        goalService.savePathwayToMostRecentGoalVersion(goal.id, pathway);
+                        goalService.savePathwayToexistingGoalVersion(goal.id, pathway);
                     }
                 })
                 
             }
             else {
-                
+                console.log("2");
                 goal.ownedBy = req.session.authUser.id; 
+
+                // save the image if one is provided
+                if(req.session.savedGoalFileName) {
+                    goal.topicImage = req.session.savedGoalFileName;
+                } 
 
                 // let goal = await goalService.saveGoal( goal );
                 goalService.saveGoal( goal ).then( ( goal ) => {
+                    console.log("2-1");
                     if( goal ) {
                         messageTitle = "Goal Saved";
                         messageBody = "Goal " + goal.goalName + " saved successfully!";
@@ -179,8 +192,14 @@ exports.saveGoal = async function( req, res ) {
             // create the ApiMessage
             const apiRes = ApiMessage.createApiMessage( goal, 200, "Success", "Goal Saved");
 
-            res.setHeader( 'Content-Type', 'application/json' );
-            res.send(JSON.stringify(apiRes));
+            if( redirect ) {
+                return apiRes;
+            }
+            else {
+                res.setHeader( 'Content-Type', 'application/json' );
+                res.send(JSON.stringify(apiRes));
+            }
+            
 
         }  
     });

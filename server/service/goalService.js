@@ -226,6 +226,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
  */
 exports.saveGoal = async function(goal) {
     // check to see if an id exists - insert / update check
+    console.log( "about to save goal " + JSON.stringify( goal ) );
     if(goal) {
         if(goal.id > 0) {
             

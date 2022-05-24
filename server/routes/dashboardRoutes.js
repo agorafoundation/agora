@@ -12,6 +12,7 @@ var router = express.Router( );
  
 // controllers
 const dashboardController = require( '../controller/dashboardController' );
+const goalController = require( '../controller/apis/goalController' );
 
 // pre route
 // check that the user is logged in!
@@ -34,9 +35,17 @@ router.use(function ( req, res, next ) {
 router.route( '/' )
     .get( ( req, res ) => {
         dashboardController.getDashboard( req, res );
-    })
+    }
+);
+
+router.route( '/goal' )
     .post( ( req, res ) => {
-        
+        console.log( "arrived at the /dashboard/goal post route" );
+        let goal = goalController.saveGoal( req, res, true );
+        console.log( "retuned goal: " + goal );
+
+        // reload dashboard?
+        dashboardController.getDashboard( req, res );
     }
 );
 

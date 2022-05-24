@@ -53,8 +53,8 @@ router.route('/')
 /**
  * Admin Goal Routes
  */
-let adminGoalRoutes = require('./adminGoalRoutes')
-router.use('/goal', adminGoalRoutes);
+//let adminGoalRoutes = require('./adminGoalRoutes')
+//router.use('/goal', adminGoalRoutes);
 
 /**
  * Admin Topic Routes
