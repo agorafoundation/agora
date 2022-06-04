@@ -193,9 +193,11 @@ exports.saveGoal = async function( req, res, redirect ) {
             const apiRes = ApiMessage.createApiMessage( goal, 200, "Success", "Goal Saved");
 
             if( redirect ) {
+                console.log("3-1");
                 return apiRes;
             }
             else {
+                console.log("3-2");
                 res.setHeader( 'Content-Type', 'application/json' );
                 res.send(JSON.stringify(apiRes));
             }

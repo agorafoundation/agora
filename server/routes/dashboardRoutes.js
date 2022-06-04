@@ -13,6 +13,7 @@ var router = express.Router( );
 // controllers
 const dashboardController = require( '../controller/dashboardController' );
 const goalController = require( '../controller/apis/goalController' );
+const { redirect } = require('express/lib/response');
 
 // pre route
 // check that the user is logged in!
@@ -45,7 +46,7 @@ router.route( '/goal' )
         console.log( "retuned goal: " + goal );
 
         // reload dashboard?
-        dashboardController.getDashboard( req, res );
+        res.redirect(303, '/dashboard');
     }
 );
 
