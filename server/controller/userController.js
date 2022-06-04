@@ -9,7 +9,7 @@ const nodemailer = require("nodemailer");
 
 // import multer (file upload)
 const fs = require('fs');
-let path = require('path');
+const path = require('path');
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
