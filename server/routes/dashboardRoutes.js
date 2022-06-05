@@ -42,11 +42,17 @@ router.route( '/' )
 router.route( '/goal' )
     .post( ( req, res ) => {
         console.log( "arrived at the /dashboard/goal post route" );
-        let goal = goalController.saveGoal( req, res, true );
-        console.log( "retuned goal: " + goal );
 
-        // reload dashboard?
-        res.redirect(303, '/dashboard');
+        goalController.saveGoal( req, res, true ).then ( ( rGoal ) => {
+            console.log( "retuned goal: " + JSON.stringify( rGoal ) );
+
+            // save the image
+            goalController.saveGoalImage( req, res, rGoal.rid );
+
+            // reload dashboard?
+            res.redirect(303, '/dashboard');
+        } );
+        
     }
 );
 

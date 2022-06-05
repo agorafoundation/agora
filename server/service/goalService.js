@@ -219,6 +219,51 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
     }
 }
 
+/*
+ * Update / set the user goal image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateGoalImage = async (goalId, filename) => {
+    // get the goal (required to exist)
+    let goal = await exports.getMostRecentGoalById(goalId);
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if(goal) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT goal_image FROM goals WHERE rid = $1";
+            let values = [goal.rid];
+
+            // perform the query
+            let res = await db.query(text, values);
+            
+            // set the prevFileName with the prev name
+            if(res.rows.length > 0) {
+                prevFileName = res.rows[0].goal_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE goals SET goal_image = $2 WHERE rid = $1";
+            values = [goal.rid, filename];
+
+            // perform query
+            db.query(text, values);
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
+
 /**
  * Saves a goal to the database, creates a new record if no id is assigned, updates existing record if there is an id.
  * @param {Goal} goal 
@@ -236,6 +281,7 @@ exports.saveGoal = async function(goal) {
     
             try {
                 let res = await db.query(text, values);
+                goal.rid = res.rows[0].rid;
             }
             catch(e) {
                 console.log("[ERR]: Error updating goal - " + e);
@@ -260,6 +306,7 @@ exports.saveGoal = async function(goal) {
         
                     if(res2.rowCount > 0) {
                         goal.id = res2.rows[0].id;
+                        goal.rid = res2.rows[0].rid;
                     }
                 }
             }
