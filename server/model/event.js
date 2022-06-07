@@ -11,7 +11,7 @@ function event() {
     this.eventType = "";
     this.eventUsername = "";
     this.eventUserId = -1;
-    this.eventUserPrivate = false;  // TODO: STUB create a field in user_data that a user can use to disable public profile. This will make their name not a link if true
+    this.eventUserPrivate = false;  // TODO: STUB create a field in users that a user can use to disable public profile. This will make their name not a link if true
     this.eventTitle = "";
     this.eventDescription = "";
     this.eventImage = "";
