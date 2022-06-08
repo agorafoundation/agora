@@ -614,7 +614,7 @@ exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
 
 exports.getRecentGoalEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -650,7 +650,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
 
 exports.getRecentGoalCompletionEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {

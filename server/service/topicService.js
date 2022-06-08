@@ -1004,7 +1004,7 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 
 exports.getRecentTopicEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as topic_id, mod.topic_name as topic, mod.topic_image as topic_image, mode.create_time as create_time from user_data ud, topics mod, user_topic mode where mode.user_id = ud.id AND mode.topic_id = mod.id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as topic_id, mod.topic_name as topic, mod.topic_image as topic_image, mode.create_time as create_time from users ud, topics mod, user_topic mode where mode.user_id = ud.id AND mode.topic_id = mod.id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {

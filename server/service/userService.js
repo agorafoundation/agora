@@ -115,7 +115,7 @@ exports.getActiveRolesForUserId = async function(userId) {
 
 exports.useAccessTokensById = async function(userId, numberOfTokens) {
     if(userId > 0 && numberOfTokens > 0) {
-        let text = "UPDATE user_data SET available_access_tokens=available_access_tokens - $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens - $1 WHERE id=$2";
         let values = [ numberOfTokens, userId ];
         //console.log("taking away a token");
         try {
@@ -136,7 +136,7 @@ exports.useAccessTokensById = async function(userId, numberOfTokens) {
 exports.addAccessTokensToUserById = async function(userId, numberOfTokens) {
     //console.log("adding tokens - userId : " + userId + " tokens: " + numberOfTokens);
     if(userId > 0 && numberOfTokens > 0) {
-        let text = "UPDATE user_data SET available_access_tokens=available_access_tokens + $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens + $1 WHERE id=$2";
         let values = [ numberOfTokens, userId ];
         try {
              
@@ -178,7 +178,7 @@ exports.saveUser = async function(record) {
         // hash the token
         let emailVerificationToken = await crypto.createHash('sha256').update(token).digest('hex');
 
-        let text = 'INSERT INTO user_data(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, beginning_programming, intermediate_programming, advanced_programming,'
+        let text = 'INSERT INTO users(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, beginning_programming, intermediate_programming, advanced_programming,'
             + 'mobile_development, robotics_programming, web_applications, web3, iot_programming, database_design, relational_database, nosql_database, object_relational_mapping, stripe_id, available_access_tokens)'
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)';
         let values = [record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
@@ -215,7 +215,7 @@ exports.saveUser = async function(record) {
         
     }
     else {
-        let text = 'UPDATE user_data SET first_name=$2, last_name=$3, subscription_active=$4, beginning_programming=$5, intermediate_programming=$6, advanced_programming=$7,'
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4, beginning_programming=$5, intermediate_programming=$6, advanced_programming=$7,'
             + 'mobile_development=$8, robotics_programming=$9, web_applications=$10, web3=$11, iot_programming=$12, database_design=$13, relational_database=$14, nosql_database=$15,'
             + 'object_relational_mapping=$16 WHERE email=$1';
         let values = [record.email, record.firstName, record.lastName, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
@@ -243,7 +243,7 @@ exports.reValidateEmail = async function(email) {
     // hash a new token
     let emailVerificationToken = await crypto.createHash('sha256').update(token).digest('hex');
 
-    let text = 'UPDATE user_data SET email_token=$2 WHERE email=$1';
+    let text = 'UPDATE users SET email_token=$2 WHERE email=$1';
     let values = [email, emailVerificationToken];
 
     try {
@@ -267,7 +267,7 @@ exports.reValidateEmail = async function(email) {
  * @returns User associated with id with an active status or false in none found.
  */
  exports.getActiveUserById = async function(id) {
-    const text = "SELECT * FROM user_data WHERE id = $1;";
+    const text = "SELECT * FROM users WHERE id = $1;";
     const values = [ id ];
     
     try {
@@ -328,7 +328,7 @@ exports.reValidateEmail = async function(email) {
 
 
 exports.getUserByUsername = async function(username) {
-    let text = "SELECT * FROM user_data WHERE LOWER(username) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
     let values = [username];
     
     try {
@@ -355,7 +355,7 @@ exports.getUserByUsername = async function(username) {
  * @returns User associated with stripe customer id or false in none found.
  */
  exports.getUserByStripeCustomerId = async function(stripeCustomerId) {
-    const text = "SELECT * FROM user_data WHERE stripe_id = $1";
+    const text = "SELECT * FROM users WHERE stripe_id = $1";
     const values = [stripeCustomerId];
     
     let user = null;
@@ -377,7 +377,7 @@ exports.getUserByUsername = async function(username) {
 
 
 exports.getUserByEmail = async function(email) {
-    let text = "SELECT * FROM user_data WHERE LOWER(email) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
     let values = [email];
     
     try {
@@ -451,7 +451,7 @@ exports.setUserSession = async function(email) {
  * @returns true if a user already exists having that email, false otherwise
  */
 exports.verifyEmail = async function(email) {
-    let text = "SELECT * FROM user_data WHERE LOWER(email) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
     let values = [email];
     
     try {
@@ -477,7 +477,7 @@ exports.verifyEmail = async function(email) {
  * @returns True if a user already exists with that username, false otherwise
  */
 exports.verifyUsername = async function(username) {
-    let text = "SELECT * FROM user_data WHERE LOWER(username) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
     let values = [username];
     
     try {
@@ -512,7 +512,7 @@ exports.updateProfileFilename = async (email, filename) => {
     if(user) {
         try {
             // save the current filename so that we can delete it after.
-            let text = "SELECT profile_filename FROM user_data WHERE email = $1";
+            let text = "SELECT profile_filename FROM users WHERE email = $1";
             let values = [email];
 
              
@@ -522,7 +522,7 @@ exports.updateProfileFilename = async (email, filename) => {
                 prevFileName = res.rows[0].profile_filename;
             }
 
-            text = "UPDATE user_data SET profile_filename = $2 WHERE email = $1";
+            text = "UPDATE users SET profile_filename = $2 WHERE email = $1";
             values = [email, filename];
 
         
@@ -553,7 +553,7 @@ exports.createPasswordToken = async (email) => {
         // set expire (1 day)
         let resetPasswordTokenExpiration = Date.now() + parseInt(process.env.PW_TOKEN_EXPIRATION);
 
-        let text = "UPDATE user_data SET password_token = $2, password_token_expiration = $3 WHERE LOWER(email) = LOWER($1)";
+        let text = "UPDATE users SET password_token = $2, password_token_expiration = $3 WHERE LOWER(email) = LOWER($1)";
         let values = [email, resetPasswordToken, parseInt(resetPasswordTokenExpiration)];
 
         try {
@@ -575,7 +575,7 @@ exports.createPasswordToken = async (email) => {
 
 exports.verifyEmailTokenVerifyCombo = async (email, token) => {
     if(email && token) {
-        let text = "SELECT * FROM user_data WHERE email = $1 AND email_token = $2";
+        let text = "SELECT * FROM users WHERE email = $1 AND email_token = $2";
         let values = [email, token];
         
         try {
@@ -583,7 +583,7 @@ exports.verifyEmailTokenVerifyCombo = async (email, token) => {
             let res = await db.query(text, values);
             if(res.rows.length > 0) {
                 //update verify flag and cleanup
-                let text = "UPDATE user_data SET email_validated = $3, email_token = $4 WHERE LOWER(email) = LOWER($1) AND email_token = $2";
+                let text = "UPDATE users SET email_validated = $3, email_token = $4 WHERE LOWER(email) = LOWER($1) AND email_token = $2";
                 let values = [email, token, true, ""];
                 
                 try {
@@ -615,7 +615,7 @@ exports.verifyEmailTokenVerifyCombo = async (email, token) => {
 
 exports.verifyEmailTokenResetCombo = async (email, token) => {
     if(email && token) {
-        let text = "SELECT * FROM user_data WHERE LOWER(email) = LOWER($1) AND password_token = $2";
+        let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1) AND password_token = $2";
         let values = [email, token];
         
         try {
@@ -650,7 +650,7 @@ exports.verifyEmailTokenResetCombo = async (email, token) => {
 exports.resetPassword = async (email, token, hashedPassword) => {
     if(email && token && hashedPassword) {
 
-        let text = "UPDATE user_data SET hashed_password = $3, password_token = $4 WHERE LOWER(email) = LOWER($1) AND password_token = $2";
+        let text = "UPDATE users SET hashed_password = $3, password_token = $4 WHERE LOWER(email) = LOWER($1) AND password_token = $2";
         let values = [email, token, hashedPassword, ""];
         
         try {
@@ -674,7 +674,7 @@ exports.passwordHasher = async function(plainTxtPassword) {
 }
 
 exports.checkPassword = async function(email, enteredPassword) {
-    let text = "SELECT * FROM user_data WHERE LOWER(email) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
     let values = [email];
     
     try {
@@ -719,7 +719,7 @@ exports.logUserSession = async function(userId, ipAddress, device) {
 
 exports.getRecentNewUserEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select * from user_data order by create_time desc limit $1;";
+    let text = "select * from users order by create_time desc limit $1;";
     let values = [ limit ];
     
     try {
@@ -761,8 +761,8 @@ exports.getRecentNewUserEvents = async function(limit) {
  */
 exports.getRecentSupportingMembers = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ur.id as user_role_id, r.id as role_id, ud.id as user_data_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.id as id "
-     + "from user_role ur inner join user_data as ud on ur.user_id = ud.id inner join roles as r on ur.role_id = r.id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
+    let text = "select ur.id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.id as id "
+     + "from user_role ur inner join users as ud on ur.user_id = ud.id inner join roles as r on ur.role_id = r.id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
     let values = [ limit ];
     
     try {

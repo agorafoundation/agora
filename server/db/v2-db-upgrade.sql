@@ -37,7 +37,7 @@ CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
 -- end production https://github.com/briangormanly/agora/pull/50
 
 -- #62  
-update user_data set profile_filename = REPLACE ( profile_filename, '/assets/uploads/profile/', '');
+update users set profile_filename = REPLACE ( profile_filename, '/assets/uploads/profile/', '');
 update goals set goal_image = REPLACE ( goal_image, '/assets/uploads/goal/', '');
 update topics set topic_image = REPLACE ( topic_image, '/assets/uploads/topic/', '');
 update resources set resource_image = REPLACE ( resource_image, '/assets/uploads/resource/', '');
