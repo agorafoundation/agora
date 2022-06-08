@@ -418,7 +418,7 @@ CREATE TABLE IF NOT EXISTS tag_association (
     use_count INTEGER, -- incremented when user finds entity via tag lookup
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
-)
+);
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora;
 CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
