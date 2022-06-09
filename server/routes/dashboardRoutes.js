@@ -8,6 +8,12 @@
 var express = require( 'express' );
 var router = express.Router( );
 
+const bodyParser = require('body-parser');
+router.use(bodyParser.urlencoded({
+    extended: true
+}));
+router.use(bodyParser.json());
+
 //dependencies 
  
 // controllers
@@ -42,6 +48,7 @@ router.route( '/' )
 router.route( '/goal' )
     .post( ( req, res ) => {
         console.log( "arrived at the /dashboard/goal post route" );
+        console.log(req);
 
         goalController.saveGoal( req, res, true ).then ( ( rGoal ) => {
             console.log( "retuned goal: " + JSON.stringify( rGoal ) );

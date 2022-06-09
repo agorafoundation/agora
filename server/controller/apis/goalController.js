@@ -124,8 +124,8 @@ exports.saveGoalImage = async function( req, res, goalRid ) {
             console.log(5);
             // save image in db and delete old file  
             if( goalRid > 0 ) {
-                console.log(6);
-                goalService.saveGoalImage( goalRid, req.session.savedGoalFileName ).then( ( rValue ) => {
+                console.log("rid: " + goalRid + " saved filename: " + req.session.savedGoalFileName);
+                goalService.updateGoalImage( goalRid, req.session.savedGoalFileName ).then( ( rValue ) => {
                     console.log(7);
                     if( rValue && rValue != 'goal-default.png' ) {
                         console.log(8);

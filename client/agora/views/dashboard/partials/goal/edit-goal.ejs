@@ -22,7 +22,7 @@
                 
                 if(goal) {
                     %>
-                    <form action="/dashboard/goal" id="goalForm" enctype="application/json" method="POST">
+                    <form action="/dashboard/goal" id="goalForm" type="multipart/form-data" method="POST">
                         <div class="form-group">
                             <input type="hidden" name="goalId" id="goalId" value="<%- goal.id %>" />
                             <fieldset class="form-group row">
@@ -48,15 +48,14 @@
                             Name: <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Name" required>
                             Desciption: <input type="input" class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description">
                             <%
-                            console.log("view goal: " + JSON.stringify(goal)); 
                             if( goal.goalImage ) {
                                 %>
-                                Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH %><%- goal.goalImage %>" id="goalImage" />
+                                Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH %><%- goal.goalImage %>" />
                                 <%
                             }
                             else {
                                 %>
-                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" id="goalImage" />
+                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" />
                                 <%
                             }
                             %>

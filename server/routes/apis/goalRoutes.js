@@ -11,7 +11,7 @@ var router = express.Router( );
 const bodyParser = require('body-parser');
 router.use(bodyParser.urlencoded({
     extended: true
-  }));
+}));
 router.use(bodyParser.json());
 
 //dependencies 
@@ -24,7 +24,6 @@ const goalController = require( '../../controller/apis/goalController' );
 router.route( '/' )
     .get(async function (req, res) {
         goalController.getAllActiveGoals( req, res );
-    
     })    
     .post( ( req, res ) => { 
         goalController.saveGoal( req, res );

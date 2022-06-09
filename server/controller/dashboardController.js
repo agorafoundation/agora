@@ -30,7 +30,6 @@ exports.getDashboard = async function( req, res ) {
 
     // get all the goals for this owner
     let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
-    console.log("Owner goals this is where I left off why is the images path wrong??? " + JSON.stringify(ownerGoals));
 
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );

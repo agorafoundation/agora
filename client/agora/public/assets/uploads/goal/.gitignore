@@ -2,3 +2,5 @@
 *
 # Except this file
 !.gitignore
+# and the default goal pic
+!goal-default.png

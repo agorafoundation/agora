@@ -226,12 +226,14 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
 exports.updateGoalImage = async (goalId, filename) => {
     // get the goal (required to exist)
     let goal = await exports.getMostRecentGoalById(goalId);
+    console.log("updateGoalImage retrieved : " + JSON.stringify(goal));
 
     // save the current filename so that we can delete it after.
     let prevFileName = "";
 
     if(goal) {
         try {
+            console.log('2-1');
             // retrieve the current filename so that we can delete it after.
             let text = "SELECT goal_image FROM goals WHERE rid = $1";
             let values = [goal.rid];
@@ -243,13 +245,14 @@ exports.updateGoalImage = async (goalId, filename) => {
             if(res.rows.length > 0) {
                 prevFileName = res.rows[0].goal_image;
             }
+            console.log("previous filename: " + prevFileName);
 
             // cerate the update query to set the new name
             text = "UPDATE goals SET goal_image = $2 WHERE rid = $1";
             values = [goal.rid, filename];
 
             // perform query
-            db.query(text, values);
+            await db.query(text, values);
             
         }
         catch(e) {
@@ -299,15 +302,17 @@ exports.saveGoal = async function(goal) {
                 goal.id++;
                 if(res.rowCount > 0) {
                     // insert
-                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;";
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, rid;";
                     values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
                     
                     let res2 = await db.query(text, values);
+                    console.log("res2 : " + JSON.stringify(res2));
         
                     if(res2.rowCount > 0) {
                         goal.id = res2.rows[0].id;
                         goal.rid = res2.rows[0].rid;
                     }
+                    console.log("db goal object: " + JSON.stringify(goal));
                 }
             }
             catch(e) {
