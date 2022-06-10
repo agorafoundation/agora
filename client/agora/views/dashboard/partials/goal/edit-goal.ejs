@@ -22,7 +22,7 @@
                 
                 if(goal) {
                     %>
-                    <form action="/dashboard/goal" id="goalForm" type="multipart/form-data" method="POST">
+                    <form action="/dashboard/goal" id="goalForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" -->
                         <div class="form-group">
                             <input type="hidden" name="goalId" id="goalId" value="<%- goal.id %>" />
                             <fieldset class="form-group row">
