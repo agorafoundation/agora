@@ -21,8 +21,9 @@
                 <% } 
                 
                 if(goal) {
+                    console.log("View goal incomming: " + JSON.stringify(goal));
                     %>
-                    <form action="/dashboard/goal" id="goalForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" -->
+                    <form action="/dashboard/goal" id="goalForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" enctype="multipart/form-data"-->
                         <div class="form-group">
                             <input type="hidden" name="goalId" id="goalId" value="<%- goal.id %>" />
                             <fieldset class="form-group row">
@@ -50,12 +51,12 @@
                             <%
                             if( goal.goalImage ) {
                                 %>
-                                Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH %><%- goal.goalImage %>" />
+                                Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH %><%- goal.goalImage %>" id="goalImageEl" />
                                 <%
                             }
                             else {
                                 %>
-                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" />
+                                Image: <img class="img-supersmall" src="data:," alt="Upload an Image" id="goalImageEl" />
                                 <%
                             }
                             %>

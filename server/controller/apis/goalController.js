@@ -6,7 +6,6 @@
  */
 
 // dependencies
-// import multer (file upload) and setup
 const fs = require( 'fs' );
 let path = require( 'path' );
 
@@ -22,39 +21,7 @@ const goalService = require( '../../service/goalService' );
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
 let FRONT_END = process.env.FRONT_END_NAME;
-let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
-
-// set the max image size for avatars and resource, topic and goal icons
-let maxSize = 1 * 1024 * 1024;
-
-// Start multer
-let multer = require( 'multer' );
-const { toUnicode } = require('punycode');
-
-const fileFilter = ( req, file, cb ) => {
-    if( file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png' ) {
-        cb( null, true );
-    }
-    else {
-        cb( null, false );
-    }
-}
-
-let storage = multer.diskStorage({
-    destination: function ( req, file, cb ) {
-      cb( null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH )
-    },
-    filename: function ( req, file, cb ) {
-        let filename = Date.now( ) + file.originalname;
-        
-        req.session.savedGoalFileName = filename;
-        console.log("the filename is ----  " + req.session.savedGoalFileName);
-
-        cb( null, filename );
-    }
-})
-let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'goalImage' );
-// end multer
+let GOAL_PATH = process.env.GOAL_IMAGE_PATH;
 
 
 exports.getAllActiveGoals = async function ( req, res ) {
@@ -99,54 +66,34 @@ exports.getAllGoalsForAuthUser = async function ( req, res ) {
  * @param {*} res 
  * @param {*} goalRid 
  */
-exports.saveGoalImage = async function( req, res, goalRid ) {
+exports.saveGoalImage = async function( req, res, goalRid, filename ) {
     console.log( "goalController.saveGoalImage() - START goalRid:  " + goalRid);
 
     console.log(0);
 
-    if(req.session.uploadMessage) {
-        console.log(1);
-        req.session.uploadMessage = undefined;
+    
+    
+    // save image in db and delete old file  
+    if( goalRid > 0 ) {
+        console.log("rid: " + goalRid + " saved filename: " + filename);
+        goalService.updateGoalImage( goalRid, filename ).then( ( rValue ) => {
+            if( rValue && rValue != 'goal-default.png' ) {
+                fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH + rValue, ( err ) => {
+                    if( err ) {
+                        console.log( "[goalController] file delete error status: " + err );
+                        return false;
+                    }
+                    
+                });
+            } 
+        });
     }
     
-    //call multer upload function defined near top
-    console.log(2);
-    upload( req, res, ( err ) => {
-        console.log(3);
-        if( err ) {
-            console.log(4);
-            console.log( "Error uploading profile picture : " + err );
-            req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-            res.redirect( 303, '/dashboard' );
-            return false;
-        }
-        else {
-            console.log(5);
-            // save image in db and delete old file  
-            if( goalRid > 0 ) {
-                console.log("rid: " + goalRid + " saved filename: " + req.session.savedGoalFileName);
-                goalService.updateGoalImage( goalRid, req.session.savedGoalFileName ).then( ( rValue ) => {
-                    console.log(7);
-                    if( rValue && rValue != 'goal-default.png' ) {
-                        console.log(8);
-                        fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH + rValue, ( err ) => {
-                            console.log(9);
-                            if( err ) {
-                                console.log(10);
-                                console.log( "[goalController] file delete error status: " + err );
-                                return false;
-                            }
-                            
-                        });
-                    } 
-                });
-            }
-            
-            console.log( "goalController.saveGoalImage() - END ");
-            return true;
+    console.log( "goalController.saveGoalImage() - END ");
+    return true;
 
-        }  
-    })
+        
+    
 }
 
 /**
@@ -157,8 +104,7 @@ exports.saveGoalImage = async function( req, res, goalRid ) {
  * @returns 
  */
 exports.saveGoal = async function( req, res, redirect ) {
-    console.log( "goalController.saveGoal() - START ");
-    console.log( " body has: " + JSON.stringify( req.body ) );
+
     let messageTitle = null;
     let messageBody = null;
     let errorTitle = null;
@@ -167,56 +113,43 @@ exports.saveGoal = async function( req, res, redirect ) {
     let goal = Goal.emptyGoal();
     goal.id = req.body.goalId;
 
+    console.log("the body rec. by the controller: " + JSON.stringify(req.body));
+
+    // see if this is a modification of an existing goal
+    let existingGoal = await goalService.getMostRecentGoalById( goal.id );
+
+    // if this is an update replace the goal with teh existing one as the starting point
+    if(existingGoal) {
+        console.log("there was an existing goal for this id: " + JSON.stringify(existingGoal));
+        goal = existingGoal;
+    }
+
+    // add changes from the body if they are passed
     goal.visibility = req.body.goalVisibility;
     goal.goalName = req.body.goalName;
     goal.goalDescription = req.body.goalDescription;
     goal.active = ( req.body.goalActive == "on" ) ? true : false;
     goal.completable = ( req.body.goalCompletable == "on") ? true : false;
-    goal.goalImage = req.body.goalImage;
     
-    // see if this is a modification of an existing goal
-    let existingGoal = await goalService.getMostRecentGoalById( goal.id );
+    goal.ownedBy = req.session.authUser.id; 
+    goal = await goalService.saveGoal( goal );
 
-    // get the existing data
-    if(existingGoal) {
-        goal.id = existingGoal.id;
-        goal.goalImage = existingGoal.goalImage
+    console.log("saved goal: " + JSON.stringify(goal));
 
-        goal.ownedBy = req.session.authUser.id;
-        //let goal = await goalService.saveGoal( );
-        let goal = await goalService.saveGoal( goal );
-
-        if( goal ) {
-            messageTitle = "Goal Updated";
-            messageBody = "Goal " + goal.goalName + " updated successfully!";
-        }
-        else {
-            errorTitle += "Error updating Goal <br />";
-            errorBody += "There was a problem updating the goal. <br />";
-        }
-        
-        // get the pathway
-        let pathway = null;
-        if(req.body.pathway) {
-            pathway = req.body.pathway.split(",");
-            goalService.savePathwayToexistingGoalVersion(goal.id, pathway);
-        }
-        
+    if( goal ) {
+        messageTitle = "Goal Saved";
+        messageBody = "Goal " + goal.goalName + " saved successfully!";
     }
     else {
+        errorTitle += "Error saving Goal <br />";
+        errorBody += "There was a problem saving the goal. <br />";
+    }
 
-        goal.ownedBy = req.session.authUser.id; 
-        goal = await goalService.saveGoal( goal );
-
-        if( goal ) {
-            messageTitle = "Goal Saved";
-            messageBody = "Goal " + goal.goalName + " saved successfully!";
-        }
-        else {
-            errorTitle += "Error saving Goal <br />";
-            errorBody += "There was a problem saving the goal. <br />";
-        }
-        
+    // get the pathway
+    let pathway = null;
+    if(req.body.pathway) {
+        pathway = req.body.pathway.split(",");
+        goalService.savePathwayToexistingGoalVersion(goal.id, pathway);
     }
     
     // create the ApiMessage

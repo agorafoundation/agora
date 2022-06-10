@@ -274,13 +274,13 @@ exports.updateGoalImage = async (goalId, filename) => {
  */
 exports.saveGoal = async function(goal) {
     // check to see if an id exists - insert / update check
-    console.log( "about to save goal " + JSON.stringify( goal ) );
+    //console.log( "about to save goal " + JSON.stringify( goal ) );
     if(goal) {
         if(goal.id > 0) {
-            
+            console.log("update");
             // update
-            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7, visibility = $9 WHERE id = $8;";
-            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.id, goal.visibility ];
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
     
             try {
                 let res = await db.query(text, values);
@@ -294,6 +294,7 @@ exports.saveGoal = async function(goal) {
         }
         else {
             // get the current max goal id
+            console.log("insert");
             let text = "select max(id) from goals;";
             let values = [];
             try {
@@ -302,17 +303,15 @@ exports.saveGoal = async function(goal) {
                 goal.id++;
                 if(res.rowCount > 0) {
                     // insert
-                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, rid;";
-                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, rid;";
+                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
                     
                     let res2 = await db.query(text, values);
-                    console.log("res2 : " + JSON.stringify(res2));
         
                     if(res2.rowCount > 0) {
                         goal.id = res2.rows[0].id;
                         goal.rid = res2.rows[0].rid;
                     }
-                    console.log("db goal object: " + JSON.stringify(goal));
                 }
             }
             catch(e) {
