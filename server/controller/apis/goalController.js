@@ -64,21 +64,21 @@ exports.getAllGoalsForAuthUser = async function ( req, res ) {
  * 
  * @param {*} req 
  * @param {*} res 
- * @param {*} goalRid 
+ * @param {*} goalId 
  */
-exports.saveGoalImage = async function( req, res, goalRid, filename ) {
-    console.log( "goalController.saveGoalImage() - START goalRid:  " + goalRid);
+exports.saveGoalImage = async function( req, res, goalId, filename ) {
+    console.log( "goalController.saveGoalImage() - START goalId:  " + goalId);
 
     console.log(0);
 
     
     
     // save image in db and delete old file  
-    if( goalRid > 0 ) {
-        console.log("rid: " + goalRid + " saved filename: " + filename);
-        goalService.updateGoalImage( goalRid, filename ).then( ( rValue ) => {
+    if( goalId > 0 ) {
+        console.log("rid: " + goalId + " saved filename: " + filename);
+        goalService.updateGoalImage( goalId, filename ).then( ( rValue ) => {
             if( rValue && rValue != 'goal-default.png' ) {
-                fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH + rValue, ( err ) => {
+                fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[goalController] file delete error status: " + err );
                         return false;
