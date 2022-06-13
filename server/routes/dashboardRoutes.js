@@ -29,7 +29,7 @@ const goalUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH;
 //
 
 // set the max image size for avatars and resource, topic and goal icons
-let maxSize = 1 * 1024 * 1024;
+let maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 
 
 // setup fileupload (works with enctype="multipart/form-data" encoding in request)
