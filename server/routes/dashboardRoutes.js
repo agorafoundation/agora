@@ -80,13 +80,25 @@ router.route( '/' )
 router.route( '/goal' )
     .post( async ( req, res ) => {
 
+        let messageTitle = "";
+        let messageBody = "";
+        let messageType = "";
+
+        if( req.session.messageType ) {
+            messageType = req.session.messageType;
+            delete req.session.messageType;
+        }
+        if( req.session.messageTitle ) {
+            messageTitle = req.session.messageTitle;
+            delete req.session.messageTitle;
+        }
+        if( req.session.messageBody ) {
+            messageBody = req.session.messageBody;
+            delete req.session.messageBody;
+        }
+
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
-
-        // reset the upload message if there is one
-        if( req.session.uploadMessage ) {
-            req.session.uploadMessage = undefined;
-        }
 
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
@@ -99,24 +111,21 @@ router.route( '/goal' )
             const timeStamp = Date.now();
 
             // check the file size
-            console.log("------------------ Compare: " + file.size + ">" + maxSize );
             if( file.size > maxSize ) {
                 console.log(`File ${file.name} size limit has been exceeded`);
 
-                const messageTitle = "Image too large!";
-                const messageBody = "Image size was larger the 1MB, please use a smaller file.";
-
-                // req.set( "x-agora-message-title", messageTitle );
-                // req.set( "x-agora-message-detail", messageBody );
-                req.session.messageTitle = messageTitle;
-                req.session.messageBody = messageBody;
+                messageType = "warn";
+                messageTitle = "Image too large!";
+                messageBody = "Image size was larger then " + maxSize + " KB, please use a smaller file. Your goal was saved without the image.";
+                
             }
-
             else if( rGoal ) {
                 file.mv(goalUploadPath + timeStamp + file.name, (err) => {
                     if (err) {
                         console.log( "Error uploading profile picture : " + err );
-                        req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
+                        messageType = "error";
+                        messageTitle = "Error uploading image!";
+                        messageBody = "There was a error uploading your image for this goal. Your goal should be saved without the image.";
                         res.redirect( 303, '/dashboard' );
                         return;
                     }
@@ -125,15 +134,16 @@ router.route( '/goal' )
                     }
                 });
             }
-
             else {
-                const messageTitle = "Error saving goal!";
-                const messageBody = "The goal did not save within the system.";
-
-                res.set( "x-agora-message-title", messageTitle );
-                res.set( "x-agora-message-detail", messageBody );
+                messageType = "error";
+                messageTitle = "Error saving goal!";
+                messageBody = "The goal did not save within the system.";
             }
         }
+
+        req.session.messageType = messageType;
+        req.session.messageTitle = messageTitle;
+        req.session.messageBody = messageBody;
         
         res.redirect(303, '/dashboard');
     }

@@ -1,6 +1,26 @@
-<h1>Hello!</h1>
-<% if(!!locals.messageTitle && !!locals.messageBody) { %>
+<% if( !!locals.messageType && !!locals.messageTitle && !!locals.messageBody ) {
+    if( locals.messageType == "success" ) {
+        %>
+    <div class="alert-message alert-message-success" role="alert">
+        <%
+    }
+    else if( locals.messageType == "warn" ) {
+        %>
     <div class="alert-message alert-message-warning" role="alert">
+        <%
+    }
+    else if( locals.messageType == "info" ) {
+        %>
+    <div class="alert-message alert-message-info" role="alert">
+        <%
+    }
+    else if( locals.messageType == "error" ) {
+        %>
+    <div class="alert-message alert-message-danger" role="alert">
+        <%
+    }
+    %>
+    
         <h3 ><%= locals.messageTitle %></h3>
         <p><%= locals.messageBody %></p>
     </div>

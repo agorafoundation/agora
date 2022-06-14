@@ -226,14 +226,12 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
 exports.updateGoalImage = async (goalId, filename) => {
     // get the goal (required to exist)
     let goal = await exports.getMostRecentGoalById(goalId);
-    console.log("updateGoalImage retrieved : " + JSON.stringify(goal));
 
     // save the current filename so that we can delete it after.
     let prevFileName = "";
 
     if(goal) {
         try {
-            console.log('2-1');
             // retrieve the current filename so that we can delete it after.
             let text = "SELECT goal_image FROM goals WHERE rid = $1";
             let values = [goal.rid];
@@ -245,7 +243,6 @@ exports.updateGoalImage = async (goalId, filename) => {
             if(res.rows.length > 0) {
                 prevFileName = res.rows[0].goal_image;
             }
-            console.log("previous filename: " + prevFileName);
 
             // cerate the update query to set the new name
             text = "UPDATE goals SET goal_image = $2 WHERE rid = $1";

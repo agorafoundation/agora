@@ -67,15 +67,9 @@ exports.getAllGoalsForAuthUser = async function ( req, res ) {
  * @param {*} goalId 
  */
 exports.saveGoalImage = async function( req, res, goalId, filename ) {
-    console.log( "goalController.saveGoalImage() - START goalId:  " + goalId);
 
-    console.log(0);
-
-    
-    
     // save image in db and delete old file  
     if( goalId > 0 ) {
-        console.log("rid: " + goalId + " saved filename: " + filename);
         goalService.updateGoalImage( goalId, filename ).then( ( rValue ) => {
             if( rValue && rValue != 'goal-default.png' ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH + rValue, ( err ) => {
@@ -89,11 +83,7 @@ exports.saveGoalImage = async function( req, res, goalId, filename ) {
         });
     }
     
-    console.log( "goalController.saveGoalImage() - END ");
     return true;
-
-        
-    
 }
 
 /**
@@ -105,15 +95,12 @@ exports.saveGoalImage = async function( req, res, goalId, filename ) {
  */
 exports.saveGoal = async function( req, res, redirect ) {
 
+    let messageType = "warn";
     let messageTitle = null;
     let messageBody = null;
-    let errorTitle = null;
-    let errorBody = null;
 
     let goal = Goal.emptyGoal();
     goal.id = req.body.goalId;
-
-    console.log("the body rec. by the controller: " + JSON.stringify(req.body));
 
     // see if this is a modification of an existing goal
     let existingGoal = await goalService.getMostRecentGoalById( goal.id );
@@ -134,15 +121,15 @@ exports.saveGoal = async function( req, res, redirect ) {
     goal.ownedBy = req.session.authUser.id; 
     goal = await goalService.saveGoal( goal );
 
-    console.log("saved goal: " + JSON.stringify(goal));
-
     if( goal ) {
+        messageType = "success";
         messageTitle = "Goal Saved";
         messageBody = "Goal " + goal.goalName + " saved successfully!";
     }
     else {
-        errorTitle += "Error saving Goal <br />";
-        errorBody += "There was a problem saving the goal. <br />";
+        messageType = "error";
+        messageTitle = "Error saving Goal <br />";
+        messageBody = "There was a problem saving the goal. <br />";
     }
 
     // get the pathway
@@ -153,18 +140,17 @@ exports.saveGoal = async function( req, res, redirect ) {
     }
     
     // create the ApiMessage
+    req.session.messageType = messageType;
+    req.session.messageTitle = messageTitle;
+    req.session.messageBody = messageBody;
 
     if( redirect ) {
         console.log( "goalController.saveGoal() - END - Redirect ");
-        res.set( "x-agora-message-title", messageTitle );
-        res.set( "x-agora-message-detail", messageBody );
         return goal;
     }
     else {
         console.log( "goalController.saveGoal() - END - Non-Redirect ");
         res.setHeader( 'Content-Type', 'application/json' );
-        res.set( "x-agora-message-title", messageTitle );
-        res.set( "x-agora-message-detail", messageBody );
         res.send(JSON.stringify(goal));
     }
 }
