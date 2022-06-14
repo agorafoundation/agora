@@ -8,6 +8,12 @@
 var express = require( 'express' );
 var router = express.Router( );
 
+const bodyParser = require('body-parser');
+router.use(bodyParser.urlencoded({
+    extended: true
+}));
+router.use(bodyParser.json());
+
 //dependencies 
  
 // controllers
@@ -18,19 +24,26 @@ const goalController = require( '../../controller/apis/goalController' );
 router.route( '/' )
     .get(async function (req, res) {
         goalController.getAllActiveGoals( req, res );
-    
     })    
     .post( ( req, res ) => { 
         goalController.saveGoal( req, res );
     }
 )
 
-// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
-router.route( '/authUser' )
+// goals /api/v1/auth/goals
+router.route( '/:id' )
     .get(async function (req, res) {
-        goalController.getAllGoalsForAuthUser( req, res );
+        goalController.getGoalById( req, res );
     
     }
 );
+
+// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
+// router.route( '/authUser' )
+//     .get(async function (req, res) {
+//         goalController.getAllGoalsForAuthUser( req, res );
+    
+//     }
+// );
 
 module.exports = router;

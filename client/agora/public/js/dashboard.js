@@ -93,10 +93,10 @@ function updateGoalModal( goal, goalImagePath ) {
         document.getElementById( 'goalDescription' ).value = goal.goalDescription;
 
         if( goal.goalImage ) {
-            document.getElementById( 'goalImage' ).src = goalImagePath + goal.goalImage;
+            document.getElementById( 'goalImageEl' ).src = goalImagePath + goal.goalImage;
         }
         else {
-            document.getElementById( 'goalImage' ).src = "data:,";
+            document.getElementById( 'goalImageEl' ).src = "data:,";
             document.getElementById( 'formFile' ).value = "";
         }
         

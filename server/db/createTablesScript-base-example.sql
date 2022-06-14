@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS cc_sponsors (
 GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO agora;
 GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS user_data (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR,
     username VARCHAR,
@@ -67,11 +67,11 @@ CREATE TABLE IF NOT EXISTS user_data (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE user_data TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_data_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE users TO agora;
+GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_data_username ON user_data (LOWER(username));
-CREATE INDEX IF NOT EXISTS idx_user_data_email ON user_data (LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_users_username ON users (LOWER(username));
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (LOWER(email));
 
 CREATE TABLE IF NOT EXISTS session (
   sid varchar NOT NULL COLLATE "default",
@@ -400,6 +400,23 @@ CREATE TABLE IF NOT EXISTS resources (
     visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tags (
+    id SERIAL PRIMARY KEY,
+    tag VARCHAR UNIQUE,
+    create_time TIMESTAMP DEFAULT current_timestamp,
+    owned_by INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tag_association (
+    id SERIAL PRIMARY KEY,
+    entity_type INTEGER, --  1-goal, 2-topic, 3-resource, 
+    entity_id INTEGER, -- fk to entity id for entity_type
+    user_id INTEGER, -- fk of user that set tag
+    use_count INTEGER, -- incremented when user finds entity via tag lookup
+    active BOOLEAN,
+    create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora;

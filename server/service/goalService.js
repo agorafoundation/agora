@@ -16,8 +16,6 @@ const GoalEnrollment = require("../model/goalEnrollment");
 const Event = require('../model/event');
 
 
-
-
 /**
  * Retrieves all active goals with the highest version number
  * @returns All active goals as a list
@@ -164,7 +162,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
 
 
     try {
-        let goal = "";
+        let goal = null;
          
         let res = await db.query(text, values);
         if(res.rowCount > 0) {
@@ -187,6 +185,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
             goal.topics = topics;
                
         }
+
         return goal;
         
     }
@@ -220,6 +219,51 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
     }
 }
 
+/*
+ * Update / set the user goal image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateGoalImage = async (goalId, filename) => {
+    // get the goal (required to exist)
+    let goal = await exports.getMostRecentGoalById(goalId);
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if(goal) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT goal_image FROM goals WHERE rid = $1";
+            let values = [goal.rid];
+
+            // perform the query
+            let res = await db.query(text, values);
+            
+            // set the prevFileName with the prev name
+            if(res.rows.length > 0) {
+                prevFileName = res.rows[0].goal_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE goals SET goal_image = $2 WHERE rid = $1";
+            values = [goal.rid, filename];
+
+            // perform query
+            await db.query(text, values);
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
+
 /**
  * Saves a goal to the database, creates a new record if no id is assigned, updates existing record if there is an id.
  * @param {Goal} goal 
@@ -227,15 +271,17 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
  */
 exports.saveGoal = async function(goal) {
     // check to see if an id exists - insert / update check
+    //console.log( "about to save goal " + JSON.stringify( goal ) );
     if(goal) {
         if(goal.id > 0) {
-            
+            console.log("update");
             // update
-            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, goal_image = $4, active = $5, completable = $6, owned_by = $7, visibility = $9 WHERE id = $8;";
-            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.id, goal.visibility ];
+            let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
     
             try {
                 let res = await db.query(text, values);
+                goal.rid = res.rows[0].rid;
             }
             catch(e) {
                 console.log("[ERR]: Error updating goal - " + e);
@@ -245,6 +291,7 @@ exports.saveGoal = async function(goal) {
         }
         else {
             // get the current max goal id
+            console.log("insert");
             let text = "select max(id) from goals;";
             let values = [];
             try {
@@ -253,13 +300,14 @@ exports.saveGoal = async function(goal) {
                 goal.id++;
                 if(res.rowCount > 0) {
                     // insert
-                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, goal_image, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;";
-                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.goalImage, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
+                    text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, rid;";
+                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
                     
                     let res2 = await db.query(text, values);
         
                     if(res2.rowCount > 0) {
                         goal.id = res2.rows[0].id;
+                        goal.rid = res2.rows[0].rid;
                     }
                 }
             }
@@ -567,7 +615,7 @@ exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
 
 exports.getRecentGoalEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -603,7 +651,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
 
 exports.getRecentGoalCompletionEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from user_data ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {

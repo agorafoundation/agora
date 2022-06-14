@@ -19,11 +19,23 @@ const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
+    console.log("Loading Dashboard");
+    
+    let messageTitle = "";
+    let messageBody = "";
+    let messageType = "";
 
-    let message = '';
-
-    if( req.locals && req.locals.message ) {
-        message = req.locals.message;
+    if( req.session.messageType ) {
+        messageType = req.session.messageType;
+        delete req.session.messageType;
+    }
+    if( req.session.messageTitle ) {
+        messageTitle = req.session.messageTitle;
+        delete req.session.messageTitle;
+    }
+    if( req.session.messageBody ) {
+        messageBody = req.session.messageBody;
+        delete req.session.messageBody;
     }
     
     let goalId = req.params.goalId;
@@ -66,16 +78,11 @@ exports.getDashboard = async function( req, res ) {
     
     // make sure the user has access to this goal (is owner)
     if(goal.ownedBy === req.session.authUser.id) {
-        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource });
+        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageTitle: messageTitle, messageBody: messageBody, messageType: messageType });
     }
     else {
-        message = 'Access Denied';
-        message2 = 'You do not have access to the requested resource';
-        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, message: message, message2: message2 });
+        messageTitle = 'Access Denied';
+        messageBody = 'You do not have access to the requested resource';
+        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, messageTitle: messageTitle, messageBody: messageBody, messageType: messageType });
     }
-}
-
-exports.saveGoal = async function( req, res ) {
-    
-
 }
