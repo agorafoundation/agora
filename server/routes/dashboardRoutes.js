@@ -30,7 +30,7 @@ const goalUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH;
 
 // set the max image size for avatars and resource, topic and goal icons
 let maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
-
+console.log("IMAGE_UPLOAD_MAX_SIZE: " + maxSize);
 
 // setup fileupload (works with enctype="multipart/form-data" encoding in request)
 const fileUpload = require("express-fileupload");
@@ -67,13 +67,8 @@ router.use(function ( req, res, next ) {
 router.route( '/' )
     .get( ( req, res ) => {
         console.log("showing dashboard");
-        console.log(req.headers("x-agora-message-title"));
-        if( req.headers( "x-agora-message-title" ) ) {
-            req.session.messageTitle = req.headers( "x-agora-message-title" );
-        }
-        if( req.header( "x-agora-message-detail" ) ) {
-            req.session.messageBody = req.header( "x-agora-message-detail" );
-        }
+        console.log(JSON.stringify(req.session));
+
         dashboardController.getDashboard( req, res );
     }
 );
@@ -104,14 +99,17 @@ router.route( '/goal' )
             const timeStamp = Date.now();
 
             // check the file size
+            console.log("------------------ Compare: " + file.size + ">" + maxSize );
             if( file.size > maxSize ) {
                 console.log(`File ${file.name} size limit has been exceeded`);
 
                 const messageTitle = "Image too large!";
                 const messageBody = "Image size was larger the 1MB, please use a smaller file.";
 
-                res.set( "x-agora-message-title", messageTitle );
-                res.set( "x-agora-message-detail", messageBody );
+                // req.set( "x-agora-message-title", messageTitle );
+                // req.set( "x-agora-message-detail", messageBody );
+                req.session.messageTitle = messageTitle;
+                req.session.messageBody = messageBody;
             }
 
             else if( rGoal ) {
@@ -136,7 +134,7 @@ router.route( '/goal' )
                 res.set( "x-agora-message-detail", messageBody );
             }
         }
-
+        
         res.redirect(303, '/dashboard');
     }
 );

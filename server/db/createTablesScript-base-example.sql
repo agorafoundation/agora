@@ -405,7 +405,6 @@ CREATE TABLE IF NOT EXISTS resources (
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
-    visibility INTEGER,
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );

@@ -20,10 +20,17 @@ const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
     console.log("Loading Dashboard");
-    let message = '';
+    
+    let messageTitle = "";
+    let messageBody = "";
 
-    if( req.locals && req.locals.message ) {
-        message = req.locals.message;
+    if( req.session.messageTitle ) {
+        messageTitle = req.session.messageBody;
+        delete req.session.messageTitle;
+    }
+    if( req.session.messageBody ) {
+        messageBody = req.session.messageBody;
+        delete req.session.messageBody;
     }
     
     let goalId = req.params.goalId;

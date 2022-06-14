@@ -1,0 +1,7 @@
+<h1>Hello!</h1>
+<% if(!!locals.messageTitle && !!locals.messageBody) { %>
+    <div class="alert-message alert-message-warning" role="alert">
+        <h3 ><%= locals.messageTitle %></h3>
+        <p><%= locals.messageBody %></p>
+    </div>
+<% } %>

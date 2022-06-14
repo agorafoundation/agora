@@ -156,6 +156,8 @@ exports.saveGoal = async function( req, res, redirect ) {
 
     if( redirect ) {
         console.log( "goalController.saveGoal() - END - Redirect ");
+        res.set( "x-agora-message-title", messageTitle );
+        res.set( "x-agora-message-detail", messageBody );
         return goal;
     }
     else {
