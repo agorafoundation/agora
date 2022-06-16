@@ -137,3 +137,6 @@ dist
 
 #intellij
 .idea/
+
+#Mac
+.DS_Store
