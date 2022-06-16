@@ -5,11 +5,22 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// dependencies
+const fs = require( 'fs' );
+let path = require( 'path' );
+
 // import services
-const topicService = require( '../service/topicService' );
+const topicService = require( '../../service/topicService' );
+const resourceService = require( '../../service/resourceService' );
 
 // import models
-const CompletedResource = require( '../model/completedResource' );
+const CompletedResource = require( '../../model/completedResource' );
+const Resource = require( '../../model/resource' );
+
+// set up file paths for user profile images
+let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
+let FRONT_END = process.env.FRONT_END_NAME;
+let RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 
 /**
@@ -55,4 +66,76 @@ exports.saveCompletedResource = async function( req, res ) {
     }
 
     res.send();
+}
+
+
+
+exports.saveResourceImage = async function( req, res, resourceId, filename ) {
+
+    // save image in db and delete old file  
+    if( resourceId > 0 ) {
+        resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
+            if( rValue && rValue != 'resource-default.png' ) {
+                fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue, ( err ) => {
+                    if( err ) {
+                        console.log( "[resourceController] file delete error status: " + err );
+                        return false;
+                    }
+                    
+                });
+            } 
+        });
+    }
+    
+    return true;
+}
+
+
+exports.saveResource = async function( req, res, redirect ) {
+
+    let resource = Resource.emptyResource();
+    resource.id = req.body.resourceId;
+
+    // see if this is a modification of an existing resource
+    let existingResource = await resourceService.getResourceById( resource.id );
+
+    // if this is an update replace the resource with teh existing one as the starting point
+    if(existingResource) {
+        resource = existingResource;
+    }
+
+    // add changes from the body if they are passed
+    resource.resourceType = req.body.resourceType;
+    resource.visibility = req.body.resourceVisibility;
+    resource.resourceName = req.body.resourceName;
+    resource.resourceDescription = req.body.resourceDescription;
+    resource.resourceContentHtml = req.body.submissionText;
+    resource.resourceLink = req.body.resourceLink;
+    resource.active = ( req.body.resourceActive == "on" ) ? true : false;
+    resource.isRequired = ( req.body.isRequired == "on") ? true : false;
+    
+    resource.ownedBy = req.session.authUser.id; 
+    resource = await resourceService.saveResource( resource );
+
+    if( resource ) {
+        req.session.messageType = "success";
+        req.session.messageTitle = "Resource Saved";
+        req.session.messageBody = "Resource " + resource.resourceName + " saved successfully!";
+    }
+    else {
+        req.session.messageType = "error";
+        req.session.messageTitle = "Error saving Resource <br />";
+        req.session.messageBody = "There was a problem saving the resource. <br />";
+    }
+
+    if( redirect ) {
+        console.log( "resourceController.saveResource() - END - Redirect ");
+        return resource;
+    }
+    else {
+        console.log( "resourceController.saveResource() - END - Non-Redirect ");
+        res.setHeader( 'Content-Type', 'application/json' );
+        res.send(JSON.stringify(resource));
+    }
+    
 }

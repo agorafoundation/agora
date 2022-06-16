@@ -151,6 +151,51 @@ exports.markUserTopicCompletedResourcesInactive = async function( completedResou
     }
 }
 
+/*
+ * Update / set the user resource image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateResourceImage = async (resourceId, filename) => {
+    // get the resource (required to exist)
+    let resource = await exports.getResourceById(resourceId);
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if(resource) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT resource_image FROM resources WHERE id = $1";
+            let values = [resource.id];
+
+            // perform the query
+            let res = await db.query(text, values);
+            
+            // set the prevFileName with the prev name
+            if(res.rows.length > 0) {
+                prevFileName = res.rows[0].resource_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE resources SET resource_image = $2 WHERE id = $1";
+            values = [resource.id, filename];
+
+            // perform query
+            await db.query(text, values);
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
+
 
 /**
  * Saves a resource to the database, creates a new record if no id is assigned, updates existing record if there is an id.

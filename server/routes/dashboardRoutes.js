@@ -23,9 +23,11 @@ router.use(bodyParser.json());
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
 const GOAL_PATH = process.env.GOAL_IMAGE_PATH;
+const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 // goal file path
 const goalUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH;
+const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 
 // set the max image size for avatars and resource, topic and goal icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
@@ -37,11 +39,11 @@ router.use(
     fileUpload()
 );
 
-
 // controllers
 const dashboardController = require( '../controller/dashboardController' );
 const goalController = require( '../controller/apis/goalController' );
-//const { redirect } = require('express/lib/response');
+const resourceController = require( '../controller/apis/resourceController' );
+
 
 /**
  * Pre Route
@@ -117,6 +119,62 @@ router.route( '/goal' )
                 req.session.messageType = "error";
                 req.session.messageTitle = "Error saving goal!";
                 req.session.messageBody = "The goal did not save within the system.";
+            }
+        }
+        
+        res.redirect(303, '/dashboard');
+    }
+);
+
+
+/** 
+ * Form enctype="multipart/form-data" route using express-fileupload for file upload
+ * 
+ */
+router.route( '/resource' )
+    .post( async ( req, res ) => {
+
+        // save the resource
+        let rResource = await resourceController.saveResource( req, res, true );
+
+        if ( !req.files || Object.keys( req.files ).length === 0 ) {
+            // no files uploaded
+            resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
+            
+        }
+        else {
+            // files included
+            const file = req.files.resourceImage;
+            const timeStamp = Date.now();
+
+            // check the file size
+            if( file.size > maxSize ) {
+                console.log(`File ${file.name} size limit has been exceeded`);
+
+                req.session.messageType = "warn";
+                req.session.messageTitle = "Image too large!";
+                req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
+                
+            }
+            else if( rResource ) {
+                await file.mv(resourceUploadPath + timeStamp + file.name, async (err) => {
+                    if (err) {
+                        console.log( "Error uploading profile picture : " + err );
+                        req.session.messageType = "error";
+                        req.session.messageTitle = "Error uploading image!";
+                        req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
+                        res.redirect( 303, '/dashboard' );
+                        return;
+                    }
+                    else {
+                        await resourceController.saveResourceImage( req, res, rResource.id, timeStamp + file.name );
+                    }
+                });
+            }
+            else {
+                req.session.messageType = "error";
+                req.session.messageTitle = "Error saving resource!";
+                req.session.messageBody = "The resources did not save within the system.";
             }
         }
         
