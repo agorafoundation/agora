@@ -76,16 +76,6 @@ router.route( '/' )
 router.route( '/goal' )
     .post( async ( req, res ) => {
 
-        if( req.session.messageType ) {
-            delete req.session.messageType;
-        }
-        if( req.session.messageTitle ) {
-            delete req.session.messageTitle;
-        }
-        if( req.session.messageBody ) {
-            delete req.session.messageBody;
-        }
-
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
 
@@ -109,7 +99,7 @@ router.route( '/goal' )
                 
             }
             else if( rGoal ) {
-                file.mv(goalUploadPath + timeStamp + file.name, async (err) => {
+                await file.mv(goalUploadPath + timeStamp + file.name, async (err) => {
                     if (err) {
                         console.log( "Error uploading profile picture : " + err );
                         req.session.messageType = "error";
