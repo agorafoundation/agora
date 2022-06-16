@@ -95,10 +95,6 @@ exports.saveGoalImage = async function( req, res, goalId, filename ) {
  */
 exports.saveGoal = async function( req, res, redirect ) {
 
-    let messageType = "warn";
-    let messageTitle = null;
-    let messageBody = null;
-
     let goal = Goal.emptyGoal();
     goal.id = req.body.goalId;
 
@@ -122,14 +118,14 @@ exports.saveGoal = async function( req, res, redirect ) {
     goal = await goalService.saveGoal( goal );
 
     if( goal ) {
-        messageType = "success";
-        messageTitle = "Goal Saved";
-        messageBody = "Goal " + goal.goalName + " saved successfully!";
+        req.session.messageType = "success";
+        req.session.messageTitle = "Goal Saved";
+        req.session.messageBody = "Goal " + goal.goalName + " saved successfully!";
     }
     else {
-        messageType = "error";
-        messageTitle = "Error saving Goal <br />";
-        messageBody = "There was a problem saving the goal. <br />";
+        req.session.messageType = "error";
+        req.session.messageTitle = "Error saving Goal <br />";
+        req.session.messageBody = "There was a problem saving the goal. <br />";
     }
 
     // get the pathway
@@ -138,11 +134,6 @@ exports.saveGoal = async function( req, res, redirect ) {
         pathway = req.body.pathway.split(",");
         goalService.savePathwayToexistingGoalVersion(goal.id, pathway);
     }
-    
-    // create the ApiMessage
-    req.session.messageType = messageType;
-    req.session.messageTitle = messageTitle;
-    req.session.messageBody = messageBody;
 
     if( redirect ) {
         console.log( "goalController.saveGoal() - END - Redirect ");

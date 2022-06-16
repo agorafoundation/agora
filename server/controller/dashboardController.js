@@ -19,24 +19,6 @@ const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
-    console.log("Loading Dashboard");
-    
-    let messageTitle = "";
-    let messageBody = "";
-    let messageType = "";
-
-    if( req.session.messageType ) {
-        messageType = req.session.messageType;
-        delete req.session.messageType;
-    }
-    if( req.session.messageTitle ) {
-        messageTitle = req.session.messageTitle;
-        delete req.session.messageTitle;
-    }
-    if( req.session.messageBody ) {
-        messageBody = req.session.messageBody;
-        delete req.session.messageBody;
-    }
     
     let goalId = req.params.goalId;
 
@@ -50,11 +32,12 @@ exports.getDashboard = async function( req, res ) {
 
     // create an empty goal to use if the user creates a new one
     let goal = Goal.emptyGoal();
+
     if( goalId > 0 ) {
         goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
 
         // iterate through the goals assigned topics, remove them from the available list
-        for(let i=0; i < goal.topics.length; i++) {
+        for( let i=0; i < goal.topics.length; i++ ) {
             let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( goal.topics[i].id );
             
             ~redundantTopic && availableTopics.splice( redundantTopic, 1 );
@@ -74,15 +57,32 @@ exports.getDashboard = async function( req, res ) {
     // get all the resources for this owner
     let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.id );
     
-    let resource = Resource.emptyResource();
-    
+    let resource = Resource.emptyResource( );
+
+    const messageType = req.session.messageType;
+    const messageTitle = req.session.messageTitle;
+    const messageBody = req.session.messageBody;
+
+    if( req.session.messageType ) {
+        delete req.session.messageType;
+    }
+    if( req.session.messageTitle ) {
+        delete req.session.messageTitle;
+    }
+    if( req.session.messageBody ) {
+        delete req.session.messageBody;
+    }
+
     // make sure the user has access to this goal (is owner)
-    if(goal.ownedBy === req.session.authUser.id) {
-        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageTitle: messageTitle, messageBody: messageBody, messageType: messageType });
+    if( goal.ownedBy === req.session.authUser.id ) {
+        res.render( 'dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
     else {
-        messageTitle = 'Access Denied';
-        messageBody = 'You do not have access to the requested resource';
-        res.render('dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, messageTitle: messageTitle, messageBody: messageBody, messageType: messageType });
+        req.session.messageType = "warn";
+        req.session.messageTitle = 'Access Denied';
+        req.session.messageBody = 'You do not have access to the requested resource';
+        res.render( 'dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
+
+    
 }

@@ -33,6 +33,7 @@ exports.getProfile = async function( req, res ) {
 exports.manageProfile = async function ( req, res ) {
 
     if(req.session.authUser) {
+        
         const authUser = await userService.setUserSession(req.session.authUser.email);
         req.session.authUser = null;
         req.session.authUser = authUser;
@@ -47,15 +48,23 @@ exports.manageProfile = async function ( req, res ) {
             product.status = orders[i].orderStatus;
             products.push(product);
         }
+
+        const messageType = req.session.messageType;
+        const messageTitle = req.session.messageTitle;
+        const messageBody = req.session.messageBody;
+
+        if( req.session.messageType ) {
+            delete req.session.messageType;
+        }
+        if( req.session.messageTitle ) {
+            delete req.session.messageTitle;
+        }
+        if( req.session.messageBody ) {
+            delete req.session.messageBody;
+        }
         
-        if(req.session.uploadMessage) {
-            let message = req.session.uploadMessage;
-            req.session.uploadMessage = null;
-            res.render('./profile/manage', { authUser: authUser, user: authUser, products: products });
-        }
-        else {
-            res.render('./profile/manage', { authUser: authUser, user: authUser, products: products });
-        }
+        res.render('./profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody });
+        
         
     }
     else {

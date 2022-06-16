@@ -315,9 +315,6 @@ exports.saveGoal = async function(goal) {
                 console.log("[ERR]: Error inserting goal - " + e);
                 return false;
             }
-            
-
-            
         }
         return goal;
     }

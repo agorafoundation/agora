@@ -185,12 +185,9 @@
                         <div class="col-lg-5">
                             
                             <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
-                            <% if(!!locals.uploadMessage){ %>
-                                <div class="alert-message alert-message-warning" role="alert">
-                                    <h3 >Error Uploading File</h3>
-                                    <p><%= uploadMessage %></p>
-                                </div>
-                            <% } %>
+                            
+                            <%- include('../partials/message'); %>
+
                             <form action="/user/uploadProfilePicture" method="POST" enctype="multipart/form-data" style="width: 100%;">
                                 <div class="mb-2">
                                     <label for="formFile" class="form-label">Upload a profile picture (1MB Max size)</label>
