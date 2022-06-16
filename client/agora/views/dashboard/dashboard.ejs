@@ -13,47 +13,50 @@
         <!-- About Section-->
         <section class="page-section-top-padded mb-0" id="about">
             <div class="container navbar-interior font-weight-bold text-primary">
+                <%- include('../partials/message'); %>
                 <%- include('../partials/community-menu'); %>
                 <%- include('../partials/welcome'); %>
             </div>
 
             <div class="container">
-                
                 <div class="divider-custom">
                 </div>
-                <%- include('../partials/message'); %>
+
+                
+
+                <div class="row">
+                    <h3 class="text-secondary">Search</h3>
+                    <%- include('./partials/search'); %>
+
+                    <h3 class="text-secondary">Tags</h3>
+                    <%- include('./partials/tags'); %>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">
+                        <%- include('./partials/goals'); %>
+
+                     </div>
+                     <div class="col-lg-2">
+                        
+                        <%- include('./partials/topics'); %>
+
+                     </div>
+                     <div class="col-lg-4">
+                         <%- include( './partials/resources' ) %>
+
+                      </div>
+                     <div class="col-lg-4">
+
+                         <h2 class="text-secondary">Suggestions</h2>
+
+
+                     </div>
+                </div>
+
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
 
-                        <div class="col-lg-3">
-                           <h2 class="text-secondary">Filters</h2>
-                           <h3 class="text-secondary">Search</h3>
-                           <%- include('./partials/search'); %>
-
-                           <h3 class="text-secondary">Tags</h3>
-                           <%- include('./partials/tags'); %>
-
-                           <h3 class="text-secondary">Goals</h3>
-                           <%- include('./partials/goals'); %>
-
-                           <hr />
-
-                           <h3 class="text-secondary">Topics</h3>
-                           <%- include('./partials/topics'); %>
-
-
-                        </div>
-                        <div class="col-lg-5">
-                            <h2 class="text-secondary">Resources</h2>
-                            <%- include( './partials/resources' ) %>
- 
-                         </div>
-                        <div class="col-lg-4">
-
-                            <h2 class="text-secondary">Suggestions</h2>
-
-
-                        </div>
+                        
                         
                     </div>
                 </div>
