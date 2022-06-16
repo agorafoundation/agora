@@ -82,7 +82,7 @@ exports.getAllActiveResourcesForOwner = async function(ownerId) {
         for(let i=0; i<res.rows.length; i++) {
             resources.push(Resource.ormResource(res.rows[i]));
         }
-
+        
         return resources;
         
     }

@@ -7,7 +7,7 @@
 if(availableResources && availableResources.length > 0) {
     for(let i=0; i < availableResources.length; i++) {
         
-
+        console.log("main page: " + availableResources[i].resourceContentHtml)
         %>
 
         <a class="card" style="width: 100%;" href="/community/resource/<%- availableResources[i].id %>" id="resource_<%- availableResources[i].id %>">

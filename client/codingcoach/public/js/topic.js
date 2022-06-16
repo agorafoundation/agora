@@ -544,7 +544,7 @@ window.addEventListener('load', () => {
             theme: 'snow'
         });
 
-        document.getElementById('creatorResourceForm').addEventListener('submit', () => {
+        document.getElementById('dashboardResourceForm').addEventListener('submit', () => {
             document.getElementById("quill_html").value = quill.root.innerHTML;
         });
 

@@ -109,7 +109,12 @@ exports.saveResource = async function( req, res, redirect ) {
     resource.visibility = req.body.resourceVisibility;
     resource.resourceName = req.body.resourceName;
     resource.resourceDescription = req.body.resourceDescription;
-    resource.resourceContentHtml = req.body.submissionText;
+    if(resource.resourceType == 3) {
+        resource.resourceContentHtml = req.body.embedded_submission_text_resource;
+    }
+    else {
+        resource.resourceContentHtml = req.body.resourceEditor;
+    }
     resource.resourceLink = req.body.resourceLink;
     resource.active = ( req.body.resourceActive == "on" ) ? true : false;
     resource.isRequired = ( req.body.isRequired == "on") ? true : false;

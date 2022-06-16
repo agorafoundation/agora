@@ -13,6 +13,10 @@
 
                 <h4 class="text-secondary">Edit resource</h4>
 
+                <%
+                console.log("incoming resource: " + JSON.stringify(resource));
+                %>
+
                 <% if(!!locals.message){ %>
                     <div class="alert-message alert-message-warning" role="alert">
                         <h3 ><%= message %></h3>
@@ -22,7 +26,7 @@
                 
                 if(resource) {
                     %>
-                    <form action="/dashboard/resource" id="resourceForm" enctype="multipart/form-data" method="POST">
+                    <form action="/dashboard/resource" id='dashboardResourceForm' enctype="multipart/form-data" method="POST">
                         <div class="form-group">
                             <input type="hidden" name="resourceId" id="resourceId" value="<%- resource.id %>" />
                             <fieldset class="form-group row">
@@ -102,11 +106,14 @@
                                 <label for="formFile" class="form-label">Upload an image for this resource (1MB Max size)</label>
                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage">
                             </div>
+                            <%
+                            console.log("content: " + resource.resourceContentHtml );
+                            %>
 
-                            <span id="quillWrapper" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
-                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                            <input id="resourceEditor" name="resourceEditor" type="hidden" class="sun-editor sun-editor-editable"><%- resource.resourceContentHtml %></textarea>
+
                             Embedded HTML:
-                            <textarea name="submission_text2" id="submission_text2" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />
+                            <textarea name="embedded_submission_text_resource" id="embedded_submission_text_resource" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />
                             Resource Link: <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">
 
                             Required? <input type="checkbox" class="" id="isRequired" name="isRequired" <%- (resource.isRequired)?'checked':'' %> />

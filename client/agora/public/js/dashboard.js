@@ -1,4 +1,54 @@
+/**
+ * When toggling resource types set the correct editor in the UI
+ */
+ function toggleSunEditor() {
+    if(document.getElementById('resourceType').value == "3") {
+        document.getElementById('resourceEditor').style.display = 'none';
+        document.getElementById('suneditor_resourceEditor').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'block';
+    }
+    else if(document.getElementById('resourceType').value == "2") {
+        document.getElementById('resourceEditor').style.display = 'none';
+        document.getElementById('suneditor_resourceEditor').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
+    }
+    else {
+        document.getElementById('resourceEditor').style.display = 'block';
+        document.getElementById('suneditor_resourceEditor').style.display = 'block';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
+    }
+}
 
+
+// sun editor for resource
+if(document.getElementById('resourceDescription')) {
+
+    const resourceEditor = SUNEDITOR.create('resourceEditor', {
+        toolbarContainer : '#toolbar_container',
+        showPathLabel : false,
+        width : 'auto',
+        height : 'auto',
+        minHeight : '100px',
+        buttonList : [
+            ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
+            ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat'],
+            ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table'],
+            ['link', 'image', 'video', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
+        ],
+        callBackSave : function (contents, isChanged) {
+            alert(contents);
+            console.log(contents);
+    
+        }
+    
+    });
+
+    toggleSunEditor();
+    document.getElementById('resourceType').addEventListener('change', () => {
+        toggleSunEditor();
+    })
+
+}
 
 if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'topicType' ).length > 0 ) {
 
@@ -215,8 +265,9 @@ function updateTopicModal( topic, topicImagePath ) {
             document.getElementById( 'formFile' ).value = "";
         }
 
-        document.getElementById( 'quill_html' ).value = resource.resourceContentHtml;
-        document.getElementById( 'quill_editor' ).value = resource.resourceContentHtml;
+        // document.getElementById( 'quill_html_resource' ).value = resource.resourceContentHtml;
+        // document.getElementById( 'quill_editor_resource' ).value = resource.resourceContentHtml;
+        document.getElementById( 'embedded_submission_text_resource' ).value = resource.resourceContentHtml;
         
 
         if( resource.active ) {
