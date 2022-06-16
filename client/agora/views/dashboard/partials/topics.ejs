@@ -1,28 +1,24 @@
-<div class="">
 
-    <%
-    if( ownerTopics && ownerTopics.length > 0 ) {
-        for( let i=0; i < ownerTopics.length; i++ ) {
+<i class="fas fa-2x fa-plus-circle triadic" data-toggle="modal" data-target="#create-topic-modal" onclick='updateTopicModal(<%- JSON.stringify(topic).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.TOPIC_IMAGE_WEB_PATH %>");'></i> 
+<span class="font-weight-bold text-secondary title-font-size text-uppercase"> | topics</span><br />
+
+<%
+if( ownerTopics && ownerTopics.length > 0 ) {
+    for( let i=0; i < ownerTopics.length; i++ ) {
+        %>
+        <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-topic-modal" onclick='updateTopicModal(<%- JSON.stringify(ownerTopics[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.TOPIC_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; <a class="fas fa-trash redColor" onclick='deleteTopic();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'><%- ownerTopics[i].topicName %></a>
+        <%
+        if(!ownerTopics[i].active) {
             %>
-            <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-topic-modal" onclick='updateTopicModal(<%- JSON.stringify(ownerTopics[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.TOPIC_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; <a class="fas fa-trash redColor" onclick='deleteTopic();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'><%- ownerTopics[i].topicName %></a>
-            <%
-            if(!ownerTopics[i].active) {
-                %>
-                <span class="redColor">{Inactive}</span>
-                <%
-            }
-            %>
-                <br />
+            <span class="redColor">{Inactive}</span>
             <%
         }
+        %>
+            <br />
+        <%
     }
+}
 
-    %>
+%>
 
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-topic-modal" onclick='updateTopicModal(<%- JSON.stringify(topic).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.TOPIC_IMAGE_WEB_PATH %>");' >
-        Create a Topic
-    </button>
-
-    <%- include('./topic/edit-topic') %>
-    
-</div>
+<%- include('./topic/edit-topic') %>

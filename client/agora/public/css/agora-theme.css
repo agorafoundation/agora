@@ -550,7 +550,6 @@ a:hover {
     height: auto;
     transition: .5s ease;
     backface-visibility: hidden;
-    padding:1rem;
 }
 
 div.product-card a {
@@ -894,9 +893,6 @@ input:checked + .slider:after {
 
 
 
-
-
-
   /* New Card stuff */
 .card {
     position: relative;
@@ -904,10 +900,8 @@ input:checked + .slider:after {
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #fff;
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.125);
-    border-radius: 0.25rem; 
 }
 .card > hr {
     margin-right: 0;
@@ -949,10 +943,9 @@ input:checked + .slider:after {
 }
   
 .card-header {
-    padding: 0.75rem 1.25rem;
+    padding: 0.5rem .5rem;
     margin-bottom: 0;
     background-color: rgba(0, 0, 0, 0.03);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.125); 
 }
 
 .card-header:first-child {

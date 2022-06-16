@@ -193,6 +193,10 @@ small {
   font-size: 80%;
 }
 
+.title-font-size {
+    font-size: 1.8em;
+}
+
 sub,
 sup {
   position: relative;
@@ -5497,7 +5501,6 @@ a.close.disabled {
   background-color: #fff;
   background-clip: padding-box;
   border: 0 solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.75rem;
   outline: 0;
 }
 
@@ -5522,9 +5525,6 @@ a.close.disabled {
   align-items: flex-start;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 0 solid #dee2e6;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
 }
 .modal-header .close {
   padding: 1rem 1rem;
@@ -5539,7 +5539,7 @@ a.close.disabled {
 .modal-body {
   position: relative;
   flex: 1 1 auto;
-  padding: 4rem 1rem;
+  padding: .2rem 1rem;
 }
 
 .modal-footer {
@@ -5594,7 +5594,7 @@ a.close.disabled {
 @media (min-width: 992px) {
   .modal-lg,
 .modal-xl {
-    max-width: 800px;
+    max-width: 70%;
   }
 }
 @media (min-width: 1200px) {
