@@ -110,7 +110,8 @@
                             console.log("content: " + resource.resourceContentHtml );
                             %>
 
-                            <input id="resourceEditor" name="resourceEditor" type="hidden" class="sun-editor sun-editor-editable"><%- resource.resourceContentHtml %></textarea>
+                            <textarea id="resourceEditor" name="resourceEditor"><%- resource.resourceContentHtml %></textarea>
+
 
                             Embedded HTML:
                             <textarea name="embedded_submission_text_resource" id="embedded_submission_text_resource" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />

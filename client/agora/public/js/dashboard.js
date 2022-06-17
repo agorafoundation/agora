@@ -21,8 +21,8 @@
 
 
 // sun editor for resource
-if(document.getElementById('resourceDescription')) {
-
+if(document.getElementById('resourceEditor')) {
+    console.log("initializing the sun editor");
     const resourceEditor = SUNEDITOR.create('resourceEditor', {
         toolbarContainer : '#toolbar_container',
         showPathLabel : false,
@@ -43,6 +43,8 @@ if(document.getElementById('resourceDescription')) {
     
     });
 
+    resourceEditor.save()
+
     toggleSunEditor();
     document.getElementById('resourceType').addEventListener('change', () => {
         toggleSunEditor();
@@ -53,12 +55,12 @@ if(document.getElementById('resourceDescription')) {
 if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'topicType' ).length > 0 ) {
 
     if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
-        console.log('1');
+        //console.log('1');
         document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
         document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
     }
     else {
-        console.log('2');
+        //console.log('2');
         document.getElementById( 'acivity-accordion-group' ).style.display = 'none';
         document.getElementById( 'assessment-accordion-group' ).style.display = 'none';
     }
@@ -68,12 +70,12 @@ if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'to
         topicTypeBox.addEventListener( 'click', ( ) => { 
             console.log("clicked: " + document.querySelector('input[name="topicType"]:checked').value);
             if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
-                console.log('1');
+                //console.log('1');
                 document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
                 document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
             }
             else {
-                console.log('2');
+                //console.log('2');
                 // make sure option were not selected by cleaning them
                 if( document.getElementById('topicHasAssessment').checked ) {
                     document.getElementById('assessment-accordion').click();
