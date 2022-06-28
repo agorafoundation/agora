@@ -6,7 +6,7 @@
 The goals behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
 
 The perfect research and learning platform:
-- Is accessible: Free and open source and will remain so forever.
+- Is accessible: Free and open source and will remain so forever
 - Provides feedback to both the learner and teacher. Learners can see what they have learned and what need more attention.  Teachers can see how well lessons are recieved and how well content is working. Agora closes the loop.
 - User, not institution centric: Lifelong learners require a lifelong system that follows them.
 - Is social: Opening a safe central hub of learning means collaboration and sharing of
