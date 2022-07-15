@@ -2,6 +2,7 @@
  * When toggling resource types set the correct editor in the UI
  */
  function toggleSunEditor() {
+    console.log("Type value is: " + document.getElementById('resourceType').value);
     if(document.getElementById('resourceType').value == "3") {
         document.getElementById('resourceEditor').style.display = 'none';
         document.getElementById('suneditor_resourceEditor').style.display = 'none';
@@ -13,7 +14,7 @@
         document.getElementById('embedded_submission_text_resource').style.display = 'none';
     }
     else {
-        document.getElementById('resourceEditor').style.display = 'block';
+        document.getElementById('resourceEditor').style.display = 'none';
         document.getElementById('suneditor_resourceEditor').style.display = 'block';
         document.getElementById('embedded_submission_text_resource').style.display = 'none';
     }
@@ -43,9 +44,10 @@ if(document.getElementById('resourceEditor')) {
     
     });
 
-    resourceEditor.save()
+    resourceEditor.onChange = (contents, core) => {
+        resourceEditor.save();
+    };
 
-    toggleSunEditor();
     document.getElementById('resourceType').addEventListener('change', () => {
         toggleSunEditor();
     })
@@ -285,6 +287,8 @@ function updateTopicModal( topic, topicImagePath ) {
         else {
             document.getElementById( 'isRequired' ).checked = false;
         }
+
+        toggleSunEditor();
     }
 }
 
