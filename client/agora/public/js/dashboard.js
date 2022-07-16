@@ -1,4 +1,13 @@
 /**
+ * make clicking the resource image the way to add one.
+ */
+if( document.getElementById( 'resourceImage' )) {
+    document.getElementById( 'resourceImage' ).addEventListener( 'click', () => {
+        document.getElementById( 'formFile' ).click();
+    } )
+}
+
+/**
  * When toggling resource types set the correct editor in the UI
  */
  function toggleSunEditor() {
@@ -244,29 +253,7 @@ function updateTopicModal( topic, topicImagePath ) {
             //console.log(JSON.stringify(res));
             res.json().then( ( data ) => {
                 const resource = data[0];
-                console.log(JSON.stringify(resource));
                 document.getElementById( 'resourceId' ).value = resource.id;
-
-                //console.log( resource.visibility );
-                if( resource.visibility === 0 ) {
-                    document.getElementById( 'resourceVisibilityPrivate' ).checked = true;
-                    document.getElementById( 'resourceVisibilityShared' ).checked = false;
-                    document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-                }
-                else if( resource.visibility === 1 ) {
-                    document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-                    document.getElementById( 'resourceVisibilityShared' ).checked = true;
-                    document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-                }
-                else if( resource.visibility === 2 ) {
-                    document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-                    document.getElementById( 'resourceVisibilityShared' ).checked = false;
-                    document.getElementById( 'resourceVisibilityPublic' ).checked = true;
-                }
-
-                document.getElementById( 'resourceType' ).value = resource.resourceType;
-                document.getElementById( 'resourceName' ).value = resource.resourceName;
-                document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
 
                 if( resource.resourceImage ) {
                     document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
@@ -276,15 +263,8 @@ function updateTopicModal( topic, topicImagePath ) {
                     document.getElementById( 'formFile' ).value = "";
                 }
 
-                //console.log( " the value is:: " + resource.resourceContentHtml )
-
-                // document.getElementById( 'quill_html_resource' ).value = resource.resourceContentHtml;
-                // document.getElementById( 'quill_editor_resource' ).value = resource.resourceContentHtml;
-
-                //document.getElementById( 'embedded_submission_text_resource' ).value = resource.resourceContentHtml;
-
-                resourceEditor.insertHTML( resource.resourceContentHtml, true, true );
-                
+                document.getElementById( 'resourceType' ).value = resource.resourceType;
+                document.getElementById( 'resourceVisibility' ).value = resource.visibility;
 
                 if( resource.active ) {
                     document.getElementById( 'resourceActive' ).checked = true;
@@ -299,6 +279,12 @@ function updateTopicModal( topic, topicImagePath ) {
                 else {
                     document.getElementById( 'isRequired' ).checked = false;
                 }
+
+                document.getElementById( 'resourceName' ).value = resource.resourceName;
+                document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
+
+                resourceEditor.insertHTML( resource.resourceContentHtml, true, true );
+                document.getElementById( 'resourceLink' ).value = resource.resourceLink;
 
                 toggleSunEditor();
             } )
