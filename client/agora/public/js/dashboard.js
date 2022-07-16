@@ -22,9 +22,10 @@
 
 
 // sun editor for resource
+let resourceEditor = null;
 if(document.getElementById('resourceEditor')) {
     console.log("initializing the sun editor");
-    const resourceEditor = SUNEDITOR.create('resourceEditor', {
+    resourceEditor = SUNEDITOR.create('resourceEditor', {
         toolbarContainer : '#toolbar_container',
         showPathLabel : false,
         width : 'auto',
@@ -235,60 +236,75 @@ function updateTopicModal( topic, topicImagePath ) {
  * @param {*} resource <- resource used to popluate the form
  * @param {*} resourceImagePath <- base path for the image url
  */
- function updateResourceModal( resource, resourceImagePath ) {
-    if(document.getElementById( 'create-resource-modal' ) && resource ) {
+ function updateResourceModal( resourceId, resourceImagePath ) {
+    if(document.getElementById( 'create-resource-modal' ) && resourceId ) {
 
-        document.getElementById( 'resourceId' ).value = resource.id;
+        // fetch the resource
+        fetch( "/api/v1/auth/resources/" + resourceId ).then( ( res ) => {
+            //console.log(JSON.stringify(res));
+            res.json().then( ( data ) => {
+                const resource = data[0];
+                console.log(JSON.stringify(resource));
+                document.getElementById( 'resourceId' ).value = resource.id;
 
-        console.log( resource.visibility );
-        if( resource.visibility === 0 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = true;
-            document.getElementById( 'resourceVisibilityShared' ).checked = false;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-        }
-        else if( resource.visibility === 1 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-            document.getElementById( 'resourceVisibilityShared' ).checked = true;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-        }
-        else if( resource.visibility === 2 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-            document.getElementById( 'resourceVisibilityShared' ).checked = false;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = true;
-        }
+                //console.log( resource.visibility );
+                if( resource.visibility === 0 ) {
+                    document.getElementById( 'resourceVisibilityPrivate' ).checked = true;
+                    document.getElementById( 'resourceVisibilityShared' ).checked = false;
+                    document.getElementById( 'resourceVisibilityPublic' ).checked = false;
+                }
+                else if( resource.visibility === 1 ) {
+                    document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
+                    document.getElementById( 'resourceVisibilityShared' ).checked = true;
+                    document.getElementById( 'resourceVisibilityPublic' ).checked = false;
+                }
+                else if( resource.visibility === 2 ) {
+                    document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
+                    document.getElementById( 'resourceVisibilityShared' ).checked = false;
+                    document.getElementById( 'resourceVisibilityPublic' ).checked = true;
+                }
 
-        document.getElementById( 'resourceType' ).value = resource.resourceType;
-        document.getElementById( 'resourceName' ).value = resource.resourceName;
-        document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
+                document.getElementById( 'resourceType' ).value = resource.resourceType;
+                document.getElementById( 'resourceName' ).value = resource.resourceName;
+                document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
 
-        if( resource.resourceImage ) {
-            document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
-        }
-        else {
-            document.getElementById( 'resourceImage' ).src = "data:,";
-            document.getElementById( 'formFile' ).value = "";
-        }
+                if( resource.resourceImage ) {
+                    document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
+                }
+                else {
+                    document.getElementById( 'resourceImage' ).src = "data:,";
+                    document.getElementById( 'formFile' ).value = "";
+                }
 
-        // document.getElementById( 'quill_html_resource' ).value = resource.resourceContentHtml;
-        // document.getElementById( 'quill_editor_resource' ).value = resource.resourceContentHtml;
-        document.getElementById( 'embedded_submission_text_resource' ).value = resource.resourceContentHtml;
+                //console.log( " the value is:: " + resource.resourceContentHtml )
+
+                // document.getElementById( 'quill_html_resource' ).value = resource.resourceContentHtml;
+                // document.getElementById( 'quill_editor_resource' ).value = resource.resourceContentHtml;
+
+                //document.getElementById( 'embedded_submission_text_resource' ).value = resource.resourceContentHtml;
+
+                resourceEditor.insertHTML( resource.resourceContentHtml, true, true );
+                
+
+                if( resource.active ) {
+                    document.getElementById( 'resourceActive' ).checked = true;
+                }
+                else {
+                    document.getElementById( 'resourceActive' ).checked = false;
+                }
+                
+                if( resource.isRequired ) {
+                    document.getElementById( 'isRequired' ).checked = true;
+                }
+                else {
+                    document.getElementById( 'isRequired' ).checked = false;
+                }
+
+                toggleSunEditor();
+            } )
+        } )
+
         
-
-        if( resource.active ) {
-            document.getElementById( 'resourceActive' ).checked = true;
-        }
-        else {
-            document.getElementById( 'resourceActive' ).checked = false;
-        }
-        
-        if( resource.isRequired ) {
-            document.getElementById( 'isRequired' ).checked = true;
-        }
-        else {
-            document.getElementById( 'isRequired' ).checked = false;
-        }
-
-        toggleSunEditor();
     }
 }
 

@@ -7,7 +7,6 @@
 if(availableResources && availableResources.length > 0) {
     for(let i=0; i < availableResources.length; i++) {
         
-        console.log("main page: " + availableResources[i].resourceContentHtml)
         %>
 
         <a class="card" style="width: 100%;" href="/community/resource/<%- availableResources[i].id %>" id="resource_<%- availableResources[i].id %>">
@@ -21,7 +20,8 @@ if(availableResources && availableResources.length > 0) {
                         </button>
                         
                         </h5>
-                        <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- JSON.stringify(availableResources[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; 
+                        
+                        <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- availableResources[i].id %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; 
                         <a class="fas fa-trash redColor" onclick='deleteResource();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
                     </div>
                 

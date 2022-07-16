@@ -73,8 +73,6 @@ exports.getDashboard = async function( req, res ) {
         delete req.session.messageBody;
     }
 
-    console.log("returning resources: " + JSON.stringify(availableResources));
-
     // make sure the user has access to this goal (is owner)
     if( goal.ownedBy === req.session.authUser.id ) {
         res.render( 'dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );

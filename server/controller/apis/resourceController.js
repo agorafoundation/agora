@@ -24,6 +24,47 @@ let RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 
 /**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.getAllActiveResources = async function ( req, res ) {
+    // get all the active resources
+    let resources = await resourceService.getAllActiveResourcesForOwner();
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all resources" );
+    res.status( 200 ).json( resources );
+}
+
+exports.getResourceById = async function ( req, res ) {
+    // get all the active resources by user 
+    let resource = await resourceService.getAllActiveResourcesForOwnerById( req.session.authUser.id, req.params.id );
+    if(resource) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned resource by id" );
+        res.status( 200 ).json( resource );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Resource not found" );
+        res.status( 404 ).json( message );
+    }
+    
+    
+}
+
+exports.getAllResourcesForAuthUser = async function ( req, res ) {
+    // get all the resources for this owner
+    let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id, false );
+
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all resources for user" );
+    res.status( 200 ).json( ownerResources );
+}
+
+/**
  * Update or create a completed resource for the resource Id passed.
  * Checks to see if there is an existing completedResource with the passed resourceId and
  * updates if so, otherwise creates a new completedResource and saves

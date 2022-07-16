@@ -45,8 +45,8 @@ router.use('/goals', goalRoutes);
 /**
  * Resource APIs
  */
-// const resourceRoutes = require('./apis/resourceRoutes')
-// router.use('/resource', resourceRoutes);
+const resourceRoutes = require('./apis/resourceRoutes')
+router.use('/resources', resourceRoutes);
  
 /**
  * User APIs

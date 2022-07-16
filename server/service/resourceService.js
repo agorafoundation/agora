@@ -70,8 +70,41 @@ exports.getActiveResourceById = async function(resourceId) {
  * @returns All active resources as a list
  */
 exports.getAllActiveResourcesForOwner = async function(ownerId) {
+    console.log("ownerId: " + ownerId);
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
+
+    let resources = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
+        }
+        
+        return resources;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
+
+/**
+ * 
+ * @param {*} ownerId 
+ * @param {*} resourceId 
+ * @returns 
+ */
+exports.getAllActiveResourcesForOwnerById = async function(ownerId, resourceId) {
+    console.log("ownerId: " + ownerId);
+    const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
+    const values = [ true, ownerId, resourceId ];
 
     let resources = [];
     
