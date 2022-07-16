@@ -1,11 +1,98 @@
+
+
+
+// ************************ Drag and drop ***************** //
 /**
- * make clicking the resource image the way to add one.
+ * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
+ * 
  */
-if( document.getElementById( 'resourceImage' )) {
-    document.getElementById( 'resourceImage' ).addEventListener( 'click', () => {
-        document.getElementById( 'formFile' ).click();
-    } )
+if( document.querySelectorAll( ".drop-zone" ) ) {
+    
+
+    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+
+        const dropZoneElement = inputElement.closest(".drop-zone");
+
+        dropZoneElement.addEventListener("click", (e) => {
+            inputElement.click();
+        });
+      
+        inputElement.addEventListener("change", (e) => {
+
+            if (inputElement.files.length) {
+                updateThumbnail(dropZoneElement, inputElement.files[0]);
+            }
+        });
+      
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("drop-zone--over");
+        });
+      
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("drop-zone--over");
+            });
+        });
+      
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+      
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+                updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+            }
+      
+            dropZoneElement.classList.remove("drop-zone--over");
+        });
+    });
+      
+    /**
+     * Updates the thumbnail on a drop zone element.
+     *
+     * @param {HTMLElement} dropZoneElement
+     * @param {File} file
+     */
+    function updateThumbnail(dropZoneElement, file) {
+        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+      
+        // First time - remove the prompt
+        if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+            dropZoneElement.querySelector(".drop-zone__prompt").remove();
+        }
+      
+        // First time - there is no thumbnail element, so lets create it
+        if (!thumbnailElement) {
+            thumbnailElement = document.createElement("div");
+            thumbnailElement.classList.add("drop-zone__thumb");
+            dropZoneElement.appendChild(thumbnailElement);
+        }
+      
+        thumbnailElement.dataset.label = file.name;
+      
+        // Show thumbnail for image files
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+        
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+            };
+        } else {
+            thumbnailElement.style.backgroundImage = null;
+        }
+    }
+      
+
 }
+
+// ************************ END Drag and drop ***************** //
+
+
+
+
+
+
 
 /**
  * When toggling resource types set the correct editor in the UI
@@ -253,14 +340,39 @@ function updateTopicModal( topic, topicImagePath ) {
             //console.log(JSON.stringify(res));
             res.json().then( ( data ) => {
                 const resource = data[0];
+                console.log("Client side resource check: " + JSON.stringify(resource));
                 document.getElementById( 'resourceId' ).value = resource.id;
 
                 if( resource.resourceImage ) {
-                    document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
+
+                    // set the modification flag
+                    document.getElementById( 'resourceModified' ).value = true;
+
+                    if( document.querySelectorAll(".drop-zone__input") ) {
+                        const inputElement = document.querySelectorAll(".drop-zone__input")[0];
+                        const dropZoneElement = inputElement.closest(".drop-zone");
+                        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+        
+                        // First time - remove the prompt
+                        if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+                            dropZoneElement.querySelector(".drop-zone__prompt").remove();
+                        }
+                    
+                        // First time - there is no thumbnail element, so lets create it
+                        if (!thumbnailElement) {
+                            thumbnailElement = document.createElement("div");
+                            thumbnailElement.classList.add("drop-zone__thumb");
+                            dropZoneElement.appendChild(thumbnailElement);
+                        }
+                    
+                        thumbnailElement.dataset.label = resource.resourceImage;
+                        thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage}')`;
+                        
+                    }
+
                 }
                 else {
-                    document.getElementById( 'resourceImage' ).src = "data:,";
-                    document.getElementById( 'formFile' ).value = "";
+                    //document.getElementById( 'resourceImagePreview' ).src = "data:,";
                 }
 
                 document.getElementById( 'resourceType' ).value = resource.resourceType;

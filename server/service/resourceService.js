@@ -70,7 +70,6 @@ exports.getActiveResourceById = async function(resourceId) {
  * @returns All active resources as a list
  */
 exports.getAllActiveResourcesForOwner = async function(ownerId) {
-    console.log("ownerId: " + ownerId);
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
 
@@ -102,7 +101,6 @@ exports.getAllActiveResourcesForOwner = async function(ownerId) {
  * @returns 
  */
 exports.getAllActiveResourcesForOwnerById = async function(ownerId, resourceId) {
-    console.log("ownerId: " + ownerId);
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
     const values = [ true, ownerId, resourceId ];
 

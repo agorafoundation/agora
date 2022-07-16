@@ -134,6 +134,7 @@ exports.saveResourceImage = async function( req, res, resourceId, filename ) {
 
 exports.saveResource = async function( req, res, redirect ) {
 
+
     let resource = Resource.emptyResource();
     resource.id = req.body.resourceId;
 

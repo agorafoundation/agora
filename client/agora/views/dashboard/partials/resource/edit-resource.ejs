@@ -28,22 +28,13 @@
                             <div class="row">
                                 <div class="col">
                                     <!-- Image -->
-                                    <label for="formFile" class="form-label">
-                                        <%
-                                        if( resource.resourceImage ) {
-                                            %>
-                                            <img class="img-small" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH %><%- resource.resourceImage %>" id="resourceImage" />
-                                            <%
-                                        }
-                                        else {
-                                            %>
-                                            <img class="img-small" src="data:," alt="Upload an Image" id="resourceImage" />
-                                            <%
-                                        }
-                                        %>
-                                        <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage" style="display:none;" >
-                                        (1MB Max size)
-                                    </label>
+
+                                    <div class="drop-zone">
+                                        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                                        <input type="file" name="resourceImageField" class="drop-zone__input" />
+                                        <input type="hidden" name="resourceModified" id="resourceModified" value="false" />
+                                    </div>
+
                                 </div>
                                 <div class="col">
                                     <!-- Type -->
@@ -143,11 +134,6 @@
                                     Active: <input type="checkbox" class="" id="resourceActive" name="resourceActive" <%- (resource.active)?'checked':'' %> />
                                 </fieldset>
                             </div>
-                            
-                            
-                            <%
-                            console.log("content: " + resource.resourceContentHtml );
-                            %>
 
                             <textarea id="resourceEditor" name="resourceEditor"><%- resource.resourceContentHtml %></textarea>
 

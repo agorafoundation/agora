@@ -13,7 +13,7 @@ const fs = require( 'fs' );
 let path = require( 'path' );
 
 // setup json body parser
-const bodyParser = require('body-parser');
+const bodyParser = require( 'body-parser' );
 router.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -34,7 +34,7 @@ const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 // setup fileupload (works with enctype="multipart/form-data" encoding in request)
-const fileUpload = require("express-fileupload");
+const fileUpload = require( "express-fileupload" );
 router.use(
     fileUpload()
 );
@@ -137,14 +137,18 @@ router.route( '/resource' )
         // save the resource
         let rResource = await resourceController.saveResource( req, res, true );
 
-        if ( !req.files || Object.keys( req.files ).length === 0 ) {
+        if ( req.body.resourceModified && !req.files ) {
+            // do nothing we are going to keep the original file
+            console.log("trigger modification clause");
+        }
+        else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
             resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
             
         }
         else {
             // files included
-            const file = req.files.resourceImage;
+            const file = req.files.resourceImageField;
             const timeStamp = Date.now();
 
             // check the file size
