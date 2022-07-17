@@ -1,4 +1,4 @@
-<i class="fas fa-2x fa-plus-circle triadic" data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- JSON.stringify(resource).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");' ></i>
+<i class="fas fa-2x fa-plus-circle triadic" data-toggle="modal" data-target="#create-resource-modal" onclick="newResourceModel();" ></i>
 <span class="font-weight-bold text-secondary title-font-size text-uppercase"> | Resources</span>
 <br />
 
@@ -6,19 +6,45 @@
 <%
 if(availableResources && availableResources.length > 0) {
     for(let i=0; i < availableResources.length; i++) {
-        if(availableResources[i].active) {
+        
+        %>
+
+        <a class="card" style="width: 100%;" href="/community/resource/<%- availableResources[i].id %>" id="resource_<%- availableResources[i].id %>">
+            <div class="card-body-low-padding" name="enrolled_card">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                        <button class="btn tetradic3" aria-expanded="false" aria-controls="collapseOne">
+                            <img class="img-supersmall" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH%><%- availableResources[i].resourceImage %>" />
+                            <%- availableResources[i].resourceName %>
+                        </button>
+                        
+                        </h5>
+                        
+                        <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- availableResources[i].id %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; 
+                        <a class="fas fa-trash redColor" onclick='deleteResource();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
+                    </div>
+                
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <%- availableResources[i].resourceDescription %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a> 
+
+
+        
+        <%
+        if(!availableResources[i].active) {
             %>
-            <a class="text-primary" href="/a/resource/<%- availableResources[i].id %>" ><%- availableResources[i].resourceName %></a>
-            <br />
+            <span class="redColor">{Inactive}</span>
             <%
         }
-        else {
-            %>
-            <span style="color: red;">{Inactive}
-            <a class="text-primary" href="/a/resource/<%- availableResources[i].id %>" ><%- availableResources[i].resourceName %></a></span>
+        %>
             <br />
-            <%
-        }
+        <%
     
     }
 }

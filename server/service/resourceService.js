@@ -82,7 +82,38 @@ exports.getAllActiveResourcesForOwner = async function(ownerId) {
         for(let i=0; i<res.rows.length; i++) {
             resources.push(Resource.ormResource(res.rows[i]));
         }
+        
+        return resources;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
 
+/**
+ * 
+ * @param {*} ownerId 
+ * @param {*} resourceId 
+ * @returns 
+ */
+exports.getAllActiveResourcesForOwnerById = async function(ownerId, resourceId) {
+    const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
+    const values = [ true, ownerId, resourceId ];
+
+    let resources = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
+        }
+        
         return resources;
         
     }
@@ -150,6 +181,51 @@ exports.markUserTopicCompletedResourcesInactive = async function( completedResou
         return false;
     }
 }
+
+/*
+ * Update / set the user resource image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateResourceImage = async (resourceId, filename) => {
+    // get the resource (required to exist)
+    let resource = await exports.getResourceById(resourceId);
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if(resource) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT resource_image FROM resources WHERE id = $1";
+            let values = [resource.id];
+
+            // perform the query
+            let res = await db.query(text, values);
+            
+            // set the prevFileName with the prev name
+            if(res.rows.length > 0) {
+                prevFileName = res.rows[0].resource_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE resources SET resource_image = $2 WHERE id = $1";
+            values = [resource.id, filename];
+
+            // perform query
+            await db.query(text, values);
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
 
 
 /**

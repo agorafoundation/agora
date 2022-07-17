@@ -2,3 +2,5 @@
 *
 # Except this file
 !.gitignore
+# and the default resource pic
+!resource-default.png

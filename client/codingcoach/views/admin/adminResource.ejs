@@ -72,7 +72,7 @@
                                 
                                 if(resource) {
                                     %>
-                                    <form action="/a/resource" enctype="multipart/form-data" method="POST" id='creatorResourceForm'>
+                                    <form action="/a/resource" enctype="multipart/form-data" method="POST" id='dashboardResourceForm'>
                                         <div class="form-group">
                                             <input type="hidden" name="resourceId" value="<%- resource.id %>" />
                                             <select name="resourceType" id="resourceType" class="form-control form-control-lg">
@@ -120,8 +120,10 @@
                                                 <label for="formFile" class="form-label">Upload an image for this resource (1MB Max size)</label>
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- resource.resourceImage %>" name="resourceImage">
                                             </div>
-                                            <span id="quillWrapper" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
-                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input>
+                                            <!-- <span id="quillWrapper" >Resource Content: <div id="quill_editor"><%- resource.resourceContentHtml %></div></span>
+                                            <input type="hidden" id="quill_html" name="submission_text" value=""></input> -->
+                                            <textarea id="resourceEditor"><%- resource.resourceContentHtml %></textarea>
+
                                             Embedded HTML:
                                             <textarea name="submission_text2" id="submission_text2" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />
                                             Resource Link: <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">

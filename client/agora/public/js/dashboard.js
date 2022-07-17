@@ -1,14 +1,201 @@
 
 
+
+// ************************ Drag and drop ***************** //
+/**
+ * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
+ * 
+ */
+if( document.querySelectorAll( ".drop-zone" ) ) {
+    
+
+    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+
+        const dropZoneElement = inputElement.closest(".drop-zone");
+
+        dropZoneElement.addEventListener("click", (e) => {
+            inputElement.click();
+        });
+      
+        inputElement.addEventListener("change", (e) => {
+
+            if (inputElement.files.length) {
+                updateThumbnail(dropZoneElement, inputElement.files[0]);
+            }
+        });
+      
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("drop-zone--over");
+        });
+      
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("drop-zone--over");
+            });
+        });
+      
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+      
+            if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
+                if(e.dataTransfer.files[0].size <= 1048576) {
+                    inputElement.files = e.dataTransfer.files;
+                    updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+                }
+                else {
+                    alert("Image size limit is 1MB!");
+                }
+                
+            }
+      
+            dropZoneElement.classList.remove("drop-zone--over");
+        });
+    });
+      
+    /**
+     * Updates the thumbnail on a drop zone element.
+     *
+     * @param {HTMLElement} dropZoneElement
+     * @param {File} file
+     */
+    function updateThumbnail(dropZoneElement, file) {
+        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+      
+        // First time - remove the prompt
+        if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+            dropZoneElement.querySelector(".drop-zone__prompt").remove();
+        }
+      
+        // First time - there is no thumbnail element, so lets create it
+        if (!thumbnailElement) {
+            thumbnailElement = document.createElement("div");
+            thumbnailElement.classList.add("drop-zone__thumb");
+            dropZoneElement.appendChild(thumbnailElement);
+        }
+      
+        thumbnailElement.dataset.label = file.name;
+      
+        // Show thumbnail for image files
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+        
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+            };
+        } else {
+            thumbnailElement.style.backgroundImage = null;
+        }
+    }
+      
+
+}
+
+// ************************ END Drag and drop ***************** //
+
+
+
+/**
+ * Expand metadata area
+ */
+ if( document.getElementById( 'expansionArrow' ) ) {
+    ["expansionArrow", "expansionArrowUp"].forEach( ( el ) => {
+        document.getElementById(el).addEventListener( 'click', () => {
+            if( document.getElementById( 'additionalMetadata' ).style.display === 'none') {
+                document.getElementById( 'additionalMetadata' ).style.display = 'block';
+                document.getElementById( 'expansionArrow' ).style.display = 'none';
+                document.getElementById( 'expansionArrowUp' ).style.display = 'block';
+                
+            }
+            else {
+                document.getElementById( 'additionalMetadata' ).style.display = 'none';
+                document.getElementById( 'expansionArrowUp' ).style.display = 'none';
+                document.getElementById( 'expansionArrow' ).style.display = 'block';
+            }
+        } );
+    });
+    
+    
+ }
+
+
+
+
+/**
+ * When toggling resource types set the correct editor in the UI
+ */
+ function toggleSunEditor() {
+    console.log("Type value is: " + document.getElementById('resourceType').value);
+    if(document.getElementById('resourceType').value == "3") {
+        document.getElementById('resourceEditor').style.display = 'none';
+        document.getElementById('suneditor_resourceEditor').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'block';
+    }
+    else if(document.getElementById('resourceType').value == "2") {
+        document.getElementById('resourceEditor').style.display = 'none';
+        document.getElementById('suneditor_resourceEditor').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
+    }
+    else {
+        document.getElementById('resourceEditor').style.display = 'none';
+        document.getElementById('suneditor_resourceEditor').style.display = 'block';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
+    }
+}
+
+
+// sun editor for resource
+let resourceEditor = null;
+if(document.getElementById('resourceEditor')) {
+    console.log("initializing the sun editor");
+    resourceEditor = SUNEDITOR.create('resourceEditor', {
+        toolbarContainer : '#toolbar_container',
+        showPathLabel : false,
+        width : 'auto',
+        height : 'auto',
+        minHeight : '150px',
+        maxHeight : '700px',
+        buttonList : [
+            ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
+            ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat'],
+            ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table'],
+            ['link', 'image', 'video', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
+        ],
+        callBackSave : function (contents, isChanged) {
+            alert(contents);
+            console.log(contents);
+    
+        }
+    
+    });
+
+    resourceEditor.onChange = (contents, core) => {
+        resourceEditor.save();
+    };
+
+
+    document.getElementById('resourceType').addEventListener('change', () => {
+        toggleSunEditor();
+    });
+
+    function auto_grow(element) {
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight)+"px";
+    }
+    toggleSunEditor();
+
+}
+
 if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'topicType' ).length > 0 ) {
 
     if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
-        console.log('1');
+        //console.log('1');
         document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
         document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
     }
     else {
-        console.log('2');
+        //console.log('2');
         document.getElementById( 'acivity-accordion-group' ).style.display = 'none';
         document.getElementById( 'assessment-accordion-group' ).style.display = 'none';
     }
@@ -18,12 +205,12 @@ if( document.getElementsByName( 'topicType' ) && document.getElementsByName( 'to
         topicTypeBox.addEventListener( 'click', ( ) => { 
             console.log("clicked: " + document.querySelector('input[name="topicType"]:checked').value);
             if (document.querySelector('input[name="topicType"]:checked').value == 1 ) {
-                console.log('1');
+                //console.log('1');
                 document.getElementById( 'acivity-accordion-group' ).style.display = 'block';
                 document.getElementById( 'assessment-accordion-group' ).style.display = 'block';
             }
             else {
-                console.log('2');
+                //console.log('2');
                 // make sure option were not selected by cleaning them
                 if( document.getElementById('topicHasAssessment').checked ) {
                     document.getElementById('assessment-accordion').click();
@@ -174,6 +361,35 @@ function updateTopicModal( topic, topicImagePath ) {
     }
 }
 
+function newResourceModel( ) {
+    document.getElementById( 'resourceModified' ).value = false;
+    document.getElementById( 'resourceId' ).value = -1;
+
+    document.getElementById( 'resourceType' ).value = 1;
+    document.getElementById( 'resourceVisibility' ).value = 2;
+
+    document.getElementById( 'resourceActive' ).checked = true;
+    document.getElementById( 'isRequired' ).checked = false;
+
+
+    document.getElementById( 'resourceName' ).value = '';
+    document.getElementById( 'resourceDescription' ).value = '';
+
+    resourceEditor.insertHTML( '', true, true );
+    document.getElementById( 'resourceLink' ).value = '';
+
+    if(document.querySelector('.drop-zone__thumb')) {
+        document.querySelector('.drop-zone__thumb').remove();
+
+        // add the prompt back in
+        let prompt = document.createElement("span");
+        prompt.className = "drop-zone__prompt";
+        prompt.innerHTML = "Drop file here or click to upload"
+        document.querySelector('.drop-zone').appendChild(prompt)
+
+    }
+}
+
 
 /**
  * When user selects an existing resource that they wish to edit this function will populate the DOM
@@ -181,57 +397,77 @@ function updateTopicModal( topic, topicImagePath ) {
  * @param {*} resource <- resource used to popluate the form
  * @param {*} resourceImagePath <- base path for the image url
  */
- function updateResourceModal( resource, resourceImagePath ) {
-    if(document.getElementById( 'create-resource-modal' ) && resource ) {
+ function updateResourceModal( resourceId, resourceImagePath ) {
+    if(document.getElementById( 'create-resource-modal' ) && resourceId ) {
 
-        document.getElementById( 'resourceId' ).value = resource.id;
+        // fetch the resource
+        fetch( "/api/v1/auth/resources/" + resourceId ).then( ( res ) => {
+            //console.log(JSON.stringify(res));
+            res.json().then( ( data ) => {
+                const resource = data[0];
+                console.log("Client side resource check: " + JSON.stringify(resource));
+                document.getElementById( 'resourceId' ).value = resource.id;
 
-        console.log( resource.visibility );
-        if( resource.visibility === 0 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = true;
-            document.getElementById( 'resourceVisibilityShared' ).checked = false;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-        }
-        else if( resource.visibility === 1 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-            document.getElementById( 'resourceVisibilityShared' ).checked = true;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = false;
-        }
-        else if( resource.visibility === 2 ) {
-            document.getElementById( 'resourceVisibilityPrivate' ).checked = false;
-            document.getElementById( 'resourceVisibilityShared' ).checked = false;
-            document.getElementById( 'resourceVisibilityPublic' ).checked = true;
-        }
+                if( resource.resourceImage ) {
 
-        document.getElementById( 'resourceType' ).value = resource.resourceType;
-        document.getElementById( 'resourceName' ).value = resource.resourceName;
-        document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
+                    // set the modification flag
+                    document.getElementById( 'resourceModified' ).value = true;
 
-        if( resource.resourceImage ) {
-            document.getElementById( 'resourceImage' ).src = resourceImagePath + resource.resourceImage;
-        }
-        else {
-            document.getElementById( 'resourceImage' ).src = "data:,";
-            document.getElementById( 'formFile' ).value = "";
-        }
-
-        document.getElementById( 'quill_html' ).value = resource.resourceContentHtml;
-        document.getElementById( 'quill_editor' ).value = resource.resourceContentHtml;
+                    if( document.querySelectorAll(".drop-zone__input") ) {
+                        const inputElement = document.querySelectorAll(".drop-zone__input")[0];
+                        const dropZoneElement = inputElement.closest(".drop-zone");
+                        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
         
+                        // First time - remove the prompt
+                        if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+                            dropZoneElement.querySelector(".drop-zone__prompt").remove();
+                        }
+                    
+                        // First time - there is no thumbnail element, so lets create it
+                        if (!thumbnailElement) {
+                            thumbnailElement = document.createElement("div");
+                            thumbnailElement.classList.add("drop-zone__thumb");
+                            dropZoneElement.appendChild(thumbnailElement);
+                        }
+                    
+                        thumbnailElement.dataset.label = resource.resourceImage;
+                        thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage}')`;
+                        
+                    }
 
-        if( resource.active ) {
-            document.getElementById( 'resourceActive' ).checked = true;
-        }
-        else {
-            document.getElementById( 'resourceActive' ).checked = false;
-        }
+                }
+                else {
+                    //document.getElementById( 'resourceImagePreview' ).src = "data:,";
+                }
+
+                document.getElementById( 'resourceType' ).value = resource.resourceType;
+                document.getElementById( 'resourceVisibility' ).value = resource.visibility;
+
+                if( resource.active ) {
+                    document.getElementById( 'resourceActive' ).checked = true;
+                }
+                else {
+                    document.getElementById( 'resourceActive' ).checked = false;
+                }
+                
+                if( resource.isRequired ) {
+                    document.getElementById( 'isRequired' ).checked = true;
+                }
+                else {
+                    document.getElementById( 'isRequired' ).checked = false;
+                }
+
+                document.getElementById( 'resourceName' ).value = resource.resourceName;
+                document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
+
+                resourceEditor.insertHTML( resource.resourceContentHtml, true, true );
+                document.getElementById( 'resourceLink' ).value = resource.resourceLink;
+
+                toggleSunEditor();
+            } )
+        } )
+
         
-        if( resource.isRequired ) {
-            document.getElementById( 'isRequired' ).checked = true;
-        }
-        else {
-            document.getElementById( 'isRequired' ).checked = false;
-        }
     }
 }
 

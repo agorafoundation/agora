@@ -13,6 +13,7 @@ let newQuestionNum = 0;
 // keep track of questions and options as a 2-demensional array
 let totalTracking = [];
 
+
 /**
  * Create an assessment question dynamically
  * @param {*} questionId 
@@ -372,195 +373,198 @@ window.addEventListener('load', () => {
         });
     }
 
-    // quill editor for taking an activity (set up for code)
-    if(document.getElementById('activity-submit')) {
+    // // quill editor for taking an activity (set up for code)
+    // if(document.getElementById('activity-submit')) {
 
-        hljs.configure({   // optionally configure hljs
-            languages: ['javascript', 'ruby', 'python']
-        });
+    //     hljs.configure({   // optionally configure hljs
+    //         languages: ['javascript', 'ruby', 'python']
+    //     });
         
-        var toolbarOptions = [
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],
+    //     var toolbarOptions = [
+    //       ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    //       ['blockquote', 'code-block'],
         
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
+    //       [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+    //       [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    //       [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    //       [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+    //       [{ 'direction': 'rtl' }],                         // text direction
         
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    //       [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    //       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-          [{ 'font': [] }],
-          [{ 'align': [] }],
+    //       [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    //       [{ 'font': [] }],
+    //       [{ 'align': [] }],
         
-          ['clean']                                         // remove formatting button
-        ];
+    //       ['clean']                                         // remove formatting button
+    //     ];
 
-        var quill = new Quill('#quill_editor', {
-            modules: {
-                syntax: true,
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            }, 
-            theme: 'snow'
-        });
-        // open the code-block by default
-        quill.formatLine(0, quill.getLength(), { 'code-block': true });
+    //     var quill = new Quill('#quill_editor', {
+    //         modules: {
+    //             syntax: true,
+    //             toolbar: [
+    //                 [{ header: [1, 2, false] }],
+    //                 ['bold', 'italic', 'underline'],
+    //                 ['image', 'code-block']
+    //             ]
+    //         }, 
+    //         theme: 'snow'
+    //     });
+    //     // open the code-block by default
+    //     quill.formatLine(0, quill.getLength(), { 'code-block': true });
 
-        document.getElementById('activity-form').addEventListener('submit', () => {
-            document.getElementById("quill_html").value = quill.root.innerHTML;
-        });
-    }
+    //     document.getElementById('activity-form').addEventListener('submit', () => {
+    //         document.getElementById("quill_html").value = quill.root.innerHTML;
+    //     });
+    // }
 
-    // quill editor for creator TOPIC form
-    if(document.getElementById('creatorTopicForm')) {
+    // // quill editor for creator TOPIC form
+    // if(document.getElementById('creatorTopicForm')) {
 
-        hljs.configure({   // optionally configure hljs
-            languages: ['javascript', 'ruby', 'python']
-        });
+    //     hljs.configure({   // optionally configure hljs
+    //         languages: ['javascript', 'ruby', 'python']
+    //     });
         
-        var toolbarOptions = [
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],
+    //     var toolbarOptions = [
+    //       ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    //       ['blockquote', 'code-block'],
         
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
+    //       [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+    //       [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    //       [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    //       [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+    //       [{ 'direction': 'rtl' }],                         // text direction
         
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    //       [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    //       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-          [{ 'font': [] }],
-          [{ 'align': [] }],
+    //       [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    //       [{ 'font': [] }],
+    //       [{ 'align': [] }],
         
-          ['clean']                                         // remove formatting button
-        ];
+    //       ['clean']                                         // remove formatting button
+    //     ];
 
-        var quill = new Quill('#quill_editor_topic', {
-            modules: {
-                syntax: true,
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            }, 
-            theme: 'snow'
-        });
+    //     var quill = new Quill('#quill_editor_topic', {
+    //         modules: {
+    //             syntax: true,
+    //             toolbar: [
+    //                 [{ header: [1, 2, false] }],
+    //                 ['bold', 'italic', 'underline'],
+    //                 ['image', 'code-block']
+    //             ]
+    //         }, 
+    //         theme: 'snow'
+    //     });
 
-        document.getElementById('creatorTopicForm').addEventListener('submit', () => {
-            document.getElementById("quill_html_topic").value = quill.root.innerHTML;
-        });
-    }
+    //     document.getElementById('creatorTopicForm').addEventListener('submit', () => {
+    //         document.getElementById("quill_html_topic").value = quill.root.innerHTML;
+    //     });
+    // }
 
-    // quill editor for creator TOPIC-activity form
-    if(document.getElementById('topicActivity')) {
+    // // quill editor for creator TOPIC-activity form
+    // if(document.getElementById('topicActivity')) {
 
-        hljs.configure({   // optionally configure hljs
-            languages: ['javascript', 'ruby', 'python']
-        });
+    //     hljs.configure({   // optionally configure hljs
+    //         languages: ['javascript', 'ruby', 'python']
+    //     });
         
-        var toolbarOptions = [
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],
+    //     var toolbarOptions = [
+    //       ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    //       ['blockquote', 'code-block'],
         
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
+    //       [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+    //       [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    //       [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    //       [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+    //       [{ 'direction': 'rtl' }],                         // text direction
         
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    //       [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    //       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-          [{ 'font': [] }],
-          [{ 'align': [] }],
+    //       [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    //       [{ 'font': [] }],
+    //       [{ 'align': [] }],
         
-          ['clean']                                         // remove formatting button
-        ];
+    //       ['clean']                                         // remove formatting button
+    //     ];
 
-        var quillActivity = new Quill('#quill_editor_activity', {
-            modules: {
-                syntax: true,
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            }, 
-            theme: 'snow'
-        });
+    //     var quillActivity = new Quill('#quill_editor_activity', {
+    //         modules: {
+    //             syntax: true,
+    //             toolbar: [
+    //                 [{ header: [1, 2, false] }],
+    //                 ['bold', 'italic', 'underline'],
+    //                 ['image', 'code-block']
+    //             ]
+    //         }, 
+    //         theme: 'snow'
+    //     });
 
-        document.getElementById('creatorTopicForm').addEventListener('submit', () => {
-            document.getElementById("activity_html").value = quillActivity.root.innerHTML;
-        });
-    }
+    //     document.getElementById('creatorTopicForm').addEventListener('submit', () => {
+    //         document.getElementById("activity_html").value = quillActivity.root.innerHTML;
+    //     });
+    // }
 
     // quill editor for creator resource form
     if(document.getElementById('resourceDescription')) {
-        hljs.configure({   // optionally configure hljs
-            languages: ['javascript', 'ruby', 'python']
-        });
-        
-        var toolbarOptions = [
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],
-        
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
-        
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-          [{ 'font': [] }],
-          [{ 'align': [] }],
-        
-          ['clean']                                         // remove formatting button
-        ];
 
-        var quill = new Quill('#quill_editor', {
-            modules: {
-                syntax: true,
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            }, 
-            theme: 'snow'
-        });
-        if(document.getElementById('creatorResourceForm')) {
-            document.getElementById('creatorResourceForm').addEventListener('submit', () => {
-                document.getElementById("quill_html").value = quill.root.innerHTML;
-            });
-        }
+       
 
-        if(document.getElementById('resourceForm')) {
-            document.getElementById('resourceForm').addEventListener('submit', () => {
-                document.getElementById("quill_html").value = quill.root.innerHTML;
-            });
-        }
+
+
+        // hljs.configure({   // optionally configure hljs
+        //     languages: ['javascript', 'ruby', 'python']
+        // });
+        
+        // var toolbarOptions = [
+        //   ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        //   ['blockquote', 'code-block'],
+        
+        //   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        //   [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        //   [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        //   [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        //   [{ 'direction': 'rtl' }],                         // text direction
+        
+        //   [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        //   [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        
+        //   [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        //   [{ 'font': [] }],
+        //   [{ 'align': [] }],
+        
+        //   ['clean']                                         // remove formatting button
+        // ];
+
+        // var quillResource = new Quill('#quill_editor_resource', {
+        //     modules: {
+        //         syntax: true,
+        //         toolbar: [
+        //             [{ header: [1, 2, false] }],
+        //             ['bold', 'italic', 'underline'],
+        //             ['image', 'code-block']
+        //         ]
+        //     }, 
+        //     theme: 'snow'
+        // });
+
+        // // open the code-block by default
+        // //quillResource.formatLine(0, quillResource.getLength(), { 'code-block': true });
+
+        // if(document.getElementById('dashboardResourceForm')) {
+        //     document.getElementById('dashboardResourceForm').addEventListener('submit', () => {
+        //         document.getElementById("quill_html_resource").value = quillResource.root.innerHTML;
+        //     });
+        // }
         
 
-        toggleQuillEditor();
+        // toggleQuillEditor();
 
-        document.getElementById('resourceType').addEventListener('change', () => {
-            toggleQuillEditor();
-        })
+        // document.getElementById('resourceType').addEventListener('change', () => {
+        //     toggleQuillEditor();
+        // })
     }
 
     /**
@@ -750,15 +754,15 @@ window.addEventListener('load', () => {
 function toggleQuillEditor() {
     if(document.getElementById('resourceType').value == "3") {
         document.getElementById('quillWrapper').style.display = 'none';
-        document.getElementById('submission_text2').style.display = 'block';
+        document.getElementById('embedded_submission_text_resource').style.display = 'block';
     }
     else if(document.getElementById('resourceType').value == "2") {
         document.getElementById('quillWrapper').style.display = 'none';
-        document.getElementById('submission_text2').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
     }
     else {
         document.getElementById('quillWrapper').style.display = 'block';
-        document.getElementById('submission_text2').style.display = 'none';
+        document.getElementById('embedded_submission_text_resource').style.display = 'none';
     }
 }
 

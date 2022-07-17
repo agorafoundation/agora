@@ -611,6 +611,10 @@ div.product-card a {
     width: 3rem;
 }
 
+.img-small {
+    width: 5rem;
+}
+
   /* Welcome text */
 .welcome-text {
     text-align: right;
