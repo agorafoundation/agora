@@ -38,9 +38,15 @@ if( document.querySelectorAll( ".drop-zone" ) ) {
         dropZoneElement.addEventListener("drop", (e) => {
             e.preventDefault();
       
-            if (e.dataTransfer.files.length) {
-                inputElement.files = e.dataTransfer.files;
-                updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+            if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
+                if(e.dataTransfer.files[0].size <= 1048576) {
+                    inputElement.files = e.dataTransfer.files;
+                    updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+                }
+                else {
+                    alert("Image size limit is 1MB!");
+                }
+                
             }
       
             dropZoneElement.classList.remove("drop-zone--over");
@@ -322,6 +328,35 @@ function updateTopicModal( topic, topicImagePath ) {
         else {
             document.getElementById( 'topicCompletable' ).checked = false;
         }
+    }
+}
+
+function newResourceModel( ) {
+    document.getElementById( 'resourceModified' ).value = false;
+    document.getElementById( 'resourceId' ).value = -1;
+
+    document.getElementById( 'resourceType' ).value = 1;
+    document.getElementById( 'resourceVisibility' ).value = 2;
+
+    document.getElementById( 'resourceActive' ).checked = true;
+    document.getElementById( 'isRequired' ).checked = false;
+
+
+    document.getElementById( 'resourceName' ).value = '';
+    document.getElementById( 'resourceDescription' ).value = '';
+
+    resourceEditor.insertHTML( '', true, true );
+    document.getElementById( 'resourceLink' ).value = '';
+
+    if(document.querySelector('.drop-zone__thumb')) {
+        document.querySelector('.drop-zone__thumb').remove();
+
+        // add the prompt back in
+        let prompt = document.createElement("span");
+        prompt.className = "drop-zone__prompt";
+        prompt.innerHTML = "Drop file here or click to upload"
+        document.querySelector('.drop-zone').appendChild(prompt)
+
     }
 }
 

@@ -78,16 +78,16 @@ body {
 /* Drag and drop images */
 /* started from: https://codepen.io/dcode-software/pen/xxwpLQo */
 .drop-zone {
-    max-width: 200px;
-    height: 200px;
-    padding: 25px;
+    max-width: 100px;
+    height: 100px;
+    padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     font-family: "Quicksand", sans-serif;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 12px;
     cursor: pointer;
     color: #cccccc;
     border: 4px dashed #009578;
@@ -121,7 +121,7 @@ body {
     padding: 5px 0;
     color: #ffffff;
     background: rgba(0, 0, 0, 0.75);
-    font-size: 14px;
+    font-size: 10px;
     text-align: center;
 }
 
