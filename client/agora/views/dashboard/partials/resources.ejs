@@ -15,7 +15,19 @@ if(availableResources && availableResources.length > 0) {
                     <div class="card-header" id="headingOne">
                         <h5 class="mb-0">
                         <button class="btn tetradic3" aria-expanded="false" aria-controls="collapseOne">
-                            <img class="img-supersmall" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH%><%- availableResources[i].resourceImage %>" />
+                            <%
+                            if(availableResources[i].resourceImage) {
+                                %>
+                                <img class="img-supersmall" src="<%= process.env.RESOURCE_IMAGE_WEB_PATH%><%- availableResources[i].resourceImage %>" />
+                                <%
+                            }
+                            else {
+                                %>
+                                <img class="img-supersmall" src="data:," alt="" id="resourceImageEl" />
+                                <%
+                            }
+                            %>
+                            
                             <%- availableResources[i].resourceName %>
                         </button>
                         

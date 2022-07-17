@@ -137,7 +137,9 @@ router.route( '/resource' )
         // save the resource
         let rResource = await resourceController.saveResource( req, res, true );
 
-        if ( req.body.resourceModified && !req.files ) {
+        console.log("incomming value of req.body.resourceModified: " + req.body.resourceModified);
+
+        if ( req.body.resourceModified != "false" && !req.files ) {
             // do nothing we are going to keep the original file
             console.log("trigger modification clause");
         }
