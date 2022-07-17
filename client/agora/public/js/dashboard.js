@@ -96,6 +96,28 @@ if( document.querySelectorAll( ".drop-zone" ) ) {
 
 
 
+/**
+ * Expand metadata area
+ */
+ if( document.getElementById( 'expansionArrow' ) ) {
+    ["expansionArrow", "expansionArrowUp"].forEach( ( el ) => {
+        document.getElementById(el).addEventListener( 'click', () => {
+            if( document.getElementById( 'additionalMetadata' ).style.display === 'none') {
+                document.getElementById( 'additionalMetadata' ).style.display = 'block';
+                document.getElementById( 'expansionArrow' ).style.display = 'none';
+                document.getElementById( 'expansionArrowUp' ).style.display = 'block';
+                
+            }
+            else {
+                document.getElementById( 'additionalMetadata' ).style.display = 'none';
+                document.getElementById( 'expansionArrowUp' ).style.display = 'none';
+                document.getElementById( 'expansionArrow' ).style.display = 'block';
+            }
+        } );
+    });
+    
+    
+ }
 
 
 
@@ -132,7 +154,8 @@ if(document.getElementById('resourceEditor')) {
         showPathLabel : false,
         width : 'auto',
         height : 'auto',
-        minHeight : '100px',
+        minHeight : '150px',
+        maxHeight : '700px',
         buttonList : [
             ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
             ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat'],
@@ -151,9 +174,16 @@ if(document.getElementById('resourceEditor')) {
         resourceEditor.save();
     };
 
+
     document.getElementById('resourceType').addEventListener('change', () => {
         toggleSunEditor();
-    })
+    });
+
+    function auto_grow(element) {
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight)+"px";
+    }
+    toggleSunEditor();
 
 }
 

@@ -72,14 +72,17 @@ body {
 }
 
 
-
+.centered {
+    display:block; 
+    margin: auto;
+}
 
 
 /* Drag and drop images */
 /* started from: https://codepen.io/dcode-software/pen/xxwpLQo */
 .drop-zone {
-    max-width: 100px;
-    height: 100px;
+    max-width: 125px;
+    height: 125px;
     padding: 5px;
     display: flex;
     align-items: center;
@@ -87,7 +90,7 @@ body {
     text-align: center;
     font-family: "Quicksand", sans-serif;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     color: #cccccc;
     border: 4px dashed #009578;
@@ -126,7 +129,6 @@ body {
 }
 
 /* End drag and drop */
-
 
 
 
@@ -2201,6 +2203,8 @@ select.form-control[size], select.form-control[multiple] {
 
 textarea.form-control {
   height: auto;
+  width: 95%;
+  margin: auto;
 }
 
 .form-group {
