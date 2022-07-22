@@ -145,7 +145,19 @@ router.route( '/resource' )
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
+            if( rResource.resourceType == 1 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'notebook-pen.svg' );
+            }
+            else if ( rResource.resourceType == 2 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'cell-molecule.svg' );
+            }
+            else if( rResource.resourceType == 3 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'code.svg' );
+            }
+            else {
+                resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
+            }
+            
             
         }
         else {

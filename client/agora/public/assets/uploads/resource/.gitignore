@@ -4,3 +4,6 @@
 !.gitignore
 # and the default resource pic
 !resource-default.png
+!cell-molecule.svg
+!code.svg
+!notebook-pen.svg
