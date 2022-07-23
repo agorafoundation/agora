@@ -22,6 +22,7 @@
                     <form action="/dashboard/resource" id='dashboardResourceForm' enctype="multipart/form-data" method="POST">
                         <div class="form-group">
                             <input type="hidden" name="resourceId" id="resourceId" value="<%- resource.id %>" />
+                            <input type="hidden" name="resourceModified" id="resourceModified" value="false" />
                             <div class="form-row">
                                 <div class="col-sm-2 my-1">
                                     <!-- Image -->
@@ -29,7 +30,6 @@
                                     <div class="drop-zone">
                                         <span class="drop-zone__prompt">Drop file here or click to upload</span>
                                         <input type="file" name="resourceImageField" class="drop-zone__input" />
-                                        <input type="hidden" name="resourceModified" id="resourceModified" value="false" />
                                     </div>
 
                                 </div>

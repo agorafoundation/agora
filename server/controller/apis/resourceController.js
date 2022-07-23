@@ -116,7 +116,11 @@ exports.saveResourceImage = async function( req, res, resourceId, filename ) {
     // save image in db and delete old file  
     if( resourceId > 0 ) {
         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
-            if( rValue && rValue != 'resource-default.png' ) {
+
+            if( rValue && rValue != 'resource-default.png' 
+                || rValue != 'notebook-pen.svg' 
+                || rValue != 'cell-molecule.svg' 
+                || rValue != 'code.svg' ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[resourceController] file delete error status: " + err );

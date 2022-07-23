@@ -4,3 +4,4 @@
 !.gitignore
 # and the default goal pic
 !goal-default.png
+!peak.svg

@@ -375,8 +375,10 @@ function newResourceModel( ) {
     document.getElementById( 'resourceName' ).value = '';
     document.getElementById( 'resourceDescription' ).value = '';
 
-    resourceEditor.insertHTML( '', true, true );
     document.getElementById( 'resourceLink' ).value = '';
+
+    // clear the contents of the wysiwyg editor
+    resourceEditor.setContents('');
 
     if(document.querySelector('.drop-zone__thumb')) {
         document.querySelector('.drop-zone__thumb').remove();
@@ -384,8 +386,8 @@ function newResourceModel( ) {
         // add the prompt back in
         let prompt = document.createElement("span");
         prompt.className = "drop-zone__prompt";
-        prompt.innerHTML = "Drop file here or click to upload"
-        document.querySelector('.drop-zone').appendChild(prompt)
+        prompt.innerHTML = "Drop file here or click to upload";
+        document.querySelector('.drop-zone').appendChild(prompt);
 
     }
 }
@@ -429,7 +431,7 @@ function newResourceModel( ) {
                             thumbnailElement.classList.add("drop-zone__thumb");
                             dropZoneElement.appendChild(thumbnailElement);
                         }
-                    
+                   
                         thumbnailElement.dataset.label = resource.resourceImage;
                         thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage}')`;
                         
@@ -437,7 +439,16 @@ function newResourceModel( ) {
 
                 }
                 else {
-                    //document.getElementById( 'resourceImagePreview' ).src = "data:,";
+                    // clear
+                    if(document.querySelector('.drop-zone__thumb')) {
+                        document.querySelector('.drop-zone__thumb').remove();
+
+                        // add the prompt back in
+                        let prompt = document.createElement("span");
+                        prompt.className = "drop-zone__prompt";
+                        prompt.innerHTML = "Drop file here or click to upload";
+                        document.querySelector('.drop-zone').appendChild(prompt);
+                    }
                 }
 
                 document.getElementById( 'resourceType' ).value = resource.resourceType;
@@ -460,7 +471,8 @@ function newResourceModel( ) {
                 document.getElementById( 'resourceName' ).value = resource.resourceName;
                 document.getElementById( 'resourceDescription' ).value = resource.resourceDescription;
 
-                resourceEditor.insertHTML( resource.resourceContentHtml, true, true );
+                // add the html text to the wysiwyg editor
+                resourceEditor.setContents(resource.resourceContentHtml);
                 document.getElementById( 'resourceLink' ).value = resource.resourceLink;
 
                 toggleSunEditor();

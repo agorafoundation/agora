@@ -7,7 +7,7 @@ if(ownerGoals && ownerGoals.length > 0) {
     for(let i=0; i < ownerGoals.length; i++) {
         %>
 
-        <a class="card" style="width: 100%;" href="/community/goal/<%- ownerGoals[i].id %>" id="goal_<%- ownerGoals[i].id %>">
+        <a class="card" style="width: 100%;" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(ownerGoals[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' id="goal_<%- ownerGoals[i].id %>">
             <div class="card-body-low-padding" name="enrolled_card">
                 <div class="card">
                     <div class="card-header" id="headingOne">
@@ -17,9 +17,8 @@ if(ownerGoals && ownerGoals.length > 0) {
                             <%- ownerGoals[i].goalName %>
                         </button>
                         
-                        </h5>
-                        <a class="fas fa-edit complementary" data-toggle="modal" data-target="#create-goal-modal" onclick='updateGoalModal(<%- JSON.stringify(ownerGoals[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' ></a>&nbsp;&nbsp; 
-                        <a class="fas fa-trash redColor" onclick='deleteGoal();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
+                        </h5> 
+                        
                     </div>
                 
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
