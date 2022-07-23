@@ -14,6 +14,48 @@ const Tag = require('../model/tag');
 // any cross services required
 
 
+/**
+ * Tag only APIs
+ * Managment of global tag objects
+ */
+
+
+
+
+
+exports.getAllTags = async (activeOnly) => {
+    let text = "SELECT * FROM tags";
+    if(activeOnly) {
+        text += " WHERE active = $1;";
+    }
+    
+    let values = [ true ];
+    try {
+        let tags = [];
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            tags.push(Tag.ormTag(res.rows[i]));
+        }
+        
+        return tags;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
+
+/*
+ * Tagged APIs
+ * Management of the useage of tags and association with enitities and users
+ */
+
+
+
 
 /**
  * Get an active tag by id
