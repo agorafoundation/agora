@@ -81,9 +81,11 @@ router.route( '/goal' )
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
 
+        console.log("incomming value of req.body.goalModified: " + req.body.goalModified);
+
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            goalController.saveGoalImage( req, res, rGoal.id, 'goal-default.png' );
+            goalController.saveGoalImage( req, res, rGoal.id, 'peak.svg' );
             
         }
         else {
@@ -137,13 +139,27 @@ router.route( '/resource' )
         // save the resource
         let rResource = await resourceController.saveResource( req, res, true );
 
-        if ( req.body.resourceModified && !req.files ) {
+        console.log("incomming value of req.body.resourceModified: " + req.body.resourceModified);
+
+        if ( req.body.resourceModified != "false" && !req.files ) {
             // do nothing we are going to keep the original file
             console.log("trigger modification clause");
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
+            if( rResource.resourceType == 1 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'notebook-pen.svg' );
+            }
+            else if ( rResource.resourceType == 2 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'cell-molecule.svg' );
+            }
+            else if( rResource.resourceType == 3 ) {
+                resourceController.saveResourceImage( req, res, rResource.id, 'code.svg' );
+            }
+            else {
+                resourceController.saveResourceImage( req, res, rResource.id, 'resource-default.png' );
+            }
+            
             
         }
         else {

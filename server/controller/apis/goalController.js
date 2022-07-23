@@ -71,7 +71,7 @@ exports.saveGoalImage = async function( req, res, goalId, filename ) {
     // save image in db and delete old file  
     if( goalId > 0 ) {
         goalService.updateGoalImage( goalId, filename ).then( ( rValue ) => {
-            if( rValue && rValue != 'goal-default.png' ) {
+            if( rValue && ( rValue != 'goal-default.png' || rValue != 'peak.svg' ) ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[goalController] file delete error status: " + err );
