@@ -407,6 +407,8 @@ CREATE TABLE IF NOT EXISTS tags (
     tag VARCHAR UNIQUE,
     parent INTEGER,         -- tag.id of parent creates hierarchical tagging
     last_used TIMESTAMP,
+    active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
