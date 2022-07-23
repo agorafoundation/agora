@@ -34,47 +34,6 @@
                                 <div class="col my-1">
                                     <div class="row">
                                         <div class="col">
-                                            <!-- Type -->
-                                            <select name="goalType" id="goalType" class="form-control form-control-lg">
-                                                <%
-                                                if(goal.goalType === 1) {
-                                                    %>
-                                                    <option value="1" selected>Editor</option>
-                                                    <%
-                                                }
-                                                else {
-                                                    %>
-                                                    <option value="1">Editor</option>
-                                                    <%
-                                                }
-                                                %>
-                                                <%
-                                                if(goal.goalType === 2) {
-                                                    %>
-                                                    <option value="2" selected>Link Only</option>
-                                                    <%
-                                                }
-                                                else {
-                                                    %>
-                                                    <option value="2">Link Only</option>
-                                                    <%
-                                                }
-                                                %>
-                                                <%
-                                                if(goal.goalType === 3) {
-                                                    %>
-                                                    <option value="3" selected>Embed HTML (Including iFrames)</option>
-                                                    <%
-                                                }
-                                                else {
-                                                    %>
-                                                    <option value="3">Embed HTML (Including iFrames)</option>
-                                                    <%
-                                                }
-                                                %>
-                                            </select>
-                                        </div>
-                                        <div class="col">
                                             <!-- Visibility -->
                                             <select name="goalVisibility" id="goalVisibility" class="form-control form-control-lg">
                                                 <%
@@ -115,6 +74,9 @@
                                                 %>
                                             </select>
                                         </div>
+                                        <div class="col">
+                                            Completable: <input type="checkbox" class="" id="goalCompletable" name="goalCompletable" <%- (goal.completable)?'checked':'' %> />
+                                        </div>
                                     </div>
 
                                     <div class="row">
@@ -134,11 +96,6 @@
                             <div id="additionalMetadata" style="display:none">
                                 <div class="row">
                                     <div class="col-auto">
-                                        <div class="row">
-                                            <div class="col">
-                                                Completable: <input type="checkbox" class="" id="goalCompletable" name="goalCompletable" <%- (goal.completable)?'checked':'' %> />
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="col">
                                                 Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
@@ -164,8 +121,8 @@
                             <%- include('./edit-goal-pathway') %>
 
                         </div>
+                        <a class="fas fa-trash redColor" onclick='deleteGoal();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
                         <button type="submit" id="goalButton" class="btn btn-primary btn-lg float-left">Save Goal</button>
-                        <button type="button" class="btn btn-secondary btn-lg float-sm-right" data-dismiss="modal">Cancel</button>
                     </form>
                     <%
                 }

@@ -81,9 +81,11 @@ router.route( '/goal' )
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
 
+        console.log("incomming value of req.body.goalModified: " + req.body.goalModified);
+
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            goalController.saveGoalImage( req, res, rGoal.id, 'goal-default.png' );
+            goalController.saveGoalImage( req, res, rGoal.id, 'peak.svg' );
             
         }
         else {
