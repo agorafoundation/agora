@@ -405,11 +405,7 @@ CREATE TABLE IF NOT EXISTS resources (
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
-    parent INTEGER,         -- tag.id of parent creates hierarchical tagging
     last_used TIMESTAMP,
-    active BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
-    create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
@@ -419,7 +415,9 @@ CREATE TABLE IF NOT EXISTS tag_association (
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
     use_count INTEGER, -- incremented when user finds entity via tag lookup
+    last_used TIMESTAMP,
     active BOOLEAN,
+    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
