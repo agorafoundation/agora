@@ -405,6 +405,8 @@ CREATE TABLE IF NOT EXISTS resources (
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
+    parent INTEGER,         -- tag.id of parent creates hierarchical tagging
+    last_used TIMESTAMP,
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
