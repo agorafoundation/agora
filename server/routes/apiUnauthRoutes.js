@@ -9,7 +9,14 @@ var express = require('express');
 var router = express.Router();
 
 // import controllers
-const userController = require( '../controller/apis/userController')
+const userController = require( '../controller/apis/userController');
+
+/**
+ * Tag APIs
+ */
+const tagRoutes = require( './apis/tagRoutes' );
+router.use( '/tags', tagRoutes );
+
 
 // verify email existence
 router.route( '/verifyEmail/:email' )

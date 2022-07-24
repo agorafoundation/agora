@@ -54,12 +54,6 @@ router.use('/resources', resourceRoutes);
 const userRoutes = require('./apis/userRoutes')
 router.use('/user', userRoutes);
 
-/**
- * Tag APIs
- */
-const tagRoutes = require( './apis/tagRoutes' );
-//router.use( '/tags', tagRoutes );
-
 
 /**
  * Stripe APIs
