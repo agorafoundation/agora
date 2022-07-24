@@ -58,7 +58,7 @@ router.use('/user', userRoutes);
  * Tag APIs
  */
 const tagRoutes = require( './apis/tagRoutes' );
-router.use( '/tags', tagRoutes );
+//router.use( '/tags', tagRoutes );
 
 
 /**

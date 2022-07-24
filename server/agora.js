@@ -5,11 +5,14 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// import and initizialize express
 const express = require('express');
 const app = express();
+
+// config env library setup
 require('dotenv').config();
 
-// required to parse the body of a request (post)
+// manage parsing json from body of the request
 const bodyParser = require('body-parser');
 var path = require('path');
 
@@ -18,22 +21,22 @@ app.use(bodyParser.urlencoded({
   }));
 app.use(bodyParser.json());
 
+// cross origin
 const cors = require('cors');
 app.use(cors({
     origin: '*',
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
-// get the port
-
-const PORT = process.env.SITE_PORT;
+// get the port from the env file or set 4200 as default
+const PORT = process.env.SITE_PORT || 4200;
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
 // get the view path for the front end configured
-let viewPath = '../client/' + process.env.FRONT_END_NAME + '/views';
-let publicPath = 'client/' + process.env.FRONT_END_NAME + '/public';
+const viewPath = '../client/' + process.env.FRONT_END_NAME + '/views';
+const publicPath = 'client/' + process.env.FRONT_END_NAME + '/public';
 
 app.set('views', path.join(__dirname, viewPath));
 
@@ -49,6 +52,46 @@ const pgSession = require('connect-pg-simple')(session);
 
 // database connection
 const db = require('./db/connection');
+
+/**
+ * OpenAPI / Swagger
+ */ 
+const swaggerUi = require( "swagger-ui-express" );
+const swaggerJsDoc = require( "swagger-jsdoc" );
+
+// global swagger info (TODO: maybe this should be moved into another file if it is staying?)
+const swaggerGlobal = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Agora API",
+            version: "1.0.0",
+            description: "Agora's super cool API. You can find out more about Agora at [https://freeagora.com](https://freeagora.com)",
+            termsOfService: "https://freeagora.com/terms/",
+            contact: {
+                email: "api@freeagora.com"
+            },
+            license: {
+                name: "BSD 3-Clause License",
+                url: "https://opensource.org/licenses/BSD-3-Clause"
+            }
+        },
+        servers: [
+            {
+                url: "https://api.freeagora.com/api/v1/auth"
+            },
+            {
+                url: "http://localhost:4200/api/v1/auth"
+            }
+        ]
+    }, 
+    apis: ["./routes/apis"]
+}
+
+// initialize swagger
+const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
+app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerDocInit ));
+
 
 let sess = {
     store: new pgSession({

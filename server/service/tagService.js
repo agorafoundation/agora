@@ -25,11 +25,12 @@ const Tag = require('../model/tag');
 
 exports.getAllTags = async (activeOnly) => {
     let text = "SELECT * FROM tags";
+    let values = [ ];
     if(activeOnly) {
         text += " WHERE active = $1;";
+        values.push( true );
     }
     
-    let values = [ true ];
     try {
         let tags = [];
          
@@ -40,6 +41,31 @@ exports.getAllTags = async (activeOnly) => {
         }
         
         return tags;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
+exports.getTagById = async function(tagId, activeOnly) {
+    let text = "SELECT * FROM tags WHERE id = $1";
+    let values = [ tagId ];
+    if(activeOnly) {
+        text += " AND active = $2;";
+        values.push( true );
+    }
+
+    try {
+        let tag = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            tag = Tag.ormTag(res.rows[0]);
+                  
+        }
+        return tag;
         
     }
     catch(e) {
@@ -62,48 +88,9 @@ exports.getAllTags = async (activeOnly) => {
  * @param {Integer} tagId 
  * @returns tag
  */
-exports.getActiveTagById = async function(tagId) {
-    let text = "SELECT * FROM tags WHERE active = $1 AND id = $2";
-    let values = [ true, tagId ];
-    try {
-        let tag = "";
-         
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
-        }
-        return tag;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
-    }
-}
 
-/**
- * Get an tag by id regardless of active status
- * @param {Integer} tagId 
- * @returns tag
- */
- exports.getTagById = async function(tagId) {
-    let text = "SELECT * FROM tags WHERE id = $1";
-    let values = [ tagId ];
-    try {
-        let tag = "";
-         
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
-        }
-        return tag;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
-    }
-}
+
+
 
 
 
