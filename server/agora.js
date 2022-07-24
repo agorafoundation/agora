@@ -60,37 +60,12 @@ const swaggerUi = require( "swagger-ui-express" );
 const swaggerJsDoc = require( "swagger-jsdoc" );
 
 // global swagger info (TODO: maybe this should be moved into another file if it is staying?)
-const swaggerGlobal = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "Agora API",
-            version: "1.0.0",
-            description: "Agora's super cool API. You can find out more about Agora at [https://freeagora.com](https://freeagora.com)",
-            termsOfService: "https://freeagora.com/terms/",
-            contact: {
-                email: "api@freeagora.com"
-            },
-            license: {
-                name: "BSD 3-Clause License",
-                url: "https://opensource.org/licenses/BSD-3-Clause"
-            }
-        },
-        servers: [
-            {
-                url: "https://api.freeagora.com/api/v1/auth"
-            },
-            {
-                url: "http://localhost:4200/api/v1/auth"
-            }
-        ]
-    }, 
-    apis: ["./routes/apis"]
-}
+const openApiInit = require( './agoraApi.json' );
+
 
 // initialize swagger
-const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
-app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerDocInit ));
+//const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
+app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( openApiInit ));
 
 
 let sess = {
