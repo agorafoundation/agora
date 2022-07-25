@@ -60,12 +60,13 @@ const swaggerUi = require( "swagger-ui-express" );
 const swaggerJsDoc = require( "swagger-jsdoc" );
 
 // global swagger info (TODO: maybe this should be moved into another file if it is staying?)
-const openApiInit = require( './agoraApi.json' );
+const YAML = require( "yamljs" );
+const swaggerApiDoc = YAML.load( './server/agoraApi.yaml' );
 
 
 // initialize swagger
 //const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
-app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( openApiInit ));
+app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerApiDoc ));
 
 
 let sess = {

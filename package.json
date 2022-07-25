@@ -22,10 +22,12 @@
     "suneditor": "^2.43.9",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.5.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "yamljs": "^0.3.0"
   },
   "scripts": {
     "start": "node ./server/agora.js",
+    "dev": "nodemon ./server/agora.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
