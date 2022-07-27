@@ -16,6 +16,50 @@ const deviceDetector = new DeviceDetector();
 // services
 const userService = require( '../service/userService' );
 
+/**
+ * 
+ * @param {User Email} email 
+ * @param {User Password} password 
+ * @returns 
+ */
+exports.basicAuth = async ( email, password ) => {
+    if( email && password ) {
+        // get user for email
+        let user = await userService.getUserByEmail( email );
+
+        if( user ) {
+            // verify password for user
+            const authorized = await userService.checkPassword(user.email, req.body.siPassword);
+
+            if( authorized ) {
+                // get the user role
+                const uRole = await userService.getActiveRoleByName("User");
+
+                // verify the user has the required role
+                if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
+
+                    // log the data
+                    if(user && device) {
+                        await userService.logUserSession(user.id, ip, "API Session");
+
+                        return true;
+                    }
+                    
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+
+    }
+}
 
 exports.signIn = async function( req, res ) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

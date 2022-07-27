@@ -9,7 +9,7 @@
     "cors": "^2.8.5",
     "device-detector-js": "^3.0.0",
     "dotenv": "^10.0.0",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.8",
     "express": "^4.17.1",
     "express-fileupload": "^1.4.0",
     "express-session": "^1.17.2",

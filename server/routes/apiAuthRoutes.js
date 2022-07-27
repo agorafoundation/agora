@@ -11,9 +11,46 @@ var router = express.Router();
 // import util Models
 const ApiMessage = require( '../model/util/ApiMessage' );
 
+// import controllers
+const authController = require( '../controller/authController' );
+
 // check that the user is logged in!
 // Currently by being here all APIs should require an athenicated user to work
 router.use(function (req, res, next) {
+
+    const authHeader = req.headers.authorization;
+    if(!authHeader){
+        // authentication token missing
+        var err = new Error( 'Authenticated Required' );
+
+        res.setHeader( 'WWW-Authenticate','Basic' );
+        err.status = 401;
+        next(err)
+    }
+
+    // we have a auth token, get the username and password from it.
+    const auth = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString().split(':');
+    const email = auth[0];
+    const password = auth[1];
+
+    // verify the credentials are valid
+    if (authController.basicAuth( email, password ) ) {
+        // user is authorized!
+        next( );
+
+    }
+    else {
+        res.setHeader( 'WWW-Authenticate','Basic' );
+        err.status = 401;
+        next( new Error('Authentication Required!' ) );
+    }
+
+
+    /**
+     * Old auth mechanism that relied on server session (stateful)
+     * Keeping around until Basic auth mechanism is inplace and tested
+     * with browser and other clients
+     
     if(!req.session.authUser) {
         // create the ApiMessage
         const apiRes = ApiMessage.createApiMessage( 401, "Unauthorized", "API requires authentication");
@@ -26,6 +63,7 @@ router.use(function (req, res, next) {
     else {
         next();
     }
+    */
     
 });
 
