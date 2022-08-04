@@ -30,19 +30,22 @@ router.use(function (req, res, next) {
 
     // we have a auth token, get the username and password from it.
     const auth = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString().split(':');
-    const email = auth[0];
+    const userEmail = auth[0];
     const password = auth[1];
 
     // verify the credentials are valid
-    if (authController.basicAuth( email, password ) ) {
+    const user = authController.basicAuth( userEmail, password );
+    if ( user ) {
         // user is authorized!
+        req.user = user;
+        console.log( " the original user: " + JSON.stringify(req.user));
         next( );
 
     }
     else {
         res.setHeader( 'WWW-Authenticate','Basic' );
         err.status = 401;
-        next( new Error('Authentication Required!' ) );
+        next( new Error('Authentication Failed!' ) );
     }
 
 

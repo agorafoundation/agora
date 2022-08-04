@@ -17,6 +17,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import services
 const goalService = require( '../../service/goalService' );
+const userService = require( '../../service/userService' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -52,8 +53,11 @@ exports.getGoalById = async function ( req, res ) {
 }
 
 exports.getAllGoalsForAuthUser = async function ( req, res ) {
+    
+    console.log("The rquest: " + JSON.stringify(req.user));
+
     // get all the goals for this owner
-    let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
+    let ownerGoals = await goalService.getAllGoalsForOwner( req.user.id, false );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals for user" );

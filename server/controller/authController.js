@@ -22,28 +22,30 @@ const userService = require( '../service/userService' );
  * @param {User Password} password 
  * @returns 
  */
-exports.basicAuth = async ( email, password ) => {
+exports.basicAuth = async ( email, password, req ) => {
     if( email && password ) {
         // get user for email
-        let user = await userService.getUserByEmail( email );
+        const user = await userService.getUserByEmail( email );
+        console.log('1');
 
         if( user ) {
             // verify password for user
-            const authorized = await userService.checkPassword(user.email, req.body.siPassword);
+            const authorized = await userService.checkPassword(user.email, password);
 
             if( authorized ) {
+                console.log('2');
                 // get the user role
                 const uRole = await userService.getActiveRoleByName("User");
 
                 // verify the user has the required role
                 if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
-
+                    console.log('3');
                     // log the data
-                    if(user && device) {
-                        await userService.logUserSession(user.id, ip, "API Session");
 
-                        return true;
-                    }
+                    console.log('4');
+                    userService.logUserSession(user.id, ip, "API Session");
+                    console.log(" returning: " + JSON.stringify(user));
+                    return user;
                     
                 }
                 else {
