@@ -706,6 +706,11 @@ exports.logUserSession = async function(userId, ipAddress, device) {
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)';
 
     // null checks on device
+    console.log("type check in service = " + JSON.stringify(device));
+    
+    if( !device ) {
+        device = {bot: "unknown"};
+    }
     if ( !device.client ) {
         device.client = {type: "unknown", name: "unknown", version: "unknown", engineVersion: "unknown"};
     }
@@ -716,7 +721,8 @@ exports.logUserSession = async function(userId, ipAddress, device) {
         device.device = {type: "unknown", brand: "unknown", model: "unknown"};
     }
 
-    console.log("type = " + device.device);
+    console.log("type check in service [after] = " + JSON.stringify(device));
+    
 
     let values = [userId, ipAddress, device.client.type, device.client.name, device.client.version, device.client.engine, device.client.engineVersion, device.os.name, device.os.version, device.os.platform, device.device.type, device.device.brand, device.device.model, device.bot];
 
