@@ -34,7 +34,7 @@ router.use(function (req, res, next) {
     const password = auth[1];
 
     // verify the credentials are valid
-    const user = authController.basicAuth( userEmail, password );
+    const user = authController.basicAuth( userEmail, password, req );
     if ( user ) {
         // user is authorized!
         req.user = user;

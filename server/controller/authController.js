@@ -25,26 +25,27 @@ const userService = require( '../service/userService' );
 exports.basicAuth = async ( email, password, req ) => {
     if( email && password ) {
         // get user for email
-        const user = await userService.getUserByEmail( email );
-        console.log('1');
+        const user = await userService.getUserByEmailWithRoles( email );
 
         if( user ) {
             // verify password for user
             const authorized = await userService.checkPassword(user.email, password);
 
             if( authorized ) {
-                console.log('2');
                 // get the user role
                 const uRole = await userService.getActiveRoleByName("User");
 
                 // verify the user has the required role
                 if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
-                    console.log('3');
-                    // log the data
 
-                    console.log('4');
+                    // parse the UA data
+                    const device = deviceDetector.parse(req.headers['user-agent']);
+                    console.log("device check: " + JSON.stringify(device));
+
+                    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+                    
                     userService.logUserSession(user.id, ip, "API Session");
-                    console.log(" returning: " + JSON.stringify(user));
+                    //console.log(" returning: " + JSON.stringify(user));
                     return user;
                     
                 }
@@ -96,7 +97,7 @@ exports.signIn = async function( req, res ) {
                         const device = deviceDetector.parse(req.headers['user-agent']);
                         //console.log("device check: " + JSON.stringify(device));
 
-                        var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+                        var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                         //console.log("ip check: " + ip);
 
                         // log the data
