@@ -38,17 +38,35 @@ exports.basicAuth = async ( email, password, req ) => {
                 // verify the user has the required role
                 if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
 
-                    // parse the UA data
-                    const device = deviceDetector.parse(req.headers['user-agent']);
-                    console.log("device check: " + JSON.stringify(device));
+                    // parse and log the User client data if enabled
+                    if( process.env.REQUEST_DATA_LOGGING ) {
+                        // parse the UA data
+                        const device = deviceDetector.parse(req.headers['user-agent']);
 
-                    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-                    
-                    userService.logUserSession(user.id, ip, "API Session");
-                    //console.log(" returning: " + JSON.stringify(user));
+                        // null checking on device data
+                        console.log("device check: " + JSON.stringify(device));
+
+                        // null checks on device    
+                        if( !device ) {
+                            device = { client:null, os:null, device:null, bot:null };
+                        }
+                        if ( !device.client ) {
+                            device.client = { type: "Basic Auth / Unknown client", name: "unknown", version: "unknown", engineVersion: "unknown" };
+                        }
+                        if( !device.os ) {
+                            device.os = { name: "unknown", version: "unknown", platform: "unknown" };
+                        }
+                        if( !device.device ) {
+                            device.device = { type: "Basic Auth / API call", brand: "unknown", model: "unknown" };
+                        }
+
+                        var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+                        
+                        userService.logUserSession(user.id, ip, device);
+                    }
+
                     return user;
-                    
-                }
+                } 
                 else {
                     return false;
                 }
@@ -92,20 +110,38 @@ exports.signIn = async function( req, res ) {
                     if(user.roles && user.roles.filter(role => role.id === uRole.id).length > 0) {
                         // assign the user to the session
                         req.session.authUser = user;
-                        
-                        // parse the UA data
-                        const device = deviceDetector.parse(req.headers['user-agent']);
-                        //console.log("device check: " + JSON.stringify(device));
 
-                        var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-                        //console.log("ip check: " + ip);
+                        // parse and log the User client data if enabled
+                        if( process.env.REQUEST_DATA_LOGGING ) {
 
-                        // log the data
-                        if(user && device) {
-                            await userService.logUserSession(user.id, ip, device);
+                            // parse the UA data
+                            const device = deviceDetector.parse(req.headers['user-agent']);
+                            //console.log("device check: " + JSON.stringify(device));
 
+                            // null checks on device    
+                            if( !device ) {
+                                device = { client:null, os:null, device:null, bot:null };
+                            }
+                            if ( !device.client ) {
+                                device.client = { type: "User Session / Unknown client", name: "unknown", version: "unknown", engineVersion: "unknown" };
+                            }
+                            if( !device.os ) {
+                                device.os = { name: "unknown", version: "unknown", platform: "unknown" };
+                            }
+                            if( !device.device ) {
+                                device.device = { type: "unknown", brand: "unknown", model: "unknown" };
+                            }
+
+                            var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+                            //console.log("ip check: " + ip);
+
+                            // log the data
+                            if(user && device) {
+                                userService.logUserSession(user.id, ip, device);
+
+                            }
                         }
-
+                        
                         if(req.query.redirect) {
                             res.redirect(303, req.query.redirect);
                         }
