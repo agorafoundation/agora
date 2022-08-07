@@ -35,16 +35,13 @@ router.use(function (req, res, next) {
 
     // verify the credentials are valid
     authController.basicAuth( userEmail, password, req ).then( ( user ) => {
-        console.log( " the original user: " + user );
         if ( user ) {
-            console.log(1);
             // user is authorized!
             req.user = user;
             next( );
 
         }
         else {
-            console.log(2);
             res.set("x-agora-message-title", "Unauthorized");
             res.set("x-agora-message-detail", "API requires authentication");
             res.status(401);

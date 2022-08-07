@@ -23,7 +23,6 @@ const goalController = require( '../../controller/apis/goalController' );
 // goals /api/v1/auth/goals
 router.route( '/' )
     .get(async function (req, res) {
-        console.log(3);
         goalController.getAllVisibleGoals( req, res );
     })    
     .post( ( req, res ) => { 
