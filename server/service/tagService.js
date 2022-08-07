@@ -98,7 +98,7 @@ exports.getTagById = async function(tagId, activeOnly) {
  * Retrieves all active tags created by a particular owner
  * @returns All active tags as a list
  */
-exports.getAllActiveTagsForOwner = async function(ownerId) {
+exports.getAllVisibleTags = async function( ownerId ) {
     const text = "SELECT * FROM tags WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
 

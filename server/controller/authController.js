@@ -17,7 +17,7 @@ const deviceDetector = new DeviceDetector();
 const userService = require( '../service/userService' );
 
 /**
- * 
+ * Main authenication method for all Basic Auth API requests
  * @param {User Email} email 
  * @param {User Password} password 
  * @returns 
@@ -82,6 +82,11 @@ exports.basicAuth = async ( email, password, req ) => {
     }
 }
 
+/**
+ * Main authenication method for user UI sessions
+ * @param {HTTP request} req 
+ * @param {HTTP response} res 
+ */
 exports.signIn = async function( req, res ) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     

@@ -24,7 +24,7 @@ const Event = require('../model/event');
  * all user goals and other public ones.
  * @returns List<Goal>
  */
- exports.getAllVisibleActiveGoals = async function( ownerId ) {
+ exports.getAllVisibleGoals = async function( ownerId ) {
 
     if( ownerId > -1 ) {
 
@@ -64,7 +64,7 @@ const Event = require('../model/event');
  * all user goals and other public ones.
  * @returns List<goal> with topics
  */
- exports.getAllVisibleActiveGoalsWithTopics = async function( ownerId ) {
+ exports.getAllVisibleGoalsWithTopics = async function( ownerId ) {
 
     if( ownerId > -1 ) {
 
