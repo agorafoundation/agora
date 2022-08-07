@@ -23,7 +23,8 @@ const goalController = require( '../../controller/apis/goalController' );
 // goals /api/v1/auth/goals
 router.route( '/' )
     .get(async function (req, res) {
-        goalController.getAllGoalsForAuthUser( req, res );
+        console.log(3);
+        goalController.getAllVisibleActiveGoals( req, res );
     })    
     .post( ( req, res ) => { 
         goalController.saveGoal( req, res );

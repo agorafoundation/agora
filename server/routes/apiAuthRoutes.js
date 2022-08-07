@@ -34,19 +34,24 @@ router.use(function (req, res, next) {
     const password = auth[1];
 
     // verify the credentials are valid
-    const user = authController.basicAuth( userEmail, password, req );
-    if ( user ) {
-        // user is authorized!
-        req.user = user;
-        console.log( " the original user: " + JSON.stringify(req.user));
-        next( );
+    authController.basicAuth( userEmail, password, req ).then( ( user ) => {
+        console.log( " the original user: " + user );
+        if ( user ) {
+            console.log(1);
+            // user is authorized!
+            req.user = user;
+            next( );
 
-    }
-    else {
-        res.setHeader( 'WWW-Authenticate','Basic' );
-        err.status = 401;
-        next( new Error('Authentication Failed!' ) );
-    }
+        }
+        else {
+            console.log(2);
+            res.set("x-agora-message-title", "Unauthorized");
+            res.set("x-agora-message-detail", "API requires authentication");
+            res.status(401);
+            next( 'Authentication Failed!' );
+        }
+    });
+    
 
 
     /**

@@ -25,9 +25,18 @@ let FRONT_END = process.env.FRONT_END_NAME;
 let GOAL_PATH = process.env.GOAL_IMAGE_PATH;
 
 
-exports.getAllActiveGoals = async function ( req, res ) {
+exports.getAllVisibleActiveGoals = async function ( req, res ) {
     // get all the active goals
-    let goals = await goalService.getAllActiveGoalsWithTopics();
+    let goals = await goalService.getAllVisibleActiveGoals( req.user.id );
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+exports.getAllVisibleActiveGoalsWithTopics = async function ( req, res ) {
+    // get all the active goals
+    let goals = await goalService.getAllVisibleActiveGoalsWithTopics();
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );

@@ -17,34 +17,100 @@ const Event = require('../model/event');
 
 
 /**
- * Retrieves all active goals with the highest version number
- * @returns All active goals as a list
+ * Retrieves all active goals with the highest version number that are either
+ * public, owned by the requestor, or shared with the requesting user.
+ * Retrvievs all goals
+ * TODO: sharing is not implemented yet so currently this function will return 
+ * all user goals and other public ones.
+ * @returns List<Goal>
  */
- exports.getAllActiveGoals = async function() {
-    const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
-        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-    const values = [ true ];
+ exports.getAllVisibleActiveGoals = async function( ownerId ) {
 
-    let goals = [];
-    
-    try {
-         
-        let res = await db.query(text, values);
+    if( ownerId > -1 ) {
+
+        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        const values = [ ownerId, true ];
+
+        let goals = [];
         
+        try {
+            
+            let res = await db.query(text, values);
+            
 
-        for(let i=0; i<res.rows.length; i++) {
-            goals.push(Goal.ormGoal(res.rows[i]));
+            for(let i=0; i<res.rows.length; i++) {
+                goals.push(Goal.ormGoal(res.rows[i]));
+            }
+
+            return goals;
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+            return false;
         }
 
-        return goals;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Returns all active goals including topics associated, that are either
+ * public, owned by the requestor, or shared with the requesting user.
+ * Retrvievs all goals
+ * TODO: sharing is not implemented yet so currently this function will return 
+ * all user goals and other public ones.
+ * @returns List<goal> with topics
+ */
+ exports.getAllVisibleActiveGoalsWithTopics = async function( ownerId ) {
+
+    if( ownerId > -1 ) {
+
+        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        let values = [ true ];
+
+        let goals = [];
         
+        try {
+            
+            let res = await db.query(text, values);
+            for(let i=0; i<res.rows.length; i++) {
+                text = "select * from goal_path where active = $1 and goal_rid = $2 order by position;";
+                values = [ true, res.rows[i].rid ];
+                let topics = [];
+                let res2 = await db.query(text, values);
+
+                for(let j=0; j<res2.rowCount; j++) {
+                    text = "select * from topics where active = $1 and id = $2;";
+                    values = [ true, res2.rows[j].topic_id];
+
+                    let res3 = await db.query(text, values);
+                    if(res3.rows[0]) {
+                        topics.push(Topic.ormTopic(res3.rows[0]));
+                    }
+                    
+                }
+                let goal = Goal.ormGoal(res.rows[i]);
+                goal.topics = topics;
+                
+                goals.push(goal);
+            }
+
+            
+            return goals;
+            
+        }
+        catch(e) {
+            console.log(e.stack);
+            return false;
+        }
     }
-    catch(e) {
-        console.log(e.stack)
+    else {
+        return false;
     }
-    finally {
-        
-    }
+    
 }
 
 /**
@@ -53,7 +119,7 @@ const Event = require('../model/event');
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns All active goals as a list
  */
- exports.getAllGoalsForOwner = async function(ownerId, isActive) {
+ exports.getAllGoalsForOwner = async function( ownerId, isActive ) {
 
     let text = "";
     let values = [];
@@ -88,52 +154,6 @@ const Event = require('../model/event');
     }
     finally {
         
-    }
-}
-
-
-/**
- * Returns all active goals including topics associated.
- * @returns List<goal> with topics
- */
-exports.getAllActiveGoalsWithTopics = async function() {
-    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax "
-        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-    let values = [ true ];
-
-    let goals = [];
-    
-    try {
-         
-        let res = await db.query(text, values);
-        for(let i=0; i<res.rows.length; i++) {
-            text = "select * from goal_path where active = $1 and goal_rid = $2 order by position;";
-            values = [ true, res.rows[i].rid ];
-            let topics = [];
-            let res2 = await db.query(text, values);
-
-            for(let j=0; j<res2.rowCount; j++) {
-                text = "select * from topics where active = $1 and id = $2;";
-                values = [ true, res2.rows[j].topic_id];
-
-                let res3 = await db.query(text, values);
-                if(res3.rows[0]) {
-                    topics.push(Topic.ormTopic(res3.rows[0]));
-                }
-                
-            }
-            let goal = Goal.ormGoal(res.rows[i]);
-            goal.topics = topics;
-            
-            goals.push(goal);
-        }
-
-        
-        return goals;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
     }
 }
 
