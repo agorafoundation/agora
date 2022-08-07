@@ -9,7 +9,7 @@
     "cors": "^2.8.5",
     "device-detector-js": "^3.0.0",
     "dotenv": "^10.0.0",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.8",
     "express": "^4.17.1",
     "express-fileupload": "^1.4.0",
     "express-session": "^1.17.2",
@@ -20,10 +20,14 @@
     "quill": "^1.3.6",
     "stripe": "^8.191.0",
     "suneditor": "^2.43.9",
-    "uuid": "^8.3.2"
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.5.0",
+    "uuid": "^8.3.2",
+    "yamljs": "^0.3.0"
   },
   "scripts": {
     "start": "node ./server/agora.js",
+    "dev": "nodemon ./server/agora.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

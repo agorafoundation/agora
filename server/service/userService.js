@@ -704,6 +704,21 @@ exports.checkPassword = async function(email, enteredPassword) {
 exports.logUserSession = async function(userId, ipAddress, device) {
     let text = 'INSERT INTO user_sessions(user_id, ip_address, client_type, client_name, client_version, client_engine, client_engine_version, os_name, os_version, os_platform, device_type, device_brand, device_model, bot)'
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)';
+
+    // null checks on device    
+    if( !device ) {
+        device = { client:null, os:null, device:null, bot:null };
+    }
+    if ( !device.client ) {
+        device.client = { type: "unknown", name: "unknown", version: "unknown", engineVersion: "unknown" };
+    }
+    if( !device.os ) {
+        device.os = { name: "unknown", version: "unknown", platform: "unknown" };
+    }
+    if( !device.device ) {
+        device.device = { type: "unknown", brand: "unknown", model: "unknown" };
+    }
+    
     let values = [userId, ipAddress, device.client.type, device.client.name, device.client.version, device.client.engine, device.client.engineVersion, device.os.name, device.os.version, device.os.platform, device.device.type, device.device.brand, device.device.model, device.bot];
 
     try {

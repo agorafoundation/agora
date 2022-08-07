@@ -25,11 +25,12 @@ const Tag = require('../model/tag');
 
 exports.getAllTags = async (activeOnly) => {
     let text = "SELECT * FROM tags";
+    let values = [ ];
     if(activeOnly) {
         text += " WHERE active = $1;";
+        values.push( true );
     }
     
-    let values = [ true ];
     try {
         let tags = [];
          
@@ -40,6 +41,31 @@ exports.getAllTags = async (activeOnly) => {
         }
         
         return tags;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
+
+
+exports.getTagById = async function(tagId, activeOnly) {
+    let text = "SELECT * FROM tags WHERE id = $1";
+    let values = [ tagId ];
+    if(activeOnly) {
+        text += " AND active = $2;";
+        values.push( true );
+    }
+
+    try {
+        let tag = "";
+         
+        let res = await db.query(text, values);
+        if(res.rowCount > 0) {
+            tag = Tag.ormTag(res.rows[0]);
+                  
+        }
+        return tag;
         
     }
     catch(e) {
@@ -62,48 +88,9 @@ exports.getAllTags = async (activeOnly) => {
  * @param {Integer} tagId 
  * @returns tag
  */
-exports.getActiveTagById = async function(tagId) {
-    let text = "SELECT * FROM tags WHERE active = $1 AND id = $2";
-    let values = [ true, tagId ];
-    try {
-        let tag = "";
-         
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
-        }
-        return tag;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
-    }
-}
 
-/**
- * Get an tag by id regardless of active status
- * @param {Integer} tagId 
- * @returns tag
- */
- exports.getTagById = async function(tagId) {
-    let text = "SELECT * FROM tags WHERE id = $1";
-    let values = [ tagId ];
-    try {
-        let tag = "";
-         
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
-        }
-        return tag;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
-    }
-}
+
+
 
 
 
@@ -209,8 +196,9 @@ exports.saveTag = async function(tag) {
         if(tag.id > 0) {
             
             // update
-            let text = "UPDATE tags SET tag = $2, parent=$7, active = $8, owned_by = $9, visibility = $11 WHERE id = $10;";
-            let values = [ tag.tagType, tag.tagName, tag.tagDescription, tag.tagImage, tag.tagContentHtml, tag.tagLink, tag.isRequired, tag.active, tag.ownedBy, tag.id, tag.visibility ];
+            console.log(1);
+            let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE id = $3;";
+            let values = [ tag.tag, tag.ownedBy, tag.id ];
     
             try {
                 let res = await db.query(text, values);
@@ -222,10 +210,10 @@ exports.saveTag = async function(tag) {
             
         }
         else {
-            
+            console.log(2);
             // insert
-            let text = "INSERT INTO tags (tag_type, tag_name, tag_description, tag_image, tag_content_html, tag_link, is_required, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;";
-            values = [ tag.tagType, tag.tagName, tag.tagDescription, tag.tagImage, tag.tagContentHtml, tag.tagLink, tag.isRequired, tag.active, tag.ownedBy, tag.visibility ];
+            let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING id;";
+            values = [ tag.tag, tag.ownedBy ];
 
             try {
                 let res2 = await db.query(text, values);

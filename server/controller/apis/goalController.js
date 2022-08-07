@@ -17,6 +17,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import services
 const goalService = require( '../../service/goalService' );
+const userService = require( '../../service/userService' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -24,9 +25,18 @@ let FRONT_END = process.env.FRONT_END_NAME;
 let GOAL_PATH = process.env.GOAL_IMAGE_PATH;
 
 
-exports.getAllActiveGoals = async function ( req, res ) {
+exports.getAllVisibleActiveGoals = async function ( req, res ) {
     // get all the active goals
-    let goals = await goalService.getAllActiveGoalsWithTopics();
+    let goals = await goalService.getAllVisibleActiveGoals( req.user.id );
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+exports.getAllVisibleActiveGoalsWithTopics = async function ( req, res ) {
+    // get all the active goals
+    let goals = await goalService.getAllVisibleActiveGoalsWithTopics();
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
@@ -52,8 +62,11 @@ exports.getGoalById = async function ( req, res ) {
 }
 
 exports.getAllGoalsForAuthUser = async function ( req, res ) {
+    
+    console.log("The rquest: " + JSON.stringify(req.user));
+
     // get all the goals for this owner
-    let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
+    let ownerGoals = await goalService.getAllGoalsForOwner( req.user.id, false );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals for user" );
