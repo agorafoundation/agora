@@ -18,17 +18,25 @@ const Tagged = require( '../../model/tagged' );
 
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ * Retrieves all available tags
+ * @param {HTTP request} req 
+ * @param {HTTP respons} res 
  */
  exports.getAllTags = async function ( req, res ) {
     // get all the active tags
     let tags = await tagService.getAllTags();
-    
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all tags" );
-    res.status( 200 ).json( tags );
+    console.log("tags: " + tags.length );
+
+    if( tags.length > 0 ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all tags" );
+        res.status( 200 ).json( tags );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
 }
 
 

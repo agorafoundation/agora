@@ -77,6 +77,12 @@ router.use(function (req, res, next) {
 
 
 /**
+ * Tag APIs
+ */
+ const tagRoutes = require( './apis/tagRoutes' );
+ router.use( '/tags', tagRoutes );
+
+/**
  * Goal APIs
  */
 const goalRoutes = require('./apis/goalRoutes')
