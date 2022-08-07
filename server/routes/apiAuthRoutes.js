@@ -21,33 +21,37 @@ router.use(function (req, res, next) {
     const authHeader = req.headers.authorization;
     if(!authHeader){
         // authentication token missing
-        var err = new Error( 'Authenticated Required' );
 
-        res.setHeader( 'WWW-Authenticate','Basic' );
-        err.status = 401;
-        next(err)
+        res.set("x-agora-message-title", "Unauthorized");
+        res.set("x-agora-message-detail", "API requires authentication");
+        res.status(401);
+        next( 'Authentication not provided!' );
+        
+    }
+    else {
+        // we have a auth token, get the username and password from it.
+        const auth = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString().split(':');
+        const userEmail = auth[0];
+        const password = auth[1];
+
+        // verify the credentials are valid
+        authController.basicAuth( userEmail, password, req ).then( ( user ) => {
+            if ( user ) {
+                // user is authorized!
+                req.user = user;
+                next( );
+
+            }
+            else {
+                res.set("x-agora-message-title", "Unauthorized");
+                res.set("x-agora-message-detail", "API requires authentication");
+                res.status(401);
+                next( 'Authentication Failed!' );
+            }
+        });
     }
 
-    // we have a auth token, get the username and password from it.
-    const auth = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString().split(':');
-    const userEmail = auth[0];
-    const password = auth[1];
-
-    // verify the credentials are valid
-    authController.basicAuth( userEmail, password, req ).then( ( user ) => {
-        if ( user ) {
-            // user is authorized!
-            req.user = user;
-            next( );
-
-        }
-        else {
-            res.set("x-agora-message-title", "Unauthorized");
-            res.set("x-agora-message-detail", "API requires authentication");
-            res.status(401);
-            next( 'Authentication Failed!' );
-        }
-    });
+    
     
 
 
