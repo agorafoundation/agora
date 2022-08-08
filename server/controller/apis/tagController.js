@@ -24,7 +24,8 @@ const Tagged = require( '../../model/tagged' );
  */
  exports.getAllTags = async function ( req, res ) {
     // get all the active tags
-    let tags = await tagService.getAllTags();
+
+    let tags = await tagService.getAllTags( req.headers.limit, req.headers.offset );
     console.log("tags: " + tags.length );
 
     if( tags.length > 0 ) {
