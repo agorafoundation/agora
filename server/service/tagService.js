@@ -22,7 +22,12 @@ const Tag = require('../model/tag');
 
 
 
-
+/**
+ * Any active user can query for all tags created in the system.
+ * The owned by member signifies the very first user to use the tag.
+ * @param {boolean} activeOnly 
+ * @returns 
+ */
 exports.getAllTags = async (activeOnly) => {
     let text = "SELECT * FROM tags";
     let values = [ ];
@@ -75,6 +80,13 @@ exports.getTagById = async function(tagId, activeOnly) {
 
 
 
+
+
+
+
+
+
+
 /*
  * Tagged APIs
  * Management of the useage of tags and association with enitities and users
@@ -92,36 +104,6 @@ exports.getTagById = async function(tagId, activeOnly) {
 
 
 
-
-
-/**
- * Retrieves all active tags created by a particular owner
- * @returns All active tags as a list
- */
-exports.getAllActiveTagsForOwner = async function(ownerId) {
-    const text = "SELECT * FROM tags WHERE active = $1 and owned_by = $2 order by id;";
-    const values = [ true, ownerId ];
-
-    let tags = [];
-    
-    try {
-         
-        let res = await db.query(text, values);
-        
-        for(let i=0; i<res.rows.length; i++) {
-            tags.push(Tag.ormTag(res.rows[i]));
-        }
-        
-        return tags;
-        
-    }
-    catch(e) {
-        console.log(e.stack)
-    }
-    finally {
-        
-    }
-}
 
 /**
  * 
