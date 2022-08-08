@@ -28,13 +28,33 @@ const Tag = require('../model/tag');
  * @param {boolean} activeOnly 
  * @returns 
  */
-exports.getAllTags = async (activeOnly) => {
+exports.getAllTags = async ( activeOnly, limit, offset ) => {
     let text = "SELECT * FROM tags";
     let values = [ ];
-    if(activeOnly) {
+
+    // apply a default offset if none is provided
+    if ( !offset ) offset = 0;
+
+    // aff the active clause to the query
+    if( activeOnly ) {
         text += " WHERE active = $1;";
         values.push( true );
     }
+    
+    if( limit ) {
+        if ( !activeOnly ) {
+            text += " WHERE LIMIT = $1 AND OFFSET = $2;";
+        }
+        else {
+            text += "AND LIMIT = $2 AND OFFSET = $3;";
+        }
+
+        values.push( limit );
+        values.push( offset );
+
+    }
+    
+
     
     try {
         let tags = [];
