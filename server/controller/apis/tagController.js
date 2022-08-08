@@ -25,8 +25,7 @@ const Tagged = require( '../../model/tagged' );
  exports.getAllTags = async function ( req, res ) {
     // get all the active tags
 
-    let tags = await tagService.getAllTags( req.headers.limit, req.headers.offset );
-    console.log("tags: " + tags.length );
+    let tags = await tagService.getAllTags( req.query.limit, req.query.offset );
 
     if( tags.length > 0 ) {
         res.set( "x-agora-message-title", "Success" );
