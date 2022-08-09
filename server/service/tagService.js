@@ -202,7 +202,7 @@ exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
  * @param {Tag} tag 
  * @returns Tag object with id 
  */
-exports.saveTag = async function(tag) {
+exports.saveTag = async function( tag ) {
     // check to see if an id exists - insert / update check
     if(tag) {
         if(tag.id > 0) {

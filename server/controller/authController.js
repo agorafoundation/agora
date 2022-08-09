@@ -43,9 +43,6 @@ exports.basicAuth = async ( email, password, req ) => {
                         // parse the UA data
                         const device = deviceDetector.parse(req.headers['user-agent']);
 
-                        // null checking on device data
-                        console.log("device check: " + JSON.stringify(device));
-
                         // null checks on device    
                         if( !device ) {
                             device = { client:null, os:null, device:null, bot:null };

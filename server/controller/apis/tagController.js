@@ -57,8 +57,21 @@ exports.saveTag = async function( req, res, redirect ) {
     // add changes from the body if they are passed
     tag.tag = req.body.tag;
     tag.lastUsed = Date.now();
+
+    // get the tag name
+    tag.tag = req.body.tag;
     
-    (req.session && req.session.authUser) ? tag.ownedBy = req.session.authUser.id : tag.ownedBy = req.body.ownedBy; 
+    // get the owner used the passed data if present otherwise check for the API user or 
+    // the user session
+    if( req.body.ownedBy ) {
+        tag.ownedBy = req.body.ownedBy;
+    }
+    else if( req && req.user ) {
+        tag.ownedBy = req.user.id;
+    }
+    else if ( req && req.session && req.session.authUser) {
+        tag.ownedBy = req.session.authUser.id;
+    }
 
     // save the tag
     tag = await tagService.saveTag( tag );
