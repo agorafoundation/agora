@@ -35,6 +35,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tags'
+    post:
+      tags:
+        - Tags
+      summary: Save a new tag or update an existing one (by providing the id of the existing entity)
+      parameters:
+      respsonses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: Tag
+                items:
+                  $ref: '#/components/schemas/Tag'
   /goals:
     get:
       tags:
