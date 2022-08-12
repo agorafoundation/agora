@@ -39,7 +39,20 @@ const Tagged = require( '../../model/tagged' );
     }
 }
 
+exports.getTagById = async function( req, res ) {
+    let tag = await tagService.getTagById( req.query.id );
 
+    if( tag > 0 ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned tag" );
+        res.status( 200 ).json( tag );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
+}
 
 
 

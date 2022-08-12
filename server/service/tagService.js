@@ -26,7 +26,7 @@ const Tag = require('../model/tag');
  * Any active user can query for all tags created in the system.
  * The owned by member signifies the very first user to use the tag.
  * @param {boolean} activeOnly 
- * @returns 
+ * @returns the requested set of Tags or false if not found
  */
 exports.getAllTags = async ( limit, offset ) => {
     
@@ -36,26 +36,6 @@ exports.getAllTags = async ( limit, offset ) => {
     // apply a default offset if none is provided
     if ( !offset ) offset = 0;
 
-    /* add the active clause to the query
-    if( activeOnly ) {
-        text += " WHERE active = $1";
-        values.push( true );
-    }
-    
-
-    // add the limit clause to the query with default offset
-    if( limit ) {
-        if ( !activeOnly ) {
-            text += " LIMIT = $1 OFFSET = $2";
-        }
-        else {
-            text += "LIMIT = $2 OFFSET = $3";
-        }
-
-        values.push( limit );
-        values.push( offset );
-    }
-    */
     if( limit ) {
         text += " ORDER BY id LIMIT $1 OFFSET $2";
 
@@ -69,42 +49,47 @@ exports.getAllTags = async ( limit, offset ) => {
     try {
         let tags = [];
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            tags.push(Tag.ormTag(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            tags.push( Tag.ormTag(res.rows[i] ) );
         }
         
         return tags;
         
     }
     catch(e) {
-        console.log(e.stack)
+        console.log( e.stack );
+        return false;
     }
 }
 
-
-exports.getTagById = async function(tagId, activeOnly) {
+/**
+ * Any active user can query for any tag by the tags Id
+ * @param {int} tagId 
+ * @returns Tag or false if not found
+ */
+exports.getTagById = async function( tagId ) {
     let text = "SELECT * FROM tags WHERE id = $1";
     let values = [ tagId ];
-    if(activeOnly) {
-        text += " AND active = $2;";
-        values.push( true );
-    }
 
     try {
         let tag = "";
          
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            tag = Tag.ormTag( res.rows[0] );
+            return tag;
         }
-        return tag;
+        else {
+            return false;
+        }
+        
         
     }
     catch(e) {
-        console.log(e.stack)
+        console.log( e.stack );
+        return false;
     }
 }
 

@@ -21,6 +21,12 @@ router.route( '/' )
     }
 )
 
+router.route( '/:id' )
+    .get(async (req, res ) => {
+        tagController.getTagById( req, res );
+    }
+)
+
 
 
 
