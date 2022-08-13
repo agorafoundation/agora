@@ -40,9 +40,9 @@ const Tagged = require( '../../model/tagged' );
 }
 
 exports.getTagById = async function( req, res ) {
-    let tag = await tagService.getTagById( req.query.id );
+    let tag = await tagService.getTagById( req.params.id );
 
-    if( tag > 0 ) {
+    if( tag ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned tag" );
         res.status( 200 ).json( tag );
