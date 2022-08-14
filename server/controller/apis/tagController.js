@@ -72,12 +72,13 @@ exports.deleteTagById = async ( req, res ) => {
 
 
 exports.saveTag = async function( req, res, redirect ) {
-
+    console.log(2);
     let tag = Tag.emptyTag();
     tag.id = req.body.tagId;
 
     // see if this is a modification of an existing tag
     let existingTag = await tagService.getTagById( tag.id );
+    console.log(3);
 
     // if this is an update replace the tag with teh existing one as the starting point
     (existingTag) ? tag = existingTag : null;
@@ -100,7 +101,7 @@ exports.saveTag = async function( req, res, redirect ) {
     else if ( req && req.session && req.session.authUser) {
         tag.ownedBy = req.session.authUser.id;
     }
-
+    console.log(4);
     // save the tag
     tag = await tagService.saveTag( tag );
 
@@ -122,7 +123,7 @@ exports.saveTag = async function( req, res, redirect ) {
     else {
         console.log( "tagController.saveTag() - END - Non-Redirect ");
         res.setHeader( 'Content-Type', 'application/json' );
-        res.status(200).send(JSON.stringify(tag));
+        res.status(201).send(JSON.stringify(tag));
     }
     
 }

@@ -17,6 +17,7 @@ router.route( '/' )
         tagController.getAllTags( req, res );
     })    
     .post( ( req, res ) => { 
+        console.log(1);
         tagController.saveTag( req, res, false );
     }
 )

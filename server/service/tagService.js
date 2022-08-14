@@ -207,7 +207,7 @@ exports.saveTag = async function( tag ) {
         if(tag.id > 0) {
             
             // update
-            console.log(1);
+            console.log("tag -1");
             let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE id = $3;";
             let values = [ tag.tag, tag.ownedBy, tag.id ];
     
@@ -221,7 +221,7 @@ exports.saveTag = async function( tag ) {
             
         }
         else {
-            console.log(2);
+            console.log("tag -2");
             // insert
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING id;";
             values = [ tag.tag, tag.ownedBy ];
