@@ -93,7 +93,22 @@ exports.getTagById = async function( tagId ) {
 }
 
 
+exports.deleteTagById = async ( tagId ) => {
+    let text = "DELETE FROM tags WHERE id = $1";
+    let values = [ tagId ];
 
+    try {
+         
+        let res = await db.query( text, values );
+        console.log("res: " + res )
+        return true;
+        
+    }
+    catch(e) {
+        console.log( e.stack );
+        return false;
+    }
+}
 
 
 

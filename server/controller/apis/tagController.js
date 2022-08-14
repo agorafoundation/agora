@@ -54,6 +54,21 @@ exports.getTagById = async function( req, res ) {
     }
 }
 
+exports.deleteTagById = async ( req, res ) => {
+    let success = await tagService.deleteTagById( req.params.id );
+
+    if( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned tag" );
+        res.status( 200 ).json( "Success" );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
+}
+
 
 
 exports.saveTag = async function( req, res, redirect ) {

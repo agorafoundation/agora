@@ -13,7 +13,7 @@
 
 // tags /api/v1/auth/tags
 router.route( '/' )
-    .get(async function (req, res) {
+    .get(async (req, res) => {
         tagController.getAllTags( req, res );
     })    
     .post( ( req, res ) => { 
@@ -22,10 +22,14 @@ router.route( '/' )
 )
 
 router.route( '/:id' )
-    .get(async (req, res ) => {
+    .get(async ( req, res ) => {
         tagController.getTagById( req, res );
+    })
+    .delete( async ( req, res ) => {
+        tagController.deleteTagById( req, res );
     }
-)
+) 
+
 
 
 
