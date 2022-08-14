@@ -46,7 +46,6 @@ paths:
       tags:
         - Tags
       summary: Save a new tag or update an existing one (by providing the id of the existing entity)
-      parameters:
       requestBody:
         description: Include a Tag object to save in JSON format *NOTE* - If id is provided the operation will act as an update to the record with that id, if no id is provide a new record will be created and the id will automatically be assigned
         required: true
@@ -93,7 +92,7 @@ paths:
         - Tags
       summary: Delete an existing tag providing it's Id
       parameters:
-        - in: params
+        - in: path
           name: id
           schema:
             type: integer

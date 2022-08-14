@@ -72,19 +72,26 @@ exports.deleteTagById = async ( req, res ) => {
 
 
 exports.saveTag = async function( req, res, redirect ) {
-    console.log(2);
     let tag = Tag.emptyTag();
     tag.id = req.body.tagId;
 
     // see if this is a modification of an existing tag
     let existingTag = await tagService.getTagById( tag.id );
-    console.log(3);
+    let exsitingTagName;
 
     // if this is an update replace the tag with teh existing one as the starting point
-    (existingTag) ? tag = existingTag : null;
+    if (existingTag) {
+        tag = existingTag;
+    }
+    else {
+        // check to see if there is an existing tag with the same name since we do not want dups
+        existingTagName = await tagService.getTagByTagName( req.body.tag );
+        tag = (existingTagName) ? existingTagName : tag;
+    }
 
     // add changes from the body if they are passed
     tag.tag = req.body.tag;
+
     tag.lastUsed = Date.now();
 
     // get the tag name
@@ -101,9 +108,14 @@ exports.saveTag = async function( req, res, redirect ) {
     else if ( req && req.session && req.session.authUser) {
         tag.ownedBy = req.session.authUser.id;
     }
-    console.log(4);
+
     // save the tag
-    tag = await tagService.saveTag( tag );
+    if( existingTagName ) {
+        tag = await tagService.saveTag( tag, true );
+    }
+    else {
+        tag = await tagService.saveTag( tag );
+    }
 
     if( tag ) {
         req.session.messageType = "success";
@@ -117,13 +129,26 @@ exports.saveTag = async function( req, res, redirect ) {
     }
 
     if( redirect ) {
-        console.log( "tagController.saveTag() - END - Redirect ");
         return tag;
     }
     else {
-        console.log( "tagController.saveTag() - END - Non-Redirect ");
-        res.setHeader( 'Content-Type', 'application/json' );
-        res.status(201).send(JSON.stringify(tag));
+        if( existingTag ) {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Updated Tag for Id provided" );
+            res.status(200).send(JSON.stringify(tag));
+        }
+        else if ( existingTagName ) {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Updated existing Tag by Tag name" );
+            res.status(200).send(JSON.stringify(tag));
+        }
+        else {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Created new tag" );
+            res.status(201).send(JSON.stringify(tag));
+        }
     }
-    
 }
