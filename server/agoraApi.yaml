@@ -54,7 +54,7 @@ paths:
             schema: 
               type: object
               $ref: '#/components/schemas/Tag'
-      respsonses:
+      responses:
         '201':
           description: Created
           content:
