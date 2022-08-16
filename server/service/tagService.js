@@ -13,97 +13,98 @@ const Tag = require('../model/tag');
 
 // any cross services required
 
-
-/**
- * Tag only APIs
- * Managment of global tag objects
- */
-
-
-
-
 /**
  * Any active user can query for all tags created in the system.
  * The owned by member signifies the very first user to use the tag.
  * @param {boolean} activeOnly 
- * @returns 
+ * @returns the requested set of Tags or false if not found
  */
-exports.getAllTags = async (activeOnly) => {
+exports.getAllTags = async ( limit, offset ) => {
+    
     let text = "SELECT * FROM tags";
     let values = [ ];
-    if(activeOnly) {
-        text += " WHERE active = $1;";
-        values.push( true );
+
+    // apply a default offset if none is provided
+    if ( !offset ) offset = 0;
+
+    if( limit ) {
+        text += " ORDER BY id LIMIT $1 OFFSET $2";
+
+        values.push( limit );
+        values.push( offset );
     }
+
+    text += ";";
     
+    // run the query
     try {
         let tags = [];
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            tags.push(Tag.ormTag(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            tags.push( Tag.ormTag(res.rows[i] ) );
         }
         
         return tags;
         
     }
     catch(e) {
-        console.log(e.stack)
+        console.log( e.stack );
+        return false;
     }
 }
 
-
-exports.getTagById = async function(tagId, activeOnly) {
+/**
+ * Any active user can query for any tag by the tags Id
+ * @param {int} tagId 
+ * @returns Tag or false if not found
+ */
+exports.getTagById = async function( tagId ) {
     let text = "SELECT * FROM tags WHERE id = $1";
     let values = [ tagId ];
-    if(activeOnly) {
-        text += " AND active = $2;";
-        values.push( true );
-    }
 
     try {
         let tag = "";
          
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            tag = Tag.ormTag(res.rows[0]);
-                  
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            tag = Tag.ormTag( res.rows[0] );
+            return tag;
         }
-        return tag;
+        else {
+            return false;
+        }
         
     }
     catch(e) {
-        console.log(e.stack)
+        console.log( e.stack );
+        return false;
     }
 }
 
+exports.getTagByTagName = async ( tagName ) => {
+    let text = "SELECT * FROM tags WHERE tag ILIKE $1;";
+    let values = [ tagName ];
 
-
-
-
-
-
-
-
-
-/*
- * Tagged APIs
- * Management of the useage of tags and association with enitities and users
- */
-
-
-
-
-/**
- * Get an active tag by id
- * @param {Integer} tagId 
- * @returns tag
- */
-
-
-
-
+    try {
+        let tag = "";
+         
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            tag = Tag.ormTag( res.rows[0] );
+            return tag;
+        }
+        else {
+            return false;
+        }
+        
+    }
+    catch(e) {
+        console.log( e.stack );
+        return false;
+    }
+}
 
 /**
  * 
@@ -170,17 +171,17 @@ exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
 /**
  * Saves a tag to the database, creates a new record if no id is assigned, updates existing record if there is an id.
  * @param {Tag} tag 
+ * @param {boolean} Update flag: true - force update (usually done when tag name has been verified as dup)
  * @returns Tag object with id 
  */
-exports.saveTag = async function(tag) {
+exports.saveTag = async function( tag, updateFlag ) {
     // check to see if an id exists - insert / update check
     if(tag) {
-        if(tag.id > 0) {
+        if(tag.id > 0 || updateFlag) {
             
             // update
-            console.log(1);
             let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE id = $3;";
-            let values = [ tag.tag, tag.ownedBy, tag.id ];
+            let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.id ];
     
             try {
                 let res = await db.query(text, values);
@@ -192,10 +193,9 @@ exports.saveTag = async function(tag) {
             
         }
         else {
-            console.log(2);
             // insert
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING id;";
-            values = [ tag.tag, tag.ownedBy ];
+            values = [ tag.tag.toLowerCase(), tag.ownedBy ];
 
             try {
                 let res2 = await db.query(text, values);
@@ -216,3 +216,25 @@ exports.saveTag = async function(tag) {
         return false;
     }
 }
+
+
+/**
+ * Delete a tag by the passed id
+ * @param {int} tagId 
+ * @returns {boolean} success
+ */
+ exports.deleteTagById = async ( tagId ) => {
+    let text = "DELETE FROM tags WHERE id = $1";
+    let values = [ tagId ];
+
+    try {
+        let res = await db.query( text, values );
+        return true;
+        
+    }
+    catch(e) {
+        console.log( e.stack );
+        return false;
+    }
+}
+

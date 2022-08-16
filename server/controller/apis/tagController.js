@@ -24,8 +24,8 @@ const Tagged = require( '../../model/tagged' );
  */
  exports.getAllTags = async function ( req, res ) {
     // get all the active tags
-    let tags = await tagService.getAllTags();
-    console.log("tags: " + tags.length );
+
+    let tags = await tagService.getAllTags( req.query.limit, req.query.offset );
 
     if( tags.length > 0 ) {
         res.set( "x-agora-message-title", "Success" );
@@ -39,29 +39,81 @@ const Tagged = require( '../../model/tagged' );
     }
 }
 
+exports.getTagById = async function( req, res ) {
+    let tag = await tagService.getTagById( req.params.id );
+
+    if( tag ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned tag" );
+        res.status( 200 ).json( tag );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
+}
+
+exports.deleteTagById = async ( req, res ) => {
+    let success = await tagService.deleteTagById( req.params.id );
+
+    if( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned tag" );
+        res.status( 200 ).json( "Success" );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
+}
 
 
-
-
+/**
+ * Manages saving new Tags while ensuring that the tag itself is unique. Tag names will be 
+ * checked against existing data and if match is found the tag will just have the lastUsed
+ * time updated. If owner is provided it will be saved / updaded otherwise the authenticated
+ * user is saveded as the owner.
+ * @param {HTTP request} req 
+ * @param {HTTP response} res 
+ * @param {boolean} redirect - false / null responds direct to client, true to calling function
+ * @returns 
+ */
 exports.saveTag = async function( req, res, redirect ) {
-
     let tag = Tag.emptyTag();
-    tag.id = req.body.tagId;
 
-    // see if this is a modification of an existing tag
-    let existingTag = await tagService.getTagById( tag.id );
-
-    // if this is an update replace the tag with teh existing one as the starting point
-    (existingTag) ? tag = existingTag : null;
-
+    // check to see if there is an existing tag with the same name since we do not want dups
+    existingTagName = await tagService.getTagByTagName( req.body.tag );
+    tag = (existingTagName) ? existingTagName : tag;
+    
     // add changes from the body if they are passed
     tag.tag = req.body.tag;
+
     tag.lastUsed = Date.now();
+
+    // get the tag name
+    tag.tag = req.body.tag;
     
-    (req.session && req.session.authUser) ? tag.ownedBy = req.session.authUser.id : tag.ownedBy = req.body.ownedBy; 
+    // get the owner used the passed data if present otherwise check for the API user or 
+    // the user session
+    if( req.body.ownedBy ) {
+        tag.ownedBy = req.body.ownedBy;
+    }
+    else if( req && req.user ) {
+        tag.ownedBy = req.user.id;
+    }
+    else if ( req && req.session && req.session.authUser) {
+        tag.ownedBy = req.session.authUser.id;
+    }
 
     // save the tag
-    tag = await tagService.saveTag( tag );
+    if( existingTagName ) {
+        tag = await tagService.saveTag( tag, true );
+    }
+    else {
+        tag = await tagService.saveTag( tag );
+    }
 
     if( tag ) {
         req.session.messageType = "success";
@@ -75,13 +127,20 @@ exports.saveTag = async function( req, res, redirect ) {
     }
 
     if( redirect ) {
-        console.log( "tagController.saveTag() - END - Redirect ");
         return tag;
     }
     else {
-        console.log( "tagController.saveTag() - END - Non-Redirect ");
-        res.setHeader( 'Content-Type', 'application/json' );
-        res.status(200).send(JSON.stringify(tag));
+        if ( existingTagName ) {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Updated existing Tag by Tag name" );
+            res.status(200).send(JSON.stringify(tag));
+        }
+        else {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Created new tag" );
+            res.status(201).send(JSON.stringify(tag));
+        }
     }
-    
 }
