@@ -39,6 +39,10 @@ router.use(function (req, res, next) {
             if ( user ) {
                 // user is authorized!
                 req.user = user;
+
+                // TODO future role specific verification can go here.
+
+                // Middleware complete back to called route.
                 next( );
 
             }

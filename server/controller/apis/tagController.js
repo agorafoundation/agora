@@ -70,25 +70,23 @@ exports.deleteTagById = async ( req, res ) => {
 }
 
 
-
+/**
+ * Manages saving new Tags while ensuring that the tag itself is unique. Tag names will be 
+ * checked against existing data and if match is found the tag will just have the lastUsed
+ * time updated. If owner is provided it will be saved / updaded otherwise the authenticated
+ * user is saveded as the owner.
+ * @param {HTTP request} req 
+ * @param {HTTP response} res 
+ * @param {boolean} redirect - false / null responds direct to client, true to calling function
+ * @returns 
+ */
 exports.saveTag = async function( req, res, redirect ) {
     let tag = Tag.emptyTag();
-    tag.id = req.body.tagId;
 
-    // see if this is a modification of an existing tag
-    let existingTag = await tagService.getTagById( tag.id );
-    let exsitingTagName;
-
-    // if this is an update replace the tag with teh existing one as the starting point
-    if (existingTag) {
-        tag = existingTag;
-    }
-    else {
-        // check to see if there is an existing tag with the same name since we do not want dups
-        existingTagName = await tagService.getTagByTagName( req.body.tag );
-        tag = (existingTagName) ? existingTagName : tag;
-    }
-
+    // check to see if there is an existing tag with the same name since we do not want dups
+    existingTagName = await tagService.getTagByTagName( req.body.tag );
+    tag = (existingTagName) ? existingTagName : tag;
+    
     // add changes from the body if they are passed
     tag.tag = req.body.tag;
 
@@ -132,13 +130,7 @@ exports.saveTag = async function( req, res, redirect ) {
         return tag;
     }
     else {
-        if( existingTag ) {
-            res.setHeader( 'Content-Type', 'application/json' );
-            res.set( "x-agora-message-title", "Success" );
-            res.set( "x-agora-message-detail", "Updated Tag for Id provided" );
-            res.status(200).send(JSON.stringify(tag));
-        }
-        else if ( existingTagName ) {
+        if ( existingTagName ) {
             res.setHeader( 'Content-Type', 'application/json' );
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Updated existing Tag by Tag name" );
