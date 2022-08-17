@@ -18,32 +18,50 @@ router.use(bodyParser.json());
  
 // controllers
 const goalController = require( '../../controller/apis/goalController' );
+const { get } = require('./tagRoutes');
 
 
 // goals /api/v1/auth/goals
 router.route( '/' )
-    .get(async function (req, res) {
+    // get all visible goals
+    .get( async ( req, res ) => {
         goalController.getAllVisibleGoals( req, res );
     })    
-    .post( ( req, res ) => { 
+    // save a new goal
+    .post( async ( req, res ) => { 
         goalController.saveGoal( req, res );
     }
 )
 
 // goals /api/v1/auth/goals
 router.route( '/:id' )
-    .get(async function (req, res) {
+    // get a visible goal by id
+    .get( async (req, res) => {
         goalController.getGoalById( req, res );
     
+    })
+    // update a visible goal by id
+    .patch( async ( req, res ) => {
+
+    })
+    // delete a visible goal by id
+    .delete( async (req, res ) => {
+
     }
 );
 
-// goals associated with the authorized (logged in) user /api/v1/auth/goals/authUser
-// router.route( '/authUser' )
-//     .get(async function (req, res) {
-//         goalController.getAllGoalsForAuthUser( req, res );
-    
-//     }
-// );
+// enrollment management
+router.route( '/enroll/:userId/:goalId' )
+    // enroll an eligible user in a visibile goal
+    .post( async ( req, res ) => {
+
+    })
+    // remove a users en
+    .delete( async ( req, res ) => {
+
+    }
+);
+
+
 
 module.exports = router;
