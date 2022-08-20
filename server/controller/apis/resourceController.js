@@ -23,6 +23,15 @@ let FRONT_END = process.env.FRONT_END_NAME;
 let RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 
+
+exports.getAllVisibleResources = async ( req, res ) => {
+
+}
+
+
+
+
+
 /**
  * 
  * @param {*} req 

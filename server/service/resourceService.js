@@ -50,6 +50,32 @@ exports.getResourceById = async function(resourceId, active) {
 }
 
 
+exports.getAllVisibleResources = async ( req, res ) => {
+    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 ||  order by id;";
+    const values = [ true, ownerId ];
+
+    let resources = [];
+    
+    try {
+         
+        let res = await db.query(text, values);
+        
+        for(let i=0; i<res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
+        }
+        
+        return resources;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+    finally {
+        
+    }
+}
+
+
 
 /**
  * Retrieves all active resources created by a particular owner
