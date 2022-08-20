@@ -16,37 +16,23 @@ const Resource = require('../model/resource');
 
 
 /**
- * Get an active resource by id
- * @param {Integer} resourceId 
- * @returns resource
+ * Get a single resource by Id
+ * @param {int} resourceId - Id of resource to retrieve
+ * @param {boolean} active - If true resource must have an active status
+ * @returns {Resource}
  */
-exports.getActiveResourceById = async function(resourceId) {
-    let text = "SELECT * FROM resources WHERE active = $1 AND id = $2";
-    let values = [ true, resourceId ];
-    try {
-        let resource = "";
-         
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            resource = Resource.ormResource(res.rows[0]);
-                  
-        }
-        return resource;
-        
+exports.getResourceById = async function(resourceId, active) {
+    let text = "SELECT * FROM resources WHERE id = $2";
+    if( active ) {
+        text += "AND active = $1";
     }
-    catch(e) {
-        console.log(e.stack)
-    }
-}
+    text += ";";
 
-/**
- * Get an resource by id regardless of active status
- * @param {Integer} resourceId 
- * @returns resource
- */
- exports.getResourceById = async function(resourceId) {
-    let text = "SELECT * FROM resources WHERE id = $1";
     let values = [ resourceId ];
+    if( active ) {
+        values.push( true );
+    }
+
     try {
         let resource = "";
          

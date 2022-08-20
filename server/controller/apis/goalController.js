@@ -34,14 +34,7 @@ exports.getAllVisibleGoals = async function ( req, res ) {
     res.status( 200 ).json( goals );
 }
 
-exports.getAllVisibleGoalsWithTopics = async function ( req, res ) {
-    // get all the active goals
-    let goals = await goalService.getAllVisibleGoalsWithTopics();
-    
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all goals" );
-    res.status( 200 ).json( goals );
-}
+
 
 exports.getGoalById = async function ( req, res ) {
     // get all the active goals by user 
@@ -60,6 +53,17 @@ exports.getGoalById = async function ( req, res ) {
     
     
 }
+
+exports.getAllVisibleGoalsWithTopics = async function ( req, res ) {
+    // get all the active goals
+    let goals = await goalService.getAllVisibleGoalsWithTopics();
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+
 
 exports.getAllGoalsForAuthUser = async function ( req, res ) {
     

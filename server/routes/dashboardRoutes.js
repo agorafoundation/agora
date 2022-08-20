@@ -81,8 +81,6 @@ router.route( '/goal' )
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
 
-        console.log("incomming value of req.body.goalModified: " + req.body.goalModified);
-
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
             goalController.saveGoalImage( req, res, rGoal.id, 'peak.svg' );
@@ -90,7 +88,8 @@ router.route( '/goal' )
         }
         else {
             // files included
-            const file = req.files.goalImage;
+
+            const file = req.files.goalImageField;
             const timeStamp = Date.now();
 
             // check the file size
