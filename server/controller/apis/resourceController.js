@@ -30,11 +30,29 @@ let RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
  */
 exports.getAllVisibleResources = async ( req, res ) => {
     // get all the active resources by user
-    let resources = await resourceService.getAllVisibleResourcesForOwner( req.session.authUser.id );
+    console.log("limit check:" + req.query.limit);
 
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all resources for user" );
-    res.status( 200 ).json( resources );
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+    
+    if(authUserId > 0) {
+        let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all resources" );
+        res.status( 200 ).json( resources );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Resource not found" );
+        res.status( 404 ).json( message );
+    }
 }
 
 
