@@ -23,13 +23,19 @@ let FRONT_END = process.env.FRONT_END_NAME;
 let RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 
-
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.getAllVisibleResources = async ( req, res ) => {
+    // get all the active resources by user
+    let resources = await resourceService.getAllVisibleResourcesForOwner( req.session.authUser.id );
 
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all resources for user" );
+    res.status( 200 ).json( resources );
 }
-
-
-
 
 
 /**
@@ -37,7 +43,20 @@ exports.getAllVisibleResources = async ( req, res ) => {
  * @param {*} req 
  * @param {*} res 
  */
-exports.getAllActiveResources = async function ( req, res ) {
+exports.getAllSharedResourcesForUser = async function ( req, res ) {
+    // get all the shared resources for this user
+    let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authUser.id );
+
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all shared resources for user" );
+    res.status( 200 ).json( sharedResources );
+}
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.getAllActiveResourcesForUser = async function ( req, res ) {
     // get all the active resources
     let resources = await resourceService.getAllActiveResourcesForOwner();
     

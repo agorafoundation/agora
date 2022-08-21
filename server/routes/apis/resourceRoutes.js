@@ -23,12 +23,23 @@ const resourceController = require( '../../controller/apis/resourceController' )
 // resources /api/v1/auth/resources
 router.route( '/' )
     .get(async function (req, res) {
-        
+        resourceController.getAllVisibleResources( req, res );
     })    
     .post( ( req, res ) => { 
         resourceController.saveResource( req, res );
     }
 )
+
+router.route( '/user' )
+    .get(async (req, res) => {
+        resourceController.getAllActiveResourcesForUser( req, res );
+    }
+)
+
+router.route( '/shared' )
+    .get(async (req, res) => {
+        resourceController.getAllSharedResourcesForUser( req, res );
+    })
 
 // resources /api/v1/auth/resources/:id
 router.route( '/:id' )

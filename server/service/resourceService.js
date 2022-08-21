@@ -76,6 +76,8 @@ exports.getAllVisibleResources = async ( req, res ) => {
 }
 
 
+// left off creating getAllSharedResourcesForUser
+
 
 /**
  * Retrieves all active resources created by a particular owner
