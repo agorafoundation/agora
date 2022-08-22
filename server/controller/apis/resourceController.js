@@ -61,7 +61,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
  * @param {*} req 
  * @param {*} res 
  */
-exports.getAllSharedResourcesForUser = async function ( req, res ) {
+exports.getAllSharedResourcesForUser = async ( req, res ) => {
     // get all the shared resources for this user
     let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authUser.id );
 
@@ -74,7 +74,7 @@ exports.getAllSharedResourcesForUser = async function ( req, res ) {
  * @param {*} req 
  * @param {*} res 
  */
-exports.getAllActiveResourcesForUser = async function ( req, res ) {
+exports.getAllActiveResourcesForUser = async ( req, res ) => {
     // get all the active resources
     let resources = await resourceService.getAllActiveResourcesForOwner();
     
@@ -83,7 +83,7 @@ exports.getAllActiveResourcesForUser = async function ( req, res ) {
     res.status( 200 ).json( resources );
 }
 
-exports.getResourceById = async function ( req, res ) {
+exports.getResourceById = async ( req, res ) => {
     // get all the active resources by user 
     let resource = await resourceService.getAllActiveResourcesForOwnerById( req.session.authUser.id, req.params.id );
     if(resource) {
@@ -101,7 +101,7 @@ exports.getResourceById = async function ( req, res ) {
     
 }
 
-exports.getAllResourcesForAuthUser = async function ( req, res ) {
+exports.getAllResourcesForAuthUser = async ( req, res ) => {
     // get all the resources for this owner
     let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id, false );
 
@@ -157,16 +157,17 @@ exports.saveCompletedResource = async function( req, res ) {
 
 
 
-exports.saveResourceImage = async function( req, res, resourceId, filename ) {
+exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
     // save image in db and delete old file  
     if( resourceId > 0 ) {
         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
 
-            if( rValue && rValue != 'resource-default.png' 
+            if( rValue && rValue.length > 0 && (rValue != 'resource-default.png' 
                 || rValue != 'notebook-pen.svg' 
                 || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' ) {
+                || rValue != 'code.svg' )) {
+                console.log("removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue)
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[resourceController] file delete error status: " + err );
@@ -182,8 +183,7 @@ exports.saveResourceImage = async function( req, res, resourceId, filename ) {
 }
 
 
-exports.saveResource = async function( req, res, redirect ) {
-
+exports.saveResource = async ( req, res, redirect ) => {
 
     let resource = Resource.emptyResource();
     resource.id = req.body.resourceId;
@@ -210,29 +210,56 @@ exports.saveResource = async function( req, res, redirect ) {
     resource.resourceLink = req.body.resourceLink;
     resource.active = ( req.body.resourceActive == "on" ) ? true : false;
     resource.isRequired = ( req.body.isRequired == "on") ? true : false;
+
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    console.log("authorized user: " + authUserId);
     
-    resource.ownedBy = req.session.authUser.id; 
-    resource = await resourceService.saveResource( resource );
+    if(authUserId > 0) {
+        resource.ownerId = authUserId;
 
-    if( resource ) {
-        req.session.messageType = "success";
-        req.session.messageTitle = "Resource Saved";
-        req.session.messageBody = "Resource " + resource.resourceName + " saved successfully!";
+        resource = await resourceService.saveResource( resource );
+
+        if( resource ) {
+            if( redirect ) {
+                console.log( "resourceController.saveResource() - END - Redirect ");
+                return resource;
+            }
+            else {
+                res.set( "x-agora-message-title", "Success" );
+                res.set( "x-agora-message-detail", "Returned all resources" );
+                res.status( 200 ).json( resource );
+            }
+        }
+        else {
+            if( redirect ) {
+                return resource;
+            }
+            else {
+                const message = ApiMessage.createApiMessage( 500, "Internal Server Error", "Error saving resource" );
+                res.set( "x-agora-message-title", "Internal Server Error" );
+                res.set( "x-agora-message-detail", "Error saving resource" );
+                res.status( 500 ).json( message );
+            }
+        }
     }
     else {
-        req.session.messageType = "error";
-        req.session.messageTitle = "Error saving Resource <br />";
-        req.session.messageBody = "There was a problem saving the resource. <br />";
-    }
-
-    if( redirect ) {
-        console.log( "resourceController.saveResource() - END - Redirect ");
-        return resource;
-    }
-    else {
-        console.log( "resourceController.saveResource() - END - Non-Redirect ");
-        res.setHeader( 'Content-Type', 'application/json' );
-        res.send(JSON.stringify(resource));
+        if( redirect ) {
+            return resource;
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 401, "Not Authorized", "Not able to associate authorized user with the record" );
+            res.set( "x-agora-message-title", "Not Authorized" );
+            res.set( "x-agora-message-detail", "Not able to associate authorized user with the record" );
+            res.status( 401 ).json( message );
+        }
+        
     }
     
 }

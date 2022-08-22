@@ -24,7 +24,7 @@ const Event = require('../model/event');
  * all user goals and other public ones.
  * @returns List<Goal>
  */
- exports.getAllVisibleGoals = async function( ownerId ) {
+ exports.getAllVisibleGoals = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
@@ -64,12 +64,12 @@ const Event = require('../model/event');
  * all user goals and other public ones.
  * @returns List<goal> with topics
  */
- exports.getAllVisibleGoalsWithTopics = async function( ownerId ) {
+ exports.getAllVisibleGoalsWithTopics = async ( ownerId ) =>{
 
     if( ownerId > -1 ) {
 
-        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
-        let values = [ true ];
+        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 2 ) order by gl.id;";
+        let values = [ true, ownerId ];
 
         let goals = [];
         
@@ -119,7 +119,7 @@ const Event = require('../model/event');
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns All active goals as a list
  */
- exports.getAllGoalsForOwner = async function( ownerId, isActive ) {
+ exports.getAllGoalsForOwner = async ( ownerId, isActive ) => {
 
     let text = "";
     let values = [];
@@ -164,7 +164,7 @@ const Event = require('../model/event');
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns goal with topics
  */
-exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
+exports.getActiveGoalWithTopicsById = async ( goalId, isActive ) => {
 
     let text = "";
     let values = [];
@@ -219,7 +219,7 @@ exports.getActiveGoalWithTopicsById = async function( goalId, isActive ) {
  * @param {Integer} goalId 
  * @returns goal
  */
- exports.getMostRecentGoalById = async function(goalId) {
+ exports.getMostRecentGoalById = async (goalId) => {
     let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
     let values = [ goalId ];
@@ -289,7 +289,7 @@ exports.updateGoalImage = async (goalId, filename) => {
  * @param {Goal} goal 
  * @returns Goal object with id 
  */
-exports.saveGoal = async function(goal) {
+exports.saveGoal = async (goal) =>{
     // check to see if an id exists - insert / update check
     //console.log( "about to save goal " + JSON.stringify( goal ) );
     if(goal) {
@@ -351,7 +351,7 @@ exports.saveGoal = async function(goal) {
  * @param {*} pathway Array of topic id's that make up the pathway
  * @returns true for success / false for failure
  */
-exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
+exports.savePathwayToMostRecentGoalVersion = async (goalId, pathway) => {
     // get the most recent version of the goal
     let text = "SELECT rid, MAX(goal_version) as version from goals where id = $1 group by rid";
     let values = [ goalId ];
@@ -405,7 +405,7 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  * @param {Integer} goalId id of goal
  * @returns true for successful operation or false if enrollment fails
  */
- exports.saveGoalEnrollmentMostRecentGoalVersion = async function(userId, goalId) {
+ exports.saveGoalEnrollmentMostRecentGoalVersion = async (userId, goalId) => {
     // get the most recent version of the goal
     let text = "SELECT rid, MAX(goal_version) as version from goals where id = $1 group by rid";
     let values = [ goalId ];
@@ -432,7 +432,7 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  * @param {Integer} goalVersion version of goal
  * @returns true for successful operation or false if enrollment fails
  */
- exports.saveGoalEnrollment = async function(userId, goalRid, goalVersion) {
+ exports.saveGoalEnrollment = async (userId, goalRid, goalVersion) => {
     // check this userId and goalRid combination does not already exist
     let text = "SELECT * FROM user_goal WHERE active = $1 AND user_id = $2 AND goal_rid = $3";
     let values = [ true, userId, goalRid ];
@@ -468,7 +468,7 @@ exports.savePathwayToMostRecentGoalVersion = async function(goalId, pathway) {
  * @param {Integer} goalVersion 
  * @returns true if successful
  */
-exports.completeGoalEnrollment = async function( userId, goalRid ) {
+exports.completeGoalEnrollment = async ( userId, goalRid ) => {
     let text = "UPDATE user_goal SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND goal_rid = $4;"
     let values = [ true, true, userId, goalRid ];
 
@@ -489,7 +489,7 @@ exports.completeGoalEnrollment = async function( userId, goalRid ) {
  * @param {Integer} goalVersion 
  * @returns goal if the user is actively enrolled
  */
-exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
+exports.getEnrolledGoalByUserAndGoalRid = async ( userId, goalRid ) => {
     console.log("params: userId " + userId + " goalRid: " + goalRid );
     let text = "SELECT ug.* FROM user_goal ug where ug.user_id = $1 AND ug.goal_rid = $2 and active = $3;" 
     let values = [ userId, goalRid , true ];
@@ -576,7 +576,7 @@ exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
  * @param {Integer} userId id of user enrolled
  * @returns List<goal> a list of the goal objects the user is enrolled in
  */
- exports.getActiveEnrollmentsForUserId = async function(userId) {
+ exports.getActiveEnrollmentsForUserId = async (userId) => {
 
     let text = "select * from user_goal where user_id = $1 and active = $2;";
     let values = [ userId, true ];
@@ -630,7 +630,7 @@ exports.getEnrolledGoalByUserAndGoalRid = async function( userId, goalRid ) {
 }
 
 
-exports.getRecentGoalEnrollmentEvents = async function(limit) {
+exports.getRecentGoalEnrollmentEvents = async (limit) => {
     limit = (!limit) ? 10 : limit;
     let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
@@ -666,7 +666,7 @@ exports.getRecentGoalEnrollmentEvents = async function(limit) {
     }  
 }
 
-exports.getRecentGoalCompletionEvents = async function(limit) {
+exports.getRecentGoalCompletionEvents = async (limit) => {
     limit = (!limit) ? 10 : limit;
     let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from users ud, goals mod, user_goal mode where mode.user_id = ud.id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];

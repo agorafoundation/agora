@@ -22,9 +22,9 @@ const Resource = require('../model/resource');
  * @returns {Resource}
  */
 exports.getResourceById = async ( resourceId, active ) => {
-    let text = "SELECT * FROM resources WHERE id = $2";
+    let text = "SELECT * FROM resources WHERE id = $1";
     if( active ) {
-        text += "AND active = $1";
+        text += "AND active = $2";
     }
     text += ";";
 
@@ -73,7 +73,7 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
         values.push( offset );
     }
     else {
-        text += " ORDER BY id LIMIT 100 OFFSET $3";
+        text += " LIMIT 100 OFFSET $3";
         values.push( offset );
     }
 
@@ -263,7 +263,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
         try {
             // retrieve the current filename so that we can delete it after.
             let text = "SELECT resource_image FROM resources WHERE id = $1";
-            let values = [ resource.id ];
+            let values = [ resourceId ];
 
             // perform the query
             let res = await db.query( text, values );
@@ -275,7 +275,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
 
             // cerate the update query to set the new name
             text = "UPDATE resources SET resource_image = $2 WHERE id = $1";
-            values = [ resource.id, filename ];
+            values = [ resourceId, filename ];
 
             // perform query
             await db.query( text, values );

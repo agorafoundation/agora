@@ -134,11 +134,9 @@ router.route( '/goal' )
  */
 router.route( '/resource' )
     .post( async ( req, res ) => {
-
+        
         // save the resource
         let rResource = await resourceController.saveResource( req, res, true );
-
-        console.log("incomming value of req.body.resourceModified: " + req.body.resourceModified);
 
         if ( req.body.resourceModified != "false" && !req.files ) {
             // do nothing we are going to keep the original file

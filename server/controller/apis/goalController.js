@@ -25,7 +25,7 @@ let FRONT_END = process.env.FRONT_END_NAME;
 let GOAL_PATH = process.env.GOAL_IMAGE_PATH;
 
 
-exports.getAllVisibleGoals = async function ( req, res ) {
+exports.getAllVisibleGoals = async ( req, res ) => {
     // get all the active goals
     let goals = await goalService.getAllVisibleGoals( req.user.id );
     
@@ -36,7 +36,7 @@ exports.getAllVisibleGoals = async function ( req, res ) {
 
 
 
-exports.getGoalById = async function ( req, res ) {
+exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
     let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
     if(goal) {
@@ -54,7 +54,7 @@ exports.getGoalById = async function ( req, res ) {
     
 }
 
-exports.getAllVisibleGoalsWithTopics = async function ( req, res ) {
+exports.getAllVisibleGoalsWithTopics = async ( req, res ) => {
     // get all the active goals
     let goals = await goalService.getAllVisibleGoalsWithTopics();
     
@@ -65,7 +65,7 @@ exports.getAllVisibleGoalsWithTopics = async function ( req, res ) {
 
 
 
-exports.getAllGoalsForAuthUser = async function ( req, res ) {
+exports.getAllGoalsForAuthUser = async ( req, res ) => {
     
     console.log("The rquest: " + JSON.stringify(req.user));
 
@@ -83,7 +83,7 @@ exports.getAllGoalsForAuthUser = async function ( req, res ) {
  * @param {*} res 
  * @param {*} goalId 
  */
-exports.saveGoalImage = async function( req, res, goalId, filename ) {
+exports.saveGoalImage = async ( req, res, goalId, filename ) => {
 
     // save image in db and delete old file  
     if( goalId > 0 ) {
@@ -110,7 +110,7 @@ exports.saveGoalImage = async function( req, res, goalId, filename ) {
  * @param {*} redirect 
  * @returns 
  */
-exports.saveGoal = async function( req, res, redirect ) {
+exports.saveGoal = async ( req, res, redirect ) =>{
 
     let goal = Goal.emptyGoal();
     goal.id = req.body.goalId;
