@@ -192,7 +192,6 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
 exports.saveResource = async ( req, res, redirect ) => {
 
-    console.log(" RESOURCE body: " + JSON.stringify( req.body ));
     let resource = Resource.emptyResource();
     resource.id = req.body.resourceId;
 
@@ -232,8 +231,9 @@ exports.saveResource = async ( req, res, redirect ) => {
     else if ( req.body.active ) {
         resource.active = req.body.active;
     }
-
-    resource.isRequired = ( req.body.isRequired == "on") ? true : false;
+    
+    resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
+    
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;

@@ -150,8 +150,22 @@ exports.saveGoal = async ( req, res, redirect ) =>{
         goal.visibility = req.body.goalVisibility;
         goal.goalName = req.body.goalName;
         goal.goalDescription = req.body.goalDescription;
-        goal.active = ( req.body.goalActive == "on" ) ? true : false;
-        goal.completable = ( req.body.goalCompletable == "on" ) ? true : false;
+        
+        // check to see if the incoming message format is from the UI form or the API for active
+        if( req.body.goalActive ) {
+            goal.active = ( req.body.goalActive == "on" ) ? true : false;
+        }
+        else if ( req.body.active ) {
+            goal.active = req.body.active;
+        }
+
+        // check to see if the incoming message format is from the UI form or the API for completable
+        if( req.body.goalCompletable ) {
+            goal.completable = ( req.body.goalCompletable == "on" ) ? true : false;
+        }
+        else if ( req.body.active ) {
+            goal.completable = req.body.active;
+        }
 
         goal = await goalService.saveGoal( goal );
 
@@ -164,7 +178,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            goalController.saveGoalImage( req, res, rGoal.id, 'peak.svg' );
+            this.saveGoalImage( req, res, goal.id, 'peak.svg' );
             
         }
         else {
@@ -190,7 +204,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
                     res.status( 422 ).json( message );
                 }             
             }
-            else if( rGoal ) {
+            else if( goal ) {
                 await file.mv(goalUploadPath + timeStamp + file.name, async (err) => {
                     if (err) {
                         console.log( "Error uploading profile picture : " + err );
@@ -209,7 +223,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
                         }
                     }
                     else {
-                        await goalController.saveGoalImage( req, res, rGoal.id, timeStamp + file.name );
+                        await this.saveGoalImage( req, res, goal.id, timeStamp + file.name );
                     }
                 });
             }
