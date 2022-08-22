@@ -198,7 +198,8 @@ exports.saveResource = async ( req, res, redirect ) => {
 
     // add changes from the body if they are passed
     resource.resourceType = req.body.resourceType;
-    resource.visibility = req.body.resourceVisibility;
+    resource.visibility = req.body.visibility;
+    console.log("resource.visibility: " + resource.visibility);
     resource.resourceName = req.body.resourceName;
     resource.resourceDescription = req.body.resourceDescription;
     if(resource.resourceType == 3) {

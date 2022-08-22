@@ -305,8 +305,8 @@ exports.saveResource = async ( resource ) => {
         if( resource.id > 0 ) {
             
             // update
-            let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $11 WHERE id = $10;";
-            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.id, resource.visibility ];
+            let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE id = $11;";
+            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.id ];
     
             try {
                 let res = await db.query( text, values );
