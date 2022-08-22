@@ -235,6 +235,7 @@ exports.saveResource = async ( req, res, redirect ) => {
 
     resource.isRequired = ( req.body.isRequired == "on") ? true : false;
 
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
         authUserId = req.user.id;
@@ -242,8 +243,6 @@ exports.saveResource = async ( req, res, redirect ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.id;
     }
-
-    console.log("authorized user: " + authUserId);
     
     if(authUserId > 0) {
         resource.ownedBy = authUserId;
@@ -257,7 +256,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
         if ( req.body.resourceModified && req.body.resourceModified != "false" && !req.files ) {
             // do nothing we are going to keep the original file
-            console.log("trigger modification clause");
+            console.log("resource trigger modification clause");
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
@@ -281,11 +280,21 @@ exports.saveResource = async ( req, res, redirect ) => {
 
             // check the file size
             if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded`);
+                console.log(`File ${file.name} size limit has been exceeded for resource`);
 
-                req.session.messageType = "warn";
-                req.session.messageTitle = "Image too large!";
-                req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
+                if(redirect) {
+                    req.session.messageType = "warn";
+                    req.session.messageTitle = "Image too large!";
+                    req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
+                    res.redirect( 303, '/dashboard' );
+                    return resource;
+                }
+                else {
+                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                    res.set( "x-agora-message-title", "Image too large!" );
+                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                    res.status( 422 ).json( message );
+                }
                 
             }
             else if( resource ) {
