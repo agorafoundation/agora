@@ -17,6 +17,8 @@ const Tag = require('../model/tag');
  * Any active user can query for all tags created in the system.
  * The owned by member signifies the very first user to use the tag.
  * @param {boolean} activeOnly 
+ * @param {int} limit Optional - If provided, will return up to the limit number of tags if not provided will return up to 100 tags
+ * @param {int} offset Optional - If provided, will return tags starting at the offset otherwise will start at the beginning
  * @returns the requested set of Tags or false if not found
  */
 exports.getAllTags = async ( limit, offset ) => {
@@ -31,6 +33,10 @@ exports.getAllTags = async ( limit, offset ) => {
         text += " ORDER BY id LIMIT $1 OFFSET $2";
 
         values.push( limit );
+        values.push( offset );
+    }
+    else {
+        text += " ORDER BY id LIMIT 100 OFFSET $1";
         values.push( offset );
     }
 

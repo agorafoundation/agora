@@ -246,7 +246,6 @@ CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions (user_id);
 GRANT USAGE, SELECT ON SEQUENCE user_sessions_id_seq TO agora;
 
 
--- Roles and related <- userService?
 CREATE TABLE IF NOT EXISTS roles (
     id SERIAL PRIMARY KEY,
     role_name VARCHAR,
@@ -402,12 +401,21 @@ CREATE TABLE IF NOT EXISTS resources (
     owned_by INTEGER
 );
 
+GRANT ALL PRIVILEGES ON TABLE resources TO agora; 
+CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
+CREATE INDEX IF NOT EXISTS idx_resounces_owned_by ON resources (owned_by);
+
 CREATE TABLE IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
     last_used TIMESTAMP,
     owned_by INTEGER
 );
+
+GRANT ALL PRIVILEGES ON TABLE tags TO agora;
+GRANT USAGE, SELECT ON SEQUENCE tags_id_seq TO agora;
+CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
+CREATE INDEX IF NOT EXISTS 
 
 CREATE TABLE IF NOT EXISTS tag_association (
     id SERIAL PRIMARY KEY,
@@ -421,8 +429,7 @@ CREATE TABLE IF NOT EXISTS tag_association (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE resources TO agora;
-CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
+
 
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resource (

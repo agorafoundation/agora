@@ -11,20 +11,42 @@ const router = express.Router( );
 // import controllers
 const resourceController = require( '../../controller/apis/resourceController' );
  
+/*
+ * Resources can be requested the following ways
+ * / <- all visible resources for the auth user (all resources a user can see, owned, shared with user, or set to public visibility)
+ * /user <- all resources for the user (does not include additional shared or visible ones)
+ * /shared <- all resources that are shared with the user but not their own
+ * /visible <- all resources that are publicly visible
+ * /sharedAndVisible <- all resources that are shared or visible to the user but are not their own
+ */ 
 
-// resources /api/v1/auth/resources
+
 router.route( '/' )
-    .get(async function (req, res) {
-        resourceController.getAllResourcesForAuthUser( req, res );
+    .get(async function ( req, res ) {
+        resourceController.getAllVisibleResources( req, res );
     })    
     .post( ( req, res ) => { 
         resourceController.saveResource( req, res );
     }
 )
 
+/**
+ * Returns all active resources owned by the user
+ */
+router.route( '/user/:id' )
+    .get( async ( req, res ) => {
+        resourceController.getAllActiveResourcesForUser( req, res );
+    }
+)
+
+router.route( '/shared' )
+    .get( async ( req, res ) => {
+        resourceController.getAllSharedResourcesForUser( req, res );
+    })
+
 // resources /api/v1/auth/resources/:id
 router.route( '/:id' )
-    .get(async function (req, res) {
+    .get( async function ( req, res ) {
         resourceController.getResourceById( req, res );
     
     }

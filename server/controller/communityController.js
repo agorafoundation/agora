@@ -12,12 +12,12 @@ const goalService = require( '../service/goalService' );
 const eventService = require( '../service/eventService' );
 const productService = require ( '../service/productService' );
 
-exports.getCommunityDashboard = async function( req, res ) {
+exports.getCommunityDashboard = async ( req, res ) => {
 
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
 
     // get all the current goals and topics to display
-    const availableGoals = await goalService.getAllActiveGoalsWithTopics( );
+    const availableGoals = await goalService.getAllVisibleGoalsWithTopics( req.session.authUser.id );
 
     // get the events feed
     const feed = await eventService.communityEventFeed( 10 );
@@ -25,7 +25,7 @@ exports.getCommunityDashboard = async function( req, res ) {
     res.render( 'community/community', {user: req.session.authUser, availableGoals: availableGoals, feed: feed} );
 }
 
-exports.joinPage = async function( req, res ) {
+exports.joinPage = async ( req, res ) => {
     if(req.session.authUser) {
         let user = req.session.authUser;
         
