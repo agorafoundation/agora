@@ -1,5 +1,5 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/agora-logo-bwn-1200.png?raw=true)
-## The Agora project is building a free space to Research, Learn and Collaborate.
+## The Agora project mission: To create the single best place to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy.
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
 
