@@ -9,7 +9,7 @@
 const userService = require( '../../service/userService' );
 
 // import models
-const User = require( '../../model/user' );
+const User = require( '../../model/User' );
 
 
 exports.getUserByEmail = async function( req, res ) {
