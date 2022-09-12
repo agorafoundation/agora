@@ -1,7 +1,9 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/agora-logo-bwn-1200.png?raw=true)
-## The Agora project mission: To create the single best place to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy.
+## To create the single best place to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy.
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
+
+Agora is an open, free, cloud based learning and research platform. We are creating the most intutitive way to research and learn available on the internet. Protected by the Agora Foundation, a Public Service charged with protecting individual data as a service rendered in the public interest, ensuring your privacy and ownership of data within the system now and for the lifetime of the foundation!
 
 The goals behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
 
