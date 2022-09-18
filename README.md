@@ -28,7 +28,7 @@ answers you seek
 
 ## Database setup
 * You can either run /server/db/CreateTablesScript-base-example.sql or create a copy and modify / comment out default data to your liking
->  psql -U postgres -f server/db/createTablesScript-base-example.sql (from the project's root directory, default agora password is 'agora')
+>  psql -U postgres -f server/db/createTablesScript-base-example.sql (from the root directory of the project, default agora password is 'agora')
 * Run the script to create the database.  If you run the script with postgres / root user it will create a database and user named 'agora', then connect to the new database and create the schema using the agora user.
 
 ### Quick start setup
@@ -63,24 +63,13 @@ answers you seek
 1. Full user creation / login / security / email verification
 2. Avatar / file upload
 3. Basic Stripe integration to allow for community support
-4. Event feed API / Service 
-5. Goal and Topic oriented learning path. Goals represent what the user wants to learn, topics are the pieces they need to know to accomplish the goal.
-6. Topic flow based on closed loop teaching philosophy. All topics use the following structure for content
-    1. Introduction
-    2. Pre Assessment
-    3. Resources
-    4. Activity (optional)       
-    5. Post Assessment 
-    6. Summary         
-7. Fully responsive UI based on Bootstrap
+4. Advanced Goal / Topic / Resource hierarchy for note taking and resource management 
+5. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
-1. Remove the CodingCoach content from base Agora build (In progress)
-2. Expansion of Resources to included non course (goal / topic) related use. For organizing person research and notes.
+1. Improved main dashboard interface
+2. Sharing and Collaboration 
+    a. Web3 and other decentrailized solution evaluation
 3. Discussions (At global, goal and topic level)
-4. Teacher / Administrator roles and backend to create content without having to insert into database directly
-5. Github repository integration so students can create / integrate github repo into topic activities.
-
-### And then?
-1. Web3 based decentralization! Own your academic record. (more on this soon).
+4. Classroom sharing (Goals can be shared as a classroom environment)
