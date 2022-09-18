@@ -19,8 +19,6 @@ for marketing and is only seen by people you authorize.
 answers you seek
 - Listens: To its users, the sum of its parts, always remains a force for good.
 
-### You can learn more about the pedagogical approaches that agora is designed to promote and try it out for yourself on the original running Agora platform, the Coding Coach, here: https://codingcoach.net  
-
 ## Installation  
 
 ### Dependencies:
