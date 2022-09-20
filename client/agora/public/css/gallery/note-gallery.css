@@ -1,0 +1,20 @@
+.topic-badge{
+    font-size:0.6rem
+  }
+  .note-badge{
+    float:right;
+    font-size:.8rem;
+    
+  }
+  .gallery-col{
+    max-width: 27rem;
+    height:18rem;
+  }
+  .btn-more-options{
+   width: 10%;
+   height:auto;
+    margin-left:89%;
+    margin-top:3%;
+    position:absolute;
+   
+  }

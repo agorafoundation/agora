@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <script src="../../../../public/js/dashboard"></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <%- include('../../../partials/head.ejs'); %>
+  </head>
+  <body>
+
+    <% //name:string, description:string, tags:array %>
+    <% const renderCard =(id,name,desc,tags,contentType) => { %>
+      <div class="col mb-3 gallery-col align-items-stretch">
+      <div class="card h-100" id="<%= id %> " onclick="editNote(this.id,)" >
+        <img src="/assets/img/logos/more-options.png" alt="More options" class=" btn-more-options" id="option-<%= id %>" />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title"><%= name%></h5>
+          <p class="card-text mb-4" > <%= desc%></p>    
+        </div>
+        <div class="card-footer">
+          <% for(let i = 0; i <tags.length; i++) { %>
+            <span class="badge badge-primary topic-badge"><%= tags[i]%></span>
+            <% } %>  
+          <span class="badge badge-dark note-badge"><%= contentType %> </span>
+            </div>
+      </div>
+      </div>
+      <% } %>
+    
+    <h1 class="text-secondary pt-3">My Notes</h1>
+    <hr>
+    <div class="container">
+      <% for (let i =0; i <availableResources.length;  i ++ ) { 
+        if(i === 0){
+       %>
+       <div class="row ">
+    <%  renderCard(i,availableResources[i].resourceName,"helo my jean pier polnareff helo my jean pier polnareff helo my jean pier polnareff helo my jean pier polnareff, mangos are super chill snacks",["Bio","Chem"],"Note") %>
+ 
+        <% }else if(i % 3 === 0) {%>
+          </div>
+          <div class="row ">
+            <%  renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Note") %>
+
+
+            <% }else{ %>
+              <%  renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Note") %>
+       <% }}%>
+          </div>
+
+  </body>
+  <script>
+   
+    </script>
+</html>
