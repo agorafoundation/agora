@@ -10,42 +10,15 @@
     <%- include('../../../partials/head.ejs'); %>
   </head>
   <body>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <label for="recipient-name" class="col-form-label ">Name</label>
-                <input type="text" class="form-control card-name" id="recipient-name" >
-              </div>
-              <div class="form-group">
-                <label for="message-text" class="col-form-label">Desc:</label>
-                <textarea class="form-control card-desc" id="message-text"></textarea>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Send message</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%- include('./preview-modal.ejs'); %>
     <% //name:string, description:string, tags:array %>
     <% const renderCard =(id,name,desc,tags,contentType) => { %>
       <div class="col mb-3 gallery-col align-items-stretch">
-      <div class="card h-100"  data-toggle="modal" data-target="#exampleModal" data-whatever="<%= availableResources[id].resourceName %> " data-desc ='<%= availableResources[id].resourceDescription %>'>
+      <div class="card h-100"  data-toggle="modal" data-target="#exampleModal"  id="<%= id %>"  onclick="viewModal(id)">
         <img src="/assets/img/logos/more-options.png" alt="More options" class=" btn-more-options" id="option-<%= id %>" />
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title"><%= name%></h5>
-          <p class="card-text mb-4" > <%= desc%></p>    
+          <h5 class="card-title" id="card-title-<%= id %>"><%= name%></h5>
+          <p class="card-text mb-4" id="card-desc-<%= id %>" > <%= desc%></p>    
         </div>
         <div class="card-footer">
           <% for(let i = 0; i <tags.length; i++) { %>
@@ -58,6 +31,7 @@
       <% } %>
     
     <h1 class="text-secondary pt-3">My Notes</h1>
+    
     <hr>
     <div class="container">
       <% for (let i =0; i <availableResources.length;  i ++ ) { 
@@ -79,6 +53,16 @@
 
   </body>
   <%- include('../../../partials/jsincludes.ejs'); %>
-
- 
+<script>
+  function viewModal(id,name,desc){
+    console.log(id)
+    let nameId = "card-title-"+id;
+    let descId = "card-desc-"+id;
+    
+   document.getElementById("viewModalLabel").textContent = document.getElementById(nameId).textContent;
+   document.getElementById("note-modal-description").textContent = document.getElementById(descId).textContent
+  
+  }
+  </script>
+  
 </html>

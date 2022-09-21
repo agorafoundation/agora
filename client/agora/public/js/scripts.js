@@ -5,17 +5,7 @@
  */
 (function ($) {
   "use strict"; // Start of use strict
-  $("#exampleModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget); // Button that triggered the modal
-    var name = button.data("whatever"); // Extract info from data-* attributes
-    var desc = button.data("desc");
-    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-    var modal = $(this);
 
-    modal.find(".card-name").text(name);
-    modal.find(".card-desc").val(desc);
-  });
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function () {
     if (
