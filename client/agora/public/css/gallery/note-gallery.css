@@ -10,6 +10,8 @@
     max-width: 27rem;
     height:18rem;
   }
+
+  /* MORE OPTION */
   .btn-more-options{
    width: 10%;
    height:auto;
@@ -18,3 +20,40 @@
     position:absolute;
    
   }
+
+  .dropbtn {
+    background-color: none;
+    border: none;
+    width: 100%;
+    position: relative;
+    border-radius: 15%;
+  }
+
+  .dropdown {
+    position: relative;
+    left: 89%;
+    width: 10%;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #F8F8F8;
+    min-width: 100px;
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5%;
+  }
+
+  .dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+  }
+
+  .dropdown-content a:hover {background-color: #ddd;}
+
+  .dropdown:hover .dropdown-content {display: block;}
+
+  .dropdown:hover .dropbtn {background-color: #f1f1f1;}

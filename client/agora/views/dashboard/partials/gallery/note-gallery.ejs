@@ -15,7 +15,14 @@
     <% const renderCard =(id,name,desc,tags,contentType) => { %>
       <div class="col mb-3 gallery-col align-items-stretch">
       <div class="card h-100"  data-toggle="modal" data-target="#exampleModal"  id="<%= id %>"  onclick="viewModal(id)">
-        <img src="/assets/img/logos/more-options.png" alt="More options" class=" btn-more-options" id="option-<%= id %>" />
+        <div class="dropdown">
+          <img src="/assets/img/logos/more-options.png" alt="More options" class="dropbtn" id="option-<%= id %>"/>
+          <div class="dropdown-content">
+            <a href="#">Delete</a>
+            <a href="#">Download</a>
+            <a href="#">Share</a>
+          </div>
+        </div>
         <div class="card-body d-flex flex-column">
           <h5 class="card-title" id="card-title-<%= id %>"><%= name%></h5>
           <p class="card-text mb-4" id="card-desc-<%= id %>" > <%= desc%></p>    
@@ -63,6 +70,9 @@
    document.getElementById("note-modal-description").textContent = document.getElementById(descId).textContent
   
   }
+  $('.dropdown-content').on('click', function (ev) {
+    ev.stopPropagation();
+});
   </script>
   
 </html>
