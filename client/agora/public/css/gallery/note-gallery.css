@@ -27,6 +27,7 @@
     width: 100%;
     position: relative;
     border-radius: 15%;
+    visibility: hidden;
   }
 
   .dropdown {

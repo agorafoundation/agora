@@ -14,7 +14,7 @@
     <% //name:string, description:string, tags:array %>
     <% const renderCard =(id,name,desc,tags,contentType) => { %>
       <div class="col mb-3 gallery-col align-items-stretch">
-      <div class="card h-100"  data-toggle="modal" data-target="#exampleModal"  id="<%= id %>"  onclick="viewModal(id)">
+      <div class="card h-100"  data-toggle="modal" data-target="#exampleModal"  id="<%= id %>"  onclick="viewModal(id)" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
         <div class="dropdown">
           <img src="/assets/img/logos/more-options.png" alt="More options" class="dropbtn" id="option-<%= id %>"/>
           <div class="dropdown-content">
@@ -70,6 +70,18 @@
    document.getElementById("note-modal-description").textContent = document.getElementById(descId).textContent
   
   }
+  function toggleMoreOptionsOn(id){
+
+    let dropId = "option-" + id;
+      document.getElementById(dropId).style.visibility = "visible";
+    
+  }
+  function toggleMoreOptionsOff(id){
+
+let dropId = "option-" + id;
+  document.getElementById(dropId).style.visibility = "hidden";
+
+}
   $('.dropdown-content').on('click', function (ev) {
     ev.stopPropagation();
 });
