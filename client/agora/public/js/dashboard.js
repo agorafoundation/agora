@@ -499,3 +499,7 @@ function deleteGoal() {
 function addFilter() {
     console.log( "this will add a filter" );
 }
+
+const sendIdToModal = (id) => {
+    document.getElementById("goal-title").innerHTML = id;
+}
