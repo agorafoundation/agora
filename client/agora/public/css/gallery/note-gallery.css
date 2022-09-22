@@ -21,43 +21,7 @@
    
   }
 
-  .dropbtn {
-    background-color: none;
-    border: none;
-    width: 100%;
-    position: relative;
-    border-radius: 15%;
-    visibility: hidden;
-  }
-
-  .dropdown {
-    position: relative;
-    left: 89%;
-    width: 10%;
-    display: inline-block;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #F8F8F8;
-    min-width: 100px;
-    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5%;
-  }
-
-  .dropdown-content a {
-    color: black;
-    text-decoration: none;
-    display: block;
-  }
-
-  .dropdown-content a:hover {background-color: #ddd;}
-
-  .dropdown:hover .dropdown-content {display: block;}
-
-  .dropdown:hover .dropbtn {background-color: #f1f1f1;}
+  
 
 
   /* Add Content button */
@@ -66,3 +30,42 @@
    margin-top: 15%;
   
   }
+
+  /* Drop-down option */
+  .dropbtn {
+    background-color: none;
+    border: none;
+    width: 100%;
+    position: relative;
+    border-radius: 15%;
+  }
+ 
+  .dropdown {
+    position: relative;
+    left: 89%;
+    width: 10%;
+    display: inline-block;
+  }
+ 
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 140px;
+    box-shadow: 0px 1px 2px 0px rgba(0.5,0.5,0.5,0.5);
+    z-index: 1;
+    border-radius: 5%;
+  }
+ 
+  .dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    font-size: 80%;
+  }
+ 
+  .dropdown-content a:hover {background-color: #ddd;}
+ 
+  .dropdown:hover .dropdown-content {display: block;}
+ 
+  .dropdown:hover .dropbtn {background-color: #f1f1f1;}
