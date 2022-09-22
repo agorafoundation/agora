@@ -58,3 +58,11 @@
   .dropdown:hover .dropdown-content {display: block;}
 
   .dropdown:hover .dropbtn {background-color: #f1f1f1;}
+
+
+  /* Add Content button */
+  .btn-add-content {
+    max-width:40%;
+   margin-top: 15%;
+  
+  }

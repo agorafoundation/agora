@@ -36,29 +36,46 @@
       </div>
       </div>
       <% } %>
-    
-    <h1 class="text-secondary pt-3">My Notes</h1>
-    
+      <h1 class="text-secondary pt-3">My Notes</h1>
     <hr>
     <div class="container">
-      <% for (let i =0; i <availableResources.length;  i ++ ) { 
+      <% for (let i =0; i <availableResources.length +1; i ++) { 
         if(i === 0){
        %>
        <div class="row ">
-    <%  renderCard(i,availableResources[i].resourceName,"helo my jean pier polnareff helo my jean pier polnareff helo my jean pier polnareff helo my jean pier polnareff, mangos are super chill snacks",["Bio","Chem"],"Note") %>
- 
+        <div class="col mb-3 gallery-col align-items-stretch">
+      <div class="card h-100"  data-toggle="modal" data-target="#create-resource-modal" onclick='updateResourceModal(<%- availableResources[i].id %>, "<%- process.env.RESOURCE_IMAGE_WEB_PATH %>");'   >
+        <div class="dropdown">
+          <img src="/assets/img/logos/more-options.png" alt="More options" class="dropbtn" />
+          <div class="dropdown-content">
+            <a href="#">Delete</a>
+            <a href="#">Download</a>
+            <a href="#">Share</a>
+          </div>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <img src="/assets/img/logos/new-content.png" class="mx-auto d-block btn-add-content" alt="Add content">
+        </div>
+        
+      </div>
+      </div>
+        
         <% }else if(i % 3 === 0) {%>
           </div>
           <div class="row ">
-            <%  renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Note") %>
+            <%  renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note") %>
 
 
             <% }else{ %>
-              <%  renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Note") %>
+              <%  renderCard(i,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note") %>
        <% }}%>
           </div>
+    
+  
+  
+  
+    
 
-  </body>
   <%- include('../../../partials/jsincludes.ejs'); %>
 <script>
   function viewModal(id,name,desc){
