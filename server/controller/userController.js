@@ -1,5 +1,5 @@
 // import model
-const User = require("../model/User");
+const User = require("../model/user");
 
 // import services
 const userService = require("../service/userService");
