@@ -1407,3 +1407,24 @@ padding-right: 8px;
         
     }
 }
+
+.item-list {
+    padding: 1%;
+    border: none;
+    border-radius: 5%;
+    cursor: pointer;
+    
+}
+
+.item-list:hover {
+    background-color: lightgray;
+}
+
+.item-list-text {
+    margin-left: 2%;
+}
+
+.list-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}

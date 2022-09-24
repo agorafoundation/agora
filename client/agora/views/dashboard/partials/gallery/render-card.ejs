@@ -1,0 +1,43 @@
+<% const renderCard=(id,name,desc,tags,contentType)=> { %>
+    <div class="col mb-3 gallery-col align-items-stretch">
+      <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>" onclick="viewModal(id)"
+        onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+        <div class="dropdown">
+          <img src="/assets/img/buttons/more-options.png" alt="More options" class="dropbtn"
+            id="option-<%= id %>" style="visibility: hidden"/>
+          <div class="dropdown-content">
+            <a href="#"><span class="material-icons">&nbsp;delete_forever</span><span
+                class="icon-text">&nbsp;Delete</span></a>
+            <a href="#"><span class="material-icons">&nbsp;filter_none</span><span
+                class="icon-text">&nbsp;Duplicate</span></a>
+            <a href="#"><span class="material-icons">&nbsp;link</span><span class="icon-text">&nbsp;Copy
+                Link</span></a>
+            <a href="#"><span class="material-icons">&nbsp;arrow_outward</span><span class="icon-text">&nbsp;Open in
+                new tab</span></a>
+            <a href="#"><span class="material-icons">&nbsp;edit_square</span><span
+                class="icon-text">&nbsp;Rename</span></a>
+          </div>
+
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title" id="card-title-<%= id %>">
+            <%= name%>
+          </h5>
+          <p class="card-text mb-4" id="card-desc-<%= id %>">
+            <%= desc%>
+          </p>
+        </div>
+        <div class="card-footer">
+          <% for(let i=0; i < tags.length; i++) { %>
+            <span class="badge badge-primary topic-badge">
+              <%= tags[i]%>
+            </span>
+            <% } %>
+              <span class="badge badge-dark note-badge">
+                <%= contentType %>
+              </span>
+        </div>
+      </div>
+    </div>
+
+    <% }}%>

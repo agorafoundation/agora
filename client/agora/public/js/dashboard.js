@@ -499,3 +499,28 @@ function deleteGoal() {
 function addFilter() {
     console.log( "this will add a filter" );
 }
+
+/* note-gallery */
+
+function viewModal(id, name, desc) {
+    console.log(id)
+    let nameId = "card-title-" + id;
+    let descId = "card-desc-" + id;
+
+    document.getElementById("viewModalLabel").textContent = document.getElementById(nameId).textContent;
+    document.getElementById("note-modal-description").textContent = document.getElementById(descId).textContent
+
+  }
+
+function toggleMoreOptionsOn(id) {
+
+    let dropId = "option-" + id;
+    document.getElementById(dropId).style.visibility = "visible";
+
+  }
+  function toggleMoreOptionsOff(id) {
+
+    let dropId = "option-" + id;
+    document.getElementById(dropId).style.visibility = "hidden";
+
+  }
