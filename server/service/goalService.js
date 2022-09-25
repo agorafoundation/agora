@@ -9,7 +9,7 @@
 const db = require('../db/connection');
 
 // import models
-const User = require("../model/user");
+const User = require("../model/User");
 const Goal = require("../model/goal");
 const Topic = require("../model/topic");
 const GoalEnrollment = require("../model/goalEnrollment");
@@ -664,6 +664,36 @@ exports.getRecentGoalEnrollmentEvents = async (limit) => {
         console.log(e.stack);
         return false;
     }  
+}
+
+exports.deleteGoalById = async (goalId) => {
+    let text = "DELETE FROM goals WHERE rid = $1";
+    let values = [goalId];
+
+    try {
+        let res = await db.query(text, values);
+        return true;
+
+    }
+    catch (e) {
+        console.log(e.stack);
+        return false;
+    }
+}
+
+exports.updateGoalFromId = async (goal) => {
+    let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
+    let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
+
+    try {
+        let res = await db.query(text, values);
+        return true;
+
+    }
+    catch (e) {
+        console.log(e.stack);
+        return false;
+    }
 }
 
 exports.getRecentGoalCompletionEvents = async (limit) => {
