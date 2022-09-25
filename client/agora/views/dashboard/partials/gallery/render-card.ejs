@@ -1,10 +1,7 @@
 <% const renderCard=(id,name,desc,tags,contentType)=> { %>
     <div class="col mb-3 gallery-col align-items-stretch">
-      <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>" onclick="viewModal(id)"
-        onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+      <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>">
         <div class="dropdown">
-          <img src="/assets/img/buttons/more-options.png" alt="More options" class="dropbtn"
-            id="option-<%= id %>" style="visibility: hidden"/>
           <div class="dropdown-content">
             <a href="#"><span class="material-icons">&nbsp;delete_forever</span><span
                 class="icon-text">&nbsp;Delete</span></a>
@@ -40,4 +37,4 @@
       </div>
     </div>
 
-    <% }}%>
+    <% } %>

@@ -1,11 +1,13 @@
 .topic-badge{
     font-size:0.6rem
   }
+
   .note-badge{
     float:right;
     font-size:.8rem;
     
   }
+
   .gallery-col{
     max-width: 27rem;
     height:18rem;
@@ -21,9 +23,6 @@
    
   }
 
-  
-
-
   /* Add Content button */
   .btn-add-content {
     max-width:40%;
@@ -38,6 +37,7 @@
     width: 100%;
     position: relative;
     border-radius: 15%;
+    cursor: pointer;
   }
  
   .dropdown {
@@ -64,8 +64,14 @@
     font-size: 80%;
   }
  
-  .dropdown-content a:hover {background-color: #ddd;}
+  .dropdown-content a:hover {
+    background-color: #ddd;
+  }
  
-  .dropdown:hover .dropdown-content {display: block;}
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
  
-  .dropdown:hover .dropbtn {background-color: #f1f1f1;}
+  .dropdown:hover .dropbtn {
+    background-color: #f1f1f1;
+  }

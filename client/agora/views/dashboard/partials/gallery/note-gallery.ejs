@@ -12,36 +12,37 @@
   <%- include('./preview-modal.ejs'); %>
     <% //name:string, description:string, tags:array, content:array %>
       <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
+        
         if (contentType === "Note") { %>
 
           <! --Note Card -->
-        <div class="col mb-3 gallery-col align-items-stretch">
-          <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>" onclick="viewModal(id)"
-            onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
-            <div class="dropdown">
-              <img src="/assets/img/buttons/more-options.png" alt="More options" class="dropbtn"
-                id="option-<%= id %>" style="visibility: hidden"/>
-              <%- include('./dropdown.ejs'); %>
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title" id="card-title-<%= id %>">
-                <%= name%>
-              </h5>
-              <p class="card-text mb-4" id="card-desc-<%= id %>">
-                <%= desc%>
-              </p>
-            </div>
-            <div class="card-footer">
-              <% for(let i=0; i < tags.length; i++) { %>
-                <span class="badge badge-primary topic-badge">
-                  <%= tags[i]%>
-                </span>
-                <% } %>
-                  <span class="badge badge-dark note-badge">
-                    <%= contentType %>
+          <div class="col mb-3 gallery-col align-items-stretch">
+            <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>"
+              onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+              <div class="dropdown">
+                <img src="/assets/img/buttons/more-options.png" class="dropbtn"
+                  id="option-<%= id %>" style="visibility: hidden"/>
+                <%- include('./dropdown.ejs'); %>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title" id="card-title-<%= id %>">
+                  <%= name%>
+                </h5>
+                <p class="card-text mb-4" id="card-desc-<%= id %>">
+                  <%= desc%>
+                </p>
+              </div>
+              <div class="card-footer">
+                <% for(let i=0; i < tags.length; i++) { %>
+                  <span class="badge badge-primary topic-badge">
+                    <%= tags[i]%>
                   </span>
+                  <% } %>
+                    <span class="badge badge-dark note-badge">
+                      <%= contentType %>
+                    </span>
+              </div>
             </div>
           </div>
-        </div>
         <% } else if(contentType === "Goal") {%>
 
           <! -- Goal Card -->
@@ -49,7 +50,7 @@
             <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>" 
               onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
               <div class="dropdown">
-                <img src="/assets/img/buttons/more-options.png" alt="More options" class="dropbtn"
+                <img src="/assets/img/buttons/more-options.png" id="ellipsis" class="dropbtn"
                 id="option-<%= id %>" style="visibility: hidden"/>
                   <%- include('./dropdown.ejs'); %>
               <div class="card-body d-flex flex-column">

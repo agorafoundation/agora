@@ -18,7 +18,12 @@
 
   <script>
     const closeDeleteModal = () => {
-        $('#delete-goal-modal').modal('hide');
+      // closes modal
+      $('#delete-goal-modal').modal('hide');
+
+      // removes darker backdrop after closing modal
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
     }
 
     const sendDeleteToBackend = async (id) => {
