@@ -41,7 +41,20 @@ exports.getAllVisibleGoals = async ( req, res ) => {
     res.status( 200 ).json( goals );
 }
 
-
+exports.updateGoalFromId = async (req, res) => {
+    let success = await goalService.updateGoalFromId(req.params.id);
+    
+    if (success) {
+        res.set("x-agora-message-title", "Success");
+        res.set("x-agora-message-detail", "Updated goal");
+        res.status(200).json("Success");
+    }
+    else {
+        res.set("x-agora-message-title", "Not Found");
+        res.set("x-agora-message-detail", "No goals were found meeting the query criteria");
+        res.status(404).send("No Goals Found");
+    }
+}
 
 exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
@@ -59,6 +72,21 @@ exports.getGoalById = async ( req, res ) => {
     }
     
     
+}
+
+exports.deleteGoalById = async (req, res) => {
+    let success = await goalService.deleteGoalById(req.params.id);
+
+    if (success) {
+        res.set("x-agora-message-title", "Success");
+        res.set("x-agora-message-detail", "Deleted goal");
+        res.status(200).json("Success");
+    }
+    else {
+        res.set("x-agora-message-title", "Not Found");
+        res.set("x-agora-message-detail", "No goals were found meeting the query criteria");
+        res.status(404).send("No Goals Found");
+    }
 }
 
 exports.getAllVisibleGoalsWithTopics = async ( req, res ) => {
