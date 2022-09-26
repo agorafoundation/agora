@@ -3,9 +3,9 @@ if(document.getElementById('noteEditor')) {
     noteEditor = SUNEDITOR.create('noteEditor', {
         toolbarContainer : '#toolbar_container',
         showPathLabel : false,
-        width : '900px',
-        maxWidth: '1000px',
-        minHeight : '500px',
+        width : '1200px',
+        maxWidth: '1500px',
+        minHeight : '800px',
         maxHeight : '700px',
         buttonList : [
             ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
