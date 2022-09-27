@@ -376,3 +376,20 @@ exports.saveResource = async ( req, res, redirect ) => {
     }
     
 }
+
+exports.deleteResourceById = async (req, res) => {
+    const resourceId = req.params.id;
+    let success = await resourceService.deleteResourceById(resourceId);
+
+    if (success) {
+        res.set("x-agora-message-title", "Success");
+        res.set("x-agora-message-detail", "Deleted resource");
+        res.status(200).json("Success");
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found");
+        res.set( "x-agora-message-detail", "No resources were found meeting the query criteria");
+        res.status( 404).send( "No resources Found");
+    }
+
+}

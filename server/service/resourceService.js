@@ -342,3 +342,19 @@ exports.saveResource = async ( resource ) => {
         return false;
     }
 }
+
+// Removes a resource given an ID
+exports.deleteResourceById = async ( resourceId ) => {
+    let text = "DELETE FROM resources WHERE id = $1";
+    let values = [resourceId];
+
+    try {
+        let res = await db.query( text, values );
+        return true;
+
+    }
+    catch (e) {
+        console.log( e.stack );
+        return false;
+    }
+}
