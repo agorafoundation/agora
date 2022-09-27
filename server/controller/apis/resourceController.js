@@ -48,7 +48,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    console.log("auth user id; " + authUserId);
+    //console.log("auth user id; " + authUserId);
     
     if(authUserId > 0) {
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
@@ -205,47 +205,47 @@ exports.saveResource = async ( req, res, redirect ) => {
 
     if(authUserId > 0) {
 
-    resource.id = req.body.resourceId;
+        resource.id = req.body.resourceId;
 
-    // see if this is a modification of an existing resource
-    let existingResource = await resourceService.getResourceById( resource.id, false );
+        // see if this is a modification of an existing resource
+        let existingResource = await resourceService.getResourceById( resource.id, false );
 
-    // if this is an update, replace the resource with the existing one as the starting point.
-    if(existingResource) {
-        console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
-        resource = existingResource;
-    }
+        // if this is an update, replace the resource with the existing one as the starting point.
+        if(existingResource) {
+            //console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
+            resource = existingResource;
+        }
 
-    // add changes from the body if they are passed
-    resource.resourceType = req.body.resourceType;
-    resource.visibility = req.body.visibility;
-    resource.resourceName = req.body.resourceName;
-    resource.resourceDescription = req.body.resourceDescription;
+        // add changes from the body if they are passed
+        resource.resourceType = req.body.resourceType;
+        resource.visibility = req.body.visibility;
+        resource.resourceName = req.body.resourceName;
+        resource.resourceDescription = req.body.resourceDescription;
 
-    if(resource.resourceType == 3) {
-        
-        resource.resourceContentHtml = req.body.embedded_submission_text_resource;
-    }
-    else {
-        // check to see if the incomping message format is from the UI or the API
-        if( req.body.resourceContentHtml ) {
-            resource.resourceContentHtml = req.body.resourceContentHtml;
+        if(resource.resourceType == 3) {
+            
+            resource.resourceContentHtml = req.body.embedded_submission_text_resource;
         }
         else {
-            resource.resourceContentHtml = req.body.resourceEditor;
+            // check to see if the incomping message format is from the UI or the API
+            if( req.body.resourceContentHtml ) {
+                resource.resourceContentHtml = req.body.resourceContentHtml;
+            }
+            else {
+                resource.resourceContentHtml = req.body.resourceEditor;
+            }
         }
-    }
-    resource.resourceLink = req.body.resourceLink;
-    
-    // check to see if the incoming message format is from the UI form or the API
-    if( req.body.resourceActive ) {
-        resource.active = ( req.body.resourceActive == "on" ) ? true : false;
-    }
-    else if ( req.body.active ) {
-        resource.active = req.body.active;
-    }
-    
-    resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
+        resource.resourceLink = req.body.resourceLink;
+        
+        // check to see if the incoming message format is from the UI form or the API
+        if( req.body.resourceActive ) {
+            resource.active = ( req.body.resourceActive == "on" ) ? true : false;
+        }
+        else if ( req.body.active ) {
+            resource.active = req.body.active;
+        }
+        
+        resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
     
         resource.ownedBy = authUserId;
 
