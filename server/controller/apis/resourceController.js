@@ -378,8 +378,17 @@ exports.saveResource = async ( req, res, redirect ) => {
 }
 
 exports.deleteResourceById = async (req, res) => {
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
     const resourceId = req.params.id;
-    let success = await resourceService.deleteResourceById(resourceId);
+    let success = await resourceService.deleteResourceById(resourceId, authUserId);
 
     if (success) {
         res.set("x-agora-message-title", "Success");

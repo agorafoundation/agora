@@ -344,9 +344,9 @@ exports.saveResource = async ( resource ) => {
 }
 
 // Removes a resource given an ID
-exports.deleteResourceById = async ( resourceId ) => {
-    let text = "DELETE FROM resources WHERE id = $1";
-    let values = [resourceId];
+exports.deleteResourceById = async ( resourceId, ownerId ) => {
+    let text = "DELETE FROM resources WHERE id = $1 and owned_by = $2";
+    let values = [resourceId, ownerId];
 
     try {
         let res = await db.query( text, values );
