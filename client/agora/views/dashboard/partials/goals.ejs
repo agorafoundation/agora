@@ -28,8 +28,8 @@ if(ownerGoals && ownerGoals.length > 0) {
                     </div>
                 </div>
             </div>
+            <a class="fas fa-trash redColor" data-toggle="modal" data-target="#delete-goal-modal"onclick='sendIdToModal(<%-ownerGoals[i].id%>);'></a>
         </a> 
-
 
         
         <%
@@ -49,4 +49,6 @@ if(ownerGoals && ownerGoals.length > 0) {
 
 
 <%- include('./goal/edit-goal') %>
-    
+
+<%- include('./goal/delete-goal') %>
+ 
