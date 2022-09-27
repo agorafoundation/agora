@@ -15,8 +15,14 @@ const ApiMessage = require( '../model/util/ApiMessage' );
 const authController = require( '../controller/authController' );
 
 // check that the user is logged in!
-// Currently by being here all APIs should require an athenicated user to work
+// Currently by being here all APIs should require an authenicated user to work
 router.use(function (req, res, next) {
+    // This is the case if using UI.
+    const authTest = req.session.isAuth;
+    if(authTest){
+        next();
+        return;
+    }
 
     const authHeader = req.headers.authorization;
     if(!authHeader){
@@ -26,7 +32,7 @@ router.use(function (req, res, next) {
         res.set("x-agora-message-detail", "API requires authentication");
         res.status(401);
         next( 'Authentication not provided!' );
-        
+
     }
     else {
         // we have a auth token, get the username and password from it.
@@ -55,7 +61,7 @@ router.use(function (req, res, next) {
         });
     }
 
-    
+
     
 
 
@@ -77,15 +83,15 @@ router.use(function (req, res, next) {
         next();
     }
     */
-    
+
 });
 
 
 /**
  * Tag APIs
  */
- const tagRoutes = require( './apis/tagRoutes' );
- router.use( '/tags', tagRoutes );
+const tagRoutes = require( './apis/tagRoutes' );
+router.use( '/tags', tagRoutes );
 
 /**
  * Goal APIs
@@ -104,7 +110,7 @@ router.use('/goals', goalRoutes);
  */
 const resourceRoutes = require('./apis/resourceRoutes')
 router.use('/resources', resourceRoutes);
- 
+
 /**
  * User APIs
  */

@@ -193,13 +193,26 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 exports.saveResource = async ( req, res, redirect ) => {
 
     let resource = Resource.emptyResource();
+
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if(authUserId > 0) {
+
     resource.id = req.body.resourceId;
 
     // see if this is a modification of an existing resource
-    let existingResource = await resourceService.getResourceById( resource.id );
+    let existingResource = await resourceService.getResourceById( resource.id, false );
 
-    // if this is an update replace the resource with teh existing one as the starting point
+    // if this is an update, replace the resource with the existing one as the starting point.
     if(existingResource) {
+        console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
         resource = existingResource;
     }
 
@@ -234,17 +247,6 @@ exports.saveResource = async ( req, res, redirect ) => {
     
     resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
     
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-    
-    if(authUserId > 0) {
         resource.ownedBy = authUserId;
 
         resource = await resourceService.saveResource( resource );
