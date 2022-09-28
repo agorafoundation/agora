@@ -49,6 +49,9 @@ router.route( '/:id' )
     .get( async function ( req, res ) {
         resourceController.getResourceById( req, res );
     
+    })
+    .delete( async ( req, res ) => {
+        resourceController.deleteResourceById( req, res );
     }
 );
 
