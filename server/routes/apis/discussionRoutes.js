@@ -20,13 +20,27 @@ router.use(bodyParser.json());
 const discussionController = require( '../../controller/apis/discussionController' ); 
  // /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
 // discussions /api/v1/auth/discussions/{goal | topic}/:id
-router.route( '/:type/:id' )
+router.route( '/goal/:id' )
     // get a discussion based off topic or goal id
     .get( async ( req, res ) => {
+        req.params.type = "goal"
         discussionController.getDiscussion( req, res );
     })
     // update a discussion based off topic or goal id
     .patch( async ( req, res ) => { 
+        req.params.type = "goal"
+        discussionController.updateDiscussion( req, res );
+    })
+
+router.route( '/topic/:id' )
+    // get a discussion based off topic or goal id
+    .get( async ( req, res ) => {
+        req.params.type = "topic"
+        discussionController.getDiscussion( req, res );
+    })
+    // update a discussion based off topic or goal id
+    .patch( async ( req, res ) => { 
+        req.params.type = "topic"
         discussionController.updateDiscussion( req, res );
     })
  
