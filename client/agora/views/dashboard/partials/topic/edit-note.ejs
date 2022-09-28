@@ -79,15 +79,24 @@
     
 </html>
 
-<script>
+<script>  
+    //if file modal is on, it turns off and vice versa
     const toggleFileModal = () => {
       if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
         document.getElementById('file-display').setAttribute('class','file-display-shown');
       } else {
         document.getElementById('file-display').setAttribute('class','hidden');
-      }
-      
+      } 
     }
+
+    //checks if someone is clicking off file modal and then closes it
+    $('body').click(function (ev) {
+    if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
+        if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon") {
+            console.log(ev.target.id)
+            document.getElementById('file-display').setAttribute('class','hidden');
+        }
+    }})
 
 </script>
 

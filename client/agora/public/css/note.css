@@ -162,8 +162,11 @@
     left: 55%;
     padding: 0; 
     margin: 0; 
+    font-size: 175%;
+}
+.file-display-icon:hover {
+    background-color: lightgray;
     font-size: 200%;
-
 }
 
 .file-display-name {
@@ -178,4 +181,7 @@
     margin-top: 15%;
     border: 1px solid gray;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
 }
