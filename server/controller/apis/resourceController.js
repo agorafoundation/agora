@@ -48,7 +48,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    console.log("auth user id; " + authUserId);
+    //console.log("auth user id; " + authUserId);
     
     if(authUserId > 0) {
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
@@ -193,47 +193,6 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 exports.saveResource = async ( req, res, redirect ) => {
 
     let resource = Resource.emptyResource();
-    resource.id = req.body.resourceId;
-
-    // see if this is a modification of an existing resource
-    let existingResource = await resourceService.getResourceById( resource.id );
-
-    // if this is an update replace the resource with teh existing one as the starting point
-    if(existingResource) {
-        resource = existingResource;
-    }
-
-    // add changes from the body if they are passed
-    resource.resourceType = req.body.resourceType;
-    resource.visibility = req.body.visibility;
-    resource.resourceName = req.body.resourceName;
-    resource.resourceDescription = req.body.resourceDescription;
-
-    if(resource.resourceType == 3) {
-        
-        resource.resourceContentHtml = req.body.embedded_submission_text_resource;
-    }
-    else {
-        // check to see if the incomping message format is from the UI or the API
-        if( req.body.resourceContentHtml ) {
-            resource.resourceContentHtml = req.body.resourceContentHtml;
-        }
-        else {
-            resource.resourceContentHtml = req.body.resourceEditor;
-        }
-    }
-    resource.resourceLink = req.body.resourceLink;
-    
-    // check to see if the incoming message format is from the UI form or the API
-    if( req.body.resourceActive ) {
-        resource.active = ( req.body.resourceActive == "on" ) ? true : false;
-    }
-    else if ( req.body.active ) {
-        resource.active = req.body.active;
-    }
-    
-    resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
-    
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -243,8 +202,51 @@ exports.saveResource = async ( req, res, redirect ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.id;
     }
-    
+
     if(authUserId > 0) {
+
+        resource.id = req.body.resourceId;
+
+        // see if this is a modification of an existing resource
+        let existingResource = await resourceService.getResourceById( resource.id, false );
+
+        // if this is an update, replace the resource with the existing one as the starting point.
+        if(existingResource) {
+            //console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
+            resource = existingResource;
+        }
+
+        // add changes from the body if they are passed
+        resource.resourceType = req.body.resourceType;
+        resource.visibility = req.body.visibility;
+        resource.resourceName = req.body.resourceName;
+        resource.resourceDescription = req.body.resourceDescription;
+
+        if(resource.resourceType == 3) {
+            
+            resource.resourceContentHtml = req.body.embedded_submission_text_resource;
+        }
+        else {
+            // check to see if the incomping message format is from the UI or the API
+            if( req.body.resourceContentHtml ) {
+                resource.resourceContentHtml = req.body.resourceContentHtml;
+            }
+            else {
+                resource.resourceContentHtml = req.body.resourceEditor;
+            }
+        }
+        resource.resourceLink = req.body.resourceLink;
+        
+        // check to see if the incoming message format is from the UI form or the API
+        if( req.body.resourceActive ) {
+            resource.active = ( req.body.resourceActive == "on" ) ? true : false;
+        }
+        else if ( req.body.active ) {
+            resource.active = req.body.active;
+        }
+        
+        resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
+    
         resource.ownedBy = authUserId;
 
         resource = await resourceService.saveResource( resource );
@@ -373,4 +375,30 @@ exports.saveResource = async ( req, res, redirect ) => {
         
     }
     
+}
+
+exports.deleteResourceById = async (req, res) => {
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    const resourceId = req.params.id;
+    let success = await resourceService.deleteResourceById(resourceId, authUserId);
+
+    if (success) {
+        res.set("x-agora-message-title", "Success");
+        res.set("x-agora-message-detail", "Deleted resource");
+        res.status(200).json("Success");
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found");
+        res.set( "x-agora-message-detail", "No resources were found meeting the query criteria");
+        res.status( 404).send( "No resources Found");
+    }
+
 }
