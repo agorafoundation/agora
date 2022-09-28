@@ -15,3 +15,8 @@
     const text = "";
     const values = [ ownerId, true ];
 }
+
+exports.updateDiscussion = async (type , id , updatedDiscussion) => {
+
+    return {type , id , updatedDiscussion}
+}
