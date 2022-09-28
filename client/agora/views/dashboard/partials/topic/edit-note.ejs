@@ -2,6 +2,7 @@
 <html lang="en">
 
     <head>
+        <script src="../../../../public/js/note.js"></script>
         <%- include('../../../partials/head'); %>
     </head>
 
@@ -13,38 +14,39 @@
             <div class="header-div">
                 <!--Page Header-->
                 <div class="note-header" id="new-note">
-                    <input id="note-name" type="text" placeholder="Untitled">
+                    <input id="note-name" type="text" placeholder="Untitled" style="margin-left: 6%;">
                 </div>
 
                 <span id="suggestion" class="material-symbols-outlined">
                     tips_and_updates
                 </span>
                 <i id="ellipsis" class="fa fa-ellipsis-h" ></i>
+                <span id="show-files" class="material-icons" onclick="toggleFileModal()">description</span>
+                <%- include('./file-display'); %>
+            </div>
 
-
-
+            <!--Side Bar-->
+            <div id="tools" style="position: absolute; right: 0; overflow: hidden;">
+                <div id="tools-container">
+                    <span id="add-note" class="material-symbols-outlined">
+                        edit_note
+                    </span>
+                    <span class="material-symbols-outlined">
+                        new_label
+                    </span>
+                    <span class="material-symbols-outlined">
+                        file_upload
+                    </span>
+                    <span class="material-symbols-outlined">
+                        image
+                    </span>
+                </div>
             </div>
     
             <!--Note Editor-->
-            <div id="note-div">
-                <div class="note-container">
+            <div id="note-div" style="width: 95%">
+                <div class="note-container" style="width: 85%; margin-left: 6%">
                     <textarea id="noteEditor"></textarea>
-                </div>
-                <div id="tools">
-                    <div id="tools-container">
-                        <span id="add-note" class="material-symbols-outlined">
-                            edit_note
-                        </span>
-                        <span class="material-symbols-outlined">
-                            new_label
-                        </span>
-                        <span class="material-symbols-outlined">
-                            file_upload
-                        </span>
-                        <span class="material-symbols-outlined">
-                            image
-                        </span>
-                    </div>
                 </div>
             </div>
     
@@ -74,4 +76,20 @@
         <%- include('../../../partials/jsincludes'); %>
 
     </body>
+    
 </html>
+
+<script>
+    const toggleFileModal = () => {
+      if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
+        document.getElementById('file-display').setAttribute('class','file-display-shown');
+      } else {
+        document.getElementById('file-display').setAttribute('class','hidden');
+      }
+      
+    }
+
+</script>
+
+<%- include('./file-display'); %>
+

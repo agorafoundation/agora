@@ -43,7 +43,7 @@
     cursor: pointer;
     position: absolute;
     top: 20px;
-    right: 30px;
+    right: 90px;
     height: 30px;
     width: 30px;
     margin-top: 10px;
@@ -56,11 +56,20 @@
     padding: 10px 5px;
     position: absolute;
     top: 10px;
-    right: 50px;
+    right: 120px;
     height: 40px;
     width: 70px;
     margin-top: 10px;
 }
+
+#show-files {
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    margin-top: 10px;
+}
+
 
 #button-div {
     display: flex;
@@ -117,4 +126,56 @@
     cursor: pointer;
     padding: 10px 10px;
     flex-direction: column;
+}
+
+.hidden {
+    display: none;
+}
+
+.file-display-shown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    top: 10%;
+    width: 10%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+}
+
+.file-display-content {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    background-color: white;
+}
+
+.file-display-content:hover {
+    text-decoration: none;
+}
+
+.file-display-icon {
+    position: relative;
+    left: 55%;
+    padding: 0; 
+    margin: 0; 
+    font-size: 200%;
+
+}
+
+.file-display-name {
+    position: absolute;
+    right: 50%;
+    padding: 3px 12px;
+    font-size: 30%;
+    color: white;
+    letter-spacing: 1px;
+    border-radius: 15%;
+    background-color: #3A3B3C;
+    margin-top: 15%;
+    border: 1px solid gray;
+    white-space: nowrap;
 }

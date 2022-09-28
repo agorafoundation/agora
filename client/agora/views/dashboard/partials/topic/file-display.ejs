@@ -1,0 +1,13 @@
+<% const returnFiles = () => {
+    return [{name: "file 1", filePath: '#'},{name: "file 2", filePath: '#'},{name: "file 3", filePath: '#'},{name: "file 4", filePath: '#'},{name: "file 5123123123123124141", filePath: '#'}];
+} %>
+
+  <div class="hidden" id="file-display">
+        <% returnFiles().forEach((file) => { %>
+            <a href="<%=file.filePath%>" class="file-display-content">  
+                <span class="file-display-name"><%-file.name%></span>
+                <span class="file-display-icon material-symbols-outlined" >description</span>
+            </a>
+        <% }) %>
+  </div> 
+

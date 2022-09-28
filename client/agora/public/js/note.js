@@ -29,3 +29,12 @@ if(document.getElementById('noteEditor')) {
         element.style.height = (element.scrollHeight)+"px";
     }
 }
+
+const onClickTesting = () => {
+    console.log("clicked");
+}
+
+const returnFiles = () => {
+    return [{name: "file 1", onClick: onClickTesting()},{name: "file 2", onClick: onClickTesting()}];
+}
+
