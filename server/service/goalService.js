@@ -667,7 +667,7 @@ exports.getRecentGoalEnrollmentEvents = async (limit) => {
 }
 
 exports.deleteGoalById = async (goalId) => {
-    let text = "DELETE FROM goals WHERE rid = $1";
+    let text = "DELETE FROM goals WHERE id = $1";
     let values = [goalId];
 
     try {
@@ -681,9 +681,9 @@ exports.deleteGoalById = async (goalId) => {
     }
 }
 
-exports.updateGoalFromId = async (goal) => {
-    let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
-    let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
+exports.updateGoalFromId = async (goal_version, goal_name, goal_description, active, completable, visibility, goalId) => {
+    let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, visibility = $6 WHERE id = $7;";
+    let values = [ goal_version, goal_name, goal_description, active, completable, visibility, goalId ];
 
     try {
         let res = await db.query(text, values);

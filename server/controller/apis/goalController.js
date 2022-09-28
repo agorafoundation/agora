@@ -42,7 +42,13 @@ exports.getAllVisibleGoals = async ( req, res ) => {
 }
 
 exports.updateGoalFromId = async (req, res) => {
-    let success = await goalService.updateGoalFromId(req.params.id);
+    let goal_version = req.query.goal_version;
+    let goal_name = req.query.goal_name;
+    let goal_description = req.query.goal_description;
+    let active = req.query.active;
+    let completable = req.query.completable;
+    let visibility = req.query.visibility;
+    let success = await goalService.updateGoalFromId(goal_version, goal_name, goal_description, active, completable, visibility, req.params.id);
     
     if (success) {
         res.set("x-agora-message-title", "Success");
@@ -308,7 +314,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
     }
     
     if( redirect ) {
-        console.log( "goalController.saveGoal() - END - Redirect ");
+        console.log( "goalController.saveGoal() - END -  ");
         return goal;
     }
     else {
