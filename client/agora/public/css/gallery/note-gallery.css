@@ -75,3 +75,11 @@
   .dropdown:hover .dropbtn {
     background-color: #f1f1f1;
   }
+
+/*ADD content styling */
+ .add-header {
+  text-align: center;
+ }
+ .add-topic-modal-card{
+  border-radius: 10px;
+ }
