@@ -18,7 +18,7 @@ router.use(bodyParser.json());
 
 // controllers
 const discussionController = require( '../../controller/apis/discussionController' ); 
- 
+ // /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
 // discussions /api/v1/auth/discussions/{goal | topic}/:id
 router.route( '/:type/:id' )
     // get a discussion based off topic or goal id

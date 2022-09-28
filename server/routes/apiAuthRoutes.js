@@ -121,7 +121,7 @@ router.use('/user', userRoutes);
  * Discussion APIs
  */
  const discussionRoutes = require('./apis/discussionRoutes')
- router.use('/user', discussionRoutes);
+ router.use('/discussions', discussionRoutes);
 
 
 /**
