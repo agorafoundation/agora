@@ -18,6 +18,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import models
 const CompletedResource = require( '../model/completedResource' );
 const Topic = require('../../model/topic' );
+const goalService = require("../../service/goalService");
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -30,3 +31,12 @@ const goalUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 // set the max image size for avatars and resource, topic and goal icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
+
+exports.getAllVisibleTopics = async ( req, res ) => {
+    // get all the active topics
+    let topics = await topicService.getAllTopicsForOwner( req.user.id, true );
+
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all topics for user" );
+    res.status( 200 ).json( topics );
+}
