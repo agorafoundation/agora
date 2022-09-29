@@ -16,11 +16,13 @@
                 <div class="note-header" id="new-note">
                     <input id="note-name" type="text" placeholder="Untitled" style="margin-left: 6%;">
                 </div>
-
+                <!--Suggestions-->
                 <span id="suggestion" class="material-symbols-outlined">
                     tips_and_updates
                 </span>
-                <i id="ellipsis" class="fa fa-ellipsis-h" ></i>
+                <!--More Options-->
+                <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i>
+                <!--File Dropdown-->
                 <span id="show-files" class="material-icons" onclick="toggleFileModal()">description</span>
                 <%- include('./file-display'); %>
             </div>
@@ -74,12 +76,25 @@
         </div>
 
         <%- include('../../../partials/jsincludes'); %>
+        <%- include ('../gallery/dropdown'); %>
 
     </body>
     
 </html>
 
 <script>  
+
+    //toggles the rendering of more options menu
+    const toggleMoreOptions = () => {
+        if (document.getElementById('dropdown-content').getAttribute('style')) {
+            console.log("taco")
+            document.getElementById('dropdown-content').setAttribute('style','');
+        } else {
+            console.log("taco2")
+            document.getElementById('dropdown-content').setAttribute('style',"display: block; right: 5%; top: 10%");
+        }
+    }
+
     //if file modal is on, it turns off and vice versa
     const toggleFileModal = () => {
       if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
@@ -89,14 +104,16 @@
       } 
     }
 
-    //checks if someone is clicking off file modal and then closes it
+    //checks if someone is clicking off modal and then closes it
     $('body').click(function (ev) {
     if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
-        if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon") {
-            console.log(ev.target.id)
+        if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring') {
             document.getElementById('file-display').setAttribute('class','hidden');
         }
-    }})
+    }
+    if (ev.target.id !== 'ellipsis')
+        document.getElementById('dropdown-content').setAttribute('style','');
+});
 
 </script>
 
