@@ -2,6 +2,10 @@
     transition: margin-left 5s;
 }
 
+  #page-content {
+    height: 1300px;
+  }
+
 .header-div {
     font-size: 36px;
     padding: 0px;
@@ -235,13 +239,12 @@
     max-width: 125px;
 }
 
-#close {
-    font-size: 40px;
+#ellipsis2 {
+    font-size: 30px;
     position:absolute;
     top: 0px;
-    right: 0px;
+    right: 5px;
 }
-
 
 /* Style the tab */
 .tab {
@@ -252,7 +255,6 @@
     margin-bottom: 20px;
   }
   
-  /* Style the buttons that are used to open the tab content */
   .tab button {
     background-color: inherit;
     float: left;
@@ -263,7 +265,6 @@
     transition: 0.3s;
   }
   
-  /* Change background color of buttons on hover */
   .tab button:hover {
     background-color: #ddd;
   }
@@ -273,13 +274,8 @@
     background-color: #ccc;
   }
   
-  /* Style the tab content */
   .tabcontent {
     display: none;
     padding: 6px 12px;
     border-top: none;
-  }
-
-  #page-content {
-    height: 1300px;
   }
