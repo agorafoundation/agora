@@ -16,7 +16,6 @@ if(document.getElementById('noteEditor')) {
         callBackSave : function (contents, isChanged) {
             alert(contents);
             console.log(contents);
-    
         }
     });
 
