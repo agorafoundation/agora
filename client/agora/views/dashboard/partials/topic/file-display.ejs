@@ -2,17 +2,17 @@
     return [{name: "file 1", filePath: '#'},{name: "file 2", filePath: '#'},{name: "file 3", filePath: '#'},{name: "file 4", filePath: '#'},{name: "file 5123123123123124141", filePath: '#'}];
 } %>
 
-  <div class="hidden" id="file-display">
-        <% returnFiles().forEach((file) => { %>
-            <a href="<%=file.filePath%>" class="file-display-content" id="file-display-content">  
-                <span class="file-display-name" id="file-display-name"><%-file.name%></span>
+    <% returnFiles().forEach((file) => { %>
+        <div class="file-display-content" id="file-display-content">  
+            <span class="file-display-name" id="file-display-name"><%-file.name%></span>
+            <a a href="<%=file.filePath%>">
                 <span class="file-display-icon material-symbols-outlined" id="file-display-icon">description</span>
-            </a>
-        <% }) %>
-        <div class="new-file-backing" id="new-file-backing" title="Add a new file">
-            <span class="material-symbols-outlined new-file-icon" id="new-file-icon">add_circle</span>
-            <div class="new-file-coloring" id="new-file-coloring"></div>
+                </a>
         </div>
+    <% }) %>
+    <div class="new-file-backing" id="new-file-backing" title="Add a new file">
+        <div class="new-file-coloring" id="new-file-coloring"></div>
+    </div>
         
-  </div> 
+
 

@@ -8,21 +8,32 @@
     padding: 0px;
 }
 
-.note-header {
-    margin-top: 20px;
-    margin-left: auto;
-    margin-bottom: 30px;
-    padding: 15px 15px;
+.header {
+    margin-bottom: 5px;
+    padding: 10px 10px;
+    margin-left: 3%;
 }
 
-#note-name {
+#new-tag {
+    font-size: smaller;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.placeholder {
     border: none;
     border-bottom: 1px solid gray;
+    padding-left: 0px;
 }
 
-#note-name:focus {
+.placeholder:focus {
     border-bottom: 3px solid #2c3e50;
     outline: 0;
+}
+
+#tag-placeholder {
+    font-size: 20px;
+    margin-left: 5px;
 }
 
 .note-container {
@@ -34,16 +45,17 @@
     margin-bottom: 100px;
     justify-content: center;
     align-items: center;
-    background-color: #e3e7eb;
+    background-color: #f4f4f5;
     padding-left: 100px;
     padding-right: 100px;
+    width: 85%; 
 }
 
 #ellipsis {
     cursor: pointer;
     position: absolute;
     top: 20px;
-    right: 120px;
+    right: 25px;
     height: 30px;
     width: 30px;
     margin-top: 10px;
@@ -56,20 +68,11 @@
     padding: 10px 5px;
     position: absolute;
     top: 10px;
-    right: 180px;
+    right: 35px;
     height: 40px;
     width: 70px;
     margin-top: 10px;
 }
-
-#show-files {
-    cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    margin-top: 10px;
-}
-
 
 #button-div {
     display: flex;
@@ -100,27 +103,27 @@
 }
 
 #tools {
-    margin-top: 80px;
     height: 450px;
     width: 100px;
     padding-right: 100px;
-
-    border-style: solid;
-    border-width: 1px;
+    position: absolute; 
+    right: 0; 
+    overflow: hidden;
 }
 
 #note-div {
     display: flex;
+    width: 95%;
 }
 
 #tools-container {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     text-align: center;
-    height: 450px;
+    height: 350px;
 }
 
-.material-symbols-outlined {
+.material-symbols-outlined, #show-files {
     font-size: 90px;
     color: black;
     cursor: pointer;
@@ -128,8 +131,59 @@
     flex-direction: column;
 }
 
+#left-chevron {
+    font-size: 60px;
+    padding: 9px 16px;
+}
+
+#right-chevron {
+    font-size: 60px;
+    padding: 9px 16px;
+}
+
+.right-chevron {
+    display: none;
+    position: absolute;
+    right: 100px;
+    font-size: 60px;
+    padding: 9px 16px;
+    top: 176px
+}
+
+.show-tools {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px 0px 0px 15px;
+    height: 80px;
+    width: 100px;
+    position: absolute; 
+    right: 0; 
+    overflow: hidden;
+}
+
+.hide-tools {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px 0px 0px 15px;
+    border-right: none;
+    margin-right: 2px;
+    height: 80px;
+    width: 100px;
+    position: absolute; 
+    right: 0; 
+    overflow: hidden;
+}
+
 .hidden {
     display: none;
+}
+
+#file-display {
+    height: 500px;
+    width: 200px;
+    position:absolute;
+    right: 0px;
+    top: 650px;
 }
 
 .file-display-shown {
@@ -137,8 +191,8 @@
     flex-direction: column;
     position: absolute;
     right: 0;
-    top: 10%;
-    width: 10%;
+    top: 75%;
+    width: 50%;
     height: auto;
     padding: 0;
     margin: 0;
@@ -159,21 +213,21 @@
 
 .file-display-icon {
     position: relative;
-    left: 55%;
+    left: 175%;
     padding: 0; 
     margin: 0; 
-    font-size: 175%;
+    font-size: 70px;
 }
 .file-display-icon:hover {
-    background-color: lightgray;
-    font-size: 200%;
+    background-color: #f4f4f5;
+    font-size: 71px;
 }
 
 .file-display-name {
     position: absolute;
-    right: 50%;
+    right: 40%;
     padding: 3px 12px;
-    font-size: 30%;
+    font-size: 70%;
     color: white;
     letter-spacing: 1px;
     border-radius: 15%;
@@ -208,6 +262,5 @@
     border-radius: 50%;
     width: 42.5px;
     height: 42.5px;
-    background-color: gray;
     z-index: 1;
 }

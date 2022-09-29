@@ -38,3 +38,29 @@ const returnFiles = () => {
     return [{name: "file 1", onClick: onClickTesting()},{name: "file 2", onClick: onClickTesting()}];
 }
 
+document.getElementById("left-chevron").addEventListener("click", function() {
+    document.getElementById("left-chevron").style.display = "none";
+    document.querySelector(".show-tools").style.border = "none";
+
+    document.querySelector(".right-chevron").style.display = "block";
+    document.getElementById("tools-container").style.display = "flex";
+    document.getElementById("tools").style.border = "thin solid black";
+    document.querySelector(".hide-tools").style.border = "thin solid black";
+});
+
+document.querySelector(".right-chevron").addEventListener("click", function() {
+    document.querySelector(".right-chevron").style.display = "none";
+    document.querySelector(".hide-tools").style.border = "none";
+
+    document.getElementById("left-chevron").style.display = "block";
+    document.getElementById("tools-container").style.display = "none";
+    document.getElementById("tools").style.border = "none";
+    document.querySelector(".show-tools").style.border = "thin solid black";
+});
+
+const fileName = document.querySelector(".file-display-name")
+document.addEventListener("onload", function() {
+    if (fileName.style.width > "1px") {
+        alert("true");
+    }
+});
