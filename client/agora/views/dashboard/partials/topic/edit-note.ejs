@@ -8,31 +8,34 @@
     <body>
         <div class="note-body">
 
+
+            <!--Side Nav-->
             <%- include('../../side-menu/side-menu.ejs');%>  
 
+
+            <!--Page Header-->
             <div class="header-div">
-                <!--Page Header-->
-                <div class="header" id="new-note">
-                    <input class="placeholder" id="note-placeholder" type="text" placeholder="Untitled">
+                <!--Topic Title-->
+                <div class="header">
+                    <input class="placeholder" type="text" placeholder="Untitled">
                 </div>
+                <!--Tags-->
                 <div class="header" id="new-tag">
                     <label>Tags:</label>
                     <input class="placeholder" id="tag-placeholder" type="text" placeholder="start typing...">
                 </div>
                 <!--Suggestions-->
-                <span id="suggestion" class="material-symbols-outlined">
-                    tips_and_updates
-                </span>
+                <span id="suggestion" class="material-symbols-outlined">tips_and_updates</span>
                 <!--More Options-->
                 <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i>
             </div>
 
+
+
             <!--Side Bar-->
-            <div class="right-chevron" id="chevron">
+            <div class="right-chevron">
                 <div class="hide-tools">
-                    <span id="right-chevron" class="material-symbols-outlined">
-                        chevron_right
-                    </span>
+                    <span id="right-chevron" class="material-symbols-outlined">chevron_right</span>
                 </div>
             </div>
             <div id="tools">
@@ -41,33 +44,38 @@
                         chevron_left
                     </span>
                 </div>
+                <!--Topic Editor Tools-->
                 <div id="tools-container">
-                    <span id="add-note" class="material-symbols-outlined">
-                        edit_note
-                    </span>
-                    <span class="material-symbols-outlined">
-                        image
-                    </span>
-                    <span class="material-symbols-outlined">
-                        file_upload
-                    </span>
-                    <!--File Dropdown-->
+                    <span id="add-note" class="material-symbols-outlined">edit_note</span>
+                    <span class="material-symbols-outlined">image</span>
+                    <span class="material-symbols-outlined">file_upload</span>
                     <span id="show-files" class="material-symbols-outlined" onclick="toggleFileModal()">folder_open</span>
                 </div>
             </div>
+            <!--File Dropdown-->
             <div class="hidden" id="file-display">
                 <%- include('./file-display'); %>
             </div>
-    
-            <!--Note Editor-->
-            <div id="note-div">
-                <div class="note-container">
-                    <textarea id="noteEditor"></textarea>
-                    <span id="close" class="material-symbols-outlined">
-                        cancel
-                    </span>
+
+
+            <div id="page-content">
+                 <!-- Tabs -->
+                <div class="tab">
+                    <button class="tablinks" onclick="openTab(event, 'note-div')">file 1</button>
+                    <button class="tablinks" onclick="openTab(event, 'new-tab')">file 2</button>
+                </div>
+                <!--Note Editor Tab -->
+                <div id="note-div" class="tabcontent">
+                    <div class="note-container">
+                        <textarea id="noteEditor"></textarea>
+                        <!-- <span id="close" class="material-symbols-outlined">cancel</span> -->
+                    </div>
+                </div>
+                <!--Example Tab-->
+                <div id="new-tab" class="tabcontent">
                 </div>
             </div>
+            
     
             <!--Save and Cancel-->
             <div id="button-div">
@@ -98,39 +106,4 @@
     </body>
     
 </html>
-
-<script>  
-
-    //toggles the rendering of more options menu
-    const toggleMoreOptions = () => {
-        if (document.getElementById('dropdown-content').getAttribute('style')) {
-            document.getElementById('dropdown-content').setAttribute('style','');
-        } else {
-            document.getElementById('dropdown-content').setAttribute('style',"display: block; right: 2%; top: 4%");
-        }
-    }
-
-    //if file modal is on, it turns off and vice versa
-    const toggleFileModal = () => {
-      if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
-        document.getElementById('file-display').setAttribute('class','file-display-shown');
-      } else {
-        document.getElementById('file-display').setAttribute('class','hidden');
-      } 
-    }
-
-    //checks if someone is clicking off modal and then closes it
-    $('body').click(function (ev) {
-    if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
-        if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring') {
-            document.getElementById('file-display').setAttribute('class','hidden');
-        }
-    }
-    if (ev.target.id !== 'ellipsis')
-        document.getElementById('dropdown-content').setAttribute('style','');
-});
-
-</script>
-
-<%- include('./file-display'); %>
 

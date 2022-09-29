@@ -4,14 +4,12 @@
 
 .header-div {
     font-size: 36px;
-    margin-right: 20px;
     padding: 0px;
 }
 
 .header {
     margin-bottom: 5px;
     padding: 10px 10px;
-    margin-left: 3%;
 }
 
 #new-tag {
@@ -108,6 +106,7 @@
     padding-right: 100px;
     position: absolute; 
     right: 0; 
+    top: 275px;
     overflow: hidden;
 }
 
@@ -145,9 +144,9 @@
     display: none;
     position: absolute;
     right: 100px;
+    top: 265px;
     font-size: 60px;
     padding: 9px 16px;
-    top: 176px
 }
 
 .show-tools {
@@ -179,21 +178,17 @@
 }
 
 #file-display {
-    height: 500px;
-    width: 200px;
+    height: 450px;
+    width: 250px;
     position:absolute;
     right: 0px;
-    top: 650px;
+    top: 750px;
+    overflow: auto;
 }
 
 .file-display-shown {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    right: 0;
-    top: 75%;
-    width: 50%;
-    height: auto;
     padding: 0;
     margin: 0;
     z-index: 1000;
@@ -213,7 +208,7 @@
 
 .file-display-icon {
     position: relative;
-    left: 175%;
+    left: 170px;
     padding: 0; 
     margin: 0; 
     font-size: 70px;
@@ -225,14 +220,14 @@
 
 .file-display-name {
     position: absolute;
-    right: 40%;
+    right: 35%;
     padding: 3px 12px;
     font-size: 70%;
     color: white;
     letter-spacing: 1px;
     border-radius: 15%;
     background-color: #3A3B3C;
-    margin-top: 15%;
+    margin-top: 10%;
     border: 1px solid gray;
     white-space: nowrap;
     overflow: hidden;
@@ -271,3 +266,45 @@
     top: 0px;
     right: 0px;
 }
+
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+  /* Style the buttons that are used to open the tab content */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+  
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+  }
+
+  #page-content {
+    height: 1300px;
+  }
