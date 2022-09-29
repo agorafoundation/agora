@@ -1,0 +1,99 @@
+/* SIDE MENu */
+.sidebar {
+    height: 100%;
+    width: 85px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #404D52;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 20px;
+    white-space: nowrap;
+}
+
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.material-icons,
+.icon-text {
+    vertical-align: middle;
+}
+
+.material-icons {
+    padding-bottom: 3px;
+}
+.material-icons.md-48 { 
+    font-size: 192px;
+    padding-left: 25%;
+ }
+
+
+.dashboard-content{
+    margin-left: 100px;
+    transition: margin-left .5s;
+}
+
+.sidenav a, .dropdown-btn {
+padding: 6px 8px 6px 16px;
+text-decoration: none;
+font-size: 20px;
+color: #818181;
+display: block;
+border: none;
+background: none;
+width:100%;
+text-align: left;
+cursor: pointer;
+outline: none;
+}
+
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+color: #f1f1f1;
+}
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+display: none;
+background-color: #262626;
+padding-left: 8px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+float: right;
+padding-right: 8px;
+}
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 15px;
+    }
+    .sidebar a {
+        font-size: 18px;
+    }
+    .new-page-content-button{
+        align:bottom;
+        
+    }
+}
