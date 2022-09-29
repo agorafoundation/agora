@@ -102,8 +102,8 @@ router.use('/goals', goalRoutes);
 /**
  * Topic APIs
  */
-// const topicRoutes = require('./apis/topicRoutes')
-// router.use('/topic', topicRoutes);
+const topicRoutes = require('./apis/topicRoutes')
+router.use('/topic', topicRoutes);
 
 /**
  * Resource APIs
