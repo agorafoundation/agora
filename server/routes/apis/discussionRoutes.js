@@ -37,7 +37,6 @@ router.route( '/topic/:id' )
     })
     // update a discussion based off goal id
     .patch( async ( req, res ) => { 
-        req.params.type = "topic"
         discussionController.updateDiscussionByTopicId( req, res );
     })
  
