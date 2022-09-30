@@ -7,77 +7,28 @@
 
 const discussionService = require("../../service/discussionService")
 
-exports.getDiscussionByGoalId = async ( req, res ) => {
+exports.getDiscussion = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
-    const id = req.params.id
-
-    // get the discussion by goal id
-    let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
-    
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all goals" );
-    res.status( 200 ).json( discussion );
-}
-
-exports.updateDiscussionByGoalId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
+    const type = req.params.type
     const id = req.params.id
 
     // get all the active goals
-    let discussion = await discussionService.updateDiscussion( "goal", id, req.body );
+    let goals = await discussionService.getDiscussion( type, id );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
-    res.status( 200 ).json( discussion );
+    res.status( 200 ).json( goals );
 }
 
-exports.getDiscussionByTopicId = async ( req, res ) => {
+exports.updateDiscussion = async ( req, res ) => {
 
-    const id = req.params.id
-
-    // get the discussion by topic id
-    let discussion = await discussionService.getDiscussion( "topic", id );
-    
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned discussion" );
-    res.status( 200 ).json( discussion );
-}
-
-exports.updateDiscussionByTopicId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-    
+    const type = req.params.type
     const id = req.params.id
 
     // get all the active goals
-    let discussion = await discussionService.updateDiscussion( "topic", id, req.body );
+    let goals = await discussionService.updateDiscussion( type, id, req.body );
     
     res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Updated discussion" );
-    res.status( 200 ).json( discussion );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
 }
