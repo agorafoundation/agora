@@ -571,3 +571,37 @@ GRANT USAGE, SELECT ON SEQUENCE completed_activity_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activity (activity_id);
 
+
+-- Discussion API tables
+
+CREATE TABLE IF NOT EXISTS discussions (
+    discussion_id SERIAL INTEGER,
+    resource_id INTEGER,
+    discussion_text VARCHAR
+    CONSTRAINT composite_id PRIMARY KEY (resource_id, discussion_id)
+;)
+
+GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
+GRANT USAGE, SELECT ON SEQUENCE discussions TO agora;
+
+CREATE TABLE IF NOT EXISTS discussion_comments (
+    comment_id SERIAL INTEGER,
+    discussion_id INTEGER,
+    comment_text VARCHAR,
+    likes INTEGER,
+    dislikes INTEGER,
+    CONSTRAINT composite_id PRIMARY KEY (comment_id, discussion_id)
+
+);
+
+GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
+GRANT USAGE, SELECT ON SEQUENCE discussion_comments TO agora;
+
+CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
+    comment_id PRIMARY KEY,
+    rating BOOLEAN,
+    user_id INTEGER
+);
+
+GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
+GRANT USAGE, SELECT ON SEQUENCE discussion_comment_ratings TO agora;
