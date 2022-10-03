@@ -62,8 +62,6 @@ router.use(function (req, res, next) {
     }
 
 
-    
-
 
     /**
      * Old auth mechanism that relied on server session (stateful)
