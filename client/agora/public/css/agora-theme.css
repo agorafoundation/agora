@@ -1359,7 +1359,6 @@ input:checked + .slider:after {
 
 
 .dashboard-content{
-    margin-left: 100px;
     transition: margin-left .5s;
 }
 
