@@ -20,3 +20,35 @@ exports.updateDiscussion = async (type , id , updatedDiscussion) => {
 
     return {type , id , updatedDiscussion}
 }
+
+exports.editComment = async (id , userid , editedComment) => {
+
+    //query database for the userid associated with the comment
+    commentAuthorId = 3
+
+    //compare to see if the user created the comment they are trying to edit
+    if  (commentAuthorId == id) {
+
+        //query database to update comment text
+        return {id , userid , editedComment}
+    }
+    else {
+        return {error: "User not allowed to edit this comment"}
+    }
+}
+
+exports.deleteComment = async (id , userid) => {
+
+    //query database for the userid associated with the comment
+    commentAuthorId = 3
+
+    if  (commentAuthorId == id) {
+
+        //query database to delete comment
+        return {id , userid}
+    }
+    else {
+        return {error: "User not allowed to delete this comment"}
+    }
+    
+}

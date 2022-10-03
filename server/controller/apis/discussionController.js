@@ -32,3 +32,27 @@ exports.updateDiscussion = async ( req, res ) => {
     res.set( "x-agora-message-detail", "Returned all goals" );
     res.status( 200 ).json( goals );
 }
+
+exports.editComment = async ( req, res ) => {
+
+    const id = req.params.commentId
+
+    // get all the active goals
+    let goals = await discussionService.editComment( id , req.user.id , req.body );
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
+
+exports.deleteComment = async ( req, res ) => {
+
+    const id = req.params.commentId
+
+    // get all the active goals
+    let goals = await discussionService.deleteComment( id , req.user.id);
+    
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.status( 200 ).json( goals );
+}
