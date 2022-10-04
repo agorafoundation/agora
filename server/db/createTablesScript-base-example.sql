@@ -575,21 +575,19 @@ CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activ
 -- Discussion API tables
 
 CREATE TABLE IF NOT EXISTS discussions (
-    discussion_id SERIAL INTEGER,
+    discussion_id SERIAL,
     resource_id INTEGER,
-    discussion_text VARCHAR
+    discussion_text VARCHAR,
     CONSTRAINT composite_id PRIMARY KEY (resource_id, discussion_id)
-;)
+);
 
 GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
 GRANT USAGE, SELECT ON SEQUENCE discussions TO agora;
 
 CREATE TABLE IF NOT EXISTS discussion_comments (
-    comment_id SERIAL INTEGER,
+    comment_id SERIAL,
     discussion_id INTEGER,
     comment_text VARCHAR,
-    likes INTEGER,
-    dislikes INTEGER,
     CONSTRAINT composite_id PRIMARY KEY (comment_id, discussion_id)
 
 );
