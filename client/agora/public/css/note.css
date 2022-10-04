@@ -14,6 +14,7 @@
 .header {
     margin-bottom: 5px;
     padding: 10px 10px;
+    position: relative;
 }
 
 #new-tag {
@@ -239,7 +240,7 @@
     max-width: 125px;
 }
 
-#ellipsis2 {
+#resource-ellipsis {
     font-size: 30px;
     position:absolute;
     top: 0px;
@@ -269,13 +270,52 @@
     background-color: #ddd;
   }
   
-  /* Create an active/current tablink class */
-  .tab button.active {
-    background-color: #ccc;
-  }
-  
   .tabcontent {
     display: none;
     padding: 6px 12px;
     border-top: none;
+  }
+
+#mySearch {
+    width: 10%;
+    font-size: 18px;
+    padding: 11px;
+    border-bottom: 1px solid #ddd;
+    font-size: 20px;
+    margin-left: 5px;
+    outline: none
+  }
+
+  #mySearch:focus {
+    border-bottom: 2px solid #2c3e50
+  }
+  
+  #myTags {
+    padding: 0;
+    margin: 0;
+  }
+
+  ul {
+    position: absolute;
+    top: 75px;
+    left: 90px;
+    background-color: white;
+    display: none;
+  }
+  
+  #myTags li a {
+    padding: 12px;
+    color: black;
+    display: block;
+  }
+  
+  #myTags li a:hover {
+    background-color: #eee;
+  }
+
+  li {
+    display: none;
+    width: 190px;
+    border-style: solid;
+    border-width: 1px;
   }

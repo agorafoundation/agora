@@ -129,3 +129,26 @@ $('body').click(function (ev) {
 if (ev.target.id !== 'ellipsis')
     document.getElementById('dropdown-content').setAttribute('style','');
 });
+
+function myFunction() {
+    let input, filter, ul, li, a, i;
+    input = document.getElementById("mySearch");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myTags");
+    li = ul.getElementsByTagName("li");
+
+    if (filter == "") {
+        ul.style.display = "none";
+    } else {
+        ul.style.display = "block";
+        // Hide items that don't match search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "block";
+            } else {
+            li[i].style.display = "none";
+            }
+        }
+        }
+  }

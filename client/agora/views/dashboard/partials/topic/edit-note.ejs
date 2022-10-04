@@ -22,7 +22,21 @@
                 <!--Tags-->
                 <div class="header" id="new-tag">
                     <label>Tags:</label>
-                    <input class="placeholder" id="tag-placeholder" type="text" placeholder="start typing...">
+                    <!-- <input class="placeholder" id="tag-placeholder" type="text" placeholder="start typing..."> -->
+                    <input type="text" id="mySearch" class="placeholder" onkeyup="myFunction()" placeholder="start typing...">
+
+                <ul class="tag-list" id="myTags">
+                <li class="tag-list-element"><a href="#">HTML</a></li>
+                <li class="tag-list-element"><a href="#">CSS</a></li>
+                <li class="tag-list-element"><a href="#">JavaScript</a></li>
+                <li class="tag-list-element"><a href="#">PHP</a></li>
+                <li class="tag-list-element"><a href="#">Python</a></li>
+                <li class="tag-list-element"><a href="#">jQuery</a></li>
+                <li class="tag-list-element"><a href="#">SQL</a></li>
+                <li class="tag-list-element"><a href="#">Bootstrap</a></li>
+                <li class="tag-list-element"><a href="#">Node.js</a></li>
+                </ul>
+                    
                 </div>
                 <!--Suggestions-->
                 <span id="suggestion" class="material-symbols-outlined">tips_and_updates</span>
@@ -68,7 +82,7 @@
                 <div id="note-div" class="tabcontent">
                     <div class="note-container">
                         <textarea id="noteEditor"></textarea>
-                        <i id="ellipsis2" class="fa fa-ellipsis-h"></i>
+                        <i id="resource-ellipsis" class="fa fa-ellipsis-h"></i>
                     </div>
                 </div>
                 <!--Example Tab-->
