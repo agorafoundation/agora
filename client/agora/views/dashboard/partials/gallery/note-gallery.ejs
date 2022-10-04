@@ -10,6 +10,7 @@
 </head>
 
 <body>
+  
   <%- include('./preview-modal.ejs'); %>
     <% //name:string, description:string, tags:array, content:array %>
       <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
@@ -24,7 +25,7 @@
                 <img src="/assets/img/buttons/more-options.png" class="dropbtn"
                   id="option-<%= id %>" style="visibility: hidden"/>
                 <%- include('./dropdown.ejs'); %>
-              <div class="card-body d-flex flex-column">
+              <div class="card-body d-flex flex-column" id="topic">
                 <h5 class="card-title" id="card-title-<%= id %>">
                   <%= name%>
                 </h5>
@@ -54,7 +55,7 @@
                 <img src="/assets/img/buttons/more-options.png" id="ellipsis" class="dropbtn"
                 id="option-<%= id %>" style="visibility: hidden"/>
                   <%- include('./dropdown.ejs'); %>
-              <div class="card-body d-flex flex-column">
+              <div class="card-body d-flex flex-column" id="goal">
                 <h5 class="card-title" id="card-title-<%= id %>">
                   <%= name %>
                 </h5>
@@ -91,7 +92,7 @@
               //add button
               if (i === 0) {
                  %>
-                <div class="row ">
+                <div class="row row-cols-1 row-cols-md-3 g-4 ">
                   <div class="col mb-3 gallery-col align-items-stretch">
                     <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
                       <div class="card-body d-flex flex-column" style="margin-top: 8%">
@@ -100,25 +101,53 @@
                       </div>
                     </div>
                   </div>
-
-                <% }else if(i % 3===0) {%>
-              </div>
-              <div class="row ">
-                <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
-                  %>
-
-
-                  <% }else{ %>
+                  <% }else{ 
+                    if(i % 2 === 0) {%>
                     <% renderCard(i,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
-                      %>
+                    }else{
+                      renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
+                     } %>
                       <% }}%>
               </div>
+              <button type="button" onclick="toggleGoalView()">Goal</button>
+              <button type="button" onclick="toggleTopicView()">Goal</button>
+              <button type="button" onclick="toggleTopicView()">All View</button>
 
 
 
              
 
                 <script>
+                  var toggleGoalView = () => {
+                 const input = document.querySelector(".form-control");
+                  const cards = document.getElementsByClassName("col");
+                  console.log(cards[0])
+                let filter = input.value
+                for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector(".card-body");
+                console.log(title.id)
+                if (title.id === 'goal' ) {
+                    cards[i].classList.remove("d-none")
+                } else {
+                    cards[i].classList.add("d-none")
+                }
+            }
+        } 
+        var toggleTopicView = () => {
+                 const input = document.querySelector(".form-control");
+                  const cards = document.getElementsByClassName("col");
+                  console.log(cards[0])
+                let filter = input.value
+                for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector(".card-body");
+                console.log(title.id)
+                if (title.id === 'topic' ) {
+                    cards[i].classList.remove("d-none")
+                } else {
+                    cards[i].classList.add("d-none")
+                }
+            }
+        }
                   $('.dropdown-content').on('click', function (ev) {
                     ev.stopPropagation();
                   });
