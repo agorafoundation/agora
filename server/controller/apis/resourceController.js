@@ -284,7 +284,7 @@ exports.saveResource = async ( req, res, redirect ) => {
             if( file.size > maxSize ) {
                 console.log(`File ${file.name} size limit has been exceeded for resource`);
 
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "warn";
                     req.session.messageTitle = "Image too large!";
                     req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
@@ -301,9 +301,9 @@ exports.saveResource = async ( req, res, redirect ) => {
             }
             else if( resource ) {
                 await file.mv(resourceUploadPath + timeStamp + file.name, async (err) => {
-                    if (err) {
+                    if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
-                        if(redirect) {
+                        if( redirect ) {
                             req.session.messageType = "error";
                             req.session.messageTitle = "Error saving image!";
                             req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
@@ -323,7 +323,7 @@ exports.saveResource = async ( req, res, redirect ) => {
                 });
             }
             else {
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "error";
                     req.session.messageTitle = "Error saving image!";
                     req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
