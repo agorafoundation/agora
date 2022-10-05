@@ -83,3 +83,15 @@
  .add-topic-modal-card{
   border-radius: 10px;
  }
+
+
+ /* header */
+ #gallery-header {
+  display: flex;
+  align-items: center;
+ }
+
+ .btn-goal-topic-toggle{
+  margin-left: auto; 
+  margin-bottom: 0;
+ }
