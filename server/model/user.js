@@ -5,52 +5,53 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-function user(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-    mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens) {
-    this.id -1;
-    this.email = email;
-    this.username = username;
-    this.profileFilename = profileFilename;
-    this.emailValidated = emailValidated;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.hashedPassword = hashedPassword;
-    this.roleId = roleId;
-    this.subscriptionActive =subscriptionActive;
-    this.beginningProgramming = beginningProgramming;
-    this.intermediateProgramming = intermediateProgramming;
-    this.advancedProgramming = advancedProgramming;
-    this.mobileDevelopment = mobileDevelopment;
-    this.roboticsProgramming = roboticsProgramming;
-    this.webApplications = webApplications;
-    this.web3 = web3;
-    this.iotProgramming = iotProgramming;
-    this.databaseDesign = databaseDesign;
-    this.relationalDatabase = relationalDatabase;
-    this.noSqlDatabase = noSqlDatabase;
-    this.objectRelationalMapping = objectRelationalMapping;
-    this.stripeId = stripeId;
-    this.availableAccessTokens = availableAccessTokens;
-    
-    // populate with user_role
-    this.roles = [];
+class User {
+    constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
+        mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens ) {
 
-    // populate with enrolled goal paths
-    this.enrollments = [];
+        this.id -1;
+        this.email = email;
+        this.username = username;
+        this.profileFilename = profileFilename;
+        this.emailValidated = emailValidated;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.hashedPassword = hashedPassword;
+        this.roleId = roleId;
+        this.subscriptionActive =subscriptionActive;
+        this.beginningProgramming = beginningProgramming;
+        this.intermediateProgramming = intermediateProgramming;
+        this.advancedProgramming = advancedProgramming;
+        this.mobileDevelopment = mobileDevelopment;
+        this.roboticsProgramming = roboticsProgramming;
+        this.webApplications = webApplications;
+        this.web3 = web3;
+        this.iotProgramming = iotProgramming;
+        this.databaseDesign = databaseDesign;
+        this.relationalDatabase = relationalDatabase;
+        this.noSqlDatabase = noSqlDatabase;
+        this.objectRelationalMapping = objectRelationalMapping;
+        this.stripeId = stripeId;
+        this.availableAccessTokens = availableAccessTokens;
 
-    // populate with enrolled Topics
-    this.topicEnrollments = [];
+        // populate with user_role
+        this.roles = [];
 
-    // 
+        // populate with enrolled goal paths
+        this.enrollments = [];
+
+        // populate with enrolled Topics
+        this.topicEnrollments = [];
+    }
   }
   
 exports.emptyUser = () => {
-    return new user();
+    return new User();
 }
 
 exports.createUser = function(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
     mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens) {
-    let newUser = new user(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
+    let newUser = new User(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
         mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens);
     newUser.id = -1;
     return newUser;

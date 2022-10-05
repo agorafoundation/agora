@@ -57,8 +57,8 @@ exports.createUser = async function( req, res ) {
             user = User.createUser(email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive,
                 beginningProgramming, intermediateProgramming, advancedProgramming, mobileDevelopment, roboticsProgramming,
                 webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, 0);
-
-            // save the user to the database!
+            
+                // save the user to the database!
             userService.saveUser(user).then((insertResult) => {
                 if(req.body.userEmail && insertResult) {
                     // send verification email
