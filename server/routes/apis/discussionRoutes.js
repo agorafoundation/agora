@@ -21,28 +21,31 @@ const discussionController = require( '../../controller/apis/discussionControlle
  // /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
 // discussions /api/v1/auth/discussions/{goal | topic}/:id
 router.route( '/goal/:id' )
-    // get a discussion based off topic or goal id
+    // get a discussion based off topic id
     .get( async ( req, res ) => {
-        req.params.type = "goal"
-        discussionController.getDiscussion( req, res );
+        discussionController.getDiscussionByGoalId( req, res );
     })
-    // update a discussion based off topic or goal id
+    // update a discussion based off topic id
     .patch( async ( req, res ) => { 
-        req.params.type = "goal"
-        discussionController.updateDiscussion( req, res );
+        discussionController.updateDiscussionByGoalId( req, res );
+    })
+    .post(async ( req, res ) => {
+        discussionController.createDiscussionByGoalId( req, res );
     })
 
 router.route( '/topic/:id' )
-    // get a discussion based off topic or goal id
+    // get a discussion based off goal id
     .get( async ( req, res ) => {
-        req.params.type = "topic"
-        discussionController.getDiscussion( req, res );
+        discussionController.getDiscussionByTopicId( req, res );
     })
-    // update a discussion based off topic or goal id
+    // update a discussion based off goal id
     .patch( async ( req, res ) => { 
         discussionController.updateDiscussionByTopicId( req, res );
     })
- 
+    .post(async ( req, res ) => {
+        discussionController.createDiscussionByTopicId( req, res );
+    })
+
 // discussions /api/v1/auth/discussion
 router.route( '/rating/:commentId' )
     // update a visible goal by id
