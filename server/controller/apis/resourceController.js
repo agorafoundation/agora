@@ -94,9 +94,12 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
 }
 
 exports.getResourceById = async ( req, res ) => {
-    // get all the active resources by user 
-    let resource = await resourceService.getAllActiveResourcesForOwnerById( req.session.authUser.id, req.params.id );
-    if(resource) {
+    const resourceId = req.params.id;
+    const isActive = req.params.active;
+    
+    let resource = await resourceService.getResourceById( resourceId, isActive );
+
+    if( resource ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned resource by id" );
         res.status( 200 ).json( resource );
@@ -107,8 +110,6 @@ exports.getResourceById = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Resource not found" );
         res.status( 404 ).json( message );
     }
-    
-    
 }
 
 exports.getAllResourcesForAuthUser = async ( req, res ) => {
