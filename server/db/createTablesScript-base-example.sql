@@ -574,32 +574,33 @@ CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activ
 
 -- Discussion API tables
 
+CREATE TYPE discussion_parents AS ENUM ('goal', 'topic');
+
 CREATE TABLE IF NOT EXISTS discussions (
-    discussion_id SERIAL,
-    resource_id INTEGER,
+    parent_id INTEGER,
+    parent_type discussion_parents,
     discussion_text VARCHAR,
-    CONSTRAINT composite_id PRIMARY KEY (resource_id, discussion_id)
+    CONSTRAINT discussion_parent PRIMARY KEY (parent_id, parent_type)
 );
 
 GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
-GRANT USAGE, SELECT ON SEQUENCE discussions TO agora;
 
 CREATE TABLE IF NOT EXISTS discussion_comments (
-    comment_id SERIAL,
-    discussion_id INTEGER,
+    comment_id SERIAL PRIMARY KEY,
+    parent_id INTEGER, 
+    parent_type discussion_parents,
     comment_text VARCHAR,
-    CONSTRAINT composite_id PRIMARY KEY (comment_id, discussion_id)
-
-);
-
-GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
-GRANT USAGE, SELECT ON SEQUENCE discussion_comments TO agora;
-
-CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
-    comment_id PRIMARY KEY,
-    rating BOOLEAN,
     user_id INTEGER
 );
 
+GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
+
+
+CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
+    comment_id INTEGER,
+    user_id INTEGER,
+    rating BOOLEAN,
+    CONSTRAINT user_rating PRIMARY KEY (comment_id, user_id)
+);
+
 GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
-GRANT USAGE, SELECT ON SEQUENCE discussion_comment_ratings TO agora;
