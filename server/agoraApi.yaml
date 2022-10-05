@@ -109,7 +109,7 @@ paths:
     get:
       tags: 
         - Tags 
-      summary: Retrieve existing tag by Id
+      summary: Retrieves existing tag by Id
       parameters:
         - in: path
           name: id
@@ -272,7 +272,7 @@ paths:
     get:
       tags: 
         - Goals
-      summary: Retrieve existing goal by Id
+      summary: Retrieves existing goal by Id
       parameters:
         - in: path
           name: id
@@ -322,6 +322,198 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Goal'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /topics:
+    get:
+      tags:
+        - Topics
+      summary: Retrieves all available topics, provide limit and offset for pagnation, top limit 100.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of records to return, maximum 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The starting record number, defaults to 0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      tags:
+        - Topics
+      summary: Save a new topic. If the name of the topic already exists the current topic will not be duplicated. If the ownedBy member is provided with an existing topic name the owner will be updated to the provided value.  Only the topic name is required.
+      requestBody:
+        description: Include a Topic object to save in JSON format *NOTE* - Only the topic member is required, id will be ignored.
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              $ref: '#/components/schemas/Topic'
+      responses:
+        '201':
+          description: New Topic created
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Topic'
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '200':
+          description: Updated existing record - the topic name already existed, current record used.
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Topic'
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+  /topics/shared:
+    get:
+      tags:
+        - Topics
+      summary: Retrives of all shared topics available
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest' 
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+  /topics/{id}:
+    get:
+      tags:
+        - Topics
+      summary: Retrieves existing topic by Id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the topic to retrieve 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Topic'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags: 
+        - Topics
+      summary: Delete an existing topic providing it's Id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the topic to delete 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Topic'
         headers:
             x-agora-message-title:
               schema:
@@ -471,7 +663,7 @@ paths:
     get:
       tags:
         - Resources
-      summary: Retrives of all shared resources available to a user
+      summary: Retrives of all shared resources available
       responses:
         '200':
           description: OK
@@ -500,7 +692,7 @@ paths:
     get:
       tags:
         - Resources
-      summary: Retrieve existing resource by Id
+      summary: Retrieves existing resource by Id
       parameters:
         - in: path
           name: id
@@ -535,7 +727,7 @@ paths:
     delete:
       tags: 
         - Resources
-      summary: Delete an existing resource providing it's Id
+      summary: Delete an existing resource provided it's Id
       parameters:
         - in: path
           name: id
@@ -638,6 +830,7 @@ components:
           description: The tag
         goalDescription:
           type: string
+          description: Description of the goal
         goalImage:
           type: string
           description: filename of the associated image for the goal
@@ -688,13 +881,13 @@ components:
           description: The tag
         topicDescription:
           type: string
-          description: The synopsis
+          description: Description of the topic
         topicImage:
           type: string
           description: filename of the associated image for the topic
         topicHtml:
           type: string
-          description: More description...
+          description: Embedded HTML
         assessmentId:
           type: integer
           description: assessment tag
@@ -703,10 +896,10 @@ components:
           description: activity tag
         hasAssessment:
           type: boolean
-          description: Whether there is an assessmentId
+          description: Whether topic has assessment
         hasActivity:
           type: boolean
-          description: Whether there is an activityId
+          description: Whether topic has activity
         active:
           type: boolean
           description: Active status, inactive items will not be returned in most queries
@@ -725,7 +918,7 @@ components:
         topicName: "Understanding the Agora Dashboard"
         topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
         topicImage: "myImage.png"
-        topicHtml: "<head></head><body><h1>Topic HTML</h1></body>"
+        topicHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
         assessmentId: 1
         hasActivity: false
         hasAssessment: false
@@ -785,9 +978,9 @@ components:
         resourceType: 1
         resourceName: "Dashboard Screenshot"
         resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
-        resourceContentHtml: "<head></head><body><h1>Resource Content HTML</h1></body>"
+        resourceContentHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
         resourceImage: "myImage.png"
-        resourceLink: "https://resourcelink.com"
+        resourceLink: "https://resourcelink.com/"
         isRequired: 1
         active: true
         visibility: 0
