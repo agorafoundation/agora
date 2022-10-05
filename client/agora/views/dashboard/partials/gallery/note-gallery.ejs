@@ -6,6 +6,7 @@
   <script src="../../../../public/js/dashboard"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   <%- include('../../../partials/head.ejs'); %>
+  <%- include('./new-topic-goal.ejs')  %> 
 </head>
 
 <body>
@@ -84,12 +85,15 @@
           <h1 class="text-secondary pt-3 pl-1">My Notes</h1>
           <hr>
           <div class="container">
+
+
             <% for (let i = 0; i < availableResources.length + 1; i++) { 
-              if (i === 0) { %>
+              //add button
+              if (i === 0) {
+                 %>
                 <div class="row ">
                   <div class="col mb-3 gallery-col align-items-stretch">
-                    <div class="card h-100" data-toggle="modal" data-target="#create-resource-modal"
-                     >
+                    <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
                       <div class="card-body d-flex flex-column" style="margin-top: 8%">
                         <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content"
                           alt="Add content">
@@ -112,7 +116,7 @@
 
 
 
-              <%- include('../../../partials/jsincludes.ejs'); %>
+             
 
                 <script>
                   $('.dropdown-content').on('click', function (ev) {
