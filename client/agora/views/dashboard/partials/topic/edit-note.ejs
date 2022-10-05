@@ -8,10 +8,8 @@
     <body>
         <div class="note-body">
 
-
             <!--Side Nav-->
             <%- include('../../side-menu/side-menu.ejs');%>  
-
 
             <!--Page Header-->
             <div class="header-div">
@@ -22,61 +20,46 @@
                 <!--Tags-->
                 <div class="header" id="new-tag">
                     <label>Tags:</label>
-                    <input class="placeholder" id="tag-placeholder" type="text" placeholder="start typing...">
+                    <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
+                    <div id="curr-tags"></div>
+
+                    <ul class="tag-list">
+                        <li class="tag-list-element" onclick="addTag(this)">Capping</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Math</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Algorithms</li>
+                        <li class="tag-list-element" onclick="addTag(this)" >Movies</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Music</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Taylor Swift</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Dogs</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Research</li>
+                    </ul>
+                    <ul class="new-tag">
+                        <li id="new-tag-element" class="tag-list-element" onclick="newTag()">+ New Tag</li>
+                    </ul>
                 </div>
-                <!--Suggestions-->
-                <span id="suggestion" class="material-symbols-outlined">tips_and_updates</span>
                 <!--More Options-->
                 <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i>
             </div>
 
-
-
-            <!--Side Bar-->
-            <div class="right-chevron">
-                <div class="hide-tools">
-                    <span id="right-chevron" class="material-symbols-outlined">chevron_right</span>
-                </div>
-            </div>
-            <div id="tools">
-                <div class="show-tools">
-                    <span id="left-chevron" class="material-symbols-outlined">
-                        chevron_left
-                    </span>
-                </div>
-                <!--Topic Editor Tools-->
-                <div id="tools-container">
-                    <span id="add-note" class="material-symbols-outlined">edit_note</span>
-                    <span class="material-symbols-outlined">image</span>
-                    <span class="material-symbols-outlined">file_upload</span>
-                    <span id="show-files" class="material-symbols-outlined" onclick="toggleFileModal()">folder_open</span>
-                </div>
-            </div>
             <!--File Dropdown-->
-            <div class="hidden" id="file-display">
-                <%- include('./file-display'); %>
-            </div>
-
+            <!-- <div class="hidden" id="file-display"> -->
+                <!--<%- include('./file-display'); %>-->
+            <!-- </div> -->
 
             <div id="page-content">
                  <!-- Tabs -->
                 <div class="tab">
-                    <button class="tablinks" onclick="openTab(event, 'note-div')">file 1</button>
-                    <button class="tablinks" onclick="openTab(event, 'new-tab')">file 2</button>
+                    <button class="tablinks" onclick="openTab(event, 'note-div')">Topic 1</button>
+                    <button class="tablinks" onclick="openTab(event, 'new-tab')">Topic 2</button>
                 </div>
                 <!--Note Editor Tab -->
                 <div id="note-div" class="tabcontent">
-                    <div class="note-container">
-                        <textarea id="noteEditor"></textarea>
-                        <i id="ellipsis2" class="fa fa-ellipsis-h"></i>
-                    </div>
+                    <textarea id="noteEditor"></textarea>
                 </div>
                 <!--Example Tab-->
-                <div id="new-tab" class="tabcontent">
-                </div>
+                <div id="new-tab" class="tabcontent"></div>
             </div>
 
-    
             <!--Save and Cancel-->
             <div id="button-div">
                 <button class="note-buttons" id="save-note" type="submit">Save</button>
