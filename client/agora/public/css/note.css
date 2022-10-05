@@ -1,9 +1,10 @@
 .note-body {
-    transition: margin-left 5s;
+    transition: margin-left .5s;
 }
 
   #page-content {
-    height: 1300px;
+    height: inherit;
+    position: inline-block;
   }
 
 .header-div {
@@ -117,7 +118,7 @@
 
 #note-div {
     display: flex;
-    width: 95%;
+    width: 100%;
 }
 
 #tools-container {
@@ -247,7 +248,6 @@
     right: 5px;
 }
 
-/* Style the tab */
 .tab {
     overflow: hidden;
     border: 1px solid #ccc;
@@ -256,7 +256,7 @@
     margin-bottom: 20px;
   }
   
-  .tab button {
+.tab button {
     background-color: inherit;
     float: left;
     border: none;
@@ -266,11 +266,11 @@
     transition: 0.3s;
   }
   
-  .tab button:hover {
+.tab button:hover {
     background-color: #ddd;
   }
   
-  .tabcontent {
+.tabcontent {
     display: none;
     padding: 6px 12px;
     border-top: none;
@@ -283,39 +283,59 @@
     border-bottom: 1px solid #ddd;
     font-size: 20px;
     margin-left: 5px;
-    outline: none
+    outline: none;
+    display: inline;
   }
 
   #mySearch:focus {
     border-bottom: 2px solid #2c3e50
   }
-  
-  #myTags {
-    padding: 0;
-    margin: 0;
-  }
 
-  ul {
+  .tag-list .new-tag{
     position: absolute;
     top: 75px;
     left: 90px;
     background-color: white;
     display: none;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
   }
   
-  #myTags li a {
+  .tag-list .tag-list-element .new-tag{
     padding: 12px;
     color: black;
     display: block;
   }
   
-  #myTags li a:hover {
+  .tag-list .tag-list-element .new-tag{
     background-color: #eee;
   }
 
-  li {
+.tag-list-element  {
     display: none;
     width: 190px;
     border-style: solid;
     border-width: 1px;
+    cursor: pointer;
+  }
+
+  .new-tag {
+    margin-top: 0;
+  }
+
+  #curr-tags {
+    width: 60%;
+    display: inline;
+    float: right;
+    margin-right: 20%;
+    margin-top: 1%;
+    font-size: smaller;
+  }
+
+  .styled-tags {
+    display: inline;
+    margin-right: 10px;
+    background-color:aliceblue;
+    padding: 5px 5px;
   }
