@@ -2,56 +2,64 @@
 <html lang="en">
 
     <head>
-        <script src="../../../../public/js/note.js"></script>
         <%- include('../../../partials/head'); %>
     </head>
 
     <body>
         <div class="note-body">
 
+            <!--Side Nav-->
             <%- include('../../side-menu/side-menu.ejs');%>  
 
+            <!--Page Header-->
             <div class="header-div">
-                <!--Page Header-->
-                <div class="note-header" id="new-note">
-                    <input id="note-name" type="text" placeholder="Untitled" style="margin-left: 6%;">
+                <!--Topic Title-->
+                <div class="header">
+                    <input class="placeholder" type="text" placeholder="Untitled">
                 </div>
-                <!--Suggestions-->
-                <span id="suggestion" class="material-symbols-outlined">
-                    tips_and_updates
-                </span>
+                <!--Tags-->
+                <div class="header" id="new-tag">
+                    <label>Tags:</label>
+                    <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
+                    <div id="curr-tags"></div>
+
+                    <ul class="tag-list">
+                        <li class="tag-list-element" onclick="addTag(this)">Capping</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Math</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Algorithms</li>
+                        <li class="tag-list-element" onclick="addTag(this)" >Movies</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Music</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Taylor Swift</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Dogs</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Research</li>
+                    </ul>
+                    <ul class="new-tag">
+                        <li id="new-tag-element" class="tag-list-element" onclick="newTag()">+ New Tag</li>
+                    </ul>
+                </div>
                 <!--More Options-->
                 <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i>
-                <!--File Dropdown-->
-                <span id="show-files" class="material-icons" onclick="toggleFileModal()">description</span>
-                <%- include('./file-display'); %>
             </div>
 
-            <!--Side Bar-->
-            <div id="tools" style="position: absolute; right: 0; overflow: hidden;">
-                <div id="tools-container">
-                    <span id="add-note" class="material-symbols-outlined">
-                        edit_note
-                    </span>
-                    <span class="material-symbols-outlined">
-                        new_label
-                    </span>
-                    <span class="material-symbols-outlined">
-                        file_upload
-                    </span>
-                    <span class="material-symbols-outlined">
-                        image
-                    </span>
+            <!--File Dropdown-->
+            <!-- <div class="hidden" id="file-display"> -->
+                <!--<%- include('./file-display'); %>-->
+            <!-- </div> -->
+
+            <div id="page-content">
+                 <!-- Tabs -->
+                <div class="tab">
+                    <button class="tablinks" onclick="openTab(event, 'note-div')">Topic 1</button>
+                    <button class="tablinks" onclick="openTab(event, 'new-tab')">Topic 2</button>
                 </div>
-            </div>
-    
-            <!--Note Editor-->
-            <div id="note-div" style="width: 95%">
-                <div class="note-container" style="width: 85%; margin-left: 6%">
+                <!--Note Editor Tab -->
+                <div id="note-div" class="tabcontent">
                     <textarea id="noteEditor"></textarea>
                 </div>
+                <!--Example Tab-->
+                <div id="new-tab" class="tabcontent"></div>
             </div>
-    
+
             <!--Save and Cancel-->
             <div id="button-div">
                 <button class="note-buttons" id="save-note" type="submit">Save</button>
@@ -81,41 +89,4 @@
     </body>
     
 </html>
-
-<script>  
-
-    //toggles the rendering of more options menu
-    const toggleMoreOptions = () => {
-        if (document.getElementById('dropdown-content').getAttribute('style')) {
-            console.log("taco")
-            document.getElementById('dropdown-content').setAttribute('style','');
-        } else {
-            console.log("taco2")
-            document.getElementById('dropdown-content').setAttribute('style',"display: block; right: 5%; top: 10%");
-        }
-    }
-
-    //if file modal is on, it turns off and vice versa
-    const toggleFileModal = () => {
-      if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
-        document.getElementById('file-display').setAttribute('class','file-display-shown');
-      } else {
-        document.getElementById('file-display').setAttribute('class','hidden');
-      } 
-    }
-
-    //checks if someone is clicking off modal and then closes it
-    $('body').click(function (ev) {
-    if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
-        if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring') {
-            document.getElementById('file-display').setAttribute('class','hidden');
-        }
-    }
-    if (ev.target.id !== 'ellipsis')
-        document.getElementById('dropdown-content').setAttribute('style','');
-});
-
-</script>
-
-<%- include('./file-display'); %>
 
