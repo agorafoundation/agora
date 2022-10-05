@@ -570,6 +570,8 @@ function viewModal(id, name, desc) {
 
 
     /*Updating the rename modal*/
+
+    //changing the properties of the save button of the rename-modal depending on the selected card
     var updateSaveButton = (nameId, descId) => {
         let tempName = document.getElementById('note-modal-name').value;
         if (tempName) {
@@ -582,6 +584,7 @@ function viewModal(id, name, desc) {
         }
     }
 
+    //updating the input DOM of the rename-modal depending on the selected card
     const fillNameandDescription = async (e) => { 
         let parent = e.target.parentElement.parentElement.parentElement.id;
         let parentId = parent.charAt(parent.length - 1);
@@ -604,10 +607,12 @@ function viewModal(id, name, desc) {
         }
     }
   
+    //A collection of all the rename buttons
     var cards = document.querySelectorAll('#rename-card').forEach((card)=> {
         card.addEventListener("click", fillNameandDescription);
     })
 
+    //Triggers when the "x" on the rename-modal is clicked
     const removeText = (type) => {
         document.getElementById('remove-name').style = "outline: none; border: none";
         document.getElementById('remove-desc').style = "outline: none; border: none";
