@@ -1,0 +1,85 @@
+.topic-badge{
+    font-size:0.6rem
+  }
+
+  .note-badge{
+    float:right;
+    font-size:.8rem;
+    
+  }
+
+  .gallery-col{
+    max-width: 27rem;
+    height:18rem;
+  }
+
+  /* MORE OPTION */
+  .btn-more-options{
+   width: 10%;
+   height:auto;
+    margin-left:89%;
+    margin-top:3%;
+    position:absolute;
+   
+  }
+
+  /* Add Content button */
+  .btn-add-content {
+    max-width:40%;
+   margin-top: 15%;
+  
+  }
+
+  /* Drop-down option */
+  .dropbtn {
+    background-color: none;
+    border: none;
+    width: 100%;
+    position: relative;
+    border-radius: 15%;
+    cursor: pointer;
+  }
+ 
+  .dropdown {
+    position: relative;
+    left: 89%;
+    width: 10%;
+    display: inline-block;
+  }
+ 
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 140px;
+    box-shadow: 0px 1px 2px 0px rgba(0.5,0.5,0.5,0.5);
+    z-index: 1;
+    border-radius: 5%;
+  }
+ 
+  .dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    font-size: 80%;
+  }
+ 
+  .dropdown-content a:hover {
+    background-color: #ddd;
+  }
+ 
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+ 
+  .dropdown:hover .dropbtn {
+    background-color: #f1f1f1;
+  }
+
+/*ADD content styling */
+ .add-header {
+  text-align: center;
+ }
+ .add-topic-modal-card{
+  border-radius: 10px;
+ }
