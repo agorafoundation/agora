@@ -607,5 +607,5 @@ GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
 
 -- Generating some dummy data
 INSERT INTO discussions (parent_id, parent_type, discussion_text) VALUES (0, 'topic', 'Hello! This is a topic'), (1, 'goal', 'Hello! This is a goal!');
-INSERT INTO discussion_comments (comment_id, parent_id, parent_type, comment_text, user_id) VALUES (0, 0, 'topic', 'Hi! I am commenting on this topic!', 12), (1, 1, 'goal', 'Hi! I am commenting on this goal!', 13);
+INSERT INTO discussion_comments (comment_id, parent_id, parent_type, comment_text, user_id) VALUES (0, 0, 'topic', 'Hi! I am commenting on this topic!', 12), (1, 1, 'goal', 'Hi! I am commenting on this goal!', 13), (2, 0, 'topic', 'I also am commenting on this topic!', 13), (3, 1, 'goal', 'Hey! I am on this goal!', 12);
 INSERT INTO discussion_comment_ratings (comment_id, user_id, rating) VALUES (3, 12, TRUE), (2, 13, TRUE), (1, 24, FALSE), (0, 36, FALSE), (1, 0, TRUE), (2, 9, FALSE), (0, 13, TRUE), (1, 12, FALSE);
