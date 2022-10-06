@@ -18,7 +18,7 @@
         if (contentType === "Note") { %>
 
           <! --Note Card -->
-          <div class="col mb-3 gallery-col align-items-stretch">
+          <div class="col mb-3 gallery-col align-items-stretch gallery-col">
             <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>"
               onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
               <div class="dropdown">
@@ -48,7 +48,7 @@
         <% } else if(contentType === "Goal") {%>
 
           <! -- Goal Card -->
-          <div class="col mb-3 gallery-col align-items-stretch">
+          <div class="col mb-3 gallery-col align-items-stretch" gallery-col>
             <div class="card h-100" data-toggle="modal" data-target="#exampleModal" id="<%= id %>" 
               onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
               <div class="dropdown">
@@ -89,15 +89,17 @@
         <div id="gallery-header">
           <h1 class="text-secondary pt-3 pl-1 pb-0">My Notes</h1>
           <div class="btn-group btn-group-toggle btn-goal-topic-toggle mr-5" data-toggle="buttons" >
+            
         <label class="btn btn-secondary active">
-         <input  type="radio" name="options" id="option1"  autocomplete="off" checked onclick="toggleGoalView()"> Goal
+         <input  type="radio" name="options" id="option1"  autocomplete="off" onclick="toggleGoalView()"> Goal
           </label>
+          <label class="btn btn-secondary">
+         <input type="radio" name="options" id="option3" autocomplete="off" checked  onclick="toggleAllView()"> All
+        </label>
         <label class="btn btn-secondary">
           <input type="radio" name="options" id="option2" autocomplete="off" onclick="toggleTopicView()" > Topic
         </label>
-         <label class="btn btn-secondary">
-         <input type="radio" name="options" id="option3" autocomplete="off" onclick="toggleAllView()"> All
-        </label>
+        
 </div>
 </div>
           <hr class="mt-0">

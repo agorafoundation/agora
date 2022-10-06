@@ -546,41 +546,31 @@ const toggleFileModal = () => {
 };
 
 var toggleGoalView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
+  const cards = document.getElementsByClassName("gallery-col");
   for (let i = 0; i < cards.length; i++) {
     let title = cards[i].querySelector(".card-body");
-    if (title.id === "add") {
-      cards[i].classList.remove("d-none");
-    } else if (title.id === "goal") {
-      cards[i].classList.remove("d-none");
-    } else {
+    if (title.id === "topic") {
       cards[i].classList.add("d-none");
+    } else {
+      cards[i].classList.remove("d-none");
     }
   }
 };
 var toggleTopicView = () => {
   const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
-  let filter = input.value;
+  const cards = document.getElementsByClassName("gallery-col");
   for (let i = 1; i < cards.length; i++) {
     let title = cards[i].querySelector(".card-body");
-    console.log(title.id);
-    if (title.id === "add") {
-      cards[i].classList.remove("d-none");
-    } else if (title.id === "topic") {
-      cards[i].classList.remove("d-none");
-    } else {
+    if (title.id === "goal") {
       cards[i].classList.add("d-none");
+    } else {
+      cards[i].classList.remove("d-none");
     }
   }
 };
 var toggleAllView = () => {
   const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
+  const cards = document.getElementsByClassName("gallery-col");
   let filter = input.value;
   for (let i = 0; i < cards.length; i++) {
     let title = cards[i].querySelector(".card-body");
