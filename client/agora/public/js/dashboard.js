@@ -580,8 +580,7 @@ function viewModal(id, name, desc) {
         if (tempName) {
             document.getElementById(nameId).innerText = tempName;
             document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
-            document.getElementById("rename-modal").style.display = 'none';
-            document.getElementsByClassName("modal-backdrop")[0].style.display = 'none';
+            closeRenameModal();
         } else {
             window.alert("All goals/topics must have a name");
         }
@@ -596,7 +595,6 @@ function viewModal(id, name, desc) {
         
         let parentName = document.getElementById(parentNameId).innerText;
         let parentDesc = document.getElementById(parentDescId).innerText;
-        console.log(parentDesc)
 
         document.getElementById('save-name').setAttribute("onclick",`updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(parentDescId)})`);
     
@@ -608,6 +606,10 @@ function viewModal(id, name, desc) {
         } else {
             document.getElementById('note-modal-description').value = "";
         }
+
+        document.getElementById("rename-modal").style.display = "block";
+        document.getElementById("backdrop").style.display = "block";
+        document.getElementById("rename-modal").classList.add("show");
     }
   
     //A collection of all the rename buttons
@@ -625,6 +627,14 @@ function viewModal(id, name, desc) {
           document.getElementById('note-modal-description').value = "";
         }
       }
+
+      //hides rename modal
+      const closeRenameModal = () => {
+        document.getElementById("rename-modal").style.display = "none";
+        document.getElementById("backdrop").style.display = "none";
+        document.getElementById("rename-modal").classList.remove("show");
+      }
+    
 
     
  
