@@ -9,6 +9,7 @@
   }
 
   .gallery-col{
+    min-width: 20rem;
     max-width: 27rem;
     height:18rem;
   }
@@ -95,4 +96,6 @@
  .btn-goal-topic-toggle{
   margin-left: auto; 
   margin-bottom: 0;
+
+
  }
