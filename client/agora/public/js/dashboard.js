@@ -619,8 +619,6 @@ function viewModal(id, name, desc) {
 
     //Triggers when the "x" on the rename-modal is clicked
     const removeText = (type) => {
-        document.getElementById('remove-name').style = "outline: none; border: none";
-        document.getElementById('remove-desc').style = "outline: none; border: none";
         if (type === "name") {
           document.getElementById('note-modal-name').value = "";
         } else if (type === "desc") {
