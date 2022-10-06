@@ -51,7 +51,9 @@ exports.getAllVisibleResources = async ( req, res ) => {
     //console.log("auth user id; " + authUserId);
     
     if(authUserId > 0) {
+        
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
+
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all resources" );
         res.status( 200 ).json( resources );
@@ -96,17 +98,32 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
 
     // get all the active resources
     let resources = await resourceService.getAllActiveResourcesForOwner(authUserId);
-    
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all resources" );
-    res.status( 200 ).json( resources );
+
+    if( resources ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all active resources" );
+        res.status( 200 ).json( resources );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Resources not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Resources not found" );
+        res.status( 404 ).json( message );
+    }
 }
 
 exports.getResourceById = async ( req, res ) => {
-    const resourceId = req.params.id;
-    const isActive = req.params.active;
-    
-    let resource = await resourceService.getResourceById( resourceId, isActive );
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    // get all the active resources by Id
+    let resource = await resourceService.getAllActiveResourcesForOwnerById(authUserId, req.params.id);
 
     if( resource ) {
         res.set( "x-agora-message-title", "Success" );
