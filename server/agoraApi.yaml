@@ -144,7 +144,7 @@ paths:
     delete:
       tags: 
         - Tags
-      summary: Delete an existing tag provided it's Id
+      summary: Deletes existing tag by Id
       parameters:
         - in: path
           name: id
@@ -221,7 +221,7 @@ paths:
     post:
       tags:
         - Goals
-      summary: Save a new goal. If the name of the goal already exists the current goal will not be duplicated. If the ownedBy member is provided with an existing goal name the owner will be updated to the provided value.  Only the goal name is required.
+      summary: Checks database for the goal in requestBody by Id. If found and ownedBy flag set, updates existing goal. If not found, creates new goal.
       requestBody:
         description: Include a Goal object to save in JSON format *NOTE* - Only the goal member is required, id will be ignored.
         required: true
@@ -307,7 +307,7 @@ paths:
     delete:
       tags: 
         - Goals
-      summary: Delete an existing goal provided it's Id
+      summary: Deletes existing goal by Id
       parameters:
         - in: path
           name: id
@@ -627,7 +627,7 @@ paths:
     get:
       tags: 
         - Resources
-      summary: Retrives of all active resources available to a specified user
+      summary: Retrieves all available & active resources for a user
       parameters:
         - in: path
           name: id
@@ -663,7 +663,7 @@ paths:
     get:
       tags:
         - Resources
-      summary: Retrives of all shared resources available
+      summary: Retrieves all available shared resources
       responses:
         '200':
           description: OK
@@ -727,7 +727,7 @@ paths:
     delete:
       tags: 
         - Resources
-      summary: Delete an existing resource provided it's Id
+      summary: Deletes existing resource by Id
       parameters:
         - in: path
           name: id
@@ -905,7 +905,7 @@ components:
           description: Active status, inactive items will not be returned in most queries
         visibility:
           type: integer
-          description: Public = 0, Shared = 1, Private = 0
+          description: Public = 2, Shared = 1, Private = 0
         createTime:
           type: timestamp
           description: Automatically generated timestamp of record creation
@@ -966,7 +966,7 @@ components:
           description: Active status, inactive items will not be returned in most queries
         visibility:
           type: integer
-          description: Public = 0, Shared = 1, Private = 0
+          description: Public = 2, Shared = 1, Private = 0
         createTime:
           type: timestamp
           description: Automatically generated timestamp of record creation
