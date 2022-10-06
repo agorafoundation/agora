@@ -85,8 +85,17 @@ exports.getAllSharedResourcesForUser = async ( req, res ) => {
  * @param {*} res 
  */
 exports.getAllActiveResourcesForUser = async ( req, res ) => {
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
     // get all the active resources
-    let resources = await resourceService.getAllActiveResourcesForOwner();
+    let resources = await resourceService.getAllActiveResourcesForOwner(authUserId);
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all resources" );
