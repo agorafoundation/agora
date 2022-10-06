@@ -574,30 +574,20 @@ function viewModal(id, name, desc) {
 
     /*Updating the rename modal*/
 
-    //changing the properties of the save button of the rename-modal depending on the selected card
-    var updateSaveButton = (nameId, descId) => {
-        let tempName = document.getElementById('note-modal-name').value;
-        if (tempName) {
-            document.getElementById(nameId).innerText = tempName;
-            document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
-            closeRenameModal();
-        } else {
-            window.alert("All goals/topics must have a name");
-        }
-    }
-
     //updating the input DOM of the rename-modal depending on the selected card
-    const fillNameandDescription = async (e) => { 
-        let parent = e.target.parentElement.parentElement.parentElement.id;
-        let parentId = parent.charAt(parent.length - 1);
-        let parentNameId = "card-title-" + parentId;
+    const fillNameandDescription = (e) => { 
+        let parent = e.target.parentElement.parentElement.parentElement.id;     //the id of the clicked element's card
+        let parentId = parent.charAt(parent.length - 1);                        //just the numeric id
+        let parentNameId = "card-title-" + parentId;                            
         let parentDescId = "card-desc-" + parentId;
         
         let parentName = document.getElementById(parentNameId).innerText;
         let parentDesc = document.getElementById(parentDescId).innerText;
 
+        //setting the onclick event of the save button depenidng on the id of the clicked card
         document.getElementById('save-name').setAttribute("onclick",`updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(parentDescId)})`);
     
+        //filling the input fields of the modal to the current values
         if (parentName) {
             document.getElementById('note-modal-name').value = parentName;
         }
@@ -607,6 +597,7 @@ function viewModal(id, name, desc) {
             document.getElementById('note-modal-description').value = "";
         }
 
+        //showing the modal
         document.getElementById("rename-modal").style.display = "block";
         document.getElementById("backdrop").style.display = "block";
         document.getElementById("rename-modal").classList.add("show");
@@ -617,6 +608,25 @@ function viewModal(id, name, desc) {
         card.addEventListener("click", fillNameandDescription);
     })
 
+    //changing the properties of the save button of the rename-modal depending on the selected card
+    const updateSaveButton = (nameId, descId) => {
+        let tempName = document.getElementById('note-modal-name').value;
+        if (tempName) {
+            document.getElementById(nameId).innerText = tempName;
+            document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
+            closeRenameModal();
+        } else {
+            window.alert("All goals/topics must have a name");
+        }
+    }
+
+    //hides rename modal
+    const closeRenameModal = () => {
+        document.getElementById("rename-modal").style.display = "none";
+        document.getElementById("backdrop").style.display = "none";
+        document.getElementById("rename-modal").classList.remove("show");
+    }
+
     //Triggers when the "x" on the rename-modal is clicked
     const removeText = (type) => {
         if (type === "name") {
@@ -624,14 +634,41 @@ function viewModal(id, name, desc) {
         } else if (type === "desc") {
           document.getElementById('note-modal-description').value = "";
         }
-      }
+    }
 
-      //hides rename modal
-      const closeRenameModal = () => {
-        document.getElementById("rename-modal").style.display = "none";
-        document.getElementById("backdrop").style.display = "none";
-        document.getElementById("rename-modal").classList.remove("show");
-      }
+    //////////*Updating the delete modal*/////////////
+ 
+    const showDeleteModal = (e) => {
+        let parent = e.target.parentElement.parentElement.parentElement.id;     //the id of the clicked element's card
+        let parentId = parent.charAt(parent.length - 1);    
+        let parentNameId = "card-title-" + parentId; 
+        let parentName = document.getElementById(parentNameId).innerText;
+   
+        document.getElementById('to-be-deleted-name').innerText = parentName;
+
+        document.getElementById('confirm-delete').setAttribute("onclick",`updateDeleteConfirmButton(${parentId})`);
+ 
+        document.getElementById("delete-modal").style.display = "block";
+        document.getElementById("backdrop2").style.display = "block";
+        document.getElementById("delete-modal").classList.add("show");
+    }
+ 
+    var deleteCards = document.querySelectorAll('#delete-card').forEach((deleteCard)=> {
+        deleteCard.addEventListener("click", showDeleteModal);
+    })
+
+    const updateDeleteConfirmButton = (id) => {
+        document.getElementById(id).parentElement.remove();   
+        exitDeleteModal()
+    }
+
+    function exitDeleteModal() {
+        document.getElementById("delete-modal").style.display = "none";
+        document.getElementById("backdrop2").style.display = "none";
+        document.getElementById("delete-modal").classList.remove("show");
+    }
+ 
+
     
 
     

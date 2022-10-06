@@ -11,6 +11,7 @@
 
   <body>
     <!--Declaring ejs function to display cards-->
+    <%- include('./delete-modal.ejs'); %>
     <%- include('./rename-modal.ejs'); %>
     <% //name:string, description:string, tags:array, content:array %>
     <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
