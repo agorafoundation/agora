@@ -509,81 +509,130 @@ function viewModal(id, name, desc) {
     document.getElementById(descId).textContent;
 }
 
-function toggleMoreOptionsOn(id) {
-  let dropId = "option-" + id;
-  document.getElementById(dropId).style.visibility = "visible";
-}
-
-function toggleMoreOptionsOff(id) {
-  let dropId = "option-" + id;
-  document.getElementById(dropId).style.visibility = "hidden";
-}
-
-//toggles the rendering of more options menu
-const toggleMoreOptions = () => {
-  if (document.getElementById("dropdown-content").getAttribute("style")) {
-    console.log("taco");
-    document.getElementById("dropdown-content").setAttribute("style", "");
-  } else {
-    console.log("taco2");
-    document
-      .getElementById("dropdown-content")
-      .setAttribute("style", "display: block; right: 5%; top: 10%");
-  }
-};
-
-//if file modal is on, it turns off and vice versa
-const toggleFileModal = () => {
-  if (
-    document.getElementById("file-display").getAttribute("class") === "hidden"
-  ) {
-    document
-      .getElementById("file-display")
-      .setAttribute("class", "file-display-shown");
-  } else {
-    document.getElementById("file-display").setAttribute("class", "hidden");
-  }
-};
-
-var toggleGoalView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
-  for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    if (title.id === "add") {
-      cards[i].classList.remove("d-none");
-    } else if (title.id === "goal") {
-      cards[i].classList.remove("d-none");
-    } else {
-      cards[i].classList.add("d-none");
+    /*more options toggle*/
+    function toggleMoreOptionsOn(id) {
+        let dropId = "option-" + id;
+        document.getElementById(dropId).setAttribute('style','visibility: visible');
     }
-  }
-};
-var toggleTopicView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
-  let filter = input.value;
-  for (let i = 1; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    console.log(title.id);
-    if (title.id === "add") {
-      cards[i].classList.remove("d-none");
-    } else if (title.id === "topic") {
-      cards[i].classList.remove("d-none");
-    } else {
-      cards[i].classList.add("d-none");
+
+    function toggleMoreOptionsOff(id) {
+        let dropId = "option-" + id;
+        document.getElementById(dropId).setAttribute('style','visibility: hidden');
     }
-  }
-};
-var toggleAllView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("col");
-  console.log(cards[0]);
-  let filter = input.value;
-  for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    cards[i].classList.remove("d-none");
-  }
-};
+
+    /*page view toggle*/
+    var toggleGoalView = () => {
+    const input = document.querySelector(".form-control");
+        const cards = document.getElementsByClassName("col");
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].querySelector(".card-body");
+            if(title.id === "add" ){
+                cards[i].classList.remove("d-none");
+            } else if (title.id === 'goal' ) {
+                cards[i].classList.remove("d-none")
+            } else {
+                cards[i].classList.add("d-none")
+            }
+        }
+    } 
+
+    var toggleTopicView = () => {
+        const input = document.querySelector(".form-control");
+        const cards = document.getElementsByClassName("col");
+        let filter = input.value;
+        for (let i = 1; i < cards.length; i++) {
+            let title = cards[i].querySelector(".card-body");
+            if(title.id === "add" ){
+                cards[i].classList.remove("d-none");
+            } else if (title.id === 'topic' ) {
+                cards[i].classList.remove("d-none")
+            } else {
+            cards[i].classList.add("d-none")
+            }
+        }
+    }
+
+    var toggleAllView = () => {
+        const input = document.querySelector(".form-control");
+        const cards = document.getElementsByClassName("col");
+        let filter = input.value;
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].querySelector(".card-body");
+            cards[i].classList.remove("d-none");
+        }
+    }
+
+    
+    /*$('.dropdown-content').on('click', function (ev) {
+      ev.stopPropagation();
+    });
+
+    $('.dropbtn').on('click', function (ev) {
+        ev.stopPropagation();
+    });*/
+
+
+    /*Updating the rename modal*/
+
+    //changing the properties of the save button of the rename-modal depending on the selected card
+    var updateSaveButton = (nameId, descId) => {
+        let tempName = document.getElementById('note-modal-name').value;
+        if (tempName) {
+            document.getElementById(nameId).innerText = tempName;
+            document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
+            closeRenameModal();
+        } else {
+            window.alert("All goals/topics must have a name");
+        }
+    }
+
+    //updating the input DOM of the rename-modal depending on the selected card
+    const fillNameandDescription = async (e) => { 
+        let parent = e.target.parentElement.parentElement.parentElement.id;
+        let parentId = parent.charAt(parent.length - 1);
+        let parentNameId = "card-title-" + parentId;
+        let parentDescId = "card-desc-" + parentId;
+        
+        let parentName = document.getElementById(parentNameId).innerText;
+        let parentDesc = document.getElementById(parentDescId).innerText;
+
+        document.getElementById('save-name').setAttribute("onclick",`updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(parentDescId)})`);
+    
+        if (parentName) {
+            document.getElementById('note-modal-name').value = parentName;
+        }
+        if (parentDesc) {
+            document.getElementById('note-modal-description').value = parentDesc;
+        } else {
+            document.getElementById('note-modal-description').value = "";
+        }
+
+        document.getElementById("rename-modal").style.display = "block";
+        document.getElementById("backdrop").style.display = "block";
+        document.getElementById("rename-modal").classList.add("show");
+    }
+  
+    //A collection of all the rename buttons
+    var cards = document.querySelectorAll('#rename-card').forEach((card)=> {
+        card.addEventListener("click", fillNameandDescription);
+    })
+
+    //Triggers when the "x" on the rename-modal is clicked
+    const removeText = (type) => {
+        if (type === "name") {
+          document.getElementById('note-modal-name').value = "";
+        } else if (type === "desc") {
+          document.getElementById('note-modal-description').value = "";
+        }
+      }
+
+      //hides rename modal
+      const closeRenameModal = () => {
+        document.getElementById("rename-modal").style.display = "none";
+        document.getElementById("backdrop").style.display = "none";
+        document.getElementById("rename-modal").classList.remove("show");
+      }
+    
+
+    
+ 
