@@ -1,49 +1,65 @@
 .note-body {
-    transition: margin-left 5s;
+    transition: margin-left .5s;
 }
+
+  #page-content {
+    height: inherit;
+    position: inline-block;
+  }
 
 .header-div {
     font-size: 36px;
-    margin-right: 20px;
     padding: 0px;
 }
 
-.note-header {
-    margin-top: 20px;
-    margin-left: auto;
-    margin-bottom: 30px;
-    padding: 15px 15px;
+.header {
+    margin-bottom: 5px;
+    padding: 10px 10px;
+    position: relative;
 }
 
-#note-name {
+#new-tag {
+    font-size: smaller;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.placeholder {
     border: none;
     border-bottom: 1px solid gray;
+    padding-left: 0px;
 }
 
-#note-name:focus {
+.placeholder:focus {
     border-bottom: 3px solid #2c3e50;
     outline: 0;
+}
+
+#tag-placeholder {
+    font-size: 20px;
+    margin-left: 5px;
 }
 
 .note-container {
     display: flex;
     border-style: double;
     border-width: 5px;
-    margin-right: 150px;
-    margin-left: auto;
+    margin: 0 auto;
     margin-bottom: 100px;
     justify-content: center;
     align-items: center;
-    background-color: #e3e7eb;
+    background-color: #f4f4f5;
     padding-left: 100px;
     padding-right: 100px;
+    width: 85%; 
+    position: relative;
 }
 
 #ellipsis {
     cursor: pointer;
     position: absolute;
-    top: 20px;
-    right: 120px;
+    top: 5px;
+    right: 40px;
     height: 30px;
     width: 30px;
     margin-top: 10px;
@@ -55,21 +71,12 @@
     cursor: pointer;
     padding: 10px 5px;
     position: absolute;
-    top: 10px;
-    right: 180px;
+    top: 2px;
+    right: 70px;
     height: 40px;
     width: 70px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
-
-#show-files {
-    cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    margin-top: 10px;
-}
-
 
 #button-div {
     display: flex;
@@ -100,27 +107,28 @@
 }
 
 #tools {
-    margin-top: 80px;
     height: 450px;
     width: 100px;
     padding-right: 100px;
-
-    border-style: solid;
-    border-width: 1px;
+    position: absolute; 
+    right: 0; 
+    top: 275px;
+    overflow: hidden;
 }
 
 #note-div {
     display: flex;
+    width: 100%;
 }
 
 #tools-container {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     text-align: center;
-    height: 450px;
+    height: 350px;
 }
 
-.material-symbols-outlined {
+.material-symbols-outlined, #show-files {
     font-size: 90px;
     color: black;
     cursor: pointer;
@@ -128,18 +136,65 @@
     flex-direction: column;
 }
 
+#left-chevron {
+    font-size: 60px;
+    padding: 9px 16px;
+}
+
+#right-chevron {
+    font-size: 60px;
+    padding: 9px 16px;
+}
+
+.right-chevron {
+    display: none;
+    position: absolute;
+    right: 100px;
+    top: 266px;
+    font-size: 60px;
+    padding: 9px 16px;
+}
+
+.show-tools {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px 0px 0px 15px;
+    height: 80px;
+    width: 100px;
+    position: absolute; 
+    right: 0; 
+    overflow: hidden;
+}
+
+.hide-tools {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px 0px 0px 15px;
+    border-right: none;
+    margin-right: 2px;
+    height: 80px;
+    width: 100px;
+    position: absolute; 
+    right: 0; 
+    overflow: hidden;
+}
+
 .hidden {
     display: none;
+}
+
+#file-display {
+    height: 450px;
+    width: 250px;
+    position:absolute;
+    right: 5px;
+    top: 750px;
+    overflow: auto;
 }
 
 .file-display-shown {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    right: 0;
-    top: 10%;
-    width: 10%;
-    height: auto;
     padding: 0;
     margin: 0;
     z-index: 1000;
@@ -150,7 +205,7 @@
     display: flex;
     flex-direction: row;
     padding: 0;
-    background-color: white;
+    background-color: transparent
 }
 
 .file-display-content:hover {
@@ -159,26 +214,26 @@
 
 .file-display-icon {
     position: relative;
-    left: 55%;
+    left: 180px;
     padding: 0; 
     margin: 0; 
-    font-size: 175%;
+    font-size: 49px;
 }
 .file-display-icon:hover {
-    background-color: lightgray;
-    font-size: 200%;
+    background-color: #f4f4f5;
+    font-size: 50px;
 }
 
 .file-display-name {
     position: absolute;
-    right: 50%;
+    right: 35%;
     padding: 3px 12px;
-    font-size: 30%;
+    font-size: 70%;
     color: white;
     letter-spacing: 1px;
     border-radius: 15%;
     background-color: #3A3B3C;
-    margin-top: 15%;
+    margin-top: 10%;
     border: 1px solid gray;
     white-space: nowrap;
     overflow: hidden;
@@ -186,28 +241,101 @@
     max-width: 125px;
 }
 
-.new-file-backing {
-    background-color: white;
+#resource-ellipsis {
+    font-size: 30px;
+    position:absolute;
+    top: 0px;
+    right: 5px;
 }
 
-.new-file-icon {
-    position: relative;
-    left: 58%;
-    top: 5px;
-    padding: 0; 
-    margin: 0; 
-    font-size: 150%;
-    background-color: transparent;
-    z-index: 2;
-}
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+  }
+  
+.tab button:hover {
+    background-color: #ddd;
+  }
+  
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+  }
 
-.new-file-coloring {
+#mySearch {
+    width: 10%;
+    font-size: 18px;
+    padding: 11px;
+    border-bottom: 1px solid #ddd;
+    font-size: 20px;
+    margin-left: 5px;
+    outline: none;
+    display: inline;
+  }
+
+  #mySearch:focus {
+    border-bottom: 2px solid #2c3e50
+  }
+
+  .tag-list .new-tag{
     position: absolute;
-    right: 8.8%;
-    bottom: 3.5%;
-    border-radius: 50%;
-    width: 42.5px;
-    height: 42.5px;
-    background-color: gray;
-    z-index: 1;
-}
+    top: 75px;
+    left: 90px;
+    background-color: white;
+    display: none;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
+  }
+  
+  .tag-list .tag-list-element .new-tag{
+    padding: 12px;
+    color: black;
+    display: block;
+  }
+  
+  .tag-list .tag-list-element .new-tag{
+    background-color: #eee;
+  }
+
+.tag-list-element  {
+    display: none;
+    width: 190px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+  }
+
+  .new-tag {
+    margin-top: 0;
+  }
+
+  #curr-tags {
+    width: 60%;
+    display: inline;
+    float: right;
+    margin-right: 20%;
+    margin-top: 1%;
+    font-size: smaller;
+  }
+
+  .styled-tags {
+    display: inline;
+    margin-right: 10px;
+    background-color:aliceblue;
+    padding: 5px 5px;
+  }
