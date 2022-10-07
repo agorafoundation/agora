@@ -146,70 +146,36 @@ exports.removeCommentRating = async (commentId, userId) => {
 
 exports.editComment = async (commentId , userId , editedComment) => {
 
+    let defaultComment = comment.emptyComment()
+
+    const updated = {
+        ...defaultComment,
+        comment_text: editedComment.comment_text
+    } 
+
     try {
-        const text = `SELECT user_id from discussion_comments WHERE comment_id = $1`
-        const values = [commentId]
+        const text = `UPDATE discussion_comments SET comment_text = $3 WHERE comment_id = $1 AND user_id = $2`
+        const values = [commentId, userId, updated.comment_text]
 
         let res = await db.query(text , values)
-
-        if(res.rows.length === 0) {
-            return {error: "No such comment with id: " + commentId}
-        }
-
-        commentAuthorId = res.rows[0].user_id
-    }
-    catch(e) {
+        return comment.ormComment(res.rows[0]) // give back the edited comment
+    } catch(e) {
         console.log(e.stack);
         return false;
-    }
-
-    if  (commentAuthorId == userId) {
-
-        try {
-            const text = `UPDATE discussion_comments SET comment_text = $1 WHERE comment_id = $2`
-            const values = [editedComment.body , commentId]
-
-            let res = await db.query(text , values)
-            return res.rowCount == 1
-        }
-        catch(e) {
-            console.log(e.stack);
-            return false;
-        }
-    }
-    else {
-        return {error: "User not allowed to edit this comment"}
     }
 }
 
 exports.deleteComment = async (commentId , userId) => {
 
     try {
-        const text = `SELECT user_id from discussion_comments WHERE comment_id = $1`
-        const values = [commentId]
+        const text = `DELETE FROM discussion_comments WHERE comment_id = $1 AND user_id = $2`
+        const values = [commentId, userId]
 
         let res = await db.query(text , values)
-
-        if(res.rows.length === 0) {
-            return {error: "No such comment with id: " + commentId}
-        }
-
-        commentAuthorId = res.rows[0].user_id
-    }
-    catch(e) {
+        return res.rowCount === 1
+    } catch(e) {
         console.log(e.stack);
         return false;
-    }
-
-    if  (commentAuthorId == userId) {
-        const text = `DELETE FROM discussion_comments WHERE comment_id = $1`
-        const values = [commentId]
-
-        let res = await db.query(text , values)
-        return res.rowCount == 1
-    }
-    else {
-        return {error: "User not allowed to delete this comment"}
     }
     
 }

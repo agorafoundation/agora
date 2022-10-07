@@ -106,9 +106,17 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 exports.editComment = async ( req, res ) => {
 
     const commentId = req.params.commentId
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
 
     // get all the active goals
-    let goals = await discussionService.editComment( commentId , req.user.id , req.body );
+    let goals = await discussionService.editComment( commentId , authUserId , req.body );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
@@ -118,9 +126,17 @@ exports.editComment = async ( req, res ) => {
 exports.deleteComment = async ( req, res ) => {
 
     const commentId = req.params.commentId
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
 
     // get all the active goals
-    let goals = await discussionService.deleteComment( commentId , req.user.id);
+    let goals = await discussionService.deleteComment( commentId , authUserId);
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
