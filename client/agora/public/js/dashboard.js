@@ -668,8 +668,33 @@ function viewModal(id, name, desc) {
         document.getElementById("delete-modal").classList.remove("show");
     }
  
+    ////////*Handling Duplicate*/////////////
 
+    const duplicateGoal = (e) => {
+        let parent = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
+        let clone = parent.cloneNode(true);
+        //clone.childNodes[1].id = checkForNextId();
+        clone = replaceIds(clone,checkForNextId())
+        document.getElementById("card-display").appendChild(clone);
+    }
+
+    var duplicateCards = document.querySelectorAll('#duplicate-card').forEach((duplicateCard)=> {
+        duplicateCard.addEventListener("click", duplicateGoal);
+    })
+
+    const checkForNextId = () => {
+        return document.querySelectorAll('#countable').length + 1;
+    }
     
+    const replaceIds = (element, newId) => {
+        element.childNodes[1].id = newId;
+
+        element.childNodes[1].childNodes[1].id = element.childNodes[1].childNodes[1].id.slice(0,-1) + newId;
+        element.childNodes[1].childNodes[3].childNodes[1].id = element.childNodes[1].childNodes[3].childNodes[1].id.slice(0,-1) + newId;
+        element.childNodes[1].childNodes[3].childNodes[3].id = element.childNodes[1].childNodes[3].childNodes[3].id.slice(0,-1) + newId;
+        return element;
+        
+    }
 
     
  

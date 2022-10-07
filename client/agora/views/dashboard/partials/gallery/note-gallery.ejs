@@ -6,7 +6,6 @@
     <script src="../../../../public/js/dashboard"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <%- include('../../../partials/head.ejs'); %>
-    <%- include('./new-topic-goal.ejs')  %> 
   </head>
 
   <body>
@@ -19,7 +18,7 @@
       if (contentType === "Note") { %>
 
         <!--Note Card -->
-        <div class="col mb-3 gallery-col align-items-stretch">
+        <div class="col mb-3 gallery-col align-items-stretch" id="countable">
           <div class="card h-100"  id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
@@ -48,7 +47,7 @@
       <% } else if (contentType === "Goal") { %>
 
         <!--Goal Card-->
-        <div class="col mb-3 gallery-col align-items-stretch">
+        <div class="col mb-3 gallery-col align-items-stretch" id="countable">
           <div class="card h-100" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
@@ -88,7 +87,7 @@
 
       <!--Displaying Cards-->
       <hr class="mt-0">
-      <div class="container">
+      <div class="container" id="card-display">
         <% for (let i = 0; i < availableResources.length + 1; i++) { 
           if (i === 0) { %>
             <div class="row row-cols-1 row-cols-md-3 g-4 ">
