@@ -384,7 +384,7 @@ paths:
     post:
       tags:
         - Topics
-      summary: Save a new topic. If the name of the topic already exists the current topic will not be duplicated. If the ownedBy member is provided with an existing topic name the owner will be updated to the provided value.  Only the topic name is required.
+      summary: Checks database for the topic in requestBody by Id. If found and ownedBy flag set, updates existing topic. If not found, creates new topic.
       requestBody:
         description: Include a Topic object to save in JSON format *NOTE* - Only the topic member is required, id will be ignored.
         required: true
@@ -435,7 +435,7 @@ paths:
     get:
       tags:
         - Topics
-      summary: Retrives of all shared topics available
+      summary: Retrieves all available shared topics
       responses:
         '200':
           description: OK
@@ -499,7 +499,7 @@ paths:
     delete:
       tags: 
         - Topics
-      summary: Delete an existing topic providing it's Id
+      summary: Deletes existing topic by Id
       parameters:
         - in: path
           name: id
@@ -576,7 +576,7 @@ paths:
     post:
       tags:
         - Resources
-      summary: Save a new resource. If the name of the resource already exists the current goal will not be duplicated. If the ownedBy member is provided with an existing resource name the owner will be updated to the provided value.  Only the goal value is required.
+      summary: Checks database for the resource in requestBody by Id. If found and ownedBy flag set, updates existing resource. If not found, creates new resource.
       requestBody:
         description: Include a Resource object to save in JSON format *NOTE* - Only the resouce member is required, id will be ignored.
         required: true
