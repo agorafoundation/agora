@@ -144,6 +144,30 @@ exports.removeCommentRating = async (commentId, userId) => {
     }
 }
 
+exports.createComment = async (userId, commentToMake) => {
+    try {
+
+        const text = `
+            INSERT INTO discussion_comments (
+                parent_id,
+                parent_type,
+                comment_text,
+                user_id
+            ) VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `
+        const values = [commentToMake.parent_id, commentToMake.parent_type, commentToMake.comment_text, userId]
+
+        const res = await db.query(text, values)
+
+        return comment.ormComment(res.rows[0])
+
+    } catch(e) { 
+        console.log(e.stack)
+        return false
+    }
+}
+
 exports.editComment = async (commentId , userId , editedComment) => {
 
     let defaultComment = comment.emptyComment()
@@ -154,7 +178,7 @@ exports.editComment = async (commentId , userId , editedComment) => {
     } 
 
     try {
-        const text = `UPDATE discussion_comments SET comment_text = $3 WHERE comment_id = $1 AND user_id = $2`
+        const text = `UPDATE discussion_comments SET comment_text = $3 WHERE comment_id = $1 AND user_id = $2 RETURNING *`
         const values = [commentId, userId, updated.comment_text]
 
         let res = await db.query(text , values)
@@ -168,11 +192,12 @@ exports.editComment = async (commentId , userId , editedComment) => {
 exports.deleteComment = async (commentId , userId) => {
 
     try {
-        const text = `DELETE FROM discussion_comments WHERE comment_id = $1 AND user_id = $2`
+        const text = `DELETE FROM discussion_comments WHERE comment_id = $1 AND user_id = $2 RETURNING *`
         const values = [commentId, userId]
 
         let res = await db.query(text , values)
-        return res.rowCount === 1
+        
+        return comment.ormComment(res.rows[0])
     } catch(e) {
         console.log(e.stack);
         return false;
