@@ -15,7 +15,7 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 //dependencies 
- 
+
 // controllers
 const goalController = require( '../../controller/apis/goalController' );
 const { get } = require('./tagRoutes');
@@ -42,11 +42,11 @@ router.route( '/:id' )
     })
     // update a visible goal by id
     .patch( async ( req, res ) => {
-        goalController.updateGoalFromId(req, res);
+
     })
     // delete a visible goal by id
-    .delete( async (req, res) => {
-        goalController.deleteGoalById( req, res );
+    .delete( async (req, res ) => {
+
     }
 );
 
