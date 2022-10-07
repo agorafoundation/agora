@@ -105,10 +105,10 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
 exports.editComment = async ( req, res ) => {
 
-    const id = req.params.commentId
+    const commentId = req.params.commentId
 
     // get all the active goals
-    let goals = await discussionService.editComment( id , req.user.id , req.body );
+    let goals = await discussionService.editComment( commentId , req.user.id , req.body );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
@@ -117,10 +117,10 @@ exports.editComment = async ( req, res ) => {
 
 exports.deleteComment = async ( req, res ) => {
 
-    const id = req.params.commentId
+    const commentId = req.params.commentId
 
     // get all the active goals
-    let goals = await discussionService.deleteComment( id , req.user.id);
+    let goals = await discussionService.deleteComment( commentId , req.user.id);
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );

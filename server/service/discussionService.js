@@ -1,4 +1,5 @@
 const discussion = require("../model/discussion")
+const comment = require("../model/comment")
 const db = require("../db/connection")
 
 // Essentially acts as enabling a discussion
@@ -143,11 +144,19 @@ exports.removeCommentRating = async (commentId, userId) => {
     }
 }
 
-exports.editComment = async (id , userid , editedComment) => {
+exports.editComment = async (commentId , userId , editedComment) => {
 
     try {
-        const text = 'SELECT user.id from discussion_comments WHERE comment.id = '
-        commentAuthorId = 3
+        const text = `SELECT user_id from discussion_comments WHERE comment_id = $1`
+        const values = [commentId]
+
+        let res = await db.query(text , values)
+
+        if(res.rows.length === 0) {
+            return {error: "No such comment with id: " + commentId}
+        }
+
+        commentAuthorId = res.rows[0].user_id
     }
     catch(e) {
         console.log(e.stack);
@@ -155,25 +164,34 @@ exports.editComment = async (id , userid , editedComment) => {
     }
 
     //compare to see if the user created the comment they are trying to edit
-    if  (commentAuthorId == id) {
+    if  (commentAuthorId == userId) {
 
-        //query database to update comment text
-        return {id , userid , editedComment}
+        try {
+            const text = `UPDATE discussion_comments SET comment_text = $1 WHERE comment_id = $2`
+            const values = [editedComment.body , commentId]
+
+            let res = await db.query(text , values)
+            return true
+        }
+        catch(e) {
+            console.log(e.stack);
+            return false;
+        }
     }
     else {
         return {error: "User not allowed to edit this comment"}
     }
 }
 
-exports.deleteComment = async (id , userid) => {
+exports.deleteComment = async (commentId , userId) => {
 
     //query database for the userid associated with the comment
     commentAuthorId = 3
 
-    if  (commentAuthorId == id) {
+    if  (commentAuthorId == commentId) {
 
         //query database to delete comment
-        return {id , userid}
+        return {commentId , userId}
     }
     else {
         return {error: "User not allowed to delete this comment"}
