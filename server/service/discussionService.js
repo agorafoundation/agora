@@ -23,8 +23,14 @@ exports.updateDiscussion = async (type , id , updatedDiscussion) => {
 
 exports.editComment = async (id , userid , editedComment) => {
 
-    //query database for the userid associated with the comment
-    commentAuthorId = 3
+    try {
+        const text = 'SELECT user.id from discussion_comments WHERE comment.id = '
+        commentAuthorId = 3
+    }
+    catch(e) {
+        console.log(e.stack);
+        return false;
+    }
 
     //compare to see if the user created the comment they are trying to edit
     if  (commentAuthorId == id) {
