@@ -9,6 +9,7 @@
   }
 
   .gallery-col{
+    min-width: 20rem;
     max-width: 27rem;
     height:18rem;
   }
@@ -38,6 +39,7 @@
     position: relative;
     border-radius: 15%;
     cursor: pointer;
+    visibility: hidden;
   }
  
   .dropdown {
@@ -119,4 +121,8 @@
   font-weight: 400;
   font-size: 100%;
  }
+  /* document icon */
+.document-icon{
+  color: blue;
+}
 
