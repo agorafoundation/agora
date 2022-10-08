@@ -1132,3 +1132,18 @@ exports.getAllPublicTopics = async ( limit, offset ) => {
             //return false;
         }
 }
+
+exports.deleteTopicById = async ( topicId, authUserId ) => {
+    let text = "DELETE FROM topics WHERE id = $1 and owned_by = $2";
+    let values = [topicId, authUserId];
+
+    try {
+        let res = await db.query( text, values );
+        return true;
+
+    }
+    catch (e) {
+        console.log( e.stack );
+        return false;
+    }
+}
