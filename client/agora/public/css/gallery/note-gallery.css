@@ -83,3 +83,40 @@
  .add-topic-modal-card{
   border-radius: 10px;
  }
+
+
+ /* header */
+ #gallery-header {
+  display: flex;
+  align-items: center;
+ }
+
+ .btn-goal-topic-toggle{
+  margin-left: auto; 
+  margin-bottom: 0;
+ }
+
+ /*rename modal*/
+
+ #rename-header {
+    display: flex;
+    flex-direction: row;
+ }
+
+ .rename-label {
+  margin-right: 2%;
+  margin-top: 1.5%;
+  font-weight: 400;
+  font-size: 100%;
+ }
+
+ .rename-input {
+    height: 80%;
+ }
+
+ .desc-label {
+  margin-top: 1.5%;
+  font-weight: 400;
+  font-size: 100%;
+ }
+
