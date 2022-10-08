@@ -48,9 +48,33 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         res.status( 200 ).json( topics );
     }
     else {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
         res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Resource not found" );
+        res.set( "x-agora-message-detail", "Topic not found" );
+        res.status( 404 ).json( message );
+    }
+}
+
+exports.getAllPublicTopics = async ( req, res ) => {
+
+     // get the auth user id from either the basic auth header or the session
+     let authUserId;
+     if( req.user ) {
+         authUserId = req.user.id;
+     }
+     else if( req.session.authUser ) {
+         authUserId = req.session.authUser.id;
+     }
+
+    if(authUserId > 0) {
+        let topics = await topicService.getAllPublicTopics( req.query.limit, req.query.offset );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all public topics" );
+        res.status( 200 ).json( topics );
+    } else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Topic not found" );
         res.status( 404 ).json( message );
     }
 }

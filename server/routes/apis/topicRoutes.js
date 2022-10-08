@@ -46,7 +46,7 @@
  
  // Topics /api/v1/auth/topics/:id
  router.route( '/:id' )
-     .get( async function ( req, res ) {
+     .get( async  ( req, res ) => {
          topicController.getTopicById( req, res );
      
      })
@@ -54,7 +54,11 @@
          topicController.deleteTopicById( req, res );
      }
  );
- 
+
+ router.route( '/visible' ) // In Progress.
+     .get ( async ( req, res ) => {
+        topicController.getAllPublicTopics( req, res );
+     });
  
  
   

@@ -1093,3 +1093,42 @@ exports.getAllVisibleTopics = async ( ownerId , limit, offset) => {
         //return false;
     }
 }
+
+// Similar to getAllVisibleTopics, but does not show user specific topics.
+exports.getAllPublicTopics = async ( limit, offset ) => {
+
+        let text = "select * from topics WHERE active = $1 and visibility = 2 ORDER BY id";
+        const values = [ true, ownerId ];
+
+        // apply a default offset if none is provided
+        if ( !offset ) offset = 0;
+
+        if( limit ) {
+            text += " LIMIT $3 OFFSET $4";
+            values.push( limit );
+            values.push( offset );
+        }
+        else {
+            text += " LIMIT 100 OFFSET $3";
+            values.push( offset );
+        }
+
+        text += ";";
+        let topics = [];
+
+        try {
+
+            let res = await db.query(text, values);
+
+            for(let i=0; i<res.rows.length; i++) {
+                topics.push(Topic.ormTopic(res.rows[i]));
+            }
+
+            return topics;
+
+        }
+        catch(e) {
+            console.log(e.stack);
+            //return false;
+        }
+}
