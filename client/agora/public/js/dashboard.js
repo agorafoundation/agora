@@ -574,30 +574,20 @@ function viewModal(id, name, desc) {
 
     /*Updating the rename modal*/
 
-    //changing the properties of the save button of the rename-modal depending on the selected card
-    var updateSaveButton = (nameId, descId) => {
-        let tempName = document.getElementById('note-modal-name').value;
-        if (tempName) {
-            document.getElementById(nameId).innerText = tempName;
-            document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
-            closeRenameModal();
-        } else {
-            window.alert("All goals/topics must have a name");
-        }
-    }
-
     //updating the input DOM of the rename-modal depending on the selected card
-    const fillNameandDescription = async (e) => { 
-        let parent = e.target.parentElement.parentElement.parentElement.id;
-        let parentId = parent.charAt(parent.length - 1);
-        let parentNameId = "card-title-" + parentId;
+    const fillNameandDescription = (e) => { 
+        let parent = e.target.parentElement.parentElement.parentElement.id;     //the id of the clicked element's card
+        let parentId = parent.charAt(parent.length - 1);                        //just the numeric id
+        let parentNameId = "card-title-" + parentId;                            
         let parentDescId = "card-desc-" + parentId;
         
         let parentName = document.getElementById(parentNameId).innerText;
         let parentDesc = document.getElementById(parentDescId).innerText;
 
+        //setting the onclick event of the save button depenidng on the id of the clicked card
         document.getElementById('save-name').setAttribute("onclick",`updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(parentDescId)})`);
     
+        //filling the input fields of the modal to the current values
         if (parentName) {
             document.getElementById('note-modal-name').value = parentName;
         }
@@ -607,6 +597,7 @@ function viewModal(id, name, desc) {
             document.getElementById('note-modal-description').value = "";
         }
 
+        //showing the modal
         document.getElementById("rename-modal").style.display = "block";
         document.getElementById("backdrop").style.display = "block";
         document.getElementById("rename-modal").classList.add("show");
@@ -617,6 +608,25 @@ function viewModal(id, name, desc) {
         card.addEventListener("click", fillNameandDescription);
     })
 
+    //changing the properties of the save button of the rename-modal depending on the selected card
+    const updateSaveButton = (nameId, descId) => {
+        let tempName = document.getElementById('note-modal-name').value;
+        if (tempName) {
+            document.getElementById(nameId).innerText = tempName;
+            document.getElementById(descId).innerText = document.getElementById('note-modal-description').value;
+            closeRenameModal();
+        } else {
+            window.alert("All goals/topics must have a name");
+        }
+    }
+
+    //hides rename modal
+    const closeRenameModal = () => {
+        document.getElementById("rename-modal").style.display = "none";
+        document.getElementById("backdrop").style.display = "none";
+        document.getElementById("rename-modal").classList.remove("show");
+    }
+
     //Triggers when the "x" on the rename-modal is clicked
     const removeText = (type) => {
         if (type === "name") {
@@ -624,15 +634,126 @@ function viewModal(id, name, desc) {
         } else if (type === "desc") {
           document.getElementById('note-modal-description').value = "";
         }
-      }
+    }
 
-      //hides rename modal
-      const closeRenameModal = () => {
-        document.getElementById("rename-modal").style.display = "none";
-        document.getElementById("backdrop").style.display = "none";
-        document.getElementById("rename-modal").classList.remove("show");
-      }
+    //////////*Updating the delete modal*/////////////
+ 
+    //updating the input DOM of the delete-modal depending on the selected card
+    const showDeleteModal = (e) => {
+        let parent = e.target.parentElement.parentElement.parentElement.id;     //the id of the clicked element's card
+        let parentId = parent.charAt(parent.length - 1);                        //just the numeric id
+        let parentNameId = "card-title-" + parentId; 
+        let parentName = document.getElementById(parentNameId).innerText;
+   
+        //setting the text inside the delete modal to show user what they're deleting
+        document.getElementById('to-be-deleted-name').innerText = parentName;
+
+        //setting the properties of the confirm button to delete the correct card
+        document.getElementById('confirm-delete').setAttribute("onclick",`updateDeleteConfirmButton(${parentId})`);
+ 
+        //showing the delete modal
+        document.getElementById("delete-modal").style.display = "block";
+        document.getElementById("backdrop2").style.display = "block";
+        document.getElementById("delete-modal").classList.add("show");
+    }
+ 
+    //A collection of the delete buttons
+    var deleteCards = document.querySelectorAll('#delete-card').forEach((deleteCard)=> {
+        deleteCard.addEventListener("click", showDeleteModal);
+    })
+
+    //changing the properties of the confirm button of the delete-modal depending on the selected card
+    const updateDeleteConfirmButton = (id) => {
+        document.getElementById(id).parentElement.remove();   
+        exitDeleteModal()
+    }
+
+    //close delete modal
+    function exitDeleteModal() {
+        document.getElementById("delete-modal").style.display = "none";
+        document.getElementById("backdrop2").style.display = "none";
+        document.getElementById("delete-modal").classList.remove("show");
+    }
+ 
+    ////////*Handling Duplicate*/////////////
+
+    //handles cloning a card then updating it's id and properties
+    const duplicateGoal = (e) => {
+        let parent = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;    //the selected card element
+        let clone = parent.cloneNode(true);     //clone is a separte but equal element to the original
+
+        //calculating new id then setting the elements ids to the new one
+        clone = replaceIds(clone,checkForNextId());     
+
+        //updating the more options of the clone
+        clone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener("click", showDeleteModal);        //delete
+        clone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener("click", duplicateGoal);          //duplicate
+        clone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener("click", fillNameandDescription); //rename 
+        
+        //adding the new clone to the array
+        document.getElementById("gallery-row").appendChild(clone);
+    }
+
+    //A collection of the duplicate buttons
+    var duplicateCards = document.querySelectorAll('#duplicate-card').forEach((duplicateCard)=> {
+        duplicateCard.addEventListener("click", duplicateGoal);
+    })
+
+    //Calculating the id of a new card
+    const checkForNextId = () => {
+        //Option 1: make new id highest current id + 1
+
+        /*var highest = 0;
+        document.querySelectorAll('.countable').forEach((obj)=> {
+            if (obj.id > highest) {
+                highest = obj.id;
+            }
+        })
+        return ++highest;*/
+
+        //Option 2: make new id first available gap between ids
+
+        var ids = [];
+        document.querySelectorAll('.countable').forEach((obj)=> {
+           ids.push(obj.id);
+        })
+        ids.sort();
+
+        const len = ids.length;
+        var done = false;
+        var iterator = 1;
+        var output = 0;
+        if (ids[0] > 1) {
+            output = 1;
+            done = true;
+        } else if (len === 1) {
+            output = ++ids[0];
+            done = true;
+        } else {
+            while (!done && len > iterator) {
+                if (ids[iterator] - ids[iterator - 1] > 1) {
+                    done = true;
+                    output = ++(ids[iterator - 1]);
+                } else {
+                    iterator++;
+                }
+            }
+        }   
+        if (!done) {
+            output = ++(ids[len - 1]);
+        }
+        return output;
+    }
     
+    //handles updating an element's various ids
+    const replaceIds = (element, newId) => {
+        element.childNodes[1].id = newId;   //main id
+
+        element.childNodes[1].childNodes[1].id = element.childNodes[1].childNodes[1].id.slice(0,-1) + newId;    //option id
+        element.childNodes[1].childNodes[3].childNodes[1].id = element.childNodes[1].childNodes[3].childNodes[1].id.slice(0,-1) + newId;    //card title id
+        element.childNodes[1].childNodes[3].childNodes[3].id = element.childNodes[1].childNodes[3].childNodes[3].id.slice(0,-1) + newId;    //card description id
+        return element;
+    }
 
     
  

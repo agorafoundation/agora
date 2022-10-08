@@ -6,11 +6,11 @@
     <script src="../../../../public/js/dashboard"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <%- include('../../../partials/head.ejs'); %>
-    <%- include('./new-topic-goal.ejs')  %> 
   </head>
 
   <body>
     <!--Declaring ejs function to display cards-->
+    <%- include('./delete-modal.ejs'); %>
     <%- include('./rename-modal.ejs'); %>
     <% //name:string, description:string, tags:array, content:array %>
     <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
@@ -18,8 +18,8 @@
       if (contentType === "Note") { %>
 
         <!--Note Card -->
-        <div class="col mb-3 gallery-col align-items-stretch">
-          <div class="card h-100"  id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+        <div class="col mb-3 gallery-col align-items-stretch" id="countable">
+          <div class="card h-100 countable"  id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
@@ -47,8 +47,8 @@
       <% } else if (contentType === "Goal") { %>
 
         <!--Goal Card-->
-        <div class="col mb-3 gallery-col align-items-stretch">
-          <div class="card h-100" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+        <div class="col mb-3 gallery-col align-items-stretch" id="countable">
+          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
@@ -87,10 +87,10 @@
 
       <!--Displaying Cards-->
       <hr class="mt-0">
-      <div class="container">
+      <div class="container" id="card-display">
         <% for (let i = 0; i < availableResources.length + 1; i++) { 
           if (i === 0) { %>
-            <div class="row row-cols-1 row-cols-md-3 g-4 ">
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="gallery-row">
               <div class="col mb-3 gallery-col align-items-stretch">
                 <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal">
                   <div class="card-body d-flex flex-column" style="margin-top: 8%" id="add">
