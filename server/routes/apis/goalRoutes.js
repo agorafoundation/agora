@@ -40,10 +40,6 @@ router.route( '/:id' )
         goalController.getGoalById( req, res );
     
     })
-    // update a visible goal by id
-    .patch( async ( req, res ) => {
-        goalController.updateGoalFromId(req, res);
-    })
     // delete a visible goal by id
     .delete( async (req, res) => {
         goalController.deleteGoalById( req, res );
