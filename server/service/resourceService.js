@@ -136,6 +136,9 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
  * @returns All active resources as a list
  */
 exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
+
+    console.log("[resourceService]: ownerId/authUserId - " + ownerId);
+
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
 
