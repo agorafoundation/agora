@@ -41,8 +41,6 @@ exports.getAllVisibleGoals = async ( req, res ) => {
     res.status( 200 ).json( goals );
 }
 
-
-
 exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
     let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
@@ -59,6 +57,33 @@ exports.getGoalById = async ( req, res ) => {
     }
     
     
+}
+
+exports.deleteGoalById = async (req, res) => {
+
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if ( authUserId > 0 ) {
+        const goalId = req.params.id;
+        let success = await goalService.deleteGoalById(goalId, authUserId);
+
+        if (success) {
+            res.set("x-agora-message-title", "Success");
+            res.set("x-agora-message-detail", "Deleted goal");
+            res.status(200).json("Success");
+        }
+        else {
+            res.set("x-agora-message-title", "Not Found");
+            res.set("x-agora-message-detail", "No goals were found meeting the query criteria");
+            res.status(404).send("No Goals Found");
+        }
+    }
 }
 
 exports.getAllVisibleGoalsWithTopics = async ( req, res ) => {
@@ -280,7 +305,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
     }
     
     if( redirect ) {
-        console.log( "goalController.saveGoal() - END - Redirect ");
+        console.log( "goalController.saveGoal() - END - Redirect");
         return goal;
     }
     else {
