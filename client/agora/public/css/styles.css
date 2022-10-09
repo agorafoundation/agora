@@ -80,9 +80,13 @@ body {
 
 /* Drag and drop images */
 /* started from: https://codepen.io/dcode-software/pen/xxwpLQo */
+.resources-zone{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width:100%;
+}
 .drop-zone {
-    max-width: 125px;
-    height: 125px;
     padding: 5px;
     display: flex;
     align-items: center;
@@ -91,10 +95,25 @@ body {
     font-family: "Quicksand", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    cursor: pointer;
     color: #cccccc;
-    border: 4px dashed #009578;
     border-radius: 10px;
+}
+.drop-zone-show {
+  margin: 5px;
+  width: 125px;
+  height: 125px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #cccccc;
+  border: 1px dashed #505050;
+  border-radius: 10px;
 }
   
 .drop-zone--over {

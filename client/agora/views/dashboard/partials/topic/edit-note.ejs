@@ -6,6 +6,9 @@
     </head>
 
     <body>
+        <div class="drop-zone">
+            <span class="drop-zone__prompt"></span>
+            <input type="file" name="resourceImageField" class="drop-zone__input" />
         <div class="note-body">
 
             <!--Side Nav-->
@@ -42,6 +45,9 @@
             </div>
 
             <!--File Dropdown-->
+            <p style="text-align: left; color: rgba(0, 0, 0, 0.8)">Resources:</p>
+            <div id="resources-zone" class="resources-zone"></div>
+            
             <!-- <div class="hidden" id="file-display"> -->
                 <!--<%- include('./file-display'); %>-->
             <!-- </div> -->
@@ -82,7 +88,7 @@
             </div>
 
         </div>
-
+    </div>
         <%- include('../../../partials/jsincludes'); %>
         <%- include ('../gallery/dropdown'); %>
 

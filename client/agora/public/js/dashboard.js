@@ -7,9 +7,6 @@ if (document.querySelectorAll(".drop-zone")) {
   document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
     const dropZoneElement = inputElement.closest(".drop-zone");
 
-    dropZoneElement.addEventListener("click", (e) => {
-      inputElement.click();
-    });
 
     inputElement.addEventListener("change", (e) => {
       if (inputElement.files.length) {
@@ -50,34 +47,40 @@ if (document.querySelectorAll(".drop-zone")) {
    * @param {HTMLElement} dropZoneElement
    * @param {File} file
    */
+
   function updateThumbnail(dropZoneElement, file) {
     let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
 
-    // First time - remove the prompt
-    if (dropZoneElement.querySelector(".drop-zone__prompt")) {
-      dropZoneElement.querySelector(".drop-zone__prompt").remove();
-    }
-
-    // First time - there is no thumbnail element, so lets create it
-    if (!thumbnailElement) {
-      thumbnailElement = document.createElement("div");
-      thumbnailElement.classList.add("drop-zone__thumb");
-      dropZoneElement.appendChild(thumbnailElement);
-    }
-
-    thumbnailElement.dataset.label = file.name;
-
-    // Show thumbnail for image files
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-      };
-    } else {
-      thumbnailElement.style.backgroundImage = null;
-    }
+        mydiv = document.createElement('div');
+        mydiv.className = "drop-zone-show";
+        inputfile = document.createElement('input');
+        inputfile.type = "file"
+        inputfile.name = "resourceImageField"
+        inputfile.className = "drop-zone__input"
+        
+      
+        
+        // First time - there is no thumbnail element, so lets create it
+        thumbnailElement = document.createElement("div");
+        thumbnailElement.classList.add("drop-zone__thumb");
+        mydiv.appendChild(thumbnailElement);
+      
+        thumbnailElement.dataset.label = file.name;
+      
+        // Show thumbnail for image files
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+        
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+            };
+        
+        } else {
+            thumbnailElement.style.backgroundImage = null;
+        }
+        mydiv.appendChild(inputfile)
+        document.getElementById("resources-zone").appendChild(mydiv);
   }
 }
 
