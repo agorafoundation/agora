@@ -18,7 +18,7 @@
       if (contentType === "Note") { %>
 
         <!--Note Card -->
-        <div class="col mb-3 gallery-col align-items-stretch gallery-col" id="countable">
+        <div class="col mb-3 align-items-stretch gallery-col query-countable">
           <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id)">
             <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
@@ -47,7 +47,7 @@
       <% } else if (contentType === "Goal") { %>
 
         <!--Goal Card-->
-        <div class="col mb-3 gallery-col align-items-stretch gallery-col" id="countable">
+        <div class="col mb-3 align-items-stretch gallery-col query-countable">
           <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
@@ -88,7 +88,7 @@
 <%- include('./view-toggle.ejs'); %>  
 
 <!--Search bar-->
-<input class="card-search" placeholder="Search"/>
+<input class="card-search" placeholder="Search" oninput="queryTopics()"/>
 
   <hr class="mt-0">
   <div class="container">

@@ -775,3 +775,73 @@ const topicReroute = (id) => {
 
   location.href = '/note';
 }
+
+
+////////serach functions////////////
+
+var removedItems = [];
+
+const getTopics = () => {
+    return document.querySelectorAll('.query-countable');
+}
+
+const queryTopics = (newVal, arr) => {
+  const len = arr.length;
+  newVal = newVal.toLowerCase();
+  for (let i = 0; i < len; i++) {
+      let elemName = arr[i].childNodes[1].childNodes[3].childNodes[i].innerText.toLowerCase();
+      
+      if (!elemName.includes(newVal)) {
+          if (!hasElement(arr[i].childNodes[1].id, removedItems)) {
+              let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;
+              removedItems.push({element: badElement, id: arr[i].childNodes[1].id});
+              badElement.remove();
+          }
+      } else if (hasElement(arr[i].childNodes[1].id, removedItems)) {
+          document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedItems));
+          removedItems = removeElement(arr[i].childNodes[1].id, removedItems);
+      }
+  }
+}
+
+const hasElement = (id, removed) => {
+  let done = false;
+  let index = 0;
+  const removedLength = removed.length;
+  while(!done && index < removedLength) {
+      if (removed[index].id === id) {
+          done = true;
+      }
+      index++;
+  }
+  return done;
+}
+
+const getElement = (id, removed) => {
+  let done = false; 
+  let index = 0;
+  let output = null;
+  const removedLength = removed.length;
+  while (!done && index < removedLength) {
+      if ( removed[index].id === id) {
+          output = removed[index].element;
+          done = true;
+      }
+      index++;
+  }
+  return output;
+}
+
+const removeElement = (id, removed) => {
+  let done = false;
+  let index = 0;
+  const removedLength = removed.length;
+  while(!done && index < removedLength) {
+      if (removed[index].id === id) {
+          done = true;
+          removed.splice(index, 1);
+      }
+      index++;
+  }
+  return removed;
+}
