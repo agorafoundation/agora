@@ -88,7 +88,7 @@
 <%- include('./view-toggle.ejs'); %>  
 
 <!--Search bar-->
-<input class="card-search" placeholder="Search" oninput="queryTopics()"/>
+<input id="topic-search" class="card-search" placeholder="Search" oninput="queryTopics(document.getElementById('topic-search').value, topicArr)"/>
 
   <hr class="mt-0">
   <div class="container">

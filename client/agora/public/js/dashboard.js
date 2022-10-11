@@ -664,6 +664,7 @@ var deleteCards = document
 //changing the properties of the confirm button of the delete-modal depending on the selected card
 const updateDeleteConfirmButton = (id) => {
   document.getElementById(id).parentElement.remove();
+  getTopics();
   exitDeleteModal();
 };
 
@@ -705,6 +706,8 @@ const duplicateGoal = (e) => {
 
   //adding the new clone to the array
   document.getElementById("gallery-row").appendChild(clone);
+
+  getTopics();
 
   e.stopPropagation();
 };
@@ -779,69 +782,85 @@ const topicReroute = (id) => {
 
 ////////serach functions////////////
 
-var removedItems = [];
+//contains all topic/goal cards
+var topicArr = [];
 
+//dynamically updates depending on search input
+var removedTopics = [];
+
+//this needs to be called whenever the topics are added or removed
 const getTopics = () => {
-    return document.querySelectorAll('.query-countable');
+  topicArr = document.querySelectorAll('.query-countable');
 }
 
+window.onload = getTopics;
+
+//what changes the DOM and modifies removed topics depending on search
+//newVal is the input value
+//arr is the topicArray
 const queryTopics = (newVal, arr) => {
   const len = arr.length;
   newVal = newVal.toLowerCase();
   for (let i = 0; i < len; i++) {
-      let elemName = arr[i].childNodes[1].childNodes[3].childNodes[i].innerText.toLowerCase();
-      
-      if (!elemName.includes(newVal)) {
-          if (!hasElement(arr[i].childNodes[1].id, removedItems)) {
-              let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;
-              removedItems.push({element: badElement, id: arr[i].childNodes[1].id});
-              badElement.remove();
-          }
-      } else if (hasElement(arr[i].childNodes[1].id, removedItems)) {
-          document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedItems));
-          removedItems = removeElement(arr[i].childNodes[1].id, removedItems);
+    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element
+
+    if (!elemName.includes(newVal)) {   //checking query
+
+      if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
+
+        let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
+        removedTopics.push({element: badElement, id: arr[i].childNodes[1].id});   //add element to removedTopics
+        badElement.remove();    
       }
+    } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
+
+      document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedTopics)); //adding the element back to the DOM
+      removedTopics = removeElement(arr[i].childNodes[1].id, removedTopics);  //remove element from removedTopics
+    }
   }
 }
 
+//checks if removedTopics contains a certain id
 const hasElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
   while(!done && index < removedLength) {
-      if (removed[index].id === id) {
-          done = true;
-      }
-      index++;
+    if (removed[index].id === id) {
+      done = true;
+    }
+    index++;
   }
   return done;
 }
 
+//returns an element from removedTopics depending on id
 const getElement = (id, removed) => {
   let done = false; 
   let index = 0;
   let output = null;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
-      if ( removed[index].id === id) {
-          output = removed[index].element;
-          done = true;
-      }
-      index++;
+    if ( removed[index].id === id) {
+        output = removed[index].element;
+        done = true;
+    }
+    index++;
   }
   return output;
 }
 
+//Removes an element from removedTopics then returns the updated array
 const removeElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
   while(!done && index < removedLength) {
-      if (removed[index].id === id) {
-          done = true;
-          removed.splice(index, 1);
-      }
-      index++;
+    if (removed[index].id === id) {
+      done = true;
+      removed.splice(index, 1);
+    }
+    index++;
   }
   return removed;
 }
