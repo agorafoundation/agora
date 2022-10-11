@@ -512,12 +512,12 @@ function viewModal(id, name, desc) {
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
   let dropId = "option-" + id;
-  document.getElementById(dropId).setAttribute("style", "visibility: visible");
+  document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
   let dropId = "option-" + id;
-  document.getElementById(dropId).setAttribute("style", "visibility: hidden");
+  document.getElementById(dropId).style.visibility = "hidden";
 }
 
 var toggleGoalView = () => {
@@ -553,13 +553,6 @@ var toggleAllView = () => {
   }
 };
 
-/*$('.dropdown-content').on('click', function (ev) {
-      ev.stopPropagation();
-    });
-
-    $('.dropbtn').on('click', function (ev) {
-        ev.stopPropagation();
-    });*/
 
 /*Updating the rename modal*/
 
@@ -597,6 +590,8 @@ const fillNameandDescription = (e) => {
   document.getElementById("rename-modal").style.display = "block";
   document.getElementById("backdrop").style.display = "block";
   document.getElementById("rename-modal").classList.add("show");
+
+  e.stopPropagation();
 };
 
 //A collection of all the rename buttons
@@ -644,8 +639,8 @@ const showDeleteModal = (e) => {
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
-  document.getElementById("to-be-deleted-name").innerText = parentName;
-
+    document.getElementById("to-be-deleted-name").innerText = parentName;
+  
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
@@ -655,6 +650,8 @@ const showDeleteModal = (e) => {
   document.getElementById("delete-modal").style.display = "block";
   document.getElementById("backdrop2").style.display = "block";
   document.getElementById("delete-modal").classList.add("show");
+
+  e.stopPropagation();
 };
 
 //A collection of the delete buttons
@@ -703,8 +700,13 @@ const duplicateGoal = (e) => {
     fillNameandDescription
   ); //rename
 
+  //makes the ellipsis of the clone hidden on initialization
+  clone.childNodes[1].childNodes[1].style.visibility = "hidden";
+
   //adding the new clone to the array
   document.getElementById("gallery-row").appendChild(clone);
+
+  e.stopPropagation();
 };
 
 //A collection of the duplicate buttons
@@ -716,18 +718,6 @@ var duplicateCards = document
 
 //Calculating the id of a new card
 const checkForNextId = () => {
-  //Option 1: make new id highest current id + 1
-
-  /*var highest = 0;
-        document.querySelectorAll('.countable').forEach((obj)=> {
-            if (obj.id > highest) {
-                highest = obj.id;
-            }
-        })
-        return ++highest;*/
-
-  //Option 2: make new id first available gap between ids
-
   var ids = [];
   document.querySelectorAll(".countable").forEach((obj) => {
     ids.push(obj.id);
@@ -738,8 +728,8 @@ const checkForNextId = () => {
   var done = false;
   var iterator = 1;
   var output = 0;
-  if (ids[0] > 1) {
-    output = 1;
+  if (ids[0] > 0) {
+    output = 0;
     done = true;
   } else if (len === 1) {
     output = ++ids[0];
@@ -772,3 +762,16 @@ const replaceIds = (element, newId) => {
     element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
   return element;
 };
+
+
+//////onclick handling for topic rerouting//////////
+
+const topicReroute = (id) => {
+
+  const title = document.getElementById("card-title-" + id);
+  const description = document.getElementById("card-desc-" + id);
+
+  //pass the title and description to backend
+
+  location.href = '/note';
+}

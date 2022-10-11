@@ -19,17 +19,17 @@
 
         <!--Note Card -->
         <div class="col mb-3 gallery-col align-items-stretch gallery-col" id="countable">
-          <div class="card h-100 countable"  id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id)">
             <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
             <div class="card-body d-flex flex-column" id="topic">
               <h5 class="card-title" id="card-title-<%= id %>">
-                <%= name%>
+                <%= name %>
               </h5>
               <p class="card-text mb-4" id="card-desc-<%= id %>">
-                <%= desc%>
+                <%= desc %>
               </p>
             </div>
             <div class="card-footer">
@@ -62,7 +62,8 @@
                 <% if (content) { %>
                   <ul class="list-group list-group-flush list-grid">
                     <% content.slice(0,8).forEach((item) => { %>
-                      <li class="list-group-item item-list" title='Open <%=item%>'> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                      <!--topicReroute() below has a filler id-->
+                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
                     <% }) %>
                   </ul>
                 <% } %>
@@ -81,52 +82,36 @@
           </div>
         </div>
       <% }}%>
-          
-      <!--View Toggle-->
-      <%- include('./view-toggle.ejs'); %>
-
-        
-      
 </div>
-          <hr class="mt-0">
-          <div class="container">
 
+<!--View Toggle-->
+<%- include('./view-toggle.ejs'); %>  
 
-            <% for (let i = 0; i < availableResources.length + 1; i++) { 
-              //add button
-              if (i === 0) {
-                 %>
-                <div class="row row-cols-1 row-cols-md-3 g-4 ">
-                  <div class="col mb-3 gallery-col align-items-stretch gallery-col">
-                    <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
-                      <div class="card-body d-flex flex-column mt-1" id="add">
-                        <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content"
-                          alt="Add content">
-                      </div>
-                    </div>
-                  </div>
-                  <% }else{ 
-                    if(i % 2 === 0) {%>
-                    <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
-                    }else{
-                      renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
-                     } %>
-                      <% }}%>
+<!--Search bar-->
+<input class="card-search" placeholder="Search"/>
+
+  <hr class="mt-0">
+  <div class="container">
+
+    <% for (let i = 0; i < availableResources.length + 1; i++) { 
+      //add button
+      if (i === 0) {
+          %>
+        <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
+          <div class="col mb-3 gallery-col align-items-stretch gallery-col">
+            <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
+              <div class="card-body d-flex flex-column mt-1" id="add">
+                <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content"
+                  alt="Add content">
               </div>
-            
-
-
-
-             
-
-                <script>
-                  $('.dropdown-content').on('click', function (ev) {
-                    ev.stopPropagation();
-                  });
-
-                  $('.dropbtn').on('click', function (ev) {
-                    ev.stopPropagation();
-                  });
-                </script>
-
+            </div>
+          </div>
+          <% }else{ 
+            if(i % 2 === 0) {%>
+            <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
+            }else{
+              renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
+              } %>
+              <% }}%>
+    </div>      
 </html>
