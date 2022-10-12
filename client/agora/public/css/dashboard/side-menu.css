@@ -87,6 +87,7 @@ padding-right: 8px;
 @media screen and (max-height: 450px) {
     .sidebar {
         padding-top: 15px;
+      
     }
     .sidebar a {
         font-size: 18px;
@@ -96,3 +97,15 @@ padding-right: 8px;
         
     }
 }
+@media screen and (max-width: 650px) {
+    .sidebar {
+        display: none;
+    }
+    .navbar{
+        visibility: visible;
+    }
+    .burger-nav{
+        display: inline;
+    }
+}
+

@@ -9,7 +9,7 @@
 const db = require('../db/connection');
 
 // import models
-const User = require("../model/user");
+const User = require("../model/User");
 const Goal = require("../model/goal");
 const Topic = require("../model/topic");
 const GoalEnrollment = require("../model/goalEnrollment");
@@ -664,6 +664,21 @@ exports.getRecentGoalEnrollmentEvents = async (limit) => {
         console.log(e.stack);
         return false;
     }  
+}
+
+exports.deleteGoalById = async (goalId, ownerId) => {
+    let text = "DELETE FROM goals WHERE id = $1 AND owned_by = $2";
+    let values = [goalId, ownerId];
+
+    try {
+        let res = await db.query(text, values);
+        return true;
+
+    }
+    catch (e) {
+        console.log(e.stack);
+        return false;
+    }
 }
 
 exports.getRecentGoalCompletionEvents = async (limit) => {
