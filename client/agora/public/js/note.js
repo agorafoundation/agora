@@ -44,36 +44,69 @@ if (document.getElementById("noteEditor")) {
       console.log(contents);
     },
   });
+
+  /* Note Editor Events  ---------------------------------------------------*/
   noteEditor.onChange = (contents, core) => {
     noteEditor.save();
   };
+
   noteEditor.onKeyUp = (e) => {
     if (e.key == "Enter") {
       noteEditor.setDefaultStyle("font-size: 22px;", {
         defaultTag: "p",
       });
     } else if (e.key == "/") {
-      console.log("test");
-      noteEditor.insertHTML(
+        noteEditor.insertHTML(
         '<div><button style=background:pink;>Hello</button></div>',
         true
       );
     }
   };
+
   // Close tags list
   noteEditor.onFocus = () => {
     document.querySelector(".tag-list").style.display = "none";
     document.querySelector("#new-tag-element").style.display = "none";
     document.querySelector("#mySearch").value = "";
   };
-  // noteEditor.onBlur = () => {
-  //   document.addEventListener("keyup", function(e) {
-  //     if (e.key == "Enter" && document.getElementById("mySearch").value != null) {
-  //       alert("hey")
-  //     }
-  //   })
-  // }
+
+  noteEditor.onImageUpload = () => {
+    // Image upload default does not automatically place cursor after image, so...
+    noteEditor.appendContents("");
+  };
+
+  // Since suneditor only supports image upload...
+  let numImages = 0;
+  let numFileDrops = 0;
+  // This function determines whether a file dropped in the editor is an image or a different file type
+  noteEditor.onDrop = (e) => {
+    // We don't know if it's an image at this point
+    numFileDrops++;
+
+    let file = e.dataTransfer.files[0];
+    let fileName = file.name;
+    if (file == undefined) {
+      // Plain text, returning true ensures text will still be rendered after drop
+      return true;
+    } else if (file.type.startsWith("image/")) {
+      numImages++;
+      // Continue with image upload
+      return true;
+    }
+
+    if (numImages != numFileDrops) {
+      alert("Not an image");
+      // for temporary testing
+      noteEditor.insertHTML(
+        '<div style="border-style:solid">' + fileName + '</div><br/>',
+        true)
+    }
+  }
 }
+  /* END Note Editor Events  ---------------------------------------------------*/
+
+
+
 
 // Change tabs
 function openTab(evt, tabName) {
@@ -141,7 +174,7 @@ document.addEventListener("keyup", function(e) {
   if (e.key == "Enter" && ul.style.display == "block") {
     newTag();
   }
-})
+});
 
 let currTagList = [];
 function addTag(selectedTag) {
@@ -219,9 +252,9 @@ function addTag(selectedTag) {
         mydiv = document.createElement('div');
         mydiv.className = "drop-zone-show";
         inputfile = document.createElement('input');
-        inputfile.type = "file"
-        inputfile.name = "resourceImageField"
-        inputfile.className = "drop-zone__input"
+        inputfile.type = "file";
+        inputfile.name = "resourceImageField";
+        inputfile.className = "drop-zone__input";
       
         // First time - there is no thumbnail element, so lets create it
         thumbnailElement = document.createElement("div");
@@ -242,12 +275,17 @@ function addTag(selectedTag) {
         } else {
             thumbnailElement.style.backgroundImage = null;
         }
-        mydiv.appendChild(inputfile)
+        mydiv.appendChild(inputfile);
         document.getElementById("resources-zone").appendChild(mydiv);
   }
 }
-
 // ************************ END Drag and drop ***************** //
+
+
+
+
+
+
 
 // // Toggles the rendering of more options menu
 // const toggleMoreOptions = () => {
