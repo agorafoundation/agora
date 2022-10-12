@@ -6,11 +6,12 @@
     </head>
 
     <body>
+        <!--File Upload Drop Zone-->
         <div class="drop-zone">
             <span class="drop-zone__prompt"></span>
             <input type="file" name="resourceImageField" class="drop-zone__input" />
+            
         <div class="note-body">
-
             <!--Side Nav-->
             <%- include('../../side-menu/side-menu.ejs');%>  
 
@@ -41,12 +42,8 @@
                     </ul>
                 </div>
                 <!--More Options-->
-                <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i>
+                <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
             </div>
-
-            <!--File Dropdown-->
-            <p style="text-align: left; color: rgba(0, 0, 0, 0.8)">Resources:</p>
-            <div id="resources-zone" class="resources-zone"></div>
             
             <!-- <div class="hidden" id="file-display"> -->
                 <!--<%- include('./file-display'); %>-->
@@ -60,6 +57,9 @@
                 </div>
                 <!--Note Editor Tab -->
                 <div id="note-div" class="tabcontent">
+                    <!--Uploaded Files Section-->
+                    <label>Resources:</label>
+                    <div id="resources-zone" class="resources-zone"></div>
                     <textarea id="noteEditor"></textarea>
                 </div>
                 <!--Example Tab-->

@@ -88,14 +88,6 @@ body {
 }
 .drop-zone {
     padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: "Quicksand", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    color: #cccccc;
     border-radius: 10px;
 }
 .drop-zone-show {
@@ -103,15 +95,6 @@ body {
   width: 125px;
   height: 125px;
   padding: 5px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: "Quicksand", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  color: #cccccc;
   border: 1px dashed #505050;
   border-radius: 10px;
 }
@@ -129,7 +112,6 @@ body {
     height: 100%;
     border-radius: 10px;
     overflow: hidden;
-    background-color: #cccccc;
     background-size: cover;
     position: relative;
 }

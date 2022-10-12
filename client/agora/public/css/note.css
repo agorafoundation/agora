@@ -117,8 +117,9 @@
 }
 
 #note-div {
-    display: flex;
-    width: 100%;
+    /* display: flex; */
+    display: block;
+    width: 99%;
 }
 
 #tools-container {
