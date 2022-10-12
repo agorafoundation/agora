@@ -427,12 +427,12 @@ function viewModal(id, name, desc) {
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
   let dropId = "option-" + id;
-  document.getElementById(dropId).setAttribute("style", "visibility: visible");
+  document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
   let dropId = "option-" + id;
-  document.getElementById(dropId).setAttribute("style", "visibility: hidden");
+  document.getElementById(dropId).style.visibility = "hidden";
 }
 
 var toggleGoalView = () => {
@@ -468,13 +468,6 @@ var toggleAllView = () => {
   }
 };
 
-/*$('.dropdown-content').on('click', function (ev) {
-      ev.stopPropagation();
-    });
-
-    $('.dropbtn').on('click', function (ev) {
-        ev.stopPropagation();
-    });*/
 
 /*Updating the rename modal*/
 
@@ -512,6 +505,8 @@ const fillNameandDescription = (e) => {
   document.getElementById("rename-modal").style.display = "block";
   document.getElementById("backdrop").style.display = "block";
   document.getElementById("rename-modal").classList.add("show");
+
+  e.stopPropagation();
 };
 
 //A collection of all the rename buttons
@@ -559,8 +554,8 @@ const showDeleteModal = (e) => {
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
-  document.getElementById("to-be-deleted-name").innerText = parentName;
-
+    document.getElementById("to-be-deleted-name").innerText = parentName;
+  
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
@@ -570,6 +565,8 @@ const showDeleteModal = (e) => {
   document.getElementById("delete-modal").style.display = "block";
   document.getElementById("backdrop2").style.display = "block";
   document.getElementById("delete-modal").classList.add("show");
+
+  e.stopPropagation();
 };
 
 //A collection of the delete buttons
@@ -582,6 +579,7 @@ var deleteCards = document
 //changing the properties of the confirm button of the delete-modal depending on the selected card
 const updateDeleteConfirmButton = (id) => {
   document.getElementById(id).parentElement.remove();
+  getTopics();
   exitDeleteModal();
 };
 
@@ -618,8 +616,15 @@ const duplicateGoal = (e) => {
     fillNameandDescription
   ); //rename
 
+  //makes the ellipsis of the clone hidden on initialization
+  clone.childNodes[1].childNodes[1].style.visibility = "hidden";
+
   //adding the new clone to the array
   document.getElementById("gallery-row").appendChild(clone);
+
+  getTopics();
+
+  e.stopPropagation();
 };
 
 //A collection of the duplicate buttons
@@ -631,18 +636,6 @@ var duplicateCards = document
 
 //Calculating the id of a new card
 const checkForNextId = () => {
-  //Option 1: make new id highest current id + 1
-
-  /*var highest = 0;
-        document.querySelectorAll('.countable').forEach((obj)=> {
-            if (obj.id > highest) {
-                highest = obj.id;
-            }
-        })
-        return ++highest;*/
-
-  //Option 2: make new id first available gap between ids
-
   var ids = [];
   document.querySelectorAll(".countable").forEach((obj) => {
     ids.push(obj.id);
@@ -653,8 +646,8 @@ const checkForNextId = () => {
   var done = false;
   var iterator = 1;
   var output = 0;
-  if (ids[0] > 1) {
-    output = 1;
+  if (ids[0] > 0) {
+    output = 0;
     done = true;
   } else if (len === 1) {
     output = ++ids[0];
@@ -687,3 +680,102 @@ const replaceIds = (element, newId) => {
     element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
   return element;
 };
+
+
+//////onclick handling for topic rerouting//////////
+
+const topicReroute = (id) => {
+
+  const title = document.getElementById("card-title-" + id);
+  const description = document.getElementById("card-desc-" + id);
+
+  //pass the title and description to backend
+
+  location.href = '/note';
+}
+
+
+////////serach functions////////////
+
+//contains all topic/goal cards
+var topicArr = [];
+
+//dynamically updates depending on search input
+var removedTopics = [];
+
+//this needs to be called whenever the topics are added or removed
+const getTopics = () => {
+  topicArr = document.querySelectorAll('.query-countable');
+}
+
+window.onload = getTopics;
+
+//what changes the DOM and modifies removed topics depending on search
+//newVal is the input value
+//arr is the topicArray
+const queryTopics = (newVal, arr) => {
+  const len = arr.length;
+  newVal = newVal.toLowerCase();
+  for (let i = 0; i < len; i++) {
+    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element
+
+    if (!elemName.includes(newVal)) {   //checking query
+
+      if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
+
+        let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
+        removedTopics.push({element: badElement, id: arr[i].childNodes[1].id});   //add element to removedTopics
+        badElement.remove();    
+      }
+    } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
+
+      document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedTopics)); //adding the element back to the DOM
+      removedTopics = removeElement(arr[i].childNodes[1].id, removedTopics);  //remove element from removedTopics
+    }
+  }
+}
+
+//checks if removedTopics contains a certain id
+const hasElement = (id, removed) => {
+  let done = false;
+  let index = 0;
+  const removedLength = removed.length;
+  while(!done && index < removedLength) {
+    if (removed[index].id === id) {
+      done = true;
+    }
+    index++;
+  }
+  return done;
+}
+
+//returns an element from removedTopics depending on id
+const getElement = (id, removed) => {
+  let done = false; 
+  let index = 0;
+  let output = null;
+  const removedLength = removed.length;
+  while (!done && index < removedLength) {
+    if ( removed[index].id === id) {
+        output = removed[index].element;
+        done = true;
+    }
+    index++;
+  }
+  return output;
+}
+
+//Removes an element from removedTopics then returns the updated array
+const removeElement = (id, removed) => {
+  let done = false;
+  let index = 0;
+  const removedLength = removed.length;
+  while(!done && index < removedLength) {
+    if (removed[index].id === id) {
+      done = true;
+      removed.splice(index, 1);
+    }
+    index++;
+  }
+  return removed;
+}

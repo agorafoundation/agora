@@ -39,7 +39,6 @@
     position: relative;
     border-radius: 15%;
     cursor: pointer;
-    visibility: hidden;
   }
  
   .dropdown {
@@ -126,3 +125,26 @@
   color: blue;
 }
 
+#to-be-deleted-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 225px;
+}
+
+.card-search {
+  position: absolute;
+  right: 16.5%;
+  top: 3.2%;
+  height: 29px;
+  padding: 7px;
+  margin: 0;
+  background-color: #BBB;
+  border-radius: 10px;
+  border: none;
+}
+
+.card-search:focus {
+  background-color: lightgray;
+  outline: none;
+}
