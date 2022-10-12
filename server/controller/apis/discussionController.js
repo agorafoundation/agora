@@ -103,6 +103,48 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
     res.status( 200 ).json( discussion );
 }
 
+exports.setRating = async ( req, res ) => {
+
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    const commentId = req.params.commentId
+    const userRating = req.body.rating
+
+    let rating = await discussionService.setCommentRating( commentId, userRating, authUserId );
+
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Updated discussion" );
+    res.status( 200 ).json( rating );
+}
+
+exports.removeRating = async ( req, res ) => {
+    // get the user id either from the request user from basic auth in API call, or from the session for the UI
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+
+    const commentId = req.params.commentId
+
+    let rating = await discussionService.removeCommentRating( commentId, authUserId );
+
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Updated discussion" );
+    res.status( 200 ).json( rating );
+}
+    
+
 exports.createComment = async (req, res) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -135,6 +177,13 @@ exports.editComment = async ( req, res ) => {
 
     // get all the active goals
     let goals = await discussionService.editComment( commentId , authUserId , req.body );
+
+    if(!goals) {
+        res.set( "x-agora-message-title", "Error" );
+        res.set( "x-agora-message-detail", "Comment not found" );
+        res.status( 404 ).json( { message: "Comment not found" } );
+        return
+    }
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );

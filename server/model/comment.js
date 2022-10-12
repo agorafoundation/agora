@@ -4,6 +4,8 @@ function comment() {
     this.parent_type = ""
     this.comment_text = ""
     this.user_id = -1
+    this.likes = 0;
+    this.dislikes = 0;
 }
 
 exports.emptyComment = () => {
@@ -18,6 +20,8 @@ exports.ormComment = (row) => {
     comment.parent_type = row.parent_type
     comment.comment_text = row.comment_text
     comment.user_id = row.user_id
+    comment.likes = parseInt(row.likes)
+    comment.dislikes = parseInt(row.dislikes)
 
     return comment;
 }
