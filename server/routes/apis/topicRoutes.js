@@ -59,7 +59,7 @@
      .get ( async ( req, res ) => {
         topicController.getAllPublicTopics( req, res );
      });
- 
+  
  
   
  router.route( '/topic/completed' )
