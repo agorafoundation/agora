@@ -339,3 +339,56 @@
     background-color:aliceblue;
     padding: 5px 5px;
   }
+
+  /* Drag and drop images */
+/* started from: https://codepen.io/dcode-software/pen/xxwpLQo */
+.resources-zone{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width:100%;
+  }
+  .drop-zone {
+      padding: 5px;
+      border-radius: 10px;
+  }
+  .drop-zone-show {
+    margin: 5px;
+    width: 125px;
+    height: 125px;
+    padding: 5px;
+    border: 1px dashed #505050;
+    border-radius: 10px;
+  }
+    
+  .drop-zone--over {
+      border-style: solid;
+  }
+    
+  .drop-zone__input {
+      display: none;
+  }
+    
+  .drop-zone__thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background-size: cover;
+      position: relative;
+  }
+    
+  .drop-zone__thumb::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 5px 0;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 10px;
+      text-align: center;
+  }
+  
+  /* End drag and drop */
