@@ -244,9 +244,17 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
     return true;
 }
 
+// saveTopic in progress. Still missing handling of attributes: 
+//     this.topicImage = ""; // -- skip testing for now.
+//     this.hasActivity = false; -- not being handled.
+//     this.hasAssessment = false; -- not being handled.
+//     this.active = true; -- not being handled. is also duplicate inside Activity object.
+//     this.ownedBy = -1; -- how can we test this? Pretty sure not working.
 exports.saveTopic = async ( req, res, redirect ) => {
 
     let topic = Topic.emptyTopic();
+
+    console.log(JSON.stringify(req.body));
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -259,7 +267,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
     if(authUserId > 0) {
 
-        topic.id = req.body.topicId;
+        topic.id = req.body.id;
 
         // see if this is a modification of an existing topic
         let existingTopic = await topicService.getTopicById( topic.id, false );
@@ -267,7 +275,10 @@ exports.saveTopic = async ( req, res, redirect ) => {
         // if this is an update, replace the topic with the existing one as the starting point.
         if(existingTopic) {
             //console.log( "there was an existing topic for this id: " + JSON.stringify(existingTopic) );
+            console.log("existing topic");
             topic = existingTopic;
+        } else {
+            topic.creationTime = Date.now(); // what type does our backend support? Is this fine?
         }
 
         // add changes from the body if they are passed
@@ -278,18 +289,17 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         if(topic.topicType == 3) {
             
-            topic.topicContentHtml = req.body.embedded_submission_text_topic;
+            topic.topicHtml = req.body.embedded_submission_text_topic;
         }
         else {
             // check to see if the incomping message format is from the UI or the API
-            if( req.body.topicContentHtml ) {
-                topic.topicContentHtml = req.body.topicContentHtml;
+            if( req.body.topicHtml ) {
+                topic.topicHtml = req.body.topicHtml;
             }
             else {
-                topic.topicContentHtml = req.body.topicEditor;
+                topic.topicHtml = req.body.topicEditor;
             }
         }
-        topic.topicLink = req.body.topicLink;
         
         // check to see if the incoming message format is from the UI form or the API
         if( req.body.topicActive ) {
@@ -299,9 +309,15 @@ exports.saveTopic = async ( req, res, redirect ) => {
             topic.active = req.body.active;
         }
         
-        topic.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
+        //topic.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false; // is this needed?
     
         topic.ownedBy = authUserId;
+
+        // TODO: Add Resources to topics. topicService.saveResourcesForTopic(topicId, resourceIds, resourcesRequired);
+
+        // TODO: Add Activity to topics. Create topicService.saveActivity? 
+
+        // TODO: Add Assessment to topics. Create topicService.saveAssessment? 
 
         topic = await topicService.saveTopic( topic );
 

@@ -1003,6 +1003,51 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 
 
 
+/*
+ * Update / set the user topic image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateTopicImage = async ( topicId, filename ) => {
+    // get the topic (required to exist)
+    let topic = await exports.getTopicById( topicId );
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if( topic ) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT topic_image FROM topics WHERE id = $1";
+            let values = [ topicId ];
+
+            // perform the query
+            let res = await db.query( text, values );
+            
+            // set the prevFileName with the prev name
+            if( res.rows.length > 0 ) {
+                prevFileName = res.rows[0].topic_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE topics SET topic_image = $2 WHERE id = $1";
+            values = [ topicId, filename ];
+
+            // perform query
+            await db.query( text, values );
+            
+        }
+        catch(e) {
+            console.log( e.stack );
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
+
 exports.getRecentTopicEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;
     let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as topic_id, mod.topic_name as topic, mod.topic_image as topic_image, mode.create_time as create_time from users ud, topics mod, user_topic mode where mode.user_id = ud.id AND mode.topic_id = mod.id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
