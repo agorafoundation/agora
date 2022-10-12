@@ -1,0 +1,20 @@
+<div class="modal" tabindex="-1" role="dialog" id="delete-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Confirmation</h5>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: row;">
+          <p>Are you sure you'd like to delete&nbsp;<p id="to-be-deleted-name" style="font-weight: bold;"></p>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="confirm-delete">Confirm</button>
+          <button type="button" class="btn btn-secondary" onclick="exitDeleteModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" id="backdrop2" style="display: none;"></div>
+

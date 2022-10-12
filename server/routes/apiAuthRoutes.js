@@ -62,8 +62,6 @@ router.use(function (req, res, next) {
     }
 
 
-    
-
 
     /**
      * Old auth mechanism that relied on server session (stateful)
@@ -102,8 +100,8 @@ router.use('/goals', goalRoutes);
 /**
  * Topic APIs
  */
-// const topicRoutes = require('./apis/topicRoutes')
-// router.use('/topic', topicRoutes);
+const topicRoutes = require('./apis/topicRoutes')
+router.use('/topics', topicRoutes);
 
 /**
  * Resource APIs

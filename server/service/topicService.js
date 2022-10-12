@@ -26,6 +26,7 @@ const CompletedResource = require('../model/completedResource');
 // any cross services required
 const userService = require('../service/userService');
 const assessmentService = require('../service/assessmentService');
+const Goal = require("../model/goal");
 
 
 /**
@@ -1035,5 +1036,114 @@ exports.getRecentTopicEnrollmentEvents = async function(limit) {
     catch(e) {
         console.log(e.stack);
         return false;
-    }  
+    }
+}
+
+/**
+ * Get all topics that are visible to a user. This includes topics that are owned by the user and active,
+ * topics that are and shared with the user, and topics that are publicly available.
+ * TODO: Currently this method is implementing user owned active and publicly available topics. This will be updated to include shared topics
+ * when the shared topics model is implemented.
+ * @param {int} ownerId
+ * @param {int} limit Optional - If provided, will return up to the limit number of topics if not provided will return up to 100 topics
+ * @param {int} offset Optional - If provided, will return topics starting at the offset otherwise will start at the beginning
+ * @returns All visible topics as an array
+ */
+exports.getAllVisibleTopics = async ( ownerId , limit, offset) => {
+
+    if( ownerId > -1 ) {
+
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
+        const values = [ true, ownerId ];
+
+        // apply a default offset if none is provided
+        if ( !offset ) offset = 0;
+
+        if( limit ) {
+            text += " LIMIT $3 OFFSET $4";
+            values.push( limit );
+            values.push( offset );
+        }
+        else {
+            text += " LIMIT 100 OFFSET $3";
+            values.push( offset );
+        }
+
+        text += ";";
+        let topics = [];
+
+        try {
+
+            let res = await db.query(text, values);
+
+            for(let i=0; i<res.rows.length; i++) {
+                topics.push(Topic.ormTopic(res.rows[i]));
+            }
+
+            return topics;
+
+        }
+        catch(e) {
+            console.log(e.stack);
+            //return false;
+        }
+
+    }
+    else {
+        //return false;
+    }
+}
+
+// Similar to getAllVisibleTopics, but does not show user specific topics.
+exports.getAllPublicTopics = async ( limit, offset ) => {
+
+        let text = "select * from topics WHERE active = $1 and visibility = 2 ORDER BY id";
+        const values = [ true, ownerId ];
+
+        // apply a default offset if none is provided
+        if ( !offset ) offset = 0;
+
+        if( limit ) {
+            text += " LIMIT $3 OFFSET $4";
+            values.push( limit );
+            values.push( offset );
+        }
+        else {
+            text += " LIMIT 100 OFFSET $3";
+            values.push( offset );
+        }
+
+        text += ";";
+        let topics = [];
+
+        try {
+
+            let res = await db.query(text, values);
+
+            for(let i=0; i<res.rows.length; i++) {
+                topics.push(Topic.ormTopic(res.rows[i]));
+            }
+
+            return topics;
+
+        }
+        catch(e) {
+            console.log(e.stack);
+            //return false;
+        }
+}
+
+exports.deleteTopicById = async ( topicId, authUserId ) => {
+    let text = "DELETE FROM topics WHERE id = $1 and owned_by = $2";
+    let values = [topicId, authUserId];
+
+    try {
+        let res = await db.query( text, values );
+        return true;
+
+    }
+    catch (e) {
+        console.log( e.stack );
+        return false;
+    }
 }
