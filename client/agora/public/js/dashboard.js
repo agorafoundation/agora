@@ -215,7 +215,7 @@ if (
     topicTypeBox.addEventListener("click", () => {
       console.log(
         "clicked: " +
-          document.querySelector('input[name="topicType"]:checked').value
+        document.querySelector('input[name="topicType"]:checked').value
       );
       if (
         document.querySelector('input[name="topicType"]:checked').value == 1
@@ -437,9 +437,8 @@ function updateResourceModal(resourceId, resourceImagePath) {
             }
 
             thumbnailElement.dataset.label = resource.resourceImage;
-            thumbnailElement.style.backgroundImage = `url('${
-              resourceImagePath + resource.resourceImage
-            }')`;
+            thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage
+              }')`;
           }
         } else {
           // clear
@@ -553,13 +552,26 @@ var toggleAllView = () => {
   }
 };
 
+////get the id of the parent element////
+//e is pointer event
+const getId = (e) => {
+  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
+  return parent.charAt(parent.length - 1); //just the numeric id
+}
 
-/*Updating the rename modal*/
+////Create a toast////
+const createToast = (text) => {
+  document.getElementById('toast-text').innerText = text;
+  const thisToast = document.getElementById('liveToast');
+  const toast = new bootstrap.Toast(thisToast);
+  toast.show();
+}
+
+////////////Updating the rename modal//////////
 
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
-  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
-  let parentId = parent.charAt(parent.length - 1); //just the numeric id
+  let parentId = getId(e);
   let parentNameId = "card-title-" + parentId;
   let parentDescId = "card-desc-" + parentId;
 
@@ -633,14 +645,13 @@ const removeText = (type) => {
 
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = (e) => {
-  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
-  let parentId = parent.charAt(parent.length - 1); //just the numeric id
+  let parentId = getId(e);
   let parentNameId = "card-title-" + parentId;
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
-    document.getElementById("to-be-deleted-name").innerText = parentName;
-  
+  document.getElementById("to-be-deleted-name").innerText = parentName;
+
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
@@ -675,6 +686,56 @@ function exitDeleteModal() {
   document.getElementById("delete-modal").classList.remove("show");
 }
 
+//////onclick handling for topic rerouting//////////
+
+const topicReroute = (id, newTab) => {
+
+  const title = document.getElementById("card-title-" + id);
+  const description = document.getElementById("card-desc-" + id);
+
+  //pass the title and description to backend
+  if (newTab) {
+    window.open("http://localhost:4200/note", "_blank");
+  } else {
+    location.href = '/note';
+  }
+}
+
+///////////////Open in new tab button///////////////
+
+const openInNewTab = (e) => {
+  let parentId = getId(e);
+
+  topicReroute(parentId, true);
+
+  e.stopPropagation();
+}
+
+//A collection of the new tab buttons
+var newTabCards = document
+  .querySelectorAll("#new-tab-card")
+  .forEach((newTabCard) => {
+    newTabCard.addEventListener("click", openInNewTab);
+  });
+
+//////////////////Copy to clipboard//////////////////
+
+const copyLink = (e) => {
+  let parentId = getId(e);
+
+  navigator.clipboard.writeText("http://localhost:4200/note");
+
+  createToast("Copied Link!")
+
+  e.stopPropagation();
+}
+
+var newTabCards = document
+  .querySelectorAll("#copy-link-card")
+  .forEach((copyLinkCard) => {
+    copyLinkCard.addEventListener("click", copyLink);
+  });
+
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
@@ -696,6 +757,14 @@ const duplicateGoal = (e) => {
     "click",
     duplicateGoal
   ); //duplicate
+  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[5].addEventListener(
+    "click",
+    copyLink
+  ); //open in new tab
+  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[7].addEventListener(
+    "click",
+    openInNewTab
+  ); //open in new tab
   clone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
@@ -708,6 +777,8 @@ const duplicateGoal = (e) => {
   document.getElementById("gallery-row").appendChild(clone);
 
   getTopics();
+
+  createToast("Duplicated " + parent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
 
   e.stopPropagation();
 };
@@ -766,21 +837,7 @@ const replaceIds = (element, newId) => {
   return element;
 };
 
-
-//////onclick handling for topic rerouting//////////
-
-const topicReroute = (id) => {
-
-  const title = document.getElementById("card-title-" + id);
-  const description = document.getElementById("card-desc-" + id);
-
-  //pass the title and description to backend
-
-  location.href = '/note';
-}
-
-
-////////serach functions////////////
+////////search functions////////////
 
 //contains all topic/goal cards
 var topicArr = [];
@@ -809,8 +866,8 @@ const queryTopics = (newVal, arr) => {
       if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
 
         let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
-        removedTopics.push({element: badElement, id: arr[i].childNodes[1].id});   //add element to removedTopics
-        badElement.remove();    
+        removedTopics.push({ element: badElement, id: arr[i].childNodes[1].id });   //add element to removedTopics
+        badElement.remove();
       }
     } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
 
@@ -825,7 +882,7 @@ const hasElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
-  while(!done && index < removedLength) {
+  while (!done && index < removedLength) {
     if (removed[index].id === id) {
       done = true;
     }
@@ -836,14 +893,14 @@ const hasElement = (id, removed) => {
 
 //returns an element from removedTopics depending on id
 const getElement = (id, removed) => {
-  let done = false; 
+  let done = false;
   let index = 0;
   let output = null;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
-    if ( removed[index].id === id) {
-        output = removed[index].element;
-        done = true;
+    if (removed[index].id === id) {
+      output = removed[index].element;
+      done = true;
     }
     index++;
   }
@@ -855,7 +912,7 @@ const removeElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
-  while(!done && index < removedLength) {
+  while (!done && index < removedLength) {
     if (removed[index].id === id) {
       done = true;
       removed.splice(index, 1);
