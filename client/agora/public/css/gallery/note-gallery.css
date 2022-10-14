@@ -148,3 +148,16 @@
   background-color: lightgray;
   outline: none;
 }
+
+#show-toast {
+  position: fixed;
+  top: 0;
+  left: 45%;
+  z-index: 1000;
+  box-shadow: 3px rgba(0.5,0.5,0.5,0.5);
+}
+
+.show-toast-text {
+  font-size: 150%;
+  padding: 15px 20px;
+}
