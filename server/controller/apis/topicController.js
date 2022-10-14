@@ -11,12 +11,16 @@ let path = require( 'path' );
 
 // import services
 const topicService = require( '../../service/topicService' );
+const assessmentService = require( '../../service/assessmentService' );
+const activityService = require( '../../service/activityService' );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
 const Topic = require('../../model/topic' );
+const Assessment = require('../../model/assessment' );
+const Activity = require('../../model/activity' );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -108,45 +112,6 @@ exports.getTopicById = async ( req, res ) => {
 const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -246,8 +211,6 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
 
 // saveTopic in progress. Still missing handling of attributes: 
 //     this.topicImage = ""; // -- skip testing for now.
-//     this.hasActivity = false; -- not being handled.
-//     this.hasAssessment = false; -- not being handled.
 //     this.active = true; -- not being handled. is also duplicate inside Activity object.
 //     this.ownedBy = -1; -- how can we test this? Pretty sure not working.
 exports.saveTopic = async ( req, res, redirect ) => {
@@ -308,19 +271,44 @@ exports.saveTopic = async ( req, res, redirect ) => {
         else if ( req.body.active ) {
             topic.active = req.body.active;
         }
-        
-        //topic.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false; // is this needed?
     
         topic.ownedBy = authUserId;
 
         // TODO: Add Resources to topics. topicService.saveResourcesForTopic(topicId, resourceIds, resourcesRequired);
 
-        // TODO: Add Activity to topics. Create topicService.saveActivity? 
 
-        // TODO: Add Assessment to topics. Create topicService.saveAssessment? 
+
+        // Activity
+        topic.hasActivity = req.body.hasActivity;
+        if (topic.hasActivity) {
+
+            let activity = await activityService.saveActivity(req.body.activity);
+
+            topic.activity = activity;
+            topic.activity.creationTime = Date.now();
+
+            console.log("[topicController-saveTopic-activity]: " + JSON.stringify(topic.activity));
+        }
+
+        // Assessment
+        topic.hasAssessment = req.body.hasAssessment;
+        if (topic.hasAssessment) {
+
+            let assessment = await assessmentService.saveAssessment(req.body.assessment);
+            //assessmentService.getAssessmentById(ass.id);  -- test and fix getAssessmentById
+
+            topic.assessment = assessment;
+            topic.assessment.creationTime = Date.now();
+
+            //topic.assessment.questions = req.body.questions;
+            //topic.assessment.completedAssessments = req.body.completedAssessments;
+
+            console.log("[topicController-saveTopic-assessment]: " + JSON.stringify(topic.assessment));
+        }
 
         topic = await topicService.saveTopic( topic );
 
+        
         /**
          * once the topic is saved, save the image if it is passed
          */ 
