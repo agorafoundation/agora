@@ -191,13 +191,13 @@ exports.editComment = async (commentId , userId , editedComment) => {
 
     const updated = {
         ...defaultComment,
-        comment_text: editedComment.comment_text
+        comment_text: editedComment.comment_text,
     } 
 
     // The try catch will fail even if the query is successful if no rows are returned
     try {
-        const text = `UPDATE discussion_comments SET comment_text = $3 WHERE comment_id = $1 AND user_id = $2 RETURNING *`
-        const values = [commentId, userId, updated.comment_text]
+        const text = `UPDATE discussion_comments SET comment_text = $3, updated_date = $4 WHERE comment_id = $1 AND user_id = $2 RETURNING *`
+        const values = [commentId, userId, updated.comment_text, new Date().toISOString()]
 
         let res = await db.query(text , values)
         return comment.ormComment(res.rows[0]) // give back the edited comment
@@ -227,14 +227,14 @@ exports.deleteComment = async (commentId , userId) => {
 exports.getCommentsForDiscussion = async (id, type) => {
     try {
         
-        //TODO: order by date when we get that field
         const text = `
-            SELECT C.comment_id, C.comment_text, C.parent_id, C.parent_type, C.user_id, SUM(CASE WHEN R.rating = TRUE THEN 1 ELSE 0 END) as likes, SUM(CASE WHEN R.rating = FALSE THEN 1 ELSE 0 END) as dislikes
+            SELECT C.comment_id, C.comment_text, C.parent_id, C.parent_type, C.user_id, C.creation_date, C.updated_date, SUM(CASE WHEN R.rating = TRUE THEN 1 ELSE 0 END) as likes, SUM(CASE WHEN R.rating = FALSE THEN 1 ELSE 0 END) as dislikes
             FROM discussion_comments C
             LEFT JOIN discussion_comment_ratings R ON C.comment_id = R.comment_id
             WHERE C.parent_id = $1
             AND C.parent_type = $2
             GROUP BY C.comment_id, R.comment_id
+            ORDER BY C.creation_date ASC
         ` 
 
         const values = [id, type]
