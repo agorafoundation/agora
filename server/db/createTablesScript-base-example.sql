@@ -590,8 +590,8 @@ CREATE TABLE IF NOT EXISTS discussion_comments (
     parent_id INTEGER, 
     parent_type discussion_parents,
     comment_text VARCHAR,
-    creation_date TIMESTAMP,
-  	updated_date TIMESTAMP,
+    creation_date TIMESTAMP DEFAULT current_timestamp,
+  	updated_date TIMESTAMP DEFAULT current_timestamp,
     user_id INTEGER
 );
 
