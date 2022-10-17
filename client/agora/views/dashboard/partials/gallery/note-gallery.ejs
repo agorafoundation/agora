@@ -93,11 +93,28 @@
 
   <hr class="mt-0">
   <div class="container">
+  <!--Right Click Sub Menu-->
+  <menu id="ctxMenu">
+      <menu title="File">
+          <menu title="Share"></menu>
+          <menu title="Workflow"></menu>
+          <menu title="Options"></menu>
+      </menu>
+      <menu title="Edit">
+          <menu title="Cut"></menu>
+          <menu title="Copy"></menu>
+          <menu title="Paste"></menu>
+      </menu>
+  </menu>
+  <div id="notepad">
+  </div>
 
     <% for (let i = 0; i < availableResources.length + 1; i++) { 
       //add button
       if (i === 0) {
           %>
+        
+        
         <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
           <div class="col mb-3 gallery-col align-items-stretch gallery-col">
             <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
