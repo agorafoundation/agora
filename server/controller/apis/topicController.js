@@ -274,15 +274,21 @@ exports.saveTopic = async ( req, res, redirect ) => {
     
         topic.ownedBy = authUserId;
 
-        // TODO: Add Resources to topics. topicService.saveResourcesForTopic(topicId, resourceIds, resourcesRequired);
-
-
 
         // Activity
         topic.hasActivity = req.body.hasActivity;
         if (topic.hasActivity) {
 
-            let activity = await activityService.saveActivity(req.body.activity);
+            
+
+            /*
+
+            // TODO: check why id is -1
+
+            */
+
+            
+            let activity = await activityService.saveActivity(req.body.activity); 
 
             topic.activity = activity;
             topic.activity.creationTime = Date.now();
@@ -306,7 +312,25 @@ exports.saveTopic = async ( req, res, redirect ) => {
             console.log("[topicController-saveTopic-assessment]: " + JSON.stringify(topic.assessment));
         }
 
+        // Resources are held as a list of resource id's.
+        topic.resources = req.body.resources;
+
+        // Associated resource id's (by position) are required. E.g. below.
+        topic.resourcesRequired = req.body.resourcesRequired;
+
+        /*
+            E.g. 
+            resources = [1, 2, 3, 4]
+            resourcesRequired = [false, false, true, true]
+        */
+
         topic = await topicService.saveTopic( topic );
+
+        // Need to do this after ensuring a topic id > -1.
+        if ( req.body.resources ){
+            let resourcesSaved = await topicService.saveResourcesForTopic(topic.id, req.body.resources, req.body.resourcesRequired)
+            console.log("@ -- @" +resourcesSaved);
+        }
 
         
         /**

@@ -27,6 +27,7 @@ function topic() {
     this.assessment = Assessment.emptyAssessment();
     this.activity = Activity.emptyActivity();
     this.resources = [];
+    this.resourcesRequired = [];
 }
 
 exports.emptyTopic = () => {
@@ -49,5 +50,9 @@ exports.ormTopic = function (row) {
     topic.active = row.visibility;
     topic.createTime = row.create_time;
     topic.ownedBy = row.owned_by;
+    topic.assessment = row.assessment;
+    topic.activity = row.activity;
+    topic.resources = row.resources;
+    topic.resourcesRequired = row.resourcesRequired;
     return topic;
 }
