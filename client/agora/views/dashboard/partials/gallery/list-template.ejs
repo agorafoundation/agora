@@ -12,22 +12,28 @@
       if (contentType === "Note") { %>
 
         <!--Topic List Member -->
-        <li class="list-group-item" style="display: flex; flex-direction: row;">
-            <span><%=name%></span>
+        <li class="list-group-item" id="lv-<%= id %>">
+            <span id="lv-card-title-<%= id %>"><%=name%></span>
             <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
-            <span>
+            <span class="trigger1 trigger2" id="lv-option-<%= id %>">
                 <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+                <span style="position: relative; left: 88%; bottom: 30px; cursor: pointer">
+                    <%- include('./dropdown.ejs'); %>
+                </span>
             </span>
         </li>
             
       <% } else if (contentType === "Goal") { %>
 
         <!--Goal List Member-->
-        <li class="list-group-item">
-            <span><%=name%></span>
+        <li class="list-group-item" id="lv-<%= id %>">
+            <span id="lv-card-title-<%= id %>"><%=name%></span>
             <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
-            <span>
+            <span class="trigger1 trigger2" id="lv-option-<%= id %>">
                 <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+                <span style="position: relative; left: 88%; bottom: 30px; cursor: pointer">
+                    <%- include('./dropdown.ejs'); %>
+                </span>
             </span>
         </li>
     <% }
@@ -36,7 +42,7 @@
 
 <!--List Display-->
 <div id="list-container" style="display: none">
-    <ul class="list-group list-group-flush" style="margin-top: 5%">
+    <ul class="list-group list-group-flush" style="margin-top: 5%" id="list-column">
         <li class="list-group-item" style="font-weight: bold;"><span>Name</span><span style="margin-left: 30%">Tags</span></li>
         <% for (let i = 1; i < availableResources.length + 1; i++) { 
             if(i % 2 === 0) { 

@@ -69,11 +69,11 @@
     background-color: #ddd;
   }
  
-  .dropdown:hover .dropdown-content {
+  .trigger1:hover .dropdown-content {
     display: block;
   }
  
-  .dropdown:hover .dropbtn {
+  .trigger1:hover .trigger2 {
     background-color: #f1f1f1;
   }
 

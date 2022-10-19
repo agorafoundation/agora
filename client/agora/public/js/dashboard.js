@@ -425,12 +425,14 @@ function viewModal(id, name, desc) {
 
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
-  let dropId = "option-" + id;
+  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
+  //let dropId = "option-" + id;
   document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
-  let dropId = "option-" + id;
+  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
+  //let dropId = "option-" + id;
   document.getElementById(dropId).style.visibility = "hidden";
 }
 
@@ -467,10 +469,16 @@ var toggleAllView = () => {
   }
 };
 
+
 ////get the id of the parent element////
 //e is pointer event
 const getId = (e) => {
-  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
+  var parent = null;
+  if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
+    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element's card
+  } else {
+    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element's card
+  }
   return parent.charAt(parent.length - 1); //just the numeric id
 }
 
@@ -487,8 +495,8 @@ const createToast = (text) => {
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
   let parentId = getId(e);
-  let parentNameId = "card-title-" + parentId;
-  let parentDescId = "card-desc-" + parentId;
+  let parentNameId = "lv-card-title-" + parentId;
+  let parentDescId = "gv-card-desc-" + parentId;
 
   let parentName = document.getElementById(parentNameId).innerText;
   let parentDesc = document.getElementById(parentDescId).innerText;
@@ -530,10 +538,9 @@ var cards = document.querySelectorAll("#rename-card").forEach((card) => {
 const updateSaveButton = (nameId, descId) => {
   let tempName = document.getElementById("note-modal-name").value;
   if (tempName) {
-    document.getElementById(nameId).innerText = tempName;
-    document.getElementById(descId).innerText = document.getElementById(
-      "note-modal-description"
-    ).value;
+    document.getElementById("gv-" + nameId).innerText = tempName;
+    document.getElementById("lv-" + nameId).innerText = tempName;
+    document.getElementById("gv-" + descId).innerText = document.getElementById("note-modal-description").value;
     closeRenameModal();
   } else {
     window.alert("All goals/topics must have a name");
@@ -561,7 +568,7 @@ const removeText = (type) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = (e) => {
   let parentId = getId(e);
-  let parentNameId = "card-title-" + parentId;
+  let parentNameId = "lv-card-title-" + parentId;
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
@@ -589,7 +596,8 @@ var deleteCards = document
 
 //changing the properties of the confirm button of the delete-modal depending on the selected card
 const updateDeleteConfirmButton = (id) => {
-  document.getElementById(id).parentElement.remove();
+  document.getElementById("gv-" + id).parentElement.remove();
+  document.getElementById("lv-" + id).remove();
   getTopics();
   exitDeleteModal();
 };
@@ -605,8 +613,8 @@ function exitDeleteModal() {
 
 const topicReroute = (id, newTab) => {
 
-  const title = document.getElementById("card-title-" + id);
-  const description = document.getElementById("card-desc-" + id);
+  const title = document.getElementById("lv-card-title-" + id);
+  const description = document.getElementById("gv-card-desc-" + id);
 
   //pass the title and description to backend
   if (newTab) {
@@ -655,45 +663,81 @@ var newTabCards = document
 
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = (e) => {
-  let parent =
-    e.target.parentElement.parentElement.parentElement.parentElement
-      .parentElement; //the selected card element
-  let clone = parent.cloneNode(true); //clone is a separte but equal element to the original
+  let parentId = getId(e);
+
+  gridParent = document.getElementById("gv-" + parentId).parentElement;
+
+  listParent = document.getElementById("lv-" + parentId);
+
+  gridClone = gridParent.cloneNode(true);
+
+  listClone = listParent.cloneNode(true);
+
+  let newId = checkForNextId();
+
+  gridClone = replaceIds(gridClone, newId, true);
+
+  listClone = replaceIds(listClone, newId, false);
 
   //calculating new id then setting the elements ids to the new one
-  clone = replaceIds(clone, checkForNextId());
 
   //updating the more options of the clone
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener(
     "click",
     showDeleteModal
   ); //delete
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener(
     "click",
     duplicateGoal
   ); //duplicate
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[5].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[5].addEventListener(
     "click",
     copyLink
   ); //open in new tab
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[7].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[7].addEventListener(
     "click",
     openInNewTab
   ); //open in new tab
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
   ); //rename
 
-  //makes the ellipsis of the clone hidden on initialization
-  clone.childNodes[1].childNodes[1].style.visibility = "hidden";
+  ///////////////////////
 
-  //adding the new clone to the array
-  document.getElementById("gallery-row").appendChild(clone);
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
+    "click",
+    showDeleteModal
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[3].addEventListener(
+    "click",
+    duplicateGoal
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[5].addEventListener(
+    "click",
+    copyLink
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[7].addEventListener(
+    "click",
+    openInNewTab
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[9].addEventListener(
+    "click",
+    fillNameandDescription
+  );
+
+
+  //makes the ellipsis of the clone hidden on initialization
+  gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
+
+  //adding the new clone to the grid array
+  document.getElementById("gallery-row").appendChild(gridClone);
+
+  document.getElementById("list-column").appendChild(listClone);
 
   getTopics();
 
-  createToast("Duplicated " + parent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
+  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
 
   e.stopPropagation();
 };
@@ -709,7 +753,8 @@ var duplicateCards = document
 const checkForNextId = () => {
   var ids = [];
   document.querySelectorAll(".countable").forEach((obj) => {
-    ids.push(obj.id);
+    let temp = obj.id.split("-").pop();
+    ids.push(temp);
   });
   ids.sort();
 
@@ -740,15 +785,24 @@ const checkForNextId = () => {
 };
 
 //handles updating an element's various ids
-const replaceIds = (element, newId) => {
-  element.childNodes[1].id = newId; //main id
+const replaceIds = (element, newId, grid) => {
+  if (grid) {
+    element.childNodes[1].id = "gv-" + newId; //main id
 
-  element.childNodes[1].childNodes[1].id =
-    element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
-  element.childNodes[1].childNodes[3].childNodes[1].id =
-    element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
-  element.childNodes[1].childNodes[3].childNodes[3].id =
-    element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
+    element.childNodes[1].childNodes[1].id =
+      element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
+    element.childNodes[1].childNodes[3].childNodes[1].id =
+      element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
+    element.childNodes[1].childNodes[3].childNodes[3].id =
+      element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
+  } else {
+    element.id = "lv-" + newId;
+
+    element.childNodes[1].id = element.childNodes[1].id.slice(0,-1) + newId;
+
+    element.childNodes[5].id = element.childNodes[5].id.slice(0,-1) + newId;
+
+  }
   return element;
 };
 
