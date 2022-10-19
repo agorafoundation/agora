@@ -144,7 +144,6 @@ exports.saveGoalImage = async ( req, res, goalId, filename ) => {
 exports.saveGoal = async ( req, res, redirect ) =>{
 
     let goal = Goal.emptyGoal();
-    
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -202,8 +201,9 @@ exports.saveGoal = async ( req, res, redirect ) =>{
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            this.saveGoalImage( req, res, goal.id, 'peak.svg' );
-            
+            if (!goal.goalImage){
+                this.saveGoalImage( req, res, goal.id, 'peak.svg' );
+            }
         }
         else {
             // files included
