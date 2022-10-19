@@ -316,17 +316,19 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
-            if( topic.topicType == 1 ) {
-                this.saveTopicImage( req, res, topic.id, 'notebook-pen.svg' );
-            }
-            else if ( topic.topicType == 2 ) {
-                this.saveTopicImage( req, res, topic.id, 'cell-molecule.svg' );
-            }
-            else if( topic.topicType == 3 ) {
-                this.saveTopicImage( req, res, topic.id, 'code.svg' );
-            }
-            else {
-                this.saveTopicImage( req, res, topic.id, 'topic-default.png' );
+            if (!topic.topicImage) {
+                if( topic.topicType == 1 ) {
+                    this.saveTopicImage( req, res, topic.id, 'notebook-pen.svg' );
+                }
+                else if ( topic.topicType == 2 ) {
+                    this.saveTopicImage( req, res, topic.id, 'cell-molecule.svg' );
+                }
+                else if( topic.topicType == 3 ) {
+                    this.saveTopicImage( req, res, topic.id, 'code.svg' );
+                }
+                else {
+                    this.saveTopicImage( req, res, topic.id, 'topic-default.png' );
+                }
             }
         }
         else {

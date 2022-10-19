@@ -289,17 +289,19 @@ exports.saveResource = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
-            if( resource.resourceType == 1 ) {
-                this.saveResourceImage( req, res, resource.id, 'notebook-pen.svg' );
-            }
-            else if ( resource.resourceType == 2 ) {
-                this.saveResourceImage( req, res, resource.id, 'cell-molecule.svg' );
-            }
-            else if( resource.resourceType == 3 ) {
-                this.saveResourceImage( req, res, resource.id, 'code.svg' );
-            }
-            else {
-                this.saveResourceImage( req, res, resource.id, 'resource-default.png' );
+            if (!resource.resourceImage) {
+                if( resource.resourceType == 1 ) {
+                    this.saveResourceImage( req, res, resource.id, 'notebook-pen.svg' );
+                }
+                else if ( resource.resourceType == 2 ) {
+                    this.saveResourceImage( req, res, resource.id, 'cell-molecule.svg' );
+                }
+                else if( resource.resourceType == 3 ) {
+                    this.saveResourceImage( req, res, resource.id, 'code.svg' );
+                }
+                else {
+                    this.saveResourceImage( req, res, resource.id, 'resource-default.png' );
+                }
             }
         }
         else {
