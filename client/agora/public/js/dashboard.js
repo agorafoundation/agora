@@ -475,9 +475,9 @@ var toggleAllView = () => {
 const getId = (e) => {
   var parent = null;
   if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
-    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element's card
+    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
   } else {
-    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element's card
+    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
   }
   return parent.charAt(parent.length - 1); //just the numeric id
 }
@@ -666,22 +666,22 @@ const duplicateGoal = (e) => {
   let parentId = getId(e);
 
   gridParent = document.getElementById("gv-" + parentId).parentElement;
-
   listParent = document.getElementById("lv-" + parentId);
 
+  //creating separate, autonomous element that's a clone of the original
   gridClone = gridParent.cloneNode(true);
-
   listClone = listParent.cloneNode(true);
 
+  //getting the next id to use
   let newId = checkForNextId();
 
+  //changing the ids in the cloned element
   gridClone = replaceIds(gridClone, newId, true);
-
   listClone = replaceIds(listClone, newId, false);
 
   //calculating new id then setting the elements ids to the new one
 
-  //updating the more options of the clone
+  //updating the more options of the grid clone
   gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener(
     "click",
     showDeleteModal
@@ -704,6 +704,7 @@ const duplicateGoal = (e) => {
   ); //rename
 
   ///////////////////////
+  //updating the more options of the list clone
 
   listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
     "click",
@@ -730,9 +731,10 @@ const duplicateGoal = (e) => {
   //makes the ellipsis of the clone hidden on initialization
   gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
 
-  //adding the new clone to the grid array
+  //adding the new clone to the grid container
   document.getElementById("gallery-row").appendChild(gridClone);
 
+  //adding the new clone to the list container
   document.getElementById("list-column").appendChild(listClone);
 
   getTopics();
