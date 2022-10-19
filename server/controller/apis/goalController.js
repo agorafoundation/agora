@@ -116,7 +116,6 @@ exports.getAllGoalsForAuthUser = async ( req, res ) => {
  * @param {*} goalId 
  */
 exports.saveGoalImage = async ( req, res, goalId, filename ) => {
-
     // save image in db and delete old file  
     if( goalId > 0 ) {
         goalService.updateGoalImage( goalId, filename ).then( ( rValue ) => {
