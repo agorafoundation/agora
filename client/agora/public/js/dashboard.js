@@ -495,11 +495,11 @@ const createToast = (text) => {
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
   let parentId = getId(e);
-  let parentNameId = "lv-card-title-" + parentId;
-  let parentDescId = "gv-card-desc-" + parentId;
+  let parentNameId = "card-title-" + parentId;
+  let parentDescId = "card-desc-" + parentId;
 
-  let parentName = document.getElementById(parentNameId).innerText;
-  let parentDesc = document.getElementById(parentDescId).innerText;
+  let parentName = document.getElementById("lv-" + parentNameId).innerText;
+  let parentDesc = document.getElementById("gv-" + parentDescId).innerText;
 
   //setting the onclick event of the save button depenidng on the id of the clicked card
   document
