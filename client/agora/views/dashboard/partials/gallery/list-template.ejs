@@ -1,0 +1,48 @@
+<% const showTags=(tags) => {
+    for(let i=0; i < tags.length; i++) { %>
+        <span class="badge badge-primary topic-badge">
+          <%= tags[i]%>
+        </span>
+    <% }
+} %>
+
+<% //name:string, description:string, tags:array, content:array %>
+    <% const renderListCard=(id,name,desc,tags,contentType, content)=> { 
+        
+      if (contentType === "Note") { %>
+
+        <!--Topic List Member -->
+        <li class="list-group-item" style="display: flex; flex-direction: row;">
+            <span><%=name%></span>
+            <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
+            <span>
+                <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+            </span>
+        </li>
+            
+      <% } else if (contentType === "Goal") { %>
+
+        <!--Goal List Member-->
+        <li class="list-group-item">
+            <span><%=name%></span>
+            <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
+            <span>
+                <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+            </span>
+        </li>
+    <% }
+}%>
+</div>
+
+<!--List Display-->
+<div id="list-container" style="display: none">
+    <ul class="list-group list-group-flush" style="margin-top: 5%">
+        <li class="list-group-item" style="font-weight: bold;"><span>Name</span><span style="margin-left: 30%">Tags</span></li>
+        <% for (let i = 1; i < availableResources.length + 1; i++) { 
+            if(i % 2 === 0) { 
+                renderListCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
+            } else {
+                renderListCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
+            }
+        } %>
+    </ul>

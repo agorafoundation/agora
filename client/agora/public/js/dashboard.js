@@ -836,3 +836,20 @@ const removeElement = (id, removed) => {
   }
   return removed;
 }
+
+//////View Toggle////////////
+
+const toggleGrid = () => {
+  document.getElementById("list-container").style.display = "none";
+  document.getElementById("main-container").appendChild(document.getElementById("grid-container"));
+  document.getElementById("grid-container").style.display = "block";
+  
+}
+
+const toggleList = () => {
+  document.getElementById("grid-container").style.display = "none";
+  document.getElementById("main-container").appendChild(document.getElementById("list-container"));
+  document.getElementById("list-container").style.display = "block";
+}
+
+window.onload(toggleGrid());
