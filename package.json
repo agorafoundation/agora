@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/briangormanly/agora/issues"
   },
-  "homepage": "https://github.com/briangormanly/agora#readme"
+  "homepage": "https://github.com/briangormanly/agora#readme",
+  "devDependencies": {
+    "eslint": "^8.25.0"
+  }
 }
