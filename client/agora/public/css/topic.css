@@ -1,0 +1,385 @@
+.topic-body {
+    transition: margin-left .5s;
+}
+
+.topic-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    margin-bottom: 50px;
+    border-radius: 20px;
+    border:1px solid lightgray;
+  }
+
+.header-div {
+    margin-left: 20px;
+    font-size: 40px;
+}
+
+.header {
+    padding: 10px 10px;
+    position: relative;
+}
+
+#divider {
+    height: 75px;
+    margin-right: 5px;
+}
+
+#new-tag {
+    font-size: smaller;
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.placeholder {
+    border: none;
+    border-bottom: 1px solid lightgrey;
+    padding-left: 0px;
+}
+
+.placeholder:focus {
+    border-bottom: 3px solid #2c3e50;
+    outline: 0;
+}
+
+#ellipsis {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 40px;
+    height: 30px;
+    width: 30px;
+    margin-top: 10px;
+}
+
+#topic1 {
+    display: block;
+    width: 99%;
+}
+
+#topic2 {
+    display: none;
+    width: 99%;
+}
+
+.material-symbols-outlined {
+    font-size: 60px;
+    color: black;
+    cursor: pointer;
+    padding: 3px 3px;
+    float:right
+}
+
+.textarea-div {
+    resize: vertical;
+    margin: 5px;
+    margin-bottom: 40px;
+    width: 100%;
+    height: 300px;
+    padding: 5px;
+    border: 1px solid #505050;
+    border-radius: 10px;
+}
+
+#edit-icon {
+    font-size: 40px;
+    margin-left: 30px;
+}
+
+#preview-icon {
+    font-size: 40px;
+    margin-left: 30px;
+}
+
+.description {
+    resize: none;
+    width: 18%;
+    height: 60px;
+    border: 1px solid lightgrey;
+    padding-top: 10px;
+    padding-left: 10px;
+    margin-left: 20px;
+}
+
+.description:focus {
+    border: 1px solid #2c3e50;
+    outline: 0;
+}
+
+#description {
+    margin-top: 20px;
+    font-size: x-large;
+}
+
+#workspace-title {
+    width: 20%;
+}
+
+
+
+/* File Display  -------------------------*/
+.hidden {
+    display: none;
+}
+
+#show-files {
+    font-size: 90px;
+    color: black;
+    cursor: pointer;
+    padding: 10px 10px;
+    flex-direction: column;
+}
+
+#file-display {
+    height: 450px;
+    width: 250px;
+    position:absolute;
+    right: 5px;
+    top: 750px;
+    overflow: auto;
+}
+
+.file-display-shown {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+}
+
+.file-display-content {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    background-color: transparent
+}
+
+.file-display-content:hover {
+    text-decoration: none;
+}
+
+.file-display-icon {
+    position: relative;
+    left: 180px;
+    padding: 0; 
+    margin: 0; 
+    font-size: 49px;
+}
+.file-display-icon:hover {
+    background-color: #f4f4f5;
+    font-size: 50px;
+}
+
+.file-display-name {
+    position: absolute;
+    right: 35%;
+    padding: 3px 12px;
+    font-size: 70%;
+    color: white;
+    letter-spacing: 1px;
+    border-radius: 15%;
+    background-color: #3A3B3C;
+    margin-top: 10%;
+    border: 1px solid gray;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+}
+/* END File Display ---------------------- */
+
+
+
+
+/* Tabs ---------------------------------- */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+  }
+  
+.tab button:hover {
+    background-color: #ddd;
+  }
+  
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+  }
+
+/* END Tabs --------------------------------- */
+
+
+
+
+/* Tags --------------------------------------*/
+#mySearch {
+    width: 10%;
+    font-size: 18px;
+    padding: 11px;
+    border-bottom: 1px solid #ddd;
+    font-size: 20px;
+    margin-left: 5px;
+    outline: none;
+    display: inline;
+  }
+
+#mySearch:focus {
+    border-bottom: 2px solid #2c3e50
+}
+
+.tag-list .new-tag{
+    position: absolute;
+    top: 75px;
+    left: 90px;
+    background-color: white;
+    display: none;
+    z-index: 10;
+}
+  
+.tag-list .tag-list-element .new-tag{
+    padding: 12px;
+    color: black;
+    display: block;
+}
+  
+.tag-list .tag-list-element .new-tag{
+    background-color: #eee;
+}
+
+.tag-list-element  {
+    margin-left: 45px;
+    font-size: large;
+    display: none;
+    width: 190px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+}
+
+.new-tag {
+    margin-top: 0;
+}
+
+  #curr-tags {
+    width: 60%;
+    display: inline;
+    float: right;
+    margin-right: 20%;
+    margin-top: 1%;
+    font-size: smaller;
+  }
+
+  .styled-tags {
+    display: inline;
+    margin-right: 10px;
+    background-color:aliceblue;
+    padding: 5px 5px;
+  }
+
+  .empty-state {
+    height: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .empty-state-text {
+    width: 50%;
+    height: auto;
+    text-align: center;
+  }
+
+/* END Tags*/
+
+
+
+
+/* Drag and drop ----------------------------------------------*/
+/* started from: https://codepen.io/dcode-software/pen/xxwpLQo */
+.resources-zone{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 95%;
+    height: auto;
+  }
+
+.drop-zone {
+    padding: 5px;
+    border-radius: 10px;
+    
+}
+
+  .drop-zone-show {
+    margin: 5px;
+    margin-bottom: 40px;
+    width: 100%;
+    height: 500px;
+    padding: 5px;
+    border: 1px dashed #505050;
+    border-radius: 10px;
+  }
+    
+  .drop-zone--over {
+      border-style: solid;
+  }
+    
+  .drop-zone__input {
+      display: none;
+  }
+
+  .drop-zone__title {
+    width: 95%;
+    border: none;
+    border-bottom: 1px solid gray;
+    padding: 10px 5px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .drop-zone__title:focus {
+    border-bottom: 2px solid #2c3e50;
+    outline: 0;
+  }
+
+  .drop-zone__thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background-size: cover;
+      position: relative;
+  }
+    
+  .drop-zone__thumb::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 5px 0;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: large;
+      text-align: center;
+  }
+  /* End drag and drop -------------------------------------*/

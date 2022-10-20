@@ -3,12 +3,12 @@ if (document.getElementById("noteEditor")) {
   noteEditor = SUNEDITOR.create("noteEditor", {
     toolbarContainer: "#toolbar_container",
     showPathLabel: false,
-    defaultTag: "h1",
+    defaultTag: "p",
     charCounter: true,
     charCounterLabel: "Char Count",
     width: "100%",
     height: "auto",
-    minHeight: "800px",
+    minHeight: "1500px",
     defaultStyle: "font-size:22px;",
     buttonList: [
       ["undo", "redo", "font", "fontSize", "formatBlock"],
@@ -51,11 +51,7 @@ if (document.getElementById("noteEditor")) {
   };
 
   noteEditor.onKeyUp = (e) => {
-    if (e.key == "Enter") {
-      noteEditor.setDefaultStyle("font-size: 22px;", {
-        defaultTag: "p",
-      });
-    } else if (e.key == "/") {
+    if (e.key == "/") {
         noteEditor.insertHTML(
         '<div><button style=background:pink;>Hello</button></div>',
         true
@@ -95,197 +91,82 @@ if (document.getElementById("noteEditor")) {
     }
 
     if (numImages != numFileDrops) {
-      alert("Not an image");
       // for temporary testing
       noteEditor.insertHTML(
-        '<div style="border-style:solid">' + fileName + '</div><br/>',
-        true)
+        '<div class="testing" id="myFile" contenteditable="false">' + fileName + '</div><br/>',
+        true);
+      let newResource = document.createElement("div");
+      console.log(newResource)
+      newResource.setAttribute("id", "myResource");
+      newResource.innerHTML = fileName;
+      newResource.style.display = "none";
+      document.getElementById("note-div").appendChild(newResource);
     }
   }
+
+
+
+
+
+let isMoving = false;
+
+  function onMouseMove (e) {
+    let resource = document.getElementById('myResource');
+    resource.style.left = e.pageX + 30 + 'px';
+    resource.style.top = e.pageY + 30 + 'px';
+  }
+
+  noteEditor.onFocus = () => {
+    noteEditor.core.focus();
+    console.log(noteEditor.core)
+
+    let element = document.querySelector(".testing");
+    let resource = document.getElementById('myResource');
+
+    if (resource && element) {
+
+        document.addEventListener("mousedown", function(e) {
+          if (e.target == element) {
+            e.preventDefault();
+            console.log('dragging');
+            isMoving = true;
+            resource.style.display = "block";
+            element.style.display = "none";
+          }
+        });
+
+        document.addEventListener("mouseup", function(e) {
+          if (isMoving) {
+            console.log('dropped');
+            resource.style.display = "none";
+            isMoving = false;
+            element.remove();
+            core.blur();
+            noteEditor.insertHTML(
+              '<div class="testing" id="myFile" contenteditable="false">' + resource.innerHTML + '</div><br/>',
+              true);
+          }
+        });
+      
+      document.addEventListener('mousemove', onMouseMove);
+
+    }
+  }
+
+  // noteEditor.onClick = () => {
+  //   var startPos = noteEditor.selectionStart;
+  //       var endPos = noteEditor.selectionEnd;
+  //       console.log(startPos + ", " + endPos);
+  // }
 }
   /* END Note Editor Events  ---------------------------------------------------*/
 
 
 
 
-// Change tabs
-function openTab(evt, tabName) {
-  var i, tabcontent, tablinks;
-
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-
-  // Get all elements with class="tablinks" and remove the class "active"
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-
-  // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-
-function tagSearch() {
-  let input, filter, ul, li, tag, i;
-  input = document.getElementById("mySearch");
-  filter = input.value.toUpperCase();
-  ul = document.querySelector(".tag-list");
-  li = ul.getElementsByTagName("li");
-
-  if (filter == "") {
-    ul.style.display = "none";
-  } else {
-    ul.style.display = "block";
-    // Hide items that don't match search query
-    for (i = 0; i < li.length; i++) {
-      tag = li[i].innerHTML;
-      if (tag.toUpperCase().indexOf(filter) > -1) {
-        li[i].style.display = "block";
-      } else {
-        li[i].style.display = "none";
-      }
-    }
-  }
-  // Always show new tag option
-  document.querySelector("#new-tag-element").style.display = "block";
-}
-
-function newTag() {
-  // Add the new tag to the search list
-  const ul = document.querySelector(".tag-list");
-  const li = document.createElement("li");
-  const tagName = document.getElementById("mySearch").value;
-
-  li.setAttribute("class", "tag-list-element");
-  li.innerHTML = tagName;
-  ul.appendChild(li);
-
-  // create the tag and add to existing tags
-  this.addTag(li);
-}
-
-// Add new tag by pressing enter key
-let noteEditorDiv = document.getElementById("noteEditor");
-ul = document.querySelector(".tag-list");
-document.addEventListener("keyup", function(e) {
-  if (e.key == "Enter" && ul.style.display == "block") {
-    newTag();
-  }
-});
-
-let currTagList = [];
-function addTag(selectedTag) {
-  // check that selected tag isn't already active
-  let isActiveTag = false;
-  for (let i = 0; i < currTagList.length; i++) {
-    if (currTagList[i] === selectedTag.innerHTML) {
-      isActiveTag = true;
-    }
-  }
-  if (!isActiveTag) {
-    const currTags = document.getElementById("curr-tags");
-    const newTag = document.createElement("div");
-
-    newTag.setAttribute("class", "styled-tags");
-    newTag.innerHTML = selectedTag.innerHTML;
-    currTags.appendChild(newTag);
-    currTagList.push(newTag.innerHTML);
-  }
-}
 
 
-// ************************ Drag and drop ***************** //
-/**
- * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
- *
- */
- if (document.querySelectorAll(".drop-zone")) {
-  document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
-    const dropZoneElement = inputElement.closest(".drop-zone");
-
-    inputElement.addEventListener("change", (e) => {
-      if (inputElement.files.length) {
-        updateThumbnail(dropZoneElement, inputElement.files[0]);
-      }
-    });
-
-    dropZoneElement.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropZoneElement.classList.add("drop-zone--over");
-    });
-
-    ["dragleave", "dragend"].forEach((type) => {
-      dropZoneElement.addEventListener(type, (e) => {
-        dropZoneElement.classList.remove("drop-zone--over");
-      });
-    });
-
-    dropZoneElement.addEventListener("drop", (e) => {
-      e.preventDefault();
-
-      if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
-        if (e.dataTransfer.files[0].size <= 1048576) {
-          inputElement.files = e.dataTransfer.files;
-          updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
-        } else {
-          alert("Image size limit is 1MB!");
-        }
-      }
-
-      dropZoneElement.classList.remove("drop-zone--over");
-    });
-  });
-
-  /**
-   * Updates the thumbnail on a drop zone element.
-   *
-   * @param {HTMLElement} dropZoneElement
-   * @param {File} file
-   */
-
-  function updateThumbnail(dropZoneElement, file) {
-    let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
-
-        mydiv = document.createElement('div');
-        mydiv.className = "drop-zone-show";
-        inputfile = document.createElement('input');
-        inputfile.type = "file";
-        inputfile.name = "resourceImageField";
-        inputfile.className = "drop-zone__input";
-      
-        // First time - there is no thumbnail element, so lets create it
-        thumbnailElement = document.createElement("div");
-        thumbnailElement.classList.add("drop-zone__thumb");
-        mydiv.appendChild(thumbnailElement);
-      
-        thumbnailElement.dataset.label = file.name;
-      
-        // Show thumbnail for image files
-        if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-        
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-            };
-        
-        } else {
-            thumbnailElement.style.backgroundImage = null;
-        }
-        mydiv.appendChild(inputfile);
-        document.getElementById("resources-zone").appendChild(mydiv);
-  }
-}
-// ************************ END Drag and drop ***************** //
-
-
-
-
-
-
+/* File Dropdown ----------------------------------------- */
 
 // // Toggles the rendering of more options menu
 // const toggleMoreOptions = () => {
@@ -324,3 +205,5 @@ function addTag(selectedTag) {
 // const returnFiles = () => {
 //     return [{name: "file 1", onClick: onClickTesting()},{name: "file 2", onClick: onClickTesting()}];
 // }
+
+/* END File Dropdown ----------------------------------------- */
