@@ -1,36 +1,20 @@
-<!DOCTYPE html>
-
-<html>
-
-  <head>
-    <script src="../../../../public/js/dashboard"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    <%- include('../../../partials/head.ejs'); %>
-  </head>
-
-  <body>
-    <!--Declaring ejs function to display cards-->
-    <%- include('./delete-modal.ejs'); %>
-    <%- include('./rename-modal.ejs'); %>
-    <%- include('./alert-toast.ejs'); %>
-    <%- include('./new-topic-goal.ejs'); %>
-    <% //name:string, description:string, tags:array, content:array %>
+<% //name:string, description:string, tags:array, content:array %>
     <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
         
       if (contentType === "Note") { %>
 
-        <!--Note Card -->
+        <!--Topic Card -->
         <div class="col mb-3 align-items-stretch gallery-col query-countable">
-          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
-            <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
+          <div class="card h-100 countable" id="gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
+            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
             <div class="card-body d-flex flex-column" id="topic">
-              <h5 class="card-title" id="card-title-<%= id %>">
+              <h5 class="card-title" id="gv-card-title-<%= id %>">
                 <%= name %>
               </h5>
-              <p class="card-text mb-4" id="card-desc-<%= id %>">
+              <p class="card-text mb-4" id="gv-card-desc-<%= id %>">
                 <%= desc %>
               </p>
             </div>
@@ -50,16 +34,16 @@
 
         <!--Goal Card-->
         <div class="col mb-3 align-items-stretch gallery-col query-countable">
-          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
-            <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
+          <div class="card h-100 countable" id="gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
             <div class="card-body d-flex flex-column" id="goal">
-              <h5 class="card-title" id="card-title-<%= id %>">
+              <h5 class="card-title" id="gv-card-title-<%= id %>">
                   <%= name %>
               </h5>
-              <div id="card-desc-<%= id %>"></div>
+              <div id="gv-card-desc-<%= id %>"></div>
               <div>
                 <% if (content) { %>
                   <ul class="list-group list-group-flush list-grid">
@@ -83,22 +67,28 @@
             </div>
           </div>
         </div>
-      <% }}%>
+    <% }}%>
 </div>
 
-<!--View Toggle-->
-<%- include('./view-toggle.ejs'); %>  
-
-<!--List Toggle-->
-<%- include('./list-toggle.ejs'); %>
-
-<!--Search bar-->
-<input id="topic-search" class="card-search" placeholder="Search" oninput="queryTopics(document.getElementById('topic-search').value, topicArr)"/>
-
-  <hr class="mt-0">
-  <div class="container" id="main-container">
-    <%- include('./grid-template.ejs'); %>
-    <%- include('./list-template.ejs'); %>
-    
-    </div>      
-</html>
+<div id="grid-container" style="display: none">
+    <% for (let i = 0; i < availableResources.length + 1; i++) { 
+        //add button
+        if (i === 0) {
+            %>
+        <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
+            <div class="col mb-3 gallery-col align-items-stretch gallery-col">
+            <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
+                <div class="card-body d-flex flex-column mt-1" id="add">
+                <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content"
+                    alt="Add content">
+                </div>
+            </div>
+            </div>
+            <% }else{ 
+            if(i % 2 === 0) {%>
+            <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
+            }else{
+                renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
+            } %>
+        <% }}%>
+    </div>
