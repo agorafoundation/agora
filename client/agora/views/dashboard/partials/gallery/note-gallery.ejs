@@ -13,8 +13,78 @@
     <%- include('./delete-modal.ejs'); %>
     <%- include('./rename-modal.ejs'); %>
     <%- include('./alert-toast.ejs'); %>
-    
-    
+    <%- include('./new-topic-goal.ejs'); %>
+    <% //name:string, description:string, tags:array, content:array %>
+    <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
+        
+      if (contentType === "Note") { %>
+
+        <!--Note Card -->
+        <div class="col mb-3 align-items-stretch gallery-col query-countable">
+          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
+            <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
+              <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+              <%- include('./dropdown.ejs'); %>
+            </div>
+            <div class="card-body d-flex flex-column" id="topic">
+              <h5 class="card-title" id="card-title-<%= id %>">
+                <%= name %>
+              </h5>
+              <p class="card-text mb-4" id="card-desc-<%= id %>">
+                <%= desc %>
+              </p>
+            </div>
+            <div class="card-footer">
+              <% for(let i=0; i < tags.length; i++) { %>
+                <span class="badge badge-primary topic-badge">
+                  <%= tags[i]%>
+                </span>
+              <% } %>
+              <span class="badge badge-dark note-badge">
+                <%= contentType %>
+              </span>
+            </div>
+          </div>
+        </div>
+      <% } else if (contentType === "Goal") { %>
+
+        <!--Goal Card-->
+        <div class="col mb-3 align-items-stretch gallery-col query-countable">
+          <div class="card h-100 countable" id="<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+            <div class="dropdown dropbtn" id="option-<%= id %>" style="visibility: hidden">
+              <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+              <%- include('./dropdown.ejs'); %>
+            </div>
+            <div class="card-body d-flex flex-column" id="goal">
+              <h5 class="card-title" id="card-title-<%= id %>">
+                  <%= name %>
+              </h5>
+              <div id="card-desc-<%= id %>"></div>
+              <div>
+                <% if (content) { %>
+                  <ul class="list-group list-group-flush list-grid">
+                    <% content.slice(0,8).forEach((item) => { %>
+                      <!--topicReroute() below has a filler id-->
+                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+            <div class="card-footer" >
+              <% for(let i=0; i < tags.length; i++) { %>
+                <span class="badge badge-primary topic-badge">
+                  <%= tags[i]%>
+                </span>
+              <% } %>
+              <span class="badge badge-dark note-badge">
+                <%= contentType %>
+              </span>
+            </div>
+          </div>
+        </div>
+      <% }}%>
+</div>
 
 <!--View Toggle-->
 <%- include('./view-toggle.ejs'); %>  
