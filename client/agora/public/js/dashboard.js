@@ -830,20 +830,28 @@ const queryTopics = (newVal, arr) => {
   const len = arr.length;
   newVal = newVal.toLowerCase();
   for (let i = 0; i < len; i++) {
-    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element
+    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
+    
+    let idToRemove = (arr[i].childNodes[1].id).slice(-1); //id of the elememnt being checked
 
     if (!elemName.includes(newVal)) {   //checking query
+  
+      if (!hasElement(idToRemove, removedTopics)) {  //has this element not yet already been removed?
 
-      if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
+        let badListElement = document.getElementById("lv-" + idToRemove); //element in list view to be removed
 
-        let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
-        removedTopics.push({ element: badElement, id: arr[i].childNodes[1].id });   //add element to removedTopics
-        badElement.remove();
+        let badGridElement = document.getElementById("gv-" + idToRemove).parentNode;   //element in grid view to be removed
+
+        removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idToRemove });   //add element to removedTopics
+        badGridElement.remove();
+        badListElement.remove();
       }
-    } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
+    } else if (hasElement(idToRemove, removedTopics)) {  //does the query name exist in removedTopics?
 
-      document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedTopics)); //adding the element back to the DOM
-      removedTopics = removeElement(arr[i].childNodes[1].id, removedTopics);  //remove element from removedTopics
+      let addedElements = getElement(idToRemove, removedTopics);
+      document.getElementById("gallery-row").appendChild(addedElements.gridEl); //adding the grid element back to the DOM
+      document.getElementById("list-column").appendChild(addedElements.listEl); //adding the list element back to the DOM
+      removedTopics = removeElement(idToRemove, removedTopics);  //remove element from removedTopics
     }
   }
 }
@@ -870,7 +878,7 @@ const getElement = (id, removed) => {
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
-      output = removed[index].element;
+      output = {gridEl: removed[index].gridElement, listEl: removed[index].listElement};
       done = true;
     }
     index++;
