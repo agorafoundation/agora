@@ -65,11 +65,12 @@
 }
 
 .material-symbols-outlined {
-    font-size: 60px;
     color: black;
     cursor: pointer;
     padding: 3px 3px;
-    float:right
+    float:right;
+    font-size: 40px;
+    margin-left: 30px;
 }
 
 .textarea-div {
@@ -83,14 +84,8 @@
     border-radius: 10px;
 }
 
-#edit-icon {
-    font-size: 40px;
-    margin-left: 30px;
-}
-
-#preview-icon {
-    font-size: 40px;
-    margin-left: 30px;
+#new-resource {
+    font-size: 60px;
 }
 
 .description {

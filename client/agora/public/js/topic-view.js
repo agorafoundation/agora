@@ -26,7 +26,6 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " active";
 
   evt.currentTarget.style.backgroundColor = "#ddd";
-  // document.querySelector(".tablinks").style.backgroundColor = "#ddd"
 }
 
 function tagSearch() {
@@ -113,45 +112,112 @@ function checkActiveHeight() {
     }
 }
 
+
+let numSunEditors = 0;
+let doneIconList = [];
+let editIconList = [];
 function createTextArea() {
-    // Check for filler space
-    if (document.getElementById("filler-space")) {
-        console.log("true")
-        document.getElementById("filler-space").remove();
-    }
+    return new Promise((resolve, reject) => {
+        numSunEditors++;
 
-    // Title element
-    let title = document.createElement('input');
-    title.type = "text";
-    title.className = "drop-zone__title";
-    title.placeholder = "Untitled";
+        // Check for filler space
+        if (document.getElementById("filler-space")) {
+            console.log("true")
+            document.getElementById("filler-space").remove();
+        }
 
-    // Div element that renders the html from the suneditor
-    // This would be a great place to implement resizable divs
-    let textAreaDiv = document.createElement("div");
-    textAreaDiv.setAttribute("id", "noteEditor");
-    textAreaDiv.setAttribute("class", "textarea-div");
+        // Title element
+        let title = document.createElement('input');
+        title.type = "text";
+        title.className = "drop-zone__title";
+        title.placeholder = "Untitled";
 
-    // Edit icon
-    let editIcon = document.createElement('span');
-    editIcon.setAttribute("class", "material-symbols-outlined");
-    editIcon.setAttribute("id", "edit-icon");
-    editIcon.innerHTML = "edit";
+        // Edit icon
+        let editIcon = document.createElement('span');
+        editIcon.setAttribute("class", "material-symbols-outlined");
+        editIcon.setAttribute("id", "edit-icon" + numSunEditors);
+        editIcon.innerHTML = "edit";
+        editIcon.style.display = "none";
 
-    activeTab.appendChild(title);
-    activeTab.appendChild(editIcon);
-    activeTab.appendChild(textAreaDiv);
+        // Done icon
+        let doneIcon = document.createElement('span');
+        doneIcon.setAttribute("class", "material-symbols-outlined");
+        doneIcon.setAttribute("id", "done-icon" +numSunEditors);
+        doneIcon.innerHTML = "done";
 
-    // Hide the empty state
-    document.querySelector(".empty-state").style.display = "none"; 
+        let sunEditor = document.createElement("textarea");
+        sunEditor.setAttribute("id", "sunEditor" + numSunEditors);
 
-    // Maintain a baseline height until 1200px is exceeded
-    activeHeight += 300;
-    console.log(activeHeight);
-    checkActiveHeight()
+        activeTab.appendChild(title);
+        activeTab.appendChild(editIcon);
+        activeTab.appendChild(doneIcon);
+        activeTab.appendChild(sunEditor);
 
-    // Open a new tab with suneditor
-    openSunEditor();
+        doneIconList.push(doneIcon);
+        editIconList.push(editIcon);
+
+        // Hide the empty state
+        document.querySelector(".empty-state").style.display = "none"; 
+
+        // Maintain a baseline height until 1200px is exceeded
+        activeHeight += 300;
+        console.log(activeHeight);
+        checkActiveHeight()
+        resolve();
+    });
+}
+
+let sunEditor = {};
+let sunEditorList = [];
+const createSunEditor = async() => {
+    await createTextArea();
+    sunEditor["sunEditor"+numSunEditors] = SUNEDITOR.create("sunEditor" + numSunEditors, {
+        toolbarContainer: "#toolbar_container",
+        showPathLabel: false,
+        defaultTag: "p",
+        charCounter: true,
+        charCounterLabel: "Char Count",
+        width: "100%",
+        height: "auto",
+        minHeight: "500px",
+        defaultStyle: "font-size:22px;",
+        buttonList: [
+          ["undo", "redo", "font", "fontSize", "formatBlock"],
+          ["fontColor", "hiliteColor", "textStyle"],
+          [
+            "bold",
+            "underline",
+            "italic",
+            "strike",
+            "subscript",
+            "superscript",
+            "removeFormat",
+          ],
+          ["outdent", "indent", "align", "horizontalRule", "list", "table"],
+          [
+            "-right",
+            "link",
+            "image",
+            "video",
+            "showBlocks",
+            "codeView",
+            "preview",
+            "print",
+            "save",
+            "fullScreen",
+          ],
+        ],
+        mode: "classic",
+        lang: SUNEDITOR_LANG.en,
+        "lang(In nodejs)": "en",
+        callBackSave: function (contents, isChanged) {
+          alert(contents);
+          console.log(contents);
+        },
+      });
+
+
+      sunEditorList.push(sunEditor["sunEditor"+numSunEditors]);
 }
 
 /* Drag and Drop ------------------------------------------------------------------------- */
@@ -278,23 +344,56 @@ function createTextArea() {
 /* END Drag and Drop ------------------------------------------------------------------------- */
 
 
-
-function openSunEditor() {
-    window.open(
-        "http://localhost:4200/note", "_blank");
-}
-
-
+/* Suneditor Events ------------------------------------------------------*/
 document.addEventListener("mousemove", function() {
-    if (document.getElementById("edit-icon")) {
-        document.getElementById("edit-icon").addEventListener("click", function() {
-            openSunEditor();
-        });
-    } 
+    for (let i=0; i<sunEditorList.length; i++) {
+        sunEditorList[i].onFocus = () => {
+            document.getElementById(doneIconList[i].id).style.display = "block";
+            document.getElementById(editIconList[i].id).style.display = "none";
+            sunEditor["sunEditor"+(i+1)].readOnly(false);
+        }
+        sunEditorList[i].onChange = (contents, core) => {
+            noteEditor.save();
+          };
+        sunEditorList[i].onKeyUp = (e) => {
+            if (e.key == "/") {
+                noteEditor.insertHTML(
+                '<div><button style=background:pink;>Hello</button></div>',
+                true
+              );
+            }
+          };
+        sunEditorList[i].onImageUpload = () => {
+            // Image upload default does not automatically place cursor after image, so...
+            noteEditor.appendContents("");
+          };
+    }
 });
+/* END Suneditor Events ------------------------------------------------------*/
 
 
-document.addEventListener("click", function() {
+
+document.addEventListener("click", function(e) {
+    if ((e.target.id).includes("done")) {
+        for (let i=0; i<doneIconList.length; i++) {
+            if (doneIconList[i] === e.target) {
+                document.getElementById(editIconList[i].id).style.display = "block";
+                document.getElementById(doneIconList[i].id).style.display = "none";
+                sunEditor["sunEditor"+(i+1)].readOnly(true);
+            }
+        }
+    }
+
+    if ((e.target.id).includes("edit")) {
+        for (let i=0; i<editIconList.length; i++) {
+            if (editIconList[i] === e.target) {
+                document.getElementById(doneIconList[i].id).style.display = "block";
+                document.getElementById(editIconList[i].id).style.display = "none";
+                sunEditor["sunEditor"+(i+1)].readOnly(false);
+            }
+        }
+    }
+
     if (document.querySelector(".tag-list").style.display = "block") {
         document.querySelector(".tag-list").style.display = "none";
         document.querySelector("#new-tag-element").style.display = "none";

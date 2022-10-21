@@ -46,30 +46,30 @@ if (document.getElementById("noteEditor")) {
   });
 
   /* Note Editor Events  ---------------------------------------------------*/
-  noteEditor.onChange = (contents, core) => {
-    noteEditor.save();
-  };
+  // noteEditor.onChange = (contents, core) => {
+  //   noteEditor.save();
+  // };
 
-  noteEditor.onKeyUp = (e) => {
-    if (e.key == "/") {
-        noteEditor.insertHTML(
-        '<div><button style=background:pink;>Hello</button></div>',
-        true
-      );
-    }
-  };
+  // noteEditor.onKeyUp = (e) => {
+  //   if (e.key == "/") {
+  //       noteEditor.insertHTML(
+  //       '<div><button style=background:pink;>Hello</button></div>',
+  //       true
+  //     );
+  //   }
+  // };
 
-  // Close tags list
-  noteEditor.onFocus = () => {
-    document.querySelector(".tag-list").style.display = "none";
-    document.querySelector("#new-tag-element").style.display = "none";
-    document.querySelector("#mySearch").value = "";
-  };
+  // // Close tags list
+  // noteEditor.onFocus = () => {
+  //   document.querySelector(".tag-list").style.display = "none";
+  //   document.querySelector("#new-tag-element").style.display = "none";
+  //   document.querySelector("#mySearch").value = "";
+  // };
 
-  noteEditor.onImageUpload = () => {
-    // Image upload default does not automatically place cursor after image, so...
-    noteEditor.appendContents("");
-  };
+  // noteEditor.onImageUpload = () => {
+  //   // Image upload default does not automatically place cursor after image, so...
+  //   noteEditor.appendContents("");
+  // };
 
   // Since suneditor only supports image upload...
   let numImages = 0;
