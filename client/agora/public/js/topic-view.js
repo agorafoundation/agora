@@ -73,6 +73,9 @@ ul = document.querySelector(".tag-list");
 document.addEventListener("keyup", function(e) {
   if (e.key == "Enter" && ul.style.display == "block") {
     newTag();
+    document.querySelector(".tag-list").style.display = "none";
+    document.querySelector("#new-tag-element").style.display = "none";
+    document.querySelector("#mySearch").value = "";
   }
 });
 
@@ -160,7 +163,7 @@ function createTextArea() {
         document.querySelector(".empty-state").style.display = "none"; 
 
         // Maintain a baseline height until 1200px is exceeded
-        activeHeight += 300;
+        activeHeight += 800;
         console.log(activeHeight);
         checkActiveHeight()
         resolve();
@@ -179,10 +182,10 @@ const createSunEditor = async() => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "500px",
-        defaultStyle: "font-size:22px;",
+        minHeight: "800px",
+        defaultStyle: "font-size:15px;",
         buttonList: [
-          ["undo", "redo", "font", "fontSize", "formatBlock"],
+          ["undo", "redo", "font", "fontSize", "formatBlock"], 
           ["fontColor", "hiliteColor", "textStyle"],
           [
             "bold",
@@ -195,7 +198,6 @@ const createSunEditor = async() => {
           ],
           ["outdent", "indent", "align", "horizontalRule", "list", "table"],
           [
-            "-right",
             "link",
             "image",
             "video",
@@ -394,7 +396,13 @@ document.addEventListener("click", function(e) {
         }
     }
 
-    if (document.querySelector(".tag-list").style.display = "block") {
+    if (document.querySelector(".tag-list") && document.querySelector(".tag-list").style.display == "block") {
+        document.querySelector(".tag-list").style.display = "none";
+        document.querySelector("#new-tag-element").style.display = "none";
+        document.querySelector("#mySearch").value = "";
+    }
+
+    if (document.querySelector("#new-tag-element") && document.querySelector("#new-tag-element").style.display == "block") {
         document.querySelector(".tag-list").style.display = "none";
         document.querySelector("#new-tag-element").style.display = "none";
         document.querySelector("#mySearch").value = "";

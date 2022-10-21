@@ -1,4 +1,4 @@
-.note-body {
+/* .note-body {
     transition: margin-left .5s;
 }
 
@@ -11,12 +11,6 @@
     margin-bottom: 5px;
     padding: 10px 10px;
     position: relative;
-}
-
-#new-tag {
-    font-size: smaller;
-    margin-top: 5px;
-    margin-bottom: 30px;
 }
 
 .placeholder {
@@ -68,7 +62,7 @@
     width: 99%;
 }
 
-/* .testing {
+.testing {
     cursor: pointer;
     border-style:solid;
     width: 20%;
@@ -92,6 +86,6 @@
     width:35px;
     border-radius:50%;
     border:2px solid black;
-  } */
+  }
 
-  
+   */

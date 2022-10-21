@@ -19,18 +19,19 @@
             <div class="header-div">
 
                 <!--Workspace Title-->
-                <div class="header">
+                <div class="header" id="title-div">
                     <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
                 </div>
 
                 <!--Workspace Description-->
-                <div class="header" id="description">
-                    <textarea class="description" id="workspace-desc" placeholder="Description -- ex: really cool stuff"></textarea>
+                <div class="header" id="description-div">
+                    <label class="label">Description</label>
+                    <textarea class="descriptionTA" id="workspace-desc" ></textarea>
                 </div>
 
                 <!--Tags-->
-                <div class="header" id="new-tag">
-                    <label>Tags:</label>
+                <div class="header" id="tag-div">
+                    <label class="label">Tags</label>
                     <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
                     <div id="curr-tags"></div>
         

@@ -93,7 +93,7 @@ if (document.getElementById("noteEditor")) {
     if (numImages != numFileDrops) {
       // for temporary testing
       noteEditor.insertHTML(
-        '<div class="testing" id="myFile" contenteditable="false">' + fileName + '</div><br/>',
+        '<div class="testing" id="myFile" contenteditable="false"><object>  ' + fileName + ' </object></div><br/>',
         true);
       let newResource = document.createElement("div");
       console.log(newResource)
@@ -108,50 +108,65 @@ if (document.getElementById("noteEditor")) {
 
 
 
-let isMoving = false;
 
-  function onMouseMove (e) {
-    let resource = document.getElementById('myResource');
-    resource.style.left = e.pageX + 30 + 'px';
-    resource.style.top = e.pageY + 30 + 'px';
-  }
 
-  noteEditor.onFocus = () => {
-    noteEditor.core.focus();
-    console.log(noteEditor.core)
 
-    let element = document.querySelector(".testing");
-    let resource = document.getElementById('myResource');
 
-    if (resource && element) {
 
-        document.addEventListener("mousedown", function(e) {
-          if (e.target == element) {
-            e.preventDefault();
-            console.log('dragging');
-            isMoving = true;
-            resource.style.display = "block";
-            element.style.display = "none";
-          }
-        });
 
-        document.addEventListener("mouseup", function(e) {
-          if (isMoving) {
-            console.log('dropped');
-            resource.style.display = "none";
-            isMoving = false;
-            element.remove();
-            core.blur();
-            noteEditor.insertHTML(
-              '<div class="testing" id="myFile" contenteditable="false">' + resource.innerHTML + '</div><br/>',
-              true);
-          }
-        });
+
+
+
+
+
+
+
+
+
+
+// let isMoving = false;
+
+//   function onMouseMove (e) {
+//     let resource = document.getElementById('myResource');
+//     resource.style.left = e.pageX + 30 + 'px';
+//     resource.style.top = e.pageY + 30 + 'px';
+//   }
+
+//   noteEditor.onFocus = () => {
+//     noteEditor.core.focus();
+//     console.log(noteEditor.core)
+
+//     let element = document.querySelector(".testing");
+//     let resource = document.getElementById('myResource');
+
+//     if (resource && element) {
+
+//         document.addEventListener("mousedown", function(e) {
+//           if (e.target == element) {
+//             e.preventDefault();
+//             console.log('dragging');
+//             isMoving = true;
+//             resource.style.display = "block";
+//             element.style.display = "none";
+//           }
+//         });
+
+//         document.addEventListener("mouseup", function(e) {
+//           if (isMoving) {
+//             console.log('dropped');
+//             resource.style.display = "none";
+//             isMoving = false;
+//             element.remove();
+//             noteEditor.insertHTML(
+//               '<div class="testing" id="myFile" contenteditable="false">' + resource.innerHTML + '</div><br/>',
+//               true);
+//           }
+//         });
       
-      document.addEventListener('mousemove', onMouseMove);
+//       document.addEventListener('mousemove', onMouseMove);
 
-    }
-  }
+//     }
+//   }
 
   // noteEditor.onClick = () => {
   //   var startPos = noteEditor.selectionStart;
