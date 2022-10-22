@@ -274,22 +274,19 @@ exports.saveTopic = async ( req, res, redirect ) => {
     
         topic.ownedBy = authUserId;
 
+        // Note: If we are able to create assessments/ activities 
+        // outside of topics, we will need to change implementation of handling topic.assessmentId and topic.activityId.
+
 
         // Activity
+        topic.activityId = -1; // Initialize at -1 in case not found.
         topic.hasActivity = req.body.hasActivity;
         if (topic.hasActivity) {
 
             
-
-            /*
-
-            // TODO: check why id is -1
-
-            */
-
-            
             let activity = await activityService.saveActivity(req.body.activity); 
 
+            topic.activityId = activity.id;
             topic.activity = activity;
             topic.activity.creationTime = Date.now();
 
@@ -297,12 +294,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // Assessment
+        topic.assessmentId = -1; // Initialize at -1 in case not found. 
         topic.hasAssessment = req.body.hasAssessment;
         if (topic.hasAssessment) {
 
             let assessment = await assessmentService.saveAssessment(req.body.assessment);
             //assessmentService.getAssessmentById(ass.id);  -- test and fix getAssessmentById
-
+            topic.assessmentId = assessment.id;
             topic.assessment = assessment;
             topic.assessment.creationTime = Date.now();
 
@@ -328,7 +326,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after ensuring a topic id > -1.
         if ( req.body.resources ){
-            let resourcesSaved = await topicService.saveResourcesForTopic(topic.id, req.body.resources, req.body.resourcesRequired)
+            let resourcesSaved = await topicService.saveResourcesForTopic(topic.id, req.body.resources, req.body.resourcesRequired);
             console.log("@ -- @" +resourcesSaved);
         }
 
