@@ -524,7 +524,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
  * @param {Integer} topicId id of the topic 
  * @param {*} resourceIds Array of resource id's to be associated with the topic
  * @returns true for success / false for failure
- */                                                // 1, [1,2, 5, 6], [1, 5],
+ */                                               
  exports.saveResourcesForTopic = async function(topicId, resourceIds, resourcesRequired) {
     // get the most recent version of the topic
     let text = "SELECT * from topics where id = $1";

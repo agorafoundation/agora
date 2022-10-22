@@ -152,7 +152,7 @@ exports.saveCompletedTopic = async function( req, res ) {
     let submittedText = req.body.submittedText;
 
     if( req.session.currentTopic && req.session.authUser ) {
-        // call service?
+
         let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.id );
         if( !completedTopic ) {
             completedTopic = CompletedTopic.emptyCompletedTopic( );
@@ -239,7 +239,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
             console.log("existing topic");
             topic = existingTopic;
         } else {
-            topic.creationTime = Date.now(); // what type does our backend support? Is this fine?
+            topic.creationTime = Date.now();
         }
 
         // add changes from the body if they are passed
@@ -320,7 +320,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         topic = await topicService.saveTopic( topic );
 
-        // Need to do this after ensuring a topic id > -1.
+        // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
             let resourcesSaved = await topicService.saveResourcesForTopic(topic.id, req.body.resources, req.body.resourcesRequired);
             console.log("@ -- @" +resourcesSaved);
