@@ -211,7 +211,6 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
 
 // saveTopic in progress. Still missing handling of attributes: 
 //     this.topicImage = ""; // -- skip testing for now.
-//     this.active = true; -- not being handled. is also duplicate inside Activity object.
 exports.saveTopic = async ( req, res, redirect ) => {
 
     let topic = Topic.emptyTopic();
@@ -271,7 +270,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
     
         topic.ownedBy = authUserId;
 
-        
+
         // Note: If we are able to create assessments/ activities 
         // outside of topics, we will need to change implementation of handling topic.assessmentId and topic.activityId.
 
