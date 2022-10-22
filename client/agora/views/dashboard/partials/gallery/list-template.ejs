@@ -14,7 +14,8 @@
         <!--Topic List Member -->
         <li class="list-group-item view-check" id="lv-<%= id %>">
             <span id="lv-card-title-<%= id %>"><%=name%></span>
-            <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
+            <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
+            <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
             <span class="trigger1 trigger2" id="lv-option-<%= id %>">
                 <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
                 <span style="position: relative; left: 88%; bottom: 30px; cursor: pointer">
@@ -28,7 +29,8 @@
         <!--Goal List Member-->
         <li class="list-group-item view-check a-goal" id="lv-<%= id %>">
             <span id="lv-card-title-<%= id %>"><%=name%></span>
-            <span style="position: absolute; left: 33.5%"><% showTags(tags) %></span>
+            <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
+            <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
             <span class="trigger1 trigger2" id="lv-option-<%= id %>">
                 <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
                 <span style="position: relative; left: 88%; bottom: 30px; cursor: pointer">
@@ -43,7 +45,11 @@
 <!--List Display-->
 <div id="list-container" style="display: none">
     <ul class="list-group list-group-flush" style="margin-top: 5%" id="list-column">
-        <li class="list-group-item" style="font-weight: bold;"><span>Name</span><span style="margin-left: 30%">Tags</span></li>
+        <li class="list-group-item" style="font-weight: bold;">
+            <span>Name</span>
+            <span style="margin-left: 29%">Type</span>
+            <span style="margin-left: 10%">Tags</span>
+        </li>
         <% for (let i = 1; i < availableResources.length + 1; i++) { 
             if(i % 2 === 0) { 
                 renderListCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)

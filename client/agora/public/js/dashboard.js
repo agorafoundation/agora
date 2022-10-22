@@ -470,7 +470,7 @@ const toggleAllView = () => {
 ////get the id of the parent element////
 //e is pointer event
 const getId = (e) => {
-  var parent = null;
+  let parent;
   if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
     parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
   } else {
