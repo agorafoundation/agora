@@ -179,3 +179,8 @@
   right: 1%;
   margin-top: 3px;
 }
+
+.list-view:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}

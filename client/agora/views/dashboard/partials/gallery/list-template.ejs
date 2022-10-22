@@ -12,7 +12,7 @@
       if (contentType === "Note") { %>
 
         <!--Topic List Member -->
-        <li class="list-group-item view-check" id="lv-<%= id %>">
+        <li class="list-group-item list-view view-check" id="lv-<%= id %>" onclick="topicReroute(id, false)">
             <span id="lv-card-title-<%= id %>"><%=name%></span>
             <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
             <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
@@ -27,7 +27,7 @@
       <% } else if (contentType === "Goal") { %>
 
         <!--Goal List Member-->
-        <li class="list-group-item view-check a-goal" id="lv-<%= id %>">
+        <li class="list-group-item list-view view-check a-goal" id="lv-<%= id %>" onclick="topicReroute(id, false)">
             <span id="lv-card-title-<%= id %>"><%=name%></span>
             <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
             <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
