@@ -314,9 +314,9 @@ exports.saveTopic = async ( req, res, redirect ) => {
             // do nothing we are going to keep the original file
             console.log("topic trigger modification clause");
         }
-        else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
-            // no files uploaded
-            if (!topic.topicImage) {
+        else {
+            if ( (!req.files || Object.keys( req.files ).length === 0) && !existingTopic ) {   // no files were uploaded       
+                // no files uploaded
                 if( topic.topicType == 1 ) {
                     this.saveTopicImage( req, res, topic.id, 'notebook-pen.svg' );
                 }
@@ -330,67 +330,70 @@ exports.saveTopic = async ( req, res, redirect ) => {
                     this.saveTopicImage( req, res, topic.id, 'topic-default.png' );
                 }
             }
-        }
-        else {
-            // files included
-            const file = req.files.topicImageField;
-            const timeStamp = Date.now();
-
-            // check the file size
-            if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded for topic`);
-
-                if(redirect) {
-                    req.session.messageType = "warn";
-                    req.session.messageTitle = "Image too large!";
-                    req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return topic;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
-                    res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
-                    res.status( 422 ).json( message );
-                }
-                
-            }
-            else if( topic ) {
-                await file.mv(topicUploadPath + timeStamp + file.name, async (err) => {
-                    if (err) {
-                        console.log( "Error uploading profile picture : " + err );
-                        if(redirect) {
-                            req.session.messageType = "error";
-                            req.session.messageTitle = "Error saving image!";
-                            req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
-                            res.redirect( 303, '/dashboard' );
-                            return topic;
-                        }
-                        else {
-                            const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
-                            res.set( "x-agora-message-title", "Error saving image!" );
-                            res.set( "x-agora-message-detail", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
-                            res.status( 422 ).json( message );
-                        }
-                    }
-                    else {
-                        await this.saveTopicImage( req, res, topic.id, timeStamp + file.name );
-                    }
-                });
+            else if ( (!req.files || Object.keys( req.files ).length === 0) && existingTopic ) {   // no files were uploaded       
+                console.log("Image does not need to be resaved.");
             }
             else {
-                if(redirect) {
-                    req.session.messageType = "error";
-                    req.session.messageTitle = "Error saving image!";
-                    req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return topic;
+                // files included
+                const file = req.files.topicImageField;
+                const timeStamp = Date.now();
+
+                // check the file size
+                if( file.size > maxSize ) {
+                    console.log(`File ${file.name} size limit has been exceeded for topic`);
+
+                    if(redirect) {
+                        req.session.messageType = "warn";
+                        req.session.messageTitle = "Image too large!";
+                        req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.";
+                        res.redirect( 303, '/dashboard' );
+                        return topic;
+                    }
+                    else {
+                        const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
+                        res.set( "x-agora-message-title", "Image too large!" );
+                        res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
+                        res.status( 422 ).json( message );
+                    }
+                    
+                }
+                else if( topic ) {
+                    await file.mv(topicUploadPath + timeStamp + file.name, async (err) => {
+                        if (err) {
+                            console.log( "Error uploading profile picture : " + err );
+                            if(redirect) {
+                                req.session.messageType = "error";
+                                req.session.messageTitle = "Error saving image!";
+                                req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
+                                res.redirect( 303, '/dashboard' );
+                                return topic;
+                            }
+                            else {
+                                const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
+                                res.set( "x-agora-message-title", "Error saving image!" );
+                                res.set( "x-agora-message-detail", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
+                                res.status( 422 ).json( message );
+                            }
+                        }
+                        else {
+                            await this.saveTopicImage( req, res, topic.id, timeStamp + file.name );
+                        }
+                    });
                 }
                 else {
-                    const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
-                    res.set( "x-agora-message-title", "Error saving image!" );
-                    res.set( "x-agora-message-detail", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
-                    res.status( 422 ).json( message );
+                    if(redirect) {
+                        req.session.messageType = "error";
+                        req.session.messageTitle = "Error saving image!";
+                        req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
+                        res.redirect( 303, '/dashboard' );
+                        return topic;
+                    }
+                    else {
+                        const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
+                        res.set( "x-agora-message-title", "Error saving image!" );
+                        res.set( "x-agora-message-detail", "There was a error uploading your image for this topic. Your topic should be saved without the image." );
+                        res.status( 422 ).json( message );
+                    }
                 }
             }
         }

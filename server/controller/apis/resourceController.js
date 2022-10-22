@@ -287,9 +287,8 @@ exports.saveResource = async ( req, res, redirect ) => {
             // do nothing we are going to keep the original file
             console.log("resource trigger modification clause");
         }
-        else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
-            // no files uploaded
-            if (!resource.resourceImage) {
+        else {
+            if ( (!req.files || Object.keys( req.files ).length === 0) && !existingResource ) {   // no files were uploaded       
                 if( resource.resourceType == 1 ) {
                     this.saveResourceImage( req, res, resource.id, 'notebook-pen.svg' );
                 }
@@ -303,67 +302,70 @@ exports.saveResource = async ( req, res, redirect ) => {
                     this.saveResourceImage( req, res, resource.id, 'resource-default.png' );
                 }
             }
-        }
-        else {
-            // files included
-            const file = req.files.resourceImageField;
-            const timeStamp = Date.now();
-
-            // check the file size
-            if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded for resource`);
-
-                if( redirect ) {
-                    req.session.messageType = "warn";
-                    req.session.messageTitle = "Image too large!";
-                    req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
-                    res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
-                    res.status( 422 ).json( message );
-                }
-                
-            }
-            else if( resource ) {
-                await file.mv(resourceUploadPath + timeStamp + file.name, async (err) => {
-                    if ( err ) {
-                        console.log( "Error uploading profile picture : " + err );
-                        if( redirect ) {
-                            req.session.messageType = "error";
-                            req.session.messageTitle = "Error saving image!";
-                            req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                            res.redirect( 303, '/dashboard' );
-                            return resource;
-                        }
-                        else {
-                            const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.set( "x-agora-message-title", "Error saving image!" );
-                            res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.status( 422 ).json( message );
-                        }
-                    }
-                    else {
-                        await this.saveResourceImage( req, res, resource.id, timeStamp + file.name );
-                    }
-                });
+            else if ( (!req.files || Object.keys( req.files ).length === 0) && existingResource) {
+                console.log("Image does not need to be resaved.");
             }
             else {
-                if( redirect ) {
-                    req.session.messageType = "error";
-                    req.session.messageTitle = "Error saving image!";
-                    req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
+                // files included
+                const file = req.files.resourceImageField;
+                const timeStamp = Date.now();
+
+                // check the file size
+                if( file.size > maxSize ) {
+                    console.log(`File ${file.name} size limit has been exceeded for resource`);
+
+                    if( redirect ) {
+                        req.session.messageType = "warn";
+                        req.session.messageTitle = "Image too large!";
+                        req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
+                        res.redirect( 303, '/dashboard' );
+                        return resource;
+                    }
+                    else {
+                        const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                        res.set( "x-agora-message-title", "Image too large!" );
+                        res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                        res.status( 422 ).json( message );
+                    }
+                    
+                }
+                else if( resource ) {
+                    await file.mv(resourceUploadPath + timeStamp + file.name, async (err) => {
+                        if ( err ) {
+                            console.log( "Error uploading profile picture : " + err );
+                            if( redirect ) {
+                                req.session.messageType = "error";
+                                req.session.messageTitle = "Error saving image!";
+                                req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
+                                res.redirect( 303, '/dashboard' );
+                                return resource;
+                            }
+                            else {
+                                const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
+                                res.set( "x-agora-message-title", "Error saving image!" );
+                                res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
+                                res.status( 422 ).json( message );
+                            }
+                        }
+                        else {
+                            await this.saveResourceImage( req, res, resource.id, timeStamp + file.name );
+                        }
+                    });
                 }
                 else {
-                    const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.set( "x-agora-message-title", "Error saving image!" );
-                    res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.status( 422 ).json( message );
+                    if( redirect ) {
+                        req.session.messageType = "error";
+                        req.session.messageTitle = "Error saving image!";
+                        req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
+                        res.redirect( 303, '/dashboard' );
+                        return resource;
+                    }
+                    else {
+                        const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
+                        res.set( "x-agora-message-title", "Error saving image!" );
+                        res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
+                        res.status( 422 ).json( message );
+                    }
                 }
             }
         }
