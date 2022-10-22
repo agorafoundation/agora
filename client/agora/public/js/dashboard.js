@@ -703,23 +703,23 @@ const duplicateGoal = (e) => {
   ///////////////////////
   //updating the more options of the list clone
 
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[1].addEventListener(
     "click",
     showDeleteModal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[3].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[3].addEventListener(
     "click",
     duplicateGoal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[5].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[5].addEventListener(
     "click",
     copyLink
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[7].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[7].addEventListener(
     "click",
     openInNewTab
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[9].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
   );
@@ -785,22 +785,20 @@ const checkForNextId = () => {
 
 //handles updating an element's various ids
 const replaceIds = (element, newId, grid) => {
-  if (grid) {
+  if (grid) {   //if element is in grid view
     element.childNodes[1].id = "gv-" + newId; //main id
 
-    element.childNodes[1].childNodes[1].id =
-      element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
-    element.childNodes[1].childNodes[3].childNodes[1].id =
-      element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
-    element.childNodes[1].childNodes[3].childNodes[3].id =
-      element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
-  } else {
-    element.id = "lv-" + newId;
+    element.childNodes[1].childNodes[1].id = "gv-option-" + newId; //option id
+    
+    element.childNodes[1].childNodes[3].childNodes[1].id = "gv-card-title-" + newId; //card title id
+    
+    element.childNodes[1].childNodes[3].childNodes[3].id = "gv-card-desc-" + newId; //card description id
+  } else {  //if element is in list view
+    element.id = "lv-" + newId; //main id
 
-    element.childNodes[1].id = element.childNodes[1].id.slice(0,-1) + newId;
+    element.childNodes[1].id = "lv-card-title-" + newId;  //card title id
 
-    element.childNodes[5].id = element.childNodes[5].id.slice(0,-1) + newId;
-
+    element.childNodes[5].id = "lv-option-" + newId;  //option id
   }
   return element;
 };
@@ -830,7 +828,7 @@ const queryTopics = (newVal, arr) => {
   for (let i = 0; i < len; i++) {
     elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
     
-    idToRemove = (arr[i].childNodes[1].id).slice(-1); //id of the elememnt being checked
+    idToRemove = (arr[i].childNodes[1].id).substr(3); //id of the element being checked
 
     if (!elemName.includes(newVal)) {   //checking query
   
