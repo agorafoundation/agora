@@ -1,88 +1,3 @@
-// ************************ Drag and drop ***************** //
-/**
- * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
- *
- */
-if (document.querySelectorAll(".drop-zone")) {
-  document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
-    const dropZoneElement = inputElement.closest(".drop-zone");
-
-    dropZoneElement.addEventListener("click", (e) => {
-      inputElement.click();
-    });
-
-    inputElement.addEventListener("change", (e) => {
-      if (inputElement.files.length) {
-        updateThumbnail(dropZoneElement, inputElement.files[0]);
-      }
-    });
-
-    dropZoneElement.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropZoneElement.classList.add("drop-zone--over");
-    });
-
-    ["dragleave", "dragend"].forEach((type) => {
-      dropZoneElement.addEventListener(type, (e) => {
-        dropZoneElement.classList.remove("drop-zone--over");
-      });
-    });
-
-    dropZoneElement.addEventListener("drop", (e) => {
-      e.preventDefault();
-
-      if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
-        if (e.dataTransfer.files[0].size <= 1048576) {
-          inputElement.files = e.dataTransfer.files;
-          updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
-        } else {
-          alert("Image size limit is 1MB!");
-        }
-      }
-
-      dropZoneElement.classList.remove("drop-zone--over");
-    });
-  });
-
-  /**
-   * Updates the thumbnail on a drop zone element.
-   *
-   * @param {HTMLElement} dropZoneElement
-   * @param {File} file
-   */
-  function updateThumbnail(dropZoneElement, file) {
-    let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
-
-    // First time - remove the prompt
-    if (dropZoneElement.querySelector(".drop-zone__prompt")) {
-      dropZoneElement.querySelector(".drop-zone__prompt").remove();
-    }
-
-    // First time - there is no thumbnail element, so lets create it
-    if (!thumbnailElement) {
-      thumbnailElement = document.createElement("div");
-      thumbnailElement.classList.add("drop-zone__thumb");
-      dropZoneElement.appendChild(thumbnailElement);
-    }
-
-    thumbnailElement.dataset.label = file.name;
-
-    // Show thumbnail for image files
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-      };
-    } else {
-      thumbnailElement.style.backgroundImage = null;
-    }
-  }
-}
-
-// ************************ END Drag and drop ***************** //
-
 /**
  * Expand metadata area
  */
@@ -215,7 +130,7 @@ if (
     topicTypeBox.addEventListener("click", () => {
       console.log(
         "clicked: " +
-          document.querySelector('input[name="topicType"]:checked').value
+        document.querySelector('input[name="topicType"]:checked').value
       );
       if (
         document.querySelector('input[name="topicType"]:checked').value == 1
@@ -437,9 +352,8 @@ function updateResourceModal(resourceId, resourceImagePath) {
             }
 
             thumbnailElement.dataset.label = resource.resourceImage;
-            thumbnailElement.style.backgroundImage = `url('${
-              resourceImagePath + resource.resourceImage
-            }')`;
+            thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage
+              }')`;
           }
         } else {
           // clear
@@ -511,12 +425,14 @@ function viewModal(id, name, desc) {
 
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
-  let dropId = "option-" + id;
+  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
+  //let dropId = "option-" + id;
   document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
-  let dropId = "option-" + id;
+  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
+  //let dropId = "option-" + id;
   document.getElementById(dropId).style.visibility = "hidden";
 }
 
@@ -554,17 +470,36 @@ var toggleAllView = () => {
 };
 
 
-/*Updating the rename modal*/
+////get the id of the parent element////
+//e is pointer event
+const getId = (e) => {
+  var parent = null;
+  if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
+    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
+  } else {
+    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
+  }
+  return parent.charAt(parent.length - 1); //just the numeric id
+}
+
+////Create a toast////
+const createToast = (text) => {
+  document.getElementById('toast-text').innerText = text;
+  const thisToast = document.getElementById('liveToast');
+  const toast = new bootstrap.Toast(thisToast);
+  toast.show();
+}
+
+////////////Updating the rename modal//////////
 
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
-  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
-  let parentId = parent.charAt(parent.length - 1); //just the numeric id
+  let parentId = getId(e);
   let parentNameId = "card-title-" + parentId;
   let parentDescId = "card-desc-" + parentId;
 
-  let parentName = document.getElementById(parentNameId).innerText;
-  let parentDesc = document.getElementById(parentDescId).innerText;
+  let parentName = document.getElementById("lv-" + parentNameId).innerText;
+  let parentDesc = document.getElementById("gv-" + parentDescId).innerText;
 
   //setting the onclick event of the save button depenidng on the id of the clicked card
   document
@@ -603,10 +538,9 @@ var cards = document.querySelectorAll("#rename-card").forEach((card) => {
 const updateSaveButton = (nameId, descId) => {
   let tempName = document.getElementById("note-modal-name").value;
   if (tempName) {
-    document.getElementById(nameId).innerText = tempName;
-    document.getElementById(descId).innerText = document.getElementById(
-      "note-modal-description"
-    ).value;
+    document.getElementById("gv-" + nameId).innerText = tempName;
+    document.getElementById("lv-" + nameId).innerText = tempName;
+    document.getElementById("gv-" + descId).innerText = document.getElementById("note-modal-description").value;
     closeRenameModal();
   } else {
     window.alert("All goals/topics must have a name");
@@ -633,14 +567,13 @@ const removeText = (type) => {
 
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = (e) => {
-  let parent = e.target.parentElement.parentElement.parentElement.id; //the id of the clicked element's card
-  let parentId = parent.charAt(parent.length - 1); //just the numeric id
-  let parentNameId = "card-title-" + parentId;
+  let parentId = getId(e);
+  let parentNameId = "lv-card-title-" + parentId;
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
-    document.getElementById("to-be-deleted-name").innerText = parentName;
-  
+  document.getElementById("to-be-deleted-name").innerText = parentName;
+
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
@@ -663,7 +596,8 @@ var deleteCards = document
 
 //changing the properties of the confirm button of the delete-modal depending on the selected card
 const updateDeleteConfirmButton = (id) => {
-  document.getElementById(id).parentElement.remove();
+  document.getElementById("gv-" + id).parentElement.remove();
+  document.getElementById("lv-" + id).remove();
   getTopics();
   exitDeleteModal();
 };
@@ -675,39 +609,137 @@ function exitDeleteModal() {
   document.getElementById("delete-modal").classList.remove("show");
 }
 
+//////onclick handling for topic rerouting//////////
+
+const topicReroute = (id, newTab) => {
+
+  const title = document.getElementById("lv-card-title-" + id);
+  const description = document.getElementById("gv-card-desc-" + id);
+
+  //pass the title and description to backend
+  if (newTab) {
+    window.open("http://localhost:4200/note", "_blank");
+  } else {
+    location.href = '/note';
+  }
+}
+
+///////////////Open in new tab button///////////////
+
+const openInNewTab = (e) => {
+  let parentId = getId(e);
+
+  topicReroute(parentId, true);
+
+  e.stopPropagation();
+}
+
+//A collection of the new tab buttons
+var newTabCards = document
+  .querySelectorAll("#new-tab-card")
+  .forEach((newTabCard) => {
+    newTabCard.addEventListener("click", openInNewTab);
+  });
+
+//////////////////Copy to clipboard//////////////////
+
+const copyLink = (e) => {
+  let parentId = getId(e);
+
+  navigator.clipboard.writeText("http://localhost:4200/note");
+
+  createToast("Copied Link!")
+
+  e.stopPropagation();
+}
+
+var newTabCards = document
+  .querySelectorAll("#copy-link-card")
+  .forEach((copyLinkCard) => {
+    copyLinkCard.addEventListener("click", copyLink);
+  });
+
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = (e) => {
-  let parent =
-    e.target.parentElement.parentElement.parentElement.parentElement
-      .parentElement; //the selected card element
-  let clone = parent.cloneNode(true); //clone is a separte but equal element to the original
+  let parentId = getId(e);
+
+  gridParent = document.getElementById("gv-" + parentId).parentElement;
+  listParent = document.getElementById("lv-" + parentId);
+
+  //creating separate, autonomous element that's a clone of the original
+  gridClone = gridParent.cloneNode(true);
+  listClone = listParent.cloneNode(true);
+
+  //getting the next id to use
+  let newId = checkForNextId();
+
+  //changing the ids in the cloned element
+  gridClone = replaceIds(gridClone, newId, true);
+  listClone = replaceIds(listClone, newId, false);
 
   //calculating new id then setting the elements ids to the new one
-  clone = replaceIds(clone, checkForNextId());
 
-  //updating the more options of the clone
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener(
+  //updating the more options of the grid clone
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[1].addEventListener(
     "click",
     showDeleteModal
   ); //delete
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener(
     "click",
     duplicateGoal
   ); //duplicate
-  clone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener(
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[5].addEventListener(
+    "click",
+    copyLink
+  ); //open in new tab
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[7].addEventListener(
+    "click",
+    openInNewTab
+  ); //open in new tab
+  gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
   ); //rename
 
-  //makes the ellipsis of the clone hidden on initialization
-  clone.childNodes[1].childNodes[1].style.visibility = "hidden";
+  ///////////////////////
+  //updating the more options of the list clone
 
-  //adding the new clone to the array
-  document.getElementById("gallery-row").appendChild(clone);
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
+    "click",
+    showDeleteModal
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[3].addEventListener(
+    "click",
+    duplicateGoal
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[5].addEventListener(
+    "click",
+    copyLink
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[7].addEventListener(
+    "click",
+    openInNewTab
+  );
+  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[9].addEventListener(
+    "click",
+    fillNameandDescription
+  );
+
+
+  //makes the ellipsis of the clone hidden on initialization
+  gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
+
+  //adding the new clone to the grid container
+  document.getElementById("gallery-row").appendChild(gridClone);
+
+  //adding the new clone to the list container
+  document.getElementById("list-column").appendChild(listClone);
 
   getTopics();
+
+  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
 
   e.stopPropagation();
 };
@@ -723,7 +755,8 @@ var duplicateCards = document
 const checkForNextId = () => {
   var ids = [];
   document.querySelectorAll(".countable").forEach((obj) => {
-    ids.push(obj.id);
+    let temp = obj.id.split("-").pop();
+    ids.push(temp);
   });
   ids.sort();
 
@@ -754,33 +787,28 @@ const checkForNextId = () => {
 };
 
 //handles updating an element's various ids
-const replaceIds = (element, newId) => {
-  element.childNodes[1].id = newId; //main id
+const replaceIds = (element, newId, grid) => {
+  if (grid) {
+    element.childNodes[1].id = "gv-" + newId; //main id
 
-  element.childNodes[1].childNodes[1].id =
-    element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
-  element.childNodes[1].childNodes[3].childNodes[1].id =
-    element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
-  element.childNodes[1].childNodes[3].childNodes[3].id =
-    element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
+    element.childNodes[1].childNodes[1].id =
+      element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
+    element.childNodes[1].childNodes[3].childNodes[1].id =
+      element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
+    element.childNodes[1].childNodes[3].childNodes[3].id =
+      element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
+  } else {
+    element.id = "lv-" + newId;
+
+    element.childNodes[1].id = element.childNodes[1].id.slice(0,-1) + newId;
+
+    element.childNodes[5].id = element.childNodes[5].id.slice(0,-1) + newId;
+
+  }
   return element;
 };
 
-
-//////onclick handling for topic rerouting//////////
-
-const topicReroute = (id) => {
-
-  const title = document.getElementById("card-title-" + id);
-  const description = document.getElementById("card-desc-" + id);
-
-  //pass the title and description to backend
-
-  location.href = '/note';
-}
-
-
-////////serach functions////////////
+////////search functions////////////
 
 //contains all topic/goal cards
 var topicArr = [];
@@ -809,8 +837,8 @@ const queryTopics = (newVal, arr) => {
       if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
 
         let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
-        removedTopics.push({element: badElement, id: arr[i].childNodes[1].id});   //add element to removedTopics
-        badElement.remove();    
+        removedTopics.push({ element: badElement, id: arr[i].childNodes[1].id });   //add element to removedTopics
+        badElement.remove();
       }
     } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
 
@@ -825,7 +853,7 @@ const hasElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
-  while(!done && index < removedLength) {
+  while (!done && index < removedLength) {
     if (removed[index].id === id) {
       done = true;
     }
@@ -836,14 +864,14 @@ const hasElement = (id, removed) => {
 
 //returns an element from removedTopics depending on id
 const getElement = (id, removed) => {
-  let done = false; 
+  let done = false;
   let index = 0;
   let output = null;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
-    if ( removed[index].id === id) {
-        output = removed[index].element;
-        done = true;
+    if (removed[index].id === id) {
+      output = removed[index].element;
+      done = true;
     }
     index++;
   }
@@ -855,7 +883,7 @@ const removeElement = (id, removed) => {
   let done = false;
   let index = 0;
   const removedLength = removed.length;
-  while(!done && index < removedLength) {
+  while (!done && index < removedLength) {
     if (removed[index].id === id) {
       done = true;
       removed.splice(index, 1);
@@ -864,3 +892,20 @@ const removeElement = (id, removed) => {
   }
   return removed;
 }
+
+//////View Toggle////////////
+
+const toggleGrid = () => {
+  document.getElementById("list-container").style.display = "none";
+  document.getElementById("main-container").appendChild(document.getElementById("grid-container"));
+  document.getElementById("grid-container").style.display = "block";
+  
+}
+
+const toggleList = () => {
+  document.getElementById("grid-container").style.display = "none";
+  document.getElementById("main-container").appendChild(document.getElementById("list-container"));
+  document.getElementById("list-container").style.display = "block";
+}
+
+window.onload(toggleGrid());

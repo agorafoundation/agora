@@ -12,6 +12,7 @@
     min-width: 20rem;
     max-width: 27rem;
     height:18rem;
+ 
   }
 
   /* MORE OPTION */
@@ -69,11 +70,11 @@
     background-color: #ddd;
   }
  
-  .dropdown:hover .dropdown-content {
+  .trigger1:hover .dropdown-content {
     display: block;
   }
  
-  .dropdown:hover .dropbtn {
+  .trigger1:hover .trigger2 {
     background-color: #f1f1f1;
   }
 
@@ -134,7 +135,7 @@
 
 .card-search {
   position: absolute;
-  right: 16.5%;
+  right: 26%;
   top: 3.2%;
   height: 29px;
   padding: 7px;
@@ -147,4 +148,34 @@
 .card-search:focus {
   background-color: lightgray;
   outline: none;
+}
+
+#show-toast {
+  position: fixed;
+  top: 0;
+  left: 45%;
+  z-index: 1000;
+  box-shadow: 3px rgba(0.5,0.5,0.5,0.5);
+}
+
+.show-toast-text {
+  font-size: 150%;
+  padding: 15px 20px;
+}
+
+/*List Toggle*/
+
+.list-toggle-btn {
+  position: absolute;
+  top: 2.2%;
+  right: 13%;
+}
+
+.list-more-options {
+  transform: rotate(90deg);
+  height: 42%;
+  width: 2.5%;
+  position: absolute;
+  right: 1%;
+  margin-top: 3px;
 }

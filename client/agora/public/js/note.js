@@ -44,31 +44,69 @@ if (document.getElementById("noteEditor")) {
       console.log(contents);
     },
   });
+
+  /* Note Editor Events  ---------------------------------------------------*/
   noteEditor.onChange = (contents, core) => {
     noteEditor.save();
   };
-  noteEditor.onKeyDown = (e) => {
+
+  noteEditor.onKeyUp = (e) => {
     if (e.key == "Enter") {
       noteEditor.setDefaultStyle("font-size: 22px;", {
         defaultTag: "p",
       });
-    }
-  };
-  noteEditor.onKeyUp = (e) => {
-    if (e.key == "/") {
-      console.log("test");
-      noteEditor.insertHTML(
-        '<div><button style="background:pink;>Hello</button></div>',
+    } else if (e.key == "/") {
+        noteEditor.insertHTML(
+        '<div><button style=background:pink;>Hello</button></div>',
         true
       );
     }
   };
+
+  // Close tags list
   noteEditor.onFocus = () => {
     document.querySelector(".tag-list").style.display = "none";
     document.querySelector("#new-tag-element").style.display = "none";
     document.querySelector("#mySearch").value = "";
   };
+
+  noteEditor.onImageUpload = () => {
+    // Image upload default does not automatically place cursor after image, so...
+    noteEditor.appendContents("");
+  };
+
+  // Since suneditor only supports image upload...
+  let numImages = 0;
+  let numFileDrops = 0;
+  // This function determines whether a file dropped in the editor is an image or a different file type
+  noteEditor.onDrop = (e) => {
+    // We don't know if it's an image at this point
+    numFileDrops++;
+
+    let file = e.dataTransfer.files[0];
+    let fileName = file.name;
+    if (file == undefined) {
+      // Plain text, returning true ensures text will still be rendered after drop
+      return true;
+    } else if (file.type.startsWith("image/")) {
+      numImages++;
+      // Continue with image upload
+      return true;
+    }
+
+    if (numImages != numFileDrops) {
+      alert("Not an image");
+      // for temporary testing
+      noteEditor.insertHTML(
+        '<div style="border-style:solid">' + fileName + '</div><br/>',
+        true)
+    }
+  }
 }
+  /* END Note Editor Events  ---------------------------------------------------*/
+
+
+
 
 // Change tabs
 function openTab(evt, tabName) {
@@ -111,7 +149,7 @@ function tagSearch() {
       }
     }
   }
-  // Allways show new tag option
+  // Always show new tag option
   document.querySelector("#new-tag-element").style.display = "block";
 }
 
@@ -128,6 +166,15 @@ function newTag() {
   // create the tag and add to existing tags
   this.addTag(li);
 }
+
+// Add new tag by pressing enter key
+let noteEditorDiv = document.getElementById("noteEditor");
+ul = document.querySelector(".tag-list");
+document.addEventListener("keyup", function(e) {
+  if (e.key == "Enter" && ul.style.display == "block") {
+    newTag();
+  }
+});
 
 let currTagList = [];
 function addTag(selectedTag) {
@@ -148,6 +195,97 @@ function addTag(selectedTag) {
     currTagList.push(newTag.innerHTML);
   }
 }
+
+
+// ************************ Drag and drop ***************** //
+/**
+ * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
+ *
+ */
+ if (document.querySelectorAll(".drop-zone")) {
+  document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+    const dropZoneElement = inputElement.closest(".drop-zone");
+
+    inputElement.addEventListener("change", (e) => {
+      if (inputElement.files.length) {
+        updateThumbnail(dropZoneElement, inputElement.files[0]);
+      }
+    });
+
+    dropZoneElement.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZoneElement.classList.add("drop-zone--over");
+    });
+
+    ["dragleave", "dragend"].forEach((type) => {
+      dropZoneElement.addEventListener(type, (e) => {
+        dropZoneElement.classList.remove("drop-zone--over");
+      });
+    });
+
+    dropZoneElement.addEventListener("drop", (e) => {
+      e.preventDefault();
+
+      if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
+        if (e.dataTransfer.files[0].size <= 1048576) {
+          inputElement.files = e.dataTransfer.files;
+          updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+        } else {
+          alert("Image size limit is 1MB!");
+        }
+      }
+
+      dropZoneElement.classList.remove("drop-zone--over");
+    });
+  });
+
+  /**
+   * Updates the thumbnail on a drop zone element.
+   *
+   * @param {HTMLElement} dropZoneElement
+   * @param {File} file
+   */
+
+  function updateThumbnail(dropZoneElement, file) {
+    let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+        mydiv = document.createElement('div');
+        mydiv.className = "drop-zone-show";
+        inputfile = document.createElement('input');
+        inputfile.type = "file";
+        inputfile.name = "resourceImageField";
+        inputfile.className = "drop-zone__input";
+      
+        // First time - there is no thumbnail element, so lets create it
+        thumbnailElement = document.createElement("div");
+        thumbnailElement.classList.add("drop-zone__thumb");
+        mydiv.appendChild(thumbnailElement);
+      
+        thumbnailElement.dataset.label = file.name;
+      
+        // Show thumbnail for image files
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+        
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+            };
+        
+        } else {
+            thumbnailElement.style.backgroundImage = null;
+        }
+        mydiv.appendChild(inputfile);
+        document.getElementById("resources-zone").appendChild(mydiv);
+  }
+}
+// ************************ END Drag and drop ***************** //
+
+
+
+
+
+
 
 // // Toggles the rendering of more options menu
 // const toggleMoreOptions = () => {
