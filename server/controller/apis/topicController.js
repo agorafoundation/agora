@@ -264,18 +264,16 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
         
         // check to see if the incoming message format is from the UI form or the API
-        if( req.body.topicActive ) {
-            topic.active = ( req.body.topicActive == "on" ) ? true : false;
-        }
-        else if ( req.body.active ) {
+        topic.active = false; // Defaulted to false if not specified.
+        if( req.body.active ) {
             topic.active = req.body.active;
         }
     
         topic.ownedBy = authUserId;
 
+        
         // Note: If we are able to create assessments/ activities 
         // outside of topics, we will need to change implementation of handling topic.assessmentId and topic.activityId.
-
 
         // Activity
         topic.activityId = -1; // Initialize at -1 in case not found.
