@@ -212,7 +212,6 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
 // saveTopic in progress. Still missing handling of attributes: 
 //     this.topicImage = ""; // -- skip testing for now.
 //     this.active = true; -- not being handled. is also duplicate inside Activity object.
-//     this.ownedBy = -1; -- how can we test this? Pretty sure not working.
 exports.saveTopic = async ( req, res, redirect ) => {
 
     let topic = Topic.emptyTopic();
