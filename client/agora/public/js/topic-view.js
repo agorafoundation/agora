@@ -1,10 +1,40 @@
+// Workspace resizing
+let activeHeightObj = {};
+let activeHeightList = [];
+
+// Initializes a height variable for each open topic
+// For now get intialized to 0, but in the future would be initialized according to saved height
+function activeHeightInit() {
+  for (let i=0; i<document.querySelectorAll('.tabcontent').length; i++) {
+    activeHeightObj[document.querySelectorAll('.tabcontent')[i].id] = 0;
+    activeHeightList.push(activeHeightObj[document.querySelectorAll('.tabcontent')[i].id]);
+  }
+}
+activeHeightInit();
+
+
+// Implemented to ensure resources fill a 1200px space first 
+// And then page grows as needed
+function checkActiveHeight() {
+    if (activeHeightObj[tabName] < 1200) {
+        let filler = document.createElement("div");
+        filler.setAttribute("id", "filler-space");
+        filler.style.height = (1200-activeHeightObj[tabName]) + "px";
+        activeTab.appendChild(filler);
+    }
+}
+
 /* Tab Functions ------------------------------------------------------------------- */
 
-// First topic is active tab for now
+// First topic is default active tab for now
 let activeTab = document.getElementById("resources-zone1");
+let tabName = "topic1";
+
 
 // Change tabs
-function openTab(evt, tabName) {
+function openTab(evt, name) {
+  tabName = name;
+
   let i, tabcontent, tablinks;
 
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -19,10 +49,11 @@ function openTab(evt, tabName) {
     tablinks[i].style.backgroundColor = "#f1f1f1";
   }
 
-  activeTab = document.getElementById("resources-zone" + tabName.slice(-1));
+  activeTab = document.getElementById("resources-zone" + name.slice(-1));
+  console.log(activeHeightObj[name]);
 
   // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = "block";
+  document.getElementById(name).style.display = "block";
   evt.currentTarget.className += " active";
 
   evt.currentTarget.style.backgroundColor = "#ddd";
@@ -101,31 +132,16 @@ function addTag(selectedTag) {
 /* END Tab Functions ------------------------------------------------------------------- */
 
 
-// Workspace resizing only works for topic1 right now
-let activeHeight = 0;
-
-// Implemented to ensure resources fill a 1200px space first 
-// And then page grows as needed
-function checkActiveHeight() {
-    if (activeHeight < 1200) {
-        let filler = document.createElement("div");
-        filler.setAttribute("id", "filler-space");
-        filler.style.height = (1200-activeHeight) + "px";
-        activeTab.appendChild(filler);
-    }
-}
-
-
 let numSunEditors = 0;
 let doneIconList = [];
 let editIconList = [];
+let newTabIconList = [];
 function createTextArea() {
     return new Promise((resolve, reject) => {
         numSunEditors++;
 
         // Check for filler space
         if (document.getElementById("filler-space")) {
-            console.log("true")
             document.getElementById("filler-space").remove();
         }
 
@@ -145,26 +161,37 @@ function createTextArea() {
         // Done icon
         let doneIcon = document.createElement('span');
         doneIcon.setAttribute("class", "material-symbols-outlined");
-        doneIcon.setAttribute("id", "done-icon" +numSunEditors);
+        doneIcon.setAttribute("id", "done-icon" + numSunEditors);
         doneIcon.innerHTML = "done";
 
+        // New Tab
+        let newTabIcon = document.createElement('span');
+        newTabIcon.setAttribute("class", "material-symbols-outlined");
+        newTabIcon.setAttribute("id", "open-tab-icon" + numSunEditors);
+        newTabIcon.innerHTML = "open_in_new";
+
+        // Suneditor textarea
         let sunEditor = document.createElement("textarea");
         sunEditor.setAttribute("id", "sunEditor" + numSunEditors);
 
         activeTab.appendChild(title);
+        activeTab.appendChild(newTabIcon);
         activeTab.appendChild(editIcon);
         activeTab.appendChild(doneIcon);
         activeTab.appendChild(sunEditor);
 
         doneIconList.push(doneIcon);
         editIconList.push(editIcon);
+        newTabIconList.push(newTabIcon);
 
-        // Hide the empty state
-        document.querySelector(".empty-state").style.display = "none"; 
+        // Remove empty state if necessary
+        if (activeTab.childElementCount > 0) {
+          document.querySelectorAll(".empty-state")[Number(tabName.slice(-1))-1].style.display = "none";
+        }
 
         // Maintain a baseline height until 1200px is exceeded
-        activeHeight += 800;
-        console.log(activeHeight);
+        activeHeightObj[tabName] += 800;
+        console.log(activeHeightObj[tabName]);
         checkActiveHeight()
         resolve();
     });
@@ -217,7 +244,6 @@ const createSunEditor = async() => {
           console.log(contents);
         },
       });
-
 
       sunEditorList.push(sunEditor["sunEditor"+numSunEditors]);
 }
@@ -301,7 +327,6 @@ const createSunEditor = async() => {
 
         // Check for filler space
         if (document.getElementById("filler-space")) {
-            console.log("true");
             document.getElementById("filler-space").remove();
         }
         
@@ -318,13 +343,14 @@ const createSunEditor = async() => {
             reader.readAsDataURL(file);
             reader.onload = () => {
                 thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-                thumbnailElement.style.backgroundSize = "1000px";
-                thumbnailElement.style.backgroundRepeat = "no-repeat";
-
             };
-          
+            mydiv.style.height = "500px";
+            activeHeightObj[tabName] += 500;
           } else {
-              thumbnailElement.style.backgroundImage = null;
+              thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
+              thumbnailElement.style.backgroundSize = "200px";
+              mydiv.style.height = "200px";
+              activeHeightObj[tabName] += 200;
           }
 
           mydiv.appendChild(inputfile);
@@ -332,14 +358,13 @@ const createSunEditor = async() => {
           activeTab.appendChild(previewIcon);
           activeTab.appendChild(mydiv);
 
-          // Remove empty state if there are resources
+          // Remove empty state if necessary
           if (mydiv.childElementCount > 0) {
-            document.querySelector(".empty-state").style.display = "none";
+            document.querySelectorAll(".empty-state")[Number(tabName.slice(-1))-1].style.display = "none";
           }
 
           // Maintain a baseline height until 1200px is exceeded
-          activeHeight += 500;
-          console.log(activeHeight)
+          console.log(activeHeightObj[tabName])
           checkActiveHeight();
     }
   }
@@ -376,35 +401,98 @@ document.addEventListener("mousemove", function() {
 
 
 document.addEventListener("click", function(e) {
-    if ((e.target.id).includes("done")) {
-        for (let i=0; i<doneIconList.length; i++) {
-            if (doneIconList[i] === e.target) {
-                document.getElementById(editIconList[i].id).style.display = "block";
-                document.getElementById(doneIconList[i].id).style.display = "none";
-                sunEditor["sunEditor"+(i+1)].readOnly(true);
-            }
-        }
-    }
+  // toggle edit and done icons
+  if ((e.target.id).includes("done")) {
+      for (let i=0; i<doneIconList.length; i++) {
+          if (doneIconList[i] === e.target) {
+              document.getElementById(editIconList[i].id).style.display = "block";
+              document.getElementById(doneIconList[i].id).style.display = "none";
+              sunEditor["sunEditor"+(i+1)].readOnly(true);
+          }
+      }
+  }
+  if ((e.target.id).includes("edit")) {
+      for (let i=0; i<editIconList.length; i++) {
+          if (editIconList[i] === e.target) {
+              document.getElementById(doneIconList[i].id).style.display = "block";
+              document.getElementById(editIconList[i].id).style.display = "none";
+              sunEditor["sunEditor"+(i+1)].readOnly(false);
+          }
+      }
+  }
 
-    if ((e.target.id).includes("edit")) {
-        for (let i=0; i<editIconList.length; i++) {
-            if (editIconList[i] === e.target) {
-                document.getElementById(doneIconList[i].id).style.display = "block";
-                document.getElementById(editIconList[i].id).style.display = "none";
-                sunEditor["sunEditor"+(i+1)].readOnly(false);
-            }
-        }
-    }
 
-    if (document.querySelector(".tag-list") && document.querySelector(".tag-list").style.display == "block") {
-        document.querySelector(".tag-list").style.display = "none";
-        document.querySelector("#new-tag-element").style.display = "none";
-        document.querySelector("#mySearch").value = "";
-    }
+  // open suneditor in new tab
+  if (e.target.id.includes("tab")) {
+    window.open("http://localhost:4200/note", "_blank");
+  }
 
-    if (document.querySelector("#new-tag-element") && document.querySelector("#new-tag-element").style.display == "block") {
-        document.querySelector(".tag-list").style.display = "none";
-        document.querySelector("#new-tag-element").style.display = "none";
-        document.querySelector("#mySearch").value = "";
-    }
+
+  // close tag list elements
+  if (document.querySelector(".tag-list") && document.querySelector(".tag-list").style.display == "block") {
+      document.querySelector(".tag-list").style.display = "none";
+      document.querySelector("#new-tag-element").style.display = "none";
+      document.querySelector("#mySearch").value = "";
+  }
+  if (document.querySelector("#new-tag-element") && document.querySelector("#new-tag-element").style.display == "block") {
+      document.querySelector(".tag-list").style.display = "none";
+      document.querySelector("#new-tag-element").style.display = "none";
+      document.querySelector("#mySearch").value = "";
+  }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* File Dropdown ----------------------------------------- */
+
+// // Toggles the rendering of more options menu
+// const toggleMoreOptions = () => {
+//     if (document.getElementById('dropdown-content').getAttribute('style')) {
+//         document.getElementById('dropdown-content').setAttribute('style','');
+//     } else {
+//         document.getElementById('dropdown-content').setAttribute('style',"display: block; right: 2%; top: 4%");
+//     }
+// }
+
+// // If file modal is on, it turns off and vice versa
+// const toggleFileModal = () => {
+//     if (document.getElementById('file-display').getAttribute('class') === 'hidden') {
+//     document.getElementById('file-display').setAttribute('class','file-display-shown');
+//     } else {
+//     document.getElementById('file-display').setAttribute('class','hidden');
+//     }
+// }
+
+// // Checks if someone is clicking off modal and then closes it
+// $('body').click(function (ev) {
+//     if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
+//         if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring') {
+//         document.getElementById('file-display').setAttribute('class','hidden');
+//         }
+
+//     }
+// if (ev.target.id !== 'ellipsis')
+//     document.getElementById('dropdown-content').setAttribute('style','');
+// });
+
+// const onClickTesting = () => {
+//     console.log("clicked");
+// }
+
+// const returnFiles = () => {
+//     return [{name: "file 1", onClick: onClickTesting()},{name: "file 2", onClick: onClickTesting()}];
+// }
+
+/* END File Dropdown ----------------------------------------- */
