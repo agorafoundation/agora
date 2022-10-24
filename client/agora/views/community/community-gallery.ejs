@@ -1,9 +1,30 @@
+ <% const recipeList
+= [ { name:"Chicken", desc:"very tasy"}, { name:"Steak", desc:"very tasy"},{
+name:"Steak", desc:"very tasy"} ] %> 
 <div>
-  <h1>Welcome</h1>
-  <% const test = ["Chicken","Steak","Miso","Fish","Bugs"] %> <% for(let i = 0;
-  i < test.length; i++){ %>
-  <div class="row row-cols-1 row-cols-md-3 g-4" id="gallery-row">
-  
+  <% for(let i = 0; i < 3; i++){ %>
+
+    <div class="col mb-3 align-items-stretch gallery-col query-countable">
+      <div class="card h-100 countable" >
+        <div class="card-body d-flex flex-column" id="topic">
+          <h5 class="card-title" >
+            <%=  recipeList[i].name %>
+          </h5>
+          <p class="card-text mb-4" >
+            <%=  recipeList[i].desc %>
+          </p>
+        </div>
+        <div class="card-footer">
+          <% for(let i=0; i < 2; i++) { %>
+            <span class="badge badge-primary topic-badge">
+              Lol
+            </span>
+          <% } %>
+          <span class="badge badge-dark note-badge">
+            Topic
+          </span>
+        </div>
+      </div>
     </div>
     <% } %>
   </div>
