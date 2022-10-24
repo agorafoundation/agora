@@ -24,8 +24,9 @@ function checkActiveHeight() {
     }
 }
 
-/* Tab Functions ------------------------------------------------------------------- */
 
+
+/* Tab Functions ------------------------------------------------------------------- */
 // First topic is default active tab for now
 let activeTab = document.getElementById("resources-zone1");
 let tabName = "topic1";
@@ -132,6 +133,9 @@ function addTag(selectedTag) {
 /* END Tab Functions ------------------------------------------------------------------- */
 
 
+
+
+/* Suneditor Creation -----------------------------------------------------------*/
 let numSunEditors = 0;
 let doneIconList = [];
 let editIconList = [];
@@ -247,6 +251,7 @@ const createSunEditor = async() => {
 
       sunEditorList.push(sunEditor["sunEditor"+numSunEditors]);
 }
+/* END Suneditor Creation -----------------------------------------------------------*/
 
 /* Drag and Drop ------------------------------------------------------------------------- */
 /**
@@ -371,6 +376,7 @@ const createSunEditor = async() => {
 /* END Drag and Drop ------------------------------------------------------------------------- */
 
 
+
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener("mousemove", function() {
     for (let i=0; i<sunEditorList.length; i++) {
@@ -400,6 +406,7 @@ document.addEventListener("mousemove", function() {
 
 
 
+
 document.addEventListener("click", function(e) {
   // toggle edit and done icons
   if ((e.target.id).includes("done")) {
@@ -421,12 +428,10 @@ document.addEventListener("click", function(e) {
       }
   }
 
-
   // open suneditor in new tab
   if (e.target.id.includes("tab")) {
     window.open("http://localhost:4200/note", "_blank");
   }
-
 
   // close tag list elements
   if (document.querySelector(".tag-list") && document.querySelector(".tag-list").style.display == "block") {
@@ -442,6 +447,50 @@ document.addEventListener("click", function(e) {
 });
 
 
+
+/* Workspace Manager Modal ----------------------------------------------- */
+const modal = document.getElementById("resource-modal-div");
+const openBtn = document.getElementById("new-resource");
+const closeBtn = document.getElementById("close");
+const createDoc = document.getElementById("create-doc-div");
+
+// open the modal
+openBtn.onclick = () => {
+  modal.style.display = "block";
+}
+
+//close the modal
+closeBtn.onclick = function() {
+  modal.style.display = "none";
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// option hover events
+document.addEventListener("mousemove", function(e) {
+  for (let i=0; i<document.getElementsByClassName("modal-icon").length; i++) {
+    if (e.target === document.getElementsByClassName("modal-icon")[i] ||
+        e.target === document.getElementsByClassName("option")[i]) {
+      document.getElementsByClassName("modal-icon")[i].style.color = "black";
+      document.getElementsByClassName("option")[i].style.color = "black";
+      document.getElementsByClassName("option")[i].style.textDecoration = "underline";
+    } else {
+      document.getElementsByClassName("modal-icon")[i].style.color = "rgb(100, 98, 98)";
+      document.getElementsByClassName("option")[i].style.color = "rgb(100, 98, 98)";
+      document.getElementsByClassName("option")[i].style.textDecoration = "none";
+    }
+  }
+});
+
+// option events
+createDoc.onclick = () => {
+  modal.style.display = "none";
+  createSunEditor();
+}
+/* END Workspace Manager Modal ----------------------------------------------- */
 
 
 
