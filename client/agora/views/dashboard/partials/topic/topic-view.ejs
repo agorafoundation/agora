@@ -13,7 +13,10 @@
             
         <div class="topic-body">
             <!--Side Nav-->
-            <%- include('../../side-menu/side-menu.ejs');%>  
+            <%- include('../../side-menu/side-menu.ejs');%> 
+            
+            <!--Workspace Manager Modal-->
+            <%- include('./workspace-manager-modal.ejs');%> 
 
             <!--Page Header-->
             <div class="header-div">
@@ -60,7 +63,7 @@
 
             <!--Create New Resources-->
             <div id="divider">
-                <span id="new-resource" class="material-symbols-outlined" onclick="createSunEditor()">add</span>
+                <span id="new-resource" class="material-symbols-outlined">add</span>
             </div>
 
              <!-- Tabs -->
@@ -79,7 +82,6 @@
                             <label class="empty-state-text"><h3>Your Topic is Empty</h3></label>
                             <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
                         </div>
-                        <!-- <textarea id="sunEditor"></textarea> -->
                     </div>
                 </div>
             </div>
