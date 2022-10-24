@@ -550,10 +550,10 @@ const toggleProfileList = () => {
   let arrow = document.getElementById("profiles-toggle");
 
   if (arrow.classList.contains("down-arrow")) {
-      document.getElementById("profiles-list").style.display = "none";
+      document.getElementById("permissions-box").style.display = "none";
       arrow.setAttribute('class','arrow up-arrow');
   } else {
-    document.getElementById("profiles-list").style.display = "block";
+    document.getElementById("permissions-box").style.display = "flex";
       arrow.setAttribute('class','arrow down-arrow');
   }
 }

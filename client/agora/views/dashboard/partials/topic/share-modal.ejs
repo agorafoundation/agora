@@ -16,7 +16,6 @@
             
         </div>
         <div class="modal-body">
-            <button class="arrow down-arrow" id="profiles-toggle"></button>
             <ul id="profiles-list" class="currently-shared-with">
                 <% sharedWith.forEach((profile)=> { %>
                     <li class="profile-shared-with">
@@ -28,9 +27,10 @@
             </ul>
         </div>
         <div class="modal-footer">
-            <div class="permissions-header">Permissions:</div>
+            <div class="permissions-header">Permissions</div>
+            <button class="arrow down-arrow" id="profiles-toggle"></button>
             <hr class="permissions-hr">
-            <div class="permissions-row">
+            <div class="permissions-row" id="permissions-box">
                 <div class="permissions-col">
                     <span class="permission-li">
                         <span>Permission 1</span>

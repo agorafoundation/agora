@@ -739,7 +739,7 @@ const duplicateGoal = (e) => {
 
   getTopics();
 
-  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
+  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText)
 
   e.stopPropagation();
 };

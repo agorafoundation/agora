@@ -555,7 +555,8 @@
   .permissions-header {
     font-size: large;
     font-weight: 500;
-    margin-right: 70%;
+    margin-right: 64%;
+
   }
 
   .permissions-hr {
@@ -568,13 +569,10 @@
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 3px;
-    height: 20px;
-    width: 20px;
+    height: 15px;
+    width: 15px;
     background-color: transparent;
-    position: absolute;
-    right: 50%;
-    top: -25px;
-
+    margin-right: 20px;
   }
 
   .arrow:focus {
