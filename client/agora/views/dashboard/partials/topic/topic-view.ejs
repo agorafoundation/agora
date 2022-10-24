@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <%- include('../../../partials/head'); %>
+    </head>
+
+    <body>
+        <!--File Upload Drop Zone-->
+        <div class="drop-zone">
+            <span class="drop-zone__prompt"></span>
+            <input type="file" name="resourceImageField" class="drop-zone__input" />
+            
+        <div class="topic-body">
+            <!--Side Nav-->
+            <%- include('../../side-menu/side-menu.ejs');%> 
+            
+            <!--Workspace Manager Modal-->
+            <%- include('./workspace-manager-modal.ejs');%> 
+
+            <!--Page Header-->
+            <div class="header-div">
+
+                <!--Workspace Title-->
+                <div class="header" id="title-div">
+                    <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+                </div>
+
+                <!--Workspace Description-->
+                <div class="header" id="description-div">
+                    <label class="label">Description</label>
+                    <textarea class="descriptionTA" id="workspace-desc" ></textarea>
+                </div>
+
+                <!--Tags-->
+                <div class="header" id="tag-div">
+                    <label class="label">Tags</label>
+                    <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
+                    <div id="curr-tags"></div>
+        
+                    <ul class="tag-list">
+                        <li class="tag-list-element" onclick="addTag(this)">Capping</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Math</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Algorithms</li>
+                        <li class="tag-list-element" onclick="addTag(this)" >Movies</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Music</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Taylor Swift</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Dogs</li>
+                        <li class="tag-list-element" onclick="addTag(this)">Research</li>
+                    </ul>
+                    <ul class="new-tag">
+                        <li id="new-tag-element" class="tag-list-element" onclick="newTag()">+ New Tag</li>
+                    </ul>
+                </div>
+                <!--More Options-->
+                <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
+
+            </div>
+
+            <!-- <div class="hidden" id="file-display"> -->
+            <!--<%- include('./file-display'); %>-->
+            <!-- </div> -->
+
+            <!--Create New Resources-->
+            <div id="divider">
+                <span id="new-resource" class="material-symbols-outlined">add</span>
+            </div>
+
+             <!-- Tabs -->
+             <div class="tab">
+                <button class="tablinks" style="background-color:#ddd" onclick="openTab(event, 'topic1')">Topic 1</button>
+                <button class="tablinks" onclick="openTab(event, 'topic2')">Topic 2</button>
+            </div>
+
+            <!--Topic 1 -->
+            <div id="topic1" class="tabcontent">
+                <!--Topic Content-->
+                <div class="topic-content">
+                    <!--Uploaded Files Section-->
+                    <div id="resources-zone1" class="resources-zone">
+                        <div class="empty-state">
+                            <label class="empty-state-text"><h3>Your Topic is Empty</h3></label>
+                            <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Topic 2 -->
+            <div id="topic2" class="tabcontent">
+                <!--Topic Content-->
+                <div class="topic-content">
+                    <!--Uploaded Files Section-->
+                    <div id="resources-zone2" class="resources-zone">
+                        <div class="empty-state">
+                            <label class="empty-state-text"><h3>Your Topic is Empty</h3></label>
+                            <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Footer-->
+            <footer class="footer text-center">
+                <%- include('../../../partials/footer'); %>
+            </footer>
+
+            <!-- Copyright Section-->
+            <div class="copyright py-4 text-center text-white">
+                <%- include('../../../partials/copyright'); %>
+            </div>
+
+            <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+            <div class="scroll-to-top d-lg-none position-fixed">
+                <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+            </div>
+
+        </div>
+    </div>
+
+        <%- include('../../../partials/jsincludes'); %>
+        <%- include ('../gallery/dropdown'); %>
+
+    </body>
+    
+</html>
+
