@@ -227,7 +227,7 @@ a:hover {
     /* background-color: rgba(70, 47, 77, .85); */
     /* background-color: rgba(97, 95, 77, 0.85); */
     /* background-color: rgba(121, 6, 4, .85) !important; */
-    background-color: #414d53;
+    background-color: #d9e8c8;
 }
 
 @media (min-width: 576px) {
@@ -270,7 +270,7 @@ a:hover {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-weight: 700;
     background: rgb(255,255,255);
-    background: linear-gradient(180deg, rgba(255,255,255,1) 94%, rgba(65,77,83,1) 98%);
+    background: linear-gradient(180deg, #171717 94%, #d9e8c8 100%);
 }
 #mainNav .navbar-brand {
 }
@@ -278,7 +278,7 @@ a:hover {
     margin-top: 1rem;
 }
 #mainNav .navbar-nav li.nav-item a.nav-link {
-    color: #333;
+    color: rgb(209, 209, 209);
 }
 #mainNav .navbar-nav li.nav-item a.nav-link:hover {
     color: #534741;
@@ -323,10 +323,23 @@ a:hover {
       font-size: 1.5em;
     }
 }
+.homepageButton{
+    color: white;
+    text-decoration: underline;
+    font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+    background-color: #a4b072;
+    border-style: solid;
+    border-width: 5px;
+    border-color: white;
+    border-radius:10px;
+    padding:30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
 /* Primary pages (Community, Resources, Goals, etc) */
 .primary-page-background {
-    background-color: #414d53;
+    background-color: #d9e8c8;
 }
 
 
