@@ -311,7 +311,7 @@ exports.getTopicWithEverythingById = async function(topicId, isActive) {
             // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
             // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
             text = "SELECT r.id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
-            values = [ topic.id, true, true ];
+            values = [ topic.topicId, true, true ];
             let res6 = await db.query(text, values);
 
             let resources = [];
@@ -476,11 +476,11 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     // check to see if an id exists - insert / update check
     if(topic) {
         console.log("saving topic: " + JSON.stringify(topic));
-        if(topic.id > 0) {
+        if(topic.topicId > 0) {
             
             // update
             let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE id = $10;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id, topic.visibility, topic.topicType, topic.hasAssessment ];
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
     
             try {
                 let res = await db.query(text, values);
@@ -501,7 +501,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 let res = await db.query(text, values);
                 if(res.rowCount > 0) {
                     
-                    topic.id = res.rows[0].id;
+                    topic.topicId = res.rows[0].id;
                 }
                 
             }
