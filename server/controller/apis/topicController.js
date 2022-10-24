@@ -94,7 +94,7 @@ exports.getTopicById = async ( req, res ) => {
     }
 
     if( authUserId > 0 ){
-        let topic = await topicService.getTopicById( req.params.id, authUserId );
+        let topic = await topicService.getTopicById( req.params.topicId, authUserId );
         if(topic) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned topic by id" );
@@ -167,9 +167,9 @@ exports.saveCompletedTopic = async function( req, res ) {
 
         // update the session
         let replaced = false;
-        if( req.session.currentTopic.completedTopics.length > 0 && completeTopic.id > 0 ) {
+        if( req.session.currentTopic.completedTopics.length > 0 && completeTopic.topicId > 0 ) {
             for( let i=0; i < req.session.currentTopic.completedTopics.length; i++ ) {
-                if( req.session.currentTopic.completedTopics[ i ].id == completeTopic.id ) {
+                if( req.session.currentTopic.completedTopics[ i ].topicId == completeTopic.topicId ) {
                     req.session.currentTopic.completedTopics[ i ] = completeTopic;
                     replaced = true;
                     break;
@@ -215,8 +215,6 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
     let topic = Topic.emptyTopic();
 
-    console.log(JSON.stringify(req.body));
-
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -228,14 +226,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
     if(authUserId > 0) {
 
-        topic.id = req.body.id;
+        topic.topicId = req.body.topicId;
 
         // see if this is a modification of an existing topic
-        let existingTopic = await topicService.getTopicById( topic.id, false );
+        let existingTopic = await topicService.getTopicById( topic.topicId, false );
 
         // if this is an update, replace the topic with the existing one as the starting point.
         if(existingTopic) {
-            //console.log( "there was an existing topic for this id: " + JSON.stringify(existingTopic) );
             console.log("existing topic");
             topic = existingTopic;
         } else {
@@ -322,7 +319,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
-            let resourcesSaved = await topicService.saveResourcesForTopic(topic.id, req.body.resources, req.body.resourcesRequired);
+            let resourcesSaved = await topicService.saveResourcesForTopic(topic.topicId, req.body.resources, req.body.resourcesRequired);
             console.log("@ -- @" +resourcesSaved);
         }
 
@@ -339,16 +336,16 @@ exports.saveTopic = async ( req, res, redirect ) => {
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
             if( topic.topicType == 1 ) {
-                this.saveTopicImage( req, res, topic.id, 'notebook-pen.svg' );
+                this.saveTopicImage( req, res, topic.topicId, 'notebook-pen.svg' );
             }
             else if ( topic.topicType == 2 ) {
-                this.saveTopicImage( req, res, topic.id, 'cell-molecule.svg' );
+                this.saveTopicImage( req, res, topic.topicId, 'cell-molecule.svg' );
             }
             else if( topic.topicType == 3 ) {
-                this.saveTopicImage( req, res, topic.id, 'code.svg' );
+                this.saveTopicImage( req, res, topic.topicId, 'code.svg' );
             }
             else {
-                this.saveTopicImage( req, res, topic.id, 'topic-default.png' );
+                this.saveTopicImage( req, res, topic.topicId, 'topic-default.png' );
             }
         }
         else {
@@ -394,7 +391,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveTopicImage( req, res, topic.id, timeStamp + file.name );
+                        await this.saveTopicImage( req, res, topic.topicId, timeStamp + file.name );
                     }
                 });
             }

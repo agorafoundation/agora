@@ -9,7 +9,7 @@ let Assessment = require('./assessment');
 let Activity = require('./activity');
 
 function topic() {
-    this.id = -1;
+    this.topicId = -1;
     this.topicType = 0;
     this.topicName = "";
     this.topicDescription = "";
@@ -36,7 +36,7 @@ exports.emptyTopic = () => {
 
 exports.ormTopic = function (row) {
     let topic = exports.emptyTopic();
-    topic.id = row.id;
+    topic.topicId = row.topicId;
     topic.topicType = row.topic_type;
     topic.topicName = row.topic_name;
     topic.topicDescription = row.topic_description;
