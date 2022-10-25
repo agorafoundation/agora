@@ -264,6 +264,9 @@ exports.saveTopic = async ( req, res, redirect ) => {
         if( req.body.active ) {
             topic.active = req.body.active;
         }
+
+        // assigns isRequired based on UI selection; leaving this here for later
+        topic.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
     
         topic.ownedBy = authUserId;
 

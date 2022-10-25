@@ -12,7 +12,7 @@ function assessment() {
     this.assessmentDescription = "";
     this.preThreshold = 90;             // default value that if acheived in pre assessment allows a student to "test-out" of topic
     this.postThreshold = 70;            // default value that if acheived in post assessment means a user can "move-on" from a topic
-    this.isRequired = false;
+    this.isRequired = "";               // boolean in DB, but leaving as string for now
     this.active = true;
     this.createTime;
 
