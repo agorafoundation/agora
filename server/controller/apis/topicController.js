@@ -268,18 +268,25 @@ exports.saveTopic = async ( req, res, redirect ) => {
         // assigns isRequired based on UI selection; leaving this here for later
         topic.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
     
+        // assigns the owner's Id
         topic.ownedBy = authUserId;
 
 
         // Note: If we are able to create assessments/ activities 
         // outside of topics, we will need to change implementation of handling topic.assessmentId and topic.activityId.
 
+        /* 
+         * assessmentId & activityId will be assigned -1,
+         * and hasActivity & hasAssessment will be assigned false
+         * until properly planned and implemented
+         */
+
         // Activity
+        /*
         topic.activityId = -1; // Initialize at -1 in case not found.
         topic.hasActivity = req.body.hasActivity;
         if (topic.hasActivity) {
 
-            
             let activity = await activityService.saveActivity(req.body.activity); 
 
             topic.activityId = activity.id;
@@ -288,8 +295,10 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             console.log("[topicController-saveTopic-activity]: " + JSON.stringify(topic.activity));
         }
+        */
 
         // Assessment
+        /*
         topic.assessmentId = -1; // Initialize at -1 in case not found. 
         topic.hasAssessment = req.body.hasAssessment;
         if (topic.hasAssessment) {
@@ -305,6 +314,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             console.log("[topicController-saveTopic-assessment]: " + JSON.stringify(topic.assessment));
         }
+        */
 
         // Resources are held as a list of resource id's.
         topic.resources = req.body.resources;
