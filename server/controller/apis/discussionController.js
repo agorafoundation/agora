@@ -79,12 +79,12 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "discussion_text not provided" );
-        return res.status( 400 ).json( message );
-    }
+    // if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
+    //     const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
+    //     res.set( "x-agora-message-title", "Bad Request" );
+    //     res.set( "x-agora-message-detail", "discussion_text not provided" );
+    //     return res.status( 400 ).json( message );
+    // }
 
     const id = req.params.id
 
