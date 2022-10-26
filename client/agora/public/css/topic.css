@@ -62,7 +62,7 @@
 }
 
 #topic1 {
-    display: block;
+    display: none;
     width: 99%;
 }
 
@@ -416,7 +416,6 @@
     margin: 15% auto;
     width: 50%;
     height: 250px;
-
     position: relative;
     display: flex;
     flex-direction: column;
