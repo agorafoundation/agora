@@ -436,36 +436,33 @@ function toggleMoreOptionsOff(id) {
   document.getElementById(dropId).style.visibility = "hidden";
 }
 
-var toggleGoalView = () => {
-  const cards = document.getElementsByClassName("gallery-col");
+const toggleGoalView = () => {
+  const cards = document.getElementsByClassName("view-check");
   for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    if (title.id === "topic") {
+    if ((cards[i].classList).contains("a-goal")) {
+      cards[i].classList.remove("d-none");
+    } else {
+      cards[i].classList.add("d-none");
+    }
+  }
+}
+
+const toggleTopicView = () => {
+  const cards = document.getElementsByClassName("view-check");
+  for (let i = 0; i < cards.length; i++) {
+    if ((cards[i].classList).contains("a-goal")) {
       cards[i].classList.add("d-none");
     } else {
       cards[i].classList.remove("d-none");
     }
   }
 };
-var toggleTopicView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("gallery-col");
-  for (let i = 1; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    if (title.id === "goal") {
-      cards[i].classList.add("d-none");
-    } else {
-      cards[i].classList.remove("d-none");
-    }
-  }
-};
-var toggleAllView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("gallery-col");
-  let filter = input.value;
+
+const toggleAllView = () => {
+  const cards = document.getElementsByClassName("view-check");
   for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    cards[i].classList.remove("d-none");
+      cards[i].classList.remove("d-none");
+    
   }
 };
 
@@ -473,7 +470,7 @@ var toggleAllView = () => {
 ////get the id of the parent element////
 //e is pointer event
 const getId = (e) => {
-  var parent = null;
+  let parent;
   if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
     parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
   } else {
@@ -706,23 +703,23 @@ const duplicateGoal = (e) => {
   ///////////////////////
   //updating the more options of the list clone
 
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[1].addEventListener(
     "click",
     showDeleteModal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[3].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[3].addEventListener(
     "click",
     duplicateGoal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[5].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[5].addEventListener(
     "click",
     copyLink
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[7].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[7].addEventListener(
     "click",
     openInNewTab
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[9].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
   );
@@ -788,22 +785,20 @@ const checkForNextId = () => {
 
 //handles updating an element's various ids
 const replaceIds = (element, newId, grid) => {
-  if (grid) {
+  if (grid) {   //if element is in grid view
     element.childNodes[1].id = "gv-" + newId; //main id
 
-    element.childNodes[1].childNodes[1].id =
-      element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
-    element.childNodes[1].childNodes[3].childNodes[1].id =
-      element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
-    element.childNodes[1].childNodes[3].childNodes[3].id =
-      element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
-  } else {
-    element.id = "lv-" + newId;
+    element.childNodes[1].childNodes[1].id = "gv-option-" + newId; //option id
+    
+    element.childNodes[1].childNodes[3].childNodes[1].id = "gv-card-title-" + newId; //card title id
+    
+    element.childNodes[1].childNodes[3].childNodes[3].id = "gv-card-desc-" + newId; //card description id
+  } else {  //if element is in list view
+    element.id = "lv-" + newId; //main id
 
-    element.childNodes[1].id = element.childNodes[1].id.slice(0,-1) + newId;
+    element.childNodes[1].id = "lv-card-title-" + newId;  //card title id
 
-    element.childNodes[5].id = element.childNodes[5].id.slice(0,-1) + newId;
-
+    element.childNodes[5].id = "lv-option-" + newId;  //option id
   }
   return element;
 };
@@ -827,31 +822,39 @@ window.onload = getTopics;
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = (newVal, arr) => {
+  let elemName, idToRemove, badListElement, badGridElement, addedElements;
   const len = arr.length;
   newVal = newVal.toLowerCase();
   for (let i = 0; i < len; i++) {
-    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element
+    elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
+    
+    idToRemove = (arr[i].childNodes[1].id).substr(3); //id of the element being checked
 
     if (!elemName.includes(newVal)) {   //checking query
+  
+      if (!hasElement(idToRemove, removedTopics)) {  //has this element not yet already been removed?
 
-      if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
+        badListElement = document.getElementById("lv-" + idToRemove); //element in list view to be removed
 
-        let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
-        removedTopics.push({ element: badElement, id: arr[i].childNodes[1].id });   //add element to removedTopics
-        badElement.remove();
+        badGridElement = document.getElementById("gv-" + idToRemove).parentNode;   //element in grid view to be removed
+
+        removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idToRemove });   //add element to removedTopics
+        badGridElement.remove();
+        badListElement.remove();
       }
-    } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
+    } else if (hasElement(idToRemove, removedTopics)) {  //does the query name exist in removedTopics?
 
-      document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedTopics)); //adding the element back to the DOM
-      removedTopics = removeElement(arr[i].childNodes[1].id, removedTopics);  //remove element from removedTopics
+      addedElements = getElement(idToRemove, removedTopics);
+      document.getElementById("gallery-row").appendChild(addedElements.gridEl); //adding the grid element back to the DOM
+      document.getElementById("list-column").appendChild(addedElements.listEl); //adding the list element back to the DOM
+      removedTopics = removeElement(idToRemove, removedTopics);  //remove element from removedTopics
     }
   }
 }
 
 //checks if removedTopics contains a certain id
 const hasElement = (id, removed) => {
-  let done = false;
-  let index = 0;
+  let done = false, index = 0;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
@@ -864,13 +867,11 @@ const hasElement = (id, removed) => {
 
 //returns an element from removedTopics depending on id
 const getElement = (id, removed) => {
-  let done = false;
-  let index = 0;
-  let output = null;
+  let done = false, index = 0, output = null;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
-      output = removed[index].element;
+      output = {gridEl: removed[index].gridElement, listEl: removed[index].listElement};
       done = true;
     }
     index++;
@@ -880,8 +881,7 @@ const getElement = (id, removed) => {
 
 //Removes an element from removedTopics then returns the updated array
 const removeElement = (id, removed) => {
-  let done = false;
-  let index = 0;
+  let done = false, index = 0;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
