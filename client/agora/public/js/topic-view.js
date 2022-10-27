@@ -2,16 +2,7 @@
 let activeHeightObj = {};
 let activeHeightList = [];
 
-// Initializes a height variable for each open topic
-// For now get intialized to 0, but in the future would be initialized according to saved height
-// function activeHeightInit() {
-//   for (let i=0; i<document.querySelectorAll('.tabcontent').length; i++) {
-//     activeHeightObj[document.querySelectorAll('.tabcontent')[i].id] = 0;
-//     activeHeightList.push(activeHeightObj[document.querySelectorAll('.tabcontent')[i].id]);
-//   }
-// }
-// activeHeightInit();
-
+// Creates a height object for each open topic
 function createNewActiveHeight() {
   let tabElements = document.querySelectorAll('.tabcontent');
   activeHeightObj[tabElements[tabElements.length-1].id] = 0;
@@ -33,9 +24,8 @@ function checkActiveHeight() {
 
 
 /* Tab Functions ------------------------------------------------------------------- */
-// First topic is default active tab for now
+// Workspace empty state
 let activeTab = document.getElementById("resources-zone0");
-let tabName = "topic1";
 
 
 // Change tabs
@@ -56,23 +46,27 @@ function openTab(name) {
   }
 
   activeTab = document.getElementById("resources-zone" + name.slice(-1));
-  console.log(activeTab);
 
-  // Show the current tab, and add an "active" class to the button that opened the tab
+  // Show the current tab
   document.getElementById(name).style.display = "block";
 
   // Set tab button to active
-  tablinks[name.slice(-1)-1].className += " active";
-  tablinks[name.slice(-1)-1].style.backgroundColor = "#ddd";
+  for (i=0; i<tablinks.length; i++) {
+    if (tablinks[i].id.slice(-1) == name.slice(-1)) {
+      tablinks[i].className += " active";
+      tablinks[i].style.backgroundColor = "#ddd";
+    }
+  }
 }
 
+let currTopicID = 1;
 function createTopic() {
   let tabContent = document.getElementsByClassName("tabcontent");
   let lastTab = tabContent[tabContent.length-1];
   let newTab = document.createElement("div");
 
   // Create the tab content and append to last tab
-  newTab.id = "topic" + (tabContent.length+1);
+  newTab.id = "topic" + currTopicID;
   newTab.className = "tabcontent";
 
   // If no topics are open...
@@ -89,7 +83,7 @@ function createTopic() {
   topicContent.className = "topic-content";
 
   let resourcesZone = document.createElement("div");
-  resourcesZone.id = "resources-zone" + tabContent.length;
+  resourcesZone.id = "resources-zone" + currTopicID;
   resourcesZone.className = "resources-zone";
 
   let emptyState = document.createElement("div");
@@ -108,10 +102,22 @@ function createTopic() {
   // Create a new tab button
   let tabBtn = document.createElement("button");
   tabBtn.className = "tablinks";
-  tabBtn.innerHTML = "Topic " + tabContent.length;
-  tabBtn.onclick = () => {
-    console.log(newTab.id)
-    openTab(newTab.id);
+  tabBtn.id = "tablinks" + currTopicID;
+  tabBtn.innerHTML = "Topic " + currTopicID;
+
+  // Create close tab button
+  let closeTabBtn = document.createElement("span");
+  closeTabBtn.className = "close-tab";
+  closeTabBtn.id = "close-tab" + currTopicID;
+  closeTabBtn.innerHTML = "&times;";
+  tabBtn.appendChild(closeTabBtn);
+
+  tabBtn.onclick = (e) => {
+    if (e.target.className.includes("close-tab")) {
+      closeTab(e.target.id);
+    } else {
+      openTab(newTab.id);
+    }
   }
 
   let currTabs = document.querySelector(".tab");
@@ -125,18 +131,54 @@ function createTopic() {
   emptyState.appendChild(label1);
   emptyState.appendChild(label2);
 
-
-  for (i = 0; i < tabContent.length; i++) {
-    console.log(tabContent[i]);
-  }
-
-  let tabLinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tabLinks.length; i++) {
-    console.log(tabLinks[i]);
-  }
-
+  currTopicID++;
   createNewActiveHeight();
   openTab(newTab.id);
+}
+
+function closeTab(id) {
+  let tabContent = document.getElementsByClassName("tabcontent");
+  let tablinks = document.getElementsByClassName("tablinks");
+  let isActiveTab = false;
+  let tabLocation = -1;
+
+  let i = 0;
+  while (i<tabContent.length) {
+    // Find the tab content to be deleted
+    if (tabContent[i].id.slice(-1) == id.slice(-1)) {
+      // Check if the target tab is the active tab
+      if (id.slice(-1) == activeTab.id.slice(-1)) {
+        isActiveTab = true;
+      }
+      tabLocation = i;
+    }
+    i++;
+  }
+
+  if (isActiveTab) {
+    if (tabLocation+1 != tabContent.length) {                                               // Open the tab to the right if there is one
+      openTab(tabContent[tabLocation+1].id)
+    } else if (tabLocation-1 >= 0) {                                                        // Otherwise, open the tab to the left
+        openTab(tabContent[tabLocation-1].id)
+    } else if (tabLocation-1 < 0) {                                                         // Show the workspace empty state if closing only open tab
+        document.getElementById("workspace-empty-state").style.display = "block";
+    }
+  }
+  // Remove tab button and tab content
+  // Closing non-active tabs doesn't change the active tab
+  tablinks[tabLocation].remove();
+  tabContent[tabLocation].remove();
+}
+
+function getTabLocation(id) {
+  let tabContent = document.getElementsByClassName("tabcontent");
+  let location = -1;
+  for (let i=0; i<tabContent.length; i++) {
+    if (tabContent[i].id.slice(-1) == id.slice(-1)) {
+      location = i;
+    }
+  }
+  return location;
 }
 /* END Tab Functions ------------------------------------------------------------------- */
 
@@ -226,78 +268,74 @@ let newTabIconList = [];
 function createTextArea() {
   // Text area has to be created before suneditor initialization, 
   // so we have to return a promise indicating whether or not text area has been successfully created
-  let promise =  new Promise((resolve, reject) => {
+  let promise =  new Promise((resolve) => {
+      // workspace empty state
       if (activeTab.id == "resources-zone0") {
-        reject("create a topic first!!");
-      } else {
-        numSunEditors++;
-
-        // Check for filler space
-        if (document.getElementById("filler-space")) {
-            document.getElementById("filler-space").remove();
-        }
-
-        // Title element
-        let title = document.createElement('input');
-        title.type = "text";
-        title.className = "drop-zone__title";
-        title.placeholder = "Untitled";
-
-        // Edit icon
-        let editIcon = document.createElement('span');
-        editIcon.setAttribute("class", "material-symbols-outlined");
-        editIcon.setAttribute("id", "edit-icon" + numSunEditors);
-        editIcon.innerHTML = "edit";
-        editIcon.style.display = "none";
-
-        // Done icon
-        let doneIcon = document.createElement('span');
-        doneIcon.setAttribute("class", "material-symbols-outlined");
-        doneIcon.setAttribute("id", "done-icon" + numSunEditors);
-        doneIcon.innerHTML = "done";
-
-        // New Tab
-        let newTabIcon = document.createElement('span');
-        newTabIcon.setAttribute("class", "material-symbols-outlined");
-        newTabIcon.setAttribute("id", "open-tab-icon" + numSunEditors);
-        newTabIcon.innerHTML = "open_in_new";
-
-        // Suneditor textarea
-        let sunEditor = document.createElement("textarea");
-        sunEditor.setAttribute("id", "sunEditor" + numSunEditors);
-
-        activeTab.appendChild(title);
-        activeTab.appendChild(newTabIcon);
-        activeTab.appendChild(editIcon);
-        activeTab.appendChild(doneIcon);
-        activeTab.appendChild(sunEditor);
-
-        doneIconList.push(doneIcon);
-        editIconList.push(editIcon);
-        newTabIconList.push(newTabIcon);
-
-        // Remove empty state if necessary
-        if (activeTab.childElementCount > 0) {
-          document.querySelectorAll(".empty-state")[Number(tabName.slice(-1))].style.display = "none";
-        }
-
-        // Maintain a baseline height until 1200px is exceeded
-        activeHeightObj[tabName] += 800;
-        console.log(activeHeightObj[tabName]);
-        checkActiveHeight()
-        resolve("true");
+        createTopic();
       }
+      numSunEditors++;
+
+      // Check for filler space
+      if (document.getElementById("filler-space")) {
+          document.getElementById("filler-space").remove();
+      }
+
+      // Title element
+      let title = document.createElement('input');
+      title.type = "text";
+      title.className = "drop-zone__title";
+      title.placeholder = "Untitled";
+
+      // Edit icon
+      let editIcon = document.createElement('span');
+      editIcon.setAttribute("class", "material-symbols-outlined");
+      editIcon.setAttribute("id", "edit-icon" + numSunEditors);
+      editIcon.innerHTML = "edit";
+      editIcon.style.display = "none";
+
+      // Done icon
+      let doneIcon = document.createElement('span');
+      doneIcon.setAttribute("class", "material-symbols-outlined");
+      doneIcon.setAttribute("id", "done-icon" + numSunEditors);
+      doneIcon.innerHTML = "done";
+
+      // New Tab
+      let newTabIcon = document.createElement('span');
+      newTabIcon.setAttribute("class", "material-symbols-outlined");
+      newTabIcon.setAttribute("id", "open-tab-icon" + numSunEditors);
+      newTabIcon.innerHTML = "open_in_new";
+
+      // Suneditor textarea
+      let sunEditor = document.createElement("textarea");
+      sunEditor.setAttribute("id", "sunEditor" + numSunEditors);
+
+      activeTab.appendChild(title);
+      activeTab.appendChild(newTabIcon);
+      activeTab.appendChild(editIcon);
+      activeTab.appendChild(doneIcon);
+      activeTab.appendChild(sunEditor);
+
+      doneIconList.push(doneIcon);
+      editIconList.push(editIcon);
+      newTabIconList.push(newTabIcon);
+
+      // Remove empty state if necessary
+      if (activeTab.childElementCount > 0) {
+        let location = getTabLocation(tabName);
+        // location+1 bc of workspace empty state at location 0
+        document.querySelectorAll(".empty-state")[location+1].style.display = "none";
+      }
+
+      // Maintain a baseline height until 1200px is exceeded
+      activeHeightObj[tabName] += 800;
+      checkActiveHeight()
+      resolve("TA created");
   });
 
   promise.then(
-    // Promise resolved
     (value) => {
       console.log(value);
       createSunEditor();
-    },
-    // Promise rejected
-    (reason) => {
-      console.log(reason);
     }
   );
 }
@@ -403,74 +441,78 @@ const createSunEditor = async() => {
      * @param {File} file
      */
     function updateThumbnail(dropZoneElement, file) {
+      if (activeTab.id == "resources-zone0") {
+        createTopic()
+      } 
+      // Div that holds the thumbnail
+      let mydiv = document.createElement('div');
+      mydiv.className = "drop-zone-show";
 
-        // Div that holds the thumbnail
-        let mydiv = document.createElement('div');
-        mydiv.className = "drop-zone-show";
+      // Thumbnail element
+      let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+      thumbnailElement = document.createElement("div");
+      thumbnailElement.classList.add("drop-zone__thumb");
 
-        // Thumbnail element
-        let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
-        thumbnailElement = document.createElement("div");
-        thumbnailElement.classList.add("drop-zone__thumb");
+      // File input element
+      let inputfile = document.createElement('input');
+      inputfile.type = "file";
+      inputfile.name = "resourceImageField";
+      inputfile.className = "drop-zone__input";
 
-        // File input element
-        let inputfile = document.createElement('input');
-        inputfile.type = "file";
-        inputfile.name = "resourceImageField";
-        inputfile.className = "drop-zone__input";
+      // File title element
+      let inputTitle = document.createElement('input');
+      inputTitle.type = "text";
+      inputTitle.className = "drop-zone__title";
 
-        // File title element
-        let inputTitle = document.createElement('input');
-        inputTitle.type = "text";
-        inputTitle.className = "drop-zone__title";
+      // Preview Icon
+      let previewIcon = document.createElement('span');
+      previewIcon.setAttribute("class", "material-symbols-outlined");
+      previewIcon.setAttribute("id", "preview-icon");
+      previewIcon.innerHTML = "preview";
 
-        // Preview Icon
-        let previewIcon = document.createElement('span');
-        previewIcon.setAttribute("class", "material-symbols-outlined");
-        previewIcon.setAttribute("id", "preview-icon");
-        previewIcon.innerHTML = "preview";
-
-        // Check for filler space
-        if (document.getElementById("filler-space")) {
-            document.getElementById("filler-space").remove();
+      // Check for filler space
+      if (document.getElementById("filler-space")) {
+          document.getElementById("filler-space").remove();
+      }
+      
+      // Append the thumbnail to parent div
+      // Set the title to the file name
+      mydiv.appendChild(thumbnailElement);
+      thumbnailElement.dataset.label = file.name;
+      inputTitle.value = file.name;
+      
+      // Show thumbnail for image files
+      if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+        
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+              thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+          };
+          mydiv.style.height = "500px";
+          activeHeightObj[tabName] += 500;
+        } else {
+            thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
+            thumbnailElement.style.backgroundSize = "200px";
+            mydiv.style.height = "200px";
+            activeHeightObj[tabName] += 200;
         }
-        
-        // Append the thumbnail to parent div
-        // Set the title to the file name
-        mydiv.appendChild(thumbnailElement);
-        thumbnailElement.dataset.label = file.name;
-        inputTitle.value = file.name;
-        
-        // Show thumbnail for image files
-        if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-          
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-            };
-            mydiv.style.height = "500px";
-            activeHeightObj[tabName] += 500;
-          } else {
-              thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
-              thumbnailElement.style.backgroundSize = "200px";
-              mydiv.style.height = "200px";
-              activeHeightObj[tabName] += 200;
-          }
 
-          mydiv.appendChild(inputfile);
-          activeTab.appendChild(inputTitle);
-          activeTab.appendChild(previewIcon);
-          activeTab.appendChild(mydiv);
+        mydiv.appendChild(inputfile);
+        activeTab.appendChild(inputTitle);
+        activeTab.appendChild(previewIcon);
+        activeTab.appendChild(mydiv);
 
-          // Remove empty state if necessary
-          if (mydiv.childElementCount > 0) {
-            document.querySelectorAll(".empty-state")[Number(tabName.slice(-1))-1].style.display = "none";
-          }
+        // Remove empty state if necessary
+        if (mydiv.childElementCount > 0) {
+          let location = getTabLocation(tabName);
+          // location+1 bc of workspace empty state at location 0
+          document.querySelectorAll(".empty-state")[location+1].style.display = "none";
+        }
 
-          // Maintain a baseline height until 1200px is exceeded
-          console.log(activeHeightObj[tabName])
-          checkActiveHeight();
+        // Maintain a baseline height until 1200px is exceeded
+        checkActiveHeight();
+      
     }
   }
 /* END Drag and Drop ------------------------------------------------------------------------- */
@@ -529,7 +571,7 @@ document.addEventListener("click", function(e) {
   }
 
   // open suneditor in new tab
-  if (e.target.id.includes("tab")) {
+  if (e.target.id.includes("open-tab")) {
     window.open("http://localhost:4200/note", "_blank");
   }
 
@@ -550,7 +592,7 @@ document.addEventListener("click", function(e) {
 
 /* Workspace Manager Modal ----------------------------------------------- */
 const modal = document.getElementById("resource-modal-div");
-const openBtn = document.getElementById("new-resource");
+const openBtn = document.getElementById("new-element");
 const closeBtn = document.getElementById("close");
 const createDocBtn = document.getElementById("create-doc-div");
 const createTopicBtn = document.getElementById("create-topic-div");

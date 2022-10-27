@@ -29,11 +29,6 @@
     font-size: xx-large;
 }
 
-#divider {
-    height: 75px;
-    margin-right: 5px;
-}
-
 #description-div {
     display: flex;
     flex-direction: row;
@@ -61,16 +56,6 @@
     margin-top: 10px;
 }
 
-#topic1 {
-    display: none;
-    width: 99%;
-}
-
-#topic2 {
-    display: none;
-    width: 99%;
-}
-
 .material-symbols-outlined {
     color: black;
     cursor: pointer;
@@ -92,9 +77,10 @@
     border-radius: 10px;
 }
 
-#new-resource {
+#new-element {
     margin-top: 0px;
-    font-size: 50px;
+    margin-right: 5px;
+    font-size: 40px;
 }
 
 .descriptionTA {
@@ -107,7 +93,6 @@
     margin-left: 20px;
     margin-bottom: 10px;
     font-size: medium;
-
     border-style: dashed;
 }
 
@@ -125,6 +110,27 @@
     border: 1px solid #2c3e50;
     padding: 10px 10px;
     font-size: large;
+}
+
+#workspace-empty-state {
+    width: 98%;
+    margin-top: 25px;
+    margin-left: 11px;
+}
+
+.empty-state {
+    height: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.empty-state-text {
+    width: 50%;
+    height: auto;
+    text-align: center;
 }
 
 
@@ -209,8 +215,8 @@
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
-    margin: 0 auto;
     margin-bottom: 20px;
+    height: 50px;
   }
   
 .tab button {
@@ -231,7 +237,19 @@
     display: none;
     padding: 6px 12px;
     border-top: none;
-  }
+}
+
+.tablinks {
+    height: 50px;
+}
+
+.close-tab {
+    margin-left: 20px;
+    padding: 10px 10px
+}
+.close-tab:hover {
+    color: red;
+}
 
 /* END Tabs --------------------------------- */
 
@@ -301,22 +319,6 @@
     background-color:aliceblue;
     padding: 5px 9px;
     border-radius: 20px;
-
-  }
-
-  .empty-state {
-    height: 1200px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .empty-state-text {
-    width: 50%;
-    height: auto;
-    text-align: center;
   }
 
 /* END Tags*/
@@ -330,7 +332,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 95%;
+    width: 100%;
     height: auto;
   }
 
