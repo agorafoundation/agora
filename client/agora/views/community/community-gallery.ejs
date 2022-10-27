@@ -10,36 +10,14 @@ name:"Steak14", desc:"very tasy"} ,{ name:"Steak15", desc:"very tasy"},{
 name:"Steak16", desc:"very tasy"} ,{ name:"Steak17", desc:"very tasy"},{
 name:"Steak18", desc:"very tasy"}  ] %> 
 
-
-
-
-<div class="container my-5">
-  <!--Controls-->
-   <div class="controls-top">
-    <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
-    <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fa fa-chevron-right"></i></a>
-  </div>
-
-
-<hr class="my-5">
+<% for(let j = 0; j < 4 ;j++) {%> 
+<div class="container pt-3 pb-3">
+<h2 class="text-secondary  p-0 pt-1 pl-1 ">Recipes</h2>
+<hr class="pb-0">
 
 <!--Carousel Wrapper-->
-<div id="multi-item-example" class="carousel slide carousel-multi-item" data-ride="carousel">
+<div id="suggestion-<%=j %>" class="carousel slide carousel-multi-item pt-0 " data-ride="carousel" data-interval="false" >
 
-  <!--Controls-->
-  <div class="controls-top">
-    <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
-    <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fa fa-chevron-right"></i></a>
-  </div>
-  <!--/.Controls-->
-
-  <!--Indicators-->
-  <ol class="carousel-indicators">
-    <li data-target="#multi-item-example" data-slide-to="0" class="active"></li>
-    <li data-target="#multi-item-example" data-slide-to="1"></li>
-    <li data-target="#multi-item-example" data-slide-to="2"></li>
-  </ol>
-  <!--/.Indicators-->
 
   
   <!--Slides-->
@@ -48,6 +26,7 @@ name:"Steak18", desc:"very tasy"}  ] %>
     <!--First slide-->
     <% for(let i = 0; i + 3 < recipeList.length; i+=3) {%> 
     <% if(i === 0) {%> 
+    
     <div class="carousel-item active">
 
       <div class="row">
@@ -199,8 +178,16 @@ name:"Steak18", desc:"very tasy"}  ] %>
   <!--/.Slides-->
 </div>
 <!--/.Carousel Wrapper-->
+<a class=" " href="#suggestion-<%=j %>" data-slide="prev"><span class="material-symbols-outlined float-left">
+  arrow_back_ios_new
+  </span></a>
+<a class="" href="#suggestion-<%=j %>" data-slide="next"><span class="material-symbols-outlined ">
+  arrow_forward_ios
+  </span></a>
 
+ 
 </div>
+ <% } %> 
  
  
  
