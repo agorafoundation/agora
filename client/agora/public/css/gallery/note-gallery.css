@@ -163,7 +163,9 @@
 .list-toggle-btn {
   position: absolute;
   top: 2.2%;
-  right: 13%;
+  right: 17.5%;
+  height: 40px;
+  width: 30px;
 }
 
 .list-more-options {
@@ -173,4 +175,9 @@
   position: absolute;
   right: 1%;
   margin-top: 3px;
+}
+
+.list-view:hover {
+  background-color: lightgray;
+  cursor: pointer;
 }
