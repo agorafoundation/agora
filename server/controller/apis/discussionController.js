@@ -283,7 +283,7 @@ exports.editComment = async ( req, res ) => {
     }
     
     res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all goals" );
+    res.set( "x-agora-message-detail", "Edited comment" );
     res.status( 200 ).json( comment );
 }
 

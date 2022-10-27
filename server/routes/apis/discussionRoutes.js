@@ -46,20 +46,19 @@ router.route( '/topic/:id' )
         discussionController.createDiscussionByTopicId( req, res );
     })
 
-// discussions /api/v1/auth/discussion
 router.route( '/rating/:commentId' )
-    // update a visible goal by id
+    // update a comment rating
     .post( async ( req, res ) => {
         discussionController.setRating( req, res )
     })
-    // delete a visible goal by id
+    // delete a comment rating
     .delete( async (req, res ) => {
         discussionController.removeRating( req, res )
     });
  
 // leave a comment
 router.route( '/comment' )
-     // enroll an eligible user in a visibile goal
+     // create a comment
      .post( async ( req, res ) => {
         discussionController.createComment( req, res )
      })
