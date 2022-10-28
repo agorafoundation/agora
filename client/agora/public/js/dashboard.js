@@ -656,7 +656,7 @@ const topicReroute = (id, newTab, prefix) => {
   if (prefix) {
     usedPrefix = prefix;
   } else {
-    usedPrefix = id.charAt(0);
+    usedPrefix = id.substring(0,2);
   }
 
   const title = document.getElementById(usedPrefix + "lv-card-title-" + id);
@@ -875,21 +875,23 @@ window.onload = getTopics;
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = (newVal, arr) => {
-  let elemName, idToRemove, badListElement, badGridElement, addedElements;
+  let elemName, idToRemove, badListElement, badGridElement, addedElements, prefix;
   const len = arr.length;
   newVal = newVal.toLowerCase();
   for (let i = 0; i < len; i++) {
     elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
     
-    idToRemove = (arr[i].childNodes[1].id).substr(3); //id of the element being checked
+    idToRemove = (arr[i].childNodes[1].id).substr(5); //id of the element being checked
+
+    prefix = (arr[i].childNodes[1].id).substring(0,2);
 
     if (!elemName.includes(newVal)) {   //checking query
   
       if (!hasElement(idToRemove, removedTopics)) {  //has this element not yet already been removed?
 
-        badListElement = document.getElementById("lv-" + idToRemove); //element in list view to be removed
+        badListElement = document.getElementById(prefix + "lv-" + idToRemove); //element in list view to be removed
 
-        badGridElement = document.getElementById("gv-" + idToRemove).parentNode;   //element in grid view to be removed
+        badGridElement = document.getElementById(prefix + "gv-" + idToRemove).parentNode;   //element in grid view to be removed
 
         removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idToRemove });   //add element to removedTopics
         badGridElement.remove();
