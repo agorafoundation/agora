@@ -71,10 +71,7 @@
 </div>
 
 <div id="grid-container" style="display: none">
-    <% for (let i = 0; i < availableResources.length + 1; i++) { 
-        //add button
-        if (i === 0) {
-            %>
+   
         <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
             <div class="col mb-3 gallery-col align-items-stretch gallery-col">
             <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
@@ -84,11 +81,18 @@
                 </div>
             </div>
             </div>
-            <% }else{ 
-            if(i % 2 === 0) {%>
-            <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Topic", null)
-            }else{
-                renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
-            } %>
-        <% }}%>
+           
+           
+            <% //render resources for Now
+        for (let i = 0; i <  availableResources.length ; i++) { 
+            renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Topic", null) 
+         
+      
+         }%>
+         <%
+         //render goals
+         for (let i = 0; i <  ownerGoals.length ; i++) { 
+            renderCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+         }%>
+           
     </div>
