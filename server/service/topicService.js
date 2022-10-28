@@ -26,7 +26,7 @@ const CompletedResource = require('../model/completedResource');
 // any cross services required
 const userService = require('../service/userService');
 const assessmentService = require('../service/assessmentService');
-const Goal = require("../model/goal");
+const Goal = require("../model/workspace");
 
 
 /**
