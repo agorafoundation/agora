@@ -425,16 +425,17 @@ function viewModal(id, name, desc) {
 
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
-  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
-  //let dropId = "option-" + id;
+  const dropId = id.substring(0,5) + "option-" + id.substring(5);
+
   document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
-  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
-  //let dropId = "option-" + id;
+  const dropId = id.substring(0,5) + "option-" + id.substring(5);
+
   document.getElementById(dropId).style.visibility = "hidden";
 }
+
 
 const toggleGoalView = () => {
   const cards = document.getElementsByClassName("view-check");
@@ -466,20 +467,57 @@ const toggleAllView = () => {
   }
 };
 
+//////More Options Helpers//////
 
-////get the id of the parent element////
-//e is pointer event
-const getId = (e) => {
-  let parent;
-  if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
-    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
+//makes sure event pointer detects the proper element
+const goodElement = (e) => {
+  if (e.target.id) {
+    return e.target;
   } else {
-    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
+    return e.target.parentElement;
   }
-  return parent.charAt(parent.length - 1); //just the numeric id
 }
 
-////Create a toast////
+//returns true if e points to grid view, false if list view
+const isGrid = (e) => {
+  e = goodElement(e);
+  if (e.parentElement.parentElement.classList[4] === "grid-options") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+//return true if topic, false if goal
+//e is pointer event
+const isTopic = (e) => {
+  let output = false;
+  const GE = goodElement(e);
+  if (isGrid(e)) {
+    if ((GE.parentElement.parentElement.id).charAt(0) === "t") {
+      output = true;
+    }
+  } else {
+    if ((GE.parentElement.parentElement.parentElement.id).charAt(0) === "t") {
+      output = true;
+    }
+  }
+  return output;
+}
+
+////returns the id of the element e is pointing to
+const getId = (e) => {
+  const GE = goodElement(e);
+  let parent;
+  if (isGrid(e)) {
+    parent = GE.parentElement.parentElement.parentElement.id; //the id of the grid element
+  } else {
+    parent = GE.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
+  }
+  return parent.substring(5); //just the numeric id
+}
+
+////////Create a toast/////////
 const createToast = (text) => {
   document.getElementById('toast-text').innerText = text;
   const thisToast = document.getElementById('liveToast');
@@ -492,11 +530,14 @@ const createToast = (text) => {
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
+
   let parentNameId = "card-title-" + parentId;
   let parentDescId = "card-desc-" + parentId;
 
-  let parentName = document.getElementById("lv-" + parentNameId).innerText;
-  let parentDesc = document.getElementById("gv-" + parentDescId).innerText;
+  let parentName = document.getElementById(prefix + "lv-" + parentNameId).innerText;
+  let parentDesc = document.getElementById(prefix + "gv-" + parentDescId).innerText;
 
   //setting the onclick event of the save button depenidng on the id of the clicked card
   document
@@ -504,8 +545,7 @@ const fillNameandDescription = (e) => {
     .setAttribute(
       "onclick",
       `updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(
-        parentDescId
-      )})`
+        parentDescId)},${JSON.stringify(prefix)})`
     );
 
   //filling the input fields of the modal to the current values
@@ -532,12 +572,12 @@ var cards = document.querySelectorAll("#rename-card").forEach((card) => {
 });
 
 //changing the properties of the save button of the rename-modal depending on the selected card
-const updateSaveButton = (nameId, descId) => {
+const updateSaveButton = (nameId, descId, prefix) => {
   let tempName = document.getElementById("note-modal-name").value;
   if (tempName) {
-    document.getElementById("gv-" + nameId).innerText = tempName;
-    document.getElementById("lv-" + nameId).innerText = tempName;
-    document.getElementById("gv-" + descId).innerText = document.getElementById("note-modal-description").value;
+    document.getElementById(prefix + "gv-" + nameId).innerText = tempName;
+    document.getElementById(prefix + "lv-" + nameId).innerText = tempName;
+    document.getElementById(prefix + "gv-" + descId).innerText = document.getElementById("note-modal-description").value;
     closeRenameModal();
   } else {
     window.alert("All goals/topics must have a name");
@@ -565,7 +605,10 @@ const removeText = (type) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = (e) => {
   let parentId = getId(e);
-  let parentNameId = "lv-card-title-" + parentId;
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-"; 
+
+  let parentNameId = prefix + "lv-card-title-" + parentId;
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
@@ -574,7 +617,7 @@ const showDeleteModal = (e) => {
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
-    .setAttribute("onclick", `updateDeleteConfirmButton(${parentId})`);
+    .setAttribute("onclick", `updateDeleteConfirmButton(${JSON.stringify(parentId)}, ${JSON.stringify(prefix)})`);
 
   //showing the delete modal
   document.getElementById("delete-modal").style.display = "block";
@@ -592,9 +635,9 @@ var deleteCards = document
   });
 
 //changing the properties of the confirm button of the delete-modal depending on the selected card
-const updateDeleteConfirmButton = (id) => {
-  document.getElementById("gv-" + id).parentElement.remove();
-  document.getElementById("lv-" + id).remove();
+const updateDeleteConfirmButton = (id, prefix) => {
+  document.getElementById(prefix + "gv-" + id).parentElement.remove();
+  document.getElementById(prefix + "lv-" + id).remove();
   getTopics();
   exitDeleteModal();
 };
@@ -608,10 +651,16 @@ function exitDeleteModal() {
 
 //////onclick handling for topic rerouting//////////
 
-const topicReroute = (id, newTab) => {
+const topicReroute = (id, newTab, prefix) => {
+  let usedPrefix;
+  if (prefix) {
+    usedPrefix = prefix;
+  } else {
+    usedPrefix = id.charAt(0);
+  }
 
-  const title = document.getElementById("lv-card-title-" + id);
-  const description = document.getElementById("gv-card-desc-" + id);
+  const title = document.getElementById(usedPrefix + "lv-card-title-" + id);
+  const description = document.getElementById(usedPrefix + "gv-card-desc-" + id);
 
   //pass the title and description to backend
   if (newTab) {
@@ -625,8 +674,10 @@ const topicReroute = (id, newTab) => {
 
 const openInNewTab = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
 
-  topicReroute(parentId, true);
+  topicReroute(parentId, true, prefix);
 
   e.stopPropagation();
 }
@@ -661,9 +712,11 @@ var newTabCards = document
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
 
-  gridParent = document.getElementById("gv-" + parentId).parentElement;
-  listParent = document.getElementById("lv-" + parentId);
+  gridParent = document.getElementById(prefix + "gv-" + parentId).parentElement;
+  listParent = document.getElementById(prefix + "lv-" + parentId);
 
   //creating separate, autonomous element that's a clone of the original
   gridClone = gridParent.cloneNode(true);
@@ -673,8 +726,8 @@ const duplicateGoal = (e) => {
   let newId = checkForNextId();
 
   //changing the ids in the cloned element
-  gridClone = replaceIds(gridClone, newId, true);
-  listClone = replaceIds(listClone, newId, false);
+  gridClone = replaceIds(gridClone, newId, true, prefix);
+  listClone = replaceIds(listClone, newId, false, prefix);
 
   //calculating new id then setting the elements ids to the new one
 
@@ -784,21 +837,21 @@ const checkForNextId = () => {
 };
 
 //handles updating an element's various ids
-const replaceIds = (element, newId, grid) => {
+const replaceIds = (element, newId, grid, prefix) => {
   if (grid) {   //if element is in grid view
-    element.childNodes[1].id = "gv-" + newId; //main id
+    element.childNodes[1].id = prefix + "gv-" + newId; //main id
 
-    element.childNodes[1].childNodes[1].id = "gv-option-" + newId; //option id
+    element.childNodes[1].childNodes[1].id = prefix + "gv-option-" + newId; //option id
     
-    element.childNodes[1].childNodes[3].childNodes[1].id = "gv-card-title-" + newId; //card title id
+    element.childNodes[1].childNodes[3].childNodes[1].id = prefix + "gv-card-title-" + newId; //card title id
     
-    element.childNodes[1].childNodes[3].childNodes[3].id = "gv-card-desc-" + newId; //card description id
+    element.childNodes[1].childNodes[3].childNodes[3].id = prefix + "gv-card-desc-" + newId; //card description id
   } else {  //if element is in list view
-    element.id = "lv-" + newId; //main id
+    element.id = prefix + "lv-" + newId; //main id
 
-    element.childNodes[1].id = "lv-card-title-" + newId;  //card title id
+    element.childNodes[1].id = prefix + "lv-card-title-" + newId;  //card title id
 
-    element.childNodes[5].id = "lv-option-" + newId;  //option id
+    element.childNodes[5].id = prefix + "lv-option-" + newId;  //option id
   }
   return element;
 };

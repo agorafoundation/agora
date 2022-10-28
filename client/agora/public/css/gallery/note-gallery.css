@@ -130,8 +130,8 @@
 
 .card-search {
   position: absolute;
-  right: 26%;
-  top: 3.2%;
+  right: 410px;
+  top: 25px;
   height: 29px;
   padding: 7px;
   margin: 0;
@@ -162,8 +162,8 @@
 
 .list-toggle-btn {
   position: absolute;
-  top: 2.2%;
-  right: 17.5%;
+  top: 16px;
+  right: 275px;
   height: 40px; 
   width: 30px
 }
