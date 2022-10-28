@@ -1,0 +1,80 @@
+<% var sharedWith = [{name: "John Cena", pfp: 'account_circle', status: "Owner"}, {name: "The Rock", pfp: 'account_circle', status: "Member"}, {name: "Jesus", pfp: 'account_circle', status: "Contributer"}]; %>
+
+<div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="share-modal-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="border-radius: 10px; box-shadow: 3px rgba(0.5,0.5,0.5,0.5);">
+        <div class="modal-header" style="display: flex; flex-direction: column;">
+            <button class="aux-button">
+                <span class="material-symbols-outlined" style="margin: 0; font-size: 27px">language</span>
+            </button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute; top: 0; right: 0">
+                <span class="material-symbols-outlined" style="margin: 0">close</span>
+            </button>
+            <h5 class="modal-title" id="share-modal-title">Share "Untitled"</h5>
+            <input class="share-modal-input" placeholder="Enter email address"></input>
+            <hr class="permissions-hr">
+            
+        </div>
+        <div class="modal-body">
+            <ul id="profiles-list" class="currently-shared-with">
+                <% sharedWith.forEach((profile)=> { %>
+                    <li class="profile-shared-with">
+                        <span class="material-symbols-outlined"><%= profile.pfp %></span>
+                        <span class="profile-name"><%= profile.name %></span>
+                        <span class="profile-status"><%= profile.status %></span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <div class="permissions-header">Permissions</div>
+            <button class="arrow down-arrow" id="profiles-toggle"></button>
+            <hr class="permissions-hr">
+            <div class="permissions-row" id="permissions-box">
+                <div class="permissions-col">
+                    <span class="permission-li">
+                        <span>Permission 1</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 2</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 3</span>
+                        <input type="checkbox"></input>
+                    </span>
+                </div>
+                <div class="permissions-col">
+                    <span class="permission-li">
+                        <span>Permission 4</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 5</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 6</span>
+                        <input type="checkbox"></input>
+                    </span>
+                </div>
+                <div class="permissions-col">
+                    <span class="permission-li">
+                        <span>Permission 7</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 8</span>
+                        <input type="checkbox"></input>
+                    </span>
+                    <span class="permission-li">
+                        <span>Permission 9</span>
+                        <input type="checkbox"></input>
+                    </span>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
