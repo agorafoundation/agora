@@ -36,7 +36,7 @@ exports.emptyTopic = () => {
 
 exports.ormTopic = function (row) {
     let topic = exports.emptyTopic();
-    topic.topicId = row.topicId;
+    topic.topicId = row.id; // TODO: Once database change goes through, this will need to be row.topicId;
     topic.topicType = row.topic_type;
     topic.topicName = row.topic_name;
     topic.topicDescription = row.topic_description;
