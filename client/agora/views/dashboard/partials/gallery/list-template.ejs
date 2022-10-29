@@ -50,11 +50,14 @@
             <span style="margin-left: 29%">Type</span>
             <span style="margin-left: 10%">Tags</span>
         </li>
-        <% for (let i = 1; i < availableResources.length + 1; i++) { 
-            if(i % 2 === 0) { 
-                renderListCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Topic", null)
-            } else {
-                renderListCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
-            }
+        <% for (let i = 0; i < availableResources.length; i++) { 
+                renderListCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Topic", null);
+        } 
+
+        for (let i = 0; i < ownerGoals.length ; i++) { 
+            renderListCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
         } %>
     </ul>
+
+
+

@@ -536,6 +536,9 @@ const fillNameandDescription = (e) => {
   let parentNameId = "card-title-" + parentId;
   let parentDescId = "card-desc-" + parentId;
 
+  //console.log(document.getElementById(prefix + "gv-" + parentNameId).innerText)
+  console.log(document.getElementById(prefix + "gv-" + parentNameId).innerText);
+
   let parentName = document.getElementById(prefix + "lv-" + parentNameId).innerText;
   let parentDesc = document.getElementById(prefix + "gv-" + parentDescId).innerText;
 
@@ -784,6 +787,8 @@ const duplicateGoal = (e) => {
   //adding the new clone to the grid container
   document.getElementById("gallery-row").appendChild(gridClone);
 
+  //document.getElementById("gallery-row").insertBefore(gridClone,document.getElementById("gallery-row").childNodes[2])
+
   //adding the new clone to the list container
   document.getElementById("list-column").appendChild(listClone);
 
@@ -875,40 +880,46 @@ window.onload = getTopics;
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = (newVal, arr) => {
-  let elemName, idToRemove, badListElement, badGridElement, addedElements, prefix;
+  //console.log(topicArr)
+  let elemName, idToRemove, badListElement, badGridElement, addedElements, prefix, idPlusPrefix;
   const len = arr.length;
   newVal = newVal.toLowerCase();
+  console.log(newVal)
   for (let i = 0; i < len; i++) {
     elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
     
     idToRemove = (arr[i].childNodes[1].id).substr(5); //id of the element being checked
 
-    prefix = (arr[i].childNodes[1].id).substring(0,2);
+    prefix = (arr[i].childNodes[1].id).substring(0,2);  //indicates whether is goal or topic
+
+    idPlusPrefix = prefix + idToRemove;   //concatination
 
     if (!elemName.includes(newVal)) {   //checking query
   
-      if (!hasElement(idToRemove, removedTopics)) {  //has this element not yet already been removed?
+      if (!hasElement(idPlusPrefix, removedTopics)) {  //has this element not yet already been removed?
 
         badListElement = document.getElementById(prefix + "lv-" + idToRemove); //element in list view to be removed
 
         badGridElement = document.getElementById(prefix + "gv-" + idToRemove).parentNode;   //element in grid view to be removed
 
-        removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idToRemove });   //add element to removedTopics
+        removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idPlusPrefix });   //add element to removedTopics
         badGridElement.remove();
         badListElement.remove();
       }
-    } else if (hasElement(idToRemove, removedTopics)) {  //does the query name exist in removedTopics?
+    } else if (hasElement(idPlusPrefix, removedTopics)) {  //does the query name exist in removedTopics?
 
-      addedElements = getElement(idToRemove, removedTopics);
+      addedElements = getElement(idPlusPrefix, removedTopics);
       document.getElementById("gallery-row").appendChild(addedElements.gridEl); //adding the grid element back to the DOM
       document.getElementById("list-column").appendChild(addedElements.listEl); //adding the list element back to the DOM
-      removedTopics = removeElement(idToRemove, removedTopics);  //remove element from removedTopics
+      removedTopics = removeElement(idPlusPrefix, removedTopics);  //remove element from removedTopics
     }
   }
 }
 
 //checks if removedTopics contains a certain id
 const hasElement = (id, removed) => {
+  console.log(id)
+  console.log(removed)
   let done = false, index = 0;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
