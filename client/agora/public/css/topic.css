@@ -503,3 +503,117 @@
     cursor: pointer;
   }
   /* END Workspace Manager Modal  ----------------------------------*/
+
+  .share-button {
+    position: absolute;
+    right: 20px;
+    top: -20px;
+  }
+
+  #share-modal-title {
+    font-size: xx-large;
+    font-weight: 400;
+  }
+
+  .share-modal-input {
+    margin-top: 20px;
+    width: 80%;
+    outline: none;
+    border: none;
+    background-color: lightgray;
+    border-bottom: 1px solid black;
+    height: 40px;
+    padding-left: 5px;
+  }
+
+  .currently-shared-with {
+    list-style: none;
+    margin-top: -40px;
+    padding-top: 0;
+  }
+
+  .profile-shared-with {
+    display: flex; 
+    flex-direction: row; 
+    margin-left: -30px; 
+    margin-top: -25px;
+  }
+  
+  .profile-name {
+    height: 50%; 
+    margin-left: 15px; 
+    margin-top: 36px;
+  }
+
+  .profile-status {
+    margin-top: 36px;
+    margin-left: 230px;
+    font-weight: 500px;
+  }
+
+  .permissions-row {
+    display: flex; 
+    flex-direction: row; 
+    margin-right: 0px; 
+    font-size: medium
+  }
+
+  .permissions-col {
+    display: flex; 
+    flex-direction: column; 
+    margin-right: 34px;
+  }
+
+  .permission-li {
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+
+  .permissions-header {
+    font-size: large;
+    font-weight: 500;
+    margin-right: 64%;
+
+  }
+
+  .permissions-hr {
+    width: 100%;
+  }
+
+  .arrow {
+    cursor: pointer;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    height: 15px;
+    width: 15px;
+    background-color: transparent;
+    margin-right: 20px;
+  }
+
+  .arrow:focus {
+    outline: none;
+  }
+
+  .down-arrow {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+
+  .up-arrow {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
+
+  .aux-button {
+    position: absolute;
+    top: 0;
+    right: 40px;
+    border: none;
+    background-color: transparent;
+  }
+
+  .aux-button:focus {
+    outline: none;
+  }

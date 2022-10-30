@@ -798,3 +798,39 @@ createTopicBtn.onclick = () => {
 // }
 
 /* END File Dropdown ----------------------------------------- */
+
+const toggleProfileList = () => {
+  let arrow = document.getElementById("profiles-toggle");
+
+  if (arrow.classList.contains("down-arrow")) {
+      document.getElementById("permissions-box").style.display = "none";
+      arrow.setAttribute('class','arrow up-arrow');
+  } else {
+    document.getElementById("permissions-box").style.display = "flex";
+      arrow.setAttribute('class','arrow down-arrow');
+  }
+}
+
+function toggleProfile (e) {
+  let target = e.target;
+  let box;
+
+  target.classList.contains("permission-li") ? 
+  box = target.childNodes[3] : 
+  box = target.parentElement.childNodes[3];
+
+  box.checked ?
+  box.checked = false :
+  box.checked = true;
+}
+
+
+document.getElementById("profiles-toggle").addEventListener("click", toggleProfileList);
+
+var perms = document.getElementsByClassName("permission-li");
+
+for (let i = 0; i < perms.length; i++) {
+  perms[i].addEventListener("click", toggleProfile);
+}
+
+  
