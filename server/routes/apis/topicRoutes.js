@@ -39,13 +39,13 @@
      }
  )
  
- router.route( '/shared' )
+ router.route( '/shared' ) // In Progress.
      .get( async ( req, res ) => {
          topicController.getAllSharedTopicsForUser( req, res );
      })
  
  // Topics /api/v1/auth/topics/:id
- router.route( '/:id' )
+ router.route( '/:topicId' )
      .get( async  ( req, res ) => {
          topicController.getTopicById( req, res );
      

@@ -473,7 +473,7 @@ exports.deleteTopicById = async (req, res) => {
         authUserId = req.session.authUser.id;
     }
 
-    const topicId = req.params.id;
+    const topicId = req.params.topicId;
     let success = await topicService.deleteTopicById(topicId, authUserId);
 
     if (success) {
