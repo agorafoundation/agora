@@ -7,11 +7,15 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding-top: 20px;
-    margin-bottom: 50px;
     border-radius: 20px;
     border:1px solid lightgray;
+    background-color: white;
   }
+
+#topic-background {
+    background-color: #f1f1f1;
+    padding-bottom: 50px;
+}
 
 .header-div {
     font-size: large;
@@ -213,7 +217,7 @@
 /* Tabs ---------------------------------- */
 .tab {
     overflow: hidden;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     background-color: #f1f1f1;
     margin-bottom: 20px;
     height: 50px;
@@ -222,15 +226,14 @@
 .tab button {
     background-color: inherit;
     float: left;
-    border: none;
     outline: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: 14px 10px;
     transition: 0.3s;
-  }
-  
-.tab button:hover {
-    background-color: #ddd;
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: 1px solid rgb(177, 172, 172);
   }
   
 .tabcontent {
@@ -245,10 +248,11 @@
 
 .close-tab {
     margin-left: 20px;
-    padding: 10px 10px
+    padding: 10px 0px;
+    color: rgb(100, 98, 98);
 }
 .close-tab:hover {
-    color: red;
+    color: black
 }
 
 /* END Tabs --------------------------------- */
@@ -337,9 +341,11 @@
   }
 
 .drop-zone {
-    padding: 5px;
-    border-radius: 10px;
-    
+    margin: 0 auto;
+    height: inherit;
+    padding-bottom: 50px;
+    width: 100%;
+    border-radius: 20px;
 }
 
   .drop-zone-show {
@@ -349,9 +355,21 @@
     border: 1px dashed #505050;
     border-radius: 10px;
   }
+
+  .dropzone-filler {
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 10px;
+    width: 99%;
+    height: 20px;
+    background-color: rgb(18, 79, 132);
+    display: none;
+  }
     
   .drop-zone--over {
-      border-style: solid;
+    padding-bottom: 20px;
+    border-radius: 20px;
+    border: 2px solid #2c3e50;
   }
     
   .drop-zone__input {
@@ -362,10 +380,9 @@
     width: 90%;
     border: none;
     border-bottom: 1px solid gray;
-    padding: 10px 5px;
-    margin-left: 10px;
+    padding: 5px 5px;
+    margin-left: 15px;
     margin-bottom: 10px;
-    margin-top: 30px;
   }
 
   .drop-zone__title:focus {
@@ -485,5 +502,4 @@
     text-decoration: none;
     cursor: pointer;
   }
-
   /* END Workspace Manager Modal  ----------------------------------*/

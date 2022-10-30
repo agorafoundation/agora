@@ -9,9 +9,7 @@ function createNewActiveHeight() {
   activeHeightList.push(activeHeightObj[tabElements[tabElements.length-1].id]);
 }
 
-
-// Implemented to ensure resources fill a 1200px space first 
-// And then page grows as needed
+// Implemented to ensure resources fill a 1200px space first and then grows as needed
 function checkActiveHeight() {
     if (activeHeightObj[tabName] < 1200) {
         let filler = document.createElement("div");
@@ -71,14 +69,54 @@ function createTopic() {
 
   // If no topics are open...
   if (lastTab == null) {
-    let workspaceEmptyState = document.getElementById("workspace-empty-state")
+    let workspaceEmptyState = document.getElementById("workspace-empty-state");
     workspaceEmptyState.parentNode.insertBefore(newTab, workspaceEmptyState.nextSibling);
     workspaceEmptyState.style.display = "none";
+    document.getElementById("topic-background").style.backgroundColor = "#ddd";
   } else {
     lastTab.parentNode.insertBefore(newTab, lastTab.nextSibling);
   }
 
-  // Create all elements within a topic
+  // ------------------------------------------------
+  // Create drop zone at the top of the topic
+  let newDropZone = document.createElement("div");
+  newDropZone.classList.add("drop-zone");
+  newDropZone.classList.add("first-dropzone");
+
+   // Create drop zone filler div
+   let newDropZoneFiller = document.createElement("div");
+   newDropZoneFiller.className = "dropzone-filler";
+   newDropZone.appendChild(newDropZoneFiller);
+
+  // Create drop zone input
+  let newDropZoneInput = document.createElement("input");
+  newDropZoneInput.className = "drop-zone__input";
+  newDropZoneInput.type = "file";
+  newDropZone.appendChild(newDropZoneInput);
+  createDropZoneEventListeners(newDropZone, newDropZoneInput);
+  newDropZone.style.display = "none";
+  // ------------------------------------------------------
+
+  // -----------------------------------------------------
+  // Create drop zone that fills the entire topic empty state
+  let emptyDropZone = document.createElement("div");
+  emptyDropZone.classList.add("drop-zone");
+  emptyDropZone.classList.add("empty-topic-dropzone");
+
+   // Create drop zone filler div
+   let emptyDropZoneFiller = document.createElement("div");
+   emptyDropZoneFiller.className = "dropzone-filler";
+   emptyDropZone.appendChild(emptyDropZoneFiller);
+
+  // Create drop zone input
+  let emptyDropZoneInput = document.createElement("input");
+  emptyDropZoneInput.className = "drop-zone__input";
+  emptyDropZoneInput.type = "file";
+  emptyDropZone.appendChild(emptyDropZoneInput);
+  createDropZoneEventListeners(emptyDropZone, emptyDropZoneInput);
+  // -------------------------------------------------------------
+
+  // Create all elements within a topic -----------------------------
   let topicContent = document.createElement("div");
   topicContent.className = "topic-content";
 
@@ -98,6 +136,7 @@ function createTopic() {
   let label2 = document.createElement("label");
   label2.className = "empty-state-text";
   label2.innerHTML = "Drop a file or tap the + above to get started!";
+  // --------------------------------------------------------------
 
   // Create a new tab button
   let tabBtn = document.createElement("button");
@@ -123,11 +162,13 @@ function createTopic() {
   let currTabs = document.querySelector(".tab");
   currTabs.appendChild(tabBtn);
 
-
   // Append all elements accordingly
   newTab.appendChild(topicContent);
+  // newDropZone.appendChild(topicContent);
   topicContent.appendChild(resourcesZone);
-  resourcesZone.appendChild(emptyState);
+  resourcesZone.appendChild(newDropZone);
+  resourcesZone.appendChild(emptyDropZone);
+  emptyDropZone.appendChild(emptyState);
   emptyState.appendChild(label1);
   emptyState.appendChild(label2);
 
@@ -157,11 +198,13 @@ function closeTab(id) {
 
   if (isActiveTab) {
     if (tabLocation+1 != tabContent.length) {                                               // Open the tab to the right if there is one
-      openTab(tabContent[tabLocation+1].id)
+      openTab(tabContent[tabLocation+1].id);
     } else if (tabLocation-1 >= 0) {                                                        // Otherwise, open the tab to the left
-        openTab(tabContent[tabLocation-1].id)
+        openTab(tabContent[tabLocation-1].id);
     } else if (tabLocation-1 < 0) {                                                         // Show the workspace empty state if closing only open tab
         document.getElementById("workspace-empty-state").style.display = "block";
+        document.getElementById("topic-background").style.backgroundColor = "#f1f1f1";
+        activeTab = document.getElementById("resources-zone0");
     }
   }
   // Remove tab button and tab content
@@ -273,12 +316,27 @@ function createTextArea() {
       if (activeTab.id == "resources-zone0") {
         createTopic();
       }
-      numSunEditors++;
 
       // Check for filler space
       if (document.getElementById("filler-space")) {
           document.getElementById("filler-space").remove();
       }
+
+      // Create drop zone
+      let newDropZone = document.createElement("div");
+      newDropZone.className = "drop-zone";
+
+      // Create drop zone filler space
+      let newDropZoneFiller = document.createElement("div");
+      newDropZoneFiller.className = "dropzone-filler";
+      newDropZone.appendChild(newDropZoneFiller);
+
+      // Create drop zone input
+      let newDropZoneInput = document.createElement("input");
+      newDropZoneInput.className = "drop-zone__input";
+      newDropZoneInput.type = "file";
+      newDropZone.appendChild(newDropZoneInput);
+      createDropZoneEventListeners(newDropZone, newDropZoneInput);
 
       // Title element
       let title = document.createElement('input');
@@ -309,22 +367,24 @@ function createTextArea() {
       let sunEditor = document.createElement("textarea");
       sunEditor.setAttribute("id", "sunEditor" + numSunEditors);
 
+      // Remove empty state if necessary
+      if (activeTab.childElementCount > 0) {
+        let location = getTabLocation(tabName);
+        document.querySelectorAll(".empty-topic-dropzone")[location].style.display = "none";
+        document.querySelectorAll(".first-dropzone")[location].style.display = "block";
+      }
+
+      // Append elemets accordingly
       activeTab.appendChild(title);
       activeTab.appendChild(newTabIcon);
       activeTab.appendChild(editIcon);
       activeTab.appendChild(doneIcon);
       activeTab.appendChild(sunEditor);
+      activeTab.appendChild(newDropZone);
 
       doneIconList.push(doneIcon);
       editIconList.push(editIcon);
       newTabIconList.push(newTabIcon);
-
-      // Remove empty state if necessary
-      if (activeTab.childElementCount > 0) {
-        let location = getTabLocation(tabName);
-        // location+1 bc of workspace empty state at location 0
-        document.querySelectorAll(".empty-state")[location+1].style.display = "none";
-      }
 
       // Maintain a baseline height until 1200px is exceeded
       activeHeightObj[tabName] += 800;
@@ -336,6 +396,7 @@ function createTextArea() {
     (value) => {
       console.log(value);
       createSunEditor();
+      numSunEditors++;
     }
   );
 }
@@ -391,130 +452,174 @@ const createSunEditor = async() => {
 }
 /* END Suneditor Creation -----------------------------------------------------------*/
 
+
+
+
 /* Drag and Drop ------------------------------------------------------------------------- */
 /**
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
+// Workspace empty state drop zone
+if (document.querySelectorAll(".drop-zone")) {
+  let dropZoneElement = document.querySelectorAll(".drop-zone")[0];
+  let inputElement = dropZoneElement.lastElementChild;
+  createDropZoneEventListeners(dropZoneElement, inputElement);
+}
 
- if (document.querySelectorAll(".drop-zone")) {
+// Get the target drop zone
+let targetDropZone = null;
+document.addEventListener("dragenter", (e) => {
+  targetDropZone = e.target;
+});
 
-    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
-      const dropZoneElement = inputElement.closest(".drop-zone");
-  
-      inputElement.addEventListener("change", (e) => {
-        if (inputElement.files.length) {
-          updateThumbnail(dropZoneElement, inputElement.files[0]);
-        }
-      });
-  
-      dropZoneElement.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZoneElement.classList.add("drop-zone--over");
-      });
-  
-      ["dragleave", "dragend"].forEach((type) => {
-        dropZoneElement.addEventListener(type, (e) => {
-          dropZoneElement.classList.remove("drop-zone--over");
-        });
-      });
-  
-      dropZoneElement.addEventListener("drop", (e) => {
-        e.preventDefault();
-  
-        if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
-          if (e.dataTransfer.files[0].size <= 1048576) {
-            inputElement.files = e.dataTransfer.files;
-            updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
-          } else {
-            alert("Image size limit is 1MB!");
-          }
-        }
-  
-        dropZoneElement.classList.remove("drop-zone--over");
-      });
-    });
-  
-    /**
-     * Updates the thumbnail on a drop zone element.
-     *
-     * @param {HTMLElement} dropZoneElement
-     * @param {File} file
-     */
-    function updateThumbnail(dropZoneElement, file) {
-      if (activeTab.id == "resources-zone0") {
-        createTopic()
-      } 
-      // Div that holds the thumbnail
-      let mydiv = document.createElement('div');
-      mydiv.className = "drop-zone-show";
+function createDropZoneEventListeners(dropZone, input) {
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
 
-      // Thumbnail element
-      let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
-      thumbnailElement = document.createElement("div");
-      thumbnailElement.classList.add("drop-zone__thumb");
+    dropZone.firstElementChild.style.display = "block";
 
-      // File input element
-      let inputfile = document.createElement('input');
-      inputfile.type = "file";
-      inputfile.name = "resourceImageField";
-      inputfile.className = "drop-zone__input";
-
-      // File title element
-      let inputTitle = document.createElement('input');
-      inputTitle.type = "text";
-      inputTitle.className = "drop-zone__title";
-
-      // Preview Icon
-      let previewIcon = document.createElement('span');
-      previewIcon.setAttribute("class", "material-symbols-outlined");
-      previewIcon.setAttribute("id", "preview-icon");
-      previewIcon.innerHTML = "preview";
-
-      // Check for filler space
-      if (document.getElementById("filler-space")) {
-          document.getElementById("filler-space").remove();
-      }
-      
-      // Append the thumbnail to parent div
-      // Set the title to the file name
-      mydiv.appendChild(thumbnailElement);
-      thumbnailElement.dataset.label = file.name;
-      inputTitle.value = file.name;
-      
-      // Show thumbnail for image files
-      if (file.type.startsWith("image/")) {
-          const reader = new FileReader();
-        
-          reader.readAsDataURL(file);
-          reader.onload = () => {
-              thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-          };
-          mydiv.style.height = "500px";
-          activeHeightObj[tabName] += 500;
-        } else {
-            thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
-            thumbnailElement.style.backgroundSize = "200px";
-            mydiv.style.height = "200px";
-            activeHeightObj[tabName] += 200;
-        }
-
-        mydiv.appendChild(inputfile);
-        activeTab.appendChild(inputTitle);
-        activeTab.appendChild(previewIcon);
-        activeTab.appendChild(mydiv);
-
-        // Remove empty state if necessary
-        if (mydiv.childElementCount > 0) {
-          let location = getTabLocation(tabName);
-          // location+1 bc of workspace empty state at location 0
-          document.querySelectorAll(".empty-state")[location+1].style.display = "none";
-        }
-
-        // Maintain a baseline height until 1200px is exceeded
-        checkActiveHeight();
-      
+    if (activeTab.childElementCount == 1 ||
+      dropZone.className.includes("empty-topic-dropzone")) {
+        dropZone.classList.add("drop-zone--over");
+      dropZone.firstElementChild.style.display = "none";
     }
+  });
+
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZone.addEventListener(type, (e) => {
+      dropZone.classList.remove("drop-zone--over");
+      dropZone.firstElementChild.style.display = "none";
+    });
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length && e.dataTransfer.files[0]) {
+      if (e.dataTransfer.files[0].size <= 1048576) {
+        input.files = e.dataTransfer.files;
+        updateThumbnail(dropZone, e.dataTransfer.files[0]);
+      } else {
+        alert("Image size limit is 1MB!");
+      }
+    }
+
+    dropZone.classList.remove("drop-zone--over");
+    dropZone.firstElementChild.style.display = "none";
+  });
+}
+
+/**
+ * Updates the thumbnail on a drop zone element.
+ *
+ * @param {HTMLElement} dropZoneElement
+ * @param {File} file
+ */
+function updateThumbnail(dropZoneElement, file) {
+  // Create a topic if file dropped in workspace empty state
+  if (activeTab.id == "resources-zone0") {
+    createTopic()
+  } 
+  // Div that holds the thumbnail
+  let mydiv = document.createElement('div');
+  mydiv.className = "drop-zone-show";
+
+  // Thumbnail element
+  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+  thumbnailElement = document.createElement("div");
+  thumbnailElement.classList.add("drop-zone__thumb");
+
+  // File input element
+  let inputfile = document.createElement('input');
+  inputfile.type = "file";
+  inputfile.name = "resourceImageField";
+  inputfile.className = "drop-zone__input";
+
+  // File title element
+  let inputTitle = document.createElement('input');
+  inputTitle.type = "text";
+  inputTitle.className = "drop-zone__title";
+
+  // Preview Icon
+  let previewIcon = document.createElement('span');
+  previewIcon.setAttribute("class", "material-symbols-outlined");
+  previewIcon.setAttribute("id", "preview-icon");
+  previewIcon.innerHTML = "preview";
+
+  // New drop zone
+  let newDropZone = document.createElement("div");
+  newDropZone.className = "drop-zone";
+
+  // New drop zone filler div
+  let newDropZoneFiller = document.createElement("div");
+  newDropZoneFiller.className = "dropzone-filler";
+  newDropZone.appendChild(newDropZoneFiller);
+
+  // New drop zone input
+  let newDropZoneInput = document.createElement("input");
+  newDropZoneInput.className = "drop-zone__input";
+  newDropZoneInput.type = "file";
+  newDropZone.appendChild(newDropZoneInput);
+  createDropZoneEventListeners(newDropZone, newDropZoneInput);
+
+  // Check for filler space
+  if (document.getElementById("filler-space")) {
+      document.getElementById("filler-space").remove();
   }
+  
+  // Append the thumbnail to parent div
+  // Set the title to the file name
+  mydiv.appendChild(thumbnailElement);
+  thumbnailElement.dataset.label = file.name;
+  inputTitle.value = file.name;
+  
+  // Show thumbnail for image files
+  if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+    
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+          thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+      };
+      mydiv.style.height = "500px";
+      activeHeightObj[tabName] += 500;
+    } else {
+        thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
+        thumbnailElement.style.backgroundSize = "200px";
+        mydiv.style.height = "200px";
+        activeHeightObj[tabName] += 200;
+    }
+
+    mydiv.appendChild(inputfile);
+
+    // Remove empty state if necessary
+    let location = getTabLocation(tabName);
+    if (mydiv.childElementCount > 0) {
+      document.querySelectorAll(".empty-topic-dropzone")[location].style.display = "none";
+      document.querySelectorAll(".first-dropzone")[location].style.display = "block";
+    }
+
+    // File drop in topic empty state
+    if (targetDropZone === document.querySelectorAll(".empty-state")[location+1]) {
+      activeTab.firstChild.parentNode.insertBefore(inputTitle, activeTab.firstChild.nextSibling);
+      inputTitle.parentNode.insertBefore(previewIcon, inputTitle.nextSibling);
+      previewIcon.parentNode.insertBefore(mydiv, previewIcon.nextSibling);
+      mydiv.parentNode.insertBefore(newDropZone, mydiv.nextSibling);
+    } else {
+      // File drop in workspace empty state
+      if (dropZoneElement === document.querySelectorAll(".drop-zone")[0]) {
+        activeTab.firstChild.parentNode.insertBefore(inputTitle, activeTab.firstChild.nextSibling);
+      } else {
+        targetDropZone.parentNode.insertBefore(inputTitle, targetDropZone.nextSibling);
+      }
+
+      inputTitle.parentNode.insertBefore(previewIcon, inputTitle.nextSibling);
+      previewIcon.parentNode.insertBefore(mydiv, previewIcon.nextSibling);
+      mydiv.parentNode.insertBefore(newDropZone, mydiv.nextSibling);
+    }
+
+    // Maintain a baseline height until 1200px is exceeded
+    checkActiveHeight();
+}
 /* END Drag and Drop ------------------------------------------------------------------------- */
 
 
@@ -525,14 +630,14 @@ document.addEventListener("mousemove", function() {
         sunEditorList[i].onFocus = () => {
             document.getElementById(doneIconList[i].id).style.display = "block";
             document.getElementById(editIconList[i].id).style.display = "none";
-            sunEditor["sunEditor"+(i+1)].readOnly(false);
+            sunEditor["sunEditor"+(i)].readOnly(false);
         }
         sunEditorList[i].onChange = (contents, core) => {
-            noteEditor.save();
+            sunEditor["sunEditor"+(i)].save();
           };
         sunEditorList[i].onKeyUp = (e) => {
             if (e.key == "/") {
-                noteEditor.insertHTML(
+                sunEditor["sunEditor"+(i)].insertHTML(
                 '<div><button style=background:pink;>Hello</button></div>',
                 true
               );
@@ -540,7 +645,7 @@ document.addEventListener("mousemove", function() {
           };
         sunEditorList[i].onImageUpload = () => {
             // Image upload default does not automatically place cursor after image, so...
-            noteEditor.appendContents("");
+            sunEditor["sunEditor"+(i)].appendContents("");
           };
     }
 });
