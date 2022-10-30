@@ -33,7 +33,7 @@
  /**
   * Returns all active Topics owned by the user
   */
- router.route( '/user/:id' )
+ router.route( '/user' )
      .get( async ( req, res ) => {
          topicController.getAllActiveTopicsForUser( req, res );
      }

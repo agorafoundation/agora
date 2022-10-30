@@ -135,6 +135,33 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 
 }
 
+/**
+ * Retrieves all active topic for a given user
+ * @param {Integer} ownerId
+ * @returns All active topics as a list
+ */
+ exports.getAllActiveTopicsForOwner = async function(ownerId) {
+    const text = "SELECT * FROM topics WHERE owned_by = $1 and active = $2";
+    const values = [ ownerId, true ];
+
+    let topics = [];
+    
+    try {
+        
+        let res = await db.query(text, values);
+        
+
+        for(let i=0; i<res.rows.length; i++) {
+            topics.push(Topic.ormTopic(res.rows[i]));
+        }
+
+        return topics;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
 
 
 /**
@@ -198,7 +225,7 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";
+        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";  
         values = [ ownerId ];
     }
     else {
