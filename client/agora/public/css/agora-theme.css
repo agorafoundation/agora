@@ -232,7 +232,6 @@ a:hover {
 
 @media (min-width: 576px) {
     .masthead {
-      background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:5em;
       background-size: cover;
       height: 750px;
@@ -240,7 +239,6 @@ a:hover {
 }
 @media (min-width: 768px) {
     .masthead {
-      background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:10rem;
       background-size: cover;
       height: 750px;
@@ -248,7 +246,6 @@ a:hover {
 }
 @media (min-width: 992px) {
     .masthead {
-      background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:13rem;  
       background-size: cover;
       height: 750px;
@@ -256,7 +253,6 @@ a:hover {
   }
 @media (min-width: 1200px) {
     .masthead {
-      background-image: url('/assets/img/logos/agora-logo-a-bwn-800.png');
       background-position-x:20rem;
       background-size: cover;
       height: 750px;
@@ -340,6 +336,7 @@ a:hover {
 /* Primary pages (Community, Resources, Goals, etc) */
 .primary-page-background {
     background-color: #d9e8c8;
+    height:50vh;
 }
 
 

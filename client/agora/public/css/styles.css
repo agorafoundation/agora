@@ -620,7 +620,7 @@ pre code {
 }
 @media (min-width: 1200px) {
   .container-xl, .container-lg, .container-md, .container-sm, .container {
-    max-width: 1750px;
+    max-width: 1920px;
   }
 }
 .row {
@@ -6121,7 +6121,8 @@ a.close.disabled {
 }
 
 .bg-primary {
-  background-color: #6a8f9c96 !important;
+  background-color: #d9e8c8 !important;
+  height: 100%
 }
 
 a.bg-primary:hover, a.bg-primary:focus,
