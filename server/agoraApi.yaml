@@ -86,6 +86,7 @@ paths:
               description: Message of Agora API message
         '200':
           description: Updated existing record - the tag name already existed, current record used.
+          content:
             application/json:
               schema:
                 type: object
@@ -249,7 +250,7 @@ paths:
               description: Message of Agora API message
         '200':
           description: Updated existing record - the goal name already existed, current record used.
-            application/json:
+          application/json:
               schema:
                 type: object
                 $ref: '#/components/schemas/Goal'
@@ -412,6 +413,7 @@ paths:
               description: Message of Agora API message
         '200':
           description: Updated existing record - the topic name already existed, current record used.
+          content:
             application/json:
               schema:
                 type: object
@@ -604,6 +606,7 @@ paths:
               description: Message of Agora API message
         '200':
           description: Updated existing record - the resource name already existed, current record used.
+          content:
             application/json:
               schema:
                 type: object
@@ -724,16 +727,17 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-    delete:
+  /discussions/goals/{id}:
+    get:
       tags: 
-        - Resources
-      summary: Deletes existing resource by Id
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: id of the resource to delete 
+        - Discussions
+      summary: Gets the discussion by goal ID
+      parameters: 
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: id of the goal
       responses:
         '200':
           description: OK
@@ -741,7 +745,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resouce'
+                $ref: '#/components/schemas/Discussions'
         headers:
             x-agora-message-title:
               schema:
@@ -759,6 +763,376 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
+    patch:
+      tags: 
+        - Discussions
+      summary: 'Updates discussion using goal ID'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the topic
+        - in: query
+          name: body
+          schema:
+            type: string
+          description: The new text to be updated
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      tags:
+        - Discussions
+      summary: 'Create a new discussion using goal ID'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the goal
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: discussion starting text
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/topics/{id}:
+    get:
+      tags: 
+        - Discussions
+      summary: Gets the discussion by topic ID
+      parameters: 
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: id of the topic
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    patch:
+      tags: 
+        - Discussions
+      summary: 'Updates discussion using topic ID'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the topic
+        - in: query
+          name: body
+          schema:
+            type: string
+          description: The new text to be updated
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      tags:
+        - Discussions
+      summary: 'Create a new discussion using topic id'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the topic
+        - in: query
+          name: text
+          schema:
+            type: string
+          description: discussion starting text
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/ratings/{commentid}:
+    post:
+      tags:
+        - Discussions
+      summary: 'Posts the rating for a specific comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Discussions
+      summary: 'Removes the rating for a comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/comment:
+    post:
+      tags:
+        - Discussions
+      summary: 'Post a new comment'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/comment/commentID:
+    patch:
+      tags:
+        - Discussions
+      summary: 'Change a currently existing comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Discussions
+      summary: 'Deletes a currently existing comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+      
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.com/api/v1/auth
@@ -931,6 +1305,22 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Topic'
+    Discussions:
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          description: The ID of the parent topic / goal
+          uniqueItems: true
+        parent_type:
+          type: string
+          description: The type of the parent
+        discussion_text:
+          type: string
+          description: The text of the original discussion post
+        discussion_comments:
+          type: array
+          description: Array of the comments made on a post, and their user ID
     Resource:
       type: object
       required:
