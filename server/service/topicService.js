@@ -135,6 +135,33 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
 
 }
 
+/**
+ * Retrieves all active topic for a given user
+ * @param {Integer} ownerId
+ * @returns All active topics as a list
+ */
+ exports.getAllActiveTopicsForOwner = async function(ownerId) {
+    const text = "SELECT * FROM topics WHERE owned_by = $1 and active = $2";
+    const values = [ ownerId, true ];
+
+    let topics = [];
+    
+    try {
+        
+        let res = await db.query(text, values);
+        
+
+        for(let i=0; i<res.rows.length; i++) {
+            topics.push(Topic.ormTopic(res.rows[i]));
+        }
+
+        return topics;
+        
+    }
+    catch(e) {
+        console.log(e.stack)
+    }
+}
 
 
 /**
@@ -198,7 +225,7 @@ exports.verifyUserHasMembershipAccessRole = async function(userWithRoles) {
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";
+        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";  
         values = [ ownerId ];
     }
     else {
@@ -311,7 +338,7 @@ exports.getTopicWithEverythingById = async function(topicId, isActive) {
             // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
             // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
             text = "SELECT r.id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
-            values = [ topic.id, true, true ];
+            values = [ topic.topicId, true, true ];
             let res6 = await db.query(text, values);
 
             let resources = [];
@@ -476,11 +503,11 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     // check to see if an id exists - insert / update check
     if(topic) {
         console.log("saving topic: " + JSON.stringify(topic));
-        if(topic.id > 0) {
+        if(topic.topicId > 0) {
             
             // update
             let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE id = $10;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.id, topic.visibility, topic.topicType, topic.hasAssessment ];
+            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
     
             try {
                 let res = await db.query(text, values);
@@ -501,7 +528,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                 let res = await db.query(text, values);
                 if(res.rowCount > 0) {
                     
-                    topic.id = res.rows[0].id;
+                    topic.topicId = res.rows[0].id;
                 }
                 
             }
@@ -524,7 +551,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
  * @param {Integer} topicId id of the topic 
  * @param {*} resourceIds Array of resource id's to be associated with the topic
  * @returns true for success / false for failure
- */
+ */                                               
  exports.saveResourcesForTopic = async function(topicId, resourceIds, resourcesRequired) {
     // get the most recent version of the topic
     let text = "SELECT * from topics where id = $1";
@@ -1002,6 +1029,51 @@ exports.saveCompletedResourceStatus = async function(completedResource) {
 }
 
 
+
+/*
+ * Update / set the user topic image
+ * The previous filename that was overwritten (if any) is returned
+ */
+exports.updateTopicImage = async ( topicId, filename ) => {
+    // get the topic (required to exist)
+    let topic = await exports.getTopicById( topicId );
+
+    // save the current filename so that we can delete it after.
+    let prevFileName = "";
+
+    if( topic ) {
+        try {
+            // retrieve the current filename so that we can delete it after.
+            let text = "SELECT topic_image FROM topics WHERE id = $1";
+            let values = [ topicId ];
+
+            // perform the query
+            let res = await db.query( text, values );
+            
+            // set the prevFileName with the prev name
+            if( res.rows.length > 0 ) {
+                prevFileName = res.rows[0].topic_image;
+            }
+
+            // cerate the update query to set the new name
+            text = "UPDATE topics SET topic_image = $2 WHERE id = $1";
+            values = [ topicId, filename ];
+
+            // perform query
+            await db.query( text, values );
+            
+        }
+        catch(e) {
+            console.log( e.stack );
+        }
+
+        return prevFileName;
+    }
+    else {
+        // invalid db response!
+        return false;
+    }
+};
 
 exports.getRecentTopicEnrollmentEvents = async function(limit) {
     limit = (!limit) ? 10 : limit;

@@ -164,8 +164,8 @@
   position: absolute;
   top: 2.2%;
   right: 17.5%;
-  height: 40px; 
-  width: 30px
+  height: 40px;
+  width: 30px;
 }
 
 .list-more-options {
@@ -181,4 +181,3 @@
   background-color: lightgray;
   cursor: pointer;
 }
-
