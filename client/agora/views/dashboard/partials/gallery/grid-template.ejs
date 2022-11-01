@@ -1,20 +1,20 @@
 <% //name:string, description:string, tags:array, content:array %>
     <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
         
-      if (contentType === "Note") { %>
+      if (contentType === "Topic") { %>
 
         <!--Topic Card -->
         <div class="col mb-3 align-items-stretch gallery-col query-countable view-check">
-          <div class="card h-100 countable" id="gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
-            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="gv-option-<%= id %>" style="visibility: hidden">
+          <div class="card h-100 countable" id="t-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
+            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="t-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
             <div class="card-body d-flex flex-column" id="topic">
-              <h5 class="card-title" id="gv-card-title-<%= id %>">
+              <h5 class="card-title" id="t-gv-card-title-<%= id %>">
                 <%= name %>
               </h5>
-              <p class="card-text mb-4" id="gv-card-desc-<%= id %>">
+              <p class="card-text mb-4" id="t-gv-card-desc-<%= id %>">
                 <%= desc %>
               </p>
             </div>
@@ -34,16 +34,16 @@
 
         <!--Goal Card-->
         <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-goal">
-          <div class="card h-100 countable" id="gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
-            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="gv-option-<%= id %>" style="visibility: hidden">
+          <div class="card h-100 countable" id="g-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="g-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
             <div class="card-body d-flex flex-column" id="goal">
-              <h5 class="card-title" id="gv-card-title-<%= id %>">
+              <h5 class="card-title" id="g-gv-card-title-<%= id %>">
                   <%= name %>
               </h5>
-              <div id="gv-card-desc-<%= id %>"></div>
+              <div id="g-gv-card-desc-<%= id %>"></div>
               <div>
                 <% if (content) { %>
                   <ul class="list-group list-group-flush list-grid">
@@ -71,10 +71,7 @@
 </div>
 
 <div id="grid-container" style="display: none">
-    <% for (let i = 0; i < availableResources.length + 1; i++) { 
-        //add button
-        if (i === 0) {
-            %>
+   
         <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
             <div class="col mb-3 gallery-col align-items-stretch gallery-col">
             <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
@@ -84,11 +81,18 @@
                 </div>
             </div>
             </div>
-            <% }else{ 
-            if(i % 2 === 0) {%>
-            <% renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Note", null)
-            }else{
-                renderCard(i-1,availableResources[i-1].resourceName,availableResources[i-1].resourceDescription,["Bio","Chem"],"Goal", ["Doc 1","Doc 2","Doc 3", "Doc 4","Doc 5"])
-            } %>
-        <% }}%>
+           
+           
+            <% //render resources for Now
+        for (let i = 0; i <  availableResources.length ; i++) { 
+            renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Topic", null) 
+         
+      
+         }%>
+         <%
+         //render goals
+         for (let i = 0; i <  ownerGoals.length ; i++) { 
+            renderCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+         }%>
+           
     </div>
