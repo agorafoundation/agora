@@ -793,16 +793,14 @@ const duplicateGoal = ( e ) => {
             'Content-Type': 'application/json'
         },
         body:JSON.stringify( {
-            "id": 7,
-            "version": 1,
-            "goalName": "NameDude",
-            "goalDescription":"lol",
+            "goalId": -1,
+            "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+            "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
             "goalImage": "myImage.png",
             "active": true,
             "completable": true,
             "visibility": 0,
-            "createTime": Date.now(),
-            "ownedBy": 1
+            
         } )
 
     } )
