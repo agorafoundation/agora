@@ -20,9 +20,9 @@ function completedResource() {
 
 exports.emptyCompletedResource = () => {
     return new completedResource();
-}
+};
 
-exports.ormCompletedResource = function (row) {
+exports.ormCompletedResource = function ( row ) {
     let completedResource = exports.emptyCompletedResource();
     completedResource.id = row.id;
     completedResource.resourceId = row.resource_id;
@@ -32,4 +32,4 @@ exports.ormCompletedResource = function (row) {
     completedResource.createTime = row.create_time;
     completedResource.updateTime = row.update_time;
     return completedResource;
-}
+};

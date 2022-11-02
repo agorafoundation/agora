@@ -20,9 +20,9 @@ function goalEnrollment() {
 
 exports.emptyGoalEnrollment = () => {
     return new goalEnrollment();
-}
+};
 
-exports.ormGoalEnrollment = function (row) {
+exports.ormGoalEnrollment = function ( row ) {
     let goalEnrollment = exports.emptyGoalEnrollment();
     goalEnrollment.id = row.id;
     goalEnrollment.goalRid = row.goal_rid;
@@ -32,4 +32,4 @@ exports.ormGoalEnrollment = function (row) {
     goalEnrollment.active = row.active;
     goalEnrollment.createTime = row.create_time;
     return goalEnrollment;
-}
+};

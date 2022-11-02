@@ -6,10 +6,10 @@
  */
 
 // database connection
-const db = require('../db/connection');
+const db = require( '../db/connection' );
 
 // import models
-const Activity = require('../model/activity');
+const Activity = require( '../model/activity' );
 
 // any cross services required
 
@@ -20,24 +20,24 @@ const Activity = require('../model/activity');
  * @param {Integer} activityId 
  * @returns activity
  */
-exports.getActiveActivityById = async function(activityId) {
+exports.getActiveActivityById = async function( activityId ) {
     let text = "SELECT * FROM activities WHERE active = $1 AND id = $2";
     let values = [ true, activityId ];
     try {
         let activity = "";
          
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            activity = Activity.ormActivity(res.rows[0]);
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            activity = Activity.ormActivity( res.rows[0] );
                   
         }
         return activity;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
-}
+};
 
 
 /**
@@ -45,21 +45,21 @@ exports.getActiveActivityById = async function(activityId) {
  * @param {Activity} activity 
  * @returns Activity object with id 
  */
- exports.saveActivity = async function(activity) {
+exports.saveActivity = async function( activity ) {
     // check to see if an id exists - insert / update check
-    if(activity) {
+    if( activity ) {
 
-        if(activity.id > 0) {
+        if( activity.id > 0 ) {
             
             // update
             let text = "UPDATE activities SET activity_type = $1, activity_name = $2, activity_description = $3, activity_html=$4, is_required=$5, active = $6, WHERE id = $7;";
             let values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active, activity.id ];
     
             try {
-                let res = await db.query(text, values);
+                let res = await db.query( text, values );
             }
-            catch(e) {
-                console.log("[ERR]: Error updating activity - " + e);
+            catch( e ) {
+                console.log( "[ERR]: Error updating activity - " + e );
                 return false;
             }
             
@@ -71,14 +71,14 @@ exports.getActiveActivityById = async function(activityId) {
             let values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active ];
 
             try {
-                let res = await db.query(text, values);
-                if(res.rowCount > 0) {
+                let res = await db.query( text, values );
+                if( res.rowCount > 0 ) {
                     activity.id = res.rows[0].id;
                 }
                 
             }
-            catch(e) {
-                console.log("[ERR]: Error inserting activity - " + e);
+            catch( e ) {
+                console.log( "[ERR]: Error inserting activity - " + e );
                 return false;
             }
         }
@@ -87,4 +87,4 @@ exports.getActiveActivityById = async function(activityId) {
     else {
         return false;
     }
-}
+};

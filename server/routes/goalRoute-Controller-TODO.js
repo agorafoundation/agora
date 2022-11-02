@@ -20,33 +20,33 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
+var express = require( 'express' );
 var router = express.Router();
 
 
 // require services
-const goalService = require('../../service/goalService');
-const userService = require('../../service/userService');
+const goalService = require( '../../service/goalService' );
+const userService = require( '../../service/userService' );
 
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
+const bodyParser = require( 'body-parser' );
+router.use( bodyParser.urlencoded( {
     extended: true
-  }));
-router.use(bodyParser.json());
+} ) );
+router.use( bodyParser.json() );
 
 
 // check that the user is logged in!
-router.use(function (req, res, next) {
-    if(!req.session.authUser) {
-        if(req.query.redirect) {
+router.use( function ( req, res, next ) {
+    if( !req.session.authUser ) {
+        if( req.query.redirect ) {
             res.locals.redirect = req.query.redirect;
         }
-        res.render('user-signup');
+        res.render( 'user-signup' );
     }
     else {
         next();
     }
-});
+} );
 
 /**
  * Route called from the mark goal complete form
@@ -62,7 +62,7 @@ router.route( '/' )
             // verify that the user is enrolled in the goal and that the goals topics are complete
             let userGoal = await goalService.getEnrolledGoalByUserAndGoalRid( req.session.authUser.id, goalRid.rid );
 
-            if(userGoal) {
+            if( userGoal ) {
                 await goalService.completeGoalEnrollment( req.session.authUser.id, goalRid.rid );
 
                 // reset the session
@@ -78,10 +78,10 @@ router.route( '/' )
         if( req.session.messageBody ) delete req.session.messageBody;
         req.session.save();
     }
-);
+    );
 
-router.route('/:goalId')
-    .get(async (req, res) => {
+router.route( '/:goalId' )
+    .get( async ( req, res ) => {
         
         // get the topic data
         let goalId = req.params.goalId;
@@ -93,7 +93,7 @@ router.route('/:goalId')
         if( req.session.messageBody ) delete req.session.messageBody;
         req.session.save();
     }
-);
+    );
 
 
 router.route( '/enroll/:goalId' )
@@ -111,14 +111,14 @@ router.route( '/enroll/:goalId' )
             req.session.authUser = rUser;
 
             // send them to the course
-            res.redirect('/community/goal/' + goalId);
+            res.redirect( '/community/goal/' + goalId );
             
         }
         else {
-            res.render('user-signup');
+            res.render( 'user-signup' );
         }
     }
-);
+    );
 
 
 

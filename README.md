@@ -60,16 +60,16 @@ answers you seek
 
 
 ### Current Features
-1. Full user creation / login / security / email verification
-2. Avatar / file upload
-3. Basic Stripe integration to allow for community support
-4. Advanced Goal / Topic / Resource hierarchy for note taking and resource management 
-5. Fully responsive UI based on Bootstrap
+1. Improved main dashboard interface
+2. Sharing and Collaboration
+3. Full user creation / login / security / email verification
+4. Avatar / file upload
+5. Basic Stripe integration to allow for community support
+6. Advanced Goal / Topic / Resource hierarchy for note taking and resource management 
+7. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
-1. Improved main dashboard interface
-2. Sharing and Collaboration 
-    a. Web3 and other decentrailized solution evaluation
-3. Discussions (At global, goal and topic level)
-4. Classroom sharing (Goals can be shared as a classroom environment)
+1. Web3 and other decentrailized solution evaluation
+2. Discussions (At global, goal and topic level)
+3. Classroom sharing (Goals can be shared as a classroom environment)

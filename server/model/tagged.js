@@ -30,9 +30,9 @@ class tagged {
 
 exports.emptyTag = () => {
     return new tagged();
-}
+};
 
-exports.ormTagged = (row) => {
+exports.ormTagged = ( row ) => {
     let tagged = exports.emptyTag();   // requires a query to the tag table in the service
     tagged.entityType = EntityType[row.entity_type];
     tagged.entityId = row.entity_id;
@@ -42,11 +42,11 @@ exports.ormTagged = (row) => {
     tagged.active = row.active;
     tagged.visibility = row.visibility;
     return tagged;
-}
+};
 
 const EntityType = {
     UNKNOWN: 0,
     GOAL: 1,
     TOPIC: 2,
     RESOURCE: 3
-}
+};

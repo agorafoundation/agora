@@ -35,9 +35,9 @@ function topicEnrollment() {
 
 exports.emptyTopicEnrollment = () => {
     return new topicEnrollment();
-}
+};
 
-exports.ormTopicEnrollment = function (row) {
+exports.ormTopicEnrollment = function ( row ) {
     let topicEnrollment = exports.emptyTopicEnrollment();
     topicEnrollment.id = row.id;
     topicEnrollment.topicId = row.topic_id;
@@ -51,4 +51,4 @@ exports.ormTopicEnrollment = function (row) {
     topicEnrollment.createTime = row.create_time;
     topicEnrollment.updateTime = row.update_time;
     return topicEnrollment;
-}
+};

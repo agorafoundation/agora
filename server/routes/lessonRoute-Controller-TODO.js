@@ -23,29 +23,29 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-var express = require('express');
+var express = require( 'express' );
 var router = express.Router();
 
 
 // require services
-const topicService = require('../../service/topicService');
-const productService = require('../../service/productService');
-const userService = require('../../service/userService');
-const assessmentService = require('../../service/assessmentService');
-const resourceService = require('../../service/resourceService');
+const topicService = require( '../../service/topicService' );
+const productService = require( '../../service/productService' );
+const userService = require( '../../service/userService' );
+const assessmentService = require( '../../service/assessmentService' );
+const resourceService = require( '../../service/resourceService' );
 
 // models
-const TopicEnrollment = require('../../model/topicEnrollment');
-const CompletedAssessment = require('../../model/completedAssessment');
-const CompletedAssessmentQuestion = require('../../model/completedAssessmentQuestion');
-const CompletedActivity = require('../../model/completedActivity');
+const TopicEnrollment = require( '../../model/topicEnrollment' );
+const CompletedAssessment = require( '../../model/completedAssessment' );
+const CompletedAssessmentQuestion = require( '../../model/completedAssessmentQuestion' );
+const CompletedActivity = require( '../../model/completedActivity' );
 
 
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
+const bodyParser = require( 'body-parser' );
+router.use( bodyParser.urlencoded( {
     extended: true
-  }));
-router.use(bodyParser.json());
+} ) );
+router.use( bodyParser.json() );
 
 
 
@@ -58,30 +58,30 @@ router.use(bodyParser.json());
  * This is not used to save data, just override current screen and change to another.
  * 
  */
-router.route('/override/:goalId/:topicId/:step')
-    .get(async (req, res) => {
+router.route( '/override/:goalId/:topicId/:step' )
+    .get( async ( req, res ) => {
         let goalId = req.params.goalId;
         let topicId = req.params.topicId;
         let stepOverride = req.params.step;
 
         let access = false;
-        if(req.session.authUser) {
+        if( req.session.authUser ) {
             // check that the user is enrolled!
-            access = await topicService.verifyTopicAccess(req.session.authUser.id, topicId);
+            access = await topicService.verifyTopicAccess( req.session.authUser.id, topicId );
 
-            if(access) {
+            if( access ) {
                 
                 let currentTopic = null;
                 let currentEnrollment = null;
                 
-                if(req.session.currentTopic && req.session.currentTopic.topicId == topicId) {
+                if( req.session.currentTopic && req.session.currentTopic.topicId == topicId ) {
                     // we have the current topic in the session already
                     currentTopic = req.session.currentTopic.topic;
                     currentEnrollment = req.session.currentTopic;
                 }
                 else {
                     // there is no current topic or a new topic has been choosen
-                    currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
+                    currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.id, topicId, true );
                     currentTopic = currentEnrollment.topic;
 
                     // set the session
@@ -93,17 +93,17 @@ router.route('/override/:goalId/:topicId/:step')
                 res.locals.topic = currentTopic;
 
                 // open the course
-                res.render('community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride});
+                res.render( 'community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride} );
 
             }
             else {
                 // user does not have access send to community page
-                res.redirect(303, '/community');
+                res.redirect( 303, '/community' );
             }
         }
 
     }
-);
+    );
 
 /**
  * Called by 
@@ -139,17 +139,18 @@ router.route( '/update/:finishedStep' )
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
 
                 // populate the assessment for this completedAssessment
-                ca.assessment = await assessmentService.getAssessmentById(ca.assessmentId, false);
+                ca.assessment = await assessmentService.getAssessmentById( ca.assessmentId, false );
 
                 ca.topicAssessmentNumber = 1; // pre is always #1 (there is only one and it is always first)
 
                 // go through all the questions and look for the anwser
-                for(let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++) {
+                for( let i=0; i < req.session.currentTopic.topic.assessment.questions.length; i++ ) {
                     // create a completedQuestion to hold the answer
                     let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
 
                     for ( var propName in req.query ) {
+                        // eslint-disable-next-line no-prototype-builtins
                         if ( req.query.hasOwnProperty( propName ) ) {
                             if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[propName];
@@ -207,7 +208,7 @@ router.route( '/update/:finishedStep' )
             if( finishedStep == 3 ) {
 
                 // reroute
-                res.redirect(303, '/community/topic/' + goalId + "/" + topicId);
+                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
 
             }
 
@@ -232,7 +233,7 @@ router.route( '/update/:finishedStep' )
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
 
                 // populate the assessment for this completedAssessment
-                ca.assessment = await assessmentService.getAssessmentById(ca.assessmentId, false);
+                ca.assessment = await assessmentService.getAssessmentById( ca.assessmentId, false );
 
                 // get the next topicAssessmentNumber
                 ca.topicAssessmentNumber = await assessmentService.getNextTopicAssessmentNumber( req.session.currentTopic.topic.assessmentId, req.session.authUser.id );
@@ -243,7 +244,8 @@ router.route( '/update/:finishedStep' )
                     // create a completedQuestion to hold the answer
                     let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-                    for ( var propName in req.query ) {
+                    for ( propName in req.query ) {
+                        // eslint-disable-next-line no-prototype-builtins
                         if ( req.query.hasOwnProperty( propName ) ) {
                             if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[ propName ];
@@ -312,7 +314,7 @@ router.route( '/update/:finishedStep' )
                     req.session.messageTitle = 'All requirements were not completed!';
                     req.session.messageBody = 'You are not able to finish a topic until all required parts are completed';
 
-                    console.log('incomplete topic submitted');
+                    console.log( 'incomplete topic submitted' );
 
                     res.redirect( 303, '/community/topic/' + goalId + '/' + topicId );
                 }
@@ -320,15 +322,15 @@ router.route( '/update/:finishedStep' )
             }
         }
         else {
-            console.log("checking here");
+            console.log( "checking here" );
             // update not able to take place
-            res.redirect(303, '/community')
+            res.redirect( 303, '/community' );
         }
         
 
         
     }
-);
+    );
 
 
 router.route( '/reset' )
@@ -369,7 +371,7 @@ router.route( '/reset' )
         }
         
     }
-);
+    );
 
 
 /**
@@ -420,7 +422,7 @@ router.route( '/:goalId/:topicId' )
                     let currentStep = 1;
 
                     //keep track of number of completed resources that are required
-                    let requiredCompletedResources = topicEnrollment.topic.resources.filter(( resource ) => resource.isRequired == true);
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter( ( resource ) => resource.isRequired == true );
 
                     // determine the current step if different from Introduction
                     // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
@@ -463,7 +465,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -473,7 +475,7 @@ router.route( '/:goalId/:topicId' )
                     // user is not a member and does not currently have access setup page to allow them to enroll
                     // get the topic data
                     
-                    let topic = await topicService.getTopicWithEverythingById(topicId, true);
+                    let topic = await topicService.getTopicWithEverythingById( topicId, true );
                     //console.log("topic: " + JSON.stringify(topic) + " has access::::: " + access); 
                     // open the course
                     // add the enrollment to the session
@@ -482,7 +484,7 @@ router.route( '/:goalId/:topicId' )
                     res.locals.topic = topic;
                     req.session.goalId = goalId;
 
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody});
+                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -492,7 +494,7 @@ router.route( '/:goalId/:topicId' )
             }
             else {
                 // user has access 
-                if(req.session.currentTopic && req.session.currentTopic.topicId == topicId) {
+                if( req.session.currentTopic && req.session.currentTopic.topicId == topicId ) {
                     // already have data in the session save some cycles and don't call it again for now reason
                     // TODO: (have to make sure it is up to date for this optimazation to work!) in others words, make
                     // sure the session is kept up to date when changes are made!
@@ -505,23 +507,23 @@ router.route( '/:goalId/:topicId' )
                     let currentStep = 1;
 
                     //keep track of number of completed resources that are required
-                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter( ( resource ) => resource.isRequired == true );
                     
                     // determine the current step if different from Introduction
                     // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
-                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
+                    if( !topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted ) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted ) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted ) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 5;
                     }
                     else {
@@ -547,7 +549,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -555,30 +557,30 @@ router.route( '/:goalId/:topicId' )
                 else {
 
                     // the user has access but the session does not have the topic enrollment data yet
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything(req.session.authUser.id, topicId, true);
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.id, topicId, true );
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step
                     let currentStep = 1;
 
                     //keep track of number of completed resources that are required
-                    let requiredCompletedResources = topicEnrollment.topic.resources.filter((resource) => resource.isRequired == true);
+                    let requiredCompletedResources = topicEnrollment.topic.resources.filter( ( resource ) => resource.isRequired == true );
                     
                     // determine the current step if different from Introduction
                     // #30 added && !topicEnrollment.isCompleted to ensure that the user skips ahead if they test out. 
-                    if(!topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted) {
+                    if( !topicEnrollment.isIntroComplete && !topicEnrollment.isCompleted ) {
                         currentStep = 1;
                     }
-                    else if(topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.preCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 2;
                     }
-                    else if(topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.completedResources.length < requiredCompletedResources.length && !topicEnrollment.isCompleted ) {
                         currentStep = 3;
                     }
-                    else if(topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.completedActivityId < 1 && topicEnrollment.topic.hasActivity && !topicEnrollment.isCompleted ) {
                         currentStep = 4;
                     }
-                    else if(topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted) {
+                    else if( topicEnrollment.postCompletedAssessmentId < 1 && !topicEnrollment.isCompleted ) {
                         currentStep = 5;
                     }
                     else {
@@ -604,7 +606,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render('community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody});
+                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -615,55 +617,55 @@ router.route( '/:goalId/:topicId' )
             
         }
         else {
-            res.render('user-signup');
+            res.render( 'user-signup' );
         }
     }
-);
+    );
 
 
 /** 
  * Enroll in a topic
  */
-router.route('/enroll/:goalId/:topicId')
-.get(async (req, res) => {
-    let goalId = req.params.goalId;
-    let topicId = req.params.topicId;
-    if(req.session.authUser) {
+router.route( '/enroll/:goalId/:topicId' )
+    .get( async ( req, res ) => {
+        let goalId = req.params.goalId;
+        let topicId = req.params.topicId;
+        if( req.session.authUser ) {
         // see if the user has a token
-        let user = req.session.authUser;
-        // verify the user has access, first check membership:
-        let access = await topicService.verifyTopicAccess(user.id, topicId);
-        if(access) {
+            let user = req.session.authUser;
+            // verify the user has access, first check membership:
+            let access = await topicService.verifyTopicAccess( user.id, topicId );
+            if( access ) {
             // send them to the course
-            res.redirect('/community/topic/' + topicId);
-        }
-        // User does not already have access try to enroll them if they have membership or a token
-        let enrollment = await topicService.enrollUserWithMembershipOrToken(user, topicId);
-        if(enrollment) { 
+                res.redirect( '/community/topic/' + topicId );
+            }
+            // User does not already have access try to enroll them if they have membership or a token
+            let enrollment = await topicService.enrollUserWithMembershipOrToken( user, topicId );
+            if( enrollment ) { 
 
-            // reset the session
-            const rUser = await userService.setUserSession(req.session.authUser.email);
+                // reset the session
+                const rUser = await userService.setUserSession( req.session.authUser.email );
 
-            req.session.authUser = null;
-            req.session.authUser = rUser;
+                req.session.authUser = null;
+                req.session.authUser = rUser;
 
-            // send them to the course
-            res.redirect('/community/topic/' + goalId + "/" + topicId);
-        }
-        else {
+                // send them to the course
+                res.redirect( '/community/topic/' + goalId + "/" + topicId );
+            }
+            else {
             // they did not have membership or a token
             // get products to send to page (founders membership and tokens)
-            const products = await productService.getAllActviteTokenAndMembershipProductsWithImages();
+                const products = await productService.getAllActviteTokenAndMembershipProductsWithImages();
 
-            // user does not currently have membership or tokens, redirct to join
-            res.render('community/join', {products: products, user: user, message:"You did not have a membership or token to use!", message2:"Choose an option below to obtain access to additional topics"});
+                // user does not currently have membership or tokens, redirct to join
+                res.render( 'community/join', {products: products, user: user, message:"You did not have a membership or token to use!", message2:"Choose an option below to obtain access to additional topics"} );
+            }
+        }
+        else {
+            res.render( 'user-signup' );
         }
     }
-    else {
-        res.render('user-signup');
-    }
-}
-);
+    );
 
 
 

@@ -5,11 +5,11 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-let Assessment = require('./assessment');
-let Activity = require('./activity');
+let Assessment = require( './assessment' );
+let Activity = require( './activity' );
 
 function topic() {
-    this.id = -1;
+    this.topicId = -1;
     this.topicType = 0;
     this.topicName = "";
     this.topicDescription = "";
@@ -27,15 +27,16 @@ function topic() {
     this.assessment = Assessment.emptyAssessment();
     this.activity = Activity.emptyActivity();
     this.resources = [];
+    this.resourcesRequired = [];
 }
 
 exports.emptyTopic = () => {
     return new topic();
-}
+};
 
-exports.ormTopic = function (row) {
+exports.ormTopic = function ( row ) {
     let topic = exports.emptyTopic();
-    topic.id = row.id;
+    topic.topicId = row.id; // TODO: Once database change goes through, this will need to be row.topicId;
     topic.topicType = row.topic_type;
     topic.topicName = row.topic_name;
     topic.topicDescription = row.topic_description;
@@ -46,8 +47,12 @@ exports.ormTopic = function (row) {
     topic.hasAssessment = row.has_assessment;
     topic.activityId = row.activity_id;
     topic.active = row.active;
-    topic.active = row.visibility;
+    topic.visibility = row.visibility;
     topic.createTime = row.create_time;
     topic.ownedBy = row.owned_by;
+    topic.assessment = row.assessment;
+    topic.activity = row.activity;
+    topic.resources = row.resources;
+    topic.resourcesRequired = row.resourcesRequired;
     return topic;
-}
+};
