@@ -5,8 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-const discussionService = require("../../service/discussionService")
-const ApiMessage = require("../../model/util/ApiMessage");
+const discussionService = require( "../../service/discussionService" );
+const ApiMessage = require( "../../model/util/ApiMessage" );
 
 // Get
 
@@ -21,12 +21,12 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    const id = req.params.id
+    const id = req.params.id;
 
     // get the discussion by goal id
     let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Discussion not found" );
@@ -36,7 +36,7 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned discussion with comments" );
     res.status( 200 ).json( discussion );
-}
+};
 
 exports.getDiscussionByTopicId = async ( req, res ) => {
 
@@ -49,12 +49,12 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
     
-    const id = req.params.id
+    const id = req.params.id;
 
     // get the discussion by topic id
     let discussion = await discussionService.getDiscussion( "topic", id, authUserId );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Discussion not found" );
@@ -64,7 +64,7 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned discussion with comments" );
     res.status( 200 ).json( discussion );
-}
+};
 
 // Update
 
@@ -86,11 +86,11 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
         return res.status( 400 ).json( message );
     }
 
-    const id = req.params.id
+    const id = req.params.id;
 
     let discussion = await discussionService.updateDiscussion( "goal", id, authUserId, req.body );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Discussion not found" );
@@ -100,7 +100,7 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Updated discussion" );
     res.status( 200 ).json( discussion );
-}
+};
 
 exports.updateDiscussionByTopicId = async ( req, res ) => {
 
@@ -120,11 +120,11 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
         return res.status( 400 ).json( message );
     }
 
-    const id = req.params.id
+    const id = req.params.id;
 
     let discussion = await discussionService.updateDiscussion( "topic", id, authUserId, req.body );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Discussion not found" );
@@ -134,7 +134,7 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Updated discussion" );
     res.status( 200 ).json( discussion );
-}
+};
 
 // Create
 
@@ -156,11 +156,11 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
         return res.status( 400 ).json( message );
     }
 
-    const id = req.params.id
+    const id = req.params.id;
 
     let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.text );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Could not create discussion" );
@@ -170,7 +170,7 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Created discussion" );
     res.status( 201 ).json( discussion );
-}
+};
 
 exports.createDiscussionByTopicId = async ( req, res ) => {
 
@@ -190,11 +190,11 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
         return res.status( 400 ).json( message );
     }
 
-    const id = req.params.id
+    const id = req.params.id;
 
     let discussion = await discussionService.createDiscussion( "topic", id, authUserId, req.body.text );
 
-    if(!discussion) {
+    if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Could not create discussion" );
@@ -204,11 +204,11 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Created discussion" );
     res.status( 201 ).json( discussion );
-}
+};
 
 // Comments
 
-exports.createComment = async (req, res) => {
+exports.createComment = async ( req, res ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -218,31 +218,31 @@ exports.createComment = async (req, res) => {
         authUserId = req.session.authUser.id;
     }
 
-    if(req.body.parent_id < 0) {
+    if( req.body.parent_id < 0 ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_id not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "parent_id not provided" );
         return res.status( 400 ).json( message );
     }
 
-    if(req.body.parent_type !== "goal" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/) {
+    if( req.body.parent_type !== "goal" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/ ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_type not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "parent_type not provided" );
         return res.status( 400 ).json( message );
     }
 
-    if(req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "") {
+    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "comment_text not provided" );
         return res.status( 400 ).json( message );
     }
 
-    let comment = await discussionService.createComment(authUserId, req.body );
+    let comment = await discussionService.createComment( authUserId, req.body );
 
     // not sure if this is possible, so I don't really know what the message should be
-    if(!comment) {
+    if( !comment ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "Comment could not be created" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "Comment could not be created" );
@@ -252,11 +252,11 @@ exports.createComment = async (req, res) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Created comment" );
     res.status( 200 ).json( comment );
-}
+};
 
 exports.editComment = async ( req, res ) => {
 
-    const commentId = req.params.commentId
+    const commentId = req.params.commentId;
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -266,16 +266,16 @@ exports.editComment = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if(req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "") {
+    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "comment_text not provided" );
         return res.status( 400 ).json( message );
     }
 
-    let comment = await discussionService.editComment( commentId , authUserId , req.body );
+    let comment = await discussionService.editComment( commentId, authUserId, req.body );
 
-    if(!comment) {
+    if( !comment ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Comment not found" );
@@ -285,11 +285,11 @@ exports.editComment = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Edited comment" );
     res.status( 200 ).json( comment );
-}
+};
 
 exports.deleteComment = async ( req, res ) => {
 
-    const commentId = req.params.commentId
+    const commentId = req.params.commentId;
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -299,9 +299,9 @@ exports.deleteComment = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    let comment = await discussionService.deleteComment( commentId , authUserId);
+    let comment = await discussionService.deleteComment( commentId, authUserId );
 
-    if(!comment) {
+    if( !comment ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Comment not found" );
@@ -312,7 +312,7 @@ exports.deleteComment = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Deleted Comment" );
     res.status( 200 ).json( comment );
-}
+};
 
 // Ratings
 
@@ -327,10 +327,10 @@ exports.setRating = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    const commentId = req.params.commentId
-    const userRating = req.body.rating
+    const commentId = req.params.commentId;
+    const userRating = req.body.rating;
 
-    if(typeof userRating !== "boolean") {
+    if( typeof userRating !== "boolean" ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "rating not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "rating not provided" );
@@ -339,7 +339,7 @@ exports.setRating = async ( req, res ) => {
 
     let rating = await discussionService.setCommentRating( commentId, userRating, authUserId );
 
-    if(!rating) {
+    if( !rating ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not created" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Comment not found, rating not created" );
@@ -349,7 +349,7 @@ exports.setRating = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Set Rating" );
     res.status( 200 ).json( rating );
-}
+};
 
 exports.removeRating = async ( req, res ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -361,11 +361,11 @@ exports.removeRating = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    const commentId = req.params.commentId
+    const commentId = req.params.commentId;
 
     let rating = await discussionService.removeCommentRating( commentId, authUserId );
 
-    if(!rating) {
+    if( !rating ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not removed" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Comment not found, rating not removed" );
@@ -375,4 +375,4 @@ exports.removeRating = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Removed Rating" );
     res.status( 200 ).json( rating );
-}
+};

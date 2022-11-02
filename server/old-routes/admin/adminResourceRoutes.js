@@ -5,25 +5,25 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-let express = require('express');
+let express = require( 'express' );
 let router = express.Router();
 
-const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({
+const bodyParser = require( 'body-parser' );
+router.use( bodyParser.urlencoded( {
     extended: true
-  }));
-router.use(bodyParser.json());
+} ) );
+router.use( bodyParser.json() );
 
 // service requires
-let resourceService = require('../../service/resourceService');
+let resourceService = require( '../../service/resourceService' );
 
 // model requires
-let Resource = require('../../model/resource');
-const { localsName } = require('ejs');
+let Resource = require( '../../model/resource' );
+const { localsName } = require( 'ejs' );
 
 // import multer (file upload) and setup
-const fs = require('fs');
-let path = require('path');
+const fs = require( 'fs' );
+let path = require( 'path' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
@@ -33,49 +33,49 @@ let IMAGE_PATH = process.env.RESOURCE_IMAGE_PATH;
 let maxSize = 1 * 1024 * 1024;
 
 // Start multer
-let multer = require('multer');
+let multer = require( 'multer' );
 
-const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
-        cb(null, true);
+const fileFilter = ( req, file, cb ) => {
+    if( file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png' ) {
+        cb( null, true );
     }
     else {
-        cb(null, false);
+        cb( null, false );
     }
-}
+};
 
-let storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH)
+let storage = multer.diskStorage( {
+    destination: function ( req, file, cb ) {
+        cb( null, UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH );
     },
-    filename: function (req, file, cb) {
+    filename: function ( req, file, cb ) {
         let filename = Date.now() + file.originalname;
         req.session.savedResourceFileName = filename;
-        cb(null, filename);
+        cb( null, filename );
     }
-})
-let upload = multer({ storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } }).single('resourceImage');
+} );
+let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'resourceImage' );
 // end multer
 
 
 
-router.route('/')
-    .get(async function (req, res) {
+router.route( '/' )
+    .get( async function ( req, res ) {
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllResourcesForOwner(req.session.authUser.id)
+        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id );
         //console.log("------------- owner resources: " + JSON.stringify(ownerResources));
         let resource = null;
         
-        res.render('./admin/adminResource', {ownerResources: ownerResources, resource: resource});
+        res.render( './admin/adminResource', {ownerResources: ownerResources, resource: resource} );
       
-    })
-    .post(async function(req, res) {
-        upload(req, res, (err) => {
+    } )
+    .post( async function( req, res ) {
+        upload( req, res, ( err ) => {
 
-            if(err) {
-                console.log("Error uploading picture : " + err);
-                req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file."
-                res.redirect(303, '/profile/manageProfile');
+            if( err ) {
+                console.log( "Error uploading picture : " + err );
+                req.session.uploadMessage = "File size was larger the 1MB, please use a smaller file.";
+                res.redirect( 303, '/profile/manageProfile' );
             }
             else {
                 // save image          
@@ -86,7 +86,7 @@ router.route('/')
                 resource.resourceType = req.body.resourceType;
                 resource.resourceName = req.body.resourceName;
                 resource.resourceDescription = req.body.resourceDescription;
-                if(resource.resourceType == 3) {
+                if( resource.resourceType == 3 ) {
                     resource.resourceContentHtml = req.body.submission_text2;
                 }
                 else {
@@ -94,64 +94,64 @@ router.route('/')
                 }
                 // console.log("checking the resource: " + JSON.stringify(resource));
                 // console.log("now the req.body: " + JSON.stringify(req.body));
-                resource.active = (req.body.resourceActive == "on") ? true : false;
+                resource.active = ( req.body.resourceActive == "on" ) ? true : false;
                 resource.resourceLink = req.body.resourceLink;
                 resource.isRequired = req.body.isRequired;
             
                 // get the existing data
-                if(resource.id) {
+                if( resource.id ) {
 
-                    resourceService.getResourceById(resource.id).then((dbResource) => {
+                    resourceService.getResourceById( resource.id ).then( ( dbResource ) => {
                         resource.id = dbResource.id;
-                        resource.resourceImage = dbResource.resourceImage
+                        resource.resourceImage = dbResource.resourceImage;
 
-                        if(req.session.savedResourceFileName) {
+                        if( req.session.savedResourceFileName ) {
                             resource.resourceImage = req.session.savedResourceFileName;
                         } 
 
                         resource.ownedBy = req.session.authUser.id;
-                        resourceService.saveResource(resource).then((savedResource) => {
+                        resourceService.saveResource( resource ).then( ( savedResource ) => {
                             res.locals.message = "Resource Saved Successfully";
-                        });
+                        } );
 
-                    });
+                    } );
                 }
                 else {
                     
                     resource.ownedBy = req.session.authUser.id; 
 
-                    resourceService.saveResource(resource).then((savedResource) => {
+                    resourceService.saveResource( resource ).then( ( savedResource ) => {
                         res.locals.message = "Resource Saved Successfully";
-                    });
+                    } );
 
                 }
                 
-                res.redirect(303, '/a/resource/' + resource.id);
+                res.redirect( 303, '/a/resource/' + resource.id );
 
             }  
-        });
+        } );
 
 
         
     }
-);
+    );
 
 
-router.route('/:resourceId')
-    .get(async function (req, res) {
+router.route( '/:resourceId' )
+    .get( async function ( req, res ) {
         let message = '';
-        if(req.locals && req.locals.message) {
+        if( req.locals && req.locals.message ) {
             message = req.locals.message;
         }
         
         let resourceId = req.params.resourceId;
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllResourcesForOwner(req.session.authUser.id);
+        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id );
 
         let resource = Resource.emptyResource();
-        if(resourceId > 0) {
-            resource = await resourceService.getResourceById(resourceId);
+        if( resourceId > 0 ) {
+            resource = await resourceService.getResourceById( resourceId );
         }
         else {
             resource.ownedBy = req.session.authUser.id;
@@ -159,15 +159,15 @@ router.route('/:resourceId')
       
         
         // make sure the user has access to this resource (is owner)
-        if(resource.ownedBy === req.session.authUser.id) {
-            res.render('./admin/adminResource', {ownerResources: ownerResources, resource: resource});
+        if( resource.ownedBy === req.session.authUser.id ) {
+            res.render( './admin/adminResource', {ownerResources: ownerResources, resource: resource} );
         }
         else {
             message = 'Access Denied';
             message2 = 'You do not have access to the requested resource';
-            res.render('./admin/adminResource', {ownerResources: ownerResources, resource: null, message: message, message2: message2});
+            res.render( './admin/adminResource', {ownerResources: ownerResources, resource: null, message: message, message2: message2} );
         }
     }
-);
+    );
 
 module.exports = router;

@@ -5,7 +5,7 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-function product(productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage) {
+function product( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage ) {
     this.id = -1;
     this.productType = productType;
     this.productName = productName;
@@ -23,15 +23,15 @@ function product(productType, productName, productDescription1, productDescripti
 
 exports.emptyProduct = () => {
     return new product();
-}
+};
 
-exports.createProduct = function (productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage) {
-    let newProduct = new product(productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage);
+exports.createProduct = function ( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage ) {
+    let newProduct = new product( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage );
     newProduct.id = -1;
     return newProduct;
-}
+};
 
-exports.ormProduct = function (productRow) {
+exports.ormProduct = function ( productRow ) {
     let product = exports.emptyProduct();
     product.id = productRow.id;
     product.productType = productRow.product_type;
@@ -46,4 +46,4 @@ exports.ormProduct = function (productRow) {
     product.productStaticImage = productRow.product_static_image;
     product.active = productRow.active;
     return product;
-}
+};

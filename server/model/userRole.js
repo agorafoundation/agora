@@ -16,9 +16,9 @@ function userRole() {
 
 exports.emptyUserRole = () => {
     return new userRole();
-}
+};
 
-exports.ormUserRole = function (row) {
+exports.ormUserRole = function ( row ) {
     let userRole = exports.emptyUserRole();
     userRole.id = row.id;
     userRole.userId = row.user_id;
@@ -27,4 +27,4 @@ exports.ormUserRole = function (row) {
     userRole.createTime = row.create_time;
     userRole.endTime = row.end_time;
     return userRole;
-}
+};

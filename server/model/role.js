@@ -15,10 +15,10 @@ function role() {
 
 exports.emptyRole = () => {
     return new role();
-}
+};
 
 
-exports.ormRole = function (row) {
+exports.ormRole = function ( row ) {
     let role = exports.emptyRole();
     role.id = row.id;
     role.roleName = row.role_name;
@@ -26,4 +26,4 @@ exports.ormRole = function (row) {
     role.active = row.active;
     role.createTime = row.create_time;
     return role;
-}
+};

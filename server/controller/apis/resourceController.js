@@ -37,7 +37,7 @@ const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
  */
 exports.getAllVisibleResources = async ( req, res ) => {
     // get all the active resources by user
-    console.log("limit check:" + req.query.limit);
+    console.log( "limit check:" + req.query.limit );
 
     // get the auth user id from either the basic auth header or the session
     let authUserId;
@@ -50,7 +50,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
 
     //console.log("auth user id; " + authUserId);
     
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
         
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
 
@@ -64,7 +64,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Resource not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 
 /**
@@ -79,7 +79,7 @@ exports.getAllSharedResourcesForUser = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all shared resources for user" );
     res.status( 200 ).json( sharedResources );
-}
+};
 
 /**
  * 
@@ -97,7 +97,7 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
     }
 
     // get all the active resources
-    let resources = await resourceService.getAllActiveResourcesForOwner(authUserId);
+    let resources = await resourceService.getAllActiveResourcesForOwner( authUserId );
 
     if( resources ) {
         res.set( "x-agora-message-title", "Success" );
@@ -110,7 +110,7 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Resources not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 exports.getResourceById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
@@ -123,7 +123,7 @@ exports.getResourceById = async ( req, res ) => {
     }
 
     // get all the active resources by Id
-    let resource = await resourceService.getAllActiveResourcesForOwnerById(authUserId, req.params.id);
+    let resource = await resourceService.getAllActiveResourcesForOwnerById( authUserId, req.params.id );
 
     if( resource ) {
         res.set( "x-agora-message-title", "Success" );
@@ -136,7 +136,7 @@ exports.getResourceById = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Resource not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 exports.getAllResourcesForAuthUser = async ( req, res ) => {
     // get all the resources for this owner
@@ -145,7 +145,7 @@ exports.getAllResourcesForAuthUser = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all resources for user" );
     res.status( 200 ).json( ownerResources );
-}
+};
 
 /**
  * Update or create a completed resource for the resource Id passed.
@@ -190,7 +190,7 @@ exports.saveCompletedResource = async function( req, res ) {
     }
 
     res.send();
-}
+};
 
 exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
@@ -198,24 +198,24 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
     if( resourceId > 0 ) {
         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
 
-            if( rValue && rValue.length > 0 && (rValue != 'resource-default.png' 
+            if( rValue && rValue.length > 0 && ( rValue != 'resource-default.png' 
                 || rValue != 'notebook-pen.svg' 
                 || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' )) {
-                console.log("removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue)
+                || rValue != 'code.svg' ) ) {
+                console.log( "removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue );
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[resourceController] file delete error status: " + err );
                         return false;
                     }
                     
-                });
+                } );
             } 
-        });
+        } );
     }
     
     return true;
-}
+};
 
 exports.saveResource = async ( req, res, redirect ) => {
 
@@ -230,7 +230,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
 
         resource.id = req.body.resourceId;
 
@@ -238,7 +238,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         let existingResource = await resourceService.getResourceById( resource.id, false );
 
         // if this is an update, replace the resource with the existing one as the starting point.
-        if(existingResource) {
+        if( existingResource ) {
             //console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
             resource = existingResource;
         }
@@ -249,7 +249,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
 
-        if(resource.resourceType == 3) {
+        if( resource.resourceType == 3 ) {
             
             resource.resourceContentHtml = req.body.embedded_submission_text_resource;
         }
@@ -285,7 +285,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
         if ( req.body.resourceModified && !req.files ) {
             // do nothing we are going to keep the original file
-            console.log("resource trigger modification clause");
+            console.log( "resource trigger modification clause" );
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
@@ -309,7 +309,7 @@ exports.saveResource = async ( req, res, redirect ) => {
 
             // check the file size
             if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded for resource`);
+                console.log( `File ${file.name} size limit has been exceeded for resource` );
 
                 if( redirect ) {
                     req.session.messageType = "warn";
@@ -319,15 +319,15 @@ exports.saveResource = async ( req, res, redirect ) => {
                     return resource;
                 }
                 else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
                     res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.");
+                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
                     res.status( 422 ).json( message );
                 }
                 
             }
             else if( resource ) {
-                await file.mv(resourceUploadPath + timeStamp + file.name, async (err) => {
+                await file.mv( resourceUploadPath + timeStamp + file.name, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
                         if( redirect ) {
@@ -347,7 +347,7 @@ exports.saveResource = async ( req, res, redirect ) => {
                     else {
                         await this.saveResourceImage( req, res, resource.id, timeStamp + file.name );
                     }
-                });
+                } );
             }
             else {
                 if( redirect ) {
@@ -402,9 +402,9 @@ exports.saveResource = async ( req, res, redirect ) => {
         
     }
     
-}
+};
 
-exports.deleteResourceById = async (req, res) => {
+exports.deleteResourceById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
@@ -415,17 +415,17 @@ exports.deleteResourceById = async (req, res) => {
     }
 
     const resourceId = req.params.id;
-    let success = await resourceService.deleteResourceById(resourceId, authUserId);
+    let success = await resourceService.deleteResourceById( resourceId, authUserId );
 
-    if (success) {
-        res.set("x-agora-message-title", "Success");
-        res.set("x-agora-message-detail", "Deleted resource");
-        res.status(200).json("Success");
+    if ( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Deleted resource" );
+        res.status( 200 ).json( "Success" );
     }
     else {
-        res.set( "x-agora-message-title", "Not Found");
-        res.set( "x-agora-message-detail", "No resources were found meeting the query criteria");
-        res.status( 404).send( "No resources Found");
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No resources were found meeting the query criteria" );
+        res.status( 404 ).send( "No resources Found" );
     }
 
-}
+};

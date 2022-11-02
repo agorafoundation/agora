@@ -16,9 +16,9 @@ function completedActivity() {
 
 exports.emptyCompletedActivity = () => {
     return new completedActivity();
-}
+};
 
-exports.ormCompletedActivity = function (row) {
+exports.ormCompletedActivity = function ( row ) {
     let completedActivity = exports.emptyCompletedActivity();
     completedActivity.id = row.id;
     completedActivity.activityId = row.activity_id;
@@ -27,4 +27,4 @@ exports.ormCompletedActivity = function (row) {
     completedActivity.createTime = row.create_time;
     completedActivity.updateTime = row.update_time;
     return completedActivity;
-}
+};

@@ -5,9 +5,9 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-const { Pool, Client } = require('pg');
+const { Pool, Client } = require( 'pg' );
 
-const pool = new Pool({ 
+const pool = new Pool( { 
     host: process.env.PG_HOST,
     port: process.env.PG_PORT,
     user: process.env.PG_USER,
@@ -16,11 +16,11 @@ const pool = new Pool({
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000, 
-})
+} );
 
 
 module.exports = {
     pool: () => pool,
-    query: (text, params) => pool.query(text, params),
-}
+    query: ( text, params ) => pool.query( text, params ),
+};
 

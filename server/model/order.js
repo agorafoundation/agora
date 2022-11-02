@@ -5,7 +5,7 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-function order(productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax) {
+function order( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax ) {
     this.id = -1;
     this.productId = productId;
     this.quantity = quantity;
@@ -30,15 +30,15 @@ function order(productId, quantity, userId, stripeSessionData, stripeCustomerDat
 
 exports.emptyOrder = () => {
     return new order();
-}
+};
 
-exports.createOrder = function (productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax) {
-    let newOrder = new order(productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax);
+exports.createOrder = function ( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax ) {
+    let newOrder = new order( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax );
     newOrder.id = -1;
     return newOrder;
-}
+};
 
-exports.ormOrder = function (orderRow) {
+exports.ormOrder = function ( orderRow ) {
     let order = exports.emptyOrder();
     order.id = orderRow.id;
     order.productId = orderRow.product_id;
@@ -63,7 +63,7 @@ exports.ormOrder = function (orderRow) {
 
     
     return order;
-}
+};
 
 /**
  * Returns a Order object 
@@ -74,7 +74,7 @@ exports.ormOrder = function (orderRow) {
  * @param {Integer} quantity <- quanity ordered
  * @returns Order object
  */
-exports.parseOrder = function (session, customer, user, productId, quantity) {
+exports.parseOrder = function ( session, customer, user, productId, quantity ) {
     // create order 
     let order = exports.emptyOrder();
     order.id -1;    // new order
@@ -90,7 +90,7 @@ exports.parseOrder = function (session, customer, user, productId, quantity) {
     order.mailZip = session.shipping.address.postal_code;
     order.mailCountry = session.shipping.address.country;
     order.orderStatus = session.status;
-    if(session.mode == "subscription") {
+    if( session.mode == "subscription" ) {
         order.paymentIntent = session.subscription;
     }
     else {
@@ -103,4 +103,4 @@ exports.parseOrder = function (session, customer, user, productId, quantity) {
     order.automaticTax = session.automatic_tax;
 
     return order;
-}
+};

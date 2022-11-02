@@ -19,4 +19,4 @@ class ApiMessage {
 
 exports.createApiMessage = ( statusCode, messageTitle, messageBody ) => {
     return new ApiMessage( statusCode, messageTitle, messageBody );
-}
+};

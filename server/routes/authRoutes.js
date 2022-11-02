@@ -24,52 +24,52 @@ router.route( '/signIn' )
     .post( ( req, res ) => {
         authController.signIn( req, res );
     }
-)
+    );
 
 router.route( '/signOut' )
     .get( ( req, res ) => {
-        req.session.destroy((error) => {
-            if (error) throw error;
-            res.render('sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." });
-        });
+        req.session.destroy( ( error ) => {
+            if ( error ) throw error;
+            res.render( 'sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." } );
+        } );
     }
-)
+    );
 
 router.route( '/forgotPass' )
     .get( ( req, res ) => {
-        res.render('user-forgot-password');
+        res.render( 'user-forgot-password' );
     }
-)
+    );
 
 router.route( '/userError' )
     .get( ( req, res ) => {
-        res.render('user-error');
+        res.render( 'user-error' );
     }
-)
+    );
 
 router.route( '/resetPass' )
     .post( ( req, res ) => {
         authController.generateResetPasswordEmail( req, res );
     }
-)
+    );
 
 router.route( '/resetPass/:email/:token' )
     .get( ( req, res ) => {
         authController.verifyResetPasswordToken( req, res );
     }
-)
+    );
 
 router.route( '/newPass' )
     .post( ( req, res ) => {
         authController.resetPassword( req, res );
     }
-)
+    );
 
 router.route( '/verifyEmail/:email/:token' )
     .get( ( req, res ) => {
         authController.verifyEmailWithToken( req, res );
     }
-)
+    );
 
 
 module.exports = router;

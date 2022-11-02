@@ -43,24 +43,24 @@ class User {
         // populate with enrolled Topics
         this.topicEnrollments = [];
     }
-  }
+}
   
 exports.emptyUser = () => {
     return new User();
-}
+};
 
-exports.createUser = function(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-    mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens) {
-    let newUser = new User(email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-        mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens);
+exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
+    mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens ) {
+    let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
+        mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens );
     newUser.id = -1;
     return newUser;
-}
+};
 
 
   
 
-exports.ormUser = function(userRow) {
+exports.ormUser = function( userRow ) {
     let user = exports.emptyUser();
     user.id = userRow.id;
     user.email = userRow.email;
@@ -86,4 +86,4 @@ exports.ormUser = function(userRow) {
     user.stripeId = userRow.stripe_id;
     user.availableAccessTokens = userRow.available_access_tokens;
     return user;
-}
+};

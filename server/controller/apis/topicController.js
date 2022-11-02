@@ -18,9 +18,9 @@ const activityService = require( '../../service/activityService' );
 const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
-const Topic = require('../../model/topic' );
-const Assessment = require('../../model/assessment' );
-const Activity = require('../../model/activity' );
+const Topic = require( '../../model/topic' );
+const Assessment = require( '../../model/assessment' );
+const Activity = require( '../../model/activity' );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -45,7 +45,7 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
         let topics = await topicService.getAllVisibleTopics( authUserId, req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all visible topics" );
@@ -57,31 +57,32 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Topic not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 exports.getAllPublicTopics = async ( req, res ) => {
 
-     // get the auth user id from either the basic auth header or the session
-     let authUserId;
-     if( req.user ) {
-         authUserId = req.user.id;
-     }
-     else if( req.session.authUser ) {
-         authUserId = req.session.authUser.id;
-     }
+    // get the auth user id from either the basic auth header or the session
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
 
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
         let topics = await topicService.getAllPublicTopics( req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all public topics" );
         res.status( 200 ).json( topics );
-    } else {
+    }
+    else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "Topic not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 exports.getTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
@@ -95,7 +96,7 @@ exports.getTopicById = async ( req, res ) => {
 
     if( authUserId > 0 ){
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
-        if(topic) {
+        if( topic ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned topic by id" );
             res.status( 200 ).json( topic );
@@ -108,10 +109,10 @@ exports.getTopicById = async ( req, res ) => {
         }
     }   
 
-// topic file path
-const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
+    // topic file path
+    const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
-}
+};
 
 
 
@@ -128,7 +129,7 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
     }
 
     // get all the active topics
-    let topics = await topicService.getAllActiveTopicsForOwner(authUserId);
+    let topics = await topicService.getAllActiveTopicsForOwner( authUserId );
 
     if( topics ) {
         res.set( "x-agora-message-title", "Success" );
@@ -141,7 +142,7 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Topics not found" );
         res.status( 404 ).json( message );
     }
-}
+};
 
 
 
@@ -182,7 +183,7 @@ exports.saveCompletedTopic = async function( req, res ) {
     }
 
     res.send();
-}
+};
 
 exports.saveTopicImage = async( req, res, topicId, filename ) => {
 
@@ -190,24 +191,24 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
     if( topicId > 0 ) {
         topicService.updateTopicImage( topicId, filename ).then( ( rValue ) => {
 
-            if( rValue && rValue.length > 0 && (rValue != 'topic-default.png' 
+            if( rValue && rValue.length > 0 && ( rValue != 'topic-default.png' 
                 || rValue != 'notebook-pen.svg' 
                 || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' )) {
-                console.log("removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue)
+                || rValue != 'code.svg' ) ) {
+                console.log( "removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue );
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[topicController] file delete error status: " + err );
                         return false;
                     }
                     
-                });
+                } );
             } 
-        });
+        } );
     }
     
     return true;
-}
+};
 
 // saveTopic in progress. Still missing handling of attributes: 
 //     this.topicImage = ""; // -- skip testing for now.
@@ -224,7 +225,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
 
         topic.topicId = req.body.topicId;
 
@@ -232,10 +233,11 @@ exports.saveTopic = async ( req, res, redirect ) => {
         let existingTopic = await topicService.getTopicById( topic.topicId, false );
 
         // if this is an update, replace the topic with the existing one as the starting point.
-        if(existingTopic) {
-            console.log("existing topic");
+        if( existingTopic ) {
+            console.log( "existing topic" );
             topic = existingTopic;
-        } else {
+        }
+        else {
             topic.creationTime = Date.now();
         }
 
@@ -245,7 +247,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
 
-        if(topic.topicType == 3) {
+        if( topic.topicType == 3 ) {
             
             topic.topicHtml = req.body.embedded_submission_text_topic;
         }
@@ -332,8 +334,8 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
-            let resourcesSaved = await topicService.saveResourcesForTopic(topic.topicId, req.body.resources, req.body.resourcesRequired);
-            console.log("@ -- @" +resourcesSaved);
+            let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, req.body.resources, req.body.resourcesRequired );
+            console.log( "@ -- @" +resourcesSaved );
         }
 
         
@@ -344,7 +346,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
         if ( req.body.topicModified && !req.files ) {
             // do nothing we are going to keep the original file
-            console.log("topic trigger modification clause");
+            console.log( "topic trigger modification clause" );
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
@@ -368,9 +370,9 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             // check the file size
             if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded for topic`);
+                console.log( `File ${file.name} size limit has been exceeded for topic` );
 
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "warn";
                     req.session.messageTitle = "Image too large!";
                     req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.";
@@ -378,18 +380,18 @@ exports.saveTopic = async ( req, res, redirect ) => {
                     return topic;
                 }
                 else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
+                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image." );
                     res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image.");
+                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your topic was saved without the image." );
                     res.status( 422 ).json( message );
                 }
                 
             }
             else if( topic ) {
-                await file.mv(topicUploadPath + timeStamp + file.name, async (err) => {
-                    if (err) {
+                await file.mv( topicUploadPath + timeStamp + file.name, async ( err ) => {
+                    if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
-                        if(redirect) {
+                        if( redirect ) {
                             req.session.messageType = "error";
                             req.session.messageTitle = "Error saving image!";
                             req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
@@ -406,10 +408,10 @@ exports.saveTopic = async ( req, res, redirect ) => {
                     else {
                         await this.saveTopicImage( req, res, topic.topicId, timeStamp + file.name );
                     }
-                });
+                } );
             }
             else {
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "error";
                     req.session.messageTitle = "Error saving image!";
                     req.session.messageBody = "There was a error uploading your image for this topic. Your topic should be saved without the image.";
@@ -461,9 +463,9 @@ exports.saveTopic = async ( req, res, redirect ) => {
         
     }
     
-}
+};
 
-exports.deleteTopicById = async (req, res) => {
+exports.deleteTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
@@ -474,17 +476,17 @@ exports.deleteTopicById = async (req, res) => {
     }
 
     const topicId = req.params.topicId;
-    let success = await topicService.deleteTopicById(topicId, authUserId);
+    let success = await topicService.deleteTopicById( topicId, authUserId );
 
-    if (success) {
-        res.set("x-agora-message-title", "Success");
-        res.set("x-agora-message-detail", "Deleted topic");
-        res.status(200).json("Success");
+    if ( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Deleted topic" );
+        res.status( 200 ).json( "Success" );
     }
     else {
-        res.set( "x-agora-message-title", "Not Found");
-        res.set( "x-agora-message-detail", "No topics were found meeting the query criteria");
-        res.status( 404).send( "No topics Found");
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No topics were found meeting the query criteria" );
+        res.status( 404 ).send( "No topics Found" );
     }
 
-}
+};

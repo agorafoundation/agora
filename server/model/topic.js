@@ -5,8 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-let Assessment = require('./assessment');
-let Activity = require('./activity');
+let Assessment = require( './assessment' );
+let Activity = require( './activity' );
 
 function topic() {
     this.topicId = -1;
@@ -32,9 +32,9 @@ function topic() {
 
 exports.emptyTopic = () => {
     return new topic();
-}
+};
 
-exports.ormTopic = function (row) {
+exports.ormTopic = function ( row ) {
     let topic = exports.emptyTopic();
     topic.topicId = row.id; // TODO: Once database change goes through, this will need to be row.topicId;
     topic.topicType = row.topic_type;
@@ -55,4 +55,4 @@ exports.ormTopic = function (row) {
     topic.resources = row.resources;
     topic.resourcesRequired = row.resourcesRequired;
     return topic;
-}
+};

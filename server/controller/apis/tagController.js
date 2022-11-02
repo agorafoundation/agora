@@ -22,7 +22,7 @@ const Tagged = require( '../../model/tagged' );
  * @param {HTTP request} req 
  * @param {HTTP respons} res 
  */
- exports.getAllTags = async function ( req, res ) {
+exports.getAllTags = async function ( req, res ) {
     // get all the active tags
 
     let tags = await tagService.getAllTags( req.query.limit, req.query.offset );
@@ -37,7 +37,7 @@ const Tagged = require( '../../model/tagged' );
         res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
         res.status( 404 ).send( "No Tags Found" );
     }
-}
+};
 
 exports.getTagById = async function( req, res ) {
     let tag = await tagService.getTagById( req.params.id );
@@ -52,7 +52,7 @@ exports.getTagById = async function( req, res ) {
         res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
         res.status( 404 ).send( "No Tags Found" );
     }
-}
+};
 
 exports.deleteTagById = async ( req, res ) => {
     let success = await tagService.deleteTagById( req.params.id );
@@ -67,7 +67,7 @@ exports.deleteTagById = async ( req, res ) => {
         res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
         res.status( 404 ).send( "No Tags Found" );
     }
-}
+};
 
 
 /**
@@ -85,7 +85,7 @@ exports.saveTag = async function( req, res, redirect ) {
 
     // check to see if there is an existing tag with the same name since we do not want dups
     existingTagName = await tagService.getTagByTagName( req.body.tag );
-    tag = (existingTagName) ? existingTagName : tag;
+    tag = ( existingTagName ) ? existingTagName : tag;
     
     // add changes from the body if they are passed
     tag.tag = req.body.tag;
@@ -103,7 +103,7 @@ exports.saveTag = async function( req, res, redirect ) {
     else if( req && req.user ) {
         tag.ownedBy = req.user.id;
     }
-    else if ( req && req.session && req.session.authUser) {
+    else if ( req && req.session && req.session.authUser ) {
         tag.ownedBy = req.session.authUser.id;
     }
 
@@ -134,13 +134,13 @@ exports.saveTag = async function( req, res, redirect ) {
             res.setHeader( 'Content-Type', 'application/json' );
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Updated existing Tag by Tag name" );
-            res.status(200).send(JSON.stringify(tag));
+            res.status( 200 ).send( JSON.stringify( tag ) );
         }
         else {
             res.setHeader( 'Content-Type', 'application/json' );
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Created new tag" );
-            res.status(201).send(JSON.stringify(tag));
+            res.status( 201 ).send( JSON.stringify( tag ) );
         }
     }
-}
+};

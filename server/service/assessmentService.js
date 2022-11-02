@@ -6,12 +6,12 @@
  */
 
 // database connection
-const db = require('../db/connection');
+const db = require( '../db/connection' );
 
 // import models
-const Assessment = require('../model/assessment')
-const AssessmentQuestion = require('../model/assessmentQuestion');
-const AssessmentQuestionOption = require('../model/assessmentQuestionOption'); 
+const Assessment = require( '../model/assessment' );
+const AssessmentQuestion = require( '../model/assessmentQuestion' );
+const AssessmentQuestionOption = require( '../model/assessmentQuestionOption' ); 
 
 // any cross services required
 
@@ -22,24 +22,24 @@ const AssessmentQuestionOption = require('../model/assessmentQuestionOption');
  * @param {boolean} active
  * @returns assessment
  */
-exports.getAssessmentById = async function(assessmentId, active) {
+exports.getAssessmentById = async function( assessmentId, active ) {
     let text = "";
     let values = [];
     if( active ) {
         text = "SELECT * FROM assessments WHERE active = $1 AND id = $2";
-        values = [ true, parseInt(assessmentId) ];
+        values = [ true, parseInt( assessmentId ) ];
     }
     else {
         text = "SELECT * FROM assessments WHERE id = $1";
-        values = [ parseInt(assessmentId) ];
+        values = [ parseInt( assessmentId ) ];
     }
     
     try {
         let assessment = "";
          
-        let res = await db.query(text, values);
-        if(res.rowCount > 0) {
-            assessment = Assessment.ormAssessment(res.rows[0]);
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            assessment = Assessment.ormAssessment( res.rows[0] );
 
             // find the questions associated with the assessment
             if( active ) {
@@ -52,10 +52,10 @@ exports.getAssessmentById = async function(assessmentId, active) {
             }
             
 
-            let res2 = await db.query(text, values);
+            let res2 = await db.query( text, values );
             if( res2.rowCount > 0 ) {
                 for( let i = 0; i < res2.rowCount; i++ ) {
-                    let question = AssessmentQuestion.ormAssessmentQuestion(res2.rows[i]);
+                    let question = AssessmentQuestion.ormAssessmentQuestion( res2.rows[i] );
 
                     // find the options associated with each question
                     if( active ) {
@@ -68,16 +68,16 @@ exports.getAssessmentById = async function(assessmentId, active) {
                     }
                     
     
-                    let res3 = await db.query(text, values);
-                    if(res3.rowCount > 0) {
+                    let res3 = await db.query( text, values );
+                    if( res3.rowCount > 0 ) {
                         for( let j = 0; j < res3.rowCount; j++ ) {
-                            let option = AssessmentQuestionOption.ormAssessmentQuestionOption(res3.rows[j]);
+                            let option = AssessmentQuestionOption.ormAssessmentQuestionOption( res3.rows[j] );
 
-                            question.options.push(option);
+                            question.options.push( option );
                         }
                     }
     
-                    assessment.questions.push(question);
+                    assessment.questions.push( question );
                 }
                 
             }
@@ -85,10 +85,10 @@ exports.getAssessmentById = async function(assessmentId, active) {
         return assessment;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
-}
+};
 
 /**
  * Returns the last topic_assessment_number in the database for the passed assessment and user Ids. Used to determine the post assessment  
@@ -97,7 +97,7 @@ exports.getAssessmentById = async function(assessmentId, active) {
  * @param {*} userId user Id
  * @returns the last topic assessment_number saved or false if query fails
  */
-exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
+exports.getNextTopicAssessmentNumber = async function( assessmentId, userId ) {
     if( assessmentId ) {
         // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
         let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
@@ -105,18 +105,18 @@ exports.getNextTopicAssessmentNumber = async function(assessmentId, userId) {
 
         try {
              
-            let res = await db.query(text, values);
-            if(res.rowCount > 0) {
+            let res = await db.query( text, values );
+            if( res.rowCount > 0 ) {
                 return res.rows[0].num_assessments;
             }
 
         }
-        catch(e) {
-            console.log(e.stack)
+        catch( e ) {
+            console.log( e.stack );
         }
         return false;
     }
-}
+};
 
 /**
  * Determines the number of correct answers a student had on an assessment.
@@ -130,7 +130,7 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
     let totalQuestions = 0;
     let totalCorrect = 0;
 
-    if(assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.id == completedAssessment.assessmentId ) {
+    if( assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.id == completedAssessment.assessmentId ) {
         for( let i=0; i < assessment.questions.length; i++ ) {
             
             totalQuestions++;
@@ -153,9 +153,9 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
         // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
         // console.log("tq: " + totalQuestions + " tc: " + totalCorrect + " eq: " + (totalQuestions > 0) + " res: " + (totalCorrect / totalQuestions));
         // console.log(" ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ");
-        return ((totalQuestions > 0)?(totalCorrect / totalQuestions):0);
+        return ( ( totalQuestions > 0 )?( totalCorrect / totalQuestions ):0 );
     }
-}
+};
 
 /**
  * Updates the completed resource with the matching id to status of false.
@@ -191,10 +191,11 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
             return false;
         }
 
-    } else {
+    }
+    else {
         return false;
     }
-}
+};
 
 
 /**
@@ -203,10 +204,10 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
  * @param {Integer} topicId Id of topic associated with the assessment
  * @returns Assessment object with id 
  */
- exports.saveAssessment = async function(assessment) {
+exports.saveAssessment = async function( assessment ) {
     // check to see if an id exists - insert / update check
     
-    if(assessment) {
+    if( assessment ) {
         /*
          * Working on #35 and #37 
          * #35 showed that getActiveAssessmentById now getAssessmentById was not returning anything 
@@ -278,79 +279,79 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
         // console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");
         
         // save the assessment
-        if(assessment) {
-            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;"
+        if( assessment ) {
+            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;";
             let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.preThreshold, assessment.postThreshold, assessment.isRequired, true ];
 
             try {
-                let res = await db.query(text, values);
-                if(res.rowCount > 0) {
+                let res = await db.query( text, values );
+                if( res.rowCount > 0 ) {
                     // get the id
                     assessment.id = res.rows[0].id;
 
                     // save the questions
-                    if(assessment.questions) {
-                        for( let i = 0; i < assessment.questions.length; i++) {
-                            text = "INSERT INTO assessment_question (assessment_id, question, is_required, correct_option_id, active) VALUES ($1, $2, $3, $4, $5) RETURNING id;"
+                    if( assessment.questions ) {
+                        for( let i = 0; i < assessment.questions.length; i++ ) {
+                            text = "INSERT INTO assessment_question (assessment_id, question, is_required, correct_option_id, active) VALUES ($1, $2, $3, $4, $5) RETURNING id;";
                             values = [ assessment.id, assessment.questions[i].question, assessment.questions[i].isRequired, assessment.questions[i].correctOptionId, assessment.questions[i].active ];
 
                             try {
-                                let res2 = await db.query(text, values);
+                                let res2 = await db.query( text, values );
 
-                                if(res2.rowCount > 0) {
+                                if( res2.rowCount > 0 ) {
                                     // get the id
                                     assessment.questions[i].id = res2.rows[0].id;
 
                                     // save the question options
-                                    if(assessment.questions[i].options) {
-                                        for( let j = 0; j < assessment.questions[i].options.length; j++) {
-                                            text = "INSERT INTO assessment_question_option (assessment_question_id, option_number, option_answer, active) VALUES ($1, $2, $3, $4) RETURNING id;"
+                                    if( assessment.questions[i].options ) {
+                                        for( let j = 0; j < assessment.questions[i].options.length; j++ ) {
+                                            text = "INSERT INTO assessment_question_option (assessment_question_id, option_number, option_answer, active) VALUES ($1, $2, $3, $4) RETURNING id;";
                                             values = [ assessment.questions[i].id, assessment.questions[i].options[j].optionNumber, assessment.questions[i].options[j].optionAnswer, assessment.questions[i].options[j].active ];
 
                                             try {
-                                                let res3 = await db.query(text, values);
+                                                let res3 = await db.query( text, values );
 
-                                                if(res3.rowCount > 0) {
+                                                if( res3.rowCount > 0 ) {
                                                     assessment.questions[i].options[j].id = res3.rows[0].id;
 
                                                     // update the correct option id with the actual id number and not the option index
-                                                    if( ( j + 1 ) == assessment.questions[i].correctOptionId) {
-                                                        text = "UPDATE assessment_question SET correct_option_id = $1 WHERE id = $2;"
+                                                    if( ( j + 1 ) == assessment.questions[i].correctOptionId ) {
+                                                        text = "UPDATE assessment_question SET correct_option_id = $1 WHERE id = $2;";
                                                         values = [ assessment.questions[i].options[j].id, assessment.questions[i].id ];
 
                                                         try {
-                                                            let res4 = await db.query(text, values);
+                                                            let res4 = await db.query( text, values );
                                                         }
-                                                        catch(e) {
-                                                            console.log("[ERR]: Error updating assessment_question table with correct_option_id - " + e);
+                                                        catch( e ) {
+                                                            console.log( "[ERR]: Error updating assessment_question table with correct_option_id - " + e );
                                                             return false;
                                                         }
                                                     }
                                                 }
                                             }
-                                            catch(e) {
-                                                console.log("[ERR]: Inserting into assessment_question_option - " + e);
+                                            catch( e ) {
+                                                console.log( "[ERR]: Inserting into assessment_question_option - " + e );
                                                 return false;
                                             }
                                         }
                                     }
                                 }
                             }
-                            catch(e) {
-                                console.log("[ERR]: Inserting into assessment_question - " + e);
+                            catch( e ) {
+                                console.log( "[ERR]: Inserting into assessment_question - " + e );
                                 return false;
                             }
                         }
                     }
                 }
             }
-            catch(e) {
-                console.log("[ERR]: Inserting assessment - " + e);
+            catch( e ) {
+                console.log( "[ERR]: Inserting assessment - " + e );
                 return false;
             }
         }
 
-        console.log(" ----- Assessment Saved -----");
+        console.log( " ----- Assessment Saved -----" );
         //console.log("New assessment: \n" + JSON.stringify(assessment) + "\n\n");
 
         return assessment;
@@ -358,4 +359,4 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
     else {
         return false;
     }
-}
+};

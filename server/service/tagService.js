@@ -6,10 +6,10 @@
  */
 
 // database connection
-const db = require('../db/connection');
+const db = require( '../db/connection' );
 
 // import models
-const Tag = require('../model/tag');
+const Tag = require( '../model/tag' );
 
 // any cross services required
 
@@ -49,17 +49,17 @@ exports.getAllTags = async ( limit, offset ) => {
         let res = await db.query( text, values );
         
         for( let i=0; i<res.rows.length; i++ ) {
-            tags.push( Tag.ormTag(res.rows[i] ) );
+            tags.push( Tag.ormTag( res.rows[i] ) );
         }
         
         return tags;
         
     }
-    catch(e) {
+    catch( e ) {
         console.log( e.stack );
         return false;
     }
-}
+};
 
 /**
  * Any active user can query for any tag by the tags Id
@@ -83,11 +83,11 @@ exports.getTagById = async function( tagId ) {
         }
         
     }
-    catch(e) {
+    catch( e ) {
         console.log( e.stack );
         return false;
     }
-}
+};
 
 exports.getTagByTagName = async ( tagName ) => {
     let text = "SELECT * FROM tags WHERE tag ILIKE $1;";
@@ -106,11 +106,11 @@ exports.getTagByTagName = async ( tagName ) => {
         }
         
     }
-    catch(e) {
+    catch( e ) {
         console.log( e.stack );
         return false;
     }
-}
+};
 
 /**
  * 
@@ -118,7 +118,7 @@ exports.getTagByTagName = async ( tagName ) => {
  * @param {*} tagId 
  * @returns 
  */
-exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
+exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
     const text = "SELECT * FROM tags WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
     const values = [ true, ownerId, tagId ];
 
@@ -126,28 +126,28 @@ exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
     
     try {
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            tags.push(Tag.ormTag(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            tags.push( Tag.ormTag( res.rows[i] ) );
         }
         
         return tags;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 /**
  * Retrieves all tags created by a particular owner regardless of active status
  * @returns All tags as a list
  */
- exports.getAllTagsForOwner = async function(ownerId) {
+exports.getAllTagsForOwner = async function( ownerId ) {
     const text = "SELECT * FROM tags WHERE owned_by = $1 order by id;";
     const values = [ ownerId ];
 
@@ -155,22 +155,22 @@ exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
     
     try {
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            tags.push(Tag.ormTag(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            tags.push( Tag.ormTag( res.rows[i] ) );
         }
 
         return tags;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 
 
@@ -182,18 +182,18 @@ exports.getAllActiveTagsForOwnerById = async function(ownerId, tagId) {
  */
 exports.saveTag = async function( tag, updateFlag ) {
     // check to see if an id exists - insert / update check
-    if(tag) {
-        if(tag.id > 0 || updateFlag) {
+    if( tag ) {
+        if( tag.id > 0 || updateFlag ) {
             
             // update
             let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE id = $3;";
             let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.id ];
     
             try {
-                let res = await db.query(text, values);
+                let res = await db.query( text, values );
             }
-            catch(e) {
-                console.log("[ERR]: Error updating tag - " + e);
+            catch( e ) {
+                console.log( "[ERR]: Error updating tag - " + e );
                 return false;
             }
             
@@ -204,15 +204,15 @@ exports.saveTag = async function( tag, updateFlag ) {
             values = [ tag.tag.toLowerCase(), tag.ownedBy ];
 
             try {
-                let res2 = await db.query(text, values);
+                let res2 = await db.query( text, values );
     
-                if(res2.rowCount > 0) {
+                if( res2.rowCount > 0 ) {
                     tag.id = res2.rows[0].id;
                 }
                 
             }
-            catch(e) {
-                console.log("[ERR]: Error inserting tag - " + e);
+            catch( e ) {
+                console.log( "[ERR]: Error inserting tag - " + e );
                 return false;
             }
         }
@@ -221,7 +221,7 @@ exports.saveTag = async function( tag, updateFlag ) {
     else {
         return false;
     }
-}
+};
 
 
 /**
@@ -229,7 +229,7 @@ exports.saveTag = async function( tag, updateFlag ) {
  * @param {int} tagId 
  * @returns {boolean} success
  */
- exports.deleteTagById = async ( tagId ) => {
+exports.deleteTagById = async ( tagId ) => {
     let text = "DELETE FROM tags WHERE id = $1";
     let values = [ tagId ];
 
@@ -238,9 +238,9 @@ exports.saveTag = async function( tag, updateFlag ) {
         return true;
         
     }
-    catch(e) {
+    catch( e ) {
         console.log( e.stack );
         return false;
     }
-}
+};
 

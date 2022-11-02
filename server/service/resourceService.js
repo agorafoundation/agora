@@ -6,10 +6,10 @@
  */
 
 // database connection
-const db = require('../db/connection');
+const db = require( '../db/connection' );
 
 // import models
-const Resource = require('../model/resource');
+const Resource = require( '../model/resource' );
 
 // any cross services required
 
@@ -44,10 +44,10 @@ exports.getResourceById = async ( resourceId, active ) => {
         return resource;
         
     }
-    catch(e) {
-        console.log( e.stack )
+    catch( e ) {
+        console.log( e.stack );
     }
-}
+};
 
 /**
  * Get all resources that are visible to a user. This includes resources that are owned by the user and active,
@@ -84,22 +84,22 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
     
     try {
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            resources.push(Resource.ormResource(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            resources.push( Resource.ormResource( res.rows[i] ) );
         }
         
         return resources;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 
 /**
@@ -115,21 +115,21 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
 
     let resources = [];
     try {
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
 
-        for(let i=0; i<res.rows.length; i++) {
-            resources.push(Resource.ormResource(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            resources.push( Resource.ormResource( res.rows[i] ) );
         }
         return resources;
 
     }
-    catch(e) {
-        console.log(e.stack);
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
 
     }
-}
+};
 
 /**
  * Retrieves all active resources created by a particular owner
@@ -137,7 +137,7 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
  */
 exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
 
-    console.log("[resourceService]: ownerId/authUserId - " + ownerId);
+    console.log( "[resourceService]: ownerId/authUserId - " + ownerId );
 
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
     const values = [ true, ownerId ];
@@ -146,22 +146,22 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
     
     try {
          
-        let res = await db.query(text, values);
+        let res = await db.query( text, values );
         
-        for(let i=0; i<res.rows.length; i++) {
-            resources.push(Resource.ormResource(res.rows[i]));
+        for( let i=0; i<res.rows.length; i++ ) {
+            resources.push( Resource.ormResource( res.rows[i] ) );
         }
         
         return resources;
         
     }
-    catch(e) {
-        console.log(e.stack)
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 /**
  * 
@@ -186,19 +186,19 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
         return resources;
         
     }
-    catch(e) {
-        console.log( e.stack )
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 /**
  * Retrieves all resources created by a particular owner regardless of active status
  * @returns All resources as a list
  */
- exports.getAllResourcesForOwner = async ( ownerId ) => {
+exports.getAllResourcesForOwner = async ( ownerId ) => {
     const text = "SELECT * FROM resources WHERE owned_by = $1 order by id;";
     const values = [ ownerId ];
 
@@ -215,13 +215,13 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
         return resources;
         
     }
-    catch(e) {
-        console.log( e.stack )
+    catch( e ) {
+        console.log( e.stack );
     }
     finally {
         
     }
-}
+};
 
 /**
  * Marks the users completed resource inactive which affectively marks it in-complete, but retains the history that they 
@@ -240,7 +240,7 @@ exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) 
             let res = await db.query( text, values );
             return true;
         }
-        catch(e) {
+        catch( e ) {
             console.log( "[ERR]: Error updating completedResource - " + e );
             return false;
         }
@@ -249,7 +249,7 @@ exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) 
     else {
         return false;
     }
-}
+};
 
 /*
  * Update / set the user resource image
@@ -284,7 +284,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
             await db.query( text, values );
             
         }
-        catch(e) {
+        catch( e ) {
             console.log( e.stack );
         }
 
@@ -314,7 +314,7 @@ exports.saveResource = async ( resource ) => {
             try {
                 let res = await db.query( text, values );
             }
-            catch(e) {
+            catch( e ) {
                 console.log( "[ERR]: Error updating resource - " + e );
                 return false;
             }
@@ -334,7 +334,7 @@ exports.saveResource = async ( resource ) => {
                 }
                 
             }
-            catch(e) {
+            catch( e ) {
                 console.log( "[ERR]: Error inserting resource - " + e );
                 return false;
             }
@@ -344,20 +344,20 @@ exports.saveResource = async ( resource ) => {
     else {
         return false;
     }
-}
+};
 
 // Removes a resource given an ID
 exports.deleteResourceById = async ( resourceId, ownerId ) => {
     let text = "DELETE FROM resources WHERE id = $1 and owned_by = $2";
-    let values = [resourceId, ownerId];
+    let values = [ resourceId, ownerId ];
 
     try {
         let res = await db.query( text, values );
         return true;
 
     }
-    catch (e) {
+    catch ( e ) {
         console.log( e.stack );
         return false;
     }
-}
+};

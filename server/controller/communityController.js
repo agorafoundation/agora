@@ -23,10 +23,10 @@ exports.getCommunityDashboard = async ( req, res ) => {
     const feed = await eventService.communityEventFeed( 10 );
 
     res.render( 'community/community', {user: req.session.authUser, availableGoals: availableGoals, feed: feed} );
-}
+};
 
 exports.joinPage = async ( req, res ) => {
-    if(req.session.authUser) {
+    if( req.session.authUser ) {
         let user = req.session.authUser;
         
         // get products to send to page (founders membership and tokens)
@@ -40,6 +40,6 @@ exports.joinPage = async ( req, res ) => {
         const products = await productService.getAllActviteTokenAndMembershipProductsWithImages( );
 
         // user does not currently have membership or tokens, redirct to join
-        res.render( 'community/join', { products: products });
+        res.render( 'community/join', { products: products } );
     }
-}
+};

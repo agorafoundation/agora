@@ -16,9 +16,9 @@ function assessmentQuestionOption() {
 
 exports.emptyAssessmentQuestionOption = () => {
     return new assessmentQuestionOption();
-}
+};
 
-exports.ormAssessmentQuestionOption = function (row) {
+exports.ormAssessmentQuestionOption = function ( row ) {
     let assessmentQuestionOption = exports.emptyAssessmentQuestionOption();
     assessmentQuestionOption.id = row.id;
     assessmentQuestionOption.assessmentQuestionId = row.assessment_question_id;
@@ -27,4 +27,4 @@ exports.ormAssessmentQuestionOption = function (row) {
     assessmentQuestionOption.active = row.active;
     assessmentQuestionOption.createTime = row.create_time;
     return assessmentQuestionOption;
-}
+};
