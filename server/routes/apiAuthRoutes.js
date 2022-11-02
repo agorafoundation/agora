@@ -115,6 +115,12 @@ router.use('/resources', resourceRoutes);
 const userRoutes = require('./apis/userRoutes')
 router.use('/user', userRoutes);
 
+/**
+ * Discussion APIs
+ */
+ const discussionRoutes = require('./apis/discussionRoutes')
+ router.use('/discussions', discussionRoutes);
+
 
 /**
  * Stripe APIs

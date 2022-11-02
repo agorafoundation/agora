@@ -1,9 +1,15 @@
 
-<div class="btn-group btn-group-toggle list-toggle-btn mr-5" data-toggle="buttons" >
-    <label class="btn btn-secondary active">
-    <input  type="radio" name="options" id="option1"  autocomplete="off" checked onclick="toggleGrid()"> Grid
+<div class="btn-group btn-group-toggle list-toggle-btn mr-5" data-toggle="buttons">
+    <label class="btn btn-secondary active" title="Grid View">
+        <input  type="radio" name="options" autocomplete="off" checked onclick="toggleGrid()"> 
+        <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white">
+            grid_view
+        </span>
     </label>
-    <label class="btn btn-secondary">
-    <input type="radio" name="options" id="option3" autocomplete="off" onclick="toggleList()" > List
+    <label class="btn btn-secondary" title="List View">
+        <input type="radio" name="options" autocomplete="off" onclick="toggleList()" > 
+        <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white;">
+            format_list_bulleted
+        </span>
     </label>
 </div>

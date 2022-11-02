@@ -41,6 +41,10 @@ router.route( '/note' )
         res.render('dashboard/partials/topic/edit-note.ejs')
     }
 )
-  
+router.route( '/topic' )
+    .get( ( req, res ) => {
+        res.render('dashboard/partials/topic/topic-view.ejs')
+    }
+)  
 
 module.exports = router;

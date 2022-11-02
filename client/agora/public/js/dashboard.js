@@ -425,64 +425,99 @@ function viewModal(id, name, desc) {
 
 /*more options toggle*/
 function toggleMoreOptionsOn(id) {
-  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
-  //let dropId = "option-" + id;
+  const dropId = id.substring(0,5) + "option-" + id.substring(5);
+
   document.getElementById(dropId).style.visibility = "visible";
 }
 
 function toggleMoreOptionsOff(id) {
-  let dropId = id.substring(0,3) + "option-" + id.substring(id.length - 1);
-  //let dropId = "option-" + id;
+  const dropId = id.substring(0,5) + "option-" + id.substring(5);
+
   document.getElementById(dropId).style.visibility = "hidden";
 }
 
-var toggleGoalView = () => {
-  const cards = document.getElementsByClassName("gallery-col");
+
+const toggleGoalView = () => {
+  const cards = document.getElementsByClassName("view-check");
   for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    if (title.id === "topic") {
-      cards[i].classList.add("d-none");
-    } else {
+    if ((cards[i].classList).contains("a-goal")) {
       cards[i].classList.remove("d-none");
+    } else {
+      cards[i].classList.add("d-none");
     }
   }
-};
-var toggleTopicView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("gallery-col");
-  for (let i = 1; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    if (title.id === "goal") {
-      cards[i].classList.add("d-none");
-    } else {
-      cards[i].classList.remove("d-none");
-    }
-  }
-};
-var toggleAllView = () => {
-  const input = document.querySelector(".form-control");
-  const cards = document.getElementsByClassName("gallery-col");
-  let filter = input.value;
-  for (let i = 0; i < cards.length; i++) {
-    let title = cards[i].querySelector(".card-body");
-    cards[i].classList.remove("d-none");
-  }
-};
-
-
-////get the id of the parent element////
-//e is pointer event
-const getId = (e) => {
-  var parent = null;
-  if (e.target.parentElement.parentElement.parentElement.classList[4] === "grid-options") {
-    parent = e.target.parentElement.parentElement.parentElement.id; //the id of the grid element
-  } else {
-    parent = e.target.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
-  }
-  return parent.charAt(parent.length - 1); //just the numeric id
 }
 
-////Create a toast////
+const toggleTopicView = () => {
+  const cards = document.getElementsByClassName("view-check");
+  for (let i = 0; i < cards.length; i++) {
+    if ((cards[i].classList).contains("a-goal")) {
+      cards[i].classList.add("d-none");
+    } else {
+      cards[i].classList.remove("d-none");
+    }
+  }
+};
+
+const toggleAllView = () => {
+  const cards = document.getElementsByClassName("view-check");
+  for (let i = 0; i < cards.length; i++) {
+      cards[i].classList.remove("d-none");
+    
+  }
+};
+
+//////More Options Helpers//////
+
+//makes sure event pointer detects the proper element
+const goodElement = (e) => {
+  if (e.target.id) {
+    return e.target;
+  } else {
+    return e.target.parentElement;
+  }
+}
+
+//returns true if e points to grid view, false if list view
+const isGrid = (e) => {
+  e = goodElement(e);
+  if (e.parentElement.parentElement.classList[4] === "grid-options") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+//return true if topic, false if goal
+//e is pointer event
+const isTopic = (e) => {
+  let output = false;
+  const GE = goodElement(e);
+  if (isGrid(e)) {
+    if ((GE.parentElement.parentElement.id).charAt(0) === "t") {
+      output = true;
+    }
+  } else {
+    if ((GE.parentElement.parentElement.parentElement.id).charAt(0) === "t") {
+      output = true;
+    }
+  }
+  return output;
+}
+
+////returns the id of the element e is pointing to
+const getId = (e) => {
+  const GE = goodElement(e);
+  let parent;
+  if (isGrid(e)) {
+    parent = GE.parentElement.parentElement.parentElement.id; //the id of the grid element
+  } else {
+    parent = GE.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
+  }
+  return parent.substring(5); //just the numeric id
+}
+
+////////Create a toast/////////
 const createToast = (text) => {
   document.getElementById('toast-text').innerText = text;
   const thisToast = document.getElementById('liveToast');
@@ -495,11 +530,17 @@ const createToast = (text) => {
 //updating the input DOM of the rename-modal depending on the selected card
 const fillNameandDescription = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
+
   let parentNameId = "card-title-" + parentId;
   let parentDescId = "card-desc-" + parentId;
 
-  let parentName = document.getElementById("lv-" + parentNameId).innerText;
-  let parentDesc = document.getElementById("gv-" + parentDescId).innerText;
+  //console.log(document.getElementById(prefix + "gv-" + parentNameId).innerText)
+  console.log(document.getElementById(prefix + "gv-" + parentNameId).innerText);
+
+  let parentName = document.getElementById(prefix + "lv-" + parentNameId).innerText;
+  let parentDesc = document.getElementById(prefix + "gv-" + parentDescId).innerText;
 
   //setting the onclick event of the save button depenidng on the id of the clicked card
   document
@@ -507,8 +548,7 @@ const fillNameandDescription = (e) => {
     .setAttribute(
       "onclick",
       `updateSaveButton(${JSON.stringify(parentNameId)},${JSON.stringify(
-        parentDescId
-      )})`
+        parentDescId)},${JSON.stringify(prefix)})`
     );
 
   //filling the input fields of the modal to the current values
@@ -535,12 +575,12 @@ var cards = document.querySelectorAll("#rename-card").forEach((card) => {
 });
 
 //changing the properties of the save button of the rename-modal depending on the selected card
-const updateSaveButton = (nameId, descId) => {
+const updateSaveButton = (nameId, descId, prefix) => {
   let tempName = document.getElementById("note-modal-name").value;
   if (tempName) {
-    document.getElementById("gv-" + nameId).innerText = tempName;
-    document.getElementById("lv-" + nameId).innerText = tempName;
-    document.getElementById("gv-" + descId).innerText = document.getElementById("note-modal-description").value;
+    document.getElementById(prefix + "gv-" + nameId).innerText = tempName;
+    document.getElementById(prefix + "lv-" + nameId).innerText = tempName;
+    document.getElementById(prefix + "gv-" + descId).innerText = document.getElementById("note-modal-description").value;
     closeRenameModal();
   } else {
     window.alert("All goals/topics must have a name");
@@ -568,7 +608,10 @@ const removeText = (type) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = (e) => {
   let parentId = getId(e);
-  let parentNameId = "lv-card-title-" + parentId;
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-"; 
+
+  let parentNameId = prefix + "lv-card-title-" + parentId;
   let parentName = document.getElementById(parentNameId).innerText;
 
   //setting the text inside the delete modal to show user what they're deleting
@@ -577,7 +620,7 @@ const showDeleteModal = (e) => {
   //setting the properties of the confirm button to delete the correct card
   document
     .getElementById("confirm-delete")
-    .setAttribute("onclick", `updateDeleteConfirmButton(${parentId})`);
+    .setAttribute("onclick", `updateDeleteConfirmButton(${JSON.stringify(parentId)}, ${JSON.stringify(prefix)})`);
 
   //showing the delete modal
   document.getElementById("delete-modal").style.display = "block";
@@ -595,9 +638,9 @@ var deleteCards = document
   });
 
 //changing the properties of the confirm button of the delete-modal depending on the selected card
-const updateDeleteConfirmButton = (id) => {
-  document.getElementById("gv-" + id).parentElement.remove();
-  document.getElementById("lv-" + id).remove();
+const updateDeleteConfirmButton = (id, prefix) => {
+  document.getElementById(prefix + "gv-" + id).parentElement.remove();
+  document.getElementById(prefix + "lv-" + id).remove();
   getTopics();
   exitDeleteModal();
 };
@@ -611,10 +654,16 @@ function exitDeleteModal() {
 
 //////onclick handling for topic rerouting//////////
 
-const topicReroute = (id, newTab) => {
+const topicReroute = (id, newTab, prefix) => {
+  let usedPrefix;
+  if (prefix) {
+    usedPrefix = prefix;
+  } else {
+    usedPrefix = id.substring(0,2);
+  }
 
-  const title = document.getElementById("lv-card-title-" + id);
-  const description = document.getElementById("gv-card-desc-" + id);
+  const title = document.getElementById(usedPrefix + "lv-card-title-" + id);
+  const description = document.getElementById(usedPrefix + "gv-card-desc-" + id);
 
   //pass the title and description to backend
   if (newTab) {
@@ -628,8 +677,10 @@ const topicReroute = (id, newTab) => {
 
 const openInNewTab = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
 
-  topicReroute(parentId, true);
+  topicReroute(parentId, true, prefix);
 
   e.stopPropagation();
 }
@@ -664,9 +715,11 @@ var newTabCards = document
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = (e) => {
   let parentId = getId(e);
+  let prefix;
+  isTopic(e) ? prefix = "t-" : prefix = "g-";
 
-  gridParent = document.getElementById("gv-" + parentId).parentElement;
-  listParent = document.getElementById("lv-" + parentId);
+  gridParent = document.getElementById(prefix + "gv-" + parentId).parentElement;
+  listParent = document.getElementById(prefix + "lv-" + parentId);
 
   //creating separate, autonomous element that's a clone of the original
   gridClone = gridParent.cloneNode(true);
@@ -676,8 +729,8 @@ const duplicateGoal = (e) => {
   let newId = checkForNextId();
 
   //changing the ids in the cloned element
-  gridClone = replaceIds(gridClone, newId, true);
-  listClone = replaceIds(listClone, newId, false);
+  gridClone = replaceIds(gridClone, newId, true, prefix);
+  listClone = replaceIds(listClone, newId, false, prefix);
 
   //calculating new id then setting the elements ids to the new one
 
@@ -706,23 +759,23 @@ const duplicateGoal = (e) => {
   ///////////////////////
   //updating the more options of the list clone
 
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[1].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[1].addEventListener(
     "click",
     showDeleteModal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[3].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[3].addEventListener(
     "click",
     duplicateGoal
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[5].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[5].addEventListener(
     "click",
     copyLink
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[7].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[7].addEventListener(
     "click",
     openInNewTab
   );
-  listClone.childNodes[5].childNodes[3].childNodes[1].childNodes[9].addEventListener(
+  listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[9].addEventListener(
     "click",
     fillNameandDescription
   );
@@ -734,12 +787,14 @@ const duplicateGoal = (e) => {
   //adding the new clone to the grid container
   document.getElementById("gallery-row").appendChild(gridClone);
 
+  //document.getElementById("gallery-row").insertBefore(gridClone,document.getElementById("gallery-row").childNodes[2])
+
   //adding the new clone to the list container
   document.getElementById("list-column").appendChild(listClone);
 
   getTopics();
 
-  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + "!")
+  createToast("Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText)
 
   e.stopPropagation();
 };
@@ -787,23 +842,21 @@ const checkForNextId = () => {
 };
 
 //handles updating an element's various ids
-const replaceIds = (element, newId, grid) => {
-  if (grid) {
-    element.childNodes[1].id = "gv-" + newId; //main id
+const replaceIds = (element, newId, grid, prefix) => {
+  if (grid) {   //if element is in grid view
+    element.childNodes[1].id = prefix + "gv-" + newId; //main id
 
-    element.childNodes[1].childNodes[1].id =
-      element.childNodes[1].childNodes[1].id.slice(0, -1) + newId; //option id
-    element.childNodes[1].childNodes[3].childNodes[1].id =
-      element.childNodes[1].childNodes[3].childNodes[1].id.slice(0, -1) + newId; //card title id
-    element.childNodes[1].childNodes[3].childNodes[3].id =
-      element.childNodes[1].childNodes[3].childNodes[3].id.slice(0, -1) + newId; //card description id
-  } else {
-    element.id = "lv-" + newId;
+    element.childNodes[1].childNodes[1].id = prefix + "gv-option-" + newId; //option id
+    
+    element.childNodes[1].childNodes[3].childNodes[1].id = prefix + "gv-card-title-" + newId; //card title id
+    
+    element.childNodes[1].childNodes[3].childNodes[3].id = prefix + "gv-card-desc-" + newId; //card description id
+  } else {  //if element is in list view
+    element.id = prefix + "lv-" + newId; //main id
 
-    element.childNodes[1].id = element.childNodes[1].id.slice(0,-1) + newId;
+    element.childNodes[1].id = prefix + "lv-card-title-" + newId;  //card title id
 
-    element.childNodes[5].id = element.childNodes[5].id.slice(0,-1) + newId;
-
+    element.childNodes[5].id = prefix + "lv-option-" + newId;  //option id
   }
   return element;
 };
@@ -827,31 +880,47 @@ window.onload = getTopics;
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = (newVal, arr) => {
+  //console.log(topicArr)
+  let elemName, idToRemove, badListElement, badGridElement, addedElements, prefix, idPlusPrefix;
   const len = arr.length;
   newVal = newVal.toLowerCase();
+  console.log(newVal)
   for (let i = 0; i < len; i++) {
-    let elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element
+    elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
+    
+    idToRemove = (arr[i].childNodes[1].id).substr(5); //id of the element being checked
+
+    prefix = (arr[i].childNodes[1].id).substring(0,2);  //indicates whether is goal or topic
+
+    idPlusPrefix = prefix + idToRemove;   //concatination
 
     if (!elemName.includes(newVal)) {   //checking query
+  
+      if (!hasElement(idPlusPrefix, removedTopics)) {  //has this element not yet already been removed?
 
-      if (!hasElement(arr[i].childNodes[1].id, removedTopics)) {  //has this element already been removed?
+        badListElement = document.getElementById(prefix + "lv-" + idToRemove); //element in list view to be removed
 
-        let badElement = document.getElementById(arr[i].childNodes[1].id).parentNode;   //element to be removed
-        removedTopics.push({ element: badElement, id: arr[i].childNodes[1].id });   //add element to removedTopics
-        badElement.remove();
+        badGridElement = document.getElementById(prefix + "gv-" + idToRemove).parentNode;   //element in grid view to be removed
+
+        removedTopics.push({ gridElement: badGridElement, listElement: badListElement, id: idPlusPrefix });   //add element to removedTopics
+        badGridElement.remove();
+        badListElement.remove();
       }
-    } else if (hasElement(arr[i].childNodes[1].id, removedTopics)) {  //does the query name exist in removedTopics?
+    } else if (hasElement(idPlusPrefix, removedTopics)) {  //does the query name exist in removedTopics?
 
-      document.getElementById("gallery-row").appendChild(getElement(arr[i].childNodes[1].id, removedTopics)); //adding the element back to the DOM
-      removedTopics = removeElement(arr[i].childNodes[1].id, removedTopics);  //remove element from removedTopics
+      addedElements = getElement(idPlusPrefix, removedTopics);
+      document.getElementById("gallery-row").appendChild(addedElements.gridEl); //adding the grid element back to the DOM
+      document.getElementById("list-column").appendChild(addedElements.listEl); //adding the list element back to the DOM
+      removedTopics = removeElement(idPlusPrefix, removedTopics);  //remove element from removedTopics
     }
   }
 }
 
 //checks if removedTopics contains a certain id
 const hasElement = (id, removed) => {
-  let done = false;
-  let index = 0;
+  console.log(id)
+  console.log(removed)
+  let done = false, index = 0;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
@@ -864,13 +933,11 @@ const hasElement = (id, removed) => {
 
 //returns an element from removedTopics depending on id
 const getElement = (id, removed) => {
-  let done = false;
-  let index = 0;
-  let output = null;
+  let done = false, index = 0, output = null;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {
-      output = removed[index].element;
+      output = {gridEl: removed[index].gridElement, listEl: removed[index].listElement};
       done = true;
     }
     index++;
@@ -880,8 +947,7 @@ const getElement = (id, removed) => {
 
 //Removes an element from removedTopics then returns the updated array
 const removeElement = (id, removed) => {
-  let done = false;
-  let index = 0;
+  let done = false, index = 0;
   const removedLength = removed.length;
   while (!done && index < removedLength) {
     if (removed[index].id === id) {

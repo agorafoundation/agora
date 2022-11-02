@@ -9,7 +9,7 @@
 const db = require('../db/connection');
 
 // import models
-const User = require("../model/User");
+const User = require("../model/user");
 const Goal = require("../model/goal");
 const Topic = require("../model/topic");
 const GoalEnrollment = require("../model/goalEnrollment");

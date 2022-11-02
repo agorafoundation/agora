@@ -21,56 +21,20 @@
                 <div class="header">
                     <input class="placeholder" id="note-title" type="text" placeholder="Untitled">
                 </div>
-                <!--Tags-->
-                <div class="header" id="new-tag">
-                    <label>Tags:</label>
-                    <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
-                    <div id="curr-tags"></div>
-
-                    <ul class="tag-list">
-                        <li class="tag-list-element" onclick="addTag(this)">Capping</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Math</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Algorithms</li>
-                        <li class="tag-list-element" onclick="addTag(this)" >Movies</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Music</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Taylor Swift</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Dogs</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Research</li>
-                    </ul>
-                    <ul class="new-tag">
-                        <li id="new-tag-element" class="tag-list-element" onclick="newTag()">+ New Tag</li>
-                    </ul>
-                </div>
-                <!--More Options-->
-                <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
             </div>
-            
-            <!-- <div class="hidden" id="file-display"> -->
-                <!--<%- include('./file-display'); %>-->
-            <!-- </div> -->
 
             <div id="page-content">
-                 <!-- Tabs -->
-                <div class="tab">
-                    <button class="tablinks" onclick="openTab(event, 'note-div')">Topic 1</button>
-                    <button class="tablinks" onclick="openTab(event, 'new-tab')">Topic 2</button>
-                </div>
-                <!--Note Editor Tab -->
-                <div id="note-div" class="tabcontent">
-                    <!--Uploaded Files Section-->
-                    <label>Resources:</label>
-                    <div id="resources-zone" class="resources-zone"></div>
+                <!--Sune Editor-->
+                <div id="note-div">
                     <textarea id="noteEditor"></textarea>
                 </div>
-                <!--Example Tab-->
-                <div id="new-tab" class="tabcontent"></div>
             </div>
-
+            
             <!--Save and Cancel-->
-            <div id="button-div">
+            <!-- <div id="button-div">
                 <button class="note-buttons" id="save-note" type="submit">Save</button>
                 <button class="note-buttons" id="cancel" type="submit">Cancel</button>
-            </div>
+            </div> -->
     
             <!-- Footer-->
             <footer class="footer text-center">

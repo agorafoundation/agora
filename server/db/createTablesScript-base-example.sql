@@ -571,3 +571,38 @@ GRANT USAGE, SELECT ON SEQUENCE completed_activity_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activity (activity_id);
 
+
+-- Discussion API tables
+
+CREATE TYPE discussion_parents AS ENUM ('goal', 'topic');
+
+CREATE TABLE IF NOT EXISTS discussions (
+    parent_id INTEGER,
+    parent_type discussion_parents,
+    discussion_text VARCHAR,
+    CONSTRAINT discussion_parent PRIMARY KEY (parent_id, parent_type)
+);
+
+GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
+
+CREATE TABLE IF NOT EXISTS discussion_comments (
+    comment_id SERIAL PRIMARY KEY,
+    parent_id INTEGER, 
+    parent_type discussion_parents,
+    comment_text VARCHAR,
+    creation_date TIMESTAMP DEFAULT current_timestamp,
+  	updated_date TIMESTAMP DEFAULT current_timestamp,
+    user_id INTEGER
+);
+
+GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
+
+
+CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
+    comment_id INTEGER,
+    user_id INTEGER,
+    rating BOOLEAN,
+    CONSTRAINT user_rating PRIMARY KEY (comment_id, user_id)
+);
+
+GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
