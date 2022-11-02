@@ -22,13 +22,13 @@ const resourceController = require( '../../controller/apis/resourceController' )
 
 
 router.route( '/' )
-    .get(async function ( req, res ) {
+    .get( async function ( req, res ) {
         resourceController.getAllVisibleResources( req, res );
-    })    
+    } )    
     .post( ( req, res ) => { 
         resourceController.saveResource( req, res );
     }
-)
+    );
 
 /**
  * Returns all active resources owned by the user
@@ -37,23 +37,23 @@ router.route( '/user/:id' )
     .get( async ( req, res ) => {
         resourceController.getAllActiveResourcesForUser( req, res );
     }
-)
+    );
 
 router.route( '/shared' )
     .get( async ( req, res ) => {
         resourceController.getAllSharedResourcesForUser( req, res );
-    })
+    } );
 
 // resources /api/v1/auth/resources/:id
 router.route( '/:id' )
     .get( async function ( req, res ) {
         resourceController.getResourceById( req, res );
     
-    })
+    } )
     .delete( async ( req, res ) => {
         resourceController.deleteResourceById( req, res );
     }
-);
+    );
 
 
 
@@ -62,7 +62,7 @@ router.route( '/resource/completed' )
     .post( async ( req, res ) => {
         resourceController.saveCompletedResource( req, res );
     }
-);
+    );
  
  
 module.exports = router;

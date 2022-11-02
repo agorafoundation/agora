@@ -18,9 +18,9 @@ function activity() {
 
 exports.emptyActivity = () => {
     return new activity();
-}
+};
 
-exports.ormActivity = function (row) {
+exports.ormActivity = function ( row ) {
     let activity = exports.emptyActivity();
     activity.id = row.id;
     activity.activityType = row.activity_type;
@@ -31,4 +31,4 @@ exports.ormActivity = function (row) {
     activity.active = row.active;
     activity.createTime = row.create_time;
     return activity;
-}
+};

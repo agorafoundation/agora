@@ -5,7 +5,7 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-let Assessment = require('./assessment');
+let Assessment = require( './assessment' );
 
 
 function completedAssessment() {
@@ -26,9 +26,9 @@ function completedAssessment() {
 
 exports.emptyCompletedAssessment = () => {
     return new completedAssessment();
-}
+};
 
-exports.ormCompletedAssessment = function (row) {
+exports.ormCompletedAssessment = function ( row ) {
     let completedAssessment = exports.emptyCompletedAssessment();
     completedAssessment.id = row.id;
     completedAssessment.assessmentId = row.assessment_id;
@@ -38,4 +38,4 @@ exports.ormCompletedAssessment = function (row) {
     completedAssessment.completionTime = row.completion_time;
     completedAssessment.createTime = row.create_time;
     return completedAssessment;
-}
+};

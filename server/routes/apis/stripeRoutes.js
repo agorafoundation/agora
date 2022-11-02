@@ -27,35 +27,35 @@ const stripeController = require( '../../controller/apis/stripeController' );
 router.post( '/cb1-checkout-session', async ( req, res ) => {
     stripeController.checkoutCb1( req, res );
   
-});
+} );
 
 router.post( '/founders-checkout-session', async ( req, res ) => {
     stripeController.checkoutFounders( req, res );
-});
+} );
 
 
 router.post( '/access-token-checkout-session', async ( req, res ) => {
     stripeController.checkoutToken( req, res );
-});
+} );
 
 
 /**
  * Success routes
  */
-router.get('/cb1-success', async function ( req, res ) {
+router.get( '/cb1-success', async function ( req, res ) {
     stripeController.successCb1( req, res );
     
-});
+} );
 
-router.get('/founders-success', async function ( req, res ) {
+router.get( '/founders-success', async function ( req, res ) {
     stripeController.successFounders( req, res );
     
-});
+} );
 
-router.get('/access-token-success', async function ( req, res ) {
+router.get( '/access-token-success', async function ( req, res ) {
     stripeController.successToken( req, res );
     
-});
+} );
 
 
 /**
@@ -63,15 +63,15 @@ router.get('/access-token-success', async function ( req, res ) {
  */
 router.get( '/cb1-cancel', function ( req, res ) {
     res.render( 'purchase/codebot1-cancel' );
-});
+} );
 
 router.get( '/founders-cancel', function ( req, res ) {
     res.render( 'purchase/founders-cancel' );
-});
+} );
 
 router.get( '/access-token-cancel', function ( req, res ) {
     res.render( 'purchase/access-token-cancel' );
-});
+} );
 
 
 

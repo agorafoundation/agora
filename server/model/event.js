@@ -22,7 +22,7 @@ function event() {
 
 exports.emptyEvent = () => {
     return new event();
-}
+};
 
 /*
  not stored currently

@@ -14,10 +14,10 @@ let path = require( 'path' );
 
 // setup json body parser
 const bodyParser = require( 'body-parser' );
-router.use(bodyParser.urlencoded({
+router.use( bodyParser.urlencoded( {
     extended: true
-}));
-router.use(bodyParser.json());
+} ) );
+router.use( bodyParser.json() );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
@@ -41,10 +41,10 @@ const resourceController = require( '../controller/apis/resourceController' );
  * Pre Route
  * Check that the user is logged in (required!)
  */
-router.use(function ( req, res, next ) {
+router.use( function ( req, res, next ) {
     if( !req.session.authUser ) {
         if( req.query.redirect ) {
-             res.locals.redirect = req.query.redirect;
+            res.locals.redirect = req.query.redirect;
         }
         res.render( 'user-signup' );
     }
@@ -52,7 +52,7 @@ router.use(function ( req, res, next ) {
         next( );
     }
      
-})
+} );
 
 /**
  * Show main dashboard route
@@ -61,7 +61,7 @@ router.route( '/' )
     .get( ( req, res ) => {
         dashboardController.getDashboard( req, res );
     }
-);
+    );
 
 /** 
  * Form enctype="multipart/form-data" route using express-fileupload for file upload
@@ -73,9 +73,9 @@ router.route( '/goal' )
         // save the goal
         let rGoal = await goalController.saveGoal( req, res, true );
         
-        res.redirect(303, '/dashboard');
+        res.redirect( 303, '/dashboard' );
     }
-);
+    );
 
 
 /** 
@@ -88,9 +88,9 @@ router.route( '/resource' )
         // save the resource
         let rResource = await resourceController.saveResource( req, res, true );
 
-        res.redirect(303, '/dashboard');
+        res.redirect( 303, '/dashboard' );
     }
-);
+    );
 
 
 

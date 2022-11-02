@@ -12,9 +12,9 @@ function comment() {
 
 exports.emptyComment = () => {
     return new comment();
-}
+};
 
-exports.ormComment = (row) => {
+exports.ormComment = ( row ) => {
     let comment = exports.emptyComment();
 
     comment.id = row.comment_id;
@@ -22,10 +22,10 @@ exports.ormComment = (row) => {
     comment.parent_type = row.parent_type;
     comment.comment_text = row.comment_text;
     comment.user_id = row.user_id;
-    comment.likes = parseInt(row.likes);
-    comment.dislikes = parseInt(row.dislikes);
+    comment.likes = parseInt( row.likes );
+    comment.dislikes = parseInt( row.dislikes );
     comment.created_at = row.creation_date;
     comment.updated_at = row.updated_date;
 
     return comment;
-}
+};

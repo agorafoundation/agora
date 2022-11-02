@@ -1,0 +1,21 @@
+{
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        "semi": ["error", "always"],
+        "space-in-parens": ["error", "always"],
+        "comma-spacing": ["error", {"before": false, "after": true}],
+        "array-bracket-spacing": ["error", "always"],
+        "arrow-spacing": ["error", {"before": true, "after": true}],
+        "brace-style": ["error", "stroustrup"],
+        "indent": ["error", 4],
+        "no-unused-vars": ["warn"]
+    },
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "env": {
+        "es6": true
+    }
+}

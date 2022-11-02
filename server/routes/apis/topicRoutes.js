@@ -5,13 +5,13 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
- const express = require( 'express' );
- const router = express.Router( );
+const express = require( 'express' );
+const router = express.Router( );
   
- // import controllers
- const topicController = require( '../../controller/apis/topicController' );
+// import controllers
+const topicController = require( '../../controller/apis/topicController' );
   
- /*
+/*
   * Topics can be requested the following ways
   * / <- all visible Topics for the auth user (all Topics a user can see, owned, shared with user, or set to public visibility)
   * /user <- all Topics for the user (does not include additional shared or visible ones)
@@ -21,52 +21,52 @@
   */ 
  
  
- router.route( '/' )
-     .get(async function ( req, res ) {
-         topicController.getAllVisibleTopics( req, res );
-     })    
-     .post( ( req, res ) => { 
-         topicController.saveTopic( req, res );
-     }
- )
+router.route( '/' )
+    .get( async function ( req, res ) {
+        topicController.getAllVisibleTopics( req, res );
+    } )    
+    .post( ( req, res ) => { 
+        topicController.saveTopic( req, res );
+    }
+    );
  
- /**
+/**
   * Returns all active Topics owned by the user
   */
- router.route( '/user/:id' )
-     .get( async ( req, res ) => {
-         topicController.getAllActiveTopicsForUser( req, res );
-     }
- )
+router.route( '/user' )
+    .get( async ( req, res ) => {
+        topicController.getAllActiveTopicsForUser( req, res );
+    }
+    );
  
- router.route( '/shared' )
-     .get( async ( req, res ) => {
-         topicController.getAllSharedTopicsForUser( req, res );
-     })
+router.route( '/shared' ) // In Progress.
+    .get( async ( req, res ) => {
+        topicController.getAllSharedTopicsForUser( req, res );
+    } );
  
- // Topics /api/v1/auth/topics/:id
- router.route( '/:id' )
-     .get( async  ( req, res ) => {
-         topicController.getTopicById( req, res );
+// Topics /api/v1/auth/topics/:id
+router.route( '/:topicId' )
+    .get( async  ( req, res ) => {
+        topicController.getTopicById( req, res );
      
-     })
-     .delete( async ( req, res ) => {
-         topicController.deleteTopicById( req, res );
-     }
- );
+    } )
+    .delete( async ( req, res ) => {
+        topicController.deleteTopicById( req, res );
+    }
+    );
 
- router.route( '/visible' ) // In Progress.
-     .get ( async ( req, res ) => {
+router.route( '/visible' ) // In Progress.
+    .get ( async ( req, res ) => {
         topicController.getAllPublicTopics( req, res );
-     });
+    } );
+  
  
- 
   
- router.route( '/topic/completed' )
-     .post( async ( req, res ) => {
-         topicController.saveCompletedTopic( req, res );
-     }
- );
+router.route( '/topic/completed' )
+    .post( async ( req, res ) => {
+        topicController.saveCompletedTopic( req, res );
+    }
+    );
   
   
- module.exports = router;
+module.exports = router;

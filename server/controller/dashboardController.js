@@ -85,4 +85,4 @@ exports.getDashboard = async function( req, res ) {
     }
 
     
-}
+};

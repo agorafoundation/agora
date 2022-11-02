@@ -7,9 +7,9 @@ function discussion() {
 
 exports.emptyDiscussion = () => {
     return new discussion();
-}
+};
 
-exports.ormDiscussion = (row) => {
+exports.ormDiscussion = ( row ) => {
     let discussion = exports.emptyDiscussion();
 
     discussion.parent_id = row.parent_id;
@@ -17,4 +17,4 @@ exports.ormDiscussion = (row) => {
     discussion.discussion_text = row.discussion_text;
 
     return discussion;
-}
+};
