@@ -783,22 +783,22 @@ const duplicateGoal = ( e ) => {
    
     //getting the next id to use
     let newId = checkForNextId();
-
+   
     fetch( "api/v1/auth/goals", {
         method: "POST",
         headers:{
             'Content-Type': 'application/json'
         },
         body:JSON.stringify( {
-            "id": 1,
+            "id": newId,
             "version": 1,
-            "goalName": "Learn how to use Agora",
-            "goalDescription": "Follow the tutorials and other resources provided to learn the Agora system.",
+            "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+            "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
             "goalImage": "myImage.png",
             "active": true,
             "completable": true,
             "visibility": 0,
-            "createTime": "2022-08-07T06:58:53.744Z",
+            "createTime": Date.now(),
             "ownedBy": 1
         } )
 
