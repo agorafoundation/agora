@@ -769,11 +769,14 @@ var newTabCards = document
 
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = ( e ) => {
+  
     let parentId = getId( e );
+   
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-";
 
     let gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
+    console.log(gridParent.childNodes[1].childNodes[3].childNodes[3].innerText);
     let listParent = document.getElementById( prefix + "lv-" + parentId );
 
     //creating separate, autonomous element that's a clone of the original
@@ -790,10 +793,10 @@ const duplicateGoal = ( e ) => {
             'Content-Type': 'application/json'
         },
         body:JSON.stringify( {
-            "id": newId,
+            "id": 7,
             "version": 1,
-            "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
-            "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+            "goalName": "NameDude",
+            "goalDescription":"lol",
             "goalImage": "myImage.png",
             "active": true,
             "completable": true,
@@ -803,8 +806,8 @@ const duplicateGoal = ( e ) => {
         } )
 
     } )
-    .then(response => response.json() )
-    .then(response => console.log(JSON.stringify(response)))
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
     
        
     
