@@ -418,6 +418,13 @@ function updateResourceModal( resourceId, resourceImagePath ) {
         } );
     }
 }
+function updateGoal( goalId, goalName, goalDescription ) {
+   
+}
+
+function updateTopic( topicId, topicName, topicDescription ) {
+
+}
 
 /**
  *
@@ -610,11 +617,21 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
         document.getElementById( prefix + "gv-" + nameId ).innerText = tempName;
         document.getElementById( prefix + "lv-" + nameId ).innerText = tempName;
         document.getElementById( prefix + "gv-" + descId ).innerText = document.getElementById( "note-modal-description" ).value;
+        if( prefix === "g-" ){
+            updateGoal( nameId, document.getElementById( "note-modal-description" ).value );
+        }
+        else if( prefix === "t-" ) {
+            updateTopic( nameId, document.getElementById( "note-modal-description" ).value );
+        }
+        
+
         closeRenameModal();
     }
     else {
         window.alert( "All goals/topics must have a name" );
     }
+
+  
 };
 
 //hides rename modal
@@ -763,8 +780,35 @@ const duplicateGoal = ( e ) => {
     let gridClone = gridParent.cloneNode( true );
     let listClone = listParent.cloneNode( true );
 
+   
     //getting the next id to use
     let newId = checkForNextId();
+
+    fetch( "api/v1/auth/goals", {
+        method: "POST",
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify( {
+            "id": 1,
+            "version": 1,
+            "goalName": "Learn how to use Agora",
+            "goalDescription": "Follow the tutorials and other resources provided to learn the Agora system.",
+            "goalImage": "myImage.png",
+            "active": true,
+            "completable": true,
+            "visibility": 0,
+            "createTime": "2022-08-07T06:58:53.744Z",
+            "ownedBy": 1
+        } )
+
+    } )
+    .then(response => response.json() )
+    .then(response => console.log(JSON.stringify(response)))
+    
+       
+    
+
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
@@ -830,11 +874,15 @@ const duplicateGoal = ( e ) => {
     //adding the new clone to the list container
     document.getElementById( "list-column" ).appendChild( listClone );
 
+
+
+
     getTopics();
 
     createToast( "Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText );
 
     e.stopPropagation();
+        
 };
 
 //A collection of the duplicate buttons

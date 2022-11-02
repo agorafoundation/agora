@@ -82,17 +82,17 @@
             </div>
             </div>
            
-           
+            <%
+         //render goals
+         for (let i = 0; i <  ownerGoals.length ; i++) { 
+            renderCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+         }%>
             <% //render resources for Now
         for (let i = 0; i <  availableResources.length ; i++) { 
             renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Topic", null) 
          
       
          }%>
-         <%
-         //render goals
-         for (let i = 0; i <  ownerGoals.length ; i++) { 
-            renderCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
-         }%>
+         
            
     </div>
