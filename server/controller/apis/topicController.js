@@ -19,7 +19,6 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
 const Topic = require( '../../model/topic' );
-const CompletedTopic = require( '../../model/completedTopic' );
 const Assessment = require( '../../model/assessment' );
 const Activity = require( '../../model/activity' );
 
@@ -157,7 +156,7 @@ exports.saveCompletedTopic = async function( req, res ) {
 
         let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.id );
         if( !completedTopic ) {
-            completedTopic = CompletedTopic.emptyCompletedTopic( );
+            completedTopic = Topic.emptyTopic( );
             completedTopic.userId = req.session.authUser.id;
             completedTopic.topicId = topicId;
         }
