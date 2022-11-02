@@ -1,3 +1,5 @@
+let tabName = "";
+
 // Workspace resizing
 let activeHeightObj = {};
 let activeHeightList = [];
@@ -274,7 +276,6 @@ function newTag() {
 }
 
 // Add new tag by pressing enter key
-let noteEditorDiv = document.getElementById( "noteEditor" );
 let ul = document.querySelector( ".tag-list" );
 document.addEventListener( "keyup", function( e ) {
     if ( e.key == "Enter" && ul.style.display == "block" ) {
@@ -450,7 +451,7 @@ const createSunEditor = async() => {
         // eslint-disable-next-line no-undef
         lang: SUNEDITOR_LANG.en,
         "lang(In nodejs)": "en",
-        callBackSave: function ( contents, isChanged ) {
+        callBackSave: function ( contents ) {
             alert( contents );
             console.log( contents );
         },
@@ -468,7 +469,7 @@ const createSunEditor = async() => {
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
 // Workspace empty state drop zone
-if ( document.getElementById( ".drop-zone" ) ) {
+if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
     let inputElement = dropZoneElement.lastElementChild;
     createDropZoneEventListeners( dropZoneElement, inputElement );
@@ -494,7 +495,7 @@ function createDropZoneEventListeners( dropZone, input ) {
     } );
 
     [ "dragleave", "dragend" ].forEach( ( type ) => {
-        dropZone.addEventListener( type, ( e ) => {
+        dropZone.addEventListener( type, () => {
             dropZone.classList.remove( "drop-zone--over" );
             dropZone.firstElementChild.style.display = "none";
         } );
@@ -644,7 +645,7 @@ document.addEventListener( "mousemove", function() {
             document.getElementById( editIconList[i].id ).style.display = "none";
             sunEditor["sunEditor"+( i )].readOnly( false );
         };
-        sunEditorList[i].onChange = ( contents, core ) => {
+        sunEditorList[i].onChange = () => {
             sunEditor["sunEditor"+( i )].save();
         };
         sunEditorList[i].onKeyUp = ( e ) => {
