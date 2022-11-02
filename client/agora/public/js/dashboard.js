@@ -51,6 +51,7 @@ function toggleSunEditor() {
 let resourceEditor = null;
 if ( document.getElementById( "resourceEditor" ) ) {
     console.log( "initializing the sun editor" );
+    // eslint-disable-next-line no-undef
     resourceEditor = SUNEDITOR.create( "resourceEditor", {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
@@ -105,11 +106,13 @@ if ( document.getElementById( "resourceEditor" ) ) {
         toggleSunEditor();
     } );
 
-    function auto_grow( element ) {
-        element.style.height = "5px";
-        element.style.height = element.scrollHeight + "px";
-    }
+    
     toggleSunEditor();
+}
+
+function auto_grow( element ) {
+    element.style.height = "5px";
+    element.style.height = element.scrollHeight + "px";
 }
 
 if (
@@ -545,6 +548,7 @@ const getId = ( e ) => {
 const createToast = ( text ) => {
     document.getElementById( 'toast-text' ).innerText = text;
     const thisToast = document.getElementById( 'liveToast' );
+    // eslint-disable-next-line no-undef
     const toast = new bootstrap.Toast( thisToast );
     toast.show();
 };
@@ -733,12 +737,17 @@ const copyLink = ( e ) => {
     e.stopPropagation();
 };
 
+/**
+ * This function was caught by ESLint as a duplicate function.
+ * I am not sure why it is here, but I am leaving it here for now.
+ * I do not see any calls to this function anywhere in the code. 
+ *
 var newTabCards = document
     .querySelectorAll( "#copy-link-card" )
     .forEach( ( copyLinkCard ) => {
         copyLinkCard.addEventListener( "click", copyLink );
     } );
-
+*/
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
@@ -747,12 +756,12 @@ const duplicateGoal = ( e ) => {
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-";
 
-    gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
-    listParent = document.getElementById( prefix + "lv-" + parentId );
+    let gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
+    let listParent = document.getElementById( prefix + "lv-" + parentId );
 
     //creating separate, autonomous element that's a clone of the original
-    gridClone = gridParent.cloneNode( true );
-    listClone = listParent.cloneNode( true );
+    let gridClone = gridParent.cloneNode( true );
+    let listClone = listParent.cloneNode( true );
 
     //getting the next id to use
     let newId = checkForNextId();
