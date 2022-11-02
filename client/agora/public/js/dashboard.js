@@ -1005,9 +1005,16 @@ const removeElement = ( id, removed ) => {
 //////View Toggle////////////
 
 const toggleGrid = () => {
-    document.getElementById( "list-container" ).style.display = "none";
-    document.getElementById( "main-container" ).appendChild( document.getElementById( "grid-container" ) );
-    document.getElementById( "grid-container" ).style.display = "block";
+    if( document.getElementById( "list-container" ) ) {
+        document.getElementById( "list-container" ).style.display = "none";
+    }
+    if( document.getElementById( "main-container" ) ) {
+        document.getElementById( "main-container" ).appendChild( document.getElementById( "grid-container" ) );
+    }
+    if( document.getElementById( "grid-container" ) ) {
+        document.getElementById( "grid-container" ).style.display = "block";
+    }
+    
   
 };
 

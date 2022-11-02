@@ -466,7 +466,7 @@ const createSunEditor = async() => {
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
 // Workspace empty state drop zone
-if ( document.querySelectorAll( ".drop-zone" ) ) {
+if ( document.getElementById( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
     let inputElement = dropZoneElement.lastElementChild;
     createDropZoneEventListeners( dropZoneElement, inputElement );
@@ -713,14 +713,20 @@ const createDocBtn = document.getElementById( "create-doc-div" );
 const createTopicBtn = document.getElementById( "create-topic-div" );
 
 // open the modal
-openBtn.onclick = () => {
-    modal.style.display = "block";
-};
+if( openBtn ) {
+    openBtn.onclick = () => {
+        modal.style.display = "block";
+    };
+}
+
 
 //close the modal
-closeBtn.onclick = function() {
-    modal.style.display = "none";
-};
+if( closeBtn ) {
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+    };
+}
+
 window.onclick = function( event ) {
     if ( event.target == modal ) {
         modal.style.display = "none";
@@ -745,15 +751,21 @@ document.addEventListener( "mousemove", function( e ) {
 } );
 
 // option events
-createDocBtn.onclick = () => {
-    modal.style.display = "none";
-    // createSunEditor();
-    createTextArea();
-};
-createTopicBtn.onclick = () => {
-    modal.style.display = "none";
-    createTopic();
-};
+if( createDocBtn ) { 
+    createDocBtn.onclick = () => {
+        modal.style.display = "none";
+        // createSunEditor();
+        createTextArea();
+    };
+}
+
+if( createTopicBtn ) {
+    createTopicBtn.onclick = () => {
+        modal.style.display = "none";
+        createTopic();
+    };
+}
+
 /* END Workspace Manager Modal ----------------------------------------------- */
 
 
@@ -836,8 +848,9 @@ function toggleProfile ( e ) {
         box.checked = true;
 }
 
-
-document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
+if ( document.getElementById( "profiles-toggle" ) ) {
+    document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
+}
 
 var perms = document.getElementsByClassName( "permission-li" );
 
