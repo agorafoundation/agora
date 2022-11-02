@@ -197,7 +197,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
         /**
          * Once the goal is saved, save the image if it is passed in the multipart form data
          */
-        if ( req.body.goalModified && req.body.goalModified != "false" && !req.files ) {
+        if ( req.body.goalModified && !req.files ) {
             // do nothing we are going to keep the original file
             console.log("goal trigger modification clause");
         }

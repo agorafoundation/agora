@@ -342,7 +342,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
          */ 
 
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
-        if ( req.body.topicModified && req.body.topicModified != "false" && !req.files ) {
+        if ( req.body.topicModified && !req.files ) {
             // do nothing we are going to keep the original file
             console.log("topic trigger modification clause");
         }
