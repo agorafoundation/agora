@@ -277,13 +277,70 @@ function removeOption( questionId, optionId ) {
 }
 
 
+let dragSrcEl = null;
+let draggables = document.getElementsByClassName( 'draggable' );
+
+function drag( e ) {
+    this.style.opacity = '0.4';
+    dragSrcEl = this;
+    
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData( "text", this.id );
+    
+}
+
+function drop( e ) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if ( dragSrcEl !== this ) {
+        let data = e.dataTransfer.getData( "text" );
+        this.appendChild( document.getElementById( data ) );
+    }
+
+    return false;
+}
+
+function dragEnd( e ) {
+    this.style.opacity = '1';
+
+    for( let i=0; i < draggables.length; i++ ) {
+        draggables[i].classList.remove( 'over' );
+    }
+}
+
+function dragOver( e ) {
+    if ( e.preventDefault ) {
+        e.preventDefault();
+    }
+
+    return false;
+}
+
+function dragEnter( e ) {
+    this.classList.add( 'over' );
+}
+
+function dragLeave( e ) {
+    this.classList.remove( 'over' );
+}
+
+function checkboxClick( e ) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    let elCheck = this.querySelector( '.custom-control-input' );
+    ( elCheck.checked ) ? elCheck.checked = false : elCheck.checked = true;
+
+}
+
 
 window.addEventListener( 'load', () => {
     // look for any accordions, apply click event to open
     if( document.getElementsByClassName( 'accordion-container' ) ) {
         const accordion = document.getElementsByClassName( 'accordion' );
         const accordionLabel = document.getElementsByClassName( 'accordion-label' );
-        for ( i=0; i<accordionLabel.length; i++ ) {
+        for ( let i=0; i<accordionLabel.length; i++ ) {
             accordionLabel[i].addEventListener( 'click', function () {
                 this.parentElement.classList.toggle( 'accordion-active' );
             } );
@@ -297,7 +354,7 @@ window.addEventListener( 'load', () => {
         let topicId = document.getElementById( 'topicIdField' ).value;
         //console.log(currentStep);
         switch( currentStep ) {
-        case "1":
+        case "1": {
             let step1 = document.getElementById( 'step1' );
             let step1text = document.getElementById( 'step1-text' );
             let step1a = step1text.childNodes[0];
@@ -306,7 +363,9 @@ window.addEventListener( 'load', () => {
             step1text.classList.remove( 'codingcoach-red' );
             step1a.classList.add( 'txt-white' );
             break;
-        case "2":
+        }
+            
+        case "2": {
             let step2 = document.getElementById( 'step2' );
             let step2text = document.getElementById( 'step2-text' );
             let step2a = step2text.childNodes[0];
@@ -315,7 +374,8 @@ window.addEventListener( 'load', () => {
             step2text.classList.remove( 'codingcoach-red' );
             step2a.classList.add( 'txt-white' );
             break;
-        case "3":
+        }
+        case "3": {
             let step3 = document.getElementById( 'step3' );
             let step3text = document.getElementById( 'step3-text' );
             let step3a = step3text.childNodes[0];
@@ -324,7 +384,8 @@ window.addEventListener( 'load', () => {
             step3text.classList.remove( 'codingcoach-red' );
             step3a.classList.add( 'txt-white' );
             break;
-        case "4":
+        }
+        case "4": {
             let step4 = document.getElementById( 'step4' );
             let step4text = document.getElementById( 'step4-text' );
             let step4a = step4text.childNodes[0];
@@ -333,7 +394,8 @@ window.addEventListener( 'load', () => {
             step4text.classList.remove( 'codingcoach-red' );
             step4a.classList.add( 'txt-white' );
             break;
-        case "5":
+        }
+        case "5": {
             let step5 = document.getElementById( 'step5' );
             let step5text = document.getElementById( 'step5-text' );
             let step5a = step5text.childNodes[0];
@@ -342,7 +404,8 @@ window.addEventListener( 'load', () => {
             step5text.classList.remove( 'codingcoach-red' );
             step5a.classList.add( 'txt-white' );
             break;
-        case "6":
+        }
+        case "6": {
             let step6 = document.getElementById( 'step6' );
             let step6text = document.getElementById( 'step6-text' );
             let step6a = step6text.childNodes[0];
@@ -351,6 +414,7 @@ window.addEventListener( 'load', () => {
             step6text.classList.remove( 'codingcoach-red' );
             step6a.classList.add( 'txt-white' );
             break;
+        }
         }
     }
     
@@ -572,62 +636,6 @@ window.addEventListener( 'load', () => {
      * 
      */
     if( document.getElementById( 'pathway-draggable' ) ) {
-        let dragSrcEl = null;
-      
-        function drag( e ) {
-            this.style.opacity = '0.4';
-            dragSrcEl = this;
-            
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData( "text", this.id );
-            
-        }
-      
-        function drop( e ) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            if ( dragSrcEl !== this ) {
-                let data = e.dataTransfer.getData( "text" );
-                this.appendChild( document.getElementById( data ) );
-            }
-
-            return false;
-        }
-        
-        function dragEnd( e ) {
-            this.style.opacity = '1';
-
-            for( let i=0; i < draggables.length; i++ ) {
-                draggables[i].classList.remove( 'over' );
-            }
-        }
-
-        function dragOver( e ) {
-            if ( e.preventDefault ) {
-                e.preventDefault();
-            }
-        
-            return false;
-        }
-        
-        function dragEnter( e ) {
-            this.classList.add( 'over' );
-        }
-        
-        function dragLeave( e ) {
-            this.classList.remove( 'over' );
-        }
-
-        function checkboxClick( e ) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            let elCheck = this.querySelector( '.custom-control-input' );
-            ( elCheck.checked ) ? elCheck.checked = false : elCheck.checked = true;
-
-        }
-
 
         let at = document.getElementById( 'available-items' );
         let ct = document.getElementById( 'chosen-items' );
@@ -638,9 +646,6 @@ window.addEventListener( 'load', () => {
         ct.addEventListener( 'drop', drop );
         ct.addEventListener( 'dragover', dragOver );
 
-
-
-        let draggables = document.getElementsByClassName( 'draggable' );
         for( let i=0; i < draggables.length; i++ ) {
             draggables[i].addEventListener( 'dragstart', drag );
             draggables[i].addEventListener( 'dragend', dragEnd );
@@ -747,6 +752,8 @@ window.addEventListener( 'load', () => {
 
     
 } );
+
+
 
 /**
  * When toggling resource types set the correct editor in the UI

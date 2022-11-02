@@ -275,7 +275,7 @@ function newTag() {
 
 // Add new tag by pressing enter key
 let noteEditorDiv = document.getElementById( "noteEditor" );
-ul = document.querySelector( ".tag-list" );
+let ul = document.querySelector( ".tag-list" );
 document.addEventListener( "keyup", function( e ) {
     if ( e.key == "Enter" && ul.style.display == "block" ) {
         newTag();
@@ -410,6 +410,7 @@ function createTextArea() {
 let sunEditor = {};
 let sunEditorList = [];
 const createSunEditor = async() => {
+    // eslint-disable-next-line no-undef
     sunEditor["sunEditor"+numSunEditors] = SUNEDITOR.create( "sunEditor" + numSunEditors, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
@@ -446,6 +447,7 @@ const createSunEditor = async() => {
             ],
         ],
         mode: "classic",
+        // eslint-disable-next-line no-undef
         lang: SUNEDITOR_LANG.en,
         "lang(In nodejs)": "en",
         callBackSave: function ( contents, isChanged ) {

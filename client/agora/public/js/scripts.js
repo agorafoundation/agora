@@ -80,4 +80,4 @@
                 $( this ).removeClass( "floating-label-form-group-with-focus" );
             } );
     } );
-} )( jQuery ); // End of use strict
+} ); // End of use strict

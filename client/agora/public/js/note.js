@@ -1,5 +1,6 @@
 let noteEditor = null;
 if ( document.getElementById( "noteEditor" ) ) {
+    // eslint-disable-next-line no-undef
     noteEditor = SUNEDITOR.create( "noteEditor", {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
@@ -37,6 +38,7 @@ if ( document.getElementById( "noteEditor" ) ) {
             ],
         ],
         mode: "classic",
+        // eslint-disable-next-line no-undef
         lang: SUNEDITOR_LANG.en,
         "lang(In nodejs)": "en",
         callBackSave: function ( contents, isChanged ) {
