@@ -45,7 +45,7 @@ exports.basicAuth = async ( email, password, req ) => {
 
                         // null checks on device    
                         if( !device ) {
-                            device = { client:null, os:null, device:null, bot:null };
+                            let device = { client:null, os:null, device:null, bot:null };
                         }
                         if ( !device.client ) {
                             device.client = { type: "Basic Auth / Unknown client", name: "unknown", version: "unknown", engineVersion: "unknown" };
@@ -117,7 +117,7 @@ exports.signIn = async function( req, res ) {
                         if( process.env.REQUEST_DATA_LOGGING ) {
 
                             // parse the UA data
-                            const device = deviceDetector.parse( req.headers['user-agent'] );
+                            let device = deviceDetector.parse( req.headers['user-agent'] );
                             //console.log("device check: " + JSON.stringify(device));
 
                             // null checks on device    

@@ -19,6 +19,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
 const Topic = require( '../../model/topic' );
+const CompletedTopic = require( '../../model/completedTopic' );
 const Assessment = require( '../../model/assessment' );
 const Activity = require( '../../model/activity' );
 

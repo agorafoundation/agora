@@ -317,7 +317,7 @@ router.route( '/:topicId' )
         }
         else {
             message = 'Access Denied';
-            message2 = 'You do not have access to the requested resource';
+            let message2 = 'You do not have access to the requested resource';
             res.render( './admin/adminTopic', {ownerTopics: ownerTopics, topic: null, message: message, message2: message2} );
         }
     }

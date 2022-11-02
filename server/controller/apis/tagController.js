@@ -84,7 +84,7 @@ exports.saveTag = async function( req, res, redirect ) {
     let tag = Tag.emptyTag();
 
     // check to see if there is an existing tag with the same name since we do not want dups
-    existingTagName = await tagService.getTagByTagName( req.body.tag );
+    let existingTagName = await tagService.getTagByTagName( req.body.tag );
     tag = ( existingTagName ) ? existingTagName : tag;
     
     // add changes from the body if they are passed

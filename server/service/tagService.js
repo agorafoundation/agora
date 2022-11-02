@@ -138,9 +138,7 @@ exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
+
 };
 
 /**
@@ -167,9 +165,7 @@ exports.getAllTagsForOwner = async function( ownerId ) {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
+
 };
 
 
@@ -201,7 +197,7 @@ exports.saveTag = async function( tag, updateFlag ) {
         else {
             // insert
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING id;";
-            values = [ tag.tag.toLowerCase(), tag.ownedBy ];
+            let values = [ tag.tag.toLowerCase(), tag.ownedBy ];
 
             try {
                 let res2 = await db.query( text, values );

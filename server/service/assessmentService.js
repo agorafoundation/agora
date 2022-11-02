@@ -136,7 +136,7 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
             totalQuestions++;
 
             let completedQuestion = null;
-            for( j=0; j < completedAssessment.completedQuestions.length; j++ ) {
+            for( let j=0; j < completedAssessment.completedQuestions.length; j++ ) {
                 if( assessment.questions[i].id === completedAssessment.completedQuestions[j].assessmentQuestionId ) {
 
                     // see if the user had the right answer

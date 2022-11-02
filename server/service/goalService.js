@@ -152,9 +152,6 @@ exports.getAllGoalsForOwner = async ( ownerId, isActive ) => {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
 };
 
 

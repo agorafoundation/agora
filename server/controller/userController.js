@@ -33,7 +33,7 @@ exports.createUser = async function( req, res ) {
             let username = req.body.userUsername;
             //console.log(email);
 
-            subscriptionActive = true;
+            let subscriptionActive = true;
 
             let beginningProgramming = ( req.body.beginningProgramming == "on" ) ? true : false;
             let intermediateProgramming = ( req.body.intermediateProgramming == "on" ) ? true : false;

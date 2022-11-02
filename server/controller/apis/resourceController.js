@@ -29,6 +29,8 @@ const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
+const ApiMessage = require( "../../model/util/ApiMessage" );
+
 
 /**
  * 

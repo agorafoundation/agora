@@ -670,7 +670,7 @@ exports.resetPassword = async ( email, token, hashedPassword ) => {
 };
 
 exports.passwordHasher = async function( plainTxtPassword ) {
-    return hashedPassword = await bcrypt.hash( plainTxtPassword, saltRounds );
+    return await bcrypt.hash( plainTxtPassword, saltRounds );
 };
 
 exports.checkPassword = async function( email, enteredPassword ) {

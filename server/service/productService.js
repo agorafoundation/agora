@@ -297,13 +297,14 @@ exports.getActiveProductWithProductImagesById = async function( productId ) {
     
     const text = "SELECT * FROM products WHERE active = $1 AND id = $2";
     const values = [ true, productId ];
+    let product = null;
     
     try {
          
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            Product.ormProduct( res.rows[0] );
+            product = Product.ormProduct( res.rows[0] );
         }
         else {
             return false;

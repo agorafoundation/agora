@@ -36,7 +36,7 @@ function validateUsername( username ) {
       - Underscores (_)
       - 4 to 20 characters in length
     */
-    const res = /^(?=.{4,20}$)[a-zA-Z0-9\._]+$/.exec( username );
+    const res = /^(?=.{4,20}$)[a-zA-Z0-9._]+$/.exec( username );
     const valid = !!res;
     return valid;
 }
@@ -86,10 +86,11 @@ if( document.getElementById( 'userManageButton' ) ) {
 
 let manageEmail = document.getElementById( 'manageEmail' );
 if( manageEmail ) {
-    manageEmail.addEventListener( 'input', ( e ) => {
-        validateCheckExistsManage( manageEmail.value );
+    // call to non-existant endpoint to check if email is unique
+    // manageEmail.addEventListener( 'input', ( e ) => {
+    //     validateCheckExistsManage( manageEmail.value );
 
-    } );
+    // } );
 }
 
 function validateCheckExistsMain( email, username, runOnce ) {
@@ -263,7 +264,7 @@ function pwValidator() {
     }
 
     // Validate special character
-    var specials = /[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]/g;
+    var specials = /[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]/g;
     let checkFive = myInput.value.match( specials );
     if( checkFive ) {
         special.classList.remove( "invalid" );

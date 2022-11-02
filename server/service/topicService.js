@@ -250,9 +250,6 @@ exports.getAllTopicsForOwner = async function( ownerId, isActive ) {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
 };
 
 /**
@@ -292,7 +289,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
                 if( res2.rowCount > 0 ) {
 
                     // model it
-                    assessment = Assessment.ormAssessment( res2.rows[0] );
+                    let assessment = Assessment.ormAssessment( res2.rows[0] );
                     //console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
@@ -575,7 +572,7 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
              */
             if( resourceIds && resourceIds.length > 0 ) {
                 for( let i=0; i < resourceIds.length; i++ ) {
-                    isRequired = true;
+                    let isRequired = true;
                     if( resourcesRequired.length > i ) {
                         isRequired = resourcesRequired[i];
                     }
@@ -1170,7 +1167,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 exports.getAllPublicTopics = async ( limit, offset ) => {
 
     let text = "select * from topics WHERE active = $1 and visibility = 2 ORDER BY id";
-    const values = [ true, ownerId ];
+    const values = [ true ];
 
     // apply a default offset if none is provided
     if ( !offset ) offset = 0;

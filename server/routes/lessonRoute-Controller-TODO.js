@@ -150,6 +150,7 @@ router.route( '/update/:finishedStep' )
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
 
                     for ( var propName in req.query ) {
+                        // eslint-disable-next-line no-prototype-builtins
                         if ( req.query.hasOwnProperty( propName ) ) {
                             if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[propName];
@@ -243,7 +244,8 @@ router.route( '/update/:finishedStep' )
                     // create a completedQuestion to hold the answer
                     let cq = CompletedAssessmentQuestion.emptyCompletedAssessmentQuestion();
                     cq.assessmentQuestionId = req.session.currentTopic.topic.assessment.questions[i].id;
-                    for ( var propName in req.query ) {
+                    for ( propName in req.query ) {
+                        // eslint-disable-next-line no-prototype-builtins
                         if ( req.query.hasOwnProperty( propName ) ) {
                             if( propName == 'question-id-' + req.session.currentTopic.topic.assessment.questions[i].id ) {
                                 cq.assessmentQuestionOptionId = req.query[ propName ];

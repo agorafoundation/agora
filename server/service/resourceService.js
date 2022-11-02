@@ -96,9 +96,7 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
+
 };
 
 
@@ -125,9 +123,6 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
     }
     catch( e ) {
         console.log( e.stack );
-    }
-    finally {
-
     }
 };
 
@@ -158,9 +153,6 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
 };
 
 /**
@@ -189,9 +181,6 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
     catch( e ) {
         console.log( e.stack );
     }
-    finally {
-        
-    }
 };
 
 /**
@@ -217,9 +206,6 @@ exports.getAllResourcesForOwner = async ( ownerId ) => {
     }
     catch( e ) {
         console.log( e.stack );
-    }
-    finally {
-        
     }
 };
 
@@ -324,7 +310,7 @@ exports.saveResource = async ( resource ) => {
             
             // insert
             let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;";
-            values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility ];
+            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility ];
 
             try {
                 let res2 = await db.query( text, values );
