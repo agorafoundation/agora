@@ -14,13 +14,13 @@ class tag {
 
 exports.emptyTag = () => {
     return new tag();
-}
+};
 
-exports.ormTag = (row) => {
+exports.ormTag = ( row ) => {
     let tag = exports.emptyTag();
     tag.id = row.id;
     tag.tag = row.tag;
     tag.lastUsed = row.last_used;
     tag.ownedBy = row.owned_by;
     return tag;
-}
+};

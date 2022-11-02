@@ -23,9 +23,9 @@ function goal() {
 
 exports.emptyGoal = () => {
     return new goal();
-}
+};
 
-exports.ormGoal = function (row) {
+exports.ormGoal = function ( row ) {
     let goal = exports.emptyGoal();
     goal.rid = row.rid;
     goal.id = row.id;
@@ -39,4 +39,4 @@ exports.ormGoal = function (row) {
     goal.visibility = row.visibility;
     goal.ownedBy = row.owned_by;
     return goal;
-}
+};

@@ -22,9 +22,9 @@ function resource() {
 
 exports.emptyResource = () => {
     return new resource();
-}
+};
 
-exports.ormResource = function (row) {
+exports.ormResource = function ( row ) {
     let resource = exports.emptyResource();
     resource.id = row.id;
     resource.resourceType = row.resource_type;
@@ -39,4 +39,4 @@ exports.ormResource = function (row) {
     resource.createTime = row.create_time;
     resource.ownedBy = row.owned_by;
     return resource;
-}
+};

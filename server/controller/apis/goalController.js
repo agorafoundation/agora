@@ -39,12 +39,12 @@ exports.getAllVisibleGoals = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
     res.status( 200 ).json( goals );
-}
+};
 
 exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
     let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
-    if(goal) {
+    if( goal ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned goal by id" );
         res.status( 200 ).json( goal );
@@ -57,9 +57,9 @@ exports.getGoalById = async ( req, res ) => {
     }
     
     
-}
+};
 
-exports.deleteGoalById = async (req, res) => {
+exports.deleteGoalById = async ( req, res ) => {
 
     let authUserId;
     if( req.user ) {
@@ -71,20 +71,20 @@ exports.deleteGoalById = async (req, res) => {
 
     if ( authUserId > 0 ) {
         const goalId = req.params.id;
-        let success = await goalService.deleteGoalById(goalId, authUserId);
+        let success = await goalService.deleteGoalById( goalId, authUserId );
 
-        if (success) {
-            res.set("x-agora-message-title", "Success");
-            res.set("x-agora-message-detail", "Deleted goal");
-            res.status(200).json("Success");
+        if ( success ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Deleted goal" );
+            res.status( 200 ).json( "Success" );
         }
         else {
-            res.set("x-agora-message-title", "Not Found");
-            res.set("x-agora-message-detail", "No goals were found meeting the query criteria");
-            res.status(404).send("No Goals Found");
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "No goals were found meeting the query criteria" );
+            res.status( 404 ).send( "No Goals Found" );
         }
     }
-}
+};
 
 exports.getAllVisibleGoalsWithTopics = async ( req, res ) => {
     // get all the active goals
@@ -93,13 +93,13 @@ exports.getAllVisibleGoalsWithTopics = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
     res.status( 200 ).json( goals );
-}
+};
 
 
 
 exports.getAllGoalsForAuthUser = async ( req, res ) => {
     
-    console.log("The rquest: " + JSON.stringify(req.user));
+    console.log( "The rquest: " + JSON.stringify( req.user ) );
 
     // get all the goals for this owner
     let ownerGoals = await goalService.getAllGoalsForOwner( req.user.id, false );
@@ -107,7 +107,7 @@ exports.getAllGoalsForAuthUser = async ( req, res ) => {
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals for user" );
     res.status( 200 ).json( ownerGoals );
-}
+};
 
 /**
  * 
@@ -127,13 +127,13 @@ exports.saveGoalImage = async ( req, res, goalId, filename ) => {
                         return false;
                     }
                     
-                });
+                } );
             } 
-        });
+        } );
     }
     
     return true;
-}
+};
 
 /**
  * 
@@ -142,7 +142,7 @@ exports.saveGoalImage = async ( req, res, goalId, filename ) => {
  * @param {*} redirect 
  * @returns 
  */
-exports.saveGoal = async ( req, res, redirect ) =>{
+exports.saveGoal = async ( req, res, redirect ) => {
 
     let goal = Goal.emptyGoal();
     
@@ -158,7 +158,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
     
     goal.ownedBy = authUserId; 
 
-    if(authUserId > 0) {
+    if( authUserId > 0 ) {
 
         goal.id = req.body.goalId;
 
@@ -166,8 +166,8 @@ exports.saveGoal = async ( req, res, redirect ) =>{
         let existingGoal = await goalService.getMostRecentGoalById( goal.id );
 
         // if this is an update replace the goal with teh existing one as the starting point
-        if(existingGoal) {
-            console.log("there was an existing goal for this id: " + JSON.stringify(existingGoal));
+        if( existingGoal ) {
+            console.log( "there was an existing goal for this id: " + JSON.stringify( existingGoal ) );
             goal = existingGoal;
         }
 
@@ -199,7 +199,7 @@ exports.saveGoal = async ( req, res, redirect ) =>{
          */
         if ( req.body.goalModified && !req.files ) {
             // do nothing we are going to keep the original file
-            console.log("goal trigger modification clause");
+            console.log( "goal trigger modification clause" );
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
@@ -213,9 +213,9 @@ exports.saveGoal = async ( req, res, redirect ) =>{
 
             // check the file size
             if( file.size > maxSize ) {
-                console.log(`File ${file.name} size limit has been exceeded for goal`);
+                console.log( `File ${file.name} size limit has been exceeded for goal` );
 
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "warn";
                     req.session.messageTitle = "Image too large!";
                     req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your goal was saved without the image.";
@@ -223,17 +223,17 @@ exports.saveGoal = async ( req, res, redirect ) =>{
                     return goal;
                 }
                 else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your goal was saved without the image.");
+                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your goal was saved without the image." );
                     res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your goal was saved without the image.");
+                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your goal was saved without the image." );
                     res.status( 422 ).json( message );
                 }             
             }
             else if( goal ) {
-                await file.mv(goalUploadPath + timeStamp + file.name, async (err) => {
-                    if (err) {
+                await file.mv( goalUploadPath + timeStamp + file.name, async ( err ) => {
+                    if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
-                        if(redirect) {
+                        if( redirect ) {
                             req.session.messageType = "error";
                             req.session.messageTitle = "Error saving image!";
                             req.session.messageBody = "There was a error uploading your image for this goal. Your goal should be saved without the image.";
@@ -250,10 +250,10 @@ exports.saveGoal = async ( req, res, redirect ) =>{
                     else {
                         await this.saveGoalImage( req, res, goal.id, timeStamp + file.name );
                     }
-                });
+                } );
             }
             else {
-                if(redirect) {
+                if( redirect ) {
                     req.session.messageType = "error";
                     req.session.messageTitle = "Error saving image!";
                     req.session.messageBody = "There was a error uploading your image for this goal. Your goal should be saved without the image.";
@@ -284,9 +284,9 @@ exports.saveGoal = async ( req, res, redirect ) =>{
 
         // get the pathway
         let pathway = null;
-        if(req.body.pathway) {
-            pathway = req.body.pathway.split(",");
-            goalService.savePathwayToexistingGoalVersion(goal.id, pathway);
+        if( req.body.pathway ) {
+            pathway = req.body.pathway.split( "," );
+            goalService.savePathwayToexistingGoalVersion( goal.id, pathway );
         }
 
 
@@ -305,12 +305,12 @@ exports.saveGoal = async ( req, res, redirect ) =>{
     }
     
     if( redirect ) {
-        console.log( "goalController.saveGoal() - END - Redirect");
+        console.log( "goalController.saveGoal() - END - Redirect" );
         return goal;
     }
     else {
-        console.log( "goalController.saveGoal() - END - Non-Redirect ");
+        console.log( "goalController.saveGoal() - END - Non-Redirect " );
         res.setHeader( 'Content-Type', 'application/json' );
-        res.send(JSON.stringify(goal));
+        res.send( JSON.stringify( goal ) );
     }
-}
+};

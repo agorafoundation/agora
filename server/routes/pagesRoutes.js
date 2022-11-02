@@ -15,12 +15,12 @@ router.route( '/' )
         res.render( 'index' );
     }
 
-)
+    );
 router.route( '/about' )
     .get( ( req, res ) => {
-        res.render('about')
+        res.render( 'about' );
     }
-)
+    );
 router.route( '/codebot' )
     .get( ( req, res ) => {
 
@@ -29,22 +29,22 @@ router.route( '/codebot' )
         //let product = await productService.getActiveProductWithProductImagesById(1);
         //console.log(product);
 
-        res.render('codebot');
+        res.render( 'codebot' );
     }
-)
+    );
 
 
 
 // temp testing
 router.route( '/note' )
     .get( ( req, res ) => {
-        res.render('dashboard/partials/topic/edit-note.ejs')
+        res.render( 'dashboard/partials/topic/edit-note.ejs' );
     }
-)
+    );
 router.route( '/topic' )
     .get( ( req, res ) => {
-        res.render('dashboard/partials/topic/topic-view.ejs')
+        res.render( 'dashboard/partials/topic/topic-view.ejs' );
     }
-)  
+    );  
 
 module.exports = router;

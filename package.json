@@ -28,7 +28,13 @@
   "scripts": {
     "start": "node ./server/agora.js",
     "dev": "nodemon ./server/agora.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint-full": "eslint ./",
+    "lint-client": "eslint ./client",
+    "lint-server": "eslint ./server",
+    "lint-full-fix": "eslint . --fix",
+    "lint-server-fix": "eslint ./server --fix",
+    "lint-client-fix": "eslint ./server --fix"
   },
   "repository": {
     "type": "git",
@@ -42,5 +48,8 @@
   "bugs": {
     "url": "https://github.com/briangormanly/agora/issues"
   },
-  "homepage": "https://github.com/briangormanly/agora#readme"
+  "homepage": "https://github.com/briangormanly/agora#readme",
+  "devDependencies": {
+    "eslint": "^8.25.0"
+  }
 }
