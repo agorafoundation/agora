@@ -656,10 +656,12 @@ const removeText = ( type ) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = ( e ) => {
     let parentId = getId( e );
+    
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-"; 
-
+   
     let parentNameId = prefix + "lv-card-title-" + parentId;
+   
     let parentName = document.getElementById( parentNameId ).innerText;
 
     //setting the text inside the delete modal to show user what they're deleting
