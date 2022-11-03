@@ -427,12 +427,42 @@ function updateTopic( topicId, topicName, topicDescription ) {
 }
 
 /**
- *
+ Deletes a goal given a ID
  */
-function deleteGoal() {
-    // double check the user is sure!!
-    console.log( "stub to delete goal " );
+function deleteGoal( id ) {
+    console.log ( id );
+    fetch( "api/v1/auth/goals/" + id, {
+        method: "DELETE",
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify( {
+            "goalId": id,
+        } )
+
+    } )
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
 }
+/**
+ Deletes a goal given a ID
+ */
+function deleteTopic( id ) {
+    console.log ( id );
+    fetch( "api/v1/auth/topics/" + id, {
+        method: "DELETE",
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify( {
+            "topicId": id,
+        } )
+
+    } )
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
+}
+
 
 /**
  *
@@ -691,6 +721,12 @@ var deleteCards = document
 const updateDeleteConfirmButton = ( id, prefix ) => {
     document.getElementById( prefix + "gv-" + id ).parentElement.remove();
     document.getElementById( prefix + "lv-" + id ).remove();
+    if( prefix === "g-"){
+        deleteGoal( id );
+    }
+    else if( prefix === "t-" ){
+        deleteTopic( id );
+    }
     getTopics();
     exitDeleteModal();
 };
