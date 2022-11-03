@@ -418,28 +418,57 @@ function updateResourceModal( resourceId, resourceImagePath ) {
         } );
     }
 }
-function updateGoal( goalId, goalName, goalDescription ) {
-   
+
+//edit is a number if editing a resource, false if adding a resource
+//prefix indicates whether card is goal or topic
+const addOrEditResource = ( prefix, name, description, edit ) => {
+    let id = -1;
+    if (edit) {
+        id = edit;
+    }
+
+    //if goal
+    if( prefix === "g-" ) {
+        fetch( "api/v1/auth/goals", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "goalId": id,
+                "goalName": name,
+                "goalDescription": description,
+                "goalImage": "myImage.png",
+                "active": true,
+                "completable": true,
+                "visibility": 0,
+            } )
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    //if topic
+    } else {
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                "id": id,
+                "topicType": 1,
+                "topicName": name,
+                "topicDescription": description,
+                "topicImage": "myImage.png",
+                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+            } )
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    }
 }
 
-function updateTopic( topicId, topicName, topicDescription ) {
-
-}
-
-/**
- *
- */
-function deleteGoal() {
-    // double check the user is sure!!
-    console.log( "stub to delete goal " );
-}
-
-/**
- *
- */
-function addFilter() {
-    console.log( "this will add a filter" );
-}
 
 /* note-gallery edit modal */
 function viewModal( id, name, desc ) {
@@ -571,9 +600,6 @@ const fillNameandDescription = ( e ) => {
     let parentNameId = "card-title-" + parentId;
     let parentDescId = "card-desc-" + parentId;
 
-    //console.log(document.getElementById(prefix + "gv-" + parentNameId).innerText)
-    console.log( document.getElementById( prefix + "gv-" + parentNameId ).innerText );
-
     let parentName = document.getElementById( prefix + "lv-" + parentNameId ).innerText;
     let parentDesc = document.getElementById( prefix + "gv-" + parentDescId ).innerText;
 
@@ -612,18 +638,16 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
-    let tempName = document.getElementById( "note-modal-name" ).value;
-    if ( tempName ) {
-        document.getElementById( prefix + "gv-" + nameId ).innerText = tempName;
-        document.getElementById( prefix + "lv-" + nameId ).innerText = tempName;
-        document.getElementById( prefix + "gv-" + descId ).innerText = document.getElementById( "note-modal-description" ).value;
-        if( prefix === "g-" ){
-            updateGoal( nameId, document.getElementById( "note-modal-description" ).value );
-        }
-        else if( prefix === "t-" ) {
-            updateTopic( nameId, document.getElementById( "note-modal-description" ).value );
-        }
-        
+    let name = document.getElementById( "note-modal-name" ).value;
+    let desc = document.getElementById( "note-modal-description" ).value
+    if ( name ) {
+        document.getElementById( prefix + "gv-" + nameId ).innerText = name;
+        document.getElementById( prefix + "lv-" + nameId ).innerText = name;
+        document.getElementById( prefix + "gv-" + descId ).innerText = desc;
+
+        console.log(descId.substring(10))        
+
+        addOrEditResource( prefix, name, desc, descId.substring(10) )
 
         closeRenameModal();
     }
@@ -787,56 +811,11 @@ const duplicateGoal = ( e ) => {
    
     //getting the next id to use
     let newId = checkForNextId();
-    if( prefix === "g-" ){
-        fetch( "api/v1/auth/goals", {
-            method: "POST",
-            headers:{
-                'Content-Type': 'application/json'
-            },
-            body:JSON.stringify( {
-                "goalId": -1,
-                "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
-                "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
-                "goalImage": "myImage.png",
-                "active": true,
-                "completable": true,
-                "visibility": 0,
-            
-            } )
 
-        } )
-            .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
-    }
-    else if( prefix === "t-" ){
-        fetch( "api/v1/auth/topics", {
-            method: "POST",
-            headers:{
-                'Content-Type': 'application/json'
-            },
-            body:JSON.stringify( {
-                "id": -1,
-                "topicType": 1,
-                "topicName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
-                "topicDescription": gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
-                "topicImage": "myImage.png",
-                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
-                "assessmentId": 1,
-                "hasActivity": false,
-                "hasAssessment": false,
-                "activityId": 1,
-                "active": true,
-                "visibility": 0,
-                
-            
-            } )
-
-        } )
-            .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
-
-    }
-
+    let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
+    
+    //fetch call to update backend
+    addOrEditResource(prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null);
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
@@ -902,12 +881,9 @@ const duplicateGoal = ( e ) => {
     //adding the new clone to the list container
     document.getElementById( "list-column" ).appendChild( listClone );
 
-
-
-
     getTopics();
 
-    createToast( "Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText );
+    createToast( "Duplicated " + nameOfClone );
 
     e.stopPropagation();
         
