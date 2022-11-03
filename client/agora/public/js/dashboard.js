@@ -778,7 +778,6 @@ const duplicateGoal = ( e ) => {
     isTopic( e ) ? prefix = "t-" : prefix = "g-";
 
     let gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
-    console.log(gridParent.childNodes[1].childNodes[3].childNodes[3].innerText);
     let listParent = document.getElementById( prefix + "lv-" + parentId );
 
     //creating separate, autonomous element that's a clone of the original
@@ -788,29 +787,55 @@ const duplicateGoal = ( e ) => {
    
     //getting the next id to use
     let newId = checkForNextId();
-   
-    fetch( "api/v1/auth/goals", {
-        method: "POST",
-        headers:{
-            'Content-Type': 'application/json'
-        },
-        body:JSON.stringify( {
-            "goalId": -1,
-            "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
-            "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
-            "goalImage": "myImage.png",
-            "active": true,
-            "completable": true,
-            "visibility": 0,
+    if( prefix === "g-" ){
+        fetch( "api/v1/auth/goals", {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify( {
+                "goalId": -1,
+                "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+                "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+                "goalImage": "myImage.png",
+                "active": true,
+                "completable": true,
+                "visibility": 0,
             
-        } )
+            } )
 
-    } )
-        .then( response => response.json() )
-        .then( response => console.log( JSON.stringify( response ) ) );
-    
-       
-    
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    }
+    else if( prefix === "t-" ){
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify( {
+                "id": -1,
+                "topicType": 1,
+                "topicName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+                "topicDescription": gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+                "topicImage": "myImage.png",
+                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+                
+            
+            } )
+
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+
+    }
 
 
     //changing the ids in the cloned element

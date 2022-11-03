@@ -89,10 +89,8 @@
             renderCard(ownerGoals[i].id,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
          }%>
             <% //render resources for Now
-        for (let i = 0; i <  availableTopics.length ; i++) { 
-            renderCard(availableTopics[i].topicId,availableTopics[i].topicName,availableTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
-         
-      
+        for (let i = 0; i <  ownerTopics.length ; i++) { 
+            renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
          }%>
          
            
