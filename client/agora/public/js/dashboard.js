@@ -421,14 +421,52 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is goal or topic
-const addOrEditResource = ( prefix, name, description, edit ) => {
-    let id = -1;
-    if (edit) {
-        id = edit;
-    }
-
+const addResource = ( prefix, name, description) => {
     //if goal
     if( prefix === "g-" ) {
+        fetch( "api/v1/auth/goals", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "goalId": -1,
+                "goalName": name,
+                "goalDescription": description,
+                "goalImage": "myImage.png",
+                "active": true,
+                "completable": true,
+                "visibility": 0,
+            } )
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    //if topic
+    } else {
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                "id": id,
+                "topicType": -1,
+                "topicName": name,
+                "topicDescription": description,
+                "topicImage": "myImage.png",
+                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+            } )
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    }
+}
+
+const editResource = (prefix, name, description, id) => {
+     //if goal
+     if( prefix === "g-" ) {
         fetch( "api/v1/auth/goals", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -645,7 +683,7 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
         document.getElementById( prefix + "gv-" + descId ).innerText = desc;    
 
-        addOrEditResource( prefix, name, desc, descId.substring(10) )
+        editResource( prefix, name, desc, descId.substring(10) )
 
         closeRenameModal();
     }
@@ -812,7 +850,7 @@ const duplicateGoal = ( e ) => {
     let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
     
     //fetch call to update backend
-    addOrEditResource(prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null);
+    addResource(prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText);
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
