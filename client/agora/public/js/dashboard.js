@@ -474,13 +474,12 @@ const deleteResource = ( id, prefix ) => {
     if (prefix === "g-" ) {
         fetch( "api/v1/auth/goals/" + id, {
             method: "DELETE",
-
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
     } else {
         fetch( "api/v1/auth/topics/" + id, {
-            method: "DELETE",
+            method: "DELETE"
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
