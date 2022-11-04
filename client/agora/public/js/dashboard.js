@@ -419,6 +419,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
     }
 }
 
+
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is goal or topic
 const addOrEditResource = ( prefix, name, description, edit ) => {
@@ -469,6 +470,31 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
     }
 }
 
+const deleteResource = ( id, prefix ) => {
+    if (prefix === "g-") {
+        fetch( "api/v1/auth/goals/" + id, {
+            method: "DELETE",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                "goalId": id,
+            } )
+
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    } else {
+        fetch( "api/v1/auth/goals/" + id, {
+            method: "DELETE",
+            headers:{ 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                "goalId": id,
+            } )
+    
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    }
+}
 
 /* note-gallery edit modal */
 function viewModal( id, name, desc ) {
@@ -713,6 +739,9 @@ var deleteCards = document
 const updateDeleteConfirmButton = ( id, prefix ) => {
     document.getElementById( prefix + "gv-" + id ).parentElement.remove();
     document.getElementById( prefix + "lv-" + id ).remove();
+
+    deleteResource( id, prefix );
+
     getTopics();
     exitDeleteModal();
 };
