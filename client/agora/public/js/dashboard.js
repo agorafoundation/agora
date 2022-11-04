@@ -419,12 +419,51 @@ function updateResourceModal( resourceId, resourceImagePath ) {
     }
 }
 
+//creates a empty topic
+const createNewTopic = () =>{
+    fetch( "api/v1/auth/topics", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( {
+            "topicId": -1,
+            "topicType": 1,
+            "topicName": "Untitled",
+            "topicDescription": "",
+            "active": true,
+            "visibility": 0,
+        } )
+    } )
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
+};
+
+//creates a empty topic
+const createNewGoal = () => {
+    fetch( "api/v1/auth/goals", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "goalId": -1,
+            "goalName": "Untitled",
+            "goalDescription": "",
+            "goalImage": "myImage.png",
+            "active": true,
+            "completable": true,
+            "visibility": 0,
+        } )
+    } )
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
+};
+
+
+
 
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is goal or topic
 const addOrEditResource = ( prefix, name, description, edit ) => {
     let id = -1;
-    if (edit) {
+    if ( edit ) {
         id = edit;
     }
 
@@ -446,7 +485,8 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
     //if topic
-    } else {
+    } 
+    else {
         fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
