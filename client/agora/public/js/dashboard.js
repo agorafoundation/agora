@@ -468,18 +468,26 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
     }
-}
+};
 
 const deleteResource = ( id, prefix ) => {
-    if (prefix === "g-") {
+    if (prefix === "g-" ) {
         fetch( "api/v1/auth/goals/" + id, {
             method: "DELETE",
+<<<<<<< HEAD
+=======
+
+>>>>>>> 28c048e7372fa9a96cbe601e7631326affc53ae5
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
     } else {
         fetch( "api/v1/auth/topics/" + id, {
+<<<<<<< HEAD
             method: "DELETE"
+=======
+            method: "DELETE",
+>>>>>>> 28c048e7372fa9a96cbe601e7631326affc53ae5
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
@@ -1030,7 +1038,7 @@ const hasElement = ( id, prefix, removed ) => {
     let done = false, index = 0;
     const removedLength = removed.length;
     while ( !done && index < removedLength ) {
-        if ( removed[index].id === id && removed[index].prefix === prefix) {
+        if ( removed[index].id === id && removed[index].prefix === prefix ) {
             done = true;
         }
         index++;
@@ -1043,7 +1051,7 @@ const getElement = ( id, prefix, removed ) => {
     let done = false, index = 0, output = null;
     const removedLength = removed.length;
     while ( !done && index < removedLength ) {
-        if ( removed[index].id === id && removed[index].prefix === prefix) {
+        if ( removed[index].id === id && removed[index].prefix === prefix ) {
             output = {gridEl: removed[index].gridElement, listEl: removed[index].listElement};
             done = true;
         }
