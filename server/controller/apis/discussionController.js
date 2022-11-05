@@ -7,7 +7,7 @@
 
 const discussionService = require( "../../service/discussionService" );
 const ApiMessage = require( "../../model/util/ApiMessage" );
-const { errorHandler } = require( "./apiErrorController" );
+const {errorController} = require( "./apiErrorController" );
 
 // Get
 
@@ -28,10 +28,7 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
     let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
 
     if( !discussion ) {
-        return errorHandler( ApiMessage.createNotFoundError( "Discussion" ), res );
-        // res.set( "x-agora-message-title", "Not Found" );
-        // res.set( "x-agora-message-detail", "Discussion not found" );
-        // return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );

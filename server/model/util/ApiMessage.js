@@ -18,48 +18,102 @@ class ApiMessage{
     }
 }
 
+/**
+ * NOT MEANT TO BE EXTERNALLY CALLED, INSTEAD USE OTHER METHODS IN THIS FILE
+ * 
+ * This is a wrapper for the ApiMessage class. 
+ * It is used to create an ApiError response object, this mostly should not be called externally, 
+ * if you are trying to call this externally please use a pre-specified API error format or create your own in this file.
+ * 
+ * @param {number} statusCode 
+ * @param {string} messageTitle 
+ * @param {string} messageBody 
+ * @returns Agora's API Error response
+ */
 exports.createApiMessage = ( statusCode, messageTitle, messageBody ) => {
     return new ApiMessage( statusCode, messageTitle, messageBody );
 };
 
+/**
+ * Creates a Bad Request error to be provided to ApiErrorController.errorHandler
+ * @param {*} validationIssues Zod validation issues or string values in an array
+ * @returns a 400 error
+ */
+exports.createBadRequestError = ( validationIssues ) => {
 
+    const outputMessage = validationIssues
+        .map( issue => {
 
+            // if no issue code is provided, we assume it is just a string and return it
+            if( !issue.code ) {
+                return issue;
+            }
+
+            // Handle all of the known validation error codes
+            // Possible codes: https://github.com/colinhacks/zod/blob/master/ERROR_HANDLING.md#zodissuecode
+            
+            if ( issue.code === "invalid_type" ) {
+                // also handles when not provided
+                return `Invalid type for ${issue.path.join( '.' )}, expected ${issue.expected} but got ${issue.received}`;
+            }
+            // doesn't match given options
+            if ( issue.code === "invalid_enum_value" ) {
+                return `Invalid enum value for ${issue.path.join( '.' )}`;
+            }
+            // when the string is not matching a given format, url, email, uuid, etc.
+            if ( issue.code === "invalid_string" ) {
+                return `Invalid string format for ${issue.path.join( '.' )}, does not match ${issue.validation}`;
+            }
+            if ( issue.code === "invalid_date" ) {
+                // invalid date format
+                return `Invalid date for ${issue.path.join( '.' )}`;
+            }
+            if( issue.code === "too_small" ) {
+                return `Value for ${issue.path.join( '.' )} is too small, expected at least ${issue.minimum}`;
+            }
+            if( issue.code === "too_big" ) {
+                return `Value for ${issue.path.join( '.' )} is too big, expected at most ${issue.maximum}`;
+            }
+            return `Unhandled issue: ${JSON.stringify( issue )}`;
+            
+        } )
+        .join( "; " );
+
+    return new ApiMessage( 400, "Bad Request", outputMessage );
+};
+
+/**
+ * Creates a Not Authorized error to be provided to ApiErrorController.errorHandler
+ * @returns a 401 error
+ */
+exports.createNotAuthorizedError = ( ) => {
+    return new ApiMessage( 401, "Not Authorized", `Not able to associate authorized user with the record` );
+};
+
+/**
+ * Creates a Not Found error to be provided to ApiErrorController.errorHandler
+ * @param {string} resourceName name of the resources that was not found, 
+ * @returns a 404 error
+ */
 exports.createNotFoundError = ( resourceName ) => {
-    const message = new ApiMessage( 404, "Not Found", `${resourceName} not found` );
-    return message;
+    return new ApiMessage( 404, "Not Found", `${resourceName} not found` );
 };
 
-exports.createBadRequestError = ( messageText ) => {
-    // The reason why this requires a message pass is because bad request can honestly be anything, so I've left it up to the devs. This can be changed if need be.
-    const message = new ApiMessage( 400, "Bad Request", `${messageText}` );
-    return message;
-};
-
-exports.createNotAuthorizedError = ( resourceName ) => {
-    const message = new ApiMessage( 401, "Not Authorized", `You are not authorized to access ${resourceName}` );
-    return message;
-};
-
-exports.create422Error = ( errorTitle, resourceName, messageBody ) => {
+/**
+ * Creates a Image Upload error to be provided to ApiErrorController.errorHandler
+ * @param {string} resourceName 
+ * @returns a 422 error
+ */
+exports.createImageUploadError = ( resourceName ) => {
     // This one is again a little more complicated, as we are using it to cover a variety of errors. I've left the title and text up to the developers, so as to not hamper their descriptions and their ability to troubleshoot
-    const message = new ApiMessage( 422, `${errorTitle}`, `${resourceName} ${messageBody}` );
-    return message;
+    return new ApiMessage( 422, "Error uploading image!", `There was a error uploading your image for this ${resourceName.toLowerCase()}. Your ${resourceName.toLowerCase()} should be saved without the image.` );
 };
 
-exports.createInternalServerError = ( resourceName ) => {
-    const message = new ApiMessage( 500, "Internal Server Error", `Internal server error handling ${resourceName}` );
-    return message;
-};
-
-
-exports.create200Response = ( resourceName, messageBody ) => {
-    //Threw this one in to help with returning 200s, as I feel it'll just make things easier. Same as before, we use it for multiple different setups, so passing the body is needed.
-    const message = new ApiMessage( 200, "Success", `${resourceName} ${messageBody}` );
-    return message;
-};
-
-exports.create201Response = ( resourceName, messageBody ) => {
-    //The exact same as 200, but I saw someone used 201 in tags for a successful response so I felt I should cover it.
-    const message = new ApiMessage( 201, "Success", `${resourceName} ${messageBody}` );
-    return message;
+/**
+ * To be called when all else fails, this is a catch all for errors that are not handled by the other methods in this file.
+ * 
+ * @returns a 500 error
+ */
+exports.createInternalServerError = ( ) => {
+    return new ApiMessage( 500, "Internal Server Error", `Something went wrong :(` );
 };
