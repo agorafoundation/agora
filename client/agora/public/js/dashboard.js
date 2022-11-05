@@ -418,6 +418,13 @@ function updateResourceModal( resourceId, resourceImagePath ) {
         } );
     }
 }
+function updateGoal( goalId, goalName, goalDescription ) {
+   
+}
+
+function updateTopic( topicId, topicName, topicDescription ) {
+
+}
 
 /**
  *
@@ -610,11 +617,21 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
         document.getElementById( prefix + "gv-" + nameId ).innerText = tempName;
         document.getElementById( prefix + "lv-" + nameId ).innerText = tempName;
         document.getElementById( prefix + "gv-" + descId ).innerText = document.getElementById( "note-modal-description" ).value;
+        if( prefix === "g-" ){
+            updateGoal( nameId, document.getElementById( "note-modal-description" ).value );
+        }
+        else if( prefix === "t-" ) {
+            updateTopic( nameId, document.getElementById( "note-modal-description" ).value );
+        }
+        
+
         closeRenameModal();
     }
     else {
         window.alert( "All goals/topics must have a name" );
     }
+
+  
 };
 
 //hides rename modal
@@ -639,10 +656,12 @@ const removeText = ( type ) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = ( e ) => {
     let parentId = getId( e );
+    
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-"; 
-
+   
     let parentNameId = prefix + "lv-card-title-" + parentId;
+   
     let parentName = document.getElementById( parentNameId ).innerText;
 
     //setting the text inside the delete modal to show user what they're deleting
@@ -752,7 +771,9 @@ var newTabCards = document
 
 //handles cloning a card then updating it's id and properties
 const duplicateGoal = ( e ) => {
+  
     let parentId = getId( e );
+   
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-";
 
@@ -763,8 +784,59 @@ const duplicateGoal = ( e ) => {
     let gridClone = gridParent.cloneNode( true );
     let listClone = listParent.cloneNode( true );
 
+   
     //getting the next id to use
     let newId = checkForNextId();
+    if( prefix === "g-" ){
+        fetch( "api/v1/auth/goals", {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify( {
+                "goalId": -1,
+                "goalName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+                "goalDescription":gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+                "goalImage": "myImage.png",
+                "active": true,
+                "completable": true,
+                "visibility": 0,
+            
+            } )
+
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+    }
+    else if( prefix === "t-" ){
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify( {
+                "id": -1,
+                "topicType": 1,
+                "topicName": gridParent.childNodes[1].childNodes[3].childNodes[1].innerText,
+                "topicDescription": gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+                "topicImage": "myImage.png",
+                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+                
+            
+            } )
+
+        } )
+            .then( response => response.json() )
+            .then( response => console.log( JSON.stringify( response ) ) );
+
+    }
+
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
@@ -830,11 +902,15 @@ const duplicateGoal = ( e ) => {
     //adding the new clone to the list container
     document.getElementById( "list-column" ).appendChild( listClone );
 
+
+
+
     getTopics();
 
     createToast( "Duplicated " + gridParent.childNodes[1].childNodes[3].childNodes[1].innerText );
 
     e.stopPropagation();
+        
 };
 
 //A collection of the duplicate buttons
