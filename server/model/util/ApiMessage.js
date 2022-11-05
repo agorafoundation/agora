@@ -5,7 +5,6 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-const { getActiveTopicEnrollmentsByUserAndTopicIdWithEverything } = require( "../../service/topicService" );
 
 /**
  * Wrapper for Agora API responses. Payload contains data to be transported, message and error provide unified 
