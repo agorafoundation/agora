@@ -18,7 +18,6 @@ const authController = require( '../controller/authController' );
 // Currently by being here all APIs should require an authenicated user to work
 router.use( function ( req, res, next ) {
     // This is the case if using UI.
-    console.log( "Calling API..." );
     const authTest = req.session.isAuth;
     if( authTest ){
         middlewareRevison( req );
@@ -46,7 +45,6 @@ router.use( function ( req, res, next ) {
         authController.basicAuth( userEmail, password, req ).then( ( user ) => {
             if ( user ) {
                 // user is authorized!
-                console.log( "API call" );
                 req.user = user;
 
                 // TODO future role specific verification can go here.
@@ -93,12 +91,7 @@ router.use( function ( req, res, next ) {
  * this allows us to use either req.user or req.session.authUser
  */
 function middlewareRevison( req ) {
-    if( req.user ) {
-        req.session.authUser = req.user;
-    }
-    else if( req.session.authUser ) {
-        req.user = req.session.authUser;
-    }
+    req.user = req.session.authUser ?? req.user ?? undefined;
     console.log( "req.user.id: " + req.user.id );
     console.log( "req.session.authUser.id: " + req.session.authUser.id );
 }
