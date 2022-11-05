@@ -43,7 +43,7 @@
               <h5 class="card-title" id="g-gv-card-title-<%= id %>">
                   <%= name %>
               </h5>
-              <div id="g-gv-card-desc-<%= id %>"></div>
+              <div id="g-gv-card-desc-<%= id %>"><%= desc %></div>
               <div>
                 <% if (content) { %>
                   <ul class="list-group list-group-flush list-grid">
@@ -82,17 +82,16 @@
             </div>
             </div>
            
-           
-            <% //render resources for Now
-        for (let i = 0; i <  availableResources.length ; i++) { 
-            renderCard(i,availableResources[i].resourceName,availableResources[i].resourceDescription,["Bio","Chem"],"Topic", null) 
-         
-      
-         }%>
-         <%
+            <%
          //render goals
+            
          for (let i = 0; i <  ownerGoals.length ; i++) { 
-            renderCard(i,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+            renderCard(ownerGoals[i].id,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
          }%>
+            <% //render resources for Now
+        for (let i = 0; i <  ownerTopics.length ; i++) { 
+            renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
+         }%>
+         
            
     </div>
