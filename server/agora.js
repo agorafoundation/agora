@@ -186,6 +186,12 @@ if ( process.env.GITHUB_TOGGLE == "true" ) {
     app.route( "/api/webhook/sponsor" ).post( ghApi.sponsorship );
 }
 
+app.use( ( error, req, res, next ) => {
+    console.log( error );
+} );
+
+
+
 app.listen( PORT, () =>
     console.log(
         "Agora running... {" +
