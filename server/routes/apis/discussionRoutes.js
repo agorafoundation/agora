@@ -8,12 +8,6 @@
 var express = require( 'express' );
 var router = express.Router( );
  
-// const bodyParser = require('body-parser');
-// router.use(bodyParser.urlencoded({
-//      extended: true
-// }));
-// router.use(bodyParser.json());
- 
 //dependencies 
 
 // controllers
@@ -71,7 +65,7 @@ router.route( '/comment' )
 router.route( '/comment/:commentId' )
     .patch( validate( z.object( {
         comment_text: z.string(),
-        parent_type: z.enum( [ 'discussion', 'comment' ] ),
+        parent_type: z.enum( [ 'goal', 'topic' ] ),
         parent_id: z.number(),
     } ) ), async ( req, res ) => {
         discussionController.editComment( req, res );
