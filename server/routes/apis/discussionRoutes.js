@@ -8,16 +8,18 @@
 var express = require( 'express' );
 var router = express.Router( );
  
-const bodyParser = require( 'body-parser' );
-router.use( bodyParser.urlencoded( {
-    extended: true
-} ) );
-router.use( bodyParser.json() );
+// const bodyParser = require('body-parser');
+// router.use(bodyParser.urlencoded({
+//      extended: true
+// }));
+// router.use(bodyParser.json());
  
 //dependencies 
 
 // controllers
 const discussionController = require( '../../controller/apis/discussionController' ); 
+const { validate } = require( '../middleware/inputValidation' );
+const { z } = require( 'zod' );
 // /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
 // discussions /api/v1/auth/discussions/{goal | topic}/:id
 router.route( '/goal/:id' )
@@ -26,7 +28,9 @@ router.route( '/goal/:id' )
         discussionController.getDiscussionByGoalId( req, res, next );
     } )
     // update a discussion based off goal id
-    .patch( async ( req, res ) => { 
+    .patch( validate( z.object( {
+        discussion_text: z.string(),
+    } ) ), async ( req, res ) => { 
         discussionController.updateDiscussionByGoalId( req, res );
     } )
     .post( async ( req, res ) => {
@@ -65,7 +69,11 @@ router.route( '/comment' )
 
 // modify an exsting comment
 router.route( '/comment/:commentId' )
-    .patch( async ( req, res ) => {
+    .patch( validate( z.object( {
+        comment_text: z.string(),
+        parent_type: z.enum( [ 'discussion', 'comment' ] ),
+        parent_id: z.number(),
+    } ) ), async ( req, res ) => {
         discussionController.editComment( req, res );
     } )
     .delete( async ( req, res ) => {
