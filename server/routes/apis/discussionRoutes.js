@@ -24,8 +24,8 @@ const { z } = require( 'zod' );
 // discussions /api/v1/auth/discussions/{goal | topic}/:id
 router.route( '/goal/:id' )
     // get a discussion based off goal id
-    .get( async ( req, res ) => {
-        discussionController.getDiscussionByGoalId( req, res );
+    .get( async ( req, res, next ) => {
+        discussionController.getDiscussionByGoalId( req, res, next );
     } )
     // update a discussion based off goal id
     .patch( validate( z.object( {
