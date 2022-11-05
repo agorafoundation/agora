@@ -419,8 +419,10 @@ function updateResourceModal( resourceId, resourceImagePath ) {
     }
 }
 
+
+
 //creates a empty topic
-const createNewTopic = () =>{
+const createNewTopic = async () => {
     fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -435,10 +437,17 @@ const createNewTopic = () =>{
     } )
         .then( response => response.json() )
         .then( response => console.log( JSON.stringify( response ) ) );
+    
+    const temp = await fetch( "api/v1/auth/topics")
+        //take the top anime and turns response to json
+        .then( ( res ) => res.json() );
+
+    const id = temp[temp.length - 1].topicId;
+    window.location.href = '/topic#t-' + id;
 };
 
 //creates a empty topic
-const createNewGoal = () => {
+const createNewGoal = async () => {
     fetch( "api/v1/auth/goals", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -454,6 +463,13 @@ const createNewGoal = () => {
     } )
         .then( response => response.json() )
         .then( response => console.log( JSON.stringify( response ) ) );
+   
+    const temp = await fetch( "api/v1/auth/goals" )
+        //take the top anime and turns response to json
+        .then( ( res ) => res.json() );
+
+    const id = temp[temp.length - 1].goalId;
+    window.location.href = '/topic#g-' + id;
 };
 
 
