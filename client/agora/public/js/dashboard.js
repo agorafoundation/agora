@@ -436,8 +436,8 @@ const createNewTopic = async () => {
             "visibility": 0,
         } )
     } )
-     .then( response => response.json() )
-     .then( response => window.location.href = "/topic#t-" + response.topicId );
+        .then( response => response.json() )
+        .then( response => window.location.href = "/topic#t-" + response.topicId );
 
      
     
@@ -812,10 +812,10 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/note", "_blank" );
+        window.open( "http://localhost:4200/topic", "_blank" );
     }
     else {
-        location.href = '/note';
+        window.location.href = "/topic#t-" + id.substring(5) ;
     }
 };
 
