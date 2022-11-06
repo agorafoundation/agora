@@ -423,7 +423,8 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 
 //creates a empty topic
 const createNewTopic = async () => {
-    fetch( "api/v1/auth/topics", {
+    
+    const temp = fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( {
@@ -435,15 +436,16 @@ const createNewTopic = async () => {
             "visibility": 0,
         } )
     } )
-        .then( response => response.json() )
-        .then( response => console.log( JSON.stringify( response ) ) );
-    
-    const temp = await fetch( "api/v1/auth/topics")
-        //take the top anime and turns response to json
-        .then( ( res ) => res.json() );
+     .then( response => response.json() )
+     .then( response => window.location.href = "/topic#t-" + response.topicId );
 
-    const id = temp[temp.length - 1].topicId;
-    window.location.href = '/topic#t-' + id;
+     
+    
+
+
+    //gets the most recent id
+    //let id = temp[temp.length - 1].topicId;
+   // window.location.href = '/topic#t-' + id;
 };
 
 //creates a empty topic
@@ -462,14 +464,9 @@ const createNewGoal = async () => {
         } )
     } )
         .then( response => response.json() )
-        .then( response => console.log( JSON.stringify( response ) ) );
+        .then( response => window.location.href = "/topic#g-" + response.id );
    
-    const temp = await fetch( "api/v1/auth/goals" )
-        //take the top anime and turns response to json
-        .then( ( res ) => res.json() );
-
-    const id = temp[temp.length - 1].goalId;
-    window.location.href = '/topic#g-' + id;
+  
 };
 
 
@@ -527,7 +524,7 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
 };
 
 const deleteResource = ( id, prefix ) => {
-    if (prefix === "g-" ) {
+    if ( prefix === "g-" ) {
         fetch( "api/v1/auth/goals/" + id, {
             method: "DELETE",
         } )
