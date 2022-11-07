@@ -16,7 +16,8 @@
             <%- include('../../side-menu/side-menu.ejs');%> 
             
             <!--Workspace Manager Modal-->
-            <%- include('./workspace-manager-modal.ejs');%> 
+            <%- include('./workspace-manager-modal.ejs');%>
+            <%- include('./open-topic.ejs');%>  
 
             <!--Page Header-->
             <div class="header-div">
@@ -35,21 +36,12 @@
                 <!--Tags-->
                 <div class="header" id="tag-div">
                     <label class="label">Tags</label>
-                    <input type="text" id="mySearch" class="placeholder" onkeyup="tagSearch()" placeholder="start typing...">
+                    <input type="text" id="mySearch" class="placeholder" placeholder="start typing...">
                     <div id="curr-tags"></div>
         
-                    <ul class="tag-list">
-                        <li class="tag-list-element" onclick="addTag(this)">Capping</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Math</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Algorithms</li>
-                        <li class="tag-list-element" onclick="addTag(this)" >Movies</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Music</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Taylor Swift</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Dogs</li>
-                        <li class="tag-list-element" onclick="addTag(this)">Research</li>
-                    </ul>
+                    <ul class="tag-list"></ul>
                     <ul class="new-tag">
-                        <li id="new-tag-element" class="tag-list-element" onclick="newTag()">+ New Tag</li>
+                        <li id="new-tag-element" class="tag-list-element">+ New Tag</li>
                     </ul>
                 </div>
                 <!--More Options-->
