@@ -445,7 +445,7 @@ const createNewTopic = async () => {
 
     //gets the most recent id
     //let id = temp[temp.length - 1].topicId;
-   // window.location.href = '/topic#t-' + id;
+    // window.location.href = '/topic#t-' + id;
 };
 
 //creates a empty topic
@@ -816,7 +816,7 @@ const topicReroute = ( id, newTab, prefix ) => {
         window.open( "http://localhost:4200/topic", "_blank" );
     }
     else {
-        window.location.href = "/topic#t-" + id.substring(5) ;
+        window.location.href = "/topic#t-" + id.substring( 5 ) ;
     }
 };
 
