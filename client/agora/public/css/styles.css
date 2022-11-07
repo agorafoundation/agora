@@ -4365,39 +4365,6 @@ input[type=button].btn-block {
   color: #fff;
 }
 
-. {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: border-box;
-  border: 0.125rem solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.5rem;
-}
-. > hr {
-  margin-right: 0;
-  margin-left: 0;
-}
-. > .list-group {
-  border-top: inherit;
-  border-bottom: inherit;
-}
-. > .list-group:first-child {
-  border-top-width: 0;
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
-}
-. > .list-group:last-child {
-  border-bottom-width: 0;
-  border-bottom-right-radius: 0.375rem;
-  border-bottom-left-radius: 0.375rem;
-}
-. > .-header + .list-group,
-. > .list-group + .-footer {
-  border-top: 0;
-}
 
 .-body {
   flex: 1 1 auto;

@@ -469,9 +469,10 @@ const createSunEditor = async() => {
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
 // Workspace empty state drop zone
+filenum = 0;
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
-    let inputElement = dropZoneElement.lastElementChild;
+    inputElement = dropZoneElement.lastElementChild;
     createDropZoneEventListeners( dropZoneElement, inputElement );
 }
 
@@ -526,16 +527,30 @@ function createDropZoneEventListeners( dropZone, input ) {
  */
 function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
+    filenum ++;
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
     } 
     // Div that holds the thumbnail
     let mydiv = document.createElement( 'div' );
     mydiv.className = "drop-zone-show";
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        const pdf = document.createElement("iframe");
+        pdf.id = "viewer";
+        pdf.setAttribute( "style", "width: 100%; border: none; height:100%;");
+        mydiv.appendChild(pdf);
+        console.log("pdf detected")
+    }
+    else{
+
+    }
 
     // Thumbnail element
     let thumbnailElement = dropZoneElement.querySelector( ".drop-zone__thumb" );
     thumbnailElement = document.createElement( "div" );
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        thumbnailElement.setAttribute( "style", "height:20%;");
+    }
     thumbnailElement.classList.add( "drop-zone__thumb" );
 
     // File input element
@@ -552,8 +567,10 @@ function updateThumbnail( dropZoneElement, file ) {
     // Preview Icon
     let previewIcon = document.createElement( 'span' );
     previewIcon.setAttribute( "class", "material-symbols-outlined" );
-    previewIcon.setAttribute( "id", "preview-icon" );
+    previewIcon.setAttribute( "id", "preview-icon"+filenum );
+    previewIcon.setAttribute( "onclick", "previewFile()");
     previewIcon.innerHTML = "preview";
+
 
     // New drop zone
     let newDropZone = document.createElement( "div" );
@@ -861,4 +878,12 @@ for ( let i = 0; i < perms.length; i++ ) {
     perms[i].addEventListener( "click", toggleProfile );
 }
 
-  
+function previewFile(){
+    file = inputElement.files[0]
+    console.log(file.type)
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        pdffile_url=URL.createObjectURL(file);
+        $('#viewer').attr('src',pdffile_url);
+        console.log("guh")
+    }
+}
