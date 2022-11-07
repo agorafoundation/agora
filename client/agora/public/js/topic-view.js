@@ -168,7 +168,6 @@ function createTopic() {
 
     // Append all elements accordingly
     newTab.appendChild( topicContent );
-    // newDropZone.appendChild(topicContent);
     topicContent.appendChild( resourcesZone );
     resourcesZone.appendChild( newDropZone );
     resourcesZone.appendChild( emptyDropZone );
@@ -234,7 +233,7 @@ function getTabLocation( id ) {
 
 
 /* Tag Functions ------------------------------------------------------------------- */
-function tagSearch() {
+document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
     let input, filter, ul, li, tag, i;
     input = document.getElementById( "mySearch" );
     filter = input.value.toUpperCase();
@@ -259,51 +258,94 @@ function tagSearch() {
     }
     // Always show new tag option
     document.querySelector( "#new-tag-element" ).style.display = "block";
-}
+} );
 
-function newTag() {
-    // Add the new tag to the search list
+document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
+    const tagName = document.getElementById( "mySearch" ).value;
+    newTag( tagName );
+} );
+
+let currTagList = [];
+function newTag( tagName ) {
     const ul = document.querySelector( ".tag-list" );
     const li = document.createElement( "li" );
-    const tagName = document.getElementById( "mySearch" ).value;
+    const searchList = document.querySelectorAll( ".tag-list-element" );
 
-    li.setAttribute( "class", "tag-list-element" );
-    li.innerHTML = tagName;
-    ul.appendChild( li );
+    // check that selected tag doesn't already exist
+    let isActiveTag = false;
+    for ( let i = 0; i < currTagList.length; i++ ) {
+        if ( currTagList[i] ===  tagName ) {
+            isActiveTag = true;
+        }
+    }
+    if ( !isActiveTag ) {
+        let wasSearched = false;
+        for ( let i=0; i<searchList.length; i++ ) {
+            if ( searchList[i].innerHTML === tagName ) {
+                wasSearched = true;
+            }
+        }
+        if ( !wasSearched ) {
+            // Add the new tag to the search list if it doesn't already exist
+            ul.appendChild( li );
+            li.addEventListener( "click", () => {
+                newTag( tagName );
+            } );
+        }
 
-    // create the tag and add to existing tags
-    this.addTag( li );
+        // create the tag and add to existing tags
+        li.setAttribute( "class", "tag-list-element" );
+        li.innerHTML = tagName;
+        addTag( li );
+        currTagList.push( tagName );
+    }
 }
 
 // Add new tag by pressing enter key
 let ul = document.querySelector( ".tag-list" );
 document.addEventListener( "keyup", function( e ) {
+    const tagName = document.getElementById( "mySearch" ).value;
     if ( e.key == "Enter" && ul.style.display == "block" ) {
-        newTag();
+        newTag( tagName );
         document.querySelector( ".tag-list" ).style.display = "none";
         document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
 } );
 
-let currTagList = [];
 function addTag( selectedTag ) {
-    // check that selected tag isn't already active
-    let isActiveTag = false;
-    for ( let i = 0; i < currTagList.length; i++ ) {
-        if ( currTagList[i] === selectedTag.innerHTML ) {
-            isActiveTag = true;
-        }
-    }
-    if ( !isActiveTag ) {
-        const currTags = document.getElementById( "curr-tags" );
-        const newTag = document.createElement( "div" );
+    const currTags = document.getElementById( "curr-tags" );
+    const newTag = document.createElement( "div" );
 
-        newTag.setAttribute( "class", "styled-tags" );
-        newTag.innerHTML = selectedTag.innerHTML;
-        currTags.appendChild( newTag );
-        currTagList.push( newTag.innerHTML );
-    }
+    newTag.innerHTML = selectedTag.innerHTML;
+    newTag.setAttribute( "class", "styled-tags" );
+    newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
+        
+    // Create remove tag button
+    let removeTagBtn = document.createElement( "span" );
+    removeTagBtn.className = "close-tag";
+    removeTagBtn.id = "close-tag-" + newTag.innerHTML;
+    removeTagBtn.innerHTML = "&times;";
+    removeTagBtn.style.color = "#aaa";
+
+    removeTagBtn.addEventListener( "click", () => {
+        // Get the id portion with the tag name
+        document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
+        for ( let i=0; i<currTagList.length; i++ ) {
+            if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
+                currTagList[i] = "";
+            }
+        }
+    } );
+    removeTagBtn.addEventListener( "mouseenter", () => {
+        removeTagBtn.style.color = "black";
+    } );
+    removeTagBtn.addEventListener( "mouseleave", () => {
+        removeTagBtn.style.color = "#aaa";
+    } );
+
+    newTag.appendChild( removeTagBtn );
+    currTags.appendChild( newTag );
 }
 /* END Tag Functions ------------------------------------------------------------------- */
 
@@ -624,7 +666,6 @@ function updateThumbnail( dropZoneElement, file ) {
         else {
             targetDropZone.parentNode.insertBefore( inputTitle, targetDropZone.nextSibling );
         }
-
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
         mydiv.parentNode.insertBefore( newDropZone, mydiv.nextSibling );
@@ -711,9 +752,12 @@ document.addEventListener( "click", function( e ) {
 /* Workspace Manager Modal ----------------------------------------------- */
 const modal = document.getElementById( "resource-modal-div" );
 const openBtn = document.getElementById( "new-element" );
-const closeBtn = document.getElementById( "close" );
+const closeBtns = document.querySelectorAll( ".close" );
 const createDocBtn = document.getElementById( "create-doc-div" );
 const createTopicBtn = document.getElementById( "create-topic-div" );
+const fileUploadBtn = document.getElementById( "file-upload-div" );
+const openTopicBtn = document.getElementById( "open-topic-div" );
+const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
 if( openBtn ) {
@@ -722,17 +766,26 @@ if( openBtn ) {
     };
 }
 
-
 //close the modal
-if( closeBtn ) {
-    closeBtn.onclick = () => {
-        modal.style.display = "none";
-    };
+if( closeBtns ) {
+    closeBtns.forEach( ( btn ) => {
+        btn.onclick = () => {
+            if ( modal.style.display == "block" ) {
+                modal.style.display = "none";
+            }
+            else if ( openTopicModal.style.display == "block" ) {
+                openTopicModal.style.display = "none";
+            }
+        };
+    } );
 }
 
 window.onclick = function( event ) {
     if ( event.target == modal ) {
         modal.style.display = "none";
+    }
+    else if ( event.target == openTopicModal ) {
+        openTopicModal.style.display = "none";
     }
 };
 
@@ -754,21 +807,29 @@ document.addEventListener( "mousemove", function( e ) {
 } );
 
 // option events
-if( createDocBtn ) { 
+if ( createDocBtn ) { 
     createDocBtn.onclick = () => {
         modal.style.display = "none";
-        // createSunEditor();
         createTextArea();
     };
 }
-
-if( createTopicBtn ) {
+if ( createTopicBtn ) {
     createTopicBtn.onclick = () => {
         modal.style.display = "none";
         createTopic();
     };
 }
-
+if ( fileUploadBtn ) {
+    fileUploadBtn.addEventListener( "click", async() => {
+        await window.showOpenFilePicker();
+    } );
+}
+if ( openTopicBtn ) {
+    openTopicBtn.onclick = () => {
+        modal.style.display = "none";
+        openTopicModal.style.display = "block";
+    };
+}
 /* END Workspace Manager Modal ----------------------------------------------- */
 
 
