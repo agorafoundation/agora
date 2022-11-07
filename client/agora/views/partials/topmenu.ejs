@@ -5,7 +5,7 @@
         <i class="fas fa-bars"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive" style="padding-left: 3%;">
-        <ul class="navbar-nav agora-font">
+        <ul class="navbar-nav agora-font" style="display:flex;">
             <%
             if( process.env.AGORA_ABOUT_PAGE == 'true' ) {
             %>
@@ -23,14 +23,15 @@
             }
             %>
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/about">ABOUT</a></li>
-            <% if(!locals.authUser) { %>
-                
-            
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"  href="/signIn" style="margin-left: 55vw">SIGN IN</a></li>
-            <% } else { %>
-            <li class="nav-item mx-0 mx-lg-1" style="margin-left: 90vw;"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: 55vw;" ><img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image"/></a></li>
-            <a style="padding-left: 1.5vw; color:white;"><img src="/assets/img/signout.png" alt="User Dash" title="User Dashboard" class="profile-top-image"/></a>
-            <% } %>
         </ul>
+
+    </div>
+    <div class="navbar-nav agora-font" style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;">
+        <% if(!locals.authUser) { %>
+        <li class="nav-item mx-0 mx-lg-1"style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"  href="/signIn">SIGN IN</a></li>
+        <% } else { %>
+        <li class="nav-item mx-0 mx-lg-1" style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;" ><img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image"/></a></li>
+        <a style="padding-left: 1.5vw; color:white;"><img src="/assets/img/signout.png" alt="User Dash" title="User Dashboard" class="profile-top-image"/></a>
+        <% } %>
     </div>
 </div>
