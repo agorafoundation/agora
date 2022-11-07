@@ -527,20 +527,21 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
 };
 
 const deleteResource = ( id, prefix ) => {
-    if (prefix === "g-" ) {
+    if ( prefix === "g-" ) {
         fetch( "api/v1/auth/goals/" + id, {
             method: "DELETE",
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
-    } else {
+    } 
+    else {
         fetch( "api/v1/auth/topics/" + id, {
             method: "DELETE"
         } )
             .then( response => response.json() )
             .then( response => console.log( JSON.stringify( response ) ) );
     }
-}
+};
 
 /* note-gallery edit modal */
 function viewModal( id, name, desc ) {
@@ -711,13 +712,13 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
     let name = document.getElementById( "note-modal-name" ).value;
-    let desc = document.getElementById( "note-modal-description" ).value
+    let desc = document.getElementById( "note-modal-description" ).value;
     if ( name ) {
         document.getElementById( prefix + "gv-" + nameId ).innerText = name;
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
         document.getElementById( prefix + "gv-" + descId ).innerText = desc;    
 
-        addOrEditResource( prefix, name, desc, descId.substring(10) )
+        addOrEditResource( prefix, name, desc, descId.substring( 10 ) );
 
         closeRenameModal();
     }
@@ -887,7 +888,7 @@ const duplicateGoal = ( e ) => {
     let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
     
     //fetch call to update backend
-    addOrEditResource(prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null);
+    addOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
