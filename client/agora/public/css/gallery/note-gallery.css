@@ -163,7 +163,7 @@
 .list-toggle-btn {
   position: absolute;
   top: 2.2%;
-  right: 17.5%;
+  right: 275px;
   height: 40px;
   width: 30px;
 }
@@ -180,4 +180,8 @@
 .list-view:hover {
   background-color: lightgray;
   cursor: pointer;
+}
+
+.list-view-dropbtn {
+  position: absolute; right: 13%; cursor: pointer;
 }
