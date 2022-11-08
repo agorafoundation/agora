@@ -199,9 +199,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Goal'
+                type: object
+                $ref: '#/components/schemas/Goal/response'
           headers:
             x-agora-message-title:
               schema:
@@ -230,7 +229,7 @@ paths:
           application/json:
             schema: 
               type: object
-              $ref: '#/components/schemas/Goal'
+              $ref: '#/components/schemas/Goal/request'
       responses:
         '201':
           description: New Goal created
@@ -238,7 +237,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal'
+                $ref: '#/components/schemas/Goal/response'
           headers:
             x-agora-message-title:
               schema:
@@ -253,7 +252,7 @@ paths:
           application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal'
+                $ref: '#/components/schemas/Goal/response'
           headers:
             x-agora-message-title:
               schema:
@@ -287,7 +286,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal'
+                $ref: '#/components/schemas/Goal/response'
         headers:
             x-agora-message-title:
               schema:
@@ -321,8 +320,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                $ref: '#/components/schemas/Goal'
+                type: string
+                example: "Success"
         headers:
             x-agora-message-title:
               schema:
@@ -1084,52 +1083,99 @@ components:
       items:
         $ref: '#/components/schemas/Tag'
     Goal:
-      type: object
-      required:
-        - goalName
-      properties:
-        id:
-          type: integer
-          description: Assigned automatically for new goals, used to update existing goal if provided
-          uniqueItems: true
-        version:
-          type: integer
-          description: tracks the changes to goals and is automatically incremented on updates
-        goalName:
-          type: string
-          description: The tag
-        goalDescription:
-          type: string
-          description: Description of the goal
-        goalImage:
-          type: string
-          description: filename of the associated image for the goal
-        active:
-          type: boolean
-          description: Active status, inactive items will not be returned in most queries
-        completable:
-          type: boolean
-          description: Completable goals monitor progress of users through topics
-        visibility:
-          type: integer
-          description: Public = 0, Shared = 1, Private = 0
-        createTime:
-          type: timestamp
-          description: Automatically generated timestamp of record creation
-        ownedBy:
-          type: integer
-          description: Id of the user that first generated the tag
-      example:
-        id: 1
-        version: 1
-        goalName: "Learn how to use Agora"
-        goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-        goalImage: "myImage.png"
-        active: true
-        completable: true
-        visibility: 0
-        createTime: "2022-08-07T06:58:53.744Z"
-        ownedBy: 1
+      request:
+        type: object
+        required:
+          - goalName
+        properties:
+          id:
+            type: integer
+            description: Assigned automatically for new goals, used to update existing goal if provided
+            uniqueItems: true
+          version:
+            type: integer
+            description: tracks the changes to goals and is automatically incremented on updates
+          goalName:
+            type: string
+            description: The tag
+          goalDescription:
+            type: string
+            description: Description of the goal
+          goalImage:
+            type: string
+            description: filename of the associated image for the goal
+          active:
+            type: boolean
+            description: Active status, inactive items will not be returned in most queries
+          completable:
+            type: boolean
+            description: Completable goals monitor progress of users through topics
+          visibility:
+            type: integer
+            description: Public = 0, Shared = 1, Private = 0
+          createTime:
+            type: timestamp
+            description: Automatically generated timestamp of record creation
+          ownedBy:
+            type: integer
+            description: Id of the user that first generated the tag
+        example:
+          goalId: -1
+          goalName: "Learn how to use Agora"
+          goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+          goalImage: "myImage.png"
+          active: true
+          completable: true
+          visibility: 0
+          topics: [2,3]
+      response:
+          type: object
+          required:
+            - goalName
+          properties:
+            id:
+              type: integer
+              description: Assigned automatically for new goals, used to update existing goal if provided
+              uniqueItems: true
+            version:
+              type: integer
+              description: tracks the changes to goals and is automatically incremented on updates
+            goalName:
+              type: string
+              description: The tag
+            goalDescription:
+              type: string
+              description: Description of the goal
+            goalImage:
+              type: string
+              description: filename of the associated image for the goal
+            active:
+              type: boolean
+              description: Active status, inactive items will not be returned in most queries
+            completable:
+              type: boolean
+              description: Completable goals monitor progress of users through topics
+            visibility:
+              type: integer
+              description: Public = 0, Shared = 1, Private = 0
+            createTime:
+              type: timestamp
+              description: Automatically generated timestamp of record creation
+            ownedBy:
+              type: integer
+              description: Id of the user that first generated the tag
+          example:
+            rid: 1
+            id: 1
+            goalVersion: 1
+            goalName: "Learn how to use Agora"
+            goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+            goalImage: "myImage.png"
+            active: true
+            completable: true
+            visibility: 0
+            version: 1
+            createTime: 2022-11-02T19:37:11.672Z
     Goals:
       type: array
       items:
@@ -1183,20 +1229,18 @@ components:
           type: integer
           description: Id of the user that first generated the tag
       example:
-        id: 1
+        topicId: -1
         topicType: 1
         topicName: "Understanding the Agora Dashboard"
         topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
         topicImage: "myImage.png"
-        topicHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
-        assessmentId: 1
+        topicHtml: '<div><img src="myImage.png"></div>'
         hasActivity: false
         hasAssessment: false
-        activityId: 1
+        activityId: -1
+        assessmentId: -1
         active: true
         visibility: 0
-        createTime: "2022-08-07T06:58:53.744Z"
-        ownedBy: 1
     Topics:
       type: array
       items:
@@ -1260,18 +1304,16 @@ components:
           type: integer
           description: Id of the user that first generated the tag
       example:
-        id: 1
+        resourceId: -1
         resourceType: 1
         resourceName: "Dashboard Screenshot"
         resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
-        resourceContentHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
+        resourceContentHtml: '<div><img src="myImage.png"></div>'
         resourceImage: "myImage.png"
         resourceLink: "https://resourcelink.com/"
-        isRequired: 1
+        isRequired: false
         active: true
         visibility: 0
-        createTime: "2022-08-07T06:58:53.744Z"
-        ownedBy: 1
     Resources:
       type: array
       items:
