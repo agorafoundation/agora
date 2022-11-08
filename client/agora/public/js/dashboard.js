@@ -420,7 +420,6 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 }
 
 
-
 //creates a empty topic
 const createNewTopic = async () => {
     
@@ -438,14 +437,6 @@ const createNewTopic = async () => {
     } )
         .then( response => response.json() )
         .then( response => window.location.href = "/topic#t-" + response.topicId );
-
-     
-    
-
-
-    //gets the most recent id
-    //let id = temp[temp.length - 1].topicId;
-    // window.location.href = '/topic#t-' + id;
 };
 
 //creates a empty topic
@@ -465,8 +456,6 @@ const createNewGoal = async () => {
     } )
         .then( response => response.json() )
         .then( response => window.location.href = "/topic#g-" + response.id );
-   
-  
 };
 
 
@@ -813,10 +802,10 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/topic", "_blank" );
+        window.open( "http://localhost:4200/topic#" + usedPrefix + id, "_blank" );
     }
     else {
-        window.location.href = "/topic#t-" + id.substring( 5 ) ;
+        window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
     }
 };
 
