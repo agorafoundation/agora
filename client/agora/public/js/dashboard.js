@@ -838,24 +838,24 @@ var newTabCards = document
 const copyLink = ( e ) => {
     let parentId = getId( e );
 
-    navigator.clipboard.writeText( "http://localhost:4200/note" );
+    let prefix;
+    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+
+    navigator.clipboard.writeText( "http://localhost:4200/topic#" + prefix + parentId );
 
     createToast( "Copied Link!" );
 
     e.stopPropagation();
 };
 
-/**
- * This function was caught by ESLint as a duplicate function.
- * I am not sure why it is here, but I am leaving it here for now.
- * I do not see any calls to this function anywhere in the code. 
- *
+
 var newTabCards = document
     .querySelectorAll( "#copy-link-card" )
     .forEach( ( copyLinkCard ) => {
         copyLinkCard.addEventListener( "click", copyLink );
     } );
-*/
+
+
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
