@@ -853,7 +853,7 @@ const copyLink = ( e ) => {
 };
 
 
-var newTabCards = document
+var copyLinkCards = document
     .querySelectorAll( "#copy-link-card" )
     .forEach( ( copyLinkCard ) => {
         copyLinkCard.addEventListener( "click", copyLink );
