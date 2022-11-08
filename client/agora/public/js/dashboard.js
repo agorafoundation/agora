@@ -463,7 +463,7 @@ const createNewGoal = async () => {
 
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is goal or topic
-const addOrEditResource = ( prefix, name, description, edit ) => {
+const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     let id = -1;
     if ( edit ) {
         id = edit;
@@ -485,7 +485,9 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             } )
         } )
             .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+            .then( response => {
+                return response.id;
+            } );
     //if topic
     } 
     else {
@@ -508,7 +510,9 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             } )
         } )
             .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+            .then( response => {
+                return response.id;
+            } );
     }
 };
 
@@ -704,7 +708,7 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
         document.getElementById( prefix + "gv-" + descId ).innerText = desc;    
 
-        addOrEditResource( prefix, name, desc, descId.substring( 10 ) );
+        duplicateOrEditResource( prefix, name, desc, descId.substring( 10 ) );
 
         closeRenameModal();
     }
@@ -859,7 +863,7 @@ var newTabCards = document
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
-const duplicateGoal = ( e ) => {
+const duplicateGoal = async ( e ) => {
   
     let parentId = getId( e );
    
@@ -874,12 +878,11 @@ const duplicateGoal = ( e ) => {
     let listClone = listParent.cloneNode( true );
    
     //getting the next id to use
-    let newId = checkForNextId();
 
     let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
     
     //fetch call to update backend
-    addOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
+    const newId = await duplicateOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
@@ -969,44 +972,6 @@ const placeElement = (gridElement, listElement, gridContainer, listContainer, pr
         listContainer.insertBefore(listElement, listContainer.querySelector( ".a-topic" ));
     }
 }
-
-//Calculating the id of a new card
-const checkForNextId = () => {
-    var ids = [];
-    document.querySelectorAll( ".countable" ).forEach( ( obj ) => {
-        let temp = obj.id.split( "-" ).pop();
-        ids.push( temp );
-    } );
-    ids.sort();
-
-    const len = ids.length;
-    var done = false;
-    var iterator = 1;
-    var output = 0;
-    if ( ids[0] > 0 ) {
-        output = 0;
-        done = true;
-    }
-    else if ( len === 1 ) {
-        output = ++ids[0];
-        done = true;
-    }
-    else {
-        while ( !done && len > iterator ) {
-            if ( ids[iterator] - ids[iterator - 1] > 1 ) {
-                done = true;
-                output = ++ids[iterator - 1];
-            }
-            else {
-                iterator++;
-            }
-        }
-    }
-    if ( !done ) {
-        output = ++ids[len - 1];
-    }
-    return output;
-};
 
 //handles updating an element's various ids
 const replaceIds = ( element, newId, grid, prefix ) => {
