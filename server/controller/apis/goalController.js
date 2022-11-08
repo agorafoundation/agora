@@ -35,8 +35,6 @@ const goalUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH;
 exports.getAllVisibleGoals = async ( req, res ) => {
     // get all the active goals
     let goals = await goalService.getAllVisibleGoals( req.user.id );
-
-    console.log( "[goalController.getAllVisibleGoals]: " + JSON.stringify( goals ) );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all goals" );
