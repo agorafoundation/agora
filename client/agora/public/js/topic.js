@@ -852,8 +852,8 @@ const idAndFetch = () => {
 }
 
 const fillFields = (title, description, image) => {
-    document.getElementById("workspace-title").value = title;
-    document.getElementById("workspace-desc").value = description;
+    document.getElementById("workspace-title").value = title.trim();
+    document.getElementById("workspace-desc").value = description.trim();
 }
 
 window.addEventListener( 'load', () => {

@@ -697,8 +697,8 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
-    let name = document.getElementById( "note-modal-name" ).value;
-    let desc = document.getElementById( "note-modal-description" ).value;
+    let name = (document.getElementById( "note-modal-name" ).value).trim();
+    let desc = (document.getElementById( "note-modal-description" ).value).trim();
     if ( name ) {
         document.getElementById( prefix + "gv-" + nameId ).innerText = name;
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
@@ -746,7 +746,7 @@ const showDeleteModal = ( e ) => {
     let parentName = document.getElementById( parentNameId ).innerText;
 
     //setting the text inside the delete modal to show user what they're deleting
-    document.getElementById( "to-be-deleted-name" ).innerText = parentName;
+    document.getElementById( "to-be-deleted-name" ).innerText = parentName.trim();
 
     //setting the properties of the confirm button to delete the correct card
     document
@@ -805,6 +805,11 @@ const topicReroute = ( id, newTab, prefix ) => {
         window.open( "http://localhost:4200/topic#" + usedPrefix + id, "_blank" );
     }
     else {
+        /*if (usedPrefix === "-t") {
+            window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
+        } else {
+            window.location.href = "/goal#" + usedPrefix + id.substring( 5 );
+        }*/
         window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
     }
 };
@@ -940,7 +945,7 @@ const duplicateGoal = ( e ) => {
 
     getTopics();
 
-    createToast( "Duplicated " + nameOfClone );
+    createToast( "Duplicated " + nameOfClone.trim() );
 
     e.stopPropagation();
         
