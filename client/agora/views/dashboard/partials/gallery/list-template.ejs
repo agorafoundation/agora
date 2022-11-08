@@ -12,7 +12,7 @@
       if (contentType === "Topic") { %>
 
         <!--Topic List Member -->
-        <li class="list-group-item list-view view-check" id="t-lv-<%= id %>" onclick="topicReroute(id, false)">
+        <li class="list-group-item list-view view-check a-topic" id="t-lv-<%= id %>" onclick="topicReroute(id, false)">
             <span id="t-lv-card-title-<%= id %>"><%=name%></span>
             <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
             <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>

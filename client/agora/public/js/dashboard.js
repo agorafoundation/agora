@@ -937,11 +937,10 @@ const duplicateGoal = ( e ) => {
     //makes the ellipsis of the clone hidden on initialization
     gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
 
-    //adding the new clone to the grid container
-    document.getElementById( "gallery-row" ).insertBefore( gridClone, gridParent.nextSibling );
-
-    //adding the new clone to the list container
-    document.getElementById( "list-column" ).insertBefore( listClone, listParent.nextSibling );
+    //adding element to dom
+    const gridContainer = document.getElementById( "gallery-row" );
+    const listContainer = document.getElementById( "list-column" );
+    placeElement(gridClone, listClone, gridContainer, listContainer, prefix);
 
     getTopics();
 
@@ -957,6 +956,19 @@ var duplicateCards = document
     .forEach( ( duplicateCard ) => {
         duplicateCard.addEventListener( "click", duplicateGoal );
     } );
+
+
+const placeElement = (gridElement, listElement, gridContainer, listContainer, prefix) => {
+    if ( prefix === "g-" ) {
+        gridContainer.insertBefore(gridElement, gridContainer.childNodes[2]);
+
+        listContainer.insertBefore(listElement, listContainer.childNodes[2]);
+    } else {
+        gridContainer.insertBefore(gridElement, gridContainer.querySelector( ".a-topic" ));
+
+        listContainer.insertBefore(listElement, listContainer.querySelector( ".a-topic" ));
+    }
+}
 
 //Calculating the id of a new card
 const checkForNextId = () => {
