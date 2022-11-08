@@ -28,7 +28,15 @@ exports.getAllVisibleGoals = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
-        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        // Why is this returning goal_version & version?? Is it properly filtering by visibility??
+        //const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        
+        //const text = "select * from goals where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id";
+        //const values = [ ownerId, true, 2, 1 ];
+        
+        // When this SQL query is made in pgAdmin, it returns just goalVersion
+        // But when printed in the Controller, it adds another 'version' field??
+        const text = "select * from goals where owned_by = $1 AND active = $2 ORDER BY id";
         const values = [ ownerId, true ];
 
         let goals = [];
@@ -39,7 +47,7 @@ exports.getAllVisibleGoals = async ( ownerId ) => {
             
 
             for( let i=0; i<res.rows.length; i++ ) {
-                goals.push( Goal.ormGoal( res.rows[i] ) );
+                goals.push( Goal.ormGoal( res.rows[i] ) ); // extra 'version' field is being added from here
             }
 
             return goals;
@@ -291,7 +299,7 @@ exports.saveGoal = async ( goal ) => {
     //console.log( "about to save goal " + JSON.stringify( goal ) );
     if( goal ) {
         if( goal.id > 0 ) {
-            console.log( "update" );
+            console.log( "[goalService.saveGoal]: " + goal.goalVersion );
             // update
             let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
             let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
