@@ -1025,7 +1025,10 @@ const getTopics = () => {
     topicArr = document.querySelectorAll( '.query-countable' );
 };
 
-window.onload = getTopics;
+window.addEventListener( 'load', () => {
+    getTopics();
+    toggleGrid();
+})
 
 //what changes the DOM and modifies removed topics depending on search
 //newVal is the input value
@@ -1130,5 +1133,3 @@ const toggleList = () => {
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
 };
-
-window.onload( toggleGrid() );
