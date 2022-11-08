@@ -701,8 +701,8 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
-    let name = (document.getElementById( "note-modal-name" ).value).trim();
-    let desc = (document.getElementById( "note-modal-description" ).value).trim();
+    let name = ( document.getElementById( "note-modal-name" ).value ).trim();
+    let desc = ( document.getElementById( "note-modal-description" ).value ).trim();
     if ( name ) {
         document.getElementById( prefix + "gv-" + nameId ).innerText = name;
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
@@ -943,7 +943,7 @@ const duplicateGoal = async ( e ) => {
     //adding element to dom
     const gridContainer = document.getElementById( "gallery-row" );
     const listContainer = document.getElementById( "list-column" );
-    placeElement(gridClone, listClone, gridContainer, listContainer, prefix);
+    placeElement( gridClone, listClone, gridContainer, listContainer, prefix );
 
     getTopics();
 
@@ -961,17 +961,18 @@ var duplicateCards = document
     } );
 
 
-const placeElement = (gridElement, listElement, gridContainer, listContainer, prefix) => {
+const placeElement = ( gridElement, listElement, gridContainer, listContainer, prefix ) => {
     if ( prefix === "g-" ) {
-        gridContainer.insertBefore(gridElement, gridContainer.childNodes[2]);
+        gridContainer.insertBefore( gridElement, gridContainer.childNodes[2] );
 
-        listContainer.insertBefore(listElement, listContainer.childNodes[2]);
-    } else {
-        gridContainer.insertBefore(gridElement, gridContainer.querySelector( ".a-topic" ));
+        listContainer.insertBefore( listElement, listContainer.childNodes[2] );
+    } 
+    else {
+        gridContainer.insertBefore( gridElement, gridContainer.querySelector( ".a-topic" ) );
 
-        listContainer.insertBefore(listElement, listContainer.querySelector( ".a-topic" ));
+        listContainer.insertBefore( listElement, listContainer.querySelector( ".a-topic" ) );
     }
-}
+};
 
 //handles updating an element's various ids
 const replaceIds = ( element, newId, grid, prefix ) => {
@@ -1010,7 +1011,7 @@ const getTopics = () => {
 window.addEventListener( 'load', () => {
     getTopics();
     toggleGrid();
-})
+} );
 
 //what changes the DOM and modifies removed topics depending on search
 //newVal is the input value
