@@ -20,7 +20,9 @@ router.use( function ( req, res, next ) {
     // This is the case if using UI.
     const authTest = req.session.isAuth;
     if( authTest ){
-        middlewareRevison( req );
+        // TODO: phase out session authUser, instead using req.user
+        // both are still defined for now
+        req.user = req.session.authUser;
         next();
         return;
     }
@@ -50,7 +52,7 @@ router.use( function ( req, res, next ) {
                 // TODO future role specific verification can go here.
 
                 // Middleware complete back to called route.
-                middlewareRevison( req );
+                
                 next( );
 
             }
@@ -85,17 +87,6 @@ router.use( function ( req, res, next ) {
     */
 
 } );
-
-/**
- * Middleware to update the session and user objects
- * this allows us to use either req.user or req.session.authUser
- */
-function middlewareRevison( req ) {
-    req.user = req.session.authUser ?? req.user ?? undefined;
-    console.log( "req.user.id: " + req.user.id );
-    console.log( "req.session.authUser.id: " + req.session.authUser.id );
-}
-
 
 /**
  * Tag APIs
