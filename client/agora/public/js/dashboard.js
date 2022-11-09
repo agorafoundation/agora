@@ -1,3 +1,18 @@
+//this exists for to create rudimentary tests for the API on the web page
+let btn = document.createElement( "button" );
+btn.innerHTML = "discussion";
+btn.type = "submit";
+btn.onclick = function () {
+    alert( "Button is clicked" );
+    const options = {
+        method: 'GET'
+    };
+    fetch( '/api/v1/auth/discussions/goal/1', options );
+};
+document.body.appendChild( btn );
+
+
+
 /**
  * Expand metadata area
  */
