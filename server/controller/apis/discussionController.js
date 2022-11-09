@@ -53,10 +53,7 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
     let discussion = await discussionService.getDiscussion( "topic", id, authUserId );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -77,22 +74,12 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    // if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
-    //     const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
-    //     res.set( "x-agora-message-title", "Bad Request" );
-    //     res.set( "x-agora-message-detail", "discussion_text not provided" );
-    //     return res.status( 400 ).json( message );
-    // }
-
     const id = req.params.id;
 
     let discussion = await discussionService.updateDiscussion( "goal", id, authUserId, req.body );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -111,22 +98,12 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "discussion_text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     const id = req.params.id;
 
     let discussion = await discussionService.updateDiscussion( "topic", id, authUserId, req.body );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -147,22 +124,12 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if( req.body.text === undefined || req.body.text === null || req.body.text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.text );
+    let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.discussion_text );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Could not create discussion" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -181,23 +148,12 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if( req.body.text === undefined || req.body.text === null || req.body.text === "" ) {
-        const message = ApiMessage.createNotFound( "Discussions" );
-        throw message;
-        // res.set( "x-agora-message-title", "Bad Request" );
-        // res.set( "x-agora-message-detail", "text not provided" );
-        // return res.status( 400 ).json( message );
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "topic", id, authUserId, req.body.text );
+    let discussion = await discussionService.createDiscussion( "topic", id, authUserId, req.body.discussion_text );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Could not create discussion" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -217,35 +173,10 @@ exports.createComment = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    if( req.body.parent_id < 0 ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_id not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "parent_id not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    if( req.body.parent_type !== "goal" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/ ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_type not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "parent_type not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "comment_text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     let comment = await discussionService.createComment( authUserId, req.body );
 
-    // not sure if this is possible, so I don't really know what the message should be
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "Comment could not be created" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "Comment could not be created" );
-        return res.status( 400 ).json( message );
+        return errorController( ApiMessage.createInternalServerError(), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -263,13 +194,6 @@ exports.editComment = async ( req, res ) => {
     }
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.id;
-    }
-
-    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "comment_text not provided" );
-        return res.status( 400 ).json( message );
     }
 
     let comment = await discussionService.editComment( commentId, authUserId, req.body );
@@ -301,10 +225,7 @@ exports.deleteComment = async ( req, res ) => {
     let comment = await discussionService.deleteComment( commentId, authUserId );
 
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     
@@ -329,20 +250,10 @@ exports.setRating = async ( req, res ) => {
     const commentId = req.params.commentId;
     const userRating = req.body.rating;
 
-    if( typeof userRating !== "boolean" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "rating not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "rating not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     let rating = await discussionService.setCommentRating( commentId, userRating, authUserId );
 
     if( !rating ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not created" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found, rating not created" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );
@@ -365,10 +276,7 @@ exports.removeRating = async ( req, res ) => {
     let rating = await discussionService.removeCommentRating( commentId, authUserId );
 
     if( !rating ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not removed" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found, rating not removed" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );
