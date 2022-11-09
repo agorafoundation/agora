@@ -13,19 +13,10 @@ const {errorController} = require( "./apiErrorController" );
 
 exports.getDiscussionByGoalId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const id = req.params.id;
 
     // get the discussion by goal id
-    let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
+    let discussion = await discussionService.getDiscussion( "goal", id, req.user.id );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -37,20 +28,11 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
 };
 
 exports.getDiscussionByTopicId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
     
     const id = req.params.id;
 
     // get the discussion by topic id
-    let discussion = await discussionService.getDiscussion( "topic", id, authUserId );
+    let discussion = await discussionService.getDiscussion( "topic", id, req.user.id );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -65,18 +47,9 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
 
 exports.updateDiscussionByGoalId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "goal", id, authUserId, req.body );
+    let discussion = await discussionService.updateDiscussion( "goal", id, req.user.id, req.body );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -89,18 +62,9 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
 
 exports.updateDiscussionByTopicId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "topic", id, authUserId, req.body );
+    let discussion = await discussionService.updateDiscussion( "topic", id, req.user.id, req.body );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -115,18 +79,9 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
 exports.createDiscussionByGoalId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.discussion_text );
+    let discussion = await discussionService.createDiscussion( "goal", id, req.user.id, req.body.discussion_text );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -139,18 +94,9 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
 
 exports.createDiscussionByTopicId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "topic", id, authUserId, req.body.discussion_text );
+    let discussion = await discussionService.createDiscussion( "topic", id, req.user.id, req.body.discussion_text );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -164,16 +110,8 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
 // Comments
 
 exports.createComment = async ( req, res ) => {
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    let comment = await discussionService.createComment( authUserId, req.body );
+    let comment = await discussionService.createComment( req.user.id, req.body );
 
     if( !comment ) {
         return errorController( ApiMessage.createInternalServerError(), res );
@@ -187,16 +125,8 @@ exports.createComment = async ( req, res ) => {
 exports.editComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    let comment = await discussionService.editComment( commentId, authUserId, req.body );
+    let comment = await discussionService.editComment( commentId, req.user.id, req.body );
 
     if( !comment ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
@@ -213,16 +143,8 @@ exports.editComment = async ( req, res ) => {
 exports.deleteComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    let comment = await discussionService.deleteComment( commentId, authUserId );
+    let comment = await discussionService.deleteComment( commentId, req.user.id );
 
     if( !comment ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
@@ -238,19 +160,10 @@ exports.deleteComment = async ( req, res ) => {
 
 exports.setRating = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const commentId = req.params.commentId;
     const userRating = req.body.rating;
 
-    let rating = await discussionService.setCommentRating( commentId, userRating, authUserId );
+    let rating = await discussionService.setCommentRating( commentId, userRating, req.user.id );
 
     if( !rating ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
@@ -262,18 +175,10 @@ exports.setRating = async ( req, res ) => {
 };
 
 exports.removeRating = async ( req, res ) => {
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
     const commentId = req.params.commentId;
 
-    let rating = await discussionService.removeCommentRating( commentId, authUserId );
+    let rating = await discussionService.removeCommentRating( commentId, req.user.id );
 
     if( !rating ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
