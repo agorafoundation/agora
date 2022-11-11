@@ -34,7 +34,7 @@ router.route( '/' )
     );
 
 // goals /api/v1/auth/goals
-router.route( '/:id' )
+router.route( '/:goalId' )
     // get a visible goal by id
     .get( async ( req, res ) => {
         goalController.getGoalById( req, res );
