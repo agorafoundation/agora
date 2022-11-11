@@ -827,38 +827,39 @@ const idPattern = /-([0-9]+)/;
 const idAndFetch = () => {
 
     const url = window.location.href;
-    const id = idPattern.exec(url)[1];
-    const isTopic = prefixPattern.test(url);
+    const id = idPattern.exec( url )[1];
+    const isTopic = prefixPattern.test( url );
 
-    if (isTopic) {
+    if ( isTopic ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },
         } )
             .then( response => response.json() )
             .then( response => {
-                fillFields(response.topicName, response.topicDescription, response.topicImage);
-            });
-    } else {
+                fillFields( response.topicName, response.topicDescription, response.topicImage );
+            } );
+    } 
+    else {
         fetch( "api/v1/auth/goals/" + id, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },
         } )
             .then( response => response.json() )
             .then( response => {
-                fillFields(response.goalName, response.goalDescription, response.goalImage);
-            });
+                fillFields( response.goalName, response.goalDescription, response.goalImage );
+            } );
     }
-}
+};
 
-const fillFields = (title, description, image) => {
-    document.getElementById("workspace-title").value = title.trim();
-    document.getElementById("workspace-desc").value = description.trim();
-}
+const fillFields = ( title, description, image ) => {
+    document.getElementById( "workspace-title" ).value = title.trim();
+    document.getElementById( "workspace-desc" ).value = description.trim();
+};
 
 window.addEventListener( 'load', () => {
     idAndFetch();
-});
+} );
 
 
 
