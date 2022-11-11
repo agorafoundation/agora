@@ -162,9 +162,9 @@ app.use( "/api/v1/auth", apiAuthRoutes );
 const apiUnauthRoutes = require( "./routes/apiUnauthRoutes" );
 app.use( "/api/v1/open", apiUnauthRoutes );
 
-// // goal
-// let goalRoutes = require('./routes/community/goalRoutes');
-// app.use('/community/goal', goalRoutes);
+// // workspace
+// let workspaceRoutes = require('./routes/community/workspaceRoutes');
+// app.use('/community/workspace', workspaceRoutes);
 
 // // topic
 // let topicRoutes = require('./routes/community/topicRoutes');

@@ -92,10 +92,10 @@ const tagRoutes = require( './apis/tagRoutes' );
 router.use( '/tags', tagRoutes );
 
 /**
- * Goal APIs
+ * Workspace APIs
  */
-const goalRoutes = require( './apis/goalRoutes' );
-router.use( '/goals', goalRoutes );
+const workspaceRoutes = require( './apis/workspaceRoutes' );
+router.use( '/workspaces', workspaceRoutes );
 
 /**
  * Topic APIs

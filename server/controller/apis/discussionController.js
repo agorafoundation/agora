@@ -10,7 +10,7 @@ const ApiMessage = require( "../../model/util/ApiMessage" );
 
 // Get
 
-exports.getDiscussionByGoalId = async ( req, res ) => {
+exports.getDiscussionByWorkspaceId = async ( req, res ) => {
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -23,8 +23,8 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    // get the discussion by goal id
-    let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
+    // get the discussion by workspace id
+    let discussion = await discussionService.getDiscussion( "workspace", id, authUserId );
 
     if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
@@ -68,7 +68,7 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
 
 // Update
 
-exports.updateDiscussionByGoalId = async ( req, res ) => {
+exports.updateDiscussionByWorkspaceId = async ( req, res ) => {
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -88,7 +88,7 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "goal", id, authUserId, req.body );
+    let discussion = await discussionService.updateDiscussion( "workspace", id, authUserId, req.body );
 
     if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
@@ -138,7 +138,7 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
 // Create
 
-exports.createDiscussionByGoalId = async ( req, res ) => {
+exports.createDiscussionByWorkspaceId = async ( req, res ) => {
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -158,7 +158,7 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.text );
+    let discussion = await discussionService.createDiscussion( "workspace", id, authUserId, req.body.text );
 
     if( !discussion ) {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
@@ -225,7 +225,7 @@ exports.createComment = async ( req, res ) => {
         return res.status( 400 ).json( message );
     }
 
-    if( req.body.parent_type !== "goal" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/ ) {
+    if( req.body.parent_type !== "workspace" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/ ) {
         const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_type not provided" );
         res.set( "x-agora-message-title", "Bad Request" );
         res.set( "x-agora-message-detail", "parent_type not provided" );

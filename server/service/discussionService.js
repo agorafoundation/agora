@@ -6,7 +6,7 @@ const db = require( "../db/connection" );
 exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
 
     // this is safe because we know the routes that call this function on use these two
-    const parentTable = type === "goal" ? "goals" : "topics";
+    const parentTable = type === "workspace" ? "workspaces" : "topics";
 
     const text = `
         INSERT INTO discussions (
@@ -94,7 +94,7 @@ exports.updateDiscussion = async ( type, id, userId, updatedDiscussion ) => {
             discussion_text: updatedDiscussion.discussion_text
         };
 
-        // TODO: include auth verification in this, userId must match the goal or topic owner
+        // TODO: include auth verification in this, userId must match the workspace or topic owner
         // Should rely on other teams to implement this function
         const text = `
             UPDATE discussions

@@ -18,19 +18,19 @@ router.use( bodyParser.json() );
 
 // controllers
 const discussionController = require( '../../controller/apis/discussionController' ); 
-// /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
-// discussions /api/v1/auth/discussions/{goal | topic}/:id
-router.route( '/goal/:id' )
-    // get a discussion based off goal id
+// /api/v1/auth/discussions/workspace/4 req.params.type === "workspace" req.params.id === 4
+// discussions /api/v1/auth/discussions/{workspace | topic}/:id
+router.route( '/workspace/:id' )
+    // get a discussion based off workspace id
     .get( async ( req, res ) => {
-        discussionController.getDiscussionByGoalId( req, res );
+        discussionController.getDiscussionByWorkspaceId( req, res );
     } )
-    // update a discussion based off goal id
+    // update a discussion based off workspace id
     .patch( async ( req, res ) => { 
-        discussionController.updateDiscussionByGoalId( req, res );
+        discussionController.updateDiscussionByWorkspaceId( req, res );
     } )
     .post( async ( req, res ) => {
-        discussionController.createDiscussionByGoalId( req, res );
+        discussionController.createDiscussionByWorkspaceId( req, res );
     } );
 
 router.route( '/topic/:id' )

@@ -19,7 +19,7 @@
 
             <div class="container">
                 
-                <h3 class="text-secondary">Goals</h3>
+                <h3 class="text-secondary">Workspaces</h3>
                 
                 <div class="divider-custom">
                 </div>
@@ -29,23 +29,23 @@
                     <div id="story1" class="row justify-content-left">
 
                         <div class="col-lg-3">
-                            <a class="btn btn-primary" href="/a/goal/0" >Create a Goal</a>
+                            <a class="btn btn-primary" href="/a/workspace/0" >Create a Workspace</a>
                             <hr />
-                            <h4 class="text-secondary">Your Goals:</h4>
+                            <h4 class="text-secondary">Your Workspaces:</h4>
                             
                             <%
-                            if(ownerGoals && ownerGoals.length > 0) {
-                                for(let i=0; i < ownerGoals.length; i++) {
-                                    if(ownerGoals[i].active) {
+                            if(ownerWorkspaces && ownerWorkspaces.length > 0) {
+                                for(let i=0; i < ownerWorkspaces.length; i++) {
+                                    if(ownerWorkspaces[i].active) {
                                         %>
-                                        <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a>
+                                        <a class="text-primary" href="/a/workspace/<%- ownerWorkspaces[i].id %>" ><%- ownerWorkspaces[i].workspaceName %></a>
                                         <br />
                                         <%
                                     }
                                     else {
                                         %>
                                         <span style="color: red;">{Inactive}
-                                        <a class="text-primary" href="/a/goal/<%- ownerGoals[i].id %>" ><%- ownerGoals[i].goalName %></a></span>
+                                        <a class="text-primary" href="/a/workspace/<%- ownerWorkspaces[i].id %>" ><%- ownerWorkspaces[i].workspaceName %></a></span>
                                         <br />
                                         <%
                                     }
@@ -61,7 +61,7 @@
                             
                             <section>
 
-                                <h4 class="text-secondary">Goal</h4>
+                                <h4 class="text-secondary">Workspace</h4>
 
                                 <% if(!!locals.message){ %>
                                     <div class="alert-message alert-message-warning" role="alert">
@@ -70,47 +70,47 @@
                                     </div>
                                 <% } 
                                 
-                                if(goal) {
+                                if(workspace) {
                                     %>
-                                    <form action="/a/goal" id="goalForm" enctype="multipart/form-data" method="POST">
+                                    <form action="/a/workspace" id="workspaceForm" enctype="multipart/form-data" method="POST">
                                         <div class="form-group">
-                                            <input type="hidden" name="goalId" value="<%- goal.id %>" />
+                                            <input type="hidden" name="workspaceId" value="<%- workspace.id %>" />
                                             <fieldset class="form-group row">
                                                 <legend class="col-form-legend col-sm-2">Visibility</legend>
                                                 <div class="col-sm-10 form-check">
                                                     <div class="form-check form-check-inline">
-                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="Private" id="goalVisibilityPrivate" />
+                                                        <input type="radio" class="radio-inline" name="workspaceVisibility" value="Private" id="workspaceVisibilityPrivate" />
                                                         <label class="form-check-label" for="inlineRadio1">Private</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="Shared" id="goalVisibilityShared" />
+                                                        <input type="radio" class="radio-inline" name="workspaceVisibility" value="Shared" id="workspaceVisibilityShared" />
                                                         <label class="form-check-label" for="inlineRadio2">Shared</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input type="radio" class="radio-inline" name="goalVisibility" value="goalVisibilityPublic" id="goalVisibilityPublic" checked />
+                                                        <input type="radio" class="radio-inline" name="workspaceVisibility" value="workspaceVisibilityPublic" id="workspaceVisibilityPublic" checked />
                                                         <label class="form-check-label" for="inlineRadio3">Public</label>
                                                     </div>
                                                 </div>
                                                 
                                             </fieldset>
 
-                                            Version: <input type="input" class="form-control form-control-lg" name="goalVersion" value="<%- goal.goalVersion %>" id="goalVersion" placeholder="Version" disabled>
-                                            Name: <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Name" required>
-                                            Desciption: <input type="input" class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description">
-                                            Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- goal.goalImage %>" />
+                                            Version: <input type="input" class="form-control form-control-lg" name="workspaceVersion" value="<%- workspace.workspaceVersion %>" id="workspaceVersion" placeholder="Version" disabled>
+                                            Name: <input type="input" class="form-control form-control-lg" name="workspaceName" value="<%- workspace.workspaceName %>" id="workspaceName" placeholder="Name" required>
+                                            Desciption: <input type="input" class="form-control form-control-lg" name="workspaceDescription" value="<%- workspace.workspaceDescription %>" id="workspaceDescription" placeholder="Description">
+                                            Image: <img class="img-supersmall" src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- workspace.workspaceImage %>" />
                                             <div class="mb-2">
-                                                <label for="formFile" class="form-label">Upload an image for this goal (1MB Max size)</label>
-                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- goal.goalImage %>" name="goalImage">
+                                                <label for="formFile" class="form-label">Upload an image for this workspace (1MB Max size)</label>
+                                                <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- workspace.workspaceImage %>" name="workspaceImage">
                                             </div>
-                                            Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> /><br />
-                                            Completable: <input type="checkbox" class="" id="goalCompletable" name="goalCompletable" <%- (goal.completable)?'checked':'' %> />
+                                            Active: <input type="checkbox" class="" id="workspaceActive" name="workspaceActive" <%- (workspace.active)?'checked':'' %> /><br />
+                                            Completable: <input type="checkbox" class="" id="workspaceCompletable" name="workspaceCompletable" <%- (workspace.completable)?'checked':'' %> />
                                             <br />
                                             <br />
                                             
                                             <%- include('./partials/pathway') %>
 
                                         </div>
-                                        <button type="submit" id="goalButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
+                                        <button type="submit" id="workspaceButton" class="btn btn-primary btn-lg btn-block">Save Information</button>
                                         <br />
                                     </form>
                                     <%

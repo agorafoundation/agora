@@ -30,7 +30,7 @@ let TOPIC_PATH = process.env.TOPIC_IMAGE_PATH;
 // topic file path
 const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
-// set the max image size for avatars and topic, topic and goal icons
+// set the max image size for avatars and topic, topic and workspace icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 

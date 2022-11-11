@@ -28,7 +28,7 @@
 
                 <div class="divider-custom">
                 </div>
-                <a href="/community/goal/<%- goalId %>">Back to Goal</a> <%- (!!hasAccess)?'<span style="color:green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Enrolled]</span>':'' %>
+                <a href="/community/workspace/<%- workspaceId %>">Back to Workspace</a> <%- (!!hasAccess)?'<span style="color:green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Enrolled]</span>':'' %>
                 <h2>Topic: <span class="text-primary" ><%- (!!topic)?topic.topicName:'' %></span></h2>
                 <% if(!!locals.message){ %>
                     <div class="alert-message alert-message-success" role="alert">
@@ -44,7 +44,7 @@
                         <div class="col-lg-4">
                             <%- include('./partials/topic-enrollment-options'); %>
                             <input type="hidden" id="currentStepField" value="<%- (!!currentStep)?currentStep:'' %>" />
-                            <input type="hidden" id="goalIdField" value="<%- (!!goalId)?goalId:'' %>" />
+                            <input type="hidden" id="workspaceIdField" value="<%- (!!workspaceId)?workspaceId:'' %>" />
                             <input type="hidden" id="topicIdField" value="<%- (!!topic)?topic.id:'' %>" />
                             <%- (!!hasAccess)?include('./partials/topic-navigation'):''; %>
                             

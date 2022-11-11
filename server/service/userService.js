@@ -15,7 +15,7 @@ const UserRole = require( "../model/userRole" );
 const Event = require( '../model/event' );
 
 // import services
-const goalService = require( "./goalService" );
+const workspaceService = require( "./workspaceService" );
 const topicService = require( "./topicService" );
 const productService = require( "./productService" );
 
@@ -296,12 +296,12 @@ exports.getActiveUserById = async function( id ) {
             user.codebot = await productService.verifyUserCodeBotPurchase( user );
 
             // get enrolled paths for user, 
-            //let paths = await goalService.getActiveEnrolledGoalsForUserId(user.id, false);
+            //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
 
             // get completed paths for the user
-            //let completedPaths = await goalService.getActiveEnrolledGoalsForUserId(user.id, true);
+            //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
 
-            let enrollments = await goalService.getActiveEnrollmentsForUserId( user.id );
+            let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
 
             // get enrolled topics for user
             let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    
@@ -420,12 +420,12 @@ exports.setUserSession = async function( email ) {
     user.roles = userRoles;
 
     // get enrolled paths for user, 
-    //let paths = await goalService.getActiveEnrolledGoalsForUserId(user.id, false);
+    //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
 
     // get completed paths for the user
-    //let completedPaths = await goalService.getActiveEnrolledGoalsForUserId(user.id, true);
+    //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
 
-    let enrollments = await goalService.getActiveEnrollmentsForUserId( user.id );
+    let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
 
     // get enrolled topics for user
     let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    

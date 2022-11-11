@@ -352,7 +352,7 @@ window.addEventListener( 'load', () => {
 
     if( document.getElementById( 'currentStepField' ) ) {
         let currentStep = document.getElementById( 'currentStepField' ).value;
-        let goalId = document.getElementById( 'goalIdField' ).value;
+        let workspaceId = document.getElementById( 'workspaceIdField' ).value;
         let topicId = document.getElementById( 'topicIdField' ).value;
         //console.log(currentStep);
         switch( currentStep ) {
@@ -634,7 +634,7 @@ window.addEventListener( 'load', () => {
     }
 
     /**
-     * Drag and drop for pathway (topics related to goals) 
+     * Drag and drop for pathway (topics related to workspaces) 
      * 
      */
     if( document.getElementById( 'pathway-draggable' ) ) {
@@ -662,14 +662,14 @@ window.addEventListener( 'load', () => {
     }
     
     /**
-     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * When the workspace form is submitted find all the selected topics and populate the pathway hidden form field
      * so that the data can pass as part of the form.
      */
-    if( document.getElementById( 'goalButton' ) ) {
+    if( document.getElementById( 'workspaceButton' ) ) {
         /**
          * Parses selected topics and creates list to send to server along with form data
          */
-        document.getElementById( 'goalButton' ).addEventListener( 'click', () => {
+        document.getElementById( 'workspaceButton' ).addEventListener( 'click', () => {
             
             // get the field to add the list to
             let pathway = document.getElementById( 'pathway' );
@@ -690,7 +690,7 @@ window.addEventListener( 'load', () => {
     }
 
     /**
-     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * When the workspace form is submitted find all the selected topics and populate the pathway hidden form field
      * so that the data can pass as part of the form.
      */
     if( document.getElementById( 'topicButton' ) ) {
