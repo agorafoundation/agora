@@ -455,7 +455,7 @@ const createNewGoal = async () => {
         } )
     } )
         .then( response => response.json() )
-        .then( response => window.location.href = "/topic#g-" + response.id );
+        .then( response => window.location.href = "/topic#g-" + response.goalId );
 };
 
 
