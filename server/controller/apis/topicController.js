@@ -13,6 +13,7 @@ let path = require( 'path' );
 const topicService = require( '../../service/topicService' );
 const assessmentService = require( '../../service/assessmentService' );
 const activityService = require( '../../service/activityService' );
+const resourceService = require ( '../../service/resourceService' );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -82,6 +83,56 @@ exports.getAllPublicTopics = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Topic not found" );
         res.status( 404 ).json( message );
     }
+};
+
+exports.getAllResourcesForTopicId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if( authUserId > 0 ){
+
+        // Check if valid topicId given.
+        let topic = await topicService.getTopicById( req.params.topicId, authUserId );
+        if( topic ) {
+
+            console.log( topic );
+            let resourcesList = [];
+
+            const resourceIds = [ 7, 8, 9 ]; // Change this to topic.resources once db change goes through.
+
+            for ( let index in resourceIds ) {
+                console.log( resourceIds[index] );
+                const resource = await resourceService.getResourceById( resourceIds[index], false );
+
+                if ( resource ){
+                    resourcesList.push( resourcesList );
+                    // console.log( JSON.stringify( resource ) ); 
+                }
+                else {
+                    console.log( "Error retrieving resource " + resourceIds[index] + "\n" );
+                }
+            }
+
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( topic ); // TODO: Figure out why I can't put resourcesList in here.
+        }
+
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Topic not found" );
+            res.status( 404 ).json( message );
+        }
+    }
+    
 };
 
 exports.getTopicById = async ( req, res ) => {
