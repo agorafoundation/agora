@@ -336,6 +336,8 @@ function checkboxClick( e ) {
 
 
 window.addEventListener( 'load', () => {
+    let id = window.location.hash;
+    console.log( id );
     // look for any accordions, apply click event to open
     if( document.getElementsByClassName( 'accordion-container' ) ) {
         const accordion = document.getElementsByClassName( 'accordion' );

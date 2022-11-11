@@ -420,6 +420,58 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 }
 
 
+
+//creates a empty topic
+const createNewTopic = async () => {
+    
+    const temp = fetch( "api/v1/auth/topics", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( {
+            "topicId": -1,
+            "topicType": 1,
+            "topicName": "Untitled",
+            "topicDescription": "",
+            "active": true,
+            "visibility": 0,
+        } )
+    } )
+        .then( response => response.json() )
+        .then( response => window.location.href = "/topic#t-" + response.topicId );
+
+     
+    
+
+
+    //gets the most recent id
+    //let id = temp[temp.length - 1].topicId;
+    // window.location.href = '/topic#t-' + id;
+};
+
+//creates a empty topic
+const createNewGoal = async () => {
+    fetch( "api/v1/auth/goals", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "goalId": -1,
+            "goalName": "Untitled",
+            "goalDescription": "",
+            "goalImage": "myImage.png",
+            "active": true,
+            "completable": true,
+            "visibility": 0,
+        } )
+    } )
+        .then( response => response.json() )
+        .then( response => window.location.href = "/topic#g-" + response.id );
+   
+  
+};
+
+
+
+
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is goal or topic
 const addOrEditResource = ( prefix, name, description, edit ) => {
@@ -761,10 +813,10 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/note", "_blank" );
+        window.open( "http://localhost:4200/topic", "_blank" );
     }
     else {
-        location.href = '/note';
+        window.location.href = "/topic#t-" + id.substring( 5 ) ;
     }
 };
 
