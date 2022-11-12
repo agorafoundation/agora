@@ -123,6 +123,15 @@ function createTopic() {
     let topicContent = document.createElement( "div" );
     topicContent.className = "topic-content";
 
+    let topicTitle = document.createElement( "input" );
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.id = "topic-title" + currTopicID;
+    topicTitle.placeholder = "Topic " + currTopicID;
+
+    let topicDivider = document.createElement( "div" );
+    topicDivider.id = "topic-divider";
+
     let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + currTopicID;
     resourcesZone.className = "resources-zone";
@@ -157,7 +166,7 @@ function createTopic() {
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        }
+        } 
         else {
             openTab( newTab.id );
         }
@@ -168,6 +177,8 @@ function createTopic() {
 
     // Append all elements accordingly
     newTab.appendChild( topicContent );
+    topicContent.appendChild( topicTitle );
+    topicContent.appendChild( topicDivider );
     topicContent.appendChild( resourcesZone );
     resourcesZone.appendChild( newDropZone );
     resourcesZone.appendChild( emptyDropZone );
@@ -636,7 +647,7 @@ function updateThumbnail( dropZoneElement, file ) {
         activeHeightObj[tabName] += 500;
     }
     else {
-        thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
+        // thumbnailElement.style.backgroundImage = 'url()';
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
@@ -745,6 +756,23 @@ document.addEventListener( "click", function( e ) {
         document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
+
+    if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
+        if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
+            // change the tab name to the new topic title
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+        } 
+        else {
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Topic " + tabName.slice( -1 );
+        }
+
+        // replace the close tab button
+        let closeTabBtn = document.createElement( "span" );
+        closeTabBtn.className = "close-tab";
+        closeTabBtn.id = "close-tab" + tabName.slice( -1 );
+        closeTabBtn.innerHTML = "&times;";
+        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+    }
 } );
 
 
@@ -821,7 +849,16 @@ if ( createTopicBtn ) {
 }
 if ( fileUploadBtn ) {
     fileUploadBtn.addEventListener( "click", async() => {
-        await window.showOpenFilePicker();
+        let promise =  new Promise( ( resolve ) => {
+            window.showOpenFilePicker();
+            resolve( "file upload" );
+        } );
+
+        promise.then(
+            ( value ) => {
+                console.log( value );
+            }
+        );
     } );
 }
 if ( openTopicBtn ) {
