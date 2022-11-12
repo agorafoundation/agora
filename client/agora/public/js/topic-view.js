@@ -127,7 +127,7 @@ function createTopic() {
     topicTitle.type = "text";
     topicTitle.className = "topic-title";
     topicTitle.id = "topic-title" + currTopicID;
-    topicTitle.placeholder = "Topic " + currTopicID;
+    topicTitle.placeholder = "Untitled";
 
     let topicDivider = document.createElement( "div" );
     topicDivider.id = "topic-divider";
@@ -154,7 +154,7 @@ function createTopic() {
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + currTopicID;
-    tabBtn.innerHTML = "Topic " + currTopicID;
+    tabBtn.innerHTML = "Untitled";
 
     // Create close tab button
     let closeTabBtn = document.createElement( "span" );
@@ -268,13 +268,13 @@ document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
         }
     }
     // Always show new tag option
-    document.querySelector( "#new-tag-element" ).style.display = "block";
+    // document.querySelector( "#new-tag-element" ).style.display = "block";
 } );
 
-document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
-    const tagName = document.getElementById( "mySearch" ).value;
-    newTag( tagName );
-} );
+// document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
+//     const tagName = document.getElementById( "mySearch" ).value;
+//     newTag( tagName );
+// } );
 
 let currTagList = [];
 function newTag( tagName ) {
@@ -319,7 +319,7 @@ document.addEventListener( "keyup", function( e ) {
     if ( e.key == "Enter" && ul.style.display == "block" ) {
         newTag( tagName );
         document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
+        // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
 } );
@@ -748,14 +748,14 @@ document.addEventListener( "click", function( e ) {
     // close tag list elements
     if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
         document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
+        // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
-    if ( document.querySelector( "#new-tag-element" ) && document.querySelector( "#new-tag-element" ).style.display == "block" ) {
-        document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
-        document.querySelector( "#mySearch" ).value = "";
-    }
+    // if ( document.querySelector( "#new-tag-element" ) && document.querySelector( "#new-tag-element" ).style.display == "block" ) {
+    //     document.querySelector( ".tag-list" ).style.display = "none";
+    //     document.querySelector( "#new-tag-element" ).style.display = "none";
+    //     document.querySelector( "#mySearch" ).value = "";
+    // }
 
     if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
         if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
@@ -763,7 +763,7 @@ document.addEventListener( "click", function( e ) {
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
         } 
         else {
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Topic " + tabName.slice( -1 );
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
         }
 
         // replace the close tab button
