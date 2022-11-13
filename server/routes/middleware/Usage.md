@@ -36,11 +36,11 @@ the validate function in this folder utilizes a package called zod to verify the
 
 The corresponding zod schema to match the expect json body is
 ```js
-const z = require("zod")
+const { z } = require( 'zod' );
 /*---------Import Above----------*/
 z.object({
   discussion_text: z.string()
-})
+});
 ```
 
 This is only a basic example and zod offers support for many other data types and requirements, like length of a string, or min and max of a number. Read more about it here: https://zod.dev/
