@@ -292,8 +292,8 @@ exports.saveGoal = async ( goal ) => {
     //console.log( "about to save goal " + JSON.stringify( goal ) );
     if( goal ) {
         if( goal.id > 0 ) {
-            console.log( "[goalService.saveGoal]: " + goal.goalVersion );
             // update
+            console.log( "[goalController.saveGoal]: Updating Goal in DB - " + JSON.stringify( goal ) );
             let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
             let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
     
@@ -309,7 +309,7 @@ exports.saveGoal = async ( goal ) => {
         }
         else {
             // get the current max goal id
-            console.log( "insert" );
+            console.log( "[goalController.saveGoal]: New Goal in DB - " + JSON.stringify( goal ) );
             let text = "select max(id) from goals;";
             let values = [];
             try {
