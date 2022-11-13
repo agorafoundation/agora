@@ -129,10 +129,7 @@ exports.editComment = async ( req, res ) => {
     let comment = await discussionService.editComment( commentId, req.user.id, req.body );
 
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
