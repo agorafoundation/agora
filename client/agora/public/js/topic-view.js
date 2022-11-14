@@ -1,5 +1,4 @@
 let tabName = "";
-
 // Workspace resizing
 let activeHeightObj = {};
 let activeHeightList = [];
@@ -20,7 +19,6 @@ function checkActiveHeight() {
         activeTab.appendChild( filler );
     }
 }
-
 
 
 /* Tab Functions ------------------------------------------------------------------- */
@@ -537,8 +535,9 @@ function updateThumbnail( dropZoneElement, file ) {
     if ( file.type.startsWith( "application/pdf" ) ) {
         const pdf = document.createElement("iframe");
         pdf.id = "viewer";
-        pdf.setAttribute( "style", "width: 100%; border: none; height:100%;");
+        pdf.setAttribute( "style", "width: 100%; border: none; height:900px;");
         mydiv.appendChild(pdf);
+        mydiv.style.border = 'none';
         console.log("pdf detected")
     }
     else{
@@ -884,6 +883,23 @@ function previewFile(){
     if ( file.type.startsWith( "application/pdf" ) ) {
         pdffile_url=URL.createObjectURL(file);
         $('#viewer').attr('src',pdffile_url);
-        console.log("guh")
+    }
+    
+    //This is the application type for docx for some reason
+    else if(file.type.startsWith( "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ) ) {
+        console.log("Docx preview")
+
+        
+
+        //sun editor container div
+        let seDiv = (document.getElementsByClassName("se-wrapper-inner")[1]);
+
+        //Set the Document options.
+        var docxOptions = Object.assign(docx.defaultOptions, {
+            useMathMLPolyfill: true
+        });
+
+        //Render the Word Document.
+        docx.renderAsync(file, seDiv, null, docxOptions);
     }
 }
