@@ -816,3 +816,7 @@ function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
     } );
 }
 
+
+
+
+

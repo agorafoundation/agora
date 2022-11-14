@@ -623,3 +623,18 @@
   .aux-button:focus {
     outline: none;
   }
+
+  .discussion-button {
+    position: absolute;
+    right: 80px;
+    top: -20px;
+  }
+
+  .discussion-textarea {
+    width: 100%;
+    text-decoration: none;
+    border-radius: 10px;
+    resize: none;
+    overflow: auto;
+    margin-bottom: 15px;
+  }
