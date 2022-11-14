@@ -1208,8 +1208,12 @@ exports.deleteTopicById = async ( topicId, authUserId ) => {
 
     try {
         let res = await db.query( text, values );
-        return true;
-
+        if( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     catch ( e ) {
         console.log( e.stack );

@@ -425,9 +425,10 @@ exports.deleteResourceById = async ( req, res ) => {
         res.status( 200 ).json( "Success" );
     }
     else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No resources were found meeting the query criteria" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "No resources were found meeting the query criteria" );
-        res.status( 404 ).send( "No resources Found" );
+        res.status( 404 ).json( message );
     }
 
 };
