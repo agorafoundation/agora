@@ -726,7 +726,7 @@ document.addEventListener( "click", function( e ) {
             if ( doneIconList[i] === e.target ) {
                 document.getElementById( editIconList[i].id ).style.display = "block";
                 document.getElementById( doneIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor"+( i+1 )].readOnly( true );
+                sunEditor["sunEditor"+( i )].readOnly( true );
             }
         }
     }
@@ -735,7 +735,7 @@ document.addEventListener( "click", function( e ) {
             if ( editIconList[i] === e.target ) {
                 document.getElementById( doneIconList[i].id ).style.display = "block";
                 document.getElementById( editIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor"+( i+1 )].readOnly( false );
+                sunEditor["sunEditor"+( i )].readOnly( false );
             }
         }
     }
