@@ -79,9 +79,10 @@ exports.deleteGoalById = async ( req, res ) => {
             res.status( 200 ).json( "Success" );
         }
         else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "No goals were found meeting the query criteria" );
             res.set( "x-agora-message-title", "Not Found" );
             res.set( "x-agora-message-detail", "No goals were found meeting the query criteria" );
-            res.status( 404 ).send( "No Goals Found" );
+            res.status( 404 ).json( message );
         }
     }
 };

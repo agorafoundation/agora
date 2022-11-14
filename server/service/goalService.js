@@ -669,8 +669,13 @@ exports.deleteGoalById = async ( goalId, ownerId ) => {
 
     try {
         let res = await db.query( text, values );
-        return true;
-
+        console.log(res);
+        if( res.rowCount == 0 ) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
     catch ( e ) {
         console.log( e.stack );
