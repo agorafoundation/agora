@@ -186,7 +186,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
-        goal.visibility = req.body.goalVisibility;
+        goal.visibility = req.body.visibility;
         goal.goalName = req.body.goalName;
         goal.goalDescription = req.body.goalDescription;
         goal.active = req.body.active;
