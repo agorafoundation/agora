@@ -171,7 +171,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
             goal = existingGoal;
             console.log( "[goalController.saveGoal]: Existing Goal found by goalId - " + JSON.stringify( existingGoal ) );
   
-            if( ( existingGoal.visibility != req.body.goalVisibility )
+            if( ( existingGoal.visibility != req.body.visibility )
                 || ( existingGoal.goalName != req.body.goalName )
                 || ( existingGoal.goalDescription != req.body.goalDescription )
                 || ( existingGoal.active != req.body.active )
@@ -186,7 +186,12 @@ exports.saveGoal = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
-        goal.visibility = req.body.visibility;
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            goal.visibility = req.body.visibility;   
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
         goal.goalName = req.body.goalName;
         goal.goalDescription = req.body.goalDescription;
         goal.active = req.body.active;
