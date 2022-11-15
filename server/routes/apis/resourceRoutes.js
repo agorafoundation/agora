@@ -44,8 +44,8 @@ router.route( '/shared' )
         resourceController.getAllSharedResourcesForUser( req, res );
     } );
 
-// resources /api/v1/auth/resources/:id
-router.route( '/:id' )
+// resources /api/v1/auth/resources/:resourceId
+router.route( '/:resourceId' )
     .get( async function ( req, res ) {
         resourceController.getResourceById( req, res );
     

@@ -234,10 +234,10 @@ exports.saveResource = async ( req, res, redirect ) => {
 
     if( authUserId > 0 ) {
 
-        resource.id = req.body.resourceId;
+        resource.resourceId = req.body.resourceId;
 
         // see if this is a modification of an existing resource
-        let existingResource = await resourceService.getResourceById( resource.id, false );
+        let existingResource = await resourceService.getResourceById( resource.resourceId, false );
 
         // if this is an update, replace the resource with the existing one as the starting point.
         if( existingResource ) {
@@ -292,16 +292,16 @@ exports.saveResource = async ( req, res, redirect ) => {
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
             if( resource.resourceType == 1 ) {
-                this.saveResourceImage( req, res, resource.id, 'notebook-pen.svg' );
+                this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
             }
             else if ( resource.resourceType == 2 ) {
-                this.saveResourceImage( req, res, resource.id, 'cell-molecule.svg' );
+                this.saveResourceImage( req, res, resource.resourceId, 'cell-molecule.svg' );
             }
             else if( resource.resourceType == 3 ) {
-                this.saveResourceImage( req, res, resource.id, 'code.svg' );
+                this.saveResourceImage( req, res, resource.resourceId, 'code.svg' );
             }
             else {
-                this.saveResourceImage( req, res, resource.id, 'resource-default.png' );
+                this.saveResourceImage( req, res, resource.resourceId, 'resource-default.png' );
             }
         }
         else {
@@ -347,7 +347,7 @@ exports.saveResource = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveResourceImage( req, res, resource.id, timeStamp + file.name );
+                        await this.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
                     }
                 } );
             }
@@ -416,7 +416,7 @@ exports.deleteResourceById = async ( req, res ) => {
         authUserId = req.session.authUser.id;
     }
 
-    const resourceId = req.params.id;
+    const resourceId = req.params.resourceId;
     let success = await resourceService.deleteResourceById( resourceId, authUserId );
 
     if ( success ) {

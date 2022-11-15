@@ -5,6 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+//const { ConfigurationServicePlaceholders } = require("aws-sdk/lib/config_service_placeholders");
+
 
 // keep track of running total of new questions for assessment
 let newQuestionNum = 0;
@@ -336,6 +338,8 @@ function checkboxClick( e ) {
 
 
 window.addEventListener( 'load', () => {
+    let id = window.location.hash;
+    console.log( id );
     // look for any accordions, apply click event to open
     if( document.getElementsByClassName( 'accordion-container' ) ) {
         const accordion = document.getElementsByClassName( 'accordion' );
@@ -813,4 +817,53 @@ function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
     } ).then( ( res ) => {
     } );
 }
+
+//////////////onload fetch functions //////////////////////
+
+const prefixPattern = /#t/;
+
+const idPattern = /-([0-9]+)/;
+
+const idAndFetch = () => {
+
+    const url = window.location.href;
+    const id = idPattern.exec( url )[1];
+    const isTopic = prefixPattern.test( url );
+
+    if ( isTopic ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.topicName, response.topicDescription, response.topicImage );
+            } );
+    } 
+    else {
+        fetch( "api/v1/auth/goals/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.goalName, response.goalDescription, response.goalImage );
+            } );
+    }
+};
+
+const fillFields = ( title, description, image ) => {
+    document.getElementById( "workspace-title" ).value = title.trim();
+    document.getElementById( "workspace-desc" ).value = description.trim();
+};
+
+window.addEventListener( 'load', () => {
+    idAndFetch();
+} );
+
+
+
+
+
+
 

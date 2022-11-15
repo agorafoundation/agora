@@ -43,7 +43,7 @@ exports.getAllVisibleGoals = async ( req, res ) => {
 
 exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
-    let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
+    let goal = await goalService.getActiveGoalWithTopicsById( req.params.goalId, true );
     if( goal ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned goal by id" );
@@ -70,7 +70,7 @@ exports.deleteGoalById = async ( req, res ) => {
     }
 
     if ( authUserId > 0 ) {
-        const goalId = req.params.id;
+        const goalId = req.params.goalId;
         let success = await goalService.deleteGoalById( goalId, authUserId );
 
         if ( success ) {
@@ -160,10 +160,10 @@ exports.saveGoal = async ( req, res, redirect ) => {
 
     if( authUserId > 0 ) {
 
-        goal.id = req.body.goalId;
+        goal.goalId = req.body.goalId;
 
         // see if this is a modification of an existing goal
-        let existingGoal = await goalService.getMostRecentGoalById( goal.id );
+        let existingGoal = await goalService.getMostRecentGoalById( goal.goalId );
 
         // if this is an update replace the goal with teh existing one as the starting point
         if( existingGoal ) {
@@ -228,7 +228,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            this.saveGoalImage( req, res, goal.id, 'peak.svg' );
+            this.saveGoalImage( req, res, goal.goalId, 'peak.svg' );
             
         }
         else {
@@ -273,7 +273,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveGoalImage( req, res, goal.id, timeStamp + file.name );
+                        await this.saveGoalImage( req, res, goal.goalId, timeStamp + file.name );
                     }
                 } );
             }
@@ -311,7 +311,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
         let pathway = null;
         if( req.body.pathway ) {
             pathway = req.body.pathway.split( "," );
-            goalService.savePathwayToexistingGoalVersion( goal.id, pathway );
+            goalService.savePathwayToexistingGoalVersion( goal.goalId, pathway );
         }
 
 
