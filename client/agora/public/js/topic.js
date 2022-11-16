@@ -874,8 +874,14 @@ const addLike = ( e ) => {
     goodElement = e.target.parentElement.childNodes[3] : 
     goodElement = e.target;
 
+    //if ( goodElement.parentElement.parentElement.previousSibling.previousSibling.childNodes[3].innerText)
+
     //converting the value to an int then adding 1
     goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
+
+    goodElement.parentElement.disabled = true;
+
+    goodElement.parentElement.childNodes[1].style.color = "gray";
 }
 
 //making sure every like button functions
