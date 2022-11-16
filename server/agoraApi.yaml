@@ -827,7 +827,7 @@ paths:
             schema:
               type: object
               properties:
-                text:
+                discussion_text:
                   type: string
                   description: Text that you wish to start the discussion with
       responses:
