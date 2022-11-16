@@ -24,15 +24,15 @@ exports.getSearchResults = async ( term, userId ) => {
 exports.getUsersByTerm = async ( term, userId ) => {
     //db query
 };
-  
+
 exports.getResourcesByTerm = async ( term, userId ) => {
-    //db query
+    //db query(Kyle)
 };
 
 exports.getTopicsByTerm = async ( term, userId ) => {
-    //db query
+    //db query (Chris)
 };
 
 exports.getGoalsByTerm = async ( term, userId ) => {
-    //db query
+    //db query (Chris)
 };
