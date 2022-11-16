@@ -200,7 +200,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Workspace/response'
           headers:
             x-agora-message-title:
               schema:
@@ -229,7 +229,7 @@ paths:
           application/json:
             schema: 
               type: object
-              $ref: '#/components/schemas/Goal/request'
+              $ref: '#/components/schemas/Workspace/request'
       responses:
         '201':
           description: New Workspace created
@@ -237,7 +237,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Workspace/response'
           headers:
             x-agora-message-title:
               schema:
@@ -252,7 +252,7 @@ paths:
           application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Workspace/response'
           headers:
             x-agora-message-title:
               schema:
@@ -286,7 +286,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Workspace/response'
         headers:
             x-agora-message-title:
               schema:
@@ -1221,34 +1221,34 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Tag'
-    Goal:
+    Workspace:
       request:
         type: object
         required:
-          - goalName
+          - workspaceName
         properties:
           id:
             type: integer
-            description: Assigned automatically for new goals, used to update existing goal if provided
+            description: Assigned automatically for new workspaces, used to update existing workspace if provided
             uniqueItems: true
           version:
             type: integer
-            description: tracks the changes to goals and is automatically incremented on updates
-          goalName:
+            description: tracks the changes to workspaces and is automatically incremented on updates
+          workspaceName:
             type: string
             description: The tag
-          goalDescription:
+          workspaceDescription:
             type: string
-            description: Description of the goal
-          goalImage:
+            description: Description of the workspace
+          workspaceImage:
             type: string
-            description: filename of the associated image for the goal
+            description: filename of the associated image for the workspace
           active:
             type: boolean
             description: Active status, inactive items will not be returned in most queries
           completable:
             type: boolean
-            description: Completable goals monitor progress of users through topics
+            description: Completable workspaces monitor progress of users through topics
           visibility:
             type: integer
             description: Public = 0, Shared = 1, Private = 0
@@ -1259,10 +1259,10 @@ components:
             type: integer
             description: Id of the user that first generated the tag
         example:
-          goalId: -1
-          goalName: "Learn how to use Agora"
-          goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-          goalImage: "myImage.png"
+          workspaceId: -1
+          workspaceName: "Learn how to use Agora"
+          workspaceDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+          workspaceImage: "myImage.png"
           active: true
           completable: true
           visibility: 0
@@ -1270,30 +1270,30 @@ components:
       response:
           type: object
           required:
-            - goalName
+            - workspaceName
           properties:
             id:
               type: integer
-              description: Assigned automatically for new goals, used to update existing goal if provided
+              description: Assigned automatically for new workspaces, used to update existing workspace if provided
               uniqueItems: true
             version:
               type: integer
-              description: tracks the changes to goals and is automatically incremented on updates
-            goalName:
+              description: tracks the changes to workspaces and is automatically incremented on updates
+            workspaceName:
               type: string
               description: The tag
-            goalDescription:
+            workspaceDescription:
               type: string
-              description: Description of the goal
-            goalImage:
+              description: Description of the workspace
+            workspaceImage:
               type: string
-              description: filename of the associated image for the goal
+              description: filename of the associated image for the workspace
             active:
               type: boolean
               description: Active status, inactive items will not be returned in most queries
             completable:
               type: boolean
-              description: Completable goals monitor progress of users through topics
+              description: Completable workspaces monitor progress of users through topics
             visibility:
               type: integer
               description: Public = 0, Shared = 1, Private = 0
@@ -1306,16 +1306,16 @@ components:
           example:
             rid: 1
             id: 1
-            goalVersion: 1
-            goalName: "Learn how to use Agora"
-            goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-            goalImage: "myImage.png"
+            workspaceVersion: 1
+            workspaceName: "Learn how to use Agora"
+            workspaceDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+            workspaceImage: "myImage.png"
             active: true
             completable: true
             visibility: 0
             version: 1
             createTime: 2022-11-02T19:37:11.672Z
-    Goals:
+    Workspaces:
       type: array
       items:
         $ref: '#/components/schemas/Workspace'

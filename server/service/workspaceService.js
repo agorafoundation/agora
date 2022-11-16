@@ -28,6 +28,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
+        //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
         const text = "select * from workspaces gl INNER JOIN (SELECT id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by id) workspacemax on gl.id = workspacemax.id AND gl.workspace_version = workspacemax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
         const values = [ ownerId, true ];
 
@@ -291,8 +292,8 @@ exports.saveWorkspace = async ( workspace ) => {
     //console.log( "about to save workspace " + JSON.stringify( workspace ) );
     if( workspace ) {
         if( workspace.workspaceId > 0 ) {
-            console.log( "update" );
             // update
+            console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) );
             let text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
             let values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
     
@@ -308,7 +309,7 @@ exports.saveWorkspace = async ( workspace ) => {
         }
         else {
             // get the current max workspace id
-            console.log( "insert" );
+            console.log( "[workspaceController.saveWorkspace]: New Workspace in DB - " + JSON.stringify( workspace ) );
             let text = "select max(id) from workspaces;";
             let values = [];
             try {

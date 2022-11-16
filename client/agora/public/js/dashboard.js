@@ -455,14 +455,14 @@ const createNewWorkspace = async () => {
         } )
     } )
         .then( response => response.json() )
-        .then( response => window.location.href = "/topic#g-" + response.goalId );
+        .then( response => window.location.href = "/topic#g-" + response.workspaceId );
 };
 
 
 
 
 //edit is a number if editing a resource, false if adding a resource
-//prefix indicates whether card is goal or topic
+//prefix indicates whether card is workspace or topic
 const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     let id = -1;
     if ( edit ) {
@@ -812,7 +812,7 @@ const topicReroute = ( id, newTab, prefix ) => {
         /*if (usedPrefix === "-t") {
             window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
         } else {
-            window.location.href = "/goal#" + usedPrefix + id.substring( 5 );
+            window.location.href = "/workspace#" + usedPrefix + id.substring( 5 );
         }*/
         window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
     }
@@ -863,7 +863,7 @@ var copyLinkCards = document
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
-const duplicateGoal = async ( e ) => {
+const duplicateWorkspace = async ( e ) => {
   
     let parentId = getId( e );
    

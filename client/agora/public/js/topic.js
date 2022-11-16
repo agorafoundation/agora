@@ -841,13 +841,13 @@ const idAndFetch = () => {
             } );
     } 
     else {
-        fetch( "api/v1/auth/goals/" + id, {
+        fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },
         } )
             .then( response => response.json() )
             .then( response => {
-                fillFields( response.goalName, response.goalDescription, response.goalImage );
+                fillFields( response.workspaceName, response.workspaceDescription, response.workspaceImage );
             } );
     }
 };

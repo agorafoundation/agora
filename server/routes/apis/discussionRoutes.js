@@ -14,24 +14,24 @@ var router = express.Router( );
 const discussionController = require( '../../controller/apis/discussionController' ); 
 const { validate } = require( '../middleware/inputValidation' );
 const { z } = require( 'zod' );
-// /api/v1/auth/discussions/goal/4 req.params.type === "goal" req.params.id === 4
-// discussions /api/v1/auth/discussions/{goal | topic}/:id
-router.route( '/goal/:id' )
-    // get a discussion based off goal id
+// /api/v1/auth/discussions/workspace/4 req.params.type === "workspace" req.params.id === 4
+// discussions /api/v1/auth/discussions/{workspace | topic}/:id
+router.route( '/workspace/:id' )
+    // get a discussion based off workspace id
     .get( async ( req, res ) => {
         discussionController.getDiscussionByWorkspaceId( req, res );
     } )
-    // update a discussion based off goal id
+    // update a discussion based off workspace id
     .patch( 
         validate( z.object( {discussion_text: z.string()} ) ), 
         async ( req, res ) => { 
-            discussionController.updateDiscussionByGoalId( req, res );
+            discussionController.updateDiscussionByWorkspaceId( req, res );
         } 
     )
     .post( 
         validate( z.object( {discussion_text: z.string()} ) ), 
         async ( req, res ) => {
-            discussionController.createDiscussionByGoalId( req, res );
+            discussionController.createDiscussionByWorkspaceId( req, res );
         } 
     );
 
@@ -72,7 +72,7 @@ router.route( '/comment' )
     .post( 
         validate( z.object( {
             parent_id: z.number().positive(), 
-            parent_type: z.enum( [ 'goal', 'topic' ] ), 
+            parent_type: z.enum( [ 'workspace', 'topic' ] ), 
             comment_text: z.string()
         } ) ),
         async ( req, res ) => {
