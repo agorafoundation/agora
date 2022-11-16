@@ -6,11 +6,17 @@
  */
 
 
-const searchService = require( "../../service/discussionService" );
+const searchService = require( "../../service/searchService" );
 const ApiMessage = require( "../../model/util/ApiMessage" );
 const {errorController} = require( "./apiErrorController" );
  
-exports.getSearchResult = ( res, req ) => {
+exports.getSearchResult = async ( req, res ) => {
 
-    let searchResults = 
+    const results = await searchService.getSearchResults( req.query.q, req.user.id );
+
+    if( !results ) {
+        return errorController( ApiMessage.createNotFoundError( "Search Results" ), res );
+    }
+
+    return res.status( 200 ).json( results );
 };

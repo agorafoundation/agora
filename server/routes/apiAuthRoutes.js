@@ -124,6 +124,11 @@ router.use( '/user', userRoutes );
 const discussionRoutes = require( './apis/discussionRoutes' );
 router.use( '/discussions', discussionRoutes );
 
+/**
+ * Search APIs
+ */
+const searchRoutes = require( './apis/searchRoutes' );
+router.use( '/search', searchRoutes );
 
 /**
  * Stripe APIs

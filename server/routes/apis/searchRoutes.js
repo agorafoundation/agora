@@ -13,8 +13,10 @@ const searchController = require( '../../controller/apis/searchController' );
 const { validate } = require( '../middleware/inputValidation' );
 const { z } = require( 'zod' );
 
+// api/v1/auth/search
+router.route( "/" )
+    .get( async ( req, res ) => {
+        searchController.getSearchResult( req, res );
+    } );
 
-router.route( "/search/:keyword" ).get( async ( req, res ) => {
-    searchController.getSearchResult( req, res );
-} );
-
+module.exports = router;
