@@ -817,6 +817,78 @@ function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
 }
 
 
+/* discussions code */
+
+//gets the highest id among comments then adds 1
+//this will be replaced by async backend response eventually
+const findNextId = () => {
+    let highest = -1;
+    document.querySelectorAll(".comment-countable").forEach((comment)=> {
+        if ((comment.id).substring(8) > highest) {
+            highest = comment.id;
+        }
+    })
+    return ++highest;
+}
+
+//////New Comment/////
+
+const addComment = (user, pfp, text) => {
+    let date = new Date(Date.now());
+
+    //cloning the comment template so we can modify it then add it to the stream
+    let newEl = document.getElementById("comment-template").cloneNode(true);
+
+    //setting the attributes of the comment
+    newEl.style.display = "block";
+    newEl.id = findNextId();
+    newEl.childNodes[1].childNodes[1].innerText = pfp;
+    newEl.childNodes[1].childNodes[3].innerText = user;
+    newEl.childNodes[3].innerText = text;
+    newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();;
+
+    //make sure the like button works
+    newEl.querySelector("#like-button").addEventListener("click",addLike);
+
+    //inserting the modified clone into the comment stream
+    document.getElementById("discussions-body").insertBefore(newEl, document.getElementById("post-comment-btn").nextSibling);  
+
+    //removing the value from the textarea
+    document.getElementById("discussion-textarea").innerText = '';
+}
+
+//like buttons function
+document.getElementById("post-comment-btn").addEventListener("click", ()=> {
+    addComment("Max","account_circle",document.getElementById("discussion-textarea").innerText)
+});
+
+///////Like Button////////
+
+const addLike = ( e ) => {
+    let goodElement;
+
+    //making sure the element we are clicking is the one we're looking to use
+    e.target.id ? 
+    goodElement = e.target.childNodes[3] : 
+    e.target.style ? 
+    goodElement = e.target.parentElement.childNodes[3] : 
+    goodElement = e.target;
+
+    //converting the value to an int then adding 1
+    goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
+}
+
+//making sure every like button functions
+document.querySelectorAll("#like-button").forEach((likeButton)=> {
+    likeButton.addEventListener("click", addLike)
+})
+
+
+//////Edit comment/////////
+const getCommentById = ( id ) => {
+    return comments.find( comment => comment.id === id );
+}
+
 
 
 

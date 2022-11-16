@@ -1,74 +1,33 @@
-<% class Comment {
-    constructor(id,user,pfp,text) {
-        this.id = id;
-        this.user = user;
-        this.pfp = pfp;
-        this.text = text;
-        this.likes = 0;
-        this.replies = [];
-        var date = new Date(Date.now());
-        this.timeStamp = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-    }
-}
-
-var comments = [];
-
-const addComment = (id, user, pfp, text, isReply) => {
-    let newComment = new Comment(id,user, pfp, text);
-    comments.push(newComment);
-}
-
-const findNextId = () => {
-    let highest = -1;
-    comments.forEach((comment)=> {
-        if (comment.id > highest) {
-            highest = comment.id;
-        }
-    })
-    return ++highest;
-}
-
-const getCommentById = ( id ) => {
-    return comments.find( comment => comment.id === id );
-}
-
-const addLike = ( id ) => {
-    console.log("hey")
-    ++(getCommentById(id).likes);
-}
-
-function test() {
-    console.log("test")
-}
-
-addComment(findNextId(),"John","account_circle","This is a comment", false);
-addComment(findNextId(),"Nick","account_circle","This is also a comment aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", false);
+<% 
+var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a comment", likes: 0, timestamp: "11/15/2022"},
+                {id: 1, user: "Nick", pfp: "account_circle", text: "This is a comment also", likes: 0, timestamp: "11/15/2022"},
+                {id: 2, user: "Lindsey", pfp: "account_circle", text: "This is a comment, too", likes: 0, timestamp: "11/15/2022"},
+                {id: 3, user: "Alesha", pfp: "account_circle", text: "This is a comment as well", likes: 0, timestamp: "11/15/2022"}];
 %>
 
-<div class="modal fade" id="discussion-modal" tabindex="-1" role="dialog" aria-labelledby="discussion-title" aria-hidden="true">
+<div class="modal fade discussion-modal-pos" id="discussion-modal" tabindex="-1" role="dialog" aria-labelledby="discussion-title" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
+      <div class="modal-content discussion-modal-edges">
         <div class="modal-header">
           <h5 class="modal-title" id="discussion-title">Comments</h5>
         </div>
-        <div class="modal-body" style="display: flex; flex-direction: column;">
-            <textarea class="discussion-textarea"></textarea>
+        <div class="modal-body flex-column" id="discussions-body">
+            <div contenteditable="true" class="discussion-textarea" id="discussion-textarea"></div>
+            <button class="post-comment-btn" id="post-comment-btn">Send</button>
             <% comments.forEach((comment)=> { %>
-                <div style="display: flex; flex-direction: column;" id="<%=comment.id%>">
-                    <div style="display: flex; flex-direction: row;">
+                <div class="flex-column comment-countable" id="comment-<%=comment.id%>">
+                    <div class="flex-row">
                         <span class="material-symbols-outlined" style="margin: 0"><%= comment.pfp %></span>
-                        <span style="padding: 0; margin: 6px 0 0 10px"><%= comment.user %></span>
+                        <span class="discussion-user"><%= comment.user %></span>
                     </div>
-                    <div style="margin-left: 5px; word-wrap: break-word;"><%= comment.text %></div>
-                    <div style="display: flex; flex-direction: row; margin: 7px 0 0 5px">
-                        <button id="like-button" style="background-color: lightgray; border-radius: 10%; border: none; outline: none; display: flex; flex-direction: row;">
-                            <span class="material-symbols-outlined" style="margin: 0; font-size: 22px;">thumb_up</span>
+                    <div class="comment-body"><%= comment.text %></div>
+                    <div class="comment-footer flex-row">
+                        <button id="like-button" class="like-button flex-row">
+                            <span class="material-symbols-outlined like-icon">thumb_up</span>
                             <span style="margin: 2px 0 0 1px"><%= comment.likes %></span>
                         </button>
-                        <hr style="width: 30px; transform: rotate(.25turn); margin: 15px 0 0 0;">
-                        <button style="background-color: lightgray; border-radius: 10%; border: none; outline: none; font-size: 15px; padding: 0 10px;">Reply</button>
-                        <hr style="width: 30px; transform: rotate(.25turn); margin: 15px 0 0 0;">
-                        <span style="margin-top: 2px"><%=comment.timeStamp%></span>
+                        <hr class="footer-hr">
+                        <span style="margin-top: 2px"><%=comment.timestamp%></span>
                     </div>
                     <hr style="width: 100%;">
                 </div>
@@ -81,18 +40,3 @@ addComment(findNextId(),"Nick","account_circle","This is also a comment aaaaaaaa
       </div>
     </div>
   </div>
-
-  <script>
-
-    /*document.querySelectorAll( "#like-button" ).forEach( ( likebutton ) => {
-    likebutton.addEventListener( "click", (e) => {
-        console.log(e.target.parentElement.parentElement.parentElement.id);
-    } );
-} );*/
-
-const getCommentId = (ev) => {
-    console.log(ev.target.parentElement.parentElement.parentElement.id);
-}
-
-//addLike(getCommentById(getCommentId(event)))
-  </script>
