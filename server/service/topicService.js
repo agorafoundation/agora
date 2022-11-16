@@ -542,7 +542,7 @@ exports.saveTopic = async function( topic ) {
 };
 
 /**
- * Will save or update resources associted with a topic.  
+ * Will save or update resources associated with a topic.  
  * Resources are passed as an Array of integers.  This function will replace any existing resources for
  * the topic with the resources represented by the resource id's passed.
  * @param {Integer} topicId id of the topic 

@@ -123,7 +123,7 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
             if( rValue && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH + rValue, ( err ) => {
                     if( err ) {
-                        console.log( "[workspaceController] file delete error status: " + err );
+                        console.log( "[goalController.saveGoalImage] file delete error status: " + err );
                         return false;
                     }
                     
@@ -165,32 +165,57 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         // see if this is a modification of an existing workspace
         let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId );
 
-        // if this is an update replace the workspace with teh existing one as the starting point
-        if( existingWorkspace ) {
-            console.log( "there was an existing workspace for this id: " + JSON.stringify( existingWorkspace ) );
-            workspace = existingWorkspace;
+        // if this is an update replace the goal with teh existing one as the starting point
+        if( existingGoal ) {
+            
+            goal = existingGoal;
+            console.log( "[goalController.saveGoal]: Existing Goal found by goalId - " + JSON.stringify( existingGoal ) );
+  
+            if( ( existingGoal.visibility != req.body.visibility )
+                || ( existingGoal.goalName != req.body.goalName )
+                || ( existingGoal.goalDescription != req.body.goalDescription )
+                || ( existingGoal.active != req.body.active )
+                || ( existingGoal.completable != req.body.completable ) ) {
+                goal.goalVersion++;
+                console.log( "[goalController.saveGoal]: Modifications made; Goal Version incremented - version: " + goal.goalVersion );
+            }
+            else {
+                console.log( "[goalController.saveGoal]: No modifications were made" );
+            }
+
         }
 
         // add changes from the body if they are passed
-        workspace.visibility = req.body.workspaceVisibility;
-        workspace.workspaceName = req.body.workspaceName;
-        workspace.workspaceDescription = req.body.workspaceDescription;
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            goal.visibility = req.body.visibility;   
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
+        goal.goalName = req.body.goalName;
+        goal.goalDescription = req.body.goalDescription;
+        goal.active = req.body.active;
+        goal.completable = req.body.completable;
         
         // check to see if the incoming message format is from the UI form or the API for active
-        if( req.body.workspaceActive ) {
-            workspace.active = ( req.body.workspaceActive == "on" ) ? true : false;
+        /*
+        if( req.body.goalActive ) {
+            goal.active = ( req.body.active == "on" ) ? true : false;
         }
         else if ( req.body.active ) {
             workspace.active = req.body.active;
         }
+        */
 
         // check to see if the incoming message format is from the UI form or the API for completable
-        if( req.body.workspaceCompletable ) {
-            workspace.completable = ( req.body.workspaceCompletable == "on" ) ? true : false;
+        /*
+        if( req.body.goalCompletable ) {
+            goal.completable = ( req.body.goalCompletable == "on" ) ? true : false;
         }
-        else if ( req.body.active ) {
-            workspace.completable = req.body.active;
+        else if ( req.body.completable ) {
+            goal.completable = req.body.completable;
         }
+        */
 
         workspace = await workspaceService.saveWorkspace( workspace );
 

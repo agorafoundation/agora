@@ -12,7 +12,7 @@
       if (contentType === "Topic") { %>
 
         <!--Topic List Member -->
-        <li class="list-group-item list-view view-check" id="t-lv-<%= id %>" onclick="topicReroute(id, false)">
+        <li class="list-group-item list-view view-check a-topic" id="t-lv-<%= id %>" onclick="topicReroute(id, false)">
             <span id="t-lv-card-title-<%= id %>"><%=name%></span>
             <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
             <span style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
@@ -51,8 +51,8 @@
             <span style="margin-left: 10%">Tags</span>
         </li>
         <% 
-        for (let i = 0; i < ownerWorkspaces.length ; i++) { 
-            renderListCard(ownerWorkspaces[i].id,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", ["Doc1","doc2"]) 
+        for (let i = 0; i < ownerGoals.length ; i++) { 
+            renderListCard(ownerGoals[i].goalId,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
         } 
         for (let i = 0; i <  availableTopics.length ; i++) { 
             renderListCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null); 

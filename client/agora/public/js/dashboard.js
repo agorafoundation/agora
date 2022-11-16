@@ -420,7 +420,6 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 }
 
 
-
 //creates a empty topic
 const createNewTopic = async () => {
     
@@ -438,14 +437,6 @@ const createNewTopic = async () => {
     } )
         .then( response => response.json() )
         .then( response => window.location.href = "/topic#t-" + response.topicId );
-
-     
-    
-
-
-    //gets the most recent id
-    //let id = temp[temp.length - 1].topicId;
-    // window.location.href = '/topic#t-' + id;
 };
 
 //creates a empty topic
@@ -464,17 +455,15 @@ const createNewWorkspace = async () => {
         } )
     } )
         .then( response => response.json() )
-        .then( response => window.location.href = "/topic#g-" + response.id );
-   
-  
+        .then( response => window.location.href = "/topic#g-" + response.goalId );
 };
 
 
 
 
 //edit is a number if editing a resource, false if adding a resource
-//prefix indicates whether card is workspace or topic
-const addOrEditResource = ( prefix, name, description, edit ) => {
+//prefix indicates whether card is goal or topic
+const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     let id = -1;
     if ( edit ) {
         id = edit;
@@ -496,7 +485,9 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             } )
         } )
             .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+            .then( response => {
+                return response.id;
+            } );
     //if topic
     } 
     else {
@@ -519,7 +510,9 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
             } )
         } )
             .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+            .then( response => {
+                return response.id;
+            } );
     }
 };
 
@@ -708,14 +701,14 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
-    let name = document.getElementById( "note-modal-name" ).value;
-    let desc = document.getElementById( "note-modal-description" ).value;
+    let name = ( document.getElementById( "note-modal-name" ).value ).trim();
+    let desc = ( document.getElementById( "note-modal-description" ).value ).trim();
     if ( name ) {
         document.getElementById( prefix + "gv-" + nameId ).innerText = name;
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
         document.getElementById( prefix + "gv-" + descId ).innerText = desc;    
 
-        addOrEditResource( prefix, name, desc, descId.substring( 10 ) );
+        duplicateOrEditResource( prefix, name, desc, descId.substring( 10 ) );
 
         closeRenameModal();
     }
@@ -757,7 +750,7 @@ const showDeleteModal = ( e ) => {
     let parentName = document.getElementById( parentNameId ).innerText;
 
     //setting the text inside the delete modal to show user what they're deleting
-    document.getElementById( "to-be-deleted-name" ).innerText = parentName;
+    document.getElementById( "to-be-deleted-name" ).innerText = parentName.trim();
 
     //setting the properties of the confirm button to delete the correct card
     document
@@ -813,10 +806,15 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/topic", "_blank" );
+        window.open( "http://localhost:4200/topic#" + usedPrefix + id, "_blank" );
     }
     else {
-        window.location.href = "/topic#t-" + id.substring( 5 ) ;
+        /*if (usedPrefix === "-t") {
+            window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
+        } else {
+            window.location.href = "/goal#" + usedPrefix + id.substring( 5 );
+        }*/
+        window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
     }
 };
 
@@ -844,28 +842,28 @@ var newTabCards = document
 const copyLink = ( e ) => {
     let parentId = getId( e );
 
-    navigator.clipboard.writeText( "http://localhost:4200/note" );
+    let prefix;
+    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+
+    navigator.clipboard.writeText( "http://localhost:4200/topic#" + prefix + parentId );
 
     createToast( "Copied Link!" );
 
     e.stopPropagation();
 };
 
-/**
- * This function was caught by ESLint as a duplicate function.
- * I am not sure why it is here, but I am leaving it here for now.
- * I do not see any calls to this function anywhere in the code. 
- *
-var newTabCards = document
+
+var copyLinkCards = document
     .querySelectorAll( "#copy-link-card" )
     .forEach( ( copyLinkCard ) => {
         copyLinkCard.addEventListener( "click", copyLink );
     } );
-*/
+
+
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
-const duplicateWorkspace = ( e ) => {
+const duplicateGoal = async ( e ) => {
   
     let parentId = getId( e );
    
@@ -880,12 +878,11 @@ const duplicateWorkspace = ( e ) => {
     let listClone = listParent.cloneNode( true );
    
     //getting the next id to use
-    let newId = checkForNextId();
 
     let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
     
     //fetch call to update backend
-    addOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
+    const newId = await duplicateOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
@@ -943,15 +940,14 @@ const duplicateWorkspace = ( e ) => {
     //makes the ellipsis of the clone hidden on initialization
     gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
 
-    //adding the new clone to the grid container
-    document.getElementById( "gallery-row" ).insertBefore( gridClone, gridParent.nextSibling );
-
-    //adding the new clone to the list container
-    document.getElementById( "list-column" ).insertBefore( listClone, listParent.nextSibling );
+    //adding element to dom
+    const gridContainer = document.getElementById( "gallery-row" );
+    const listContainer = document.getElementById( "list-column" );
+    placeElement( gridClone, listClone, gridContainer, listContainer, prefix );
 
     getTopics();
 
-    createToast( "Duplicated " + nameOfClone );
+    createToast( "Duplicated " + nameOfClone.trim() );
 
     e.stopPropagation();
         
@@ -964,42 +960,18 @@ var duplicateCards = document
         duplicateCard.addEventListener( "click", duplicateWorkspace );
     } );
 
-//Calculating the id of a new card
-const checkForNextId = () => {
-    var ids = [];
-    document.querySelectorAll( ".countable" ).forEach( ( obj ) => {
-        let temp = obj.id.split( "-" ).pop();
-        ids.push( temp );
-    } );
-    ids.sort();
 
-    const len = ids.length;
-    var done = false;
-    var iterator = 1;
-    var output = 0;
-    if ( ids[0] > 0 ) {
-        output = 0;
-        done = true;
-    }
-    else if ( len === 1 ) {
-        output = ++ids[0];
-        done = true;
-    }
+const placeElement = ( gridElement, listElement, gridContainer, listContainer, prefix ) => {
+    if ( prefix === "g-" ) {
+        gridContainer.insertBefore( gridElement, gridContainer.childNodes[2] );
+
+        listContainer.insertBefore( listElement, listContainer.childNodes[2] );
+    } 
     else {
-        while ( !done && len > iterator ) {
-            if ( ids[iterator] - ids[iterator - 1] > 1 ) {
-                done = true;
-                output = ++ids[iterator - 1];
-            }
-            else {
-                iterator++;
-            }
-        }
+        gridContainer.insertBefore( gridElement, gridContainer.querySelector( ".a-topic" ) );
+
+        listContainer.insertBefore( listElement, listContainer.querySelector( ".a-topic" ) );
     }
-    if ( !done ) {
-        output = ++ids[len - 1];
-    }
-    return output;
 };
 
 //handles updating an element's various ids
@@ -1036,7 +1008,10 @@ const getTopics = () => {
     topicArr = document.querySelectorAll( '.query-countable' );
 };
 
-window.onload = getTopics;
+window.addEventListener( 'load', () => {
+    getTopics();
+    toggleGrid();
+} );
 
 //what changes the DOM and modifies removed topics depending on search
 //newVal is the input value
@@ -1141,5 +1116,3 @@ const toggleList = () => {
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
 };
-
-window.onload( toggleGrid() );
