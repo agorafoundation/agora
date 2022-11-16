@@ -4,18 +4,12 @@
       <div class="modal-header" id="rename-header">
         <h5 class="rename-label">Name:</h5>
         <input type="text" class="rename-input form-control card-desc" id="note-modal-name" onclick="this.select()"/>
-        <button type="button" class="close" id="remove-name" style="outline: none; border: none" onclick="removeText('name')">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
       <div class="modal-body">
         <form>
           <div class="form-group" id="rename-header">
             <label for="message-text" class="desc-label">Desc:</label>
-            <textarea class="form-control card-desc" id="note-modal-description" onclick="this.select()" style="width: 81.5%; overflow: hidden;"></textarea>
-            <button type="button" class="close" id="remove-desc" style="outline: none; border: none" onclick="removeText('desc')">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <textarea class="form-control card-desc" id="note-modal-description" onclick="this.select()" style="margin-left: 17px; width: 100%; overflow: hidden;"></textarea>
           </div>
         </form>
       </div>

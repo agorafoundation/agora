@@ -291,11 +291,11 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
 exports.saveResource = async ( resource ) => {
     // check to see if an id exists - insert / update check
     if( resource ) {
-        if( resource.id > 0 ) {
+        if( resource.resourceId > 0 ) {
             
             // update
             let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE id = $11;";
-            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.id ];
+            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
     
             try {
                 let res = await db.query( text, values );
@@ -316,7 +316,7 @@ exports.saveResource = async ( resource ) => {
                 let res2 = await db.query( text, values );
     
                 if( res2.rowCount > 0 ) {
-                    resource.id = res2.rows[0].id;
+                    resource.resourceId = res2.rows[0].id; // TODO: Once database change goes through, this will need to be changed to .resourceId.
                 }
                 
             }

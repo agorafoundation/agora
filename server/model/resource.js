@@ -6,7 +6,7 @@
  */
 
 function resource() {
-    this.id = -1;
+    this.resourceId = -1;
     this.resourceType = 1;
     this.resourceName = "";
     this.resourceDescription = "";
@@ -26,7 +26,7 @@ exports.emptyResource = () => {
 
 exports.ormResource = function ( row ) {
     let resource = exports.emptyResource();
-    resource.id = row.id;
+    resource.resourceId = row.id;
     resource.resourceType = row.resource_type;
     resource.resourceName = row.resource_name;
     resource.resourceDescription = row.resource_description;

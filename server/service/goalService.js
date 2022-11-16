@@ -28,6 +28,7 @@ exports.getAllVisibleGoals = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
+        //const text = "select * from goals where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
         const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
         const values = [ ownerId, true ];
 
@@ -290,11 +291,11 @@ exports.saveGoal = async ( goal ) => {
     // check to see if an id exists - insert / update check
     //console.log( "about to save goal " + JSON.stringify( goal ) );
     if( goal ) {
-        if( goal.id > 0 ) {
-            console.log( "update" );
+        if( goal.goalId > 0 ) {
             // update
+            console.log( "[goalController.saveGoal]: Updating Goal in DB - " + JSON.stringify( goal ) );
             let text = "UPDATE goals SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE id = $8 RETURNING rid;";
-            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.id ];
+            let values = [ goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility, goal.goalId ];
     
             try {
                 let res = await db.query( text, values );
@@ -308,22 +309,22 @@ exports.saveGoal = async ( goal ) => {
         }
         else {
             // get the current max goal id
-            console.log( "insert" );
+            console.log( "[goalController.saveGoal]: New Goal in DB - " + JSON.stringify( goal ) );
             let text = "select max(id) from goals;";
             let values = [];
             try {
                 let res = await db.query( text, values );
-                goal.id = res.rows[0].max; 
-                goal.id++;
+                goal.goalId = res.rows[0].max; 
+                goal.goalId++;
                 if( res.rowCount > 0 ) {
                     // insert
                     text = "INSERT INTO goals (id, goal_version, goal_name, goal_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, rid;";
-                    values = [ goal.id, goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
+                    values = [ goal.goalId, goal.goalVersion, goal.goalName, goal.goalDescription, goal.active, goal.completable, goal.ownedBy, goal.visibility ];
                     
                     let res2 = await db.query( text, values );
         
                     if( res2.rowCount > 0 ) {
-                        goal.id = res2.rows[0].id;
+                        goal.goalId = res2.rows[0].id;
                         goal.rid = res2.rows[0].rid;
                     }
                 }
