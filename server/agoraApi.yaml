@@ -199,8 +199,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                $ref: '#/components/schemas/Goal/response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
           headers:
             x-agora-message-title:
               schema:
@@ -229,7 +230,7 @@ paths:
           application/json:
             schema: 
               type: object
-              $ref: '#/components/schemas/Goal/request'
+              $ref: '#/components/schemas/Goal'
       responses:
         '201':
           description: New Goal created
@@ -237,7 +238,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Goal'
           headers:
             x-agora-message-title:
               schema:
@@ -252,7 +253,7 @@ paths:
           application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Goal'
           headers:
             x-agora-message-title:
               schema:
@@ -286,7 +287,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Goal/response'
+                $ref: '#/components/schemas/Goal'
         headers:
             x-agora-message-title:
               schema:
@@ -320,8 +321,8 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: "Success"
+                type: object
+                $ref: '#/components/schemas/Goal'
         headers:
             x-agora-message-title:
               schema:
@@ -363,7 +364,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Topic/response'
+                  $ref: '#/components/schemas/Topic'
           headers:
             x-agora-message-title:
               schema:
@@ -392,7 +393,7 @@ paths:
           application/json:
             schema: 
               type: object
-              $ref: '#/components/schemas/Topic/request'
+              $ref: '#/components/schemas/Topic'
       responses:
         '201':
           description: New Topic created
@@ -400,7 +401,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: '#/components/schemas/Topic'
           headers:
             x-agora-message-title:
               schema:
@@ -416,7 +417,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: '#/components/schemas/Topic'
           headers:
             x-agora-message-title:
               schema:
@@ -445,7 +446,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Topic/response'
+                  $ref: '#/components/schemas/Topic'
         headers:
             x-agora-message-title:
               schema:
@@ -479,7 +480,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: '#/components/schemas/Topic'
         headers:
             x-agora-message-title:
               schema:
@@ -513,8 +514,8 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: "Success"
+                type: object
+                $ref: '#/components/schemas/Topic'
         headers:
             x-agora-message-title:
               schema:
@@ -556,7 +557,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource/response'
+                  $ref: '#/components/schemas/Resource'
           headers:
             x-agora-message-title:
               schema:
@@ -585,7 +586,7 @@ paths:
           application/json:
             schema: 
               type: object
-              $ref: '#/components/schemas/Resource/request'
+              $ref: '#/components/schemas/Resouce'
       responses:
         '201':
           description: New Resource created
@@ -593,7 +594,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: '#/components/schemas/Resource'
           headers:
             x-agora-message-title:
               schema:
@@ -609,7 +610,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: '#/components/schemas/Resource'
           headers:
             x-agora-message-title:
               schema:
@@ -643,7 +644,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: '#/components/schemas/Resource'
         headers:
             x-agora-message-title:
               schema:
@@ -674,7 +675,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource/response'
+                  $ref: '#/components/schemas/Resource'
         headers:
             x-agora-message-title:
               schema:
@@ -708,7 +709,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: '#/components/schemas/Resource'
         headers:
             x-agora-message-title:
               schema:
@@ -726,42 +727,7 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-    delete:
-      tags: 
-        - Resources
-      summary: Deletes existing resource by Id
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: id of the resource to delete 
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-                example: "Success"
-        headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-  /discussions/goals/{id}:
+  /discussions/goal/{id}:
     get:
       tags: 
         - Discussions
@@ -807,11 +773,17 @@ paths:
           schema:  
             type: integer
           description: id of the topic
-        - in: query
-          name: body
-          schema:
-            type: string
-          description: The new text to be updated
+      requestBody:
+        description: Json for updated text
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                discussion_text:
+                  type: string
+                  description: Text that you wish to update
       responses:
         '200':
           description: OK
@@ -847,11 +819,17 @@ paths:
           schema:  
             type: integer
           description: id of the goal
-        - in: query
-          name: text
-          schema:
-            type: string
-          description: discussion starting text
+      requestBody:
+        description: Json for new text
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Text that you wish to start the discussion with
       responses:
         '200':
           description: OK
@@ -860,7 +838,7 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Discussions'
-        headers:
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -877,7 +855,7 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-  /discussions/topics/{id}:
+  /discussions/topic/{id}:
     get:
       tags: 
         - Discussions
@@ -896,7 +874,7 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Discussions'
-        headers:
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -923,11 +901,17 @@ paths:
           schema:  
             type: integer
           description: id of the topic
-        - in: query
-          name: body
-          schema:
-            type: string
-          description: The new text to be updated
+      requestBody:
+        description: Json for updated text
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                discussion_text:
+                  type: string
+                  description: Text that you wish to update
       responses:
         '200':
           description: OK
@@ -936,7 +920,7 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Discussions'
-        headers:
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -963,11 +947,17 @@ paths:
           schema:  
             type: integer
           description: id of the topic
-        - in: query
-          name: text
-          schema:
-            type: string
-          description: discussion starting text
+      requestBody:
+        description: Json for updated text
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Text that you wish to update
       responses:
         '200':
           description: OK
@@ -976,7 +966,7 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/Discussions'
-        headers:
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -993,7 +983,7 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-  /discussions/ratings/{commentid}:
+  /discussions/rating/{commentid}:
     post:
       tags:
         - Discussions
@@ -1004,6 +994,17 @@ paths:
           schema:  
             type: integer
           description: id of the comment
+      requestBody:
+        description: Rating JSON
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: boolean
+                userId:
+                  type: integer
       responses:
         '200':
           description: OK
@@ -1011,8 +1012,8 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
+                $ref: '#/components/schemas/Comment'
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -1046,8 +1047,8 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
+                $ref: '#/components/schemas/Comment'
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -1069,7 +1070,14 @@ paths:
       tags:
         - Discussions
       summary: 'Post a new comment'
-      parameters: []
+      requestBody:
+        description: Comment JSON requestBody
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Comment'
       responses:
         '200':
           description: OK
@@ -1077,8 +1085,8 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
+                $ref: '#/components/schemas/Comment'
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -1095,7 +1103,7 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-  /discussions/comment/commentID:
+  /discussions/comment/{id}:
     patch:
       tags:
         - Discussions
@@ -1106,6 +1114,18 @@ paths:
           schema:  
             type: integer
           description: id of the comment
+      requestBody:
+        description: Comment edit JSON object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                comment_text:
+                  type: integer
       responses:
         '200':
           description: OK
@@ -1113,8 +1133,8 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
+                $ref: '#/components/schemas/Comment'
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -1148,8 +1168,8 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
+                $ref: '#/components/schemas/Comment'
+          headers:
             x-agora-message-title:
               schema:
                 type: string
@@ -1222,228 +1242,119 @@ components:
       items:
         $ref: '#/components/schemas/Tag'
     Goal:
-      request:
-        type: object
-        required:
-          - goalName
-        properties:
-          id:
-            type: integer
-            description: Assigned automatically for new goals, used to update existing goal if provided
-            uniqueItems: true
-          version:
-            type: integer
-            description: tracks the changes to goals and is automatically incremented on updates
-          goalName:
-            type: string
-            description: The tag
-          goalDescription:
-            type: string
-            description: Description of the goal
-          goalImage:
-            type: string
-            description: filename of the associated image for the goal
-          active:
-            type: boolean
-            description: Active status, inactive items will not be returned in most queries
-          completable:
-            type: boolean
-            description: Completable goals monitor progress of users through topics
-          visibility:
-            type: integer
-            description: Public = 0, Shared = 1, Private = 0
-          createTime:
-            type: timestamp
-            description: Automatically generated timestamp of record creation
-          ownedBy:
-            type: integer
-            description: Id of the user that first generated the tag
-        example:
-          goalId: -1
-          goalName: "Learn how to use Agora"
-          goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-          goalImage: "myImage.png"
-          active: true
-          completable: true
-          visibility: 0
-          topics: [2,3]
-      response:
-          type: object
-          required:
-            - goalName
-          properties:
-            id:
-              type: integer
-              description: Assigned automatically for new goals, used to update existing goal if provided
-              uniqueItems: true
-            version:
-              type: integer
-              description: tracks the changes to goals and is automatically incremented on updates
-            goalName:
-              type: string
-              description: The tag
-            goalDescription:
-              type: string
-              description: Description of the goal
-            goalImage:
-              type: string
-              description: filename of the associated image for the goal
-            active:
-              type: boolean
-              description: Active status, inactive items will not be returned in most queries
-            completable:
-              type: boolean
-              description: Completable goals monitor progress of users through topics
-            visibility:
-              type: integer
-              description: Public = 0, Shared = 1, Private = 0
-            createTime:
-              type: timestamp
-              description: Automatically generated timestamp of record creation
-            ownedBy:
-              type: integer
-              description: Id of the user that first generated the tag
-          example:
-            rid: 1
-            id: 1
-            goalVersion: 1
-            goalName: "Learn how to use Agora"
-            goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-            goalImage: "myImage.png"
-            active: true
-            completable: true
-            visibility: 0
-            version: 1
-            createTime: 2022-11-02T19:37:11.672Z
+      type: object
+      required:
+        - goalName
+      properties:
+        id:
+          type: integer
+          description: Assigned automatically for new goals, used to update existing goal if provided
+          uniqueItems: true
+        version:
+          type: integer
+          description: tracks the changes to goals and is automatically incremented on updates
+        goalName:
+          type: string
+          description: The tag
+        goalDescription:
+          type: string
+          description: Description of the goal
+        goalImage:
+          type: string
+          description: filename of the associated image for the goal
+        active:
+          type: boolean
+          description: Active status, inactive items will not be returned in most queries
+        completable:
+          type: boolean
+          description: Completable goals monitor progress of users through topics
+        visibility:
+          type: integer
+          description: Public = 0, Shared = 1, Private = 0
+        createTime:
+          type: timestamp
+          description: Automatically generated timestamp of record creation
+        ownedBy:
+          type: integer
+          description: Id of the user that first generated the tag
+      example:
+        id: 1
+        version: 1
+        goalName: "Learn how to use Agora"
+        goalDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+        goalImage: "myImage.png"
+        active: true
+        completable: true
+        visibility: 0
+        createTime: "2022-08-07T06:58:53.744Z"
+        ownedBy: 1
     Goals:
       type: array
       items:
         $ref: '#/components/schemas/Goal'
     Topic:
-      request:
-        type: object
-        required:
-          - topicName
-        properties:
-          topicId:
-            type: integer
-            description: Assigned automatically for new topics, used to update existing topic if provided
-            uniqueItems: true
-          topicType:
-            type: integer
-            description: The type
-          topicName:
-            type: string
-            description: The tag
-          topicDescription:
-            type: string
-            description: Description of the topic
-          topicImage:
-            type: string
-            description: filename of the associated image for the topic
-          topicHtml:
-            type: string
-            description: Embedded HTML
-          assessmentId:
-            type: integer
-            description: assessment tag
-          activityId:
-            type: integer
-            description: activity tag
-          hasAssessment:
-            type: boolean
-            description: Whether topic has assessment
-          hasActivity:
-            type: boolean
-            description: Whether topic has activity
-          active:
-            type: boolean
-            description: Active status, inactive items will not be returned in most queries
-          visibility:
-            type: integer
-            description: Public = 2, Shared = 1, Private = 0
-          createTime:
-            type: timestamp
-            description: Automatically generated timestamp of record creation
-          ownedBy:
-            type: integer
-            description: Id of the user that first generated the tag
-        example:
-          topicId: -1
-          topicType: 1
-          topicName: "Understanding the Agora Dashboard"
-          topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
-          topicImage: "myImage.png"
-          topicHtml: '<div><img src="myImage.png"></div>'
-          hasActivity: false
-          hasAssessment: false
-          activityId: -1
-          assessmentId: -1
-          active: true
-          visibility: 0
-      response:
-        type: object
-        required:
-          - topicName
-        properties:
-          id:
-            type: integer
-            description: Assigned automatically for new topics, used to update existing topic if provided
-            uniqueItems: true
-          topicType:
-            type: integer
-            description: The type
-          topicName:
-            type: string
-            description: The tag
-          topicDescription:
-            type: string
-            description: Description of the topic
-          topicImage:
-            type: string
-            description: filename of the associated image for the topic
-          topicHtml:
-            type: string
-            description: Embedded HTML
-          assessmentId:
-            type: integer
-            description: assessment tag
-          activityId:
-            type: integer
-            description: activity tag
-          hasAssessment:
-            type: boolean
-            description: Whether topic has assessment
-          hasActivity:
-            type: boolean
-            description: Whether topic has activity
-          active:
-            type: boolean
-            description: Active status, inactive items will not be returned in most queries
-          visibility:
-            type: integer
-            description: Public = 2, Shared = 1, Private = 0
-          createTime:
-            type: timestamp
-            description: Automatically generated timestamp of record creation
-          ownedBy:
-            type: integer
-            description: Id of the user that first generated the tag
-        example:
-          topicId: 1
-          topicType: 1
-          topicName: "Understanding the Agora Dashboard"
-          topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
-          topicImage: "myImage.png"
-          topicHtml: '<div><img src="myImage.png"></div>'
-          hasActivity: false
-          hasAssessment: false
-          activityId: 1
-          assessmentId: 1
-          active: true
-          visibility: 0
-          ownedBy: 1
-          createTime: "2022-11-02T21:15:38.179Z"
+      type: object
+      required:
+        - topicName
+      properties:
+        id:
+          type: integer
+          description: Assigned automatically for new topics, used to update existing topic if provided
+          uniqueItems: true
+        topicType:
+          type: integer
+          description: The type
+        topicName:
+          type: string
+          description: The tag
+        topicDescription:
+          type: string
+          description: Description of the topic
+        topicImage:
+          type: string
+          description: filename of the associated image for the topic
+        topicHtml:
+          type: string
+          description: Embedded HTML
+        assessmentId:
+          type: integer
+          description: assessment tag
+        activityId:
+          type: integer
+          description: activity tag
+        hasAssessment:
+          type: boolean
+          description: Whether topic has assessment
+        hasActivity:
+          type: boolean
+          description: Whether topic has activity
+        active:
+          type: boolean
+          description: Active status, inactive items will not be returned in most queries
+        visibility:
+          type: integer
+          description: Public = 2, Shared = 1, Private = 0
+        createTime:
+          type: timestamp
+          description: Automatically generated timestamp of record creation
+        ownedBy:
+          type: integer
+          description: Id of the user that first generated the tag
+      example:
+        id: 1
+        topicType: 1
+        topicName: "Understanding the Agora Dashboard"
+        topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
+        topicImage: "myImage.png"
+        topicHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
+        assessmentId: 1
+        hasActivity: false
+        hasAssessment: false
+        activityId: 1
+        active: true
+        visibility: 0
+        createTime: "2022-08-07T06:58:53.744Z"
+        ownedBy: 1
     Topics:
       type: array
       items:
@@ -1463,116 +1374,109 @@ components:
           description: The text of the original discussion post
         discussion_comments:
           type: array
-          description: Array of the comments made on a post, and their user ID
+          items: 
+            type: object
+            $ref: '#/components/schemas/Comment'
+          description: Array of the comment objects made on a post, and their user ID
+      example:
+        parent_id: 1
+        parent_type: topic
+        discussion_text: Hello There!
+        discussion_comments:
+          - id: 1
+            parent_id: 1
+            parent_type: topic
+            comment_text: This is my comment!
+            user_id: 24
+            created_at: "2022-08-07T06:58:53.744Z"
+            updated_at: "2022-08-07T06:59:53.744Z"
+            likes: 1
+            dislikes: 6
+          - id: 2
+            parent_id: 1
+            parent_type: topic
+            comment_text: Another comment!
+            user_id: 42
+            created_at: "2022-08-07T06:58:53.744Z"
+            updated_at: "2022-08-07T06:59:53.744Z"
+            likes: 6
+            dislikes: 2
+    Comment: 
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+        parent_type:
+          type: string
+        comment_text:
+              type: string
+        user_id:
+          type: integer
+        created_at:
+          type: timestamp
+        updated_at:
+          type: timestamp
+        likes:
+          type: integer
+        dislikes:
+          type: integer  
     Resource:
-      request:
-        type: object
-        required:
-          - resourceName
-        properties:
-          id:
-            type: integer
-            description: Assigned automatically for new resources, used to update existing resource if provided
-            uniqueItems: true
-          resourceType:
-            type: string
-            description: The type
-          resourceName:
-            type: string
-            description: The tag
-          resourceDescription:
-            type: string
-            description: The synopsis
-          resourceContentHtml:
-            type: string
-            description: Additional description
-          resourceImage:
-            type: string
-            description: filename of the associated image for the resource
-          resourceLink:
-            type: string
-            description: hyperlink to referenced resource
-          isRequired:
-            type: integer
-            description: Not required status, required resources are necessary for ...
-          active:
-            type: boolean
-            description: Active status, inactive items will not be returned in most queries
-          visibility:
-            type: integer
-            description: Public = 2, Shared = 1, Private = 0
-          createTime:
-            type: timestamp
-            description: Automatically generated timestamp of record creation
-          ownedBy:
-            type: integer
-            description: Id of the user that first generated the tag
-        example:
-          resourceId: -1
-          resourceType: 1
-          resourceName: "Dashboard Screenshot"
-          resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
-          resourceContentHtml: '<div><img src="myImage.png"></div>'
-          resourceImage: "myImage.png"
-          resourceLink: "https://resourcelink.com/"
-          isRequired: false
-          active: true
-          visibility: 0
-      response:
-        type: object
-        required:
-          - resourceName
-        properties:
-          id:
-            type: integer
-            description: Assigned automatically for new resources, used to update existing resource if provided
-            uniqueItems: true
-          resourceType:
-            type: string
-            description: The type
-          resourceName:
-            type: string
-            description: The tag
-          resourceDescription:
-            type: string
-            description: The synopsis
-          resourceContentHtml:
-            type: string
-            description: Additional description
-          resourceImage:
-            type: string
-            description: filename of the associated image for the resource
-          resourceLink:
-            type: string
-            description: hyperlink to referenced resource
-          isRequired:
-            type: integer
-            description: Not required status, required resources are necessary for ...
-          active:
-            type: boolean
-            description: Active status, inactive items will not be returned in most queries
-          visibility:
-            type: integer
-            description: Public = 2, Shared = 1, Private = 0
-          createTime:
-            type: timestamp
-            description: Automatically generated timestamp of record creation
-          ownedBy:
-            type: integer
-            description: Id of the user that first generated the tag
-        example:
-          id: 1
-          resourceType: 1
-          resourceName: "Dashboard Screenshot"
-          resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
-          resourceContentHtml: '<div><img src="myImage.png"></div>'
-          resourceImage: "myImage.png"
-          resourceLink: "https://resourcelink.com/"
-          isRequired: false
-          active: true
-          visibility: 0
-          ownedBy: 1
-          createTime: "2022-11-02T22:38:05.254Z"
+      type: object
+      required:
+        - resourceName
+      properties:
+        id:
+          type: integer
+          description: Assigned automatically for new resources, used to update existing resource if provided
+          uniqueItems: true
+        resourceType:
+          type: string
+          description: The type
+        resourceName:
+          type: string
+          description: The tag
+        resourceDescription:
+          type: string
+          description: The synopsis
+        resourceContentHtml:
+          type: string
+          description: Additional description
+        resourceImage:
+          type: string
+          description: filename of the associated image for the resource
+        resourceLink:
+          type: string
+          description: hyperlink to referenced resource
+        isRequired:
+          type: integer
+          description: Not required status, required resources are necessary for ...
+        active:
+          type: boolean
+          description: Active status, inactive items will not be returned in most queries
+        visibility:
+          type: integer
+          description: Public = 2, Shared = 1, Private = 0
+        createTime:
+          type: timestamp
+          description: Automatically generated timestamp of record creation
+        ownedBy:
+          type: integer
+          description: Id of the user that first generated the tag
+      example:
+        id: 1
+        resourceType: 1
+        resourceName: "Dashboard Screenshot"
+        resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
+        resourceContentHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
+        resourceImage: "myImage.png"
+        resourceLink: "https://resourcelink.com/"
+        isRequired: 1
+        active: true
+        visibility: 0
+        createTime: "2022-08-07T06:58:53.744Z"
+        ownedBy: 1
     Resources:
       type: array
       items:
