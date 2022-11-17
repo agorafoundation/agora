@@ -29,7 +29,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     if( ownerId > -1 ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
         const values = [ ownerId, true ];
 
         let workspaces = [];
@@ -218,8 +218,8 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, isActive ) => {
  * @returns workspace
  */
 exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
-    let text = "select * from workspaces gl INNER JOIN (SELECT id, MAX(workspace_version) AS max_version FROM workspaces where id = $1 group by id) workspacemax "
-        + "on gl.id = workspacemax.id AND gl.workspace_version = workspacemax.max_version order by gl.id;";
+    let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
+        + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
     let values = [ workspaceId ];
     try {
         let workspace = "";
@@ -259,7 +259,7 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
             
             // set the prevFileName with the prev name
             if( res.rows.length > 0 ) {
-                prevFileName = res.rows[0].workspace_image;
+                prevFileName = res.rows[0].goal_image;
             }
 
             // create the update query to set the new name
@@ -310,7 +310,7 @@ exports.saveWorkspace = async ( workspace ) => {
         else {
             // get the current max workspace id
             console.log( "[workspaceController.saveWorkspace]: New Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "select max(id) from workspaces;";
+            let text = "select max(id) from goals;";
             let values = [];
             try {
                 let res = await db.query( text, values );

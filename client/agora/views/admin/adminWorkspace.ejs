@@ -97,7 +97,7 @@
                                             Version: <input type="input" class="form-control form-control-lg" name="workspaceVersion" value="<%- workspace.workspaceVersion %>" id="workspaceVersion" placeholder="Version" disabled>
                                             Name: <input type="input" class="form-control form-control-lg" name="workspaceName" value="<%- workspace.workspaceName %>" id="workspaceName" placeholder="Name" required>
                                             Desciption: <input type="input" class="form-control form-control-lg" name="workspaceDescription" value="<%- workspace.workspaceDescription %>" id="workspaceDescription" placeholder="Description">
-                                            Image: <img class="img-supersmall" src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- workspace.workspaceImage %>" />
+                                            Image: <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- workspace.workspaceImage %>" />
                                             <div class="mb-2">
                                                 <label for="formFile" class="form-label">Upload an image for this workspace (1MB Max size)</label>
                                                 <input class="form-control btn-secondary" accept="image/jpeg,image/jpg,image/png" type="file" id="formFile" value="<%- workspace.workspaceImage %>" name="workspaceImage">

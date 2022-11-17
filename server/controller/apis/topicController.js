@@ -262,7 +262,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
         
         // check to see if the incoming message format is from the UI form or the API
-        topic.active = false; // Defaulted to false if not specified.
+        // topic.active = false; // Defaulted to false if not specified.
         if( req.body.active ) {
             topic.active = req.body.active;
         }

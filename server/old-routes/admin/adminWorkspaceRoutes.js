@@ -29,7 +29,7 @@ let path = require( 'path' );
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
 let FRONT_END = process.env.FRONT_END_NAME;
-let IMAGE_PATH = process.env.WORKSPACE_IMAGE_PATH;
+let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
 
 // set the max image size for avatars and resource, topic and workspace icons
 let maxSize = 1 * 1024 * 1024;
