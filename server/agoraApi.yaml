@@ -877,41 +877,6 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-    delete:
-      tags:
-        - Discussions
-      summary: 'Deletes a discussion using goal ID'
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: Id of the goal
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
   /discussions/topics/{id}:
     get:
       tags: 
@@ -1028,16 +993,17 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
-    delete:
+  /discussions/ratings/{commentid}:
+    post:
       tags:
         - Discussions
-      summary: 'Deletes a discussion using topic ID'
+      summary: 'Posts the rating for a specific comment'
       parameters:
         - in: path
           name: id
-          schema:
+          schema:  
             type: integer
-          description: Id of the topic
+          description: id of the comment
       responses:
         '200':
           description: OK
@@ -1063,6 +1029,144 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404':
           $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Discussions
+      summary: 'Removes the rating for a comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/comment:
+    post:
+      tags:
+        - Discussions
+      summary: 'Post a new comment'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /discussions/comment/commentID:
+    patch:
+      tags:
+        - Discussions
+      summary: 'Change a currently existing comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Discussions
+      summary: 'Deletes a currently existing comment'
+      parameters:
+        - in: path
+          name: id
+          schema:  
+            type: integer
+          description: id of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Discussions'
+        headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+      
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.com/api/v1/auth

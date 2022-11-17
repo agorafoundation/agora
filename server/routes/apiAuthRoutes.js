@@ -20,6 +20,9 @@ router.use( function ( req, res, next ) {
     // This is the case if using UI.
     const authTest = req.session.isAuth;
     if( authTest ){
+        // TODO: phase out session authUser, instead using req.user
+        // both are still defined for now
+        req.user = req.session.authUser;
         next();
         return;
     }
@@ -49,6 +52,7 @@ router.use( function ( req, res, next ) {
                 // TODO future role specific verification can go here.
 
                 // Middleware complete back to called route.
+                
                 next( );
 
             }
@@ -83,7 +87,6 @@ router.use( function ( req, res, next ) {
     */
 
 } );
-
 
 /**
  * Tag APIs
