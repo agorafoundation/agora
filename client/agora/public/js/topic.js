@@ -12,7 +12,7 @@
 let newQuestionNum = 0;
 //let newOptionNum = 0;
 
-// keep track of questions and options as a 2-demensional array
+// keep track of questions and options as a 2-dimensional array
 let totalTracking = [];
 
 
@@ -825,23 +825,23 @@ function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
 //this will be replaced by async backend response eventually
 const findNextId = () => {
     let highest = -1;
-    document.querySelectorAll(".comment-countable").forEach((comment)=> {
-        if ((comment.id).substring(8) > highest) {
+    document.querySelectorAll( ".comment-countable" ).forEach( ( comment ) => {
+        if ( ( comment.id ).substring( 8 ) > highest ) {
             highest = comment.id;
         }
-    })
+    } );
     return ++highest;
-}
+};
 
 //////New Comment/////
 
-const addComment = (user, pfp, text) => {
+const addComment = ( user, pfp, text ) => {
     if ( text ) {
 
         let date = new Date();
 
         //cloning the comment template so we can modify it then add it to the stream
-        let newEl = document.getElementById("comment-template").cloneNode(true);
+        let newEl = document.getElementById( "comment-template" ).cloneNode( true );
 
         //setting the attributes of the comment
         newEl.style.display = "block";
@@ -850,41 +850,43 @@ const addComment = (user, pfp, text) => {
         newEl.childNodes[1].childNodes[3].innerText = user;
         newEl.childNodes[3].innerText = text;
         newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
-        newEl.classList.add("comment-countable");
+        newEl.classList.add( "comment-countable" );
 
         //make sure the like button works
-        newEl.querySelector("#like-button").addEventListener("click",addOrRemoveLike);
+        newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
 
         //inserting the modified clone into the comment stream
-        document.getElementById("discussions-body").insertBefore(newEl, document.getElementById("post-comment-btn").nextSibling);  
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
 
         //removing the value from the textarea
-        document.getElementById("discussion-textarea").innerText = '';
-    } else {
-        window.alert("You cannot leave a blank comment");
+        document.getElementById( "discussion-textarea" ).innerText = '';
     }
-}
+    else {
+        window.alert( "You cannot leave a blank comment" );
+    }
+};
 
 //like buttons function
-document.getElementById("post-comment-btn").addEventListener("click", ()=> {
-    addComment("Max","account_circle",document.getElementById("discussion-textarea").innerText)
-});
+document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+    addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText );
+} );
 
 
 const queryLikedElements = () => {
     //TODO
     //assign 'liked' class to each element that has already been liked according to backend
-}
+};
 
-window.addEventListener("load",()=> {
+window.addEventListener("load",() => {
     //ensuring that every comment that has already been liked by the same user cannot be liked again
     queryLikedElements();
 
     //making sure every like button functions
-    document.querySelectorAll("#like-button").forEach((likeButton)=> {
-        likeButton.addEventListener("click", addOrRemoveLike)
-    })
-});
+    document.querySelectorAll("#like-button" ).forEach(( likeButton ) => {
+        likeButton.addEventListener("click", addOrRemoveLike );
+    } ) ;
+} );
+
 
 ///////Like Button////////
 
@@ -893,20 +895,21 @@ const addOrRemoveLike = ( e ) => {
 
     //making sure the element we are clicking is the one we're looking to use
     e.target.id ? 
-    goodElement = e.target.childNodes[3] : 
-    e.target.style ? 
-    goodElement = e.target.parentElement.childNodes[3] : 
-    goodElement = e.target;
+        goodElement = e.target.childNodes[3] : 
+        e.target.style ? 
+        goodElement = e.target.parentElement.childNodes[3] : 
+        goodElement = e.target;
 
     let parentEl = goodElement.parentElement.parentElement.parentElement;
 
-    if (parentEl.classList.contains( "liked" ) ) {
+    if ( parentEl.classList.contains( "liked" ) ) {
         parentEl.classList.remove( "liked" );
         goodElement.innerText = parseInt(goodElement.innerText, 10) - 1;
         goodElement.parentElement.childNodes[1].style.color = "black";
         goodElement.style.color = "black";
         goodElement.parentElement.style.outline = "2px solid gray";
-    } else {
+    } 
+    else {
         parentEl.classList.add( "liked" );
         goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
         goodElement.parentElement.childNodes[1].style.color = "gray";
@@ -915,10 +918,7 @@ const addOrRemoveLike = ( e ) => {
     }
 }
 
-//////Edit comment/////////
-const getCommentById = ( id ) => {
-    return comments.find( comment => comment.id === id );
-}
+
 //////////////onload fetch functions //////////////////////
 
 const prefixPattern = /#t/;
