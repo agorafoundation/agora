@@ -877,13 +877,13 @@ const queryLikedElements = () => {
     //assign 'liked' class to each element that has already been liked according to backend
 };
 
-window.addEventListener("load",() => {
+window.addEventListener( "load", () => {
     //ensuring that every comment that has already been liked by the same user cannot be liked again
     queryLikedElements();
 
     //making sure every like button functions
-    document.querySelectorAll("#like-button" ).forEach(( likeButton ) => {
-        likeButton.addEventListener("click", addOrRemoveLike );
+    document.querySelectorAll( "#like-button" ).forEach( ( likeButton ) => {
+        likeButton.addEventListener( "click", addOrRemoveLike );
     } ) ;
 } );
 
@@ -897,26 +897,26 @@ const addOrRemoveLike = ( e ) => {
     e.target.id ? 
         goodElement = e.target.childNodes[3] : 
         e.target.style ? 
-        goodElement = e.target.parentElement.childNodes[3] : 
-        goodElement = e.target;
+            goodElement = e.target.parentElement.childNodes[3] : 
+            goodElement = e.target;
 
     let parentEl = goodElement.parentElement.parentElement.parentElement;
 
     if ( parentEl.classList.contains( "liked" ) ) {
         parentEl.classList.remove( "liked" );
-        goodElement.innerText = parseInt(goodElement.innerText, 10) - 1;
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) - 1;
         goodElement.parentElement.childNodes[1].style.color = "black";
         goodElement.style.color = "black";
         goodElement.parentElement.style.outline = "2px solid gray";
     } 
     else {
         parentEl.classList.add( "liked" );
-        goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
         goodElement.parentElement.childNodes[1].style.color = "gray";
         goodElement.style.color = "gray";
         goodElement.parentElement.style.outline = "none";
     }
-}
+};
 
 
 //////////////onload fetch functions //////////////////////
