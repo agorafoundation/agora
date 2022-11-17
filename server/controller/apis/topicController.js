@@ -102,27 +102,27 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
         if( topic ) {
 
-            console.log( topic );
             let resourcesList = [];
 
-            const resourceIds = [ 7, 8, 9 ]; // Change this to topic.resources once db change goes through.
+            // Get all resource Ids associated with our topicId.
+            let resourceIds = await topicService.getAllResourceIdsFromTopic( topic.topicId );
 
+            // Grab each resource by id and append it to our list of resources.
             for ( let index in resourceIds ) {
-                console.log( resourceIds[index] );
-                const resource = await resourceService.getResourceById( resourceIds[index], false );
+                let resource = await resourceService.getResourceById( resourceIds[index], false );
 
-                if ( resource ){
-                    resourcesList.push( resourcesList );
-                    // console.log( JSON.stringify( resource ) ); 
+                if ( resource ){ // Ensure retrieval of resource.
+                    resourcesList.push( resource );
                 }
                 else {
                     console.log( "Error retrieving resource " + resourceIds[index] + "\n" );
                 }
             }
 
+            // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( topic ); // TODO: Figure out why I can't put resourcesList in here.
+            res.status( 200 ).json( resourcesList );
         }
 
         else {
