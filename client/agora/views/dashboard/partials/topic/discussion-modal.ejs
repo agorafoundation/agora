@@ -1,7 +1,7 @@
 <% 
 var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a comment", likes: 0, timestamp: "11/15/2022"},
                 {id: 1, user: "Nick", pfp: "account_circle", text: "This is a comment also", likes: 0, timestamp: "11/15/2022"},
-                {id: 2, user: "Lindsey", pfp: "account_circle", text: "This is a comment, too", likes: 0, timestamp: "11/15/2022"},
+                {id: 2, user: "Lindsey", pfp: "account_circle", text: "This is a comment, too, but this commenter doesn't like tacos. This is a large problem in my book.", likes: 0, timestamp: "11/15/2022"},
                 {id: 3, user: "Alesha", pfp: "account_circle", text: "This is a comment as well", likes: 0, timestamp: "11/15/2022"}];
 %>
 
@@ -27,15 +27,11 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
                             <span style="margin: 2px 0 0 1px"><%= comment.likes %></span>
                         </button>
                         <hr class="footer-hr">
-                        <span style="margin-top: 2px"><%=comment.timestamp%></span>
+                        <span class="post-date"><%=comment.timestamp%></span>
                     </div>
                     <hr style="width: 100%;">
                 </div>
             <% }) %>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>

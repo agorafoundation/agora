@@ -639,6 +639,7 @@
     border: 1px solid black;
     margin-bottom: 5px;
     overflow: auto;
+    font-size: 14px;
   }
 
   .discussion-modal-pos {
@@ -665,10 +666,15 @@
 .post-comment-btn {
   margin-left: 85%; 
   border-radius: 5px; 
-  background-color: blue; 
+  background-color: #5f89e0; 
   color: white; 
   border: none
 } 
+
+.post-comment-btn:hover {
+  background-color: #8aa9e7;
+  outline: 1px solid gray;
+}
 
 .discussion-user {
   padding: 0; 
@@ -678,17 +684,18 @@
 .comment-body {
   margin-left: 5px; 
   word-wrap: break-word;
+  font-size: 14px;
 }
 
 .comment-footer {
-  margin: 7px 0 0 5px
+  margin: 10px 0 0 5px
 }
 
 .like-button {
   background-color: lightgray; 
   border-radius: 10%; 
-  border: none; 
-  outline: none; 
+  outline: 2px solid gray;
+  border: none;
 }
 
 .footer-hr {
@@ -700,4 +707,9 @@
 .like-icon {
   margin: 0; 
   font-size: 22px;
+}
+
+.post-date {
+  font-size: 14px;
+  margin-top: 6px;
 }

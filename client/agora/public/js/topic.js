@@ -836,27 +836,33 @@ const findNextId = () => {
 //////New Comment/////
 
 const addComment = (user, pfp, text) => {
-    let date = new Date(Date.now());
+    if ( text ) {
 
-    //cloning the comment template so we can modify it then add it to the stream
-    let newEl = document.getElementById("comment-template").cloneNode(true);
+        let date = new Date();
 
-    //setting the attributes of the comment
-    newEl.style.display = "block";
-    newEl.id = findNextId();
-    newEl.childNodes[1].childNodes[1].innerText = pfp;
-    newEl.childNodes[1].childNodes[3].innerText = user;
-    newEl.childNodes[3].innerText = text;
-    newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();;
+        //cloning the comment template so we can modify it then add it to the stream
+        let newEl = document.getElementById("comment-template").cloneNode(true);
 
-    //make sure the like button works
-    newEl.querySelector("#like-button").addEventListener("click",addLike);
+        //setting the attributes of the comment
+        newEl.style.display = "block";
+        newEl.id = findNextId();
+        newEl.childNodes[1].childNodes[1].innerText = pfp;
+        newEl.childNodes[1].childNodes[3].innerText = user;
+        newEl.childNodes[3].innerText = text;
+        newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+        newEl.classList.add("comment-countable");
 
-    //inserting the modified clone into the comment stream
-    document.getElementById("discussions-body").insertBefore(newEl, document.getElementById("post-comment-btn").nextSibling);  
+        //make sure the like button works
+        newEl.querySelector("#like-button").addEventListener("click",addOrRemoveLike);
 
-    //removing the value from the textarea
-    document.getElementById("discussion-textarea").innerText = '';
+        //inserting the modified clone into the comment stream
+        document.getElementById("discussions-body").insertBefore(newEl, document.getElementById("post-comment-btn").nextSibling);  
+
+        //removing the value from the textarea
+        document.getElementById("discussion-textarea").innerText = '';
+    } else {
+        window.alert("You cannot leave a blank comment");
+    }
 }
 
 //like buttons function
@@ -864,9 +870,25 @@ document.getElementById("post-comment-btn").addEventListener("click", ()=> {
     addComment("Max","account_circle",document.getElementById("discussion-textarea").innerText)
 });
 
+
+const queryLikedElements = () => {
+    //TODO
+    //assign 'liked' class to each element that has already been liked according to backend
+}
+
+window.addEventListener("load",()=> {
+    //ensuring that every comment that has already been liked by the same user cannot be liked again
+    queryLikedElements();
+
+    //making sure every like button functions
+    document.querySelectorAll("#like-button").forEach((likeButton)=> {
+        likeButton.addEventListener("click", addOrRemoveLike)
+    })
+});
+
 ///////Like Button////////
 
-const addLike = ( e ) => {
+const addOrRemoveLike = ( e ) => {
     let goodElement;
 
     //making sure the element we are clicking is the one we're looking to use
@@ -876,21 +898,22 @@ const addLike = ( e ) => {
     goodElement = e.target.parentElement.childNodes[3] : 
     goodElement = e.target;
 
-    //if ( goodElement.parentElement.parentElement.previousSibling.previousSibling.childNodes[3].innerText)
+    let parentEl = goodElement.parentElement.parentElement.parentElement;
 
-    //converting the value to an int then adding 1
-    goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
-
-    goodElement.parentElement.disabled = true;
-
-    goodElement.parentElement.childNodes[1].style.color = "gray";
+    if (parentEl.classList.contains( "liked" ) ) {
+        parentEl.classList.remove( "liked" );
+        goodElement.innerText = parseInt(goodElement.innerText, 10) - 1;
+        goodElement.parentElement.childNodes[1].style.color = "black";
+        goodElement.style.color = "black";
+        goodElement.parentElement.style.outline = "2px solid gray";
+    } else {
+        parentEl.classList.add( "liked" );
+        goodElement.innerText = parseInt(goodElement.innerText, 10) + 1;
+        goodElement.parentElement.childNodes[1].style.color = "gray";
+        goodElement.style.color = "gray";
+        goodElement.parentElement.style.outline = "none";
+    }
 }
-
-//making sure every like button functions
-document.querySelectorAll("#like-button").forEach((likeButton)=> {
-    likeButton.addEventListener("click", addLike)
-})
-
 
 //////Edit comment/////////
 const getCommentById = ( id ) => {
