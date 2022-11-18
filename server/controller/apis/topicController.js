@@ -9,6 +9,9 @@
 const fs = require( 'fs' );
 let path = require( 'path' );
 
+// import controllers
+const {errorController} = require( "./apiErrorController" );
+
 // import services
 const topicService = require( '../../service/topicService' );
 const assessmentService = require( '../../service/assessmentService' );
@@ -126,10 +129,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
         }
 
         else {
-            const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
-            res.set( "x-agora-message-title", "Not Found" );
-            res.set( "x-agora-message-detail", "Topic not found" );
-            res.status( 404 ).json( message );
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
         }
     }
     
