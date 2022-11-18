@@ -6,21 +6,29 @@
  */
 
 const db = require( "../db/connection" );
+const resource = require( "../model/resource" );
 const { ormSearchResult } = require( "../model/searchresult" );
 
 exports.getSearchResults = async ( term, userId ) => {
 
+    // probably do some checks here so only certain queries are run
+
     const [ users, resources, topics, goals ] = await Promise.all( [
         this.getUsersByTerm( term, userId ),
         this.getResourcesByTerm( term, userId ),
-        this.getTopicsByTerm( term, userId ),
-        this.getGoalsByTerm( term, userId )
+        // this.getTopicsByTerm( term, userId ),
+        // this.getWorkspaceByTerm( term, userId )
     ] );
 
     console.log( users, resources, topics, goals );
     console.log( term );
 
-    return {search: term} ;
+    // do some stuff with the results
+    // transform to search object
+    // maybe provide a search latency stat
+    // maybe order the searches by some type of relevance
+
+    return {search: term, resources} ;
 };
 
 exports.getUsersByTerm = async ( term, userId ) => {
@@ -28,7 +36,30 @@ exports.getUsersByTerm = async ( term, userId ) => {
 };
 
 exports.getResourcesByTerm = async ( term, userId ) => {
-    //db query(Kyle)
+    const text = `
+        SELECT *
+        FROM resources
+        WHERE resource_name ILIKE '%' || $1 || '%'
+        OR resource_description ILIKE '%' || $1 || '%'
+        OR resource_content_html ILIKE '%' || $1 || '%'
+        AND owned_by = $2
+    `;
+
+    const values = [ term, userId ];
+
+    try {
+            
+        let res = await db.query( text, values );
+
+        const resources = res.rows.map( resource.ormResource );
+
+        return resources;
+
+    }
+    catch ( e ) {
+        console.log( e );
+        return null;
+    }
 };
 
 exports.getTopicsByTerm = async ( term, userId ) => {
