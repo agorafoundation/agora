@@ -33,7 +33,7 @@ exports.getResourcesByTerm = async ( term, userId ) => {
 
 exports.getTopicsByTerm = async ( term, userId ) => {
     const text = `
-        SELECT * 
+        SELECT goal_name, goal_id, goal_description
         FROM topics 
         WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
     `;
