@@ -5,6 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+const db = require( "../db/connection" );
+const { ormSearchResult } = require( "../model/searchresult" );
 
 exports.getSearchResults = async ( term, userId ) => {
 
@@ -30,9 +32,68 @@ exports.getResourcesByTerm = async ( term, userId ) => {
 };
 
 exports.getTopicsByTerm = async ( term, userId ) => {
-    //db query (Chris)
+    const text = `
+        SELECT * 
+        FROM topics 
+        WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
+    `;
+    const values = [ userId ];
+
+    try {
+        
+        let res = await db.query( text, values );
+
+        if( res.rows.length === 0 ) {
+            return false;
+        }
+
+        let results = [];
+
+        res.forEach( element => {
+            element = ormSearchResult( res.rows[0] );
+            results.push( element );
+        } );
+        
+
+        return results;
+
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
 };
 
-exports.getGoalsByTerm = async ( term, userId ) => {
-    //db query (Chris)
+
+exports.getWorkspaceByTerm = async ( term, userId ) => {
+    const text = `
+        SELECT * 
+        FROM goals 
+        WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
+    `;
+    const values = [ userId ];
+
+    try {
+        
+        let res = await db.query( text, values );
+
+        if( res.rows.length === 0 ) {
+            return false;
+        }
+
+        let results = [];
+
+        res.forEach( element => {
+            element = ormSearchResult( res.rows[0] );
+            results.push( element );
+        } );
+        
+
+        return results;
+
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
 };
