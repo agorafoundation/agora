@@ -67,7 +67,7 @@ exports.getTopicsByTerm = async ( term, userId ) => {
 
 exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
-        SELECT * 
+        SELECT goal_name, goal_id, goal_description 
         FROM goals 
         WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
     `;

@@ -1188,6 +1188,12 @@ paths:
           $ref: "#/components/responses/NotFoundError"
   /search/{query}:
     get:
+      parameters:
+        - in: path
+          name: query
+          schema:
+            type: string
+          description: The keyword / query
       tags:
         - Search
       responses:
@@ -1197,7 +1203,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Search"
+                $ref: "#/components/schemas/SearchArray"
           headers:
             x-agora-message-title:
               schema:
@@ -1454,14 +1460,23 @@ components:
     Search:
       type: object
       properties:
+        name:
+          type: string
         id:
           type: integer
-        title:
+        description:
           type: string
     SearchArray:
       type: array
       items:
         $ref: "#/components/schemas/Search"
+      example:
+        - name: "Studying Help!"
+          id: 24
+          description: "This is to help people study!"
+        - name: "Robotics 101"
+          id: 76
+          description: "How to build a moon rover using PIDs"
     Resource:
       type: object
       required:
