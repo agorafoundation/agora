@@ -4,8 +4,8 @@
       if (contentType === "Topic") { %>
 
         <!--Topic Card -->
-        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check">
-          <div class="card h-100 countable" id="t-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
+        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-topic">
+          <div class="card h-100" id="t-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="t-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
@@ -34,7 +34,7 @@
 
         <!--Goal Card-->
         <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-goal">
-          <div class="card h-100 countable" id="g-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+          <div class="card h-100" id="g-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="g-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
@@ -49,7 +49,7 @@
                   <ul class="list-group list-group-flush list-grid">
                     <% content.slice(0,8).forEach((item) => { %>
                       <!--topicReroute() below has a filler id-->
-                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false, null)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
                     <% }) %>
                   </ul>
                 <% } %>
@@ -86,12 +86,14 @@
          //render goals
             
          for (let i = 0; i <  ownerGoals.length ; i++) { 
-            renderCard(ownerGoals[i].id,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+            renderCard(ownerGoals[i].goalId,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
          }%>
             <% //render resources for Now
         for (let i = 0; i <  ownerTopics.length ; i++) { 
             renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
+            
          }%>
+         
          
            
     </div>

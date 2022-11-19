@@ -7,7 +7,7 @@
 
 function goal() {
     this.rid = -1;
-    this.id = -1;
+    this.goalId = -1;
     this.goalVersion = 1;
     this.goalName = "";
     this.goalDescription = "";
@@ -28,7 +28,7 @@ exports.emptyGoal = () => {
 exports.ormGoal = function ( row ) {
     let goal = exports.emptyGoal();
     goal.rid = row.rid;
-    goal.id = row.id;
+    goal.goalId = row.id; // TODO: Once database change goes through, this will need to be updated to row.goalId.
     goal.version = row.goal_version;
     goal.goalName = row.goal_name;
     goal.goalDescription = row.goal_description;

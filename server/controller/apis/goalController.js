@@ -43,7 +43,7 @@ exports.getAllVisibleGoals = async ( req, res ) => {
 
 exports.getGoalById = async ( req, res ) => {
     // get all the active goals by user 
-    let goal = await goalService.getActiveGoalWithTopicsById( req.params.id, true );
+    let goal = await goalService.getActiveGoalWithTopicsById( req.params.goalId, true );
     if( goal ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned goal by id" );
@@ -70,7 +70,7 @@ exports.deleteGoalById = async ( req, res ) => {
     }
 
     if ( authUserId > 0 ) {
-        const goalId = req.params.id;
+        const goalId = req.params.goalId;
         let success = await goalService.deleteGoalById( goalId, authUserId );
 
         if ( success ) {
@@ -123,7 +123,7 @@ exports.saveGoalImage = async ( req, res, goalId, filename ) => {
             if( rValue && ( rValue != 'goal-default.png' || rValue != 'peak.svg' ) ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + GOAL_PATH + rValue, ( err ) => {
                     if( err ) {
-                        console.log( "[goalController] file delete error status: " + err );
+                        console.log( "[goalController.saveGoalImage] file delete error status: " + err );
                         return false;
                     }
                     
@@ -160,37 +160,62 @@ exports.saveGoal = async ( req, res, redirect ) => {
 
     if( authUserId > 0 ) {
 
-        goal.id = req.body.goalId;
+        goal.goalId = req.body.goalId;
 
         // see if this is a modification of an existing goal
-        let existingGoal = await goalService.getMostRecentGoalById( goal.id );
+        let existingGoal = await goalService.getMostRecentGoalById( goal.goalId );
 
         // if this is an update replace the goal with teh existing one as the starting point
         if( existingGoal ) {
-            console.log( "there was an existing goal for this id: " + JSON.stringify( existingGoal ) );
+            
             goal = existingGoal;
+            console.log( "[goalController.saveGoal]: Existing Goal found by goalId - " + JSON.stringify( existingGoal ) );
+  
+            if( ( existingGoal.visibility != req.body.visibility )
+                || ( existingGoal.goalName != req.body.goalName )
+                || ( existingGoal.goalDescription != req.body.goalDescription )
+                || ( existingGoal.active != req.body.active )
+                || ( existingGoal.completable != req.body.completable ) ) {
+                goal.goalVersion++;
+                console.log( "[goalController.saveGoal]: Modifications made; Goal Version incremented - version: " + goal.goalVersion );
+            }
+            else {
+                console.log( "[goalController.saveGoal]: No modifications were made" );
+            }
+
         }
 
         // add changes from the body if they are passed
-        goal.visibility = req.body.goalVisibility;
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            goal.visibility = req.body.visibility;   
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
         goal.goalName = req.body.goalName;
         goal.goalDescription = req.body.goalDescription;
+        goal.active = req.body.active;
+        goal.completable = req.body.completable;
         
         // check to see if the incoming message format is from the UI form or the API for active
+        /*
         if( req.body.goalActive ) {
-            goal.active = ( req.body.goalActive == "on" ) ? true : false;
+            goal.active = ( req.body.active == "on" ) ? true : false;
         }
         else if ( req.body.active ) {
             goal.active = req.body.active;
         }
+        */
 
         // check to see if the incoming message format is from the UI form or the API for completable
+        /*
         if( req.body.goalCompletable ) {
             goal.completable = ( req.body.goalCompletable == "on" ) ? true : false;
         }
-        else if ( req.body.active ) {
-            goal.completable = req.body.active;
+        else if ( req.body.completable ) {
+            goal.completable = req.body.completable;
         }
+        */
 
         goal = await goalService.saveGoal( goal );
 
@@ -203,7 +228,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
-            this.saveGoalImage( req, res, goal.id, 'peak.svg' );
+            this.saveGoalImage( req, res, goal.goalId, 'peak.svg' );
             
         }
         else {
@@ -248,7 +273,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveGoalImage( req, res, goal.id, timeStamp + file.name );
+                        await this.saveGoalImage( req, res, goal.goalId, timeStamp + file.name );
                     }
                 } );
             }
@@ -286,7 +311,7 @@ exports.saveGoal = async ( req, res, redirect ) => {
         let pathway = null;
         if( req.body.pathway ) {
             pathway = req.body.pathway.split( "," );
-            goalService.savePathwayToexistingGoalVersion( goal.id, pathway );
+            goalService.savePathwayToexistingGoalVersion( goal.goalId, pathway );
         }
 
 
