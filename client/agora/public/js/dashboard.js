@@ -430,6 +430,7 @@ const addOrEditResource = ( prefix, name, description, edit ) => {
 
     //if goal
     if( prefix === "g-" ) {
+        console.log( "new goal" );
         fetch( "api/v1/auth/goals", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -1091,3 +1092,22 @@ const toggleList = () => {
 };
 
 window.onload( toggleGrid() );
+
+
+
+
+
+document.addEventListener( "click", ( e ) => {
+    if ( e.target.id.includes( "workspace" ) || e.target.id.includes( "g-gv-" ) ) {
+        fetch( "api/v1/auth/goals/" + e.target.id.slice( -1 ), {
+            method: "GET",
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                console.log( JSON.stringify( response ) );
+                sessionStorage.setItem( "workspace", JSON.stringify( response ) ); 
+                window.open( "http://localhost:4200/topic/", "_blank" );
+            } ); 
+    }
+    console.log( e.target );
+} );

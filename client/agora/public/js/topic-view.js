@@ -186,6 +186,27 @@ function createTopic() {
     emptyState.appendChild( label1 );
     emptyState.appendChild( label2 );
 
+    fetch( "api/v1/auth/topics", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "id": currTopicID,
+            "topicType": 1,
+            "topicName": tabBtn.innerHTML,
+            "topicDescription": "Follow the tutorials and other resources provided to learn the Agora Dashboard",
+            "topicHtml": "",
+            "assessmentId": 1,
+            "hasActivity": false,
+            "hasAssessment": false,
+            "activityId": 1,
+            "active": true,
+            "visibility": 0,
+            "createTime": Date.now(),
+        } )
+    } )
+        .then( response => response.json() )
+        .then( response => console.log( JSON.stringify( response ) ) );
+
     currTopicID++;
     createNewActiveHeight();
     openTab( newTab.id );
@@ -848,15 +869,29 @@ if ( createTopicBtn ) {
     };
 }
 if ( fileUploadBtn ) {
+    const pickerOpts = {
+        types: [
+            {
+                description: 'Images',
+                accept: {
+                    'image/*': [ '.png', '.gif', '.jpeg', '.jpg' ]
+                }
+            },
+        ],
+        excludeAcceptAllOption: true,
+        multiple: false
+    };
+
     fileUploadBtn.addEventListener( "click", async() => {
         let promise =  new Promise( ( resolve ) => {
-            window.showOpenFilePicker();
-            resolve( "file upload" );
+            let file = window.showOpenFilePicker( pickerOpts );
+            resolve( file );
         } );
 
         promise.then(
             ( value ) => {
-                console.log( value );
+                console.log( value[0] );
+                console.log( value[0].name );
             }
         );
     } );
@@ -960,3 +995,16 @@ for ( let i = 0; i < perms.length; i++ ) {
 }
 
   
+
+window.addEventListener( "load", () => {
+    renderWorkspace();
+} );
+
+const renderWorkspace = () => {
+    let workspaceStr = sessionStorage.getItem( "workspace" );
+    let workspaceObj = JSON.parse( workspaceStr );
+    console.log( workspaceObj );
+
+    document.getElementById( "workspace-title" ).value = workspaceObj["goalName"];
+    document.getElementById( "workspace-desc" ).value = workspaceObj["goalDescription"];
+};
