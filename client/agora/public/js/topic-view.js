@@ -82,137 +82,137 @@ function createTopic() {
         .then( ( data ) => {
             console.log( JSON.stringify( data ) );
             console.log( data.topicId );
-
-            let tabContent = document.getElementsByClassName( "tabcontent" );
-            let lastTab = tabContent[tabContent.length-1];
-            let newTab = document.createElement( "div" );
-
-            // Create the tab content and append to last tab
-            newTab.id = "topic" + currTopicID;
-            newTab.className = "tabcontent";
-
-            // If no topics are open...
-            if ( lastTab == null ) {
-                let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
-                workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
-                workspaceEmptyState.style.display = "none";
-                document.getElementById( "topic-background" ).style.backgroundColor = "#ddd";
-            }
-            else {
-                lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
-            }
-
-            // ------------------------------------------------
-            // Create drop zone at the top of the topic
-            let newDropZone = document.createElement( "div" );
-            newDropZone.classList.add( "drop-zone" );
-            newDropZone.classList.add( "first-dropzone" );
-
-            // Create drop zone filler div
-            let newDropZoneFiller = document.createElement( "div" );
-            newDropZoneFiller.className = "dropzone-filler";
-            newDropZone.appendChild( newDropZoneFiller );
-
-            // Create drop zone input
-            let newDropZoneInput = document.createElement( "input" );
-            newDropZoneInput.className = "drop-zone__input";
-            newDropZoneInput.type = "file";
-            newDropZone.appendChild( newDropZoneInput );
-            createDropZoneEventListeners( newDropZone, newDropZoneInput );
-            newDropZone.style.display = "none";
-            // ------------------------------------------------------
-
-            // -----------------------------------------------------
-            // Create drop zone that fills the entire topic empty state
-            let emptyDropZone = document.createElement( "div" );
-            emptyDropZone.classList.add( "drop-zone" );
-            emptyDropZone.classList.add( "empty-topic-dropzone" );
-
-            // Create drop zone filler div
-            let emptyDropZoneFiller = document.createElement( "div" );
-            emptyDropZoneFiller.className = "dropzone-filler";
-            emptyDropZone.appendChild( emptyDropZoneFiller );
-
-            // Create drop zone input
-            let emptyDropZoneInput = document.createElement( "input" );
-            emptyDropZoneInput.className = "drop-zone__input";
-            emptyDropZoneInput.type = "file";
-            emptyDropZone.appendChild( emptyDropZoneInput );
-            createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
-            // -------------------------------------------------------------
-
-            // Create all elements within a topic -----------------------------
-            let topicContent = document.createElement( "div" );
-            topicContent.className = "topic-content";
-
-            let topicTitle = document.createElement( "input" );
-            topicTitle.type = "text";
-            topicTitle.className = "topic-title";
-            topicTitle.id = "topic-title" + currTopicID;
-            topicTitle.placeholder = "Untitled";
-
-            let topicDivider = document.createElement( "div" );
-            topicDivider.id = "topic-divider";
-
-            let resourcesZone = document.createElement( "div" );
-            resourcesZone.id = "resources-zone" + currTopicID;
-            resourcesZone.className = "resources-zone";
-
-            let emptyState = document.createElement( "div" );
-            emptyState.className = "empty-state";
-
-            let label1 = document.createElement( "label" );
-            label1.className = "empty-state-text";
-            let header = document.createElement( "h3" );
-            header.innerHTML = "Your Topic is Empty";
-            label1.appendChild( header );
-
-            let label2 = document.createElement( "label" );
-            label2.className = "empty-state-text";
-            label2.innerHTML = "Drop a file or tap the + above to get started!";
-            // --------------------------------------------------------------
-
-            // Create a new tab button
-            let tabBtn = document.createElement( "button" );
-            tabBtn.className = "tablinks";
-            tabBtn.id = "tablinks" + currTopicID;
-            tabBtn.innerHTML = "Untitled";
-
-            // Create close tab button
-            let closeTabBtn = document.createElement( "span" );
-            closeTabBtn.className = "close-tab";
-            closeTabBtn.id = "close-tab" + currTopicID;
-            closeTabBtn.innerHTML = "&times;";
-            tabBtn.appendChild( closeTabBtn );
-
-            tabBtn.onclick = ( e ) => {
-                if ( e.target.className.includes( "close-tab" ) ) {
-                    closeTab( e.target.id );
-                } 
-                else {
-                    openTab( newTab.id );
-                }
-            };
-
-            let currTabs = document.querySelector( ".tab" );
-            currTabs.appendChild( tabBtn );
-
-            // Append all elements accordingly
-            newTab.appendChild( topicContent );
-            topicContent.appendChild( topicTitle );
-            topicContent.appendChild( topicDivider );
-            topicContent.appendChild( resourcesZone );
-            resourcesZone.appendChild( newDropZone );
-            resourcesZone.appendChild( emptyDropZone );
-            emptyDropZone.appendChild( emptyState );
-            emptyState.appendChild( label1 );
-            emptyState.appendChild( label2 );
-
-
-            currTopicID++;
-            createNewActiveHeight();
-            openTab( newTab.id );
         } );
+
+    let tabContent = document.getElementsByClassName( "tabcontent" );
+    let lastTab = tabContent[tabContent.length-1];
+    let newTab = document.createElement( "div" );
+
+    // Create the tab content and append to last tab
+    newTab.id = "topic" + currTopicID;
+    newTab.className = "tabcontent";
+
+    // If no topics are open...
+    if ( lastTab == null ) {
+        let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
+        workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
+        workspaceEmptyState.style.display = "none";
+        document.getElementById( "topic-background" ).style.backgroundColor = "#ddd";
+    }
+    else {
+        lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
+    }
+
+    // ------------------------------------------------
+    // Create drop zone at the top of the topic
+    let newDropZone = document.createElement( "div" );
+    newDropZone.classList.add( "drop-zone" );
+    newDropZone.classList.add( "first-dropzone" );
+
+    // Create drop zone filler div
+    let newDropZoneFiller = document.createElement( "div" );
+    newDropZoneFiller.className = "dropzone-filler";
+    newDropZone.appendChild( newDropZoneFiller );
+
+    // Create drop zone input
+    let newDropZoneInput = document.createElement( "input" );
+    newDropZoneInput.className = "drop-zone__input";
+    newDropZoneInput.type = "file";
+    newDropZone.appendChild( newDropZoneInput );
+    createDropZoneEventListeners( newDropZone, newDropZoneInput );
+    newDropZone.style.display = "none";
+    // ------------------------------------------------------
+
+    // -----------------------------------------------------
+    // Create drop zone that fills the entire topic empty state
+    let emptyDropZone = document.createElement( "div" );
+    emptyDropZone.classList.add( "drop-zone" );
+    emptyDropZone.classList.add( "empty-topic-dropzone" );
+
+    // Create drop zone filler div
+    let emptyDropZoneFiller = document.createElement( "div" );
+    emptyDropZoneFiller.className = "dropzone-filler";
+    emptyDropZone.appendChild( emptyDropZoneFiller );
+
+    // Create drop zone input
+    let emptyDropZoneInput = document.createElement( "input" );
+    emptyDropZoneInput.className = "drop-zone__input";
+    emptyDropZoneInput.type = "file";
+    emptyDropZone.appendChild( emptyDropZoneInput );
+    createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
+    // -------------------------------------------------------------
+
+    // Create all elements within a topic -----------------------------
+    let topicContent = document.createElement( "div" );
+    topicContent.className = "topic-content";
+
+    let topicTitle = document.createElement( "input" );
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.id = "topic-title" + currTopicID;
+    topicTitle.placeholder = "Untitled";
+
+    let topicDivider = document.createElement( "div" );
+    topicDivider.id = "topic-divider";
+
+    let resourcesZone = document.createElement( "div" );
+    resourcesZone.id = "resources-zone" + currTopicID;
+    resourcesZone.className = "resources-zone";
+
+    let emptyState = document.createElement( "div" );
+    emptyState.className = "empty-state";
+
+    let label1 = document.createElement( "label" );
+    label1.className = "empty-state-text";
+    let header = document.createElement( "h3" );
+    header.innerHTML = "Your Topic is Empty";
+    label1.appendChild( header );
+
+    let label2 = document.createElement( "label" );
+    label2.className = "empty-state-text";
+    label2.innerHTML = "Drop a file or tap the + above to get started!";
+    // --------------------------------------------------------------
+
+    // Create a new tab button
+    let tabBtn = document.createElement( "button" );
+    tabBtn.className = "tablinks";
+    tabBtn.id = "tablinks" + currTopicID;
+    tabBtn.innerHTML = "Untitled";
+
+    // Create close tab button
+    let closeTabBtn = document.createElement( "span" );
+    closeTabBtn.className = "close-tab";
+    closeTabBtn.id = "close-tab" + currTopicID;
+    closeTabBtn.innerHTML = "&times;";
+    tabBtn.appendChild( closeTabBtn );
+
+    tabBtn.onclick = ( e ) => {
+        if ( e.target.className.includes( "close-tab" ) ) {
+            closeTab( e.target.id );
+        } 
+        else {
+            openTab( newTab.id );
+        }
+    };
+
+    let currTabs = document.querySelector( ".tab" );
+    currTabs.appendChild( tabBtn );
+
+    // Append all elements accordingly
+    newTab.appendChild( topicContent );
+    topicContent.appendChild( topicTitle );
+    topicContent.appendChild( topicDivider );
+    topicContent.appendChild( resourcesZone );
+    resourcesZone.appendChild( newDropZone );
+    resourcesZone.appendChild( emptyDropZone );
+    emptyDropZone.appendChild( emptyState );
+    emptyState.appendChild( label1 );
+    emptyState.appendChild( label2 );
+
+
+    currTopicID++;
+    createNewActiveHeight();
+    openTab( newTab.id );
 }
 
 function closeTab( id ) {
