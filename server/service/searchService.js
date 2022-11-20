@@ -7,6 +7,7 @@
 
 const db = require( "../db/connection" );
 const resource = require( "../model/resource" );
+const user = require( "../model/user" );
 const { ormSearchResult } = require( "../model/searchresult" );
 
 exports.getSearchResults = async ( term, userId ) => {
@@ -28,11 +29,35 @@ exports.getSearchResults = async ( term, userId ) => {
     // maybe provide a search latency stat
     // maybe order the searches by some type of relevance
 
-    return {search: term, resources} ;
+    return {search: term, users, resources};
 };
 
 exports.getUsersByTerm = async ( term, userId ) => {
     //db query
+    const text = `
+        SELECT id,username,first_name,last_name FROM users
+        WHERE username ILIKE '%' || $1 || '%'
+        OR first_name ILIKE '%' || $1 || '%'
+        OR last_name ILIKE '%' || $1 || '%'
+        AND users.id != $2
+        ORDER BY username ASC
+        `;
+
+    const values = [ term, userId ];
+
+    try {
+            
+        let res = await db.query( text, values );
+
+        const users = res.rows.map( user.ormUser );
+
+        return users;
+
+    }
+    catch ( e ) {
+        console.log( e );
+        return null;
+    }
 };
 
 exports.getResourcesByTerm = async ( term, userId ) => {
