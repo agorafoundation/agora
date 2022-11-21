@@ -191,7 +191,7 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
     if( topicId > 0 ) {
         topicService.updateTopicImage( topicId, filename ).then( ( rValue ) => {
             if ( rValue === filename ) {
-                console.log('No image update occurred - exiting image update function.');
+                console.log( 'No image update occurred - exiting image update function.' );
                 return false;
             }
 

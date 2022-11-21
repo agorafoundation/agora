@@ -121,7 +121,7 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
     if( workspaceId > 0 ) {
         workspaceService.updateWorkspaceImage( workspaceId, filename ).then( ( rValue ) => {
             if ( rValue === filename ) {
-                console.log('No image update occurred - exiting image update function.');
+                console.log( 'No image update occurred - exiting image update function.' );
                 return false;
             }
 
