@@ -242,8 +242,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            topic.visibility = req.body.visibility;
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
         topic.topicType = req.body.topicType;
-        topic.visibility = req.body.visibility;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
 
