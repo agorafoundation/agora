@@ -37,7 +37,7 @@ class User {
         // populate with user_role
         this.roles = [];
 
-        // populate with enrolled goal paths
+        // populate with enrolled workspace paths
         this.enrollments = [];
 
         // populate with enrolled Topics

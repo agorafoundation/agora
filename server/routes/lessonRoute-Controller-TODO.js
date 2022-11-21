@@ -8,11 +8,11 @@
  * structure
  * 
  * This should be re-visited when I get to re-implementing the process of 
- * enrolling in a goal and taking a topic.
+ * enrolling in a workspace and taking a topic.
  * 
  * One of the first questions should be to determine if this is actually an
  * API router / controller or a page router / controller or some combination
- * thereof. I think this will be more clear once the actual goal, toic and
+ * thereof. I think this will be more clear once the actual workspace, toic and
  * resource API routes and controllers are built out.
  */
 
@@ -58,9 +58,9 @@ router.use( bodyParser.json() );
  * This is not used to save data, just override current screen and change to another.
  * 
  */
-router.route( '/override/:goalId/:topicId/:step' )
+router.route( '/override/:workspaceId/:topicId/:step' )
     .get( async ( req, res ) => {
-        let goalId = req.params.goalId;
+        let workspaceId = req.params.workspaceId;
         let topicId = req.params.topicId;
         let stepOverride = req.params.step;
 
@@ -93,7 +93,7 @@ router.route( '/override/:goalId/:topicId/:step' )
                 res.locals.topic = currentTopic;
 
                 // open the course
-                res.render( 'community/topic', {user: req.session.authUser, goalId: req.session.goalId, hasAccess: access, currentStep: stepOverride} );
+                res.render( 'community/topic', {user: req.session.authUser, workspaceId: req.session.workspaceId, hasAccess: access, currentStep: stepOverride} );
 
             }
             else {
@@ -112,13 +112,13 @@ router.route( '/override/:goalId/:topicId/:step' )
  * topic-resource
  * topic-activity
  * passing the finished step so data can be saved and the user sent to the next step using
- * /community/topic/goalId/topicId
+ * /community/topic/workspaceId/topicId
  * 
  */
 router.route( '/update/:finishedStep' )
     .get( async ( req, res ) => {
         if( req.session.currentTopic ) {
-            let goalId = req.session.goalId;
+            let workspaceId = req.session.workspaceId;
             let topicId = req.session.currentTopic.topicId;
             let finishedStep = req.params.finishedStep;
 
@@ -129,7 +129,7 @@ router.route( '/update/:finishedStep' )
                 topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
 
                 // reroute
-                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
             }
 
             if( finishedStep == 2 ) {
@@ -193,13 +193,13 @@ router.route( '/update/:finishedStep' )
                     // reload the user session
                     req.session.authUser = await userService.setUserSession( req.session.authUser.email );
 
-                    res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                    res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
                     req.session.error = 'Incorrect username or password';
                     
                 }
                 else {
                     // reroute
-                    res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                    res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
                 }
 
                 
@@ -208,7 +208,7 @@ router.route( '/update/:finishedStep' )
             if( finishedStep == 3 ) {
 
                 // reroute
-                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
 
             }
 
@@ -222,7 +222,7 @@ router.route( '/update/:finishedStep' )
                 // save the data
                 req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
                 // reroute
-                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
 
             }
 
@@ -263,7 +263,7 @@ router.route( '/update/:finishedStep' )
                 req.session.currentTopic = await topicService.saveTopicEnrollmentWithEverything( req.session.currentTopic );
 
                 // reroute
-                res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+                res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
             }
             if( finishedStep == 6 ) {
 
@@ -283,7 +283,7 @@ router.route( '/update/:finishedStep' )
                     req.session.messageBody = 'You completed ' + ct.topic.topicName + '!';
 
 
-                    res.redirect( 303, '/community/goal/' + goalId );
+                    res.redirect( 303, '/community/workspace/' + workspaceId );
                 }
                 else if ( ct.isIntroComplete === true && ct.preAssessment && ct.completedResources.length == requiredCompletedResources.length && ct.postAssessment ) {
                     // mark the topic complete and return the users token
@@ -305,7 +305,7 @@ router.route( '/update/:finishedStep' )
                     req.session.messageBody = 'You completed ' + ct.topic.topicName + '!';
 
 
-                    res.redirect( 303, '/community/goal/' + goalId );
+                    res.redirect( 303, '/community/workspace/' + workspaceId );
                     
                 }
                 else {
@@ -316,7 +316,7 @@ router.route( '/update/:finishedStep' )
 
                     console.log( 'incomplete topic submitted' );
 
-                    res.redirect( 303, '/community/topic/' + goalId + '/' + topicId );
+                    res.redirect( 303, '/community/topic/' + workspaceId + '/' + topicId );
                 }
                 
             }
@@ -337,7 +337,7 @@ router.route( '/reset' )
     .get( async ( req, res ) => {
         
         if( req.session.currentTopic ) {
-            let goalId = req.session.goalId;
+            let workspaceId = req.session.workspaceId;
             let topicId = req.session.currentTopic.topicId;
 
             /* 
@@ -362,7 +362,7 @@ router.route( '/reset' )
             req.session.authUser = await userService.setUserSession( req.session.authUser.email );
 
             // reroute
-            res.redirect( 303, '/community/topic/' + goalId + "/" + topicId );
+            res.redirect( 303, '/community/topic/' + workspaceId + "/" + topicId );
 
         }
         else {
@@ -381,9 +381,9 @@ router.route( '/reset' )
  * If the user has access it checks to see if there is an existing session containing 
  * the topic as the current topic. If so it skips the db load other wise it queries.
  */
-router.route( '/:goalId/:topicId' )
+router.route( '/:workspaceId/:topicId' )
     .get( async ( req, res ) => {
-        let goalId = req.params.goalId;
+        let workspaceId = req.params.workspaceId;
         let topicId = req.params.topicId;
 
         // why is this here??? 
@@ -401,7 +401,7 @@ router.route( '/:goalId/:topicId' )
             if( !access ) {
                 // check to see if the user is a member and grant access if they are
                 if( req.session.authUser.member ) {
-                    // save the enrollment for the user in the goal
+                    // save the enrollment for the user in the workspace
                     let te = TopicEnrollment.emptyTopicEnrollment();
                     te.topicId = topicId;
                     te.userId = req.session.authUser.id;
@@ -451,7 +451,7 @@ router.route( '/:goalId/:topicId' )
                     req.session.currentTopic = topicEnrollment;
                     res.locals.topicEnrollment = topicEnrollment;
                     res.locals.topic = topicEnrollment.topic;
-                    req.session.goalId = goalId;
+                    req.session.workspaceId = workspaceId;
 
                     // console.log("1----------------------------------------------------------------------");
                     // console.log(topicEnrollment.preCompletedAssessmentId);
@@ -465,7 +465,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
+                    res.render( 'community/topic', {user: req.session.authUser, workspaceId: workspaceId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -482,9 +482,9 @@ router.route( '/:goalId/:topicId' )
                     req.session.currentTopic = null;
                     res.locals.topicEnrollment = null;
                     res.locals.topic = topic;
-                    req.session.goalId = goalId;
+                    req.session.workspaceId = workspaceId;
 
-                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody} );
+                    res.render( 'community/topic', {user: req.session.authUser, workspaceId: workspaceId, hasAccess:access, currentStep:0, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -535,7 +535,7 @@ router.route( '/:goalId/:topicId' )
                     req.session.currentTopic = topicEnrollment;
                     res.locals.topicEnrollment = topicEnrollment;
                     res.locals.topic = topicEnrollment.topic;
-                    req.session.goalId = goalId;
+                    req.session.workspaceId = workspaceId;
 
                     // console.log("3----------------------------------------------------------------------");
                     // console.log(topicEnrollment.preCompletedAssessmentId);
@@ -549,7 +549,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
+                    res.render( 'community/topic', {user: req.session.authUser, workspaceId: workspaceId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -592,7 +592,7 @@ router.route( '/:goalId/:topicId' )
                     req.session.currentTopic = topicEnrollment;
                     res.locals.topicEnrollment = topicEnrollment;
                     res.locals.topic = topicEnrollment.topic;
-                    req.session.goalId = goalId;
+                    req.session.workspaceId = workspaceId;
 
                     // console.log("4----------------------------------------------------------------------");
                     // console.log(topicEnrollment.preCompletedAssessmentId);
@@ -606,7 +606,7 @@ router.route( '/:goalId/:topicId' )
                     // console.log("----------------------------------------------------------------------");
 
                     // open the course
-                    res.render( 'community/topic', {user: req.session.authUser, goalId: goalId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
+                    res.render( 'community/topic', {user: req.session.authUser, workspaceId: workspaceId, hasAccess:access, currentStep: currentStep, message:req.session.messageTitle, message2:req.session.messageBody} );
                     if( req.session.messageTitle ) delete req.session.messageTitle;
                     if( req.session.messageBody ) delete req.session.messageBody;
                     req.session.save();
@@ -626,9 +626,9 @@ router.route( '/:goalId/:topicId' )
 /** 
  * Enroll in a topic
  */
-router.route( '/enroll/:goalId/:topicId' )
+router.route( '/enroll/:workspaceId/:topicId' )
     .get( async ( req, res ) => {
-        let goalId = req.params.goalId;
+        let workspaceId = req.params.workspaceId;
         let topicId = req.params.topicId;
         if( req.session.authUser ) {
         // see if the user has a token
@@ -650,7 +650,7 @@ router.route( '/enroll/:goalId/:topicId' )
                 req.session.authUser = rUser;
 
                 // send them to the course
-                res.redirect( '/community/topic/' + goalId + "/" + topicId );
+                res.redirect( '/community/topic/' + workspaceId + "/" + topicId );
             }
             else {
             // they did not have membership or a token

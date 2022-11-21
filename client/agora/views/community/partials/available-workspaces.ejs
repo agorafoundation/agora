@@ -1,27 +1,27 @@
 <%
 let availableCount = 0;
-if(availableGoals) {
-    for(let i=0; i<availableGoals.length; i++) {
-        let enrolled = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == availableGoals[i].id && enrollment.isCompleted == false).length > 0 : false;
-        let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.goal.id == availableGoals[i].id && enrollment.isCompleted == true).length > 0 : false;
+if(availableWorkspaces) {
+    for(let i=0; i<availableWorkspaces.length; i++) {
+        let enrolled = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.id == availableWorkspaces[i].id && enrollment.isCompleted == false).length > 0 : false;
+        let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.id == availableWorkspaces[i].id && enrollment.isCompleted == true).length > 0 : false;
     
         if(!enrolled && !completed) {
             availableCount++;
             %>
-            <a class="card" style="width: 100%;" name="unenrolled_card" href="/community/goal/enroll/<%- availableGoals[i].id %>" id="goal_<%- availableGoals[i].id %>">
+            <a class="card" style="width: 100%;" name="unenrolled_card" href="/community/workspace/enroll/<%- availableWorkspaces[i].id %>" id="workspace_<%- availableWorkspaces[i].id %>">
                 <div class="card-body">
-                    <img class="product-img-overlay" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- availableGoals[i].goalImage %>" alt="Card image cap">
+                    <img class="product-img-overlay" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- availableWorkspaces[i].workspaceImage %>" alt="Card image cap">
                     <div class="card-body product-card-text-raised">
-                        <h6><input type=button class="btn-secondary btn-block" value="<%- availableGoals[i].goalName %>" /></h6>
-                        <p class="card-text"><%- availableGoals[i].goalDescription %></p>
+                        <h6><input type=button class="btn-secondary btn-block" value="<%- availableWorkspaces[i].workspaceName %>" /></h6>
+                        <p class="card-text"><%- availableWorkspaces[i].workspaceDescription %></p>
                         
                         <%
-                        if(availableGoals[i].topics.length > 0) {
+                        if(availableWorkspaces[i].topics.length > 0) {
                         %>
                             <h6>Topics Include:</h6>
                             <div id="accordion">
                                 <%
-                                let limit = (availableGoals[i].topics.length < 4) ? availableGoals[i].topics.length : 4;
+                                let limit = (availableWorkspaces[i].topics.length < 4) ? availableWorkspaces[i].topics.length : 4;
                                 for(let j=0; j < limit; j++) {
                                     if(j < 3) {
                                         %>
@@ -29,8 +29,8 @@ if(availableGoals) {
                                             <div class="card-header" id="headingOne">
                                                 <h5 class="mb-0">
                                                     <button class="btn" aria-expanded="false" aria-controls="collapseOne">
-                                                    <img class="img-supersmall" src="<%= process.env.TOPIC_IMAGE_WEB_PATH%><%- availableGoals[i].topics[j].topicImage %>" />
-                                                    <%- availableGoals[i].topics[j].topicName %>
+                                                    <img class="img-supersmall" src="<%= process.env.TOPIC_IMAGE_WEB_PATH%><%- availableWorkspaces[i].topics[j].topicImage %>" />
+                                                    <%- availableWorkspaces[i].topics[j].topicName %>
                                                 </button>
                                                 </h5>
                                             </div>
@@ -72,19 +72,19 @@ if(availableGoals) {
     
     
     }
-    if(availableCount === 0 && availableGoals.length !== 0) {
+    if(availableCount === 0 && availableWorkspaces.length !== 0) {
         %> 
         <div class="card" style="width: 100%;">
             
             <div class="card-body product-card-text-raised">
-                <h5 class="card-title">Good Job! You have enrolled in all availble Goals!</h5>
+                <h5 class="card-title">Good Job! You have enrolled in all availble Workspaces!</h5>
                 <p>Now get to work! :)</p>
             </div>
         </div> 
         <%
     }
     
-    if(availableGoals.length === 0) {
+    if(availableWorkspaces.length === 0) {
         %> 
         <div class="card" style="width: 100%;">
             
