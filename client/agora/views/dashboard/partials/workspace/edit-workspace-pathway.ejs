@@ -9,7 +9,7 @@
         <div id="available-items" class="available-items">
             
             <%
-            // get all of the goals available that are not already assigned to the goal
+            // get all of the workspaces available that are not already assigned to the workspace
             if(availableTopics) {
 
                 for(let i=0; i < availableTopics.length; i++) {
@@ -30,13 +30,13 @@
             
             <%
 
-            // if the goal has been saved allow the user to link Topics
-            if(goal && goal.id > 0) {
-                if(goal.topics && goal.topics.length > 0) {
+            // if the workspace has been saved allow the user to link Topics
+            if(workspace && workspace.id > 0) {
+                if(workspace.topics && workspace.topics.length > 0) {
 
-                    for(let i=0; i < goal.topics.length; i++) {
+                    for(let i=0; i < workspace.topics.length; i++) {
                     %>
-                        <div id="<%- goal.topics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- goal.topics[i].id %>" ><%- goal.topics[i].topicName %></div>
+                        <div id="<%- workspace.topics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- workspace.topics[i].id %>" ><%- workspace.topics[i].topicName %></div>
                     <%
                     }
                 }

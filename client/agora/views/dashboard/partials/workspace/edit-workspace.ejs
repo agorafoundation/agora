@@ -1,8 +1,8 @@
-<div class="modal fade" id="create-goal-modal" tabindex="-1" role="dialog" aria-labelledby="create-goal-modal-label" aria-hidden="true">
+<div class="modal fade" id="create-workspace-modal" tabindex="-1" role="dialog" aria-labelledby="create-workspace-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" id="create-goal-modal-label">Goal</h2>
+          <h2 class="modal-title" id="create-workspace-modal-label">Workspace</h2>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -14,12 +14,12 @@
                 <hr />
                 <%
                 
-                if(goal) {
+                if(workspace) {
                     %>
-                    <form action="/dashboard/goal" id="goalForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" enctype="multipart/form-data"-->
+                    <form action="/dashboard/workspace" id="workspaceForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" enctype="multipart/form-data"-->
                         <div class="form-group">
-                            <input type="hidden" name="goalId" id="goalId" value="<%- goal.id %>" />
-                            <input type="hidden" name="goalModified" id="goalModified" value="false" />
+                            <input type="hidden" name="workspaceId" id="workspaceId" value="<%- workspace.id %>" />
+                            <input type="hidden" name="workspaceModified" id="workspaceModified" value="false" />
 
                             <div class="form-row">
                                 <div class="col-sm-2 my-1">
@@ -27,7 +27,7 @@
 
                                     <div class="drop-zone">
                                         <span class="drop-zone__prompt">Drop file here or click to upload</span>
-                                        <input type="file" name="goalImageField" class="drop-zone__input" />
+                                        <input type="file" name="workspaceImageField" class="drop-zone__input" />
                                     </div>
 
                                 </div>
@@ -35,9 +35,9 @@
                                     <div class="row">
                                         <div class="col">
                                             <!-- Visibility -->
-                                            <select name="goalVisibility" id="goalVisibility" class="form-control form-control-lg">
+                                            <select name="workspaceVisibility" id="workspaceVisibility" class="form-control form-control-lg">
                                                 <%
-                                                if(goal.visibility === 0) {
+                                                if(workspace.visibility === 0) {
                                                     %>
                                                     <option value="0" selected>Private</option>
                                                     <%
@@ -49,7 +49,7 @@
                                                 }
                                                 %>
                                                 <%
-                                                if(goal.visibility === 1) {
+                                                if(workspace.visibility === 1) {
                                                     %>
                                                     <option value="1" selected>Shared</option>
                                                     <%
@@ -61,7 +61,7 @@
                                                 }
                                                 %>
                                                 <%
-                                                if(goal.visibility === 2) {
+                                                if(workspace.visibility === 2) {
                                                     %>
                                                     <option value="2" selected>Public</option>
                                                     <%
@@ -75,13 +75,13 @@
                                             </select>
                                         </div>
                                         <div class="col">
-                                            Completable: <input type="checkbox" class="" id="goalCompletable" name="goalCompletable" <%- (goal.completable)?'checked':'' %> />
+                                            Completable: <input type="checkbox" class="" id="workspaceCompletable" name="workspaceCompletable" <%- (workspace.completable)?'checked':'' %> />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
-                                           &nbsp; <input type="input" class="form-control form-control-lg" name="goalName" value="<%- goal.goalName %>" id="goalName" placeholder="Title" required>
+                                           &nbsp; <input type="input" class="form-control form-control-lg" name="workspaceName" value="<%- workspace.workspaceName %>" id="workspaceName" placeholder="Title" required>
                                         </div>
                                     </div>
                                 </div>
@@ -92,25 +92,25 @@
 
                             </div>
                             
-                            <!-- Additional Goal metadata - Description / Requried / Active - Hidden by default -->
+                            <!-- Additional Workspace metadata - Description / Requried / Active - Hidden by default -->
                             <div id="additionalMetadata" style="display:none">
                                 <div class="row">
                                     <div class="col-auto">
                                         <div class="row">
                                             <div class="col">
-                                                Active: <input type="checkbox" class="" id="goalActive" name="goalActive" <%- (goal.active)?'checked':'' %> />
+                                                Active: <input type="checkbox" class="" id="workspaceActive" name="workspaceActive" <%- (workspace.active)?'checked':'' %> />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                Version: <input type="input" class="form-control form-control-lg" name="goalVersion" value="<%- goal.goalVersion %>" id="goalVersion" placeholder="Version" disabled>
+                                                Version: <input type="input" class="form-control form-control-lg" name="workspaceVersion" value="<%- workspace.workspaceVersion %>" id="workspaceVersion" placeholder="Version" disabled>
                                             </div>
                                         </div>
                                         
                                     
                                     </div>
                                     <div class="col">
-                                        <textarea class="form-control form-control-lg" name="goalDescription" value="<%- goal.goalDescription %>" id="goalDescription" placeholder="Description"></textarea>
+                                        <textarea class="form-control form-control-lg" name="workspaceDescription" value="<%- workspace.workspaceDescription %>" id="workspaceDescription" placeholder="Description"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -118,11 +118,11 @@
                             <br />
                             <br />
                             
-                            <%- include('./edit-goal-pathway') %>
+                            <%- include('./edit-workspace-pathway') %>
 
                         </div>
-                        <a class="fas fa-trash redColor" onclick='deleteGoal();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
-                        <button type="submit" id="goalButton" class="btn btn-primary btn-lg float-left">Save Goal</button>
+                        <a class="fas fa-trash redColor" onclick='deleteWorkspace();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
+                        <button type="submit" id="workspaceButton" class="btn btn-primary btn-lg float-left">Save Workspace</button>
                     </form>
                     <%
                 }

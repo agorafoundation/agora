@@ -12,7 +12,7 @@
 
 // any cross services required
 const userService = require( '../service/userService' );
-const goalService = require( '../service/goalService' );
+const workspaceService = require( '../service/workspaceService' );
 
 exports.communityEventFeed = async function( limit ) {
     
@@ -23,10 +23,10 @@ exports.communityEventFeed = async function( limit ) {
     let list1 = await userService.getRecentNewUserEvents( limit );
 
     // get recent enrollments
-    let list2 = await goalService.getRecentGoalEnrollmentEvents( limit );
+    let list2 = await workspaceService.getRecentWorkspaceEnrollmentEvents( limit );
 
-    // get recent goal completions
-    let list3 = await goalService.getRecentGoalCompletionEvents( limit );
+    // get recent workspace completions
+    let list3 = await workspaceService.getRecentWorkspaceCompletionEvents( limit );
 
     // get recent supporters
     let list4 = await userService.getRecentSupportingMembers( limit );

@@ -81,13 +81,13 @@
                                 <%
                             }
                             %>
-                            <h4>Goals Completed:</h4>
+                            <h4>Workspaces Completed:</h4>
                             <%
                             if(user.enrollments) {
                                 for( let i=0; i < user.enrollments.length; i++ ) {
                                     if( user.enrollments[i].isCompleted ) {
                                         %>
-                                        <img src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].goal.goalImage %>" title="<%- user.enrollments[i].goal.goalName %>" alt="<%- user.enrollments[i].goal.goalName %>" class="badge-image" />
+                                        <img src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" title="<%- user.enrollments[i].workspace.workspaceName %>" alt="<%- user.enrollments[i].workspace.workspaceName %>" class="badge-image" />
                                         <%
                                     }
                                 }
@@ -225,7 +225,7 @@
 
                         <div class="col-lg-8">
                             <h4>Currently Enrolled In:</h4>
-                            <%- include('./partials/enrolled-goals') %>
+                            <%- include('./partials/enrolled-workspaces') %>
 
                         </div>
                         

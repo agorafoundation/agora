@@ -51,10 +51,10 @@ router.route( '/' )
 
 
 /**
- * Admin Goal Routes
+ * Admin Workspace Routes
  */
-//let adminGoalRoutes = require('./adminGoalRoutes')
-//router.use('/goal', adminGoalRoutes);
+//let adminWorkspaceRoutes = require('./adminWorkspaceRoutes')
+//router.use('/workspace', adminWorkspaceRoutes);
 
 /**
  * Admin Topic Routes
