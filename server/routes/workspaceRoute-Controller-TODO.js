@@ -1,15 +1,15 @@
 /**
  * This file is a massive TODO 
- * This was all the logic originally in Coding Coach's goalRoutes.js
+ * This was all the logic originally in Coding Coach's workspaceRoutes.js
  * It handled all of the routing and controller code (was not broken out)
- * for the goal lesson process.  Now goals are stand alone and make just 
+ * for the workspace lesson process.  Now workspaces are stand alone and make just 
  * represent an organizational structure. The "enrollment" process will
  * have to be re-thoughtout as part of the merger with Agora, at which
  * time I should revisit this code.
  * 
  * One of the first questions should be to determine if this is actually an
  * API router / controller or a page router / controller or some combination
- * thereof. I think this will be more clear once the actual goal, toic and
+ * thereof. I think this will be more clear once the actual workspace, toic and
  * resource API routes and controllers are built out.
  */
 
@@ -25,7 +25,7 @@ var router = express.Router();
 
 
 // require services
-const goalService = require( '../../service/goalService' );
+const workspaceService = require( '../../service/workspaceService' );
 const userService = require( '../../service/userService' );
 
 const bodyParser = require( 'body-parser' );
@@ -49,21 +49,21 @@ router.use( function ( req, res, next ) {
 } );
 
 /**
- * Route called from the mark goal complete form
+ * Route called from the mark workspace complete form
  */
 router.route( '/' )
     .post( async ( req, res ) => {
-        let goalId = req.body.goalId;
-        let goalRid = await goalService.getMostRecentGoalById( goalId );
+        let workspaceId = req.body.workspaceId;
+        let workspaceRid = await workspaceService.getMostRecentWorkspaceById( workspaceId );
 
-        let goalVersion = req.body.goalVersion;
+        let workspaceVersion = req.body.workspaceVersion;
 
-        if( req.session && req.session.authUser && goalRid && goalVersion ) {
-            // verify that the user is enrolled in the goal and that the goals topics are complete
-            let userGoal = await goalService.getEnrolledGoalByUserAndGoalRid( req.session.authUser.id, goalRid.rid );
+        if( req.session && req.session.authUser && workspaceRid && workspaceVersion ) {
+            // verify that the user is enrolled in the workspace and that the workspaces topics are complete
+            let userWorkspace = await workspaceService.getEnrolledWorkspaceByUserAndWorkspaceRid( req.session.authUser.id, workspaceRid.rid );
 
-            if( userGoal ) {
-                await goalService.completeGoalEnrollment( req.session.authUser.id, goalRid.rid );
+            if( userWorkspace ) {
+                await workspaceService.completeWorkspaceEnrollment( req.session.authUser.id, workspaceRid.rid );
 
                 // reset the session
                 const rUser = await userService.setUserSession( req.session.authUser.email );
@@ -73,22 +73,22 @@ router.route( '/' )
             }
         }
         // send them to the course
-        res.redirect( '/community/goal/' + goalId );
+        res.redirect( '/community/workspace/' + workspaceId );
         if( req.session.messageTitle ) delete req.session.messageTitle;
         if( req.session.messageBody ) delete req.session.messageBody;
         req.session.save();
     }
     );
 
-router.route( '/:goalId' )
+router.route( '/:workspaceId' )
     .get( async ( req, res ) => {
         
         // get the topic data
-        let goalId = req.params.goalId;
-        let goal = await goalService.getActiveGoalWithTopicsById( goalId, true );
-        //console.log("goal: " + JSON.stringify(goal));
+        let workspaceId = req.params.workspaceId;
+        let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, true );
+        //console.log("workspace: " + JSON.stringify(workspace));
         
-        res.render( 'community/goal', { user: req.session.authUser, goal: goal, message:req.session.messageTitle, message2:req.session.messageBody } );
+        res.render( 'community/workspace', { user: req.session.authUser, workspace: workspace, message:req.session.messageTitle, message2:req.session.messageBody } );
         if( req.session.messageTitle ) delete req.session.messageTitle;
         if( req.session.messageBody ) delete req.session.messageBody;
         req.session.save();
@@ -96,13 +96,13 @@ router.route( '/:goalId' )
     );
 
 
-router.route( '/enroll/:goalId' )
+router.route( '/enroll/:workspaceId' )
     .get( async ( req, res ) => {
-        let goalId = req.params.goalId;
+        let workspaceId = req.params.workspaceId;
         if( req.session.authUser ) {
 
-            // save the enrollment for the user in the goal
-            await goalService.saveGoalEnrollmentMostRecentGoalVersion( req.session.authUser.id, goalId );
+            // save the enrollment for the user in the workspace
+            await workspaceService.saveWorkspaceEnrollmentMostRecentWorkspaceVersion( req.session.authUser.id, workspaceId );
 
             // reset the session
             const rUser = await userService.setUserSession( req.session.authUser.email );
@@ -111,7 +111,7 @@ router.route( '/enroll/:goalId' )
             req.session.authUser = rUser;
 
             // send them to the course
-            res.redirect( '/community/goal/' + goalId );
+            res.redirect( '/community/workspace/' + workspaceId );
             
         }
         else {

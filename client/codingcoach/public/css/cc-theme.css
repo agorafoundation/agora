@@ -524,7 +524,7 @@ div.product-card a {
     
 }
 
-/* Goal progress */
+/* Workspace progress */
 .pb-line {
     stroke: #2c3e50;
     stroke-width:2;
@@ -1002,7 +1002,7 @@ input:checked + .slider:after {
     background-color: #c25730;
 }
 
-/* Code for goal pathway drag and drop */
+/* Code for workspace pathway drag and drop */
 .available-container {
     width: 50%;
     float: left;
