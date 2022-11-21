@@ -731,7 +731,7 @@ paths:
     get:
       tags:
         - Discussions
-      summary: Gets the discussion by goal ID
+      summary: Gets the discussion by workspace ID
       parameters:
         - in: path
           name: id
@@ -766,13 +766,13 @@ paths:
     patch:
       tags:
         - Discussions
-      summary: "Updates discussion using goal ID"
+      summary: "Updates discussion using workspace ID"
       parameters:
         - in: path
           name: id
           schema:
             type: integer
-          description: id of the topic
+          description: id of the workspace
       requestBody:
         description: Json for updated text
         required: true
@@ -812,13 +812,13 @@ paths:
     post:
       tags:
         - Discussions
-      summary: "Create a new discussion using goal ID"
+      summary: "Create a new discussion using workspace ID"
       parameters:
         - in: path
           name: id
           schema:
             type: integer
-          description: id of the goal
+          description: id of the workspace
       requestBody:
         description: Json for new text
         required: true
