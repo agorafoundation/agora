@@ -30,7 +30,7 @@ let TOPIC_PATH = process.env.TOPIC_IMAGE_PATH;
 // topic file path
 const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
-// set the max image size for avatars and topic, topic and goal icons
+// set the max image size for avatars and topic, topic and workspace icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
@@ -242,8 +242,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            topic.visibility = req.body.visibility;
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
         topic.topicType = req.body.topicType;
-        topic.visibility = req.body.visibility;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
 
@@ -262,7 +267,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
         
         // check to see if the incoming message format is from the UI form or the API
-        topic.active = false; // Defaulted to false if not specified.
+        // topic.active = false; // Defaulted to false if not specified.
         if( req.body.active ) {
             topic.active = req.body.active;
         }

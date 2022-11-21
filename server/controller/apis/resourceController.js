@@ -25,7 +25,7 @@ const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 // resource file path
 const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 
-// set the max image size for avatars and resource, topic and goal icons
+// set the max image size for avatars and resource, topic and workspace icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
@@ -246,8 +246,14 @@ exports.saveResource = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            resource.visibility = req.body.visibility;
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+        }
+
         resource.resourceType = req.body.resourceType;
-        resource.visibility = req.body.visibility;
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
 
