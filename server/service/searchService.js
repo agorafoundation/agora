@@ -121,10 +121,10 @@ exports.getTopicsByTerm = async ( term, userId ) => {
         }
 
         //Creates an array of the topics using the topic model in ../model/topics.js
-        const topic = res.rows.map( topic.ormTopic );
+        const topics = res.rows.map( topic.ormTopic );
 
         // Returns the array
-        return topic;
+        return topics;
 
     }
     catch( e ) {
