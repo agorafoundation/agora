@@ -8,6 +8,8 @@
 const db = require( "../db/connection" );
 const resource = require( "../model/resource" );
 const user = require( "../model/user" );
+const goal = require( "../model/goal" );
+const topic = require( "../model/topic" );
 const { ormSearchResult } = require( "../model/searchresult" );
 
 exports.getSearchResults = async ( term, userId ) => {
@@ -17,13 +19,14 @@ exports.getSearchResults = async ( term, userId ) => {
     const [ users, resources, topics, goals ] = await Promise.all( [
         this.getUsersByTerm( term, userId ),
         this.getResourcesByTerm( term, userId ),
-        // this.getTopicsByTerm( term, userId ),
-        // this.getWorkspaceByTerm( term, userId )
+        this.getTopicsByTerm( term, userId ),
+        this.getWorkspaceByTerm( term, userId )
     ] );
 
     console.log( users, resources, topics, goals );
     console.log( term );
 
+    
     // do some stuff with the results
     // transform to search object
     // maybe provide a search latency stat
@@ -88,32 +91,40 @@ exports.getResourcesByTerm = async ( term, userId ) => {
 };
 
 exports.getTopicsByTerm = async ( term, userId ) => {
+    //Wanted to add some comments here so that for the next people working on this, 
+    // if they aren't familiar this will hopefully help
+    
+    // This query gets all the topics by searching for the term(which is $1), and the two percents are wildcard operators
+    //Essentially, in both the name and description it will look for a term that matches
+    //In the future, this will need to be replaced. It's going to run slow if Agora becomes large,
+    //And it may be more viable to move over to a pre-made federated search option with a built-in algorithim.
     const text = `
-        SELECT topic_name, topic_id, topic_description
+        SELECT *
         FROM topics 
         WHERE topic_name ILIKE '%' || $1 || '%' 
         OR topic_description ILIKE '%' || $1 || '%'
         AND owned_by = $2
     `;
-    const values = [ userId ];
 
+    // Just gets the userId and term to place into the query
+    const values = [ term, userId ];
+
+    //Try catch, the error at the end will just return false. Might need to be updated to a proper error later.
     try {
         
+        // Res is the database response, which will come back as an QueryResultArray
         let res = await db.query( text, values );
 
+        // Just checks to see if there were any matching results. May need to change
         if( res.rows.length === 0 ) {
             return false;
         }
 
-        let results = [];
+        //Creates an array of the topics using the topic model in ../model/topics.js
+        const topic = res.rows.map( topic.ormTopic );
 
-        res.forEach( element => {
-            element = ormSearchResult( res.rows[0] );
-            results.push( element );
-        } );
-        
-
-        return results;
+        // Returns the array
+        return topic;
 
     }
     catch( e ) {
@@ -125,13 +136,13 @@ exports.getTopicsByTerm = async ( term, userId ) => {
 
 exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
-        SELECT goal_name, goal_id, goal_description 
+        SELECT *
         FROM goals 
         WHERE goal_name ILIKE '%' || $1 || '%' 
         OR goal_description ILIKE '%' || $1 || '%'
         AND owned_by = $2
     `;
-    const values = [ userId ];
+    const values = [ term, userId ];
 
     try {
         
@@ -141,15 +152,9 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
             return false;
         }
 
-        let results = [];
+        const workspaces = res.rows.map( goal.ormGoal );
 
-        res.forEach( element => {
-            element = ormSearchResult( res.rows[0] );
-            results.push( element );
-        } );
-        
-
-        return results;
+        return workspaces;
 
     }
     catch( e ) {
