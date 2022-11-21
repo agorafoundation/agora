@@ -15,10 +15,10 @@ exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
             discussion_text
         )
         SELECT parent.id, $1, $3
-        FROM $5 parent
+        FROM ${parentTable} parent
         WHERE parent.id = $2 AND parent.owned_by = $4;
     `;
-    const values = [ type, id, userId, discussion_text, parentTable ];
+    const values = [ type, id, userId, discussion_text ];
     
     try {
         
