@@ -1121,8 +1121,8 @@ exports.getRecentTopicEnrollmentEvents = async function( limit ) {
 exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
-
-        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
+        // Retrieve all user owned topics and public topics.
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 0) ORDER BY id";
         const values = [ true, ownerId ];
 
         // apply a default offset if none is provided
@@ -1166,7 +1166,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 // Similar to getAllVisibleTopics, but does not show user specific topics.
 exports.getAllPublicTopics = async ( limit, offset ) => {
 
-    let text = "select * from topics WHERE active = $1 and visibility = 2 ORDER BY id";
+    let text = "select * from topics WHERE active = $1 and visibility = 0 ORDER BY id";
     const values = [ true ];
 
     // apply a default offset if none is provided
