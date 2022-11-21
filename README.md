@@ -5,7 +5,7 @@
 
 Agora is an open, free, cloud based learning and research platform. We are creating the most intutitive way to research and learn available on the internet. Protected by the Agora Foundation, a Public Service charged with protecting individual data as a service rendered in the public interest, ensuring your privacy and ownership of data within the system now and for the lifetime of the foundation!
 
-The goals behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
+The workspaces behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
 
 The perfect research and learning platform:
 - Is accessible: Free and open source and will remain so forever
@@ -65,11 +65,11 @@ answers you seek
 3. Full user creation / login / security / email verification
 4. Avatar / file upload
 5. Basic Stripe integration to allow for community support
-6. Advanced Goal / Topic / Resource hierarchy for note taking and resource management 
+6. Advanced Workspace / Topic / Resource hierarchy for note taking and resource management 
 7. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
 1. Web3 and other decentrailized solution evaluation
-2. Discussions (At global, goal and topic level)
-3. Classroom sharing (Goals can be shared as a classroom environment)
+2. Discussions (At global, workspace and topic level)
+3. Classroom sharing (Workspaces can be shared as a classroom environment)

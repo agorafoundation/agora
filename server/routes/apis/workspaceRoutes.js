@@ -17,38 +17,38 @@ router.use( bodyParser.json() );
 //dependencies 
 
 // controllers
-const goalController = require( '../../controller/apis/goalController' );
+const workspaceController = require( '../../controller/apis/workspaceController' );
 const { get } = require( './tagRoutes' );
 
 
-// goals /api/v1/auth/goals
+// workspaces /api/v1/auth/workspaces
 router.route( '/' )
-    // get all visible goals
+    // get all visible workspaces
     .get( async ( req, res ) => {
-        goalController.getAllVisibleGoals( req, res );
+        workspaceController.getAllVisibleWorkspaces( req, res );
     } )    
-    // save a new goal
+    // save a new workspace
     .post( async ( req, res ) => { 
-        goalController.saveGoal( req, res );
+        workspaceController.saveWorkspace( req, res );
     }
     );
 
-// goals /api/v1/auth/goals
-router.route( '/:goalId' )
-    // get a visible goal by id
+// workspaces /api/v1/auth/workspaces
+router.route( '/:workspaceId' )
+    // get a visible workspace by id
     .get( async ( req, res ) => {
-        goalController.getGoalById( req, res );
+        workspaceController.getWorkspaceById( req, res );
     
     } )
-    // delete a visible goal by id
+    // delete a visible workspace by id
     .delete( async ( req, res ) => {
-        goalController.deleteGoalById( req, res );
+        workspaceController.deleteWorkspaceById( req, res );
     }
     );
 
 // enrollment management
-router.route( '/enroll/:userId/:goalId' )
-    // enroll an eligible user in a visibile goal
+router.route( '/enroll/:userId/:workspaceId' )
+    // enroll an eligible user in a visibile workspace
     .post( async ( req, res ) => {
 
     } )
