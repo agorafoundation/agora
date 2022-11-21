@@ -125,7 +125,7 @@ exports.getResourceById = async ( req, res ) => {
     }
 
     // get all the active resources by Id
-    let resource = await resourceService.getAllActiveResourcesForOwnerById( authUserId, req.params.id );
+    let resource = await resourceService.getAllActiveResourcesForOwnerById( authUserId, req.params.resourceId );
 
     if( resource ) {
         res.set( "x-agora-message-title", "Success" );

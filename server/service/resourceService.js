@@ -170,7 +170,7 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
     try {
          
         let res = await db.query( text, values );
-        
+
         for( let i=0; i<res.rows.length; i++ ) {
             resources.push( Resource.ormResource( res.rows[i] ) );
         }
