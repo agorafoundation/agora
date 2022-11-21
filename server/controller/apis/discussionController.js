@@ -7,30 +7,19 @@
 
 const discussionService = require( "../../service/discussionService" );
 const ApiMessage = require( "../../model/util/ApiMessage" );
+const {errorController} = require( "./apiErrorController" );
 
 // Get
 
-exports.getDiscussionByGoalId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
+exports.getDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    // get the discussion by goal id
-    let discussion = await discussionService.getDiscussion( "goal", id, authUserId );
+    // get the discussion by workspace id
+    let discussion = await discussionService.getDiscussion( "workspace", id, req.user.id );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );
@@ -39,26 +28,14 @@ exports.getDiscussionByGoalId = async ( req, res ) => {
 };
 
 exports.getDiscussionByTopicId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
     
     const id = req.params.id;
 
     // get the discussion by topic id
-    let discussion = await discussionService.getDiscussion( "topic", id, authUserId );
+    let discussion = await discussionService.getDiscussion( "topic", id, req.user.id );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -68,33 +45,14 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
 
 // Update
 
-exports.updateDiscussionByGoalId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
-    if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "discussion_text not provided" );
-        return res.status( 400 ).json( message );
-    }
+exports.updateDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "goal", id, authUserId, req.body );
+    let discussion = await discussionService.updateDiscussion( "workspace", id, req.user.id, req.body );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -104,31 +62,12 @@ exports.updateDiscussionByGoalId = async ( req, res ) => {
 
 exports.updateDiscussionByTopicId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
-    if( req.body.discussion_text === undefined || req.body.discussion_text === null || req.body.discussion_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "discussion_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "discussion_text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "topic", id, authUserId, req.body );
+    let discussion = await discussionService.updateDiscussion( "topic", id, req.user.id, req.body );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Discussion not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Discussion not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -138,33 +77,14 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
 // Create
 
-exports.createDiscussionByGoalId = async ( req, res ) => {
-
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
-    if( req.body.text === undefined || req.body.text === null || req.body.text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "text not provided" );
-        return res.status( 400 ).json( message );
-    }
+exports.createDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, authUserId, req.body.text );
+    let discussion = await discussionService.createDiscussion( "workspace", id, req.user.id, req.body.discussion_text );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Could not create discussion" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -174,31 +94,12 @@ exports.createDiscussionByGoalId = async ( req, res ) => {
 
 exports.createDiscussionByTopicId = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
-    if( req.body.text === undefined || req.body.text === null || req.body.text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "topic", id, authUserId, req.body.text );
+    let discussion = await discussionService.createDiscussion( "topic", id, req.user.id, req.body.discussion_text );
 
     if( !discussion ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Could not create discussion" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Could not create discussion" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -209,44 +110,11 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
 // Comments
 
 exports.createComment = async ( req, res ) => {
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    if( req.body.parent_id < 0 ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_id not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "parent_id not provided" );
-        return res.status( 400 ).json( message );
-    }
+    let comment = await discussionService.createComment( req.user.id, req.body );
 
-    if( req.body.parent_type !== "goal" && req.body.parent_type !== "topic" /*&& req.body.parent_type !== "comment"*/ ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "parent_type not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "parent_type not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "comment_text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    let comment = await discussionService.createComment( authUserId, req.body );
-
-    // not sure if this is possible, so I don't really know what the message should be
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "Comment could not be created" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "Comment could not be created" );
-        return res.status( 400 ).json( message );
+        return errorController( ApiMessage.createInternalServerError(), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -257,29 +125,11 @@ exports.createComment = async ( req, res ) => {
 exports.editComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    if( req.body.comment_text === undefined || req.body.comment_text === null || req.body.comment_text === "" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "comment_text not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "comment_text not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    let comment = await discussionService.editComment( commentId, authUserId, req.body );
+    let comment = await discussionService.editComment( commentId, req.user.id, req.body );
 
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
     
     res.set( "x-agora-message-title", "Success" );
@@ -290,22 +140,11 @@ exports.editComment = async ( req, res ) => {
 exports.deleteComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
-    let comment = await discussionService.deleteComment( commentId, authUserId );
+    let comment = await discussionService.deleteComment( commentId, req.user.id );
 
     if( !comment ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     
@@ -318,32 +157,13 @@ exports.deleteComment = async ( req, res ) => {
 
 exports.setRating = async ( req, res ) => {
 
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
-
     const commentId = req.params.commentId;
     const userRating = req.body.rating;
 
-    if( typeof userRating !== "boolean" ) {
-        const message = ApiMessage.createApiMessage( 400, "Bad Request", "rating not provided" );
-        res.set( "x-agora-message-title", "Bad Request" );
-        res.set( "x-agora-message-detail", "rating not provided" );
-        return res.status( 400 ).json( message );
-    }
-
-    let rating = await discussionService.setCommentRating( commentId, userRating, authUserId );
+    let rating = await discussionService.setCommentRating( commentId, userRating, req.user.id );
 
     if( !rating ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not created" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found, rating not created" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );
@@ -352,24 +172,13 @@ exports.setRating = async ( req, res ) => {
 };
 
 exports.removeRating = async ( req, res ) => {
-    // get the user id either from the request user from basic auth in API call, or from the session for the UI
-    let authUserId;
-    if( req.user ) {
-        authUserId = req.user.id;
-    }
-    else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
-    }
 
     const commentId = req.params.commentId;
 
-    let rating = await discussionService.removeCommentRating( commentId, authUserId );
+    let rating = await discussionService.removeCommentRating( commentId, req.user.id );
 
     if( !rating ) {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Comment not found, rating not removed" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Comment not found, rating not removed" );
-        return res.status( 404 ).json( message );
+        return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
     }
 
     res.set( "x-agora-message-title", "Success" );

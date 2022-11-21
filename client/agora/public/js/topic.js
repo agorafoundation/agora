@@ -5,6 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+//const { ConfigurationServicePlaceholders } = require("aws-sdk/lib/config_service_placeholders");
+
 
 // keep track of running total of new questions for assessment
 let newQuestionNum = 0;
@@ -352,7 +354,7 @@ window.addEventListener( 'load', () => {
 
     if( document.getElementById( 'currentStepField' ) ) {
         let currentStep = document.getElementById( 'currentStepField' ).value;
-        let goalId = document.getElementById( 'goalIdField' ).value;
+        let workspaceId = document.getElementById( 'workspaceIdField' ).value;
         let topicId = document.getElementById( 'topicIdField' ).value;
         //console.log(currentStep);
         switch( currentStep ) {
@@ -634,7 +636,7 @@ window.addEventListener( 'load', () => {
     }
 
     /**
-     * Drag and drop for pathway (topics related to goals) 
+     * Drag and drop for pathway (topics related to workspaces) 
      * 
      */
     if( document.getElementById( 'pathway-draggable' ) ) {
@@ -662,14 +664,14 @@ window.addEventListener( 'load', () => {
     }
     
     /**
-     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * When the workspace form is submitted find all the selected topics and populate the pathway hidden form field
      * so that the data can pass as part of the form.
      */
-    if( document.getElementById( 'goalButton' ) ) {
+    if( document.getElementById( 'workspaceButton' ) ) {
         /**
          * Parses selected topics and creates list to send to server along with form data
          */
-        document.getElementById( 'goalButton' ).addEventListener( 'click', () => {
+        document.getElementById( 'workspaceButton' ).addEventListener( 'click', () => {
             
             // get the field to add the list to
             let pathway = document.getElementById( 'pathway' );
@@ -690,7 +692,7 @@ window.addEventListener( 'load', () => {
     }
 
     /**
-     * When the goal form is submitted find all the selected topics and populate the pathway hidden form field
+     * When the workspace form is submitted find all the selected topics and populate the pathway hidden form field
      * so that the data can pass as part of the form.
      */
     if( document.getElementById( 'topicButton' ) ) {
@@ -815,4 +817,53 @@ function updateTopicResourceCompleteStatus( resourceId, submittedText ) {
     } ).then( ( res ) => {
     } );
 }
+
+//////////////onload fetch functions //////////////////////
+
+const prefixPattern = /#t/;
+
+const idPattern = /-([0-9]+)/;
+
+const idAndFetch = () => {
+
+    const url = window.location.href;
+    const id = idPattern.exec( url )[1];
+    const isTopic = prefixPattern.test( url );
+
+    if ( isTopic ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.topicName, response.topicDescription, response.topicImage );
+            } );
+    } 
+    else {
+        fetch( "api/v1/auth/workspaces/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.workspaceName, response.workspaceDescription, response.workspaceImage );
+            } );
+    }
+};
+
+const fillFields = ( title, description, image ) => {
+    document.getElementById( "workspace-title" ).value = title.trim();
+    document.getElementById( "workspace-desc" ).value = description.trim();
+};
+
+window.addEventListener( 'load', () => {
+    idAndFetch();
+} );
+
+
+
+
+
+
 

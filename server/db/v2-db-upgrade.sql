@@ -1,5 +1,5 @@
--- #27 https://github.com/briangormanly/agora/issues/27 make goal completable when no additional topics will be added (in production https://github.com/briangormanly/agora/pull/29)
-ALTER TABLE goals ADD COLUMN completable BOOLEAN DEFAULT true;
+-- #27 https://github.com/briangormanly/agora/issues/27 make workspace completable when no additional topics will be added (in production https://github.com/briangormanly/agora/pull/29)
+ALTER TABLE workspacespaces ADD COLUMN completable BOOLEAN DEFAULT true;
 
 -- in production https://github.com/briangormanly/agora/pull/46
 -- #30 https://github.com/briangormanly/agora/issues/30 add pre assessment threshold and post (#31)
@@ -16,20 +16,20 @@ ALTER TABLE topics ADD COLUMN has_activity BOOLEAN DEFAULT true;
 -- end production https://github.com/briangormanly/agora/pull/46
 
 -- #38 https://github.com/briangormanly/agora/issues/38
-ALTER TABLE goals DROP CONSTRAINT goals_pkey;
-ALTER TABLE goals ADD COLUMN rid SERIAL PRIMARY KEY;
+ALTER TABLE workspacespaces DROP CONSTRworkspace workspaces_pkey;
+ALTER TABLE workspacespaces ADD COLUMN rid SERIAL PRIMARY KEY;
 
-ALTER TABLE goal_path RENAME COLUMN goal_id TO goal_rid;
-ALTER TABLE goal_path DROP COLUMN goal_version;
-DROP INDEX IF EXISTS idx_goal_path_goal_id;
-DROP INDEX IF EXISTS idx_goal_path_goal_version;
-CREATE INDEX IF NOT EXISTS idx_goal_path_goal_rid ON goal_path (goal_rid);
+ALTER TABLE workspacespace_path RENAME COworkspace workspworkspaceid TO workspace_rid;
+ALTER TABLE workspacespace_path DROP COworkspace workspace_version;
+DROP INDEX IF EXISTS idx_workspacespace_workspace_workspace_id;
+DROP INDEX IF EXISTS idx_workspacespace_workspace_workspace_version;
+CREATE INDEX IF NOT EXISTS idx_workspacespace_workspace_workspaworkspaceid ON wworkspacepace_path (workspace_rid);
 
-ALTER TABLE user_goal RENAME COLUMN goal_id TO goal_rid;
-ALTER TABLE user_goal DROP COLUMN goal_version;
-DROP INDEX IF EXISTS idx_user_goal_goal_id;
-DROP INDEX IF EXISTS idx_user_goal_goal_version;
-CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
+ALTER TABLE user_workspacespace RENAME COworkspace workspworkspaceid TO workspace_rid;
+ALTER TABLE user_workspacespace DROP COworkspace workspace_version;
+DROP INDEX IF EXISTS idx_user_workspacesworkspace_workspace_id;
+DROP INDEX IF EXISTS idx_user_workspacesworkspace_workspace_version;
+CREATE INDEX IF NOT EXISTS idx_user_workspacesworkspace_workspace_riworkspace uworkspaceworkspace (workspace_rid);
 
 -- #48 https://github.com/briangormanly/agora/issues/48 
 -- I don't see any difference in the database between the tables created with just SERIAL and the ones with SERIAL PRIMARY KEY, I just made the change for the create scripts.
@@ -38,6 +38,6 @@ CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
 
 -- #62  
 update users set profile_filename = REPLACE ( profile_filename, '/assets/uploads/profile/', '');
-update goals set goal_image = REPLACE ( goal_image, '/assets/uploads/goal/', '');
+update workspacespacesworkspace workspace_image = workspaceACE ( workspace_image, '/workspacets/uploads/workspace/', '');
 update topics set topic_image = REPLACE ( topic_image, '/assets/uploads/topic/', '');
 update resources set resource_image = REPLACE ( resource_image, '/assets/uploads/resource/', '');

@@ -3,7 +3,7 @@
  * Ties the tag_association table with the tag table
  * Associates the use of tags with users and their entities 
  * 
- * entity_type INTEGER, --  1-goal, 2-topic, 3-resource, 
+ * entity_type INTEGER, --  1-workspace, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
     use_count INTEGER, -- incremented when user finds entity via tag lookup
@@ -46,7 +46,7 @@ exports.ormTagged = ( row ) => {
 
 const EntityType = {
     UNKNOWN: 0,
-    GOAL: 1,
+    WORKSPACE: 1,
     TOPIC: 2,
     RESOURCE: 3
 };

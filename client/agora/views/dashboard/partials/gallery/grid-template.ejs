@@ -4,8 +4,8 @@
       if (contentType === "Topic") { %>
 
         <!--Topic Card -->
-        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check">
-          <div class="card h-100 countable" id="t-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false)">
+        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-topic">
+          <div class="card h-100" id="t-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="t-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
@@ -30,16 +30,16 @@
             </div>
           </div>
         </div>
-      <% } else if (contentType === "Goal") { %>
+      <% } else if (contentType === "Workspace") { %>
 
-        <!--Goal Card-->
-        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-goal">
-          <div class="card h-100 countable" id="g-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+        <!--Workspace Card-->
+        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-workspace">
+          <div class="card h-100" id="g-gv-<%= id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="g-gv-option-<%= id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
               <%- include('./dropdown.ejs'); %>
             </div>
-            <div class="card-body d-flex flex-column" id="goal">
+            <div class="card-body d-flex flex-column" id="workspace">
               <h5 class="card-title" id="g-gv-card-title-<%= id %>">
                   <%= name %>
               </h5>
@@ -49,7 +49,7 @@
                   <ul class="list-group list-group-flush list-grid">
                     <% content.slice(0,8).forEach((item) => { %>
                       <!--topicReroute() below has a filler id-->
-                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false, null)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
                     <% }) %>
                   </ul>
                 <% } %>
@@ -74,7 +74,7 @@
    
         <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
             <div class="col mb-3 gallery-col align-items-stretch gallery-col">
-            <div class="card h-100" data-toggle="modal" data-target="#new-topic-goal-modal"      >
+            <div class="card h-100" data-toggle="modal" data-target="#new-topic-workspace-modal"      >
                 <div class="card-body d-flex flex-column mt-1" id="add">
                 <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content"
                     alt="Add content">
@@ -83,10 +83,10 @@
             </div>
            
             <%
-         //render goals
+         //render workspaces
             
-         for (let i = 0; i <  ownerGoals.length ; i++) { 
-            renderCard(ownerGoals[i].id,ownerGoals[i].goalName,ownerGoals[i].goalDescription,["Bio","Chem"],"Goal", ["Doc1","doc2"]) 
+         for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
+            renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", ["Doc1","doc2"]) 
          }%>
             <% //render resources for Now
         for (let i = 0; i <  ownerTopics.length ; i++) { 

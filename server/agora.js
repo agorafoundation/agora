@@ -160,11 +160,13 @@ app.use( "/api/v1/auth", apiAuthRoutes );
  * API master route file for open APIs, requires each individual API routing file
  */
 const apiUnauthRoutes = require( "./routes/apiUnauthRoutes" );
+const { errorController } = require( "./controller/apis/apiErrorController" );
+const ApiMessage = require( "./model/util/ApiMessage" );
 app.use( "/api/v1/open", apiUnauthRoutes );
 
-// // goal
-// let goalRoutes = require('./routes/community/goalRoutes');
-// app.use('/community/goal', goalRoutes);
+// // workspace
+// let workspaceRoutes = require('./routes/community/workspaceRoutes');
+// app.use('/community/workspace', workspaceRoutes);
 
 // // topic
 // let topicRoutes = require('./routes/community/topicRoutes');
@@ -185,6 +187,11 @@ if ( process.env.GITHUB_TOGGLE == "true" ) {
 
     app.route( "/api/webhook/sponsor" ).post( ghApi.sponsorship );
 }
+
+app.use( ( error, req, res, next ) => {
+    console.error( error );
+    return errorController( ApiMessage.createInternalServerError(), res );
+} );
 
 app.listen( PORT, () =>
     console.log(

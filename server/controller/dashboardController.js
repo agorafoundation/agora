@@ -9,46 +9,46 @@
 
 
 // models
-const Goal = require( '../model/goal' );
+const Workspace = require( '../model/workspace' );
 const Topic = require( '../model/topic' );
 const Resource = require( '../model/resource' );
 
 // services
-const goalService = require( '../service/goalService' );
+const workspaceService = require( '../service/workspaceService' );
 const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 
 exports.getDashboard = async function( req, res ) {
     
-    let goalId = req.params.goalId;
+    let workspaceId = req.params.workspaceId;
 
-    // get all the goals for this owner
-    let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
+    // get all the workspaces for this owner
+    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
 
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
     // start the available topics out with the full owner topic set
     let availableTopics = ownerTopics;
 
-    // create an empty goal to use if the user creates a new one
-    let goal = Goal.emptyGoal();
+    // create an empty workspace to use if the user creates a new one
+    let workspace = Workspace.emptyWorkspace();
 
-    if( goalId > 0 ) {
-        goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
+    if( workspaceId > 0 ) {
+        workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
 
-        // iterate through the goals assigned topics, remove them from the available list
-        for( let i=0; i < goal.topics.length; i++ ) {
-            let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( goal.topics[i].id );
+        // iterate through the workspaces assigned topics, remove them from the available list
+        for( let i=0; i < workspace.topics.length; i++ ) {
+            let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( workspace.topics[i].id );
             
             ~redundantTopic && availableTopics.splice( redundantTopic, 1 );
         }
 
-        // get the topics that are not currently assigned to this goal
+        // get the topics that are not currently assigned to this workspace
 
     }
     else {
-        goal.ownedBy = req.session.authUser.id;
-        goal.goalVersion = 1;
+        workspace.ownedBy = req.session.authUser.id;
+        workspace.workspaceVersion = 1;
     }
 
     // create an empty topic to use if the user creates a new one
@@ -73,15 +73,15 @@ exports.getDashboard = async function( req, res ) {
         delete req.session.messageBody;
     }
 
-    // make sure the user has access to this goal (is owner)
-    if( goal.ownedBy === req.session.authUser.id ) {
-        res.render( 'dashboard/dashboard', { ownerGoals: ownerGoals, goal: goal, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
+    // make sure the user has access to this workspace (is owner)
+    if( workspace.ownedBy === req.session.authUser.id ) {
+        res.render( 'dashboard/dashboard', { ownerWorkspaces: ownerWorkspaces, workspace: workspace, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
     else {
         req.session.messageType = "warn";
         req.session.messageTitle = 'Access Denied';
         req.session.messageBody = 'You do not have access to the requested resource';
-        res.render( 'dashboard/dashboard', { ownerGoals: ownerGoals, goal: null, ownerTopics: ownerTopics, topic: topic, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
+        res.render( 'dashboard/dashboard', { ownerWorkspaces: ownerWorkspaces, workspace: null, ownerTopics: ownerTopics, topic: topic, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
 
     
