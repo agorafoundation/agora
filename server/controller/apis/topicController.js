@@ -190,11 +190,12 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
     // save image in db and delete old file  
     if( topicId > 0 ) {
         topicService.updateTopicImage( topicId, filename ).then( ( rValue ) => {
+            if ( rValue === filename ) {
+                console.log('No image update occurred - exiting image update function.');
+                return false;
+            }
 
-            if( rValue && rValue.length > 0 && ( rValue != 'topic-default.png' 
-                || rValue != 'notebook-pen.svg' 
-                || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' ) ) {
+            if( rValue && rValue.length > 0 && rValue != 'multiple-layers.svg' ) {
                 console.log( "removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue );
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue, ( err ) => {
                     if( err ) {

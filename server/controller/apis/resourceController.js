@@ -200,10 +200,15 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
     // save image in db and delete old file  
     if( resourceId > 0 ) {
         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
-            if( rValue && rValue.length > 0 &&  rValue != "resource-default.png" 
+            if ( rValue === filename ) {
+                console.log('No image update occurred - exiting image update function.');
+                return false;
+            }
+
+            if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
                 || rValue != "notebook-pen.svg" 
                 || rValue != "cell-molecule.svg" 
-                || rValue != "code.svg"  ) {
+                || rValue != "code.svg" ) ) {
                 console.log( "removing: " + resourceUploadPath + rValue );
                 fs.unlink( (resourceUploadPath) + rValue, ( err ) => {
                     if( err ) {

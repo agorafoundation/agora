@@ -120,7 +120,12 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
     // save image in db and delete old file  
     if( workspaceId > 0 ) {
         workspaceService.updateWorkspaceImage( workspaceId, filename ).then( ( rValue ) => {
-            if( rValue && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
+            if ( rValue === filename ) {
+                console.log('No image update occurred - exiting image update function.');
+                return false;
+            }
+
+            if( rValue && rValue.length > 0 && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[workspaceController.saveWorkspaceImage] file delete error status: " + err );
