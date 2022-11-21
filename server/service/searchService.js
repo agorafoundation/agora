@@ -89,9 +89,11 @@ exports.getResourcesByTerm = async ( term, userId ) => {
 
 exports.getTopicsByTerm = async ( term, userId ) => {
     const text = `
-        SELECT goal_name, goal_id, goal_description
+        SELECT topic_name, topic_id, topic_description
         FROM topics 
-        WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
+        WHERE topic_name ILIKE '%' || $1 || '%' 
+        OR topic_description ILIKE '%' || $1 || '%'
+        AND owned_by = $2
     `;
     const values = [ userId ];
 
@@ -125,7 +127,9 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
         SELECT goal_name, goal_id, goal_description 
         FROM goals 
-        WHERE goal_name LIKE $1 OR CONTAINS(goal_description, $1)
+        WHERE goal_name ILIKE '%' || $1 || '%' 
+        OR goal_description ILIKE '%' || $1 || '%'
+        AND owned_by = $2
     `;
     const values = [ userId ];
 
