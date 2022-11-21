@@ -471,12 +471,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
 
     //if workspace
     if( prefix === "g-" ) {
-<<<<<<< HEAD
-        console.log( "new goal" );
-        fetch( "api/v1/auth/goals", {
-=======
         fetch( "api/v1/auth/workspaces", {
->>>>>>> main
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
