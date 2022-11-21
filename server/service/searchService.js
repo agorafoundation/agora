@@ -35,15 +35,15 @@ exports.getSearchResults = async ( term, userId ) => {
 exports.getUsersByTerm = async ( term, userId ) => {
     //db query
     const text = `
-        SELECT id,username,first_name,last_name FROM users
+        SELECT id,username,first_name,last_name 
+        FROM users
         WHERE username ILIKE '%' || $1 || '%'
         OR first_name ILIKE '%' || $1 || '%'
         OR last_name ILIKE '%' || $1 || '%'
-        AND users.id != $2
         ORDER BY username ASC
-        `;
+    `;
 
-    const values = [ term, userId ];
+    const values = [ term ];
 
     try {
             
