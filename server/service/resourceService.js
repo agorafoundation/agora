@@ -171,15 +171,21 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
          
         let res = await db.query( text, values );
 
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+        if( res.rowCount > 0 ) {
+            for( let i=0; i<res.rows.length; i++ ) {
+                resources.push( Resource.ormResource( res.rows[i] ) );
+            }
+            
+            return resources;
         }
-        
-        return resources;
-        
+
+        else {
+            return false;
+        }
     }
     catch( e ) {
         console.log( e.stack );
+        return false;
     }
 };
 
