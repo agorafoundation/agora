@@ -20,4 +20,5 @@ exports.ormSearchResult = function ( row ) {
     searchResult.name = row.name;
     searchResult.id = row.id;
     searchResult.description = row.description;
+    return searchResult;
 };
