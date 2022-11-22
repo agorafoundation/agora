@@ -670,8 +670,12 @@ exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
 
     try {
         let res = await db.query( text, values );
-        return true;
-
+        if( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     catch ( e ) {
         console.log( e.stack );

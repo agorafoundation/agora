@@ -489,9 +489,10 @@ exports.deleteTopicById = async ( req, res ) => {
         res.status( 200 ).json( "Success" );
     }
     else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No topics were found meeting the query criteria" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "No topics were found meeting the query criteria" );
-        res.status( 404 ).send( "No topics Found" );
+        res.status( 404 ).json( message );
     }
 
 };

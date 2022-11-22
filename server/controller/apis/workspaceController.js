@@ -79,9 +79,10 @@ exports.deleteWorkspaceById = async ( req, res ) => {
             res.status( 200 ).json( "Success" );
         }
         else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "No workspaces were found meeting the query criteria" );
             res.set( "x-agora-message-title", "Not Found" );
             res.set( "x-agora-message-detail", "No workspaces were found meeting the query criteria" );
-            res.status( 404 ).send( "No Workspaces Found" );
+            res.status( 404 ).json( message );
         }
     }
 };
