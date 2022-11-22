@@ -47,6 +47,13 @@
                 <!--More Options-->
                 <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
 
+                <!--Discussions-->
+                <span class="material-symbols-outlined discussion-button" title="Discussons" data-toggle="modal" data-target="#discussion-modal" data-backdrop="false">
+                    forum
+                </span>
+                <%-include('./discussion-modal.ejs'); %>
+                <%-include('./comment-template.ejs'); %>
+
                 <!--Sharing-->
                 <span class="material-symbols-outlined share-button" title="Share" data-toggle="modal" data-target="#share-modal">
                     ios_share

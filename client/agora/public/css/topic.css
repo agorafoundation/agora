@@ -623,3 +623,93 @@
   .aux-button:focus {
     outline: none;
   }
+
+  .discussion-button {
+    position: absolute;
+    right: 80px;
+    top: -20px;
+  }
+
+  .discussion-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 5px;
+    border-radius: 5px;
+    word-wrap: break-word;
+    border: 1px solid black;
+    margin-bottom: 5px;
+    overflow: auto;
+    font-size: 14px;
+  }
+
+  .discussion-modal-pos {
+    left: 30%; 
+    top: 35px; 
+    z-index: 1000;
+  }
+
+  .discussion-modal-edges {
+    box-shadow: 0px 1px 2px 0px rgba(0.5, 0.5, 0.5, 0.5); 
+    border-radius: 15px
+  }
+
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+.post-comment-btn {
+  margin-left: 85%; 
+  border-radius: 5px; 
+  background-color: #5f89e0; 
+  color: white; 
+  border: none
+} 
+
+.post-comment-btn:hover {
+  background-color: #8aa9e7;
+  outline: 1px solid gray;
+}
+
+.discussion-user {
+  padding: 0; 
+  margin: 6px 0 0 10px;
+}
+
+.comment-body {
+  margin-left: 5px; 
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.comment-footer {
+  margin: 10px 0 0 5px
+}
+
+.like-button {
+  background-color: lightgray; 
+  border-radius: 10%; 
+  outline: 2px solid gray;
+  border: none;
+}
+
+.footer-hr {
+  width: 30px; 
+  transform: rotate(.25turn); 
+  margin: 15px 0 0 0;
+}
+
+.like-icon {
+  margin: 0; 
+  font-size: 22px;
+}
+
+.post-date {
+  font-size: 14px;
+  margin-top: 6px;
+}
