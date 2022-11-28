@@ -61,6 +61,29 @@ function openTab( name ) {
 
 let currTopicID = 1;
 function createTopic() {
+    fetch( "api/v1/auth/topics", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "topicType": 1,
+            "topicName": "Untitled",
+            "topicDescription": "",
+            "topicHtml": "",
+            "assessmentId": 1,
+            "hasActivity": false,
+            "hasAssessment": false,
+            "activityId": 1,
+            "active": true,
+            "visibility": 0,
+            "createTime": Date.now(),
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+            console.log( data.topicId );
+        } );
+
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
@@ -123,6 +146,15 @@ function createTopic() {
     let topicContent = document.createElement( "div" );
     topicContent.className = "topic-content";
 
+    let topicTitle = document.createElement( "input" );
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.id = "topic-title" + currTopicID;
+    topicTitle.placeholder = "Untitled";
+
+    let topicDivider = document.createElement( "div" );
+    topicDivider.id = "topic-divider";
+
     let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + currTopicID;
     resourcesZone.className = "resources-zone";
@@ -145,7 +177,7 @@ function createTopic() {
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + currTopicID;
-    tabBtn.innerHTML = "Topic " + currTopicID;
+    tabBtn.innerHTML = "Untitled";
 
     // Create close tab button
     let closeTabBtn = document.createElement( "span" );
@@ -157,7 +189,7 @@ function createTopic() {
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        }
+        } 
         else {
             openTab( newTab.id );
         }
@@ -168,12 +200,15 @@ function createTopic() {
 
     // Append all elements accordingly
     newTab.appendChild( topicContent );
+    topicContent.appendChild( topicTitle );
+    topicContent.appendChild( topicDivider );
     topicContent.appendChild( resourcesZone );
     resourcesZone.appendChild( newDropZone );
     resourcesZone.appendChild( emptyDropZone );
     emptyDropZone.appendChild( emptyState );
     emptyState.appendChild( label1 );
     emptyState.appendChild( label2 );
+
 
     currTopicID++;
     createNewActiveHeight();
@@ -257,13 +292,13 @@ document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
         }
     }
     // Always show new tag option
-    document.querySelector( "#new-tag-element" ).style.display = "block";
+    // document.querySelector( "#new-tag-element" ).style.display = "block";
 } );
 
-document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
-    const tagName = document.getElementById( "mySearch" ).value;
-    newTag( tagName );
-} );
+// document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
+//     const tagName = document.getElementById( "mySearch" ).value;
+//     newTag( tagName );
+// } );
 
 let currTagList = [];
 function newTag( tagName ) {
@@ -308,7 +343,7 @@ document.addEventListener( "keyup", function( e ) {
     if ( e.key == "Enter" && ul.style.display == "block" ) {
         newTag( tagName );
         document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
+        // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
 } );
@@ -636,7 +671,7 @@ function updateThumbnail( dropZoneElement, file ) {
         activeHeightObj[tabName] += 500;
     }
     else {
-        thumbnailElement.style.backgroundImage = 'url(assets/uploads/resource/file.png)';
+        // thumbnailElement.style.backgroundImage = 'url()';
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
@@ -715,7 +750,7 @@ document.addEventListener( "click", function( e ) {
             if ( doneIconList[i] === e.target ) {
                 document.getElementById( editIconList[i].id ).style.display = "block";
                 document.getElementById( doneIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor"+( i+1 )].readOnly( true );
+                sunEditor["sunEditor"+( i )].readOnly( true );
             }
         }
     }
@@ -724,7 +759,7 @@ document.addEventListener( "click", function( e ) {
             if ( editIconList[i] === e.target ) {
                 document.getElementById( doneIconList[i].id ).style.display = "block";
                 document.getElementById( editIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor"+( i+1 )].readOnly( false );
+                sunEditor["sunEditor"+( i )].readOnly( false );
             }
         }
     }
@@ -737,13 +772,30 @@ document.addEventListener( "click", function( e ) {
     // close tag list elements
     if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
         document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
+        // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
-    if ( document.querySelector( "#new-tag-element" ) && document.querySelector( "#new-tag-element" ).style.display == "block" ) {
-        document.querySelector( ".tag-list" ).style.display = "none";
-        document.querySelector( "#new-tag-element" ).style.display = "none";
-        document.querySelector( "#mySearch" ).value = "";
+    // if ( document.querySelector( "#new-tag-element" ) && document.querySelector( "#new-tag-element" ).style.display == "block" ) {
+    //     document.querySelector( ".tag-list" ).style.display = "none";
+    //     document.querySelector( "#new-tag-element" ).style.display = "none";
+    //     document.querySelector( "#mySearch" ).value = "";
+    // }
+
+    if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
+        if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
+            // change the tab name to the new topic title
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+        } 
+        else {
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
+        }
+
+        // replace the close tab button
+        let closeTabBtn = document.createElement( "span" );
+        closeTabBtn.className = "close-tab";
+        closeTabBtn.id = "close-tab" + tabName.slice( -1 );
+        closeTabBtn.innerHTML = "&times;";
+        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
     }
 } );
 
@@ -820,8 +872,31 @@ if ( createTopicBtn ) {
     };
 }
 if ( fileUploadBtn ) {
+    const pickerOpts = {
+        types: [
+            {
+                description: 'Images',
+                accept: {
+                    'image/*': [ '.png', '.gif', '.jpeg', '.jpg' ]
+                }
+            },
+        ],
+        excludeAcceptAllOption: true,
+        multiple: false
+    };
+
     fileUploadBtn.addEventListener( "click", async() => {
-        await window.showOpenFilePicker();
+        let promise =  new Promise( ( resolve ) => {
+            let file = window.showOpenFilePicker( pickerOpts );
+            resolve( file );
+        } );
+
+        promise.then(
+            ( value ) => {
+                console.log( value[0] );
+                console.log( value[0].name );
+            }
+        );
     } );
 }
 if ( openTopicBtn ) {
@@ -832,8 +907,41 @@ if ( openTopicBtn ) {
 }
 /* END Workspace Manager Modal ----------------------------------------------- */
 
+const toggleProfileList = () => {
+    let arrow = document.getElementById( "profiles-toggle" );
 
+    if ( arrow.classList.contains( "down-arrow" ) ) {
+        document.getElementById( "permissions-box" ).style.display = "none";
+        arrow.setAttribute( 'class', 'arrow up-arrow' );
+    }
+    else {
+        document.getElementById( "permissions-box" ).style.display = "flex";
+        arrow.setAttribute( 'class', 'arrow down-arrow' );
+    }
+};
 
+function toggleProfile ( e ) {
+    let target = e.target;
+    let box;
+
+    target.classList.contains( "permission-li" ) ? 
+        box = target.childNodes[3] : 
+        box = target.parentElement.childNodes[3];
+
+    box.checked ?
+        box.checked = false :
+        box.checked = true;
+}
+
+if ( document.getElementById( "profiles-toggle" ) ) {
+    document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
+}
+
+var perms = document.getElementsByClassName( "permission-li" );
+
+for ( let i = 0; i < perms.length; i++ ) {
+    perms[i].addEventListener( "click", toggleProfile );
+}
 
 
 
@@ -885,41 +993,3 @@ if ( openTopicBtn ) {
 // }
 
 /* END File Dropdown ----------------------------------------- */
-
-const toggleProfileList = () => {
-    let arrow = document.getElementById( "profiles-toggle" );
-
-    if ( arrow.classList.contains( "down-arrow" ) ) {
-        document.getElementById( "permissions-box" ).style.display = "none";
-        arrow.setAttribute( 'class', 'arrow up-arrow' );
-    }
-    else {
-        document.getElementById( "permissions-box" ).style.display = "flex";
-        arrow.setAttribute( 'class', 'arrow down-arrow' );
-    }
-};
-
-function toggleProfile ( e ) {
-    let target = e.target;
-    let box;
-
-    target.classList.contains( "permission-li" ) ? 
-        box = target.childNodes[3] : 
-        box = target.parentElement.childNodes[3];
-
-    box.checked ?
-        box.checked = false :
-        box.checked = true;
-}
-
-if ( document.getElementById( "profiles-toggle" ) ) {
-    document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
-}
-
-var perms = document.getElementsByClassName( "permission-li" );
-
-for ( let i = 0; i < perms.length; i++ ) {
-    perms[i].addEventListener( "click", toggleProfile );
-}
-
-  
