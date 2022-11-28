@@ -982,22 +982,24 @@ const renderTopics  = ( workspace ) => {
     
 };
 
+//change order so the create stuff will all happen after information is gatherd
 async function renderTopic( topicId ){
     const response= await fetch( 'api/v1/auth/topics/'+topicId );
     const data= await response.json();
     createTopic( data.topicName );
-    renderResources(topicId );
+    createTextArea(topicId);
+    console.log(renderResources( topicId ))
     return data;
 }
 
 async function renderResources( topicId ){
-    console.log(topicId)
+    console.log( topicId )
     const response= await fetch( 'api/v1/auth/topics/resources/' + topicId );
     const data= await response.json();
     console.log( data );
     if( data.length > 0 ){
         for( let i=0; i<data.length; i++ ){
-            await createTextArea(data[i].resourceName)
+            await createTextArea( data[i].resourceName );
         }
     }
     
