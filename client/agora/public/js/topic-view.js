@@ -362,7 +362,7 @@ let numSunEditors = 0;
 let doneIconList = [];
 let editIconList = [];
 let newTabIconList = [];
-function createTextArea() {
+async function createTextArea( resourceName ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
@@ -396,7 +396,12 @@ function createTextArea() {
         let title = document.createElement( 'input' );
         title.type = "text";
         title.className = "drop-zone__title";
-        title.placeholder = "Untitled";
+        if( resourceName ){
+            title.placeholder = resourceName;
+        }
+        else{
+            title.placeholder = "Untitled";
+        }
 
         // Edit icon
         let editIcon = document.createElement( 'span' );
@@ -970,23 +975,33 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics  = ( workspace ) => {
     let topicArr = [ 1, 2, 3 ];
-    for(let i = 0; i < topicArr.length; i++){
-        renderTopic (topicArr[i] );
+    for( let i = 0; i < topicArr.length; i++ ){
+        renderTopic ( topicArr[i] );
     }
     
     
 };
 
-async function renderTopic( topidId ){
-    const response= await fetch( 'api/v1/auth/topics/'+topidId );
+async function renderTopic( topicId ){
+    const response= await fetch( 'api/v1/auth/topics/'+topicId );
     const data= await response.json();
     createTopic( data.topicName );
-    renderResources();
+    renderResources(topicId );
     return data;
-};
+}
 
-async function renderResources(){
-    createTextArea();
+async function renderResources( topicId ){
+    console.log(topicId)
+    const response= await fetch( 'api/v1/auth/topics/resources/' + topicId );
+    const data= await response.json();
+    console.log( data );
+    if( data.length > 0 ){
+        for( let i=0; i<data.length; i++ ){
+            await createTextArea(data[i].resourceName)
+        }
+    }
+    
+    return data;
    
 }
 
