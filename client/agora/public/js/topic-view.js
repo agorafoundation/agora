@@ -60,7 +60,7 @@ function openTab( name ) {
 }
 
 let currTopicID = 1;
-function createTopic() {
+function createTopic(name) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
@@ -145,7 +145,12 @@ function createTopic() {
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + currTopicID;
-    tabBtn.innerHTML = "Topic " + currTopicID;
+    if( name ) {
+        tabBtn.innerHTML = name;
+    }
+    else {
+        tabBtn.innerHTML = "Topic " + currTopicID;
+    }
 
     // Create close tab button
     let closeTabBtn = document.createElement( "span" );
@@ -922,4 +927,77 @@ for ( let i = 0; i < perms.length; i++ ) {
     perms[i].addEventListener( "click", toggleProfile );
 }
 
-  
+
+//////////////onload fetch functions //////////////////////
+
+const prefixPattern = /#t/;
+
+const idPattern = /-([0-9]+)/;
+
+const idAndFetch = () => {
+
+    const url = window.location.href;
+    const id = idPattern.exec( url )[1];
+    const isTopic = prefixPattern.test( url );
+
+    if ( isTopic ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.topicName, response.topicDescription, response.topicImage );
+            } );
+    } 
+    else {
+        fetch( "api/v1/auth/workspaces/" + id, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        } )
+            .then( response => response.json() )
+            .then( response => {
+                fillFields( response.workspaceName, response.workspaceDescription, response.workspaceImage );
+                
+            } );
+    }
+};
+
+const fillFields = ( title, description, image ) => {
+    document.getElementById( "workspace-title" ).value = title.trim();
+    document.getElementById( "workspace-desc" ).value = description.trim();
+};
+
+const renderTopics  = ( workspace ) => {
+    let topicArr = [ 1, 2, 3 ];
+    for(let i = 0; i < topicArr.length; i++){
+        renderTopic (topicArr[i] );
+    }
+    
+    
+};
+
+async function renderTopic( topidId ){
+    const response= await fetch( 'api/v1/auth/topics/'+topidId );
+    const data= await response.json();
+    createTopic( data.topicName );
+    renderResources();
+    return data;
+};
+
+async function renderResources(){
+    createTextArea();
+   
+}
+
+window.addEventListener( 'load', () => {
+    idAndFetch();
+    renderTopics();
+} );
+
+
+
+
+
+
+
