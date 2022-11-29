@@ -208,7 +208,43 @@ async function createTopicTab( name ) {
     createNewActiveHeight();
     openTab( newTab.id );
 }
+function closeTab( id ) {
+  let tabContent = document.getElementsByClassName( "tabcontent" );
+  let tablinks = document.getElementsByClassName( "tablinks" );
+  let isActiveTab = false;
+  let tabLocation = -1;
 
+  let i = 0;
+  while ( i<tabContent.length ) {
+  // Find the tab content to be deleted
+      if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
+          // Check if the target tab is the active tab
+          if ( id.slice( -1 ) == activeTab.id.slice( -1 ) ) {
+              isActiveTab = true;
+          }
+          tabLocation = i;
+      }
+      i++;
+  }
+
+  if ( isActiveTab ) {
+      if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
+          openTab( tabContent[tabLocation+1].id );
+      }
+      else if ( tabLocation-1 >= 0 ) {                                                        // Otherwise, open the tab to the left
+          openTab( tabContent[tabLocation-1].id );
+      }
+      else if ( tabLocation-1 < 0 ) {                                                         // Show the workspace empty state if closing only open tab
+          document.getElementById( "workspace-empty-state" ).style.display = "block";
+          document.getElementById( "topic-background" ).style.backgroundColor = "#f1f1f1";
+          activeTab = document.getElementById( "resources-zone0" );
+      }
+  }
+  // Remove tab button and tab content
+  // Closing non-active tabs doesn't change the active tab
+  tablinks[tabLocation].remove();
+  tabContent[tabLocation].remove();
+}
 function getTabLocation( id ) {
     let tabContent = document.getElementsByClassName("tabcontent");
     let location = -1;
