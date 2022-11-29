@@ -59,219 +59,170 @@ function createNewActiveHeight() {
   }
 
   let currTopicID = 1;
-  async function createTopic() {
+async function createTopic() {
     fetch("api/v1/auth/topics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        topicType: 1,
-        topicName: "Untitled",
-        topicDescription: "",
-        topicHtml: "",
-        assessmentId: 1,
-        hasActivity: false,
-        hasAssessment: false,
-        activityId: 1,
-        active: true,
-        visibility: 0,
-        createTime: Date.now(),
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            topicType: 1,
+            topicName: "Untitled",
+            topicDescription: "",
+            topicHtml: "",
+            assessmentId: 1,
+            hasActivity: false,
+            hasAssessment: false,
+            activityId: 1,
+            active: true,
+            visibility: 0,
+            createTime: Date.now(),
+        } ),
+    } )
+        .then(( response ) => response.json())
+        .then( ( data ) => {
         //console.log(JSON.stringify(data));
         //console.log(data.topicId);
-      });
-
-    let tabContent = document.getElementsByClassName("tabcontent");
-    let lastTab = tabContent[tabContent.length - 1];
-    let newTab = document.createElement("div");
+        } );
+    createTopicTab( "Untitled" );
+}
+async function createTopicTab( name ) {
+    let tabContent = document.getElementsByClassName( "tabcontent" );
+    let lastTab = tabContent[tabContent.length-1];
+    let newTab = document.createElement( "div" );
 
     // Create the tab content and append to last tab
     newTab.id = "topic" + currTopicID;
     newTab.className = "tabcontent";
 
     // If no topics are open...
-    if (lastTab == null) {
-      let workspaceEmptyState = document.getElementById("workspace-empty-state");
-      workspaceEmptyState.parentNode.insertBefore(
-        newTab,
-        workspaceEmptyState.nextSibling
-      );
-      workspaceEmptyState.style.display = "none";
-      document.getElementById("topic-background").style.backgroundColor = "#ddd";
-    } else {
-      lastTab.parentNode.insertBefore(newTab, lastTab.nextSibling);
+    if ( lastTab == null ) {
+        let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
+        workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
+        workspaceEmptyState.style.display = "none";
+        document.getElementById( "topic-background" ).style.backgroundColor = "#ddd";
+    }
+    else {
+        lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
     }
 
     // ------------------------------------------------
     // Create drop zone at the top of the topic
-    let newDropZone = document.createElement("div");
-    newDropZone.classList.add("drop-zone");
-    newDropZone.classList.add("first-dropzone");
+    let newDropZone = document.createElement( "div" );
+    newDropZone.classList.add( "drop-zone" );
+    newDropZone.classList.add( "first-dropzone" );
 
     // Create drop zone filler div
-    let newDropZoneFiller = document.createElement("div");
+    let newDropZoneFiller = document.createElement( "div" );
     newDropZoneFiller.className = "dropzone-filler";
-    newDropZone.appendChild(newDropZoneFiller);
+    newDropZone.appendChild( newDropZoneFiller );
 
     // Create drop zone input
-    let newDropZoneInput = document.createElement("input");
+    let newDropZoneInput = document.createElement( "input" );
     newDropZoneInput.className = "drop-zone__input";
     newDropZoneInput.type = "file";
-    newDropZone.appendChild(newDropZoneInput);
-    createDropZoneEventListeners(newDropZone, newDropZoneInput);
+    newDropZone.appendChild( newDropZoneInput );
+    createDropZoneEventListeners( newDropZone, newDropZoneInput );
     newDropZone.style.display = "none";
     // ------------------------------------------------------
 
     // -----------------------------------------------------
     // Create drop zone that fills the entire topic empty state
-    let emptyDropZone = document.createElement("div");
-    emptyDropZone.classList.add("drop-zone");
-    emptyDropZone.classList.add("empty-topic-dropzone");
+    let emptyDropZone = document.createElement( "div" );
+    emptyDropZone.classList.add( "drop-zone" );
+    emptyDropZone.classList.add( "empty-topic-dropzone" );
 
     // Create drop zone filler div
-    let emptyDropZoneFiller = document.createElement("div");
+    let emptyDropZoneFiller = document.createElement( "div" );
     emptyDropZoneFiller.className = "dropzone-filler";
-    emptyDropZone.appendChild(emptyDropZoneFiller);
+    emptyDropZone.appendChild( emptyDropZoneFiller );
 
     // Create drop zone input
-    let emptyDropZoneInput = document.createElement("input");
+    let emptyDropZoneInput = document.createElement( "input" );
     emptyDropZoneInput.className = "drop-zone__input";
     emptyDropZoneInput.type = "file";
-    emptyDropZone.appendChild(emptyDropZoneInput);
-    createDropZoneEventListeners(emptyDropZone, emptyDropZoneInput);
+    emptyDropZone.appendChild( emptyDropZoneInput );
+    createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
     // -------------------------------------------------------------
 
     // Create all elements within a topic -----------------------------
-    let topicContent = document.createElement("div");
+    let topicContent = document.createElement( "div" );
     topicContent.className = "topic-content";
 
-    let topicTitle = document.createElement("input");
-    topicTitle.type = "text";
-    topicTitle.className = "topic-title";
-    topicTitle.id = "topic-title" + currTopicID;
-    topicTitle.placeholder = "Untitled";
-
-    let topicDivider = document.createElement("div");
-    topicDivider.id = "topic-divider";
-
-    let resourcesZone = document.createElement("div");
+    let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + currTopicID;
     resourcesZone.className = "resources-zone";
 
-    let emptyState = document.createElement("div");
+    let emptyState = document.createElement( "div" );
     emptyState.className = "empty-state";
 
-    let label1 = document.createElement("label");
+    let label1 = document.createElement( "label" );
     label1.className = "empty-state-text";
-    let header = document.createElement("h3");
+    let header = document.createElement( "h3" );
     header.innerHTML = "Your Topic is Empty";
-    label1.appendChild(header);
+    label1.appendChild( header );
 
-    let label2 = document.createElement("label");
+    let label2 = document.createElement( "label" );
     label2.className = "empty-state-text";
     label2.innerHTML = "Drop a file or tap the + above to get started!";
     // --------------------------------------------------------------
 
     // Create a new tab button
-    let tabBtn = document.createElement("button");
+    let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + currTopicID;
-    if (name) {
-      tabBtn.innerHTML = name;
-    } else {
-      tabBtn.innerHTML = "Topic " + currTopicID;
+    if( name ) {
+        tabBtn.innerHTML = name;
+    }
+    else {
+        tabBtn.innerHTML = "Topic " + currTopicID;
     }
 
     // Create close tab button
-    let closeTabBtn = document.createElement("span");
+    let closeTabBtn = document.createElement( "span" );
     closeTabBtn.className = "close-tab";
     closeTabBtn.id = "close-tab" + currTopicID;
     closeTabBtn.innerHTML = "&times;";
-    tabBtn.appendChild(closeTabBtn);
+    tabBtn.appendChild( closeTabBtn );
 
-    tabBtn.onclick = (e) => {
-      if (e.target.className.includes("close-tab")) {
-        closeTab(e.target.id);
-      } else {
-        openTab(newTab.id);
-      }
+    tabBtn.onclick = ( e ) => {
+        if ( e.target.className.includes( "close-tab" ) ) {
+            closeTab( e.target.id );
+        }
+        else {
+            openTab( newTab.id );
+        }
     };
 
-    let currTabs = document.querySelector(".tab");
-    currTabs.appendChild(tabBtn);
+    let currTabs = document.querySelector( ".tab" );
+    currTabs.appendChild( tabBtn );
 
     // Append all elements accordingly
-    newTab.appendChild(topicContent);
-    topicContent.appendChild(topicTitle);
-    topicContent.appendChild(topicDivider);
-    topicContent.appendChild(resourcesZone);
-    resourcesZone.appendChild(newDropZone);
-    resourcesZone.appendChild(emptyDropZone);
-    emptyDropZone.appendChild(emptyState);
-    emptyState.appendChild(label1);
-    emptyState.appendChild(label2);
+    newTab.appendChild( topicContent );
+    topicContent.appendChild( resourcesZone );
+    resourcesZone.appendChild( newDropZone );
+    resourcesZone.appendChild( emptyDropZone );
+    emptyDropZone.appendChild( emptyState );
+    emptyState.appendChild( label1 );
+    emptyState.appendChild( label2 );
 
     currTopicID++;
     createNewActiveHeight();
-    openTab(newTab.id);
-  }
+    openTab( newTab.id );
+}
 
-  function closeTab(id) {
-    let tabContent = document.getElementsByClassName("tabcontent");
-    let tablinks = document.getElementsByClassName("tablinks");
-    let isActiveTab = false;
-    let tabLocation = -1;
-
-    let i = 0;
-    while (i < tabContent.length) {
-      // Find the tab content to be deleted
-      if (tabContent[i].id.slice(-1) == id.slice(-1)) {
-        // Check if the target tab is the active tab
-        if (id.slice(-1) == activeTab.id.slice(-1)) {
-          isActiveTab = true;
-        }
-        tabLocation = i;
-      }
-      i++;
-    }
-
-    if (isActiveTab) {
-      if (tabLocation + 1 != tabContent.length) {
-        // Open the tab to the right if there is one
-        openTab(tabContent[tabLocation + 1].id);
-      } else if (tabLocation - 1 >= 0) {
-        // Otherwise, open the tab to the left
-        openTab(tabContent[tabLocation - 1].id);
-      } else if (tabLocation - 1 < 0) {
-        // Show the workspace empty state if closing only open tab
-        document.getElementById("workspace-empty-state").style.display = "block";
-        document.getElementById("topic-background").style.backgroundColor =
-          "#f1f1f1";
-        activeTab = document.getElementById("resources-zone0");
-      }
-    }
-    // Remove tab button and tab content
-    // Closing non-active tabs doesn't change the active tab
-    tablinks[tabLocation].remove();
-    tabContent[tabLocation].remove();
-  }
-
-  function getTabLocation(id) {
+function getTabLocation( id ) {
     let tabContent = document.getElementsByClassName("tabcontent");
     let location = -1;
     for (let i = 0; i < tabContent.length; i++) {
-      if (tabContent[i].id.slice(-1) == id.slice(-1)) {
-        location = i;
-      }
+        if (tabContent[i].id.slice(-1) == id.slice(-1)) {
+            location = i;
+        }
     }
-    return location;
-  }
-  /* END Tab Functions ------------------------------------------------------------------- */
+    return location;  
+}
+/* END Tab Functions ------------------------------------------------------------------- */
 
-  /* Tag Functions ------------------------------------------------------------------- */
-  document.getElementById("mySearch").addEventListener("keyup", () => {
+/* Tag Functions ------------------------------------------------------------------- */
+document.getElementById("mySearch").addEventListener("keyup", () => {
     let input, filter, ul, li, tag, i;
     input = document.getElementById("mySearch");
     filter = input.value.toUpperCase();
@@ -1080,16 +1031,18 @@ const fillFields = (title, description, image) => {
 const  renderTopics = async (workspace) => {
  
   let topicArr = [1, 2, 3];
+  if(topicArr.length > 0){
   for (let i = 0; i < topicArr.length; i++) {
      await renderTopic(topicArr[i]);
   }
+}
 };
 
 //change order so the create stuff will all happen after information is gatherd
 async function renderTopic(topicId) {
   const response = await fetch("api/v1/auth/topics/" + topicId);
   const data = await response.json();
-  await createTopic(data.topicName);
+  await createTopicTab(data.topicName);
   const resources = await renderResources(topicId);
   if(resources.length > 0) {
     for(let i = 0; i < resources.length; i++) {
