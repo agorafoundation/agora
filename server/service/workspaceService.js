@@ -29,7 +29,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     if( ownerId > -1 ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
+        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 0 ) order by gl.id;";
         const values = [ ownerId, true ];
 
         let workspaces = [];

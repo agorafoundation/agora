@@ -1116,3 +1116,5 @@ const toggleList = () => {
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
 };
+
+window.onload( toggleGrid() );

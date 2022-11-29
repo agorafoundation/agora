@@ -278,21 +278,21 @@ GRANT USAGE, SELECT ON SEQUENCE user_role_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_role_user_id ON user_role (user_id);
 CREATE INDEX IF NOT EXISTS idx_user_role_role_id ON user_role (role_id);
 
--- insert into user_role_workspace (user_id, role_id, active) values (1, 1, true);
+-- insert into user_role_goal (user_id, role_id, active) values (1, 1, true);
 -- creator waiting for the first user
 insert into user_role (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
 insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
 
 
--- workspaces and related <- workspaceService
-CREATE TABLE IF NOT EXISTS workspaces (
+-- goals and related <- goalService
+CREATE TABLE IF NOT EXISTS goals (
     rid SERIAL PRIMARY KEY,
     id INTEGER,
-    workspace_version INTEGER,       -- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
-    workspace_name VARCHAR,
-    workspace_description VARCHAR,
-    workspace_image VARCHAR,
+    goal_version INTEGER,       -- every time a goal or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
+    goal_name VARCHAR,
+    goal_description VARCHAR,
+    goal_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
     visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
@@ -300,8 +300,8 @@ CREATE TABLE IF NOT EXISTS workspaces (
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE workspaces TO agora;
-CREATE INDEX IF NOT EXISTS idx_workspaces_visibility ON workspaces (visibility);
+GRANT ALL PRIVILEGES ON TABLE goals TO agora;
+CREATE INDEX IF NOT EXISTS idx_goals_visibility ON goals (visibility);
 
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
@@ -325,43 +325,43 @@ GRANT ALL PRIVILEGES ON TABLE topics TO agora;
 CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 
-CREATE TABLE IF NOT EXISTS workspace_path (
+CREATE TABLE IF NOT EXISTS goal_path (
     id SERIAL PRIMARY KEY,
-    workspace_rid INTEGER,
+    goal_rid INTEGER,
     topic_id INTEGER,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE workspace_path TO agora;
-GRANT USAGE, SELECT ON SEQUENCE workspace_path_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE goal_path TO agora;
+GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_workspace_path_workspace_rid ON workspace_path (workspace_rid);
+CREATE INDEX IF NOT EXISTS idx_goal_path_goal_rid ON goal_path (goal_rid);
 
 
 
--- used to track a users interest in completing a workspace (and at a specific workspace version so the correct path can be identified)
--- also tracks actually completion of a workspace.
-CREATE TABLE IF NOT EXISTS user_workspace (
+-- used to track a users interest in completing a goal (and at a specific goal version so the correct path can be identified)
+-- also tracks actually completion of a goal.
+CREATE TABLE IF NOT EXISTS user_goal (
     id SERIAL PRIMARY KEY,
-    workspace_rid INTEGER,
+    goal_rid INTEGER,
     user_id INTEGER,
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE user_workspace TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_workspace_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE user_goal TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_workspace_workspace_rid ON user_workspace (workspace_rid);
-CREATE INDEX IF NOT EXISTS idx_user_workspace_user_id ON user_workspace (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
+CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
 
 
 -- Effectively an enrollment 
 -- These records can be recified with the defined path for a topic to 
--- track a users progess twoards a workspace.
+-- track a users progess twoards a goal.
 -- querying in this matter can progmattically determine completion, but it
 -- would not actually be recorded anywhere in the db. Further if the path 
 -- changed 
@@ -418,7 +418,7 @@ CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
 
 CREATE TABLE IF NOT EXISTS tag_association (
     id SERIAL PRIMARY KEY,
-    entity_type INTEGER, --  1-workspace, 2-topic, 3-resource, 
+    entity_type INTEGER, --  1-goal, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
     use_count INTEGER, -- incremented when user finds entity via tag lookup
@@ -573,7 +573,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activ
 
 -- Discussion API tables
 
-CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
+CREATE TYPE discussion_parents AS ENUM ('goal', 'topic');
 
 CREATE TABLE IF NOT EXISTS discussions (
     parent_id INTEGER,

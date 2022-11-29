@@ -5,7 +5,6 @@
 
 .topic-content {
     width: 100%;
-    display: flex;
     justify-content: center;
     border-radius: 20px;
     border:1px solid lightgray;
@@ -17,26 +16,48 @@
     padding-bottom: 50px;
 }
 
+.topic-title {
+  width: 25%;
+  margin-left: 15px;
+  margin-top: 30px;
+  border: 1px solid lightgrey;
+  border-radius: 10px;
+  padding: 10px 7px;
+}
+
+.topic-title:focus {
+  border: 1px solid #2c3e50;
+  outline: 0;
+}
+
+#topic-divider {
+  margin-top: 25px;
+  border-top: 1px solid lightgrey;
+}
+
 .header-div {
-    font-size: large;
-    display: flex;
+    display:  flex;
     justify-content: flex-start;
-    flex-direction: column;
+    flex-direction: row;
+    height: 90px;
 }
 
 .header {
-    padding: 10px 10px;
-    position: relative;
+    font-size: small;
 }
 
 #title-div {
-    font-size: xx-large;
+    font-size: x-large;
 }
 
 #description-div {
-    display: flex;
-    flex-direction: row;
-    padding-top: 20px
+  width: 30%;
+  display: flex;
+  flex-direction: row;
+}
+
+#tag-div {
+  width: 70%;
 }
 
 .placeholder {
@@ -73,7 +94,6 @@
 .textarea-div {
     resize: vertical;
     margin: 5px;
-    margin-bottom: 40px;
     width: 100%;
     height: 300px;
     padding: 5px;
@@ -89,14 +109,12 @@
 
 .descriptionTA {
     resize: none;
-    width: 40%;
-    height: 50px;
+    height: 70px;
     border: 1px solid lightgrey;
     padding-top: 10px;
     padding-left: 10px;
     margin-left: 20px;
     margin-bottom: 10px;
-    font-size: medium;
     border-style: dashed;
 }
 
@@ -110,10 +128,10 @@
 }
 
 .label {
-    border-radius: 20px;
+    border-radius: 10px;
     border: 1px solid #2c3e50;
-    padding: 10px 10px;
-    font-size: large;
+    padding: 7px 5px;
+    height: 35px;
 }
 
 #workspace-empty-state {
@@ -230,10 +248,7 @@
     cursor: pointer;
     padding: 14px 10px;
     transition: 0.3s;
-    border-top: none;
-    border-left: none;
-    border-bottom: none;
-    border-right: 1px solid rgb(177, 172, 172);
+    border: none;
   }
   
 .tabcontent {
@@ -262,11 +277,10 @@
 
 /* Tags --------------------------------------*/
 #mySearch {
-    width: 10%;
-    font-size: 18px;
+    /* width: 10%; */
     padding: 11px;
     border-bottom: 1px solid #ddd;
-    font-size: medium;
+    font-size: small;
     margin-left: 5px;
     outline: none;
     display: inline;
@@ -277,16 +291,12 @@
 }
 
 .tag-list .new-tag{
-    position: absolute;
-    top: 75px;
-    left: 90px;
     background-color: white;
     display: none;
     z-index: 1;
 }
   
 .tag-list .tag-list-element .new-tag{
-    padding: 12px;
     color: black;
     display: block;
 }
@@ -296,12 +306,20 @@
 }
 
 .tag-list-element  {
-    margin-left: 3%;
-    font-size: medium;
+    font-size: small;
     display: none;
-    width: 190px;
     border-width: 1px;
     cursor: pointer;
+}
+
+.tag-list-element:hover {
+  text-decoration: underline;
+}
+
+.tag-list {
+  width: 19%;
+  margin-left: 50px;
+  background-color: white;
 }
 
 .close-tag {
@@ -311,14 +329,16 @@
 }
 
 .new-tag {
+  border-style: dashed;
     margin-top: 0;
 }
 
   #curr-tags {
     width: 60%;
-    display: inline;
+    display: flex;
+    flex-direction: row;
     float: right;
-    margin-right: 20%;
+    margin-right: 10%;
     margin-top: 1%;
     font-size: smaller;
   }
@@ -368,7 +388,7 @@
     margin-top: 10px;
     width: 99%;
     height: 20px;
-    background-color: rgb(18, 79, 132);
+    background-color:#2c3e50;
     display: none;
   }
     
