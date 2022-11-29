@@ -6,320 +6,320 @@ let activeHeightList = [];
 
 // Creates a height object for each open topic
 function createNewActiveHeight() {
-  let tabElements = document.querySelectorAll(".tabcontent");
-  activeHeightObj[tabElements[tabElements.length - 1].id] = 0;
-  activeHeightList.push(
-    activeHeightObj[tabElements[tabElements.length - 1].id]
-  );
-}
-
-// Implemented to ensure resources fill a 1200px space first and then grows as needed
-function checkActiveHeight() {
-  if (activeHeightObj[tabName] < 1200) {
-    let filler = document.createElement("div");
-    filler.setAttribute("id", "filler-space");
-    filler.style.height = 1200 - activeHeightObj[tabName] + "px";
-    activeTab.appendChild(filler);
-  }
-}
-
-/* Tab Functions ------------------------------------------------------------------- */
-// Workspace empty state
-let activeTab = document.getElementById("resources-zone0");
-
-// Change tabs
-function openTab(name) {
-  tabName = name;
-  let i, tabcontent, tablinks;
-
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-
-  // Get all elements with class="tablinks" and remove the class "active"
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-    tablinks[i].style.backgroundColor = "#f1f1f1";
-  }
-
-  activeTab = document.getElementById("resources-zone" + name.slice(-1));
-
-  // Show the current tab
-  document.getElementById(name).style.display = "block";
-
-  // Set tab button to active
-  for (i = 0; i < tablinks.length; i++) {
-    if (tablinks[i].id.slice(-1) == name.slice(-1)) {
-      tablinks[i].className += " active";
-      tablinks[i].style.backgroundColor = "#ddd";
-    }
-  }
-}
-
-let currTopicID = 1;
-function createTopic() {
-  fetch("api/v1/auth/topics", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      topicType: 1,
-      topicName: "Untitled",
-      topicDescription: "",
-      topicHtml: "",
-      assessmentId: 1,
-      hasActivity: false,
-      hasAssessment: false,
-      activityId: 1,
-      active: true,
-      visibility: 0,
-      createTime: Date.now(),
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(JSON.stringify(data));
-      console.log(data.topicId);
-    });
-
-  let tabContent = document.getElementsByClassName("tabcontent");
-  let lastTab = tabContent[tabContent.length - 1];
-  let newTab = document.createElement("div");
-
-  // Create the tab content and append to last tab
-  newTab.id = "topic" + currTopicID;
-  newTab.className = "tabcontent";
-
-  // If no topics are open...
-  if (lastTab == null) {
-    let workspaceEmptyState = document.getElementById("workspace-empty-state");
-    workspaceEmptyState.parentNode.insertBefore(
-      newTab,
-      workspaceEmptyState.nextSibling
+    let tabElements = document.querySelectorAll(".tabcontent");
+    activeHeightObj[tabElements[tabElements.length - 1].id] = 0;
+    activeHeightList.push(
+      activeHeightObj[tabElements[tabElements.length - 1].id]
     );
-    workspaceEmptyState.style.display = "none";
-    document.getElementById("topic-background").style.backgroundColor = "#ddd";
-  } else {
-    lastTab.parentNode.insertBefore(newTab, lastTab.nextSibling);
   }
 
-  // ------------------------------------------------
-  // Create drop zone at the top of the topic
-  let newDropZone = document.createElement("div");
-  newDropZone.classList.add("drop-zone");
-  newDropZone.classList.add("first-dropzone");
-
-  // Create drop zone filler div
-  let newDropZoneFiller = document.createElement("div");
-  newDropZoneFiller.className = "dropzone-filler";
-  newDropZone.appendChild(newDropZoneFiller);
-
-  // Create drop zone input
-  let newDropZoneInput = document.createElement("input");
-  newDropZoneInput.className = "drop-zone__input";
-  newDropZoneInput.type = "file";
-  newDropZone.appendChild(newDropZoneInput);
-  createDropZoneEventListeners(newDropZone, newDropZoneInput);
-  newDropZone.style.display = "none";
-  // ------------------------------------------------------
-
-  // -----------------------------------------------------
-  // Create drop zone that fills the entire topic empty state
-  let emptyDropZone = document.createElement("div");
-  emptyDropZone.classList.add("drop-zone");
-  emptyDropZone.classList.add("empty-topic-dropzone");
-
-  // Create drop zone filler div
-  let emptyDropZoneFiller = document.createElement("div");
-  emptyDropZoneFiller.className = "dropzone-filler";
-  emptyDropZone.appendChild(emptyDropZoneFiller);
-
-  // Create drop zone input
-  let emptyDropZoneInput = document.createElement("input");
-  emptyDropZoneInput.className = "drop-zone__input";
-  emptyDropZoneInput.type = "file";
-  emptyDropZone.appendChild(emptyDropZoneInput);
-  createDropZoneEventListeners(emptyDropZone, emptyDropZoneInput);
-  // -------------------------------------------------------------
-
-  // Create all elements within a topic -----------------------------
-  let topicContent = document.createElement("div");
-  topicContent.className = "topic-content";
-
-  let topicTitle = document.createElement("input");
-  topicTitle.type = "text";
-  topicTitle.className = "topic-title";
-  topicTitle.id = "topic-title" + currTopicID;
-  topicTitle.placeholder = "Untitled";
-
-  let topicDivider = document.createElement("div");
-  topicDivider.id = "topic-divider";
-
-  let resourcesZone = document.createElement("div");
-  resourcesZone.id = "resources-zone" + currTopicID;
-  resourcesZone.className = "resources-zone";
-
-  let emptyState = document.createElement("div");
-  emptyState.className = "empty-state";
-
-  let label1 = document.createElement("label");
-  label1.className = "empty-state-text";
-  let header = document.createElement("h3");
-  header.innerHTML = "Your Topic is Empty";
-  label1.appendChild(header);
-
-  let label2 = document.createElement("label");
-  label2.className = "empty-state-text";
-  label2.innerHTML = "Drop a file or tap the + above to get started!";
-  // --------------------------------------------------------------
-
-  // Create a new tab button
-  let tabBtn = document.createElement("button");
-  tabBtn.className = "tablinks";
-  tabBtn.id = "tablinks" + currTopicID;
-  if (name) {
-    tabBtn.innerHTML = name;
-  } else {
-    tabBtn.innerHTML = "Topic " + currTopicID;
+  // Implemented to ensure resources fill a 1200px space first and then grows as needed
+  function checkActiveHeight() {
+    if (activeHeightObj[tabName] < 1200) {
+      let filler = document.createElement("div");
+      filler.setAttribute("id", "filler-space");
+      filler.style.height = 1200 - activeHeightObj[tabName] + "px";
+      activeTab.appendChild(filler);
+    }
   }
 
-  // Create close tab button
-  let closeTabBtn = document.createElement("span");
-  closeTabBtn.className = "close-tab";
-  closeTabBtn.id = "close-tab" + currTopicID;
-  closeTabBtn.innerHTML = "&times;";
-  tabBtn.appendChild(closeTabBtn);
+  /* Tab Functions ------------------------------------------------------------------- */
+  // Workspace empty state
+  let activeTab = document.getElementById("resources-zone0");
 
-  tabBtn.onclick = (e) => {
-    if (e.target.className.includes("close-tab")) {
-      closeTab(e.target.id);
+  // Change tabs
+  function openTab(name) {
+    tabName = name;
+    let i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+      tablinks[i].style.backgroundColor = "#f1f1f1";
+    }
+
+    activeTab = document.getElementById("resources-zone" + name.slice(-1));
+
+    // Show the current tab
+    document.getElementById(name).style.display = "block";
+
+    // Set tab button to active
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.slice(-1) == name.slice(-1)) {
+        tablinks[i].className += " active";
+        tablinks[i].style.backgroundColor = "#ddd";
+      }
+    }
+  }
+
+  let currTopicID = 1;
+  async function createTopic() {
+    fetch("api/v1/auth/topics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topicType: 1,
+        topicName: "Untitled",
+        topicDescription: "",
+        topicHtml: "",
+        assessmentId: 1,
+        hasActivity: false,
+        hasAssessment: false,
+        activityId: 1,
+        active: true,
+        visibility: 0,
+        createTime: Date.now(),
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        //console.log(JSON.stringify(data));
+        //console.log(data.topicId);
+      });
+
+    let tabContent = document.getElementsByClassName("tabcontent");
+    let lastTab = tabContent[tabContent.length - 1];
+    let newTab = document.createElement("div");
+
+    // Create the tab content and append to last tab
+    newTab.id = "topic" + currTopicID;
+    newTab.className = "tabcontent";
+
+    // If no topics are open...
+    if (lastTab == null) {
+      let workspaceEmptyState = document.getElementById("workspace-empty-state");
+      workspaceEmptyState.parentNode.insertBefore(
+        newTab,
+        workspaceEmptyState.nextSibling
+      );
+      workspaceEmptyState.style.display = "none";
+      document.getElementById("topic-background").style.backgroundColor = "#ddd";
     } else {
-      openTab(newTab.id);
+      lastTab.parentNode.insertBefore(newTab, lastTab.nextSibling);
     }
-  };
 
-  let currTabs = document.querySelector(".tab");
-  currTabs.appendChild(tabBtn);
+    // ------------------------------------------------
+    // Create drop zone at the top of the topic
+    let newDropZone = document.createElement("div");
+    newDropZone.classList.add("drop-zone");
+    newDropZone.classList.add("first-dropzone");
 
-  // Append all elements accordingly
-  newTab.appendChild(topicContent);
-  topicContent.appendChild(topicTitle);
-  topicContent.appendChild(topicDivider);
-  topicContent.appendChild(resourcesZone);
-  resourcesZone.appendChild(newDropZone);
-  resourcesZone.appendChild(emptyDropZone);
-  emptyDropZone.appendChild(emptyState);
-  emptyState.appendChild(label1);
-  emptyState.appendChild(label2);
+    // Create drop zone filler div
+    let newDropZoneFiller = document.createElement("div");
+    newDropZoneFiller.className = "dropzone-filler";
+    newDropZone.appendChild(newDropZoneFiller);
 
-  currTopicID++;
-  createNewActiveHeight();
-  openTab(newTab.id);
-}
+    // Create drop zone input
+    let newDropZoneInput = document.createElement("input");
+    newDropZoneInput.className = "drop-zone__input";
+    newDropZoneInput.type = "file";
+    newDropZone.appendChild(newDropZoneInput);
+    createDropZoneEventListeners(newDropZone, newDropZoneInput);
+    newDropZone.style.display = "none";
+    // ------------------------------------------------------
 
-function closeTab(id) {
-  let tabContent = document.getElementsByClassName("tabcontent");
-  let tablinks = document.getElementsByClassName("tablinks");
-  let isActiveTab = false;
-  let tabLocation = -1;
+    // -----------------------------------------------------
+    // Create drop zone that fills the entire topic empty state
+    let emptyDropZone = document.createElement("div");
+    emptyDropZone.classList.add("drop-zone");
+    emptyDropZone.classList.add("empty-topic-dropzone");
 
-  let i = 0;
-  while (i < tabContent.length) {
-    // Find the tab content to be deleted
-    if (tabContent[i].id.slice(-1) == id.slice(-1)) {
-      // Check if the target tab is the active tab
-      if (id.slice(-1) == activeTab.id.slice(-1)) {
-        isActiveTab = true;
-      }
-      tabLocation = i;
+    // Create drop zone filler div
+    let emptyDropZoneFiller = document.createElement("div");
+    emptyDropZoneFiller.className = "dropzone-filler";
+    emptyDropZone.appendChild(emptyDropZoneFiller);
+
+    // Create drop zone input
+    let emptyDropZoneInput = document.createElement("input");
+    emptyDropZoneInput.className = "drop-zone__input";
+    emptyDropZoneInput.type = "file";
+    emptyDropZone.appendChild(emptyDropZoneInput);
+    createDropZoneEventListeners(emptyDropZone, emptyDropZoneInput);
+    // -------------------------------------------------------------
+
+    // Create all elements within a topic -----------------------------
+    let topicContent = document.createElement("div");
+    topicContent.className = "topic-content";
+
+    let topicTitle = document.createElement("input");
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.id = "topic-title" + currTopicID;
+    topicTitle.placeholder = "Untitled";
+
+    let topicDivider = document.createElement("div");
+    topicDivider.id = "topic-divider";
+
+    let resourcesZone = document.createElement("div");
+    resourcesZone.id = "resources-zone" + currTopicID;
+    resourcesZone.className = "resources-zone";
+
+    let emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+
+    let label1 = document.createElement("label");
+    label1.className = "empty-state-text";
+    let header = document.createElement("h3");
+    header.innerHTML = "Your Topic is Empty";
+    label1.appendChild(header);
+
+    let label2 = document.createElement("label");
+    label2.className = "empty-state-text";
+    label2.innerHTML = "Drop a file or tap the + above to get started!";
+    // --------------------------------------------------------------
+
+    // Create a new tab button
+    let tabBtn = document.createElement("button");
+    tabBtn.className = "tablinks";
+    tabBtn.id = "tablinks" + currTopicID;
+    if (name) {
+      tabBtn.innerHTML = name;
+    } else {
+      tabBtn.innerHTML = "Topic " + currTopicID;
     }
-    i++;
-  }
 
-  if (isActiveTab) {
-    if (tabLocation + 1 != tabContent.length) {
-      // Open the tab to the right if there is one
-      openTab(tabContent[tabLocation + 1].id);
-    } else if (tabLocation - 1 >= 0) {
-      // Otherwise, open the tab to the left
-      openTab(tabContent[tabLocation - 1].id);
-    } else if (tabLocation - 1 < 0) {
-      // Show the workspace empty state if closing only open tab
-      document.getElementById("workspace-empty-state").style.display = "block";
-      document.getElementById("topic-background").style.backgroundColor =
-        "#f1f1f1";
-      activeTab = document.getElementById("resources-zone0");
-    }
-  }
-  // Remove tab button and tab content
-  // Closing non-active tabs doesn't change the active tab
-  tablinks[tabLocation].remove();
-  tabContent[tabLocation].remove();
-}
+    // Create close tab button
+    let closeTabBtn = document.createElement("span");
+    closeTabBtn.className = "close-tab";
+    closeTabBtn.id = "close-tab" + currTopicID;
+    closeTabBtn.innerHTML = "&times;";
+    tabBtn.appendChild(closeTabBtn);
 
-function getTabLocation(id) {
-  let tabContent = document.getElementsByClassName("tabcontent");
-  let location = -1;
-  for (let i = 0; i < tabContent.length; i++) {
-    if (tabContent[i].id.slice(-1) == id.slice(-1)) {
-      location = i;
-    }
-  }
-  return location;
-}
-/* END Tab Functions ------------------------------------------------------------------- */
-
-/* Tag Functions ------------------------------------------------------------------- */
-document.getElementById("mySearch").addEventListener("keyup", () => {
-  let input, filter, ul, li, tag, i;
-  input = document.getElementById("mySearch");
-  filter = input.value.toUpperCase();
-  ul = document.querySelector(".tag-list");
-  li = ul.getElementsByTagName("li");
-
-  if (filter == "") {
-    ul.style.display = "none";
-  } else {
-    ul.style.display = "block";
-    // Hide items that don't match search query
-    for (i = 0; i < li.length; i++) {
-      tag = li[i].innerHTML;
-      if (tag.toUpperCase().indexOf(filter) > -1) {
-        li[i].style.display = "block";
+    tabBtn.onclick = (e) => {
+      if (e.target.className.includes("close-tab")) {
+        closeTab(e.target.id);
       } else {
-        li[i].style.display = "none";
+        openTab(newTab.id);
+      }
+    };
+
+    let currTabs = document.querySelector(".tab");
+    currTabs.appendChild(tabBtn);
+
+    // Append all elements accordingly
+    newTab.appendChild(topicContent);
+    topicContent.appendChild(topicTitle);
+    topicContent.appendChild(topicDivider);
+    topicContent.appendChild(resourcesZone);
+    resourcesZone.appendChild(newDropZone);
+    resourcesZone.appendChild(emptyDropZone);
+    emptyDropZone.appendChild(emptyState);
+    emptyState.appendChild(label1);
+    emptyState.appendChild(label2);
+
+    currTopicID++;
+    createNewActiveHeight();
+    openTab(newTab.id);
+  }
+
+  function closeTab(id) {
+    let tabContent = document.getElementsByClassName("tabcontent");
+    let tablinks = document.getElementsByClassName("tablinks");
+    let isActiveTab = false;
+    let tabLocation = -1;
+
+    let i = 0;
+    while (i < tabContent.length) {
+      // Find the tab content to be deleted
+      if (tabContent[i].id.slice(-1) == id.slice(-1)) {
+        // Check if the target tab is the active tab
+        if (id.slice(-1) == activeTab.id.slice(-1)) {
+          isActiveTab = true;
+        }
+        tabLocation = i;
+      }
+      i++;
+    }
+
+    if (isActiveTab) {
+      if (tabLocation + 1 != tabContent.length) {
+        // Open the tab to the right if there is one
+        openTab(tabContent[tabLocation + 1].id);
+      } else if (tabLocation - 1 >= 0) {
+        // Otherwise, open the tab to the left
+        openTab(tabContent[tabLocation - 1].id);
+      } else if (tabLocation - 1 < 0) {
+        // Show the workspace empty state if closing only open tab
+        document.getElementById("workspace-empty-state").style.display = "block";
+        document.getElementById("topic-background").style.backgroundColor =
+          "#f1f1f1";
+        activeTab = document.getElementById("resources-zone0");
       }
     }
+    // Remove tab button and tab content
+    // Closing non-active tabs doesn't change the active tab
+    tablinks[tabLocation].remove();
+    tabContent[tabLocation].remove();
   }
-  // Always show new tag option
-  // document.querySelector( "#new-tag-element" ).style.display = "block";
-});
 
-// document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
-//     const tagName = document.getElementById( "mySearch" ).value;
-//     newTag( tagName );
-// } );
-
-let currTagList = [];
-function newTag(tagName) {
-  const ul = document.querySelector(".tag-list");
-  const li = document.createElement("li");
-  const searchList = document.querySelectorAll(".tag-list-element");
-
-  // check that selected tag doesn't already exist
-  let isActiveTag = false;
-  for (let i = 0; i < currTagList.length; i++) {
-    if (currTagList[i] === tagName) {
-      isActiveTag = true;
-    }
-  }
-  if (!isActiveTag) {
-    let wasSearched = false;
-    for (let i = 0; i < searchList.length; i++) {
-      if (searchList[i].innerHTML === tagName) {
-        wasSearched = true;
+  function getTabLocation(id) {
+    let tabContent = document.getElementsByClassName("tabcontent");
+    let location = -1;
+    for (let i = 0; i < tabContent.length; i++) {
+      if (tabContent[i].id.slice(-1) == id.slice(-1)) {
+        location = i;
       }
+    }
+    return location;
+  }
+  /* END Tab Functions ------------------------------------------------------------------- */
+
+  /* Tag Functions ------------------------------------------------------------------- */
+  document.getElementById("mySearch").addEventListener("keyup", () => {
+    let input, filter, ul, li, tag, i;
+    input = document.getElementById("mySearch");
+    filter = input.value.toUpperCase();
+    ul = document.querySelector(".tag-list");
+    li = ul.getElementsByTagName("li");
+
+    if (filter == "") {
+      ul.style.display = "none";
+    } else {
+      ul.style.display = "block";
+      // Hide items that don't match search query
+      for (i = 0; i < li.length; i++) {
+        tag = li[i].innerHTML;
+        if (tag.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "block";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+    // Always show new tag option
+    // document.querySelector( "#new-tag-element" ).style.display = "block";
+  });
+
+  // document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
+  //     const tagName = document.getElementById( "mySearch" ).value;
+  //     newTag( tagName );
+  // } );
+
+  let currTagList = [];
+  function newTag(tagName) {
+    const ul = document.querySelector(".tag-list");
+    const li = document.createElement("li");
+    const searchList = document.querySelectorAll(".tag-list-element");
+
+    // check that selected tag doesn't already exist
+    let isActiveTag = false;
+    for (let i = 0; i < currTagList.length; i++) {
+      if (currTagList[i] === tagName) {
+        isActiveTag = true;
+      }
+    }
+    if (!isActiveTag) {
+      let wasSearched = false;
+      for (let i = 0; i < searchList.length; i++) {
+        if (searchList[i].innerHTML === tagName) {
+          wasSearched = true;
+        }
     }
     if (!wasSearched) {
       // Add the new tag to the search list if it doesn't already exist
@@ -482,7 +482,7 @@ async function createTextArea(resourceName) {
   });
 
   promise.then((value) => {
-    console.log(value);
+    //console.log(value);
     createSunEditor();
     numSunEditors++;
   });
@@ -917,8 +917,8 @@ if (fileUploadBtn) {
     });
 
     promise.then((value) => {
-      console.log(value[0]);
-      console.log(value[0].name);
+     // console.log(value[0]);
+     // console.log(value[0].name);
     });
   });
 }
@@ -1077,11 +1077,11 @@ const fillFields = (title, description, image) => {
   document.getElementById("workspace-desc").value = description.trim();
 };
 
-const renderTopics = (workspace) => {
-  console.log("renderTop")
+const  renderTopics = async (workspace) => {
+ 
   let topicArr = [1, 2, 3];
   for (let i = 0; i < topicArr.length; i++) {
-    renderTopic(topicArr[i]);
+     await renderTopic(topicArr[i]);
   }
 };
 
@@ -1089,9 +1089,13 @@ const renderTopics = (workspace) => {
 async function renderTopic(topicId) {
   const response = await fetch("api/v1/auth/topics/" + topicId);
   const data = await response.json();
-  createTopic(data.topicName);
-  createTextArea(topicId);
-  console.log(renderResources(topicId));
+  await createTopic(data.topicName);
+  const resources = await renderResources(topicId);
+  if(resources.length > 0) {
+    for(let i = 0; i < resources.length; i++) {
+      await createTextArea(resources[i].resourceName)
+    }
+  }
   return data;
 }
 
@@ -1100,12 +1104,6 @@ async function renderResources(topicId) {
   const response = await fetch("api/v1/auth/topics/resources/" + topicId);
   const data = await response.json();
   console.log(data);
-  if (data.length > 0) {
-    for (let i = 0; i < data.length; i++) {
-      await createTextArea(data[i].resourceName);
-    }
-  }
-
   return data;
 }
 
