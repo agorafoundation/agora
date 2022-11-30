@@ -12,7 +12,13 @@ const {errorController} = require( "./apiErrorController" );
  
 exports.getSearchResult = async ( req, res ) => {
 
-    const results = await searchService.getSearchResults( req.query.q, req.user.id );
+    const type = req.query.type ?? "all";
+
+    if( type !== "all" && type !== "users" && type !== "resources" && type !== "topics" && type !== "workspaces" ) {
+        return errorController( ApiMessage.createBadRequestError( [ "Invalid search type" ] ), res );
+    }
+
+    const results = await searchService.getSearchResults( req.query.q, req.user.id, type );
 
     if( !results ) {
         return errorController( ApiMessage.createNotFoundError( "Search Results" ), res );

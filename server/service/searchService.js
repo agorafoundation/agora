@@ -8,31 +8,73 @@
 const db = require( "../db/connection" );
 const resource = require( "../model/resource" );
 const user = require( "../model/user" );
-const goal = require( "../model/goal" );
+const workspace = require( "../model/workspace" );
 const topic = require( "../model/topic" );
-const { ormSearchResult } = require( "../model/searchresult" );
+const searchResult = require( "../model/searchresult" );
 
-exports.getSearchResults = async ( term, userId ) => {
+exports.getSearchResults = async ( term, userId, type = "all" ) => {
 
     // probably do some checks here so only certain queries are run
+    const beforeTime = Date.now();
 
-    const [ users, resources, topics, goals ] = await Promise.all( [
-        this.getUsersByTerm( term, userId ),
-        this.getResourcesByTerm( term, userId ),
-        this.getTopicsByTerm( term, userId ),
-        this.getWorkspaceByTerm( term, userId )
-    ] );
+    const searchSpace = [
+        type === "all" || type === "users" ? exports.getUsersByTerm( term, userId ) : null,
+        type === "all" || type === "resources" ? exports.getResourcesByTerm( term, userId ) : null,
+        type === "all" || type === "topics" ? exports.getTopicsByTerm( term, userId ) : null,
+        type === "all" || type === "workspaces" ? exports.getWorkspaceByTerm( term, userId ) : null
+    ];
 
-    console.log( users, resources, topics, goals );
+    const [ users, resources, topics, workspaces ] = await Promise.all( searchSpace );
+    // at this point the results only show if they are in the type filter
+
+    const searchResults = [];
+
+    // transform results from users, resources, topics, workspaces into searchResult objects
+
+    console.log( users, resources, topics, workspaces );
+
+    // const [ users, resources, topics, workspaces ] = await Promise.all(  );
+
+    // searchResult.ormSearchResult
+
+    // console.log( users, resources, topics, workspaces );
     console.log( term );
 
     
     // do some stuff with the results
     // transform to search object
-    // maybe provide a search latency stat
-    // maybe order the searches by some type of relevance
 
-    return {search: term, users, resources};
+    return {
+        search: term, 
+        timeElapsed: Date.now() - beforeTime,
+        results: searchResults
+        // results: [
+        //     {
+        //         type: "user",
+        //         id: 1,
+        //         main: "username",
+        //         secondary: "first_name last_name",
+        //     },
+        //     {
+        //         type: "resource",
+        //         id: 1,
+        //         main: "resource_name",
+        //         secondary: "resource_description",
+        //     },
+        //     {
+        //         type: "workspace",
+        //         id: 1,
+        //         main: "workspace_name",
+        //         secondary: "workspace_description",
+        //     },
+        //     {
+        //         type: "topic",
+        //         id: 1,
+        //         main: "topic_name",
+        //         secondary: "topic_description",
+        //     },
+        // ]
+    };
 };
 
 exports.getUsersByTerm = async ( term, userId ) => {
@@ -152,7 +194,7 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
             return false;
         }
 
-        const workspaces = res.rows.map( goal.ormGoal );
+        const workspaces = res.rows.map( workspace.ormWorkspace );
 
         return workspaces;
 
