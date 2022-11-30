@@ -1087,14 +1087,20 @@ const fillFields = ( title, description, image ) => {
 };
 
 const renderTopics = async ( workspace ) => {
-    let topicArr = [ 1, 2, 3 ];
-    if ( topicArr.length > 0 ) {
-        for ( let i = 0; i < topicArr.length; i++ ) {
-            await renderTopic( topicArr[i] );
+    const response = await fetch( "api/v1/auth/topics" );
+    let topics = await response.json();
+    console.log(topics)
+    let topicList = [];
+    for( let i = 0; i < topics.length; i++ ) {
+        topicList.push( topics[i].topicId );
+    }
+    if ( topicList.length > 0 ) {
+        for ( let i = 0; i < topicList.length; i++ ) {
+            await renderTopic( topicList[i] );
             
         }
     }
-    window.scrollTo( 0, 0 );
+   
 };
 
 //change order so the create stuff will all happen after information is gatherd
@@ -1109,13 +1115,14 @@ async function renderTopic( topicId ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName );
-                if( resources[i].resourceContentHtml ){
+                if( resources[i].resourceContentHtml.length > 0){
                     sunEditorList[docType1Count].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
                 }
             }
             
         }
+        window.scrollTo( 0, 0 );
     }
     return topicData;
 }
