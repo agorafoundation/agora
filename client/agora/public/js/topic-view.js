@@ -45,13 +45,14 @@ function createTopic() {
             "activityId": 1,
             "active": true,
             "visibility": 0,
+            "resources": [],
             "createTime": Date.now(),
         } )
     } )
         .then( response => response.json() )
         .then( ( data ) => {
-            // console.log( JSON.stringify( data ) );
-            console.log( data.topicId );
+            console.log( data );
+            // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
             console.log( topics );
             numTopics++;
@@ -63,7 +64,6 @@ function createTopic() {
 
     // Create the tab content and append to last tab
     newTab.id = "topic" + numTopics;
-    console.log( newTab.id );
     newTab.className = "tabcontent";
 
     // If no topics are open...
@@ -127,12 +127,13 @@ function createTopic() {
     topicTitle.placeholder = "Untitled";
 
     let saveIcon = document.createElement( "span" );
-    saveIcon.className = "material-symbols-outlined";
+    saveIcon.classList.add( "material-symbols-outlined" );
+    saveIcon.classList.add( "saveBtn" );
     saveIcon.id = "save" + numTopics;
-    saveIcon.innerHTML = "save";
+    saveIcon.innerHTML = "save_as";
     saveIcon.onclick = () => {
-        console.log( saveIcon.id );
-        updateTopic( topicTitle.value );
+        let resources = getResources();
+        updateTopic( topicTitle.value, resources );
     };
 
     let topicDivider = document.createElement( "div" );
@@ -199,15 +200,15 @@ function createTopic() {
 }
 
 // Updates topic name
-function updateTopic( name ) {
+function updateTopic( name, resources ) {
     let id = getCurrTopicID();
-    console.log( id );
     fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
             "topicId": id,
             "topicName": name ? name : "Untitled",
+            "resources": resources ? resources : []
         } )
     } )
         .then( response => response.json() )
@@ -283,10 +284,10 @@ function closeTab( id ) {
         if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
             openTab( tabContent[tabLocation+1].id );
         }
-        else if ( tabLocation-1 >= 0 ) {                                                        // Otherwise, open the tab to the left
+        else if ( tabLocation-1 >= 0 ) {                                                          // Otherwise, open the tab to the left
             openTab( tabContent[tabLocation-1].id );
         }
-        else if ( tabLocation-1 < 0 ) {                                                         // Show the workspace empty state if closing only open tab
+        else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
             document.getElementById( "topic-background" ).style.backgroundColor = "#f1f1f1";
             activeTab = document.getElementById( "resources-zone0" );
@@ -440,6 +441,7 @@ function addTag( selectedTag ) {
 
 /* Resource Functions --------------------------------------------------------------------------------- */
 let resources = {};
+// create a new resource
 function createResource( name, type, imagePath ) {
     fetch( "api/v1/auth/resources", {
         method: "POST",
@@ -461,39 +463,37 @@ function createResource( name, type, imagePath ) {
         .then( ( data ) => {
             // console.log( JSON.stringify( data ) );
             console.log( data.resourceId );
-            resources[numResources] = data.resourceId;
+            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
             numResources++;
-
-            mapResourceToTopic( data.resourceId );
-            console.log( document.querySelectorAll( ".drop-zone__title" ) );
         } );
 }
 
+// get the topic id based on the currently visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
-    console.log( 'id: ' + topicID );
     return topicID;
 }
 
-function mapResourceToTopic( resourceId ) {
-    // let topicID = getCurrTopicID();
-
-    // console.log( parseInt( topicID ) );
-    // console.log( parseInt( resourceId ) );
-
-    // fetch( "api/v1/auth/topics/resources/" + topicID, {
-    //     method: "GET",
-    //     headers: {'Content-Type': 'application/json'},
-    //     // body: JSON.stringify( {
-    //     //     "topicId": parseInt( topicID ),
-    //     //     "resourceId": parseInt( resourceId )
-    //     // } )
-    // } )
-    //     .then( response => response.json() )
-    //     .then( ( data ) => {
-    //         console.log( JSON.stringify( data ) );
-    //     } );
+// returns an array of resource id's within a given topic, sorted by position
+function getResources() {
+    let topicResources = document.querySelectorAll( '.drop-zone__title' );
+    let sorted = [];
+    for ( let i=0; i<topicResources.length; i++ ) {
+        console.log( topicResources[i] );
+        if ( topicResources[i].style.display == 'none' ) {
+            console.log( true );
+        }
+        let val = topicResources[i].id.match( /\d+/g )[0];
+        let propertyNames = Object.getOwnPropertyNames( resources );
+        for ( let j=0; j<propertyNames.length; j++ ) {
+            if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
+                sorted.push ( resources[val][0] );
+            }
+        }
+    }
+    console.log( sorted );
+    return sorted;
 }
 
 // Create the suneditor text area
@@ -594,7 +594,7 @@ let sunEditor = {};
 let sunEditorList = [];
 const createSunEditor = async() => {
     // eslint-disable-next-line no-undef
-    sunEditor["sunEditor"+numResources] = SUNEDITOR.create( "sunEditor" + numResources, {
+    sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
         defaultTag: "p",
@@ -618,9 +618,6 @@ const createSunEditor = async() => {
             ],
             [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
             [
-                "link",
-                "image",
-                "video",
                 "showBlocks",
                 "codeView",
                 "preview",
@@ -637,14 +634,63 @@ const createSunEditor = async() => {
             alert( contents );
             console.log( contents );
         },
-    } );
+    } ) ];
 
     sunEditorList.push( sunEditor["sunEditor"+numResources] );
-    console.log( "sunEditor"+numResources );
-    console.log( sunEditor["sunEditor0"] );
 };
 
+// update the sun editor contents
+function updateSunEditor( id, name, contents ) {
+    fetch( "api/v1/auth/resources", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "resourceId":  id,
+            "resourceType": 1,
+            "resourceName": name ? name : "Untitled",
+            "resourceDescription": "",
+            "resourceContentHtml": contents ? contents : "",
+            "resourceImage": "",
+            "resourceLink": "",
+            "isRequired": false,
+            "active": true,
+            "visibility": 0
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+        } );
+}
 
+function getResourceID( val ) {
+    let resourceID = resources[val][0];
+    return resourceID;
+}
+
+/* Suneditor Events ------------------------------------------------------*/
+document.addEventListener( "mousemove", function() {
+    for ( let i=0; i<sunEditorList.length; i++ ) {
+        sunEditorList[i][1].onChange = () => {
+            sunEditorList[i][1].save();
+
+            // actively get sun editor contents and make updates
+            let contents = sunEditorList[i][1].getContents();
+            let id = getResourceID( sunEditorList[i][0] );
+            let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            updateSunEditor( id, title, contents );
+        };
+        sunEditorList[i][1].onKeyUp = ( e ) => {
+            if ( e.key == "/" ) {
+                sunEditorList[i].insertHTML(
+                    '<div><button style=background:pink;>Hello</button></div>',
+                    true
+                );
+            }
+        };
+    }
+} );
+/* END Suneditor Events ---------------------------------------------------------------------------------*/
 
 
 /* Drag and Drop ------------------------------------------------------------------------- */
@@ -817,35 +863,6 @@ function updateThumbnail( dropZoneElement, file ) {
 }
 /* END Drag and Drop ------------------------------------------------------------------------- */
 
-
-
-/* Suneditor Events ------------------------------------------------------*/
-document.addEventListener( "mousemove", function() {
-    for ( let i=0; i<sunEditorList.length; i++ ) {
-        // sunEditorList[i].onFocus = () => {
-        //     console.log( sunEditorList[i] );
-        //     document.getElementById( "done-icon"+ sunEditorList[i].id.match( /\d+/g )[0] ).style.display = "block";
-        //     document.getElementById( "edit-icon"+ sunEditorList[i].id.match( /\d+/g )[0] ).style.display = "none";
-        //     sunEditorList[i].readOnly( false );
-        // };
-        sunEditorList[i].onChange = () => {
-            sunEditorList[i].save();
-        };
-        sunEditorList[i].onKeyUp = ( e ) => {
-            if ( e.key == "/" ) {
-                sunEditorList[i].insertHTML(
-                    '<div><button style=background:pink;>Hello</button></div>',
-                    true
-                );
-            }
-        };
-        sunEditorList[i].onImageUpload = () => {
-            // Image upload default does not automatically place cursor after image, so...
-            sunEditorList[i].appendContents( "" );
-        };
-    }
-} );
-/* END Suneditor Events ---------------------------------------------------------------------------------*/
 /* END Resource Functions ---------------------------------------------------------------------------------*/
 
 
@@ -854,13 +871,11 @@ document.addEventListener( "mousemove", function() {
 document.addEventListener( "click", function( e ) {
     // toggle edit and done icons
     if ( ( e.target.id ).includes( "done" ) ) {
-        console.log( e.target.id );
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
         sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]].readOnly( true );
     }
     if ( ( e.target.id ).includes( "edit" ) ) {
-        console.log( e.target.id );
         e.target.style.display = "none";
         document.getElementById( "done-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
         sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]].readOnly( false );
