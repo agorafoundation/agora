@@ -1091,27 +1091,33 @@ const renderTopics = async ( workspace ) => {
     if ( topicArr.length > 0 ) {
         for ( let i = 0; i < topicArr.length; i++ ) {
             await renderTopic( topicArr[i] );
-            console.log("Next Topic")
+            
         }
     }
+    window.scrollTo( 0, 0 );
 };
 
 //change order so the create stuff will all happen after information is gatherd
 async function renderTopic( topicId ) {
     const response = await fetch( "api/v1/auth/topics/" + topicId );
-    const data = await response.json();
-    await createTopicTab( data.topicName );
+    const topicData = await response.json();
+    await createTopicTab( topicData.topicName );
     const resources = await renderResources( topicId );
     if ( resources.length > 0 ) {
+        let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
-            await createTextArea( resources[i].resourceName );
-            if( resources[i].resourceContentHtml && resources[i].resourceType == 1 ){
-                sunEditorList[i].insertHTML( resources[i].resourceContentHtml );
+            //if resource is a document
+            if( resources[i].resourceType == 1 ){
+                await createTextArea( resources[i].resourceName );
+                if( resources[i].resourceContentHtml ){
+                    sunEditorList[docType1Count].insertHTML( resources[i].resourceContentHtml );
+                    docType1Count++;
+                }
             }
             
         }
     }
-    return data;
+    return topicData;
 }
 
 async function renderResources( topicId ) {
@@ -1125,4 +1131,5 @@ async function renderResources( topicId ) {
 window.addEventListener( "load", () => {
     idAndFetch();
     renderTopics();
+   
 } );
