@@ -1017,30 +1017,31 @@ for ( let i = 0; i < perms.length; i++ ) {
 
 /* END File Dropdown ----------------------------------------- */
 
-function toggleProfile( e ) {
-    let target = e.target;
-    let box;
+// function toggleProfile( e ) {
+//     let target = e.target;
+//     let box;
 
-    target.classList.contains( "permission-li" )
-        ? ( box = target.childNodes[3] )
-        : ( box = target.parentElement.childNodes[3] );
+//     target.classList.contains( "permission-li" )
+//         ? ( box = target.childNodes[3] )
+//         : ( box = target.parentElement.childNodes[3] );
 
-    box.checked ? ( box.checked = false ) : ( box.checked = true );
-}
+//     box.checked ? ( box.checked = false ) : ( box.checked = true );
+// }
 
-if ( document.getElementById( "profiles-toggle" ) ) {
-    document
-        .getElementById( "profiles-toggle" )
-        .addEventListener( "click", toggleProfileList );
-}
+// if ( document.getElementById( "profiles-toggle" ) ) {
+//     document
+//         .getElementById( "profiles-toggle" )
+//         .addEventListener( "click", toggleProfileList );
+// }
 
-var perms = document.getElementsByClassName( "permission-li" );
+// var perms = document.getElementsByClassName( "permission-li" );
 
-for ( let i = 0; i < perms.length; i++ ) {
-    perms[i].addEventListener( "click", toggleProfile );
-}
+// for ( let i = 0; i < perms.length; i++ ) {
+//     perms[i].addEventListener( "click", toggleProfile );
+// }
 
 //////////////onload fetch functions //////////////////////
+
 
 const prefixPattern = /#t/;
 
@@ -1089,7 +1090,7 @@ const fillFields = ( title, description, image ) => {
 const renderTopics = async ( workspace ) => {
     const response = await fetch( "api/v1/auth/topics" );
     let topics = await response.json();
-    console.log(topics)
+    //console.log( topics )
     let topicList = [];
     for( let i = 0; i < topics.length; i++ ) {
         topicList.push( topics[i].topicId );
@@ -1103,7 +1104,7 @@ const renderTopics = async ( workspace ) => {
    
 };
 
-//change order so the create stuff will all happen after information is gatherd
+//change order so the create stuff will all happen after information is gathered
 async function renderTopic( topicId ) {
     const response = await fetch( "api/v1/auth/topics/" + topicId );
     const topicData = await response.json();
@@ -1115,7 +1116,7 @@ async function renderTopic( topicId ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName );
-                if( resources[i].resourceContentHtml.length > 0){
+                if( resources[i].resourceContentHtml.length > 0 ){
                     sunEditorList[docType1Count].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
                 }
@@ -1140,3 +1141,5 @@ window.addEventListener( "load", () => {
     renderTopics();
    
 } );
+
+/* END onload function */
