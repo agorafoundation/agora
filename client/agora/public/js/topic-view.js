@@ -1048,8 +1048,8 @@ const idPattern = /-([0-9]+)/;
 
 const idAndFetch = () => {
     const url = window.location.href;
-    const id = idPattern.exec( url )[1];
     const isTopic = prefixPattern.test( url );
+    const id = idPattern.exec( url )[1];
 
     if ( isTopic ) {
         fetch( "api/v1/auth/topics/" + id, {
@@ -1140,3 +1140,166 @@ window.addEventListener( "load", () => {
     renderTopics();
    
 } );
+
+
+
+////////* discussions code *///////
+
+//gets the highest id among comments then adds 1
+//this will be replaced by async backend response eventually
+const findNextId = () => {
+    let highest = -1;
+    document.querySelectorAll( ".comment-countable" ).forEach( ( comment ) => {
+        if ( ( comment.id ).substring( 8 ) > highest ) {
+            highest = comment.id;
+        }
+    } );
+    return ++highest;
+};
+
+//////New Comment/////
+
+const addComment = ( user, pfp, text ) => {
+    if ( text ) {
+
+        let date = new Date();
+
+        //cloning the comment template so we can modify it then add it to the stream
+        let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+        //setting the attributes of the comment
+        newEl.style.display = "block";
+        newEl.id = findNextId();
+        newEl.childNodes[1].childNodes[1].innerText = pfp;
+        newEl.childNodes[1].childNodes[3].innerText = user;
+        newEl.childNodes[3].innerText = text;
+        newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+        newEl.classList.add( "comment-countable" );
+
+        //make sure the like button works
+        newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+
+        //inserting the modified clone into the comment stream
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+
+        //removing the value from the textarea
+        document.getElementById( "discussion-textarea" ).innerText = '';
+    }
+    else {
+        window.alert( "You cannot leave a blank comment" );
+    }
+};
+
+
+//window.onload rendering comment
+const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, } ) => {
+
+    //cloning the comment template so we can modify it then add it to the stream
+    let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+    //setting the attributes of the comment
+    newEl.style.display = "block";
+    newEl.id = id;
+    newEl.childNodes[1].childNodes[1].innerText = pfp;
+    newEl.childNodes[1].childNodes[3].innerText = user_id ;
+    newEl.childNodes[3].innerText = comment_text;
+    newEl.childNodes[5].childNodes[5].innerText = created_at;
+    newEl.childNodes[5].childNodes[1].childNodes[3] = likes;
+    newEl.classList.add( "comment-countable" );
+
+    //make sure the like button works
+    newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+
+    //console.log(document.getElementById( "post_comment_button"))
+
+    //inserting the modified clone under the proper discussion
+    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+};
+
+
+//like buttons function
+document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+    addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText );
+} );
+
+
+const queryLikedElements = () => {
+    //TODO
+    //assign 'liked' class to each element that has already been liked according to backend
+};
+
+const getDiscussions = async () => {
+
+    const url = window.location.href;
+    const isTopic = prefixPattern.test( url );
+    const id = idPattern.exec( url )[1];
+
+    let pageComments;
+
+    if ( isTopic ) {
+        await fetch( "api/v1/auth/discussions/topic/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                pageComments = data.comments;
+            } );
+    } 
+    else {
+        await fetch( "api/v1/auth/discussions/workspace/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                pageComments = data.comments;
+            } );
+    }
+    
+    pageComments.forEach( ( comment ) => {
+        loadComment( comment );
+    } );
+};
+
+
+window.addEventListener( "load", () => {
+    getDiscussions();
+
+    //ensuring that every comment that has already been liked by the same user cannot be liked again
+    queryLikedElements();
+
+    //making sure every like button functions
+    document.querySelectorAll( "#like-button" ).forEach( ( likeButton ) => {
+        likeButton.addEventListener( "click", addOrRemoveLike );
+    } ) ;
+} );
+
+
+///////Like Button////////
+
+const addOrRemoveLike = ( e ) => {
+    let goodElement;
+
+    //making sure the element we are clicking is the one we're looking to use
+    e.target.id ? 
+        goodElement = e.target.childNodes[3] : 
+        e.target.style ? 
+            goodElement = e.target.parentElement.childNodes[3] : 
+            goodElement = e.target;
+
+    let parentEl = goodElement.parentElement.parentElement.parentElement;
+
+    if ( parentEl.classList.contains( "liked" ) ) {
+        parentEl.classList.remove( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) - 1;
+        goodElement.parentElement.childNodes[1].style.color = "black";
+        goodElement.style.color = "black";
+        goodElement.parentElement.style.outline = "2px solid gray";
+    } 
+    else {
+        parentEl.classList.add( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
+        goodElement.parentElement.childNodes[1].style.color = "gray";
+        goodElement.style.color = "gray";
+        goodElement.parentElement.style.outline = "none";
+    }
+};
