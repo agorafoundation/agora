@@ -1105,7 +1105,9 @@ async function renderTopic( topicId ) {
     if ( resources.length > 0 ) {
         for ( let i = 0; i < resources.length; i++ ) {
             await createTextArea( resources[i].resourceName );
-            sunEditorList[i].insertHTML(resources[i].resourceContentHtml)
+            if( resources[i].resourceContentHtml && resources[i].resourceType == 1 ){
+                sunEditorList[i].insertHTML( resources[i].resourceContentHtml );
+            }
             
         }
     }
