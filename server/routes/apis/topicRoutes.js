@@ -44,7 +44,7 @@ router.route( '/shared' ) // In Progress.
         topicController.getAllSharedTopicsForUser( req, res );
     } );
  
-// Topics /api/v1/auth/topics/:id
+// Topics /api/v1/auth/topics/:topicId
 router.route( '/:topicId' )
     .get( async  ( req, res ) => {
         topicController.getTopicById( req, res );
@@ -52,6 +52,13 @@ router.route( '/:topicId' )
     } )
     .delete( async ( req, res ) => {
         topicController.deleteTopicById( req, res );
+    }
+    );
+
+// Topics /api/v1/auth/topics/resources/:topicId
+router.route( '/resources/:topicId' )
+    .get( async ( req, res ) => {
+        topicController.getAllResourcesForTopicId( req, res );
     }
     );
 

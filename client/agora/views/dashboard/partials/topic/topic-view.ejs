@@ -19,13 +19,12 @@
             <%- include('./workspace-manager-modal.ejs');%>
             <%- include('./open-topic.ejs');%>  
 
-            <!--Page Header-->
-            <div class="header-div">
+            <!--Workspace Title-->
+            <div class="header" id="title-div">
+                <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+            </div>
 
-                <!--Workspace Title-->
-                <div class="header" id="title-div">
-                    <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
-                </div>
+            <div class="header-div">
 
                 <!--Workspace Description-->
                 <div class="header" id="description-div">
@@ -38,14 +37,22 @@
                     <label class="label">Tags</label>
                     <input type="text" id="mySearch" class="placeholder" placeholder="start typing...">
                     <div id="curr-tags"></div>
+                    <div id="new-tag-element" class="tag-list-element">+</div>
         
                     <ul class="tag-list"></ul>
-                    <ul class="new-tag">
+                    <!-- <ul class="new-tag">
                         <li id="new-tag-element" class="tag-list-element">+ New Tag</li>
-                    </ul>
+                    </ul> -->
                 </div>
                 <!--More Options-->
                 <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
+
+                <!--Discussions-->
+                <span class="material-symbols-outlined discussion-button" title="Discussons" data-toggle="modal" data-target="#discussion-modal" data-backdrop="false">
+                    forum
+                </span>
+                <%-include('./discussion-modal.ejs'); %>
+                <%-include('./comment-template.ejs'); %>
 
                 <!--Sharing-->
                 <span class="material-symbols-outlined share-button" title="Share" data-toggle="modal" data-target="#share-modal">

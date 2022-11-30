@@ -20,7 +20,7 @@ const resourceController = require( '../../controller/apis/resourceController' )
  * /sharedAndVisible <- all resources that are shared or visible to the user but are not their own
  */ 
 
-
+// resources /api/v1/auth/resources/
 router.route( '/' )
     .get( async function ( req, res ) {
         resourceController.getAllVisibleResources( req, res );

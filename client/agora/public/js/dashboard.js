@@ -191,57 +191,57 @@ if ( document.getElementById( "activity-accordion" ) ) {
 }
 
 /**
- * When user selects an existing goal that they wish to edit this function will populate the DOM
- * using the passed goal so the form is ready for modification of the object.
- * @param {*} goal <- goal used to popluate the form
- * @param {*} goalImagePath <- base path for the image url
+ * When user selects an existing workspace that they wish to edit this function will populate the DOM
+ * using the passed workspace so the form is ready for modification of the object.
+ * @param {*} workspace <- workspace used to popluate the form
+ * @param {*} workspaceImagePath <- base path for the image url
  */
-function updateGoalModal( goal, goalImagePath ) {
-    if ( document.getElementById( "create-goal-modal" ) && goal ) {
-        document.getElementById( "goalId" ).value = goal.id;
+function updateWorkspaceModal( workspace, workspaceImagePath ) {
+    if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
+        document.getElementById( "workspaceId" ).value = workspace.id;
 
-        console.log( goal.visibility );
-        if ( goal.visibility === 0 ) {
-            document.getElementById( "goalVisibilityPrivate" ).checked = true;
-            document.getElementById( "goalVisibilityShared" ).checked = false;
-            document.getElementById( "goalVisibilityPublic" ).checked = false;
+        console.log( workspace.visibility );
+        if ( workspace.visibility === 0 ) {
+            document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
+            document.getElementById( "workspaceVisibilityShared" ).checked = false;
+            document.getElementById( "workspaceVisibilityPublic" ).checked = false;
         }
-        else if ( goal.visibility === 1 ) {
-            document.getElementById( "goalVisibilityPrivate" ).checked = false;
-            document.getElementById( "goalVisibilityShared" ).checked = true;
-            document.getElementById( "goalVisibilityPublic" ).checked = false;
+        else if ( workspace.visibility === 1 ) {
+            document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
+            document.getElementById( "workspaceVisibilityShared" ).checked = true;
+            document.getElementById( "workspaceVisibilityPublic" ).checked = false;
         }
-        else if ( goal.visibility === 2 ) {
-            document.getElementById( "goalVisibilityPrivate" ).checked = false;
-            document.getElementById( "goalVisibilityShared" ).checked = false;
-            document.getElementById( "goalVisibilityPublic" ).checked = true;
+        else if ( workspace.visibility === 2 ) {
+            document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
+            document.getElementById( "workspaceVisibilityShared" ).checked = false;
+            document.getElementById( "workspaceVisibilityPublic" ).checked = true;
         }
 
-        document.getElementById( "goalVersion" ).value = goal.goalVersion;
-        document.getElementById( "goalName" ).value = goal.goalName;
-        document.getElementById( "goalDescription" ).value = goal.goalDescription;
+        document.getElementById( "workspaceVersion" ).value = workspace.workspaceVersion;
+        document.getElementById( "workspaceName" ).value = workspace.workspaceName;
+        document.getElementById( "workspaceDescription" ).value = workspace.workspaceDescription;
 
-        if ( goal.goalImage ) {
-            document.getElementById( "goalImageEl" ).src =
-        goalImagePath + goal.goalImage;
+        if ( workspace.workspaceImage ) {
+            document.getElementById( "workspaceImageEl" ).src =
+        workspaceImagePath + workspace.workspaceImage;
         }
         else {
-            document.getElementById( "goalImageEl" ).src = "data:,";
+            document.getElementById( "workspaceImageEl" ).src = "data:,";
             document.getElementById( "formFile" ).value = "";
         }
 
-        if ( goal.active ) {
-            document.getElementById( "goalActive" ).checked = true;
+        if ( workspace.active ) {
+            document.getElementById( "workspaceActive" ).checked = true;
         }
         else {
-            document.getElementById( "goalActive" ).checked = false;
+            document.getElementById( "workspaceActive" ).checked = false;
         }
 
-        if ( goal.completable ) {
-            document.getElementById( "goalCompletable" ).checked = true;
+        if ( workspace.completable ) {
+            document.getElementById( "workspaceCompletable" ).checked = true;
         }
         else {
-            document.getElementById( "goalCompletable" ).checked = false;
+            document.getElementById( "workspaceCompletable" ).checked = false;
         }
     }
 }
@@ -440,45 +440,45 @@ const createNewTopic = async () => {
 };
 
 //creates a empty topic
-const createNewGoal = async () => {
-    fetch( "api/v1/auth/goals", {
+const createNewWorkspace = async () => {
+    fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
-            "goalId": -1,
-            "goalName": "Untitled",
-            "goalDescription": "",
-            "goalImage": "myImage.png",
+            "workspaceId": -1,
+            "workspaceName": "Untitled",
+            "workspaceDescription": "",
+            "workspaceImage": "myImage.png",
             "active": true,
             "completable": true,
             "visibility": 0,
         } )
     } )
         .then( response => response.json() )
-        .then( response => window.location.href = "/topic#g-" + response.goalId );
+        .then( response => window.location.href = "/topic#g-" + response.workspaceId );
 };
 
 
 
 
 //edit is a number if editing a resource, false if adding a resource
-//prefix indicates whether card is goal or topic
+//prefix indicates whether card is workspace or topic
 const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     let id = -1;
     if ( edit ) {
         id = edit;
     }
 
-    //if goal
+    //if workspace
     if( prefix === "g-" ) {
-        fetch( "api/v1/auth/goals", {
+        fetch( "api/v1/auth/workspaces", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
-                "goalId": id,
-                "goalName": name,
-                "goalDescription": description,
-                "goalImage": "myImage.png",
+                "workspaceId": id,
+                "workspaceName": name,
+                "workspaceDescription": description,
+                "workspaceImage": "myImage.png",
                 "active": true,
                 "completable": true,
                 "visibility": 0,
@@ -518,7 +518,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
 
 const deleteResource = ( id, prefix ) => {
     if ( prefix === "g-" ) {
-        fetch( "api/v1/auth/goals/" + id, {
+        fetch( "api/v1/auth/workspaces/" + id, {
             method: "DELETE",
         } )
             .then( response => response.json() )
@@ -557,10 +557,10 @@ function toggleMoreOptionsOff( id ) {
 }
 
 
-const toggleGoalView = () => {
+const toggleWorkspaceView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
-        if ( ( cards[i].classList ).contains( "a-goal" ) ) {
+        if ( ( cards[i].classList ).contains( "a-workspace" ) ) {
             cards[i].classList.remove( "d-none" );
         }
         else {
@@ -572,7 +572,7 @@ const toggleGoalView = () => {
 const toggleTopicView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
-        if ( ( cards[i].classList ).contains( "a-goal" ) ) {
+        if ( ( cards[i].classList ).contains( "a-workspace" ) ) {
             cards[i].classList.add( "d-none" );
         }
         else {
@@ -612,7 +612,7 @@ const isGrid = ( e ) => {
     }
 };
 
-//return true if topic, false if goal
+//return true if topic, false if workspace
 //e is pointer event
 const isTopic = ( e ) => {
     let output = false;
@@ -713,7 +713,7 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
         closeRenameModal();
     }
     else {
-        window.alert( "All goals/topics must have a name" );
+        window.alert( "All workspaces/topics must have a name" );
     }
 
   
@@ -812,7 +812,7 @@ const topicReroute = ( id, newTab, prefix ) => {
         /*if (usedPrefix === "-t") {
             window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
         } else {
-            window.location.href = "/goal#" + usedPrefix + id.substring( 5 );
+            window.location.href = "/workspace#" + usedPrefix + id.substring( 5 );
         }*/
         window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
     }
@@ -863,7 +863,7 @@ var copyLinkCards = document
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
-const duplicateGoal = async ( e ) => {
+const duplicateWorkspace = async ( e ) => {
   
     let parentId = getId( e );
    
@@ -897,7 +897,7 @@ const duplicateGoal = async ( e ) => {
     ); //delete
     gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[3].addEventListener(
         "click",
-        duplicateGoal
+        duplicateWorkspace
     ); //duplicate
     gridClone.childNodes[1].childNodes[1].childNodes[3].childNodes[5].addEventListener(
         "click",
@@ -921,7 +921,7 @@ const duplicateGoal = async ( e ) => {
     );
     listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[3].addEventListener(
         "click",
-        duplicateGoal
+        duplicateWorkspace
     );
     listClone.childNodes[7].childNodes[3].childNodes[1].childNodes[5].addEventListener(
         "click",
@@ -957,7 +957,7 @@ const duplicateGoal = async ( e ) => {
 var duplicateCards = document
     .querySelectorAll( "#duplicate-card" )
     .forEach( ( duplicateCard ) => {
-        duplicateCard.addEventListener( "click", duplicateGoal );
+        duplicateCard.addEventListener( "click", duplicateWorkspace );
     } );
 
 
@@ -997,7 +997,7 @@ const replaceIds = ( element, newId, grid, prefix ) => {
 
 ////////search functions////////////
 
-//contains all topic/goal cards
+//contains all topic/workspace cards
 var topicArr = [];
 
 //dynamically updates depending on search input
@@ -1026,7 +1026,7 @@ const queryTopics = ( newVal, arr ) => {
     
         idToRemove = ( arr[i].childNodes[1].id ).substring( 5 ); //id of the element being checked
 
-        prefix = ( arr[i].childNodes[1].id ).substring( 0, 2 );  //indicates whether is goal or topic
+        prefix = ( arr[i].childNodes[1].id ).substring( 0, 2 );  //indicates whether is workspace or topic
 
         if ( !elemName.includes( newVal ) ) {   //checking query
   
@@ -1116,3 +1116,5 @@ const toggleList = () => {
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
 };
+
+window.onload( toggleGrid() );

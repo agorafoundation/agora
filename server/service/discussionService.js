@@ -18,7 +18,7 @@ exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
         FROM ${parentTable} parent
         WHERE parent.id = $2 AND parent.owned_by = $4;
     `;
-    const values = [ type, id, userId, discussion_text ];
+    const values = [ type, +id, userId, discussion_text ];
     
     try {
         
@@ -94,7 +94,7 @@ exports.updateDiscussion = async ( type, id, userId, updatedDiscussion ) => {
             discussion_text: updatedDiscussion.discussion_text
         };
 
-        // TODO: include auth verification in this, userId must match the goal or topic owner
+        // TODO: include auth verification in this, userId must match the workspace or topic owner
         // Should rely on other teams to implement this function
         const text = `
             UPDATE discussions
@@ -175,7 +175,7 @@ exports.createComment = async ( userId, commentToMake ) => {
             ) VALUES ($1, $2, $3, $4)
             RETURNING *
         `;
-        const values = [ commentToMake.parent_id, commentToMake.parent_type, commentToMake.comment_text, userId ];
+        const values = [ commentToMake.parent_id, commentToMake.parent_type === "topic" ? "topic" : "goal", commentToMake.comment_text, userId ];
 
         const res = await db.query( text, values );
 

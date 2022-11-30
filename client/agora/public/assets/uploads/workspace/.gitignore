@@ -2,6 +2,6 @@
 *
 # Except this file
 !.gitignore
-# and the default goal pic
-!goal-default.png
+# and the default workspace pic
+!workspace-default.png
 !peak.svg

@@ -7,25 +7,25 @@ Use this middleware to guarantee the shape of the req.body before it is used in 
 In a routes file, you may have something like this...
 
 ```js
-router.route( '/goal/:id' )
-    // get a discussion based off goal id
+router.route( '/workspace/:id' )
+    // get a discussion based off workspace id
     .get( async ( req, res ) => {
-        discussionController.getDiscussionByGoalId( req, res );
+        discussionController.getDiscussionByWorkspaceId( req, res );
     } )
-    // update a discussion based off goal id
+    // update a discussion based off workspace id
     .patch(  
         async ( req, res ) => { 
-            discussionController.updateDiscussionByGoalId( req, res );
+            discussionController.updateDiscussionByWorkspaceId( req, res );
         } 
     )
     .post( 
         async ( req, res ) => {
-            discussionController.createDiscussionByGoalId( req, res );
+            discussionController.createDiscussionByWorkspaceId( req, res );
         } 
     );
 ```
 
-the expected req.body for updateDiscussionByGoalId is
+the expected req.body for updateDiscussionByWorkspaceId is
 ```json
 {
   "discussion_text": "string"
@@ -48,22 +48,22 @@ This is only a basic example and zod offers support for many other data types an
 Integrating the validate function into your routes is simple, just add it as the argument before you call your controller, the previous example now becomes...
 
 ```js
-router.route( '/goal/:id' )
-    // get a discussion based off goal id
+router.route( '/workspace/:id' )
+    // get a discussion based off workspace id
     .get( async ( req, res ) => {
-        discussionController.getDiscussionByGoalId( req, res );
+        discussionController.getDiscussionByWorkspaceId( req, res );
     } )
-    // update a discussion based off goal id
+    // update a discussion based off workspace id
     .patch( 
         validate( z.object( {discussion_text: z.string()} ) ), // <--- Here
         async ( req, res ) => { 
-            discussionController.updateDiscussionByGoalId( req, res );
+            discussionController.updateDiscussionByWorkspaceId( req, res );
         } 
     )
     .post( 
         validate( z.object( {discussion_text: z.string()} ) ), // <--- and Here
         async ( req, res ) => {
-            discussionController.createDiscussionByGoalId( req, res );
+            discussionController.createDiscussionByWorkspaceId( req, res );
         } 
     );
 ```

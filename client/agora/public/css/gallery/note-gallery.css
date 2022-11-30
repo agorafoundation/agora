@@ -88,7 +88,7 @@
   align-items: center;
 }
 
-.btn-goal-topic-toggle {
+.btn-workspace-topic-toggle {
   margin-left: auto;
   margin-bottom: 0;
 }
@@ -163,7 +163,7 @@
 .list-toggle-btn {
   position: absolute;
   top: 2.2%;
-  right: 275px;
+  right: 300px;
   height: 40px;
   width: 30px;
 }

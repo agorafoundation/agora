@@ -22,7 +22,7 @@ router.use( bodyParser.json() );
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
-const GOAL_PATH = process.env.GOAL_IMAGE_PATH;
+const WORKSPACE_PATH = process.env.GOAL_IMAGE_PATH;
 const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 // setup fileupload (works with enctype="multipart/form-data" encoding in request)
@@ -33,7 +33,7 @@ router.use(
 
 // controllers
 const dashboardController = require( '../controller/dashboardController' );
-const goalController = require( '../controller/apis/goalController' );
+const workspaceController = require( '../controller/apis/workspaceController' );
 const resourceController = require( '../controller/apis/resourceController' );
 
 
@@ -67,11 +67,11 @@ router.route( '/' )
  * Form enctype="multipart/form-data" route using express-fileupload for file upload
  * 
  */
-router.route( '/goal' )
+router.route( '/workspace' )
     .post( async ( req, res ) => {
 
-        // save the goal
-        let rGoal = await goalController.saveGoal( req, res, true );
+        // save the workspace
+        let rWorkspace = await workspaceController.saveWorkspace( req, res, true );
         
         res.redirect( 303, '/dashboard' );
     }

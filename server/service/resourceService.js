@@ -60,7 +60,7 @@ exports.getResourceById = async ( resourceId, active ) => {
  * @returns 
  */
 exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
-    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
+    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 0) ORDER BY id";
     let values = [ true, ownerId ];
 
     // apply a default offset if none is provided
@@ -170,16 +170,22 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
     try {
          
         let res = await db.query( text, values );
-        
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+
+        if( res.rowCount > 0 ) {
+            for( let i=0; i<res.rows.length; i++ ) {
+                resources.push( Resource.ormResource( res.rows[i] ) );
+            }
+            
+            return resources;
         }
-        
-        return resources;
-        
+
+        else {
+            return false;
+        }
     }
     catch( e ) {
         console.log( e.stack );
+        return false;
     }
 };
 
@@ -339,8 +345,12 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
 
     try {
         let res = await db.query( text, values );
-        return true;
-
+        if( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     catch ( e ) {
         console.log( e.stack );
