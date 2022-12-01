@@ -1493,23 +1493,15 @@ const getDiscussions = async ( isTopic, id ) => {
     let pageComments;
 
     if ( isTopic ) {
-        fetch( "api/v1/auth/discussions/topic/" + id, {
+        await fetch( "api/v1/auth/discussions/topic/" + id, {
             headers: { "Content-Type": "application/json" }
         } )
-            .then( async ( response ) => {
-                const data = await response.json(); 
-                if( response.ok ) {
-                    pageComments = data.comments; 
-                }
-                else {
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                data ?
+                    pageComments = data.comments :
                     pageComments = null;
-                    console.log( data.messageTitle, data.messageBody );
-                }                
-            } )
-            .catch( ( error ) => {
-                console.log( "error1" );
-                pageComments = null;
-            } ); 
+            } );
     } 
     else {
         await fetch( "api/v1/auth/discussions/workspace/" + id, {
