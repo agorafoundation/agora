@@ -1401,7 +1401,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         id = parseInt( id, 10 );
 
         if ( !hasComments ) {
-            console.log("Creating discussion")
+            console.log( "Creating discussion" );
             await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
                 { method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1496,14 +1496,15 @@ const getDiscussions = async ( isTopic, id ) => {
         fetch( "api/v1/auth/discussions/topic/" + id, {
             headers: { "Content-Type": "application/json" }
         } )
-            .then( ( response ) => {
-                return response.json(); 
-                
-            } )
-            .then( ( data ) => {
-                data ?
-                    pageComments = data.comments :
+            .then( async ( response ) => {
+                const data = await response.json(); 
+                if( response.ok ) {
+                    pageComments = data.comments; 
+                }
+                else {
                     pageComments = null;
+                    console.log( data.messageTitle, data.messageBody );
+                }                
             } )
             .catch( ( error ) => {
                 console.log( "error1" );
