@@ -32,14 +32,12 @@ exports.saveSharedEntity = async ( req, res ) => {
     const entity_type = req.body.entity_type;
 
     let sharedEntity = await sharedEntityService.getSharedEntity( owner_user_id, share_user_id, entity_type );
-    // Update
-    if ( sharedEntity ) {
-        
-    }
-    else { // Create a new shared entity.
+    // Insert a new entry
+    if ( !sharedEntity ) {
         sharedEntity = SharedEntity.ormSharedEntity();
-        sharedEntity;  
     }
+
+    sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
 
 
 
