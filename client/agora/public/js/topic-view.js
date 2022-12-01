@@ -1046,10 +1046,15 @@ const prefixPattern = /#t/;
 
 const idPattern = /-([0-9]+)/;
 
-const idAndFetch = () => {
+const getPrefixAndId = () => {
+
     const url = window.location.href;
-    const isTopic = prefixPattern.test( url );
-    const id = idPattern.exec( url )[1];
+    return [ prefixPattern.test( url ), idPattern.exec( url )[1] ];
+};
+
+const idAndFetch = () => {
+
+    const [ isTopic, id ] = getPrefixAndId();
 
     if ( isTopic ) {
         fetch( "api/v1/auth/topics/" + id, {
@@ -1089,7 +1094,7 @@ const fillFields = ( title, description, image ) => {
 const renderTopics = async ( workspace ) => {
     const response = await fetch( "api/v1/auth/topics" );
     let topics = await response.json();
-    console.log(topics)
+    //console.log(topics)
     let topicList = [];
     for( let i = 0; i < topics.length; i++ ) {
         topicList.push( topics[i].topicId );
@@ -1128,7 +1133,7 @@ async function renderTopic( topicId ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( topicId );
+    //console.log( topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     //console.log( data );
@@ -1145,31 +1150,60 @@ window.addEventListener( "load", () => {
 
 ////////* discussions code *///////
 
-//gets the highest id among comments then adds 1
-//this will be replaced by async backend response eventually
-const findNextId = () => {
-    let highest = -1;
-    document.querySelectorAll( ".comment-countable" ).forEach( ( comment ) => {
-        if ( ( comment.id ).substring( 8 ) > highest ) {
-            highest = comment.id;
-        }
-    } );
-    return ++highest;
-};
-
 //////New Comment/////
-
-const addComment = ( user, pfp, text ) => {
+const addComment = async ( user, pfp, text, isTopic, id ) => {
     if ( text ) {
 
-        let date = new Date();
+        let commentId, date, type;
+
+        date = new Date();
+
+        const hasComments = await document.querySelectorAll( ".comment-countable" ).length;
+
+        isTopic ? type = "topic" : type = "workspace";
+
+        id = parseInt( id, 10 );
+
+        if ( !hasComments ) {
+            console.log("Creating discussion")
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
+                { method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify( {  
+                        "parent_id": id,
+                        "parent_type": type,
+                        "discussion_text": "string"     
+                    } )
+                } );
+            /*.then( ( response ) => response.json() )
+            .then( ( data ) => {
+                console.log( data );
+            } );*/
+        }
+        
+        await fetch( "api/v1/auth/discussions/comment", 
+            { method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    "parent_id": id, 
+                    "parent_type": type,
+                    "comment_text": text
+                } ) 
+            } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                //console.log( data );
+                commentId = data.id;
+            } );
+            
+        ///UPDATING THE DOM///
 
         //cloning the comment template so we can modify it then add it to the stream
         let newEl = document.getElementById( "comment-template" ).cloneNode( true );
 
         //setting the attributes of the comment
         newEl.style.display = "block";
-        newEl.id = findNextId();
+        newEl.id = commentId;
         newEl.childNodes[1].childNodes[1].innerText = pfp;
         newEl.childNodes[1].childNodes[3].innerText = user;
         newEl.childNodes[3].innerText = text;
@@ -1192,7 +1226,7 @@ const addComment = ( user, pfp, text ) => {
 
 
 //window.onload rendering comment
-const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, } ) => {
+const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes } ) => {
 
     //cloning the comment template so we can modify it then add it to the stream
     let newEl = document.getElementById( "comment-template" ).cloneNode( true );
@@ -1201,7 +1235,7 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
     newEl.style.display = "block";
     newEl.id = id;
     newEl.childNodes[1].childNodes[1].innerText = pfp;
-    newEl.childNodes[1].childNodes[3].innerText = user_id ;
+    newEl.childNodes[1].childNodes[3].innerText = user_id;
     newEl.childNodes[3].innerText = comment_text;
     newEl.childNodes[5].childNodes[5].innerText = created_at;
     newEl.childNodes[5].childNodes[1].childNodes[3] = likes;
@@ -1217,22 +1251,12 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
 };
 
 
-//like buttons function
-document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
-    addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText );
-} );
-
-
 const queryLikedElements = () => {
     //TODO
     //assign 'liked' class to each element that has already been liked according to backend
 };
 
-const getDiscussions = async () => {
-
-    const url = window.location.href;
-    const isTopic = prefixPattern.test( url );
-    const id = idPattern.exec( url )[1];
+const getDiscussions = async ( isTopic, id ) => {
 
     let pageComments;
 
@@ -1254,15 +1278,25 @@ const getDiscussions = async () => {
                 pageComments = data.comments;
             } );
     }
+
+    if ( pageComments ) {
+        await pageComments.forEach( ( comment ) => {
+            loadComment( comment );
+        } );
+    }
     
-    pageComments.forEach( ( comment ) => {
-        loadComment( comment );
-    } );
 };
 
 
 window.addEventListener( "load", () => {
-    getDiscussions();
+
+    const [ isTopic, id ] = getPrefixAndId();
+    
+    document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+        addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+    } );
+
+    getDiscussions( isTopic, id );
 
     //ensuring that every comment that has already been liked by the same user cannot be liked again
     queryLikedElements();
