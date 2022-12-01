@@ -16,3 +16,5 @@ router.route( '/' )
         sharedController.saveSharedEntity( req, res );
     }
     );
+
+module.exports = router;

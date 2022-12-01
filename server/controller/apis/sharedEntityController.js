@@ -32,13 +32,25 @@ exports.saveSharedEntity = async ( req, res ) => {
     const entity_type = req.body.entity_type;
 
     let sharedEntity = await sharedEntityService.getSharedEntity( owner_user_id, share_user_id, entity_type );
+
     // Insert a new entry
     if ( !sharedEntity ) {
-        sharedEntity = SharedEntity.ormSharedEntity();
+        sharedEntity = SharedEntity.ormSharedEntity( req.body );
     }
 
-    sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
+    const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
 
 
+    if ( sharedEntity ){
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Successfully Stored Shared Entity" );
+        res.status( 200 ).json( sharedEntityId );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Something went wrong", "Error" );
+        res.set( "x-agora-message-title", "Err" );
+        res.set( "x-agora-message-detail", "Err" );
+        res.status( 404 ).json( message );
+    }
 
 };

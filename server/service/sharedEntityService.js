@@ -19,14 +19,15 @@ const SharedEntity = require( '../model/sharedEntity' );
  * @param {int} share_user_id - Id of user to share with.
  * @returns {SharedEntity}
  */
-exports.getSharedEntity = async ( entity_id, entity_type, share_user_id ) => {
-    let text = "SELECT * FROM shared_entities WHERE owner_user_id = $1 AND share_user_id = $2";
-    const values = [ entity_id, entity_type, share_user_id ];
+exports.getSharedEntity = async ( owner_user_id, share_user_id, entity_type ) => {
+    let text = "SELECT * FROM shared_entities WHERE owner_user_id = $1 AND share_user_id = $2 AND entity_type = $3";
+    const values = [ owner_user_id, share_user_id, entity_type ];
 
     try {
         let sharedEntity = "";
 
         let res = await db.query( text, values );
+        JSON.stringify( res );
         if( res.rowCount > 0 ) {
             sharedEntity = SharedEntity.ormSharedEntity( res.rows[0] );
         }
@@ -44,30 +45,30 @@ exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
     const s = sharedEntity;
 
     let text = "";
+    let values = [ s.entity_id, s.entity_type, s.share_user_id, s.owner_user_id, s.permission_level, s.can_copy ];
 
     // New entry to be added to our table. Retrieve our shared_entity_id after to inform our user.
-    if ( sharedEntity.entity_id == -1 ) {
-        text = "INSERT INTO shared_entities (shared_entity_id, entity_id, entity_type, share_user_id, owner_user_id, permission_level, can_copy) VALUES ($2, $3, $4, $5, $6, $7, $8) returning shared_entity_id";
+    if ( sharedEntity.shared_entity_id == -1 ) {
+        text = "INSERT INTO shared_entities (entity_id, entity_type, share_user_id, owner_user_id, permission_level, can_copy) VALUES ($1, $2, $3, $4, $5, $6) returning shared_entity_id;";
     }
     // Update our table with new values specified in sharedEntity.
     else {
-        text = "UPDATE shared_entities SET shared_entity_id = $2, entity_id = $3, entity_type = $4, share_user_id = $5, owner_user_id = $6, permission_level = $7, can_copy = $8 WHERE shared_entity_id = $1;";
+        text = "UPDATE shared_entities SET entity_id = $1, entity_type = $2, share_user_id = $3, owner_user_id = $4, permission_level = $5, can_copy = $6 WHERE shared_entity_id = $7;";
+        values.push( s.shared_entity_id );
     }
-
-    let values = [ s.id, s.shared_entity_id, s.entity_id, s.entity_type, s.share_user_id, s.owner_user_id, s.permission_level, s.can_copy ];
 
     try {
         let res = await db.query( text, values );
 
         if( res.rowCount > 0 ) {
-            sharedEntity.shared_entity_id = res.rows[0].shared_entity_id;
+            const sharedEntityId = res.rows[0].shared_entity_id;
+            return sharedEntityId;
         }
-
-        return sharedEntity;
+        
 
     }
     catch ( e ) {
-        console.log( "There was an error with query" + text );
+        console.log( "There was an error with query " + text + "\n\n" + e );
         return;
     }
 };

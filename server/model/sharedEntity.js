@@ -11,7 +11,6 @@ function sharedEntity() {
     this.entity_type = -1;
     this.share_user_id = -1;
     this.owner_user_id = -1;
-    this.share_type = -1;
     this.permission_level = -1;
     this.can_copy = false;
 }
@@ -27,7 +26,6 @@ exports.ormSharedEntity = function ( row ) {
     sharedEntity.entity_type = row.entity_type;
     sharedEntity.share_user_id = row.share_user_id;
     sharedEntity.owner_user_id = row.owner_user_id;
-    sharedEntity.share_type = row.share_type;
     sharedEntity.permission_level = row.permission_level;
     sharedEntity.can_copy = row.can_copy;
     return sharedEntity;
