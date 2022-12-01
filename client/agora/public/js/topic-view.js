@@ -31,33 +31,33 @@ let topics = {};
 
 // Creates a new topic
 function createTopic( name ) {
-    if(!name){
-    fetch( "api/v1/auth/topics", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "topicType": 1,
-            "topicName": "Untitled",
-            "topicDescription": "",
-            "topicHtml": "",
-            "assessmentId": 1,
-            "hasActivity": false,
-            "hasAssessment": false,
-            "activityId": 1,
-            "active": true,
-            "visibility": 0,
-            "resources": [],
-            "createTime": Date.now(),
+    if( !name ){
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "topicType": 1,
+                "topicName": "Untitled",
+                "topicDescription": "",
+                "topicHtml": "",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+                "resources": [],
+                "createTime": Date.now(),
+            } )
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            console.log( data );
-            // map the resulting topic id to the value used in topic elements
-            topics[numTopics] = data.topicId;
-            console.log( topics );
-            numTopics++;
-        } );
+            .then( response => response.json() )
+            .then( ( data ) => {
+                console.log( data );
+                // map the resulting topic id to the value used in topic elements
+                topics[numTopics] = data.topicId;
+                console.log( topics );
+                numTopics++;
+            } );
     }
     else{
         numTopics ++;
@@ -133,7 +133,7 @@ function createTopic( name ) {
         topicTitle.placeholder = name;
     }
     else{
-    topicTitle.placeholder = "Untitled";
+        topicTitle.placeholder = "Untitled";
     }
 
     let saveIcon = document.createElement( "span" );
@@ -175,7 +175,7 @@ function createTopic( name ) {
         tabBtn.innerHTML = name;
     }
     else{
-    tabBtn.innerHTML = "Untitled";
+        tabBtn.innerHTML = "Untitled";
     }
 
     // Create close tab button
@@ -586,31 +586,31 @@ function addTag( selectedTag ) {
 let resources = {};
 // create a new resource
 function createResource( name, type, imagePath, id ) {
-    if(!id){
+    if( !id ){
     
-    fetch( "api/v1/auth/resources", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "resourceId": -1,
-            "resourceType": type,
-            "resourceName": name ? name : "Untitled",
-            "resourceDescription": "",
-            "resourceContentHtml": "",
-            "resourceImage": imagePath ? imagePath : "",
-            "resourceLink": "",
-            "isRequired": false,
-            "active": true,
-            "visibility": 0
+        fetch( "api/v1/auth/resources", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "resourceId": -1,
+                "resourceType": type,
+                "resourceName": name ? name : "Untitled",
+                "resourceDescription": "",
+                "resourceContentHtml": "",
+                "resourceImage": imagePath ? imagePath : "",
+                "resourceLink": "",
+                "isRequired": false,
+                "active": true,
+                "visibility": 0
+            } )
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            // console.log( JSON.stringify( data ) );
-            console.log( data.resourceId );
-            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-            numResources++;
-        } );
+            .then( response => response.json() )
+            .then( ( data ) => {
+                // console.log( JSON.stringify( data ) );
+                console.log( data.resourceId );
+                resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+                numResources++;
+            } );
     }
     else{
         resources[numResources] = [ id, getCurrTopicID() ];
@@ -689,7 +689,7 @@ function createTextArea( name, id ) {
             title.placeholder = name;
         }
         else{
-        title.placeholder = "Untitled";
+            title.placeholder = "Untitled";
         }
 
         // Edit icon
@@ -741,10 +741,10 @@ function createTextArea( name, id ) {
             console.log( value );
             createSunEditor();
             if( name ){
-            createResource(name, 1, null, id  );
+                createResource( name, 1, null, id  );
             }
             else{
-            createResource( null, 1, null );
+                createResource( null, 1, null );
             }
         }
     );
@@ -977,7 +977,7 @@ function updateThumbnail( dropZoneElement, file ) {
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
         const reader = new FileReader();
-    
+      
         reader.readAsDataURL( file );
         reader.onload = () => {
             thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
@@ -1350,7 +1350,7 @@ async function renderTopic( topicId ) {
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName , resources[i].resourceId );
+                await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml.length > 0 ){
                     sunEditorList[docType1Count][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
@@ -1373,7 +1373,7 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
-    renderTopics();
+    //renderTopics();
    
 } );
 
