@@ -16,14 +16,14 @@ const SharedEntity = require( '../model/sharedEntity' );
 
 
 /**
- * Get a single resource by Id
+ * Get a single shared entity by Id
  * @param {int} resourceId - Id of resource to retrieve
  * @param {boolean} active - If true resource must have an active status
  * @returns {Resource}
  */
-exports.getSharedEntity = async ( owner_user_id, share_user_id, share_type ) => {
-    let text = "SELECT * from shared_entity WHERE owner_user_id = $1 AND share_user_id = $2 AND share_type = $3";
-    const values = [ owner_user_id, share_user_id, share_type ];
+exports.getSharedEntity = async ( entity_id, entity_type, share_user_id ) => {
+    let text = "SELECT * from shared_entities WHERE owner_user_id = $1 AND share_user_id = $2";
+    const values = [ entity_id, entity_type, share_user_id ];
 
     try {
         let resource = "";

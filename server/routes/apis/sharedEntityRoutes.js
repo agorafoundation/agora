@@ -9,7 +9,7 @@ const express = require( 'express' );
 const router = express.Router( );
    
 // import controllers
-const sharedController = require( '../../controller/apis/sharedController' );
+const sharedController = require( '../../controller/apis/sharedEntityController' );
 
 router.route( '/' ) 
     .post( ( req, res ) => { 
