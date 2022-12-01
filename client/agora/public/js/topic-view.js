@@ -1474,15 +1474,20 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
     newEl.childNodes[1].childNodes[3].innerText = user_id;
     newEl.childNodes[3].innerText = comment_text;
     newEl.childNodes[5].childNodes[5].innerText = created_at;
-    newEl.childNodes[5].childNodes[1].childNodes[3] = likes;
+    newEl.childNodes[5].childNodes[1].childNodes[3].innerText = likes;
     newEl.classList.add( "comment-countable" );
 
-    //make sure the like button works
-    newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+    let likeButton = newEl.querySelector( "#like-button" );
 
-    /*Fetch for checking if user has liked post. If so, 
-    assign "liked" class to comment. Either way, 
-    change dom to reflect like status */
+    //make sure the like button works
+    likeButton.addEventListener( "click", addOrRemoveLike );
+
+    if ( user_rating ) {
+        newEl.classList.add( "liked" );
+        likeButton.childNodes[1].style.color = "gray";
+        likeButton.childNodes[3].style.color = "gray";
+        likeButton.style.outline = "none";
+    } 
 
     //inserting the modified clone under the proper discussion
     document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
@@ -1559,11 +1564,10 @@ const addOrRemoveLike = ( e ) => {
         goodElement.parentElement.style.outline = "2px solid gray";
 
         fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
-            method: "POST",
+            method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify( { "rating": true } )
+            body: JSON.stringify( { "rating": false } )
         } );
-
     } 
     else {
         parentEl.classList.add( "liked" );
@@ -1573,9 +1577,9 @@ const addOrRemoveLike = ( e ) => {
         goodElement.parentElement.style.outline = "none";
 
         fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
-            method: "DELETE",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify( { "rating": false } )
+            body: JSON.stringify( { "rating": true } )
         } );
     }
 };
