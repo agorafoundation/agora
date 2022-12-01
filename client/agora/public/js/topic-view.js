@@ -1462,7 +1462,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
 
 
 //window.onload rendering comment
-const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes } ) => {
+const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, user_rating } ) => {
 
     //cloning the comment template so we can modify it then add it to the stream
     let newEl = document.getElementById( "comment-template" ).cloneNode( true );
