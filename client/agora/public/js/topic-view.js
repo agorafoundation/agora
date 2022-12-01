@@ -1244,16 +1244,12 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
     //make sure the like button works
     newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
 
-    //console.log(document.getElementById( "post_comment_button"))
+    /*Fetch for checking if user has liked post. If so, 
+    assign "liked" class to comment. Either way, 
+    change dom to reflect like status */
 
     //inserting the modified clone under the proper discussion
     document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
-};
-
-
-const queryLikedElements = () => {
-    //TODO
-    //assign 'liked' class to each element that has already been liked according to backend
 };
 
 const getDiscussions = async ( isTopic, id ) => {
@@ -1266,7 +1262,9 @@ const getDiscussions = async ( isTopic, id ) => {
         } )
             .then( ( response ) => response.json() )
             .then( ( data ) => {
-                pageComments = data.comments;
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
             } );
     } 
     else {
@@ -1275,7 +1273,9 @@ const getDiscussions = async ( isTopic, id ) => {
         } )
             .then( ( response ) => response.json() )
             .then( ( data ) => {
-                pageComments = data.comments;
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
             } );
     }
 
@@ -1297,20 +1297,13 @@ window.addEventListener( "load", () => {
     } );
 
     getDiscussions( isTopic, id );
-
-    //ensuring that every comment that has already been liked by the same user cannot be liked again
-    queryLikedElements();
-
-    //making sure every like button functions
-    document.querySelectorAll( "#like-button" ).forEach( ( likeButton ) => {
-        likeButton.addEventListener( "click", addOrRemoveLike );
-    } ) ;
 } );
 
 
 ///////Like Button////////
 
 const addOrRemoveLike = ( e ) => {
+
     let goodElement;
 
     //making sure the element we are clicking is the one we're looking to use
@@ -1328,6 +1321,13 @@ const addOrRemoveLike = ( e ) => {
         goodElement.parentElement.childNodes[1].style.color = "black";
         goodElement.style.color = "black";
         goodElement.parentElement.style.outline = "2px solid gray";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": true } )
+        } );
+
     } 
     else {
         parentEl.classList.add( "liked" );
@@ -1335,5 +1335,11 @@ const addOrRemoveLike = ( e ) => {
         goodElement.parentElement.childNodes[1].style.color = "gray";
         goodElement.style.color = "gray";
         goodElement.parentElement.style.outline = "none";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": false } )
+        } );
     }
 };
