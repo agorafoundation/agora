@@ -1373,7 +1373,7 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
-    //renderTopics();
+    renderTopics();
    
 } );
 
