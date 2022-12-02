@@ -11,6 +11,8 @@ let path = require( 'path' );
 
 // import models
 const Workspace = require( '../../model/workspace' );
+// import controllers
+const {errorController} = require( "./apiErrorController" );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -18,6 +20,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import services
 const workspaceService = require( '../../service/workspaceService' );
 const userService = require( '../../service/userService' );
+const topicService = require( '../../service/topicService' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -58,6 +61,54 @@ exports.getWorkspaceById = async ( req, res ) => {
     
     
 };
+
+exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
+    
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if( authUserId > 0 ){
+
+        // Check if valid workspaceId given.
+        let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
+        if( workspace ) {
+
+            let topicsList = [];
+            
+            // Get all topics Ids associated with our workspaceId.
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceId );
+            
+            // Grab each topic by id and append it to our list of topics
+            for ( let index in topicsIds ) {
+                let topics = await topicService.getTopicById( topicsIds[index], false );
+
+                if ( topics ){ // Ensure retrieval of topics
+                    topicsList.push( topics );
+                }
+                else {
+                    console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( topicsList );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+        }
+    }
+
+};
+
 
 exports.deleteWorkspaceById = async ( req, res ) => {
 

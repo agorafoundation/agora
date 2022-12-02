@@ -237,6 +237,32 @@ exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
     }
 };
 
+/**
+ * Get the most recent version of an workspace by id
+ * @param {Integer} workspaceId 
+ * @returns workspace
+ */
+exports.getWorkspaceById = async ( workspaceId ) => {
+   
+    let text = "select * from goals WHERE id = $1;";
+    let values = [ workspaceId ];
+    try {
+        let workspace = "";
+         
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            workspace = Workspace.ormWorkspace( res.rows[0] );
+                  
+        }
+       
+        return workspace;
+        
+    }
+    catch( e ) {
+        console.log( e.stack );
+    }
+};
+
 /*
  * Update / set the user workspace image
  * The previous filename that was overwritten (if any) is returned
@@ -717,4 +743,31 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
         console.log( e.stack );
         return false;
     }  
+};
+// Takes in a workspaceId and finds each topicId associated with it.
+exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
+
+    let text = "SELECT * from goal_path where id = $1";
+    let values = [ workspaceId ];
+    let topicIds = [];
+
+    try {
+
+        let res = await db.query( text, values );
+
+        // console.log( " RESPONSE : " + JSON.stringify( res ) );
+        if ( res.rowCount > 0 ){
+            for ( let i=0; i<res.rowCount; i++ ){
+                topicIds[i] = res.rows[i].topic_id;
+            }
+        }
+
+    }
+    catch ( e ) {
+        console.log( e.stack );
+        return false;
+    }
+
+    return topicIds;
+       
 };
