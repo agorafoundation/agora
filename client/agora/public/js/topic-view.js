@@ -1282,10 +1282,15 @@ const prefixPattern = /#t/;
 
 const idPattern = /-([0-9]+)/;
 
-const idAndFetch = () => {
+const getPrefixAndId = () => {
+
     const url = window.location.href;
-    const id = idPattern.exec( url )[1];
-    const isTopic = prefixPattern.test( url );
+    return [ prefixPattern.test( url ), idPattern.exec( url )[1] ];
+};
+
+const idAndFetch = () => {
+
+    const [ isTopic, id ] = getPrefixAndId();
 
     if ( isTopic ) {
         fetch( "api/v1/auth/topics/" + id, {
@@ -1364,7 +1369,7 @@ async function renderTopic( topicId ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( topicId );
+    //console.log( topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     //console.log( data );
@@ -1377,4 +1382,204 @@ window.addEventListener( "load", () => {
    
 } );
 
-/* END onload function */
+
+
+////////* discussions code *///////
+
+//////New Comment/////
+const addComment = async ( user, pfp, text, isTopic, id ) => {
+    if ( text ) {
+
+        let commentId, date, type;
+
+        date = new Date();
+
+        const hasComments = await document.querySelectorAll( ".comment-countable" ).length;
+
+        isTopic ? type = "topic" : type = "workspace";
+
+        id = parseInt( id, 10 );
+
+        if ( !hasComments ) {
+            console.log( "Creating discussion" );
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
+                { method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify( {  
+                        "parent_id": id,
+                        "parent_type": type,
+                        "discussion_text": "string"     
+                    } )
+                } );
+            /*.then( ( response ) => response.json() )
+            .then( ( data ) => {
+                console.log( data );
+            } );*/
+        }
+        
+        await fetch( "api/v1/auth/discussions/comment", 
+            { method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    "parent_id": id, 
+                    "parent_type": type,
+                    "comment_text": text
+                } ) 
+            } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                //console.log( data );
+                commentId = data.id;
+            } );
+            
+        ///UPDATING THE DOM///
+
+        //cloning the comment template so we can modify it then add it to the stream
+        let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+        //setting the attributes of the comment
+        newEl.style.display = "block";
+        newEl.id = commentId;
+        newEl.childNodes[1].childNodes[1].innerText = pfp;
+        newEl.childNodes[1].childNodes[3].innerText = user;
+        newEl.childNodes[3].innerText = text;
+        newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+        newEl.classList.add( "comment-countable" );
+
+        //make sure the like button works
+        newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+
+        //inserting the modified clone into the comment stream
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+
+        //removing the value from the textarea
+        document.getElementById( "discussion-textarea" ).innerText = '';
+    }
+    else {
+        window.alert( "You cannot leave a blank comment" );
+    }
+};
+
+
+//window.onload rendering comment
+const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, user_rating } ) => {
+
+    //cloning the comment template so we can modify it then add it to the stream
+    let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+    //setting the attributes of the comment
+    newEl.style.display = "block";
+    newEl.id = id;
+    newEl.childNodes[1].childNodes[1].innerText = pfp;
+    newEl.childNodes[1].childNodes[3].innerText = user_id;
+    newEl.childNodes[3].innerText = comment_text;
+    newEl.childNodes[5].childNodes[5].innerText = created_at;
+    newEl.childNodes[5].childNodes[1].childNodes[3].innerText = likes;
+    newEl.classList.add( "comment-countable" );
+
+    let likeButton = newEl.querySelector( "#like-button" );
+
+    //make sure the like button works
+    likeButton.addEventListener( "click", addOrRemoveLike );
+
+    if ( user_rating ) {
+        newEl.classList.add( "liked" );
+        likeButton.childNodes[1].style.color = "gray";
+        likeButton.childNodes[3].style.color = "gray";
+        likeButton.style.outline = "none";
+    } 
+
+    //inserting the modified clone under the proper discussion
+    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+};
+
+const getDiscussions = async ( isTopic, id ) => {
+
+    let pageComments;
+
+    if ( isTopic ) {
+        await fetch( "api/v1/auth/discussions/topic/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
+            } );
+    } 
+    else {
+        await fetch( "api/v1/auth/discussions/workspace/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
+            } );
+    }
+
+    if ( pageComments ) {
+        await pageComments.forEach( ( comment ) => {
+            loadComment( comment );
+        } );
+    }
+    
+};
+
+
+window.addEventListener( "load", () => {
+
+    const [ isTopic, id ] = getPrefixAndId();
+    
+    document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+        addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+    } );
+
+    getDiscussions( isTopic, id );
+} );
+
+
+///////Like Button////////
+
+const addOrRemoveLike = ( e ) => {
+
+    let goodElement;
+
+    //making sure the element we are clicking is the one we're looking to use
+    e.target.id ? 
+        goodElement = e.target.childNodes[3] : 
+        e.target.style ? 
+            goodElement = e.target.parentElement.childNodes[3] : 
+            goodElement = e.target;
+
+    let parentEl = goodElement.parentElement.parentElement.parentElement;
+
+    if ( parentEl.classList.contains( "liked" ) ) {
+        parentEl.classList.remove( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) - 1;
+        goodElement.parentElement.childNodes[1].style.color = "black";
+        goodElement.style.color = "black";
+        goodElement.parentElement.style.outline = "2px solid gray";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": false } )
+        } );
+    } 
+    else {
+        parentEl.classList.add( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
+        goodElement.parentElement.childNodes[1].style.color = "gray";
+        goodElement.style.color = "gray";
+        goodElement.parentElement.style.outline = "none";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": true } )
+        } );
+    }
+};

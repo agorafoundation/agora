@@ -8,6 +8,7 @@ function comment() {
     this.updated_at = new Date();
     this.likes = 0;
     this.dislikes = 0;
+    this.user_rating = 0; // -1 dislike, 0 neutral, 1 like
 }
 
 exports.emptyComment = () => {
@@ -26,6 +27,7 @@ exports.ormComment = ( row ) => {
     comment.dislikes = parseInt( row.dislikes );
     comment.created_at = row.creation_date;
     comment.updated_at = row.updated_date;
+    comment.user_rating = parseInt( row.user_rating );
 
     return comment;
 };
