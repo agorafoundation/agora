@@ -367,6 +367,65 @@ exports.saveWorkspace = async ( workspace ) => {
     }
 };
 
+
+/**
+ * Will save or update topics associated with a workspace.  
+ * Topics are passed as an Array of integers.  This function will replace any existing topics for
+ * the workspace with the topics represented by the topic id's passed.
+ * @param {Integer} workspaceId id of the topic 
+ * @param {*} topicIds Array of topic id's to be associated with the woorkspace
+ * @returns true for success / false for failure
+ */                                               
+exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRequired ) {
+    // get the most recent version of the workspace
+    let text = "SELECT * from goals where id = $1";
+    let values = [ workspaceId ];
+    try {
+         
+        let res = await db.query( text, values );
+        
+        if( res.rowCount > 0 ) {
+
+            // first remove current resources associated with the topic
+            text = "DELETE FROM goal_path WHERE goal_rid = $1";
+            values = [ workspaceId ];
+
+            let res2 = await db.query( text, values );
+
+            // now loop through the array and add the new topics
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            if( topicIds && topicIds.length > 0 ) {
+                for( let i=0; i < topicIds.length; i++ ) {  
+
+                    let isRequired = true;
+                    // always setting to true for now
+                    //if( topicsRequired.length > i ) {  
+                    //    isRequired = topicsRequired[i];
+                    //}
+
+                    text = "INSERT INTO goal_path (goal_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                    values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
+
+                    let res3 = await db.query( text, values );
+
+                    console.log( "In Loop - " + JSON.stringify( res3 ) );
+
+                }
+            }
+        }
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
+
+    return true;
+};
+
+
 /**
  * Will save or update pathway for workspace.  Pathway represents the topics associated with a workspace
  * and is passed as an Array of integers.  This function will replace any existing pathway for

@@ -203,7 +203,6 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
     let workspace = Workspace.emptyWorkspace();
     
-
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -239,8 +238,10 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
             else {
                 console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
             }
-
         }
+
+        // Array of topics sent in request body that correspond to the workspace
+        workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
         if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
@@ -253,28 +254,13 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.workspaceDescription = req.body.workspaceDescription;
         workspace.active = req.body.active;
         workspace.completable = req.body.completable;
-        
-        // check to see if the incoming message format is from the UI form or the API for active
-        /*
-        if( req.body.workspaceActive ) {
-            workspace.active = ( req.body.active == "on" ) ? true : false;
-        }
-        else if ( req.body.active ) {
-            workspace.active = req.body.active;
-        }
-        */
-
-        // check to see if the incoming message format is from the UI form or the API for completable
-        /*
-        if( req.body.workspaceCompletable ) {
-            workspace.completable = ( req.body.workspaceCompletable == "on" ) ? true : false;
-        }
-        else if ( req.body.completable ) {
-            workspace.completable = req.body.completable;
-        }
-        */
 
         workspace = await workspaceService.saveWorkspace( workspace );
+
+        if ( req.body.topics ){
+            let topicsSaved = await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
+            console.log( "@ -- @" + topicsSaved );
+        }
 
         /**
          * Once the workspace is saved, save the image if it is passed in the multipart form data
