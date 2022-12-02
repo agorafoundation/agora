@@ -747,7 +747,7 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
 // Takes in a workspaceId and finds each topicId associated with it.
 exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
 
-    let text = "SELECT * from goal_path where id = $1";
+    let text = "SELECT * from goal_path where goal_rid = $1";
     let values = [ workspaceId ];
     let topicIds = [];
 

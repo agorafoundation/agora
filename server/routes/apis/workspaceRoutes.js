@@ -51,7 +51,6 @@ router.route( '/:workspaceId' )
 router.route( '/topics/:workspaceId' )
     .get( async ( req, res ) => {
         workspaceController.getAllTopicsForWorkspaceId( req, res );
-        console.log( "Test" );
     }
     );
 
