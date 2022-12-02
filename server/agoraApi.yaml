@@ -339,6 +339,42 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /workspaces/topics/{workspaceId}:
+    get:
+      tags:
+        - Workspaces
+      summary: Retrieves all topics for a given workspace.
+      parameters:
+        - in: path
+          name: workspaceId
+          schema:
+            type: integer
+          description: id of the workspace to retrieve corresponding Topics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Topic/response"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /topics:
     get:
       tags:
