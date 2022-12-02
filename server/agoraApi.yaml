@@ -30,14 +30,14 @@ paths:
             type: integer
           description: The starting record number, defaults to 0
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tag'
+                  $ref: "#/components/schemas/Tag"
           headers:
             x-agora-message-title:
               schema:
@@ -47,14 +47,14 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Tags
@@ -62,19 +62,19 @@ paths:
       requestBody:
         description: Include a Tag object to save in JSON format *NOTE* - Only the tag member is required, id will be ignored, lastUsed will be used if provided and override the default behavior of assigning the authenticed user id, lastUsed will be updated to the current time.
         required: true
-        content: 
+        content:
           application/json:
-            schema: 
+            schema:
               type: object
-              $ref: '#/components/schemas/ShortTag'
+              $ref: "#/components/schemas/ShortTag"
       responses:
-        '201':
+        "201":
           description: New Tag created
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Tag'
+                $ref: "#/components/schemas/Tag"
           headers:
             x-agora-message-title:
               schema:
@@ -84,13 +84,13 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '200':
+        "200":
           description: Updated existing record - the tag name already existed, current record used.
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Tag'
+                $ref: "#/components/schemas/Tag"
           headers:
             x-agora-message-title:
               schema:
@@ -100,50 +100,50 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /tags/{id}:
     get:
-      tags: 
-        - Tags 
+      tags:
+        - Tags
       summary: Retrieves existing tag by Id
       parameters:
         - in: path
           name: id
           schema:
             type: integer
-          description: id of the tag to retrieve 
+          description: id of the tag to retrieve
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Tag'
+                $ref: "#/components/schemas/Tag"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
-      tags: 
+      tags:
         - Tags
       summary: Deletes existing tag by Id
       parameters:
@@ -151,32 +151,32 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the tag to delete 
+          description: id of the tag to delete
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Tag'
+                $ref: "#/components/schemas/Tag"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /workspaces:
     get:
       tags:
@@ -194,13 +194,13 @@ paths:
             type: integer
           description: The starting record number, defaults to 0
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Workspace/response'
+                $ref: "#/components/schemas/Workspace/response"
           headers:
             x-agora-message-title:
               schema:
@@ -210,14 +210,14 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Workspaces
@@ -225,19 +225,19 @@ paths:
       requestBody:
         description: Include a Workspace object to save in JSON format *NOTE* - Only the workspace member is required, id will be ignored.
         required: true
-        content: 
+        content:
           application/json:
-            schema: 
+            schema:
               type: object
-              $ref: '#/components/schemas/Workspace/request'
+              $ref: "#/components/schemas/Workspace/request"
       responses:
-        '201':
+        "201":
           description: New Workspace created
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Workspace/response'
+                $ref: "#/components/schemas/Workspace/response"
           headers:
             x-agora-message-title:
               schema:
@@ -247,12 +247,12 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '200':
+        "200":
           description: Updated existing record - the workspace name already existed, current record used.
           application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/Workspace/response'
+            schema:
+              type: object
+              $ref: "#/components/schemas/Workspace/response"
           headers:
             x-agora-message-title:
               schema:
@@ -262,15 +262,15 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /workspaces/{id}:
     get:
-      tags: 
+      tags:
         - Workspaces
       summary: Retrieves existing workspace by Id
       parameters:
@@ -278,34 +278,34 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the workspace to retrieve 
+          description: id of the workspace to retrieve
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Workspace/response'
+                $ref: "#/components/schemas/Workspace/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
-      tags: 
+      tags:
         - Workspaces
       summary: Deletes existing workspace by Id
       parameters:
@@ -313,9 +313,9 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the workspace to delete 
+          description: id of the workspace to delete
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -323,22 +323,22 @@ paths:
                 type: string
                 example: "Success"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /topics:
     get:
       tags:
@@ -356,14 +356,14 @@ paths:
             type: integer
           description: The starting record number, defaults to 0
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Topic/response'
+                  $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -373,14 +373,14 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Topics
@@ -388,19 +388,19 @@ paths:
       requestBody:
         description: Include a Topic object to save in JSON format *NOTE* - Only the topic member is required, id will be ignored.
         required: true
-        content: 
+        content:
           application/json:
-            schema: 
+            schema:
               type: object
-              $ref: '#/components/schemas/Topic/request'
+              $ref: "#/components/schemas/Topic/request"
       responses:
-        '201':
+        "201":
           description: New Topic created
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -410,13 +410,13 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '200':
+        "200":
           description: Updated existing record - the topic name already existed, current record used.
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -426,41 +426,41 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /topics/shared:
     get:
       tags:
         - Topics
       summary: Retrieves all available shared topics
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Topic/response'
+                  $ref: "#/components/schemas/Topic/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest' 
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /topics/{id}:
     get:
       tags:
@@ -471,34 +471,34 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the topic to retrieve 
+          description: id of the topic to retrieve
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Topic/response'
+                $ref: "#/components/schemas/Topic/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
-      tags: 
+      tags:
         - Topics
       summary: Deletes existing topic by Id
       parameters:
@@ -506,9 +506,9 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the topic to delete 
+          description: id of the topic to delete
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -516,22 +516,22 @@ paths:
                 type: string
                 example: "Success"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /resources:
     get:
       tags:
@@ -549,14 +549,14 @@ paths:
             type: integer
           description: The starting record number, defaults to 0
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource/response'
+                  $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -566,14 +566,14 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Resources
@@ -581,19 +581,19 @@ paths:
       requestBody:
         description: Include a Resource object to save in JSON format *NOTE* - Only the resouce member is required, id will be ignored.
         required: true
-        content: 
+        content:
           application/json:
-            schema: 
+            schema:
               type: object
-              $ref: '#/components/schemas/Resource/request'
+              $ref: "#/components/schemas/Resource/request"
       responses:
-        '201':
+        "201":
           description: New Resource created
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -603,13 +603,13 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '200':
+        "200":
           description: Updated existing record - the resource name already existed, current record used.
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -619,15 +619,15 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /resources/user/{id}:
     get:
-      tags: 
+      tags:
         - Resources
       summary: Retrieves all available & active resources for a user
       parameters:
@@ -637,59 +637,59 @@ paths:
             type: integer
           description: id of the user to retrive their active resources
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: "#/components/schemas/Resource/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /resources/shared:
     get:
       tags:
         - Resources
       summary: Retrieves all available shared resources
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource/response'
+                  $ref: "#/components/schemas/Resource/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest' 
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /resources/{id}:
     get:
       tags:
@@ -700,34 +700,34 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the resource to retrieve 
+          description: id of the resource to retrieve
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Resource/response'
+                $ref: "#/components/schemas/Resource/response"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
-      tags: 
+      tags:
         - Resources
       summary: Deletes existing resource by Id
       parameters:
@@ -735,9 +735,9 @@ paths:
           name: id
           schema:
             type: integer
-          description: id of the resource to delete 
+          description: id of the resource to delete
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -745,66 +745,66 @@ paths:
                 type: string
                 example: "Success"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /discussions/workspaces/{id}:
     get:
-      tags: 
+      tags:
         - Discussions
       summary: Gets the discussion by workspace ID
-      parameters: 
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: id of the workspace
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the workspace
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     patch:
-      tags: 
+      tags:
         - Discussions
-      summary: 'Updates discussion using workspace ID'
+      summary: "Updates discussion using workspace ID"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the topic
         - in: query
@@ -813,38 +813,38 @@ paths:
             type: string
           description: The new text to be updated
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Discussions
-      summary: 'Create a new discussion using workspace ID'
+      summary: "Create a new discussion using workspace ID"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the workspace
         - in: query
@@ -853,74 +853,74 @@ paths:
             type: string
           description: discussion starting text
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /discussions/topics/{id}:
     get:
-      tags: 
+      tags:
         - Discussions
       summary: Gets the discussion by topic ID
-      parameters: 
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: id of the topic
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/Discussions'
-        headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-    patch:
-      tags: 
-        - Discussions
-      summary: 'Updates discussion using topic ID'
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
+            type: integer
+          description: id of the topic
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Discussions"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    patch:
+      tags:
+        - Discussions
+      summary: "Updates discussion using topic ID"
+      parameters:
+        - in: path
+          name: id
+          schema:
             type: integer
           description: id of the topic
         - in: query
@@ -929,38 +929,38 @@ paths:
             type: string
           description: The new text to be updated
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     post:
       tags:
         - Discussions
-      summary: 'Create a new discussion using topic id'
+      summary: "Create a new discussion using topic id"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the topic
         - in: query
@@ -969,210 +969,210 @@ paths:
             type: string
           description: discussion starting text
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /discussions/ratings/{commentid}:
     post:
       tags:
         - Discussions
-      summary: 'Posts the rating for a specific comment'
+      summary: "Posts the rating for a specific comment"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the comment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
       tags:
         - Discussions
-      summary: 'Removes the rating for a comment'
+      summary: "Removes the rating for a comment"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the comment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /discussions/comment:
     post:
       tags:
         - Discussions
-      summary: 'Post a new comment'
+      summary: "Post a new comment"
       parameters: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /discussions/comment/commentID:
     patch:
       tags:
         - Discussions
-      summary: 'Change a currently existing comment'
+      summary: "Change a currently existing comment"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the comment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
     delete:
       tags:
         - Discussions
-      summary: 'Deletes a currently existing comment'
+      summary: "Deletes a currently existing comment"
       parameters:
         - in: path
           name: id
-          schema:  
+          schema:
             type: integer
           description: id of the comment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/Discussions'
+                $ref: "#/components/schemas/Discussions"
         headers:
-            x-agora-message-title:
-              schema:
-                type: string
-              description: Title of Agora API message
-            x-agora-message-message:
-              schema:
-                type: string
-              description: Message of Agora API message
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-      
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.com/api/v1/auth
 components:
   securitySchemes:
-    basicAuth:     # <-- arbitrary name for the security scheme
+    basicAuth: # <-- arbitrary name for the security scheme
       type: http
       scheme: basic
   schemas:
@@ -1220,7 +1220,7 @@ components:
     Tags:
       type: array
       items:
-        $ref: '#/components/schemas/Tag'
+        $ref: "#/components/schemas/Tag"
     Workspace:
       request:
         type: object
@@ -1266,64 +1266,66 @@ components:
           active: true
           completable: true
           visibility: 0
-          topics: [2,3]
+          topics: [2, 3]
       response:
-          type: object
-          required:
-            - workspaceName
-          properties:
-            id:
-              type: integer
-              description: Assigned automatically for new workspaces, used to update existing workspace if provided
-              uniqueItems: true
-            version:
-              type: integer
-              description: tracks the changes to workspaces and is automatically incremented on updates
-            workspaceName:
-              type: string
-              description: The tag
-            workspaceDescription:
-              type: string
-              description: Description of the workspace
-            workspaceImage:
-              type: string
-              description: filename of the associated image for the workspace
-            active:
-              type: boolean
-              description: Active status, inactive items will not be returned in most queries
-            completable:
-              type: boolean
-              description: Completable workspaces monitor progress of users through topics
-            visibility:
-              type: integer
-              description: Public = 0, Shared = 1, Private = 0
-            createTime:
-              type: timestamp
-              description: Automatically generated timestamp of record creation
-            ownedBy:
-              type: integer
-              description: Id of the user that first generated the tag
-          example:
-            rid: 1
-            id: 1
-            workspaceVersion: 1
-            workspaceName: "Learn how to use Agora"
-            workspaceDescription: "Follow the tutorials and other resources provided to learn the Agora system."
-            workspaceImage: "myImage.png"
-            active: true
-            completable: true
-            visibility: 0
-            version: 1
-            createTime: 2022-11-02T19:37:11.672Z
+        type: object
+        required:
+          - workspaceName
+        properties:
+          id:
+            type: integer
+            description: Assigned automatically for new workspaces, used to update existing workspace if provided
+            uniqueItems: true
+          version:
+            type: integer
+            description: tracks the changes to workspaces and is automatically incremented on updates
+          workspaceName:
+            type: string
+            description: The tag
+          workspaceDescription:
+            type: string
+            description: Description of the workspace
+          workspaceImage:
+            type: string
+            description: filename of the associated image for the workspace
+          active:
+            type: boolean
+            description: Active status, inactive items will not be returned in most queries
+          completable:
+            type: boolean
+            description: Completable workspaces monitor progress of users through topics
+          visibility:
+            type: integer
+            description: Public = 0, Shared = 1, Private = 0
+          createTime:
+            type: timestamp
+            description: Automatically generated timestamp of record creation
+          ownedBy:
+            type: integer
+            description: Id of the user that first generated the tag
+        example:
+          rid: 1
+          id: 1
+          workspaceVersion: 1
+          workspaceName: "Learn how to use Agora"
+          workspaceDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+          workspaceImage: "myImage.png"
+          active: true
+          completable: true
+          visibility: 0
+          version: 1
+          createTime: 2022-11-02T19:37:11.672Z
     Workspaces:
       type: array
       items:
-        $ref: '#/components/schemas/Workspace'
+        $ref: "#/components/schemas/Workspace"
     Topic:
       request:
         type: object
         required:
           - topicName
+          - resources
+          - resourceRequired
         properties:
           topicId:
             type: integer
@@ -1368,6 +1370,12 @@ components:
           ownedBy:
             type: integer
             description: Id of the user that first generated the tag
+          resources:
+            type: array
+            description: List of resources for the topic
+          resourceRequired:
+            type: array
+            description: Should always be true for every resource in resource array
         example:
           topicId: -1
           topicType: 1
@@ -1381,6 +1389,8 @@ components:
           assessmentId: -1
           active: true
           visibility: 0
+          resources: []
+          resourcesRequired: []
       response:
         type: object
         required:
@@ -1447,7 +1457,7 @@ components:
     Topics:
       type: array
       items:
-        $ref: '#/components/schemas/Topic'
+        $ref: "#/components/schemas/Topic"
     Discussions:
       type: object
       properties:
@@ -1576,7 +1586,7 @@ components:
     Resources:
       type: array
       items:
-        $ref: '#/components/schemas/Resource'
+        $ref: "#/components/schemas/Resource"
   responses:
     BadRequest:
       description: The HyperText Transfer Protocol (HTTP) 400 Bad Request response status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing). See the x-agora-message-title and x-agora-message-detail response parameters for more detail.
@@ -1610,7 +1620,7 @@ components:
         x-agora-message-message:
           schema:
             type: string
-          description: Message of Agora API message 
+          description: Message of Agora API message
     NotFoundError:
       description: The requested resource was not found. Check id provided or see the x-agora-message-title and x-agora-message-detail response parameters for more detail.
       headers:
