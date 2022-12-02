@@ -1389,8 +1389,8 @@ components:
           assessmentId: -1
           active: true
           visibility: 0
-          resources: []
-          resourcesRequired: []
+          resources: [ 1, 2, 4 ]
+          resourcesRequired: [ true, true, true ]
       response:
         type: object
         required:
