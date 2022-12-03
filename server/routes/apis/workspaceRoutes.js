@@ -37,12 +37,20 @@ router.route( '/' )
 router.route( '/:workspaceId' )
     // get a visible workspace by id
     .get( async ( req, res ) => {
-        workspaceController.getWorkspaceById( req, res );
+        workspaceController.getMostRecentWorkspaceById( req, res );
     
     } )
     // delete a visible workspace by id
     .delete( async ( req, res ) => {
         workspaceController.deleteWorkspaceById( req, res );
+    }
+    );
+// Topics /api/v1/auth/workspaces/topics/:workspaceId
+// workspaces /api/v1/auth/workspaces/topics/:workspaceId
+
+router.route( '/topics/:workspaceId' )
+    .get( async ( req, res ) => {
+        workspaceController.getAllTopicsForWorkspaceId( req, res );
     }
     );
 
