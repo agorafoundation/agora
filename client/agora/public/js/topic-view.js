@@ -1212,12 +1212,12 @@ const fillFields = ( title, description, image ) => {
 };
 
 const renderTopics = async ( workspace ) => {
-    const response = await fetch( "api/v1/auth/topics" );
+    const [ isTopic, id ] = getPrefixAndId();
+    const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
     let topics = await response.json();
     //console.log( topics )
     let topicList = [];
     for( let i = 0; i < topics.length; i++ ) {
-        console.log( topics[i] );
         topicList.push( topics[i].topicId );
     }
     if ( topicList.length > 0 ) {
@@ -1233,7 +1233,7 @@ const renderTopics = async ( workspace ) => {
 async function renderTopic( topicId ) {
     const response = await fetch( "api/v1/auth/topics/" + topicId );
     const topicData = await response.json();
-    await createTopic( topicData.topicId, topicData.topicName );
+    await createTopic( topicData.topicName );
     const resources = await renderResources( topicId );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
