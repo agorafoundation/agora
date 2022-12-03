@@ -37,7 +37,7 @@ router.route( '/' )
 router.route( '/:workspaceId' )
     // get a visible workspace by id
     .get( async ( req, res ) => {
-        workspaceController.getMostRecentWorkspaceById( req, res );
+        workspaceController.getWorkspaceById( req, res );
     
     } )
     // delete a visible workspace by id
