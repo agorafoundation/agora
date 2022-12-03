@@ -228,7 +228,7 @@ function updateTopic( name, resources ) {
             "topicId": id,
             "topicName": name ? name : "Untitled",
             "resources": resources ? resources : [],
-            "resourceRequired": resources ? [].fill( "true" ) : []
+            "resourceRequired": isRequired
         } )
     } )
         .then( response => response.json() )
