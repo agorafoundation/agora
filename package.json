@@ -6,6 +6,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-pg-simple": "^7.0.0",
+    "connect-session-sequelize": "^7.1.5",
     "cors": "^2.8.5",
     "device-detector-js": "^3.0.0",
     "dotenv": "^10.0.0",

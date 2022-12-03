@@ -115,8 +115,32 @@ body {
 }
 
 .yt-sub {
-  width: 35%;
+  width: 15%;
 }
+
+@media screen and (max-width: 1200px) {
+	.yt-sub {
+		width: 20%;
+	}
+}
+
+@media screen and (max-width: 992px) {
+	.yt-sub {
+		width: 25%;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.yt-sub {
+		width: 35%;
+	}
+}
+@media screen and (max-width: 250px) {
+	.yt-sub {
+		width: 30%;
+	}
+}
+
 
 .yt-sub-sm {
   width: 25%;
@@ -443,6 +467,13 @@ h6, .h6 {
 .lead {
   font-size: 1.25rem;
   font-weight: 300;
+  margin-left:7%;
+  margin-right:7%;
+}
+
+.lead1 {
+  margin-left:7%;
+  margin-right:7%;
 }
 
 .display-1 {
@@ -478,8 +509,8 @@ hr {
 
 small,
 .small {
-  font-size: 80%;
-  font-weight: 400;
+  font-size: 100%;
+  font-weight: 500;
 }
 
 mark,
@@ -10173,4 +10204,38 @@ form .row:first-child .floating-label-form-group {
   padding-bottom: 5rem;
   background-color: #2c3e50;
   color: #fff;
+}
+
+.cardText{
+  font-size: 17px;
+  font-family:'Roboto', sans-serif;
+}
+
+
+.ulListone {
+  font-family: "Open Sans", sans-serif;
+
+  text-align: justify;
+  list-style: none; /* Remove HTML bullets */
+  padding: 0;
+  margin: 0;
+  line-height: 28px;
+}
+
+.web_liList {
+  padding-left: 16px;
+  color: #010101;
+  font-size: 1em !important;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+
+}
+
+.web_liList::before {
+  line-height: normal;
+  font-size: 1em;
+  opacity: 1;
+  content: "•"; /* Insert content that looks like bullets */
+  padding-right: 2%;
+  color: #4c9d9a; /* Or a color you prefer */
 }
