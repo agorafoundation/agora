@@ -130,10 +130,11 @@ function createTopic( name ) {
     topicTitle.className = "topic-title";
     topicTitle.id = "topic-title" + numTopics;
     if( name ){
-        topicTitle.placeholder = name;
+        //topicTitle.placeholder = name;
+        topicTitle.value = name;
     }
     else{
-        topicTitle.placeholder = "Untitled";
+        topicTitle.value = "Untitled";
     }
 
     let saveIcon = document.createElement( "span" );
