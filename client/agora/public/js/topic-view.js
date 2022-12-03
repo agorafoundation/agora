@@ -1216,13 +1216,10 @@ const renderTopics = async ( workspace ) => {
     const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
     let topics = await response.json();
     //console.log( topics )
-    let topicList = [];
-    for( let i = 0; i < topics.length; i++ ) {
-        topicList.push( topics[i].topicId );
-    }
-    if ( topicList.length > 0 ) {
-        for ( let i = 0; i < topicList.length; i++ ) {
-            await renderTopic( topicList[i] );
+   
+    if ( topics.length > 0 ) {
+        for ( let i = 0; i < topics.length; i++ ) {
+            await renderTopic( topics[i] );
             
         }
     }
@@ -1230,11 +1227,10 @@ const renderTopics = async ( workspace ) => {
 };
 
 //change order so the create stuff will all happen after information is gathered
-async function renderTopic( topicId ) {
-    const response = await fetch( "api/v1/auth/topics/" + topicId );
-    const topicData = await response.json();
-    await createTopic( topicData.topicName );
-    const resources = await renderResources( topicId );
+async function renderTopic( topic ) {
+  
+    await createTopic( topic.topicId, topic.topicName);
+    const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
@@ -1250,7 +1246,7 @@ async function renderTopic( topicId ) {
         }
         window.scrollTo( 0, 0 );
     }
-    return topicData;
+    return topics;
 }
 
 async function renderResources( topicId ) {
