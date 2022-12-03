@@ -216,6 +216,10 @@ function createTopic( id, name ) {
 
 // Updates topic name
 function updateTopic( name, resources ) {
+    let isRequired = [];
+    for( let i = 0; i < resources.length; i++ ){
+        isRequired.push( "true" );
+    }
     let id = getCurrTopicID();
     fetch( "api/v1/auth/topics", {
         method: "POST",
@@ -223,7 +227,8 @@ function updateTopic( name, resources ) {
         body: JSON.stringify( {
             "topicId": id,
             "topicName": name ? name : "Untitled",
-            "resources": resources ? resources : []
+            "resources": resources ? resources : [],
+            "resourceRequired": resources ? [].fill( "true" ) : []
         } )
     } )
         .then( response => response.json() )
@@ -472,7 +477,7 @@ function createResource( name, type, imagePath, id ) {
                 "resourceContentHtml": "",
                 "resourceImage": imagePath ? imagePath : "",
                 "resourceLink": "",
-                "isRequired": false,
+                "isRequired": true,
                 "active": true,
                 "visibility": 0
             } )
@@ -1229,7 +1234,7 @@ const renderTopics = async ( workspace ) => {
 //change order so the create stuff will all happen after information is gathered
 async function renderTopic( topic ) {
   
-    await createTopic( topic.topicId, topic.topicName);
+    await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
