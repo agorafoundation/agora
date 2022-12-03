@@ -220,7 +220,7 @@ function updateTopic( name, resources ) {
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
-    console.log( isRequired)
+    console.log( isRequired );
     let id = getCurrTopicID();
     fetch( "api/v1/auth/topics", {
         method: "POST",
@@ -229,7 +229,7 @@ function updateTopic( name, resources ) {
             "topicId": id,
             "topicName": name ? name : "Untitled",
             "resources": resources ? resources : [],
-            "resourcesRequired": [true,true]
+            "resourcesRequired": [ true, true ]
         } )
     } )
         .then( response => response.json() )
