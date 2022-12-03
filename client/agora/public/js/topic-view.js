@@ -976,15 +976,17 @@ function updateThumbnail( dropZoneElement, file ) {
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        const reader = new FileReader();
-      
-        reader.readAsDataURL( file );
-        reader.onload = () => {
-            thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-        };
+        getFile( file ).then( url => {
+            thumbnailElement.style.backgroundImage = url;
+            // PayloadTooLargeError: request entity too large
+            // createResource( file.name, 2, testResult );
+
+            createResource( file.name, 2, file.name );
+            console.log( url ) ;
+        } );
+        
         mydiv.style.height = "500px";
         activeHeightObj[tabName] += 500;
-        createResource( file.name, 2, file.name );
     }
     else {
         thumbnailElement.style.backgroundSize = "200px";
@@ -1025,6 +1027,17 @@ function updateThumbnail( dropZoneElement, file ) {
     checkActiveHeight();
 }
 /* END Drag and Drop ------------------------------------------------------------------------- */
+
+function getFile( file ) {
+    return new Promise( ( resolve ) => {
+        const fileReader = new FileReader();
+        fileReader.onloadend = ( e ) => { 
+            const testResult = `url('${fileReader.result}')`;
+            resolve( testResult );
+        };
+        fileReader.readAsDataURL( file );
+    } );
+}
 
 /* END Resource Functions ---------------------------------------------------------------------------------*/
 
