@@ -1329,7 +1329,7 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    const response = await fetch( "api/v1/auth/workspaces/topics/1"   );
+    const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
     let topics = await response.json();
     console.log( topics );
     
