@@ -726,42 +726,6 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-  /discussions/goal/{id}:
-    get:
-      tags:
-        - Discussions
-      summary: Gets the discussion by workspace ID
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: id of the resource to delete
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-                example: "Success"
-        headers:
-          x-agora-message-title:
-            schema:
-              type: string
-            description: Title of Agora API message
-          x-agora-message-message:
-            schema:
-              type: string
-            description: Message of Agora API message
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        "403":
-          $ref: "#/components/responses/ForbiddenError"
-        "404":
-          $ref: "#/components/responses/NotFoundError"
   /discussions/workspaces/{id}:
     get:
       tags:
@@ -851,11 +815,6 @@ paths:
       parameters:
         - in: path
           name: id
-          schema:
-            type: integer
-          description: id of the workspace
-        - in: query
-          name: text
           schema:
             type: integer
           description: id of the workspace

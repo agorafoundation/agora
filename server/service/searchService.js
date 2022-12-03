@@ -29,15 +29,29 @@ exports.getSearchResults = async ( term, userId, type = "all" ) => {
 
     const searchResults = [];
 
+
+
     // transform results from users, resources, topics, workspaces into searchResult objects
+    users.forEach( element => {
+        let result = searchResult.ormSearchResult( element, 'username', 'firstname', "user", 'lastname' ); 
+        searchResults.push( result ); 
+    } );
+    resources.forEach( element => {
+        let result = searchResult.ormSearchResult( element, "resource_name", "resource_description", "resource" );
+        searchResults.push( result ); 
+    } );
+    workspaces.forEach( element => {
+        let result = searchResult.ormSearchResult( element, "workspace_name", "workspace_description", "workspace" );
+        searchResults.push( result );
+
+    } );
+    topics.forEach( element => {
+        let result = searchResult.ormSearchResult( element, "topic_name", "topic_description", "topic" );
+        searchResults.push( result );
+    } );
+
 
     console.log( users, resources, topics, workspaces );
-
-    // const [ users, resources, topics, workspaces ] = await Promise.all(  );
-
-    // searchResult.ormSearchResult
-
-    // console.log( users, resources, topics, workspaces );
     console.log( term );
 
     

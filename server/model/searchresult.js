@@ -15,10 +15,10 @@ exports.emptyGoal = () => {
     return new searchResult();
 };
 
-exports.ormSearchResult = function ( row ) {
-    let searchResult = new searchResult;
-    searchResult.name = row.name;
-    searchResult.id = row.id;
-    searchResult.description = row.description;
-    return searchResult;
+exports.ormSearchResult = async ( element, main, secone, type, sectwo = "" ) => {
+    let itemtype = type;
+    let id = element.id;
+    let itemmain = element[main];
+    let secondary = element[secone] + element[sectwo];
+    return {itemtype, id, itemmain, secondary};
 };
