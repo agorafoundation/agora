@@ -6,19 +6,48 @@
  */
 
 function searchResult() {
-    this.name = "";
+    this.type = "";
     this.id = -1;
-    this.description = "";
+    this.main = "";
+    this.secondary = "";
 }
 
-exports.emptyGoal = () => {
+exports.emptySearchResult = () => {
     return new searchResult();
 };
 
-exports.ormSearchResult = async ( element, main, secone, type, sectwo = "" ) => {
-    let itemtype = type;
-    let id = element.id;
-    let itemmain = element[main];
-    let secondary = element[secone] + element[sectwo];
-    return {itemtype, id, itemmain, secondary};
+exports.ormSearchResult = ( type, element ) => {
+    let result = new searchResult();
+
+    switch( type ) {
+    case "user":
+        result.type = "user";
+        result.id = element.userId;
+        result.main = element.username;
+        result.secondary = element.firstName + " " + element.lastName;
+        break;
+    case "resource":
+        result.type = "resource";
+        result.id = element.resourceId;
+        result.main = element.resourceName;
+        result.secondary = element.resourceDescription;
+        break;
+    case "workspace":
+        result.type = "workspace";
+        result.id = element.workspaceId;
+        result.main = element.workspaceName;
+        result.secondary = element.workspaceDescription;
+        break;
+    case "topic":
+        result.type = "topic";
+        result.id = element.topicId;
+        result.main = element.topicName;
+        result.secondary = element.topicDescription;
+        break;
+    default:
+        result = exports.emptySearchResult();
+        break;
+    }
+    
+    return result;
 };

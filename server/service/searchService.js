@@ -30,28 +30,29 @@ exports.getSearchResults = async ( term, userId, type = "all" ) => {
     const searchResults = [];
 
 
+    console.log( users, resources, topics, workspaces );
 
     // transform results from users, resources, topics, workspaces into searchResult objects
-    users.forEach( element => {
-        let result = searchResult.ormSearchResult( element, 'username', 'firstname', "user", 'lastname' ); 
+    users?.forEach( element => {
+        let result = searchResult.ormSearchResult( "user", element );
         searchResults.push( result ); 
     } );
-    resources.forEach( element => {
-        let result = searchResult.ormSearchResult( element, "resource_name", "resource_description", "resource" );
+    resources?.forEach( element => {
+        let result = searchResult.ormSearchResult( "resource", element  );
         searchResults.push( result ); 
     } );
-    workspaces.forEach( element => {
-        let result = searchResult.ormSearchResult( element, "workspace_name", "workspace_description", "workspace" );
+    workspaces?.forEach( element => {
+        let result = searchResult.ormSearchResult( "workspace", element );
         searchResults.push( result );
 
     } );
-    topics.forEach( element => {
-        let result = searchResult.ormSearchResult( element, "topic_name", "topic_description", "topic" );
+    topics?.forEach( element => {
+        let result = searchResult.ormSearchResult( "topic", element  );
         searchResults.push( result );
     } );
 
 
-    console.log( users, resources, topics, workspaces );
+    console.log( searchResults );
     console.log( term );
 
     
@@ -171,11 +172,6 @@ exports.getTopicsByTerm = async ( term, userId ) => {
         // Res is the database response, which will come back as an QueryResultArray
         let res = await db.query( text, values );
 
-        // Just checks to see if there were any matching results. May need to change
-        if( res.rows.length === 0 ) {
-            return false;
-        }
-
         //Creates an array of the topics using the topic model in ../model/topics.js
         const topics = res.rows.map( topic.ormTopic );
 
@@ -185,7 +181,7 @@ exports.getTopicsByTerm = async ( term, userId ) => {
     }
     catch( e ) {
         console.log( e.stack );
-        return false;
+        return null;
     }
 };
 
@@ -204,10 +200,6 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
         
         let res = await db.query( text, values );
 
-        if( res.rows.length === 0 ) {
-            return false;
-        }
-
         const workspaces = res.rows.map( workspace.ormWorkspace );
 
         return workspaces;
@@ -215,6 +207,6 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
     }
     catch( e ) {
         console.log( e.stack );
-        return false;
+        return null;
     }
 };
