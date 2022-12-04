@@ -1532,13 +1532,15 @@ const addOrRemoveLike = ( e ) => {
 
 const saveTitleOrDescription = ( ) => {
     const [ isTopic, id ] = getPrefixAndId();
+
+    const input = document.getElementById( "workspace-title" ).value;
         
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
             "workspaceId": id,
-            "workspaceName":  document.getElementById( "workspace-title" ).value,
+            "workspaceName":  input ? input : "Untitled",
             "workspaceDescription": document.getElementById( "workspace-desc" ).value,
             "topics": topics,
             "active": true
