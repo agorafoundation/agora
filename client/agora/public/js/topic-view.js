@@ -44,7 +44,7 @@ function createTopic( id, name ) {
         let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
         workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
         workspaceEmptyState.style.display = "none";
-        document.getElementById( "topic-background" ).style.backgroundColor = "#ddd";
+        document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
     }
     else {
         lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
@@ -96,6 +96,7 @@ function createTopic( id, name ) {
     let topicTitle = document.createElement( "input" );
     topicTitle.type = "text";
     topicTitle.className = "topic-title";
+    topicTitle.style.borderRadius = "5px";
     topicTitle.id = "topic-title" + numTopics;
     if( name ){
         topicTitle.value = name;
@@ -266,7 +267,8 @@ function openTab( name ) {
     tablinks = document.getElementsByClassName( "tablinks" );
     for ( i = 0; i < tablinks.length; i++ ) {
         tablinks[i].className = tablinks[i].className.replace( " active", "" );
-        tablinks[i].style.backgroundColor = "#f1f1f1";
+        tablinks[i].style.backgroundColor = "#17191a";
+        tablinks[i].style.color = "white";
     }
 
     activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
@@ -278,7 +280,7 @@ function openTab( name ) {
     for ( i=0; i<tablinks.length; i++ ) {
         if ( tablinks[i].id.slice( -1 ) == name.slice( -1 ) ) {
             tablinks[i].className += " active";
-            tablinks[i].style.backgroundColor = "#ddd";
+            tablinks[i].style.backgroundColor = "#3f3f3f";
         }
     }
 }
@@ -311,7 +313,7 @@ function closeTab( id ) {
         }
         else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
-            document.getElementById( "topic-background" ).style.backgroundColor = "#f1f1f1";
+            document.getElementById( "topic-background" ).style.backgroundColor = "#17191a";
             activeTab = document.getElementById( "resources-zone0" );
         }
     }

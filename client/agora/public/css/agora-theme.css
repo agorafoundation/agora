@@ -171,7 +171,6 @@ Masthead background: #414d53
 .footer {
     position: relative;
     height: 100%;
-    background-image: url('/assets/img/logos/agora-logo-bwn-1600.png');
     background-position-x:10rem;
     background-size: cover;
 }
@@ -623,10 +622,12 @@ div.product-card a {
 }
 
 .card{
+    border-radius:5px;
     text-decoration: none  !important;
 }
 
 .card-body {
+    border-radius:5px;
     opacity: 1;
     display: block;
     width: 100%;
@@ -973,6 +974,7 @@ input:checked + .slider:after {
 }
 
 .card-body {
+    border-radius:5px;
     flex: 1 1 auto;
     padding: 1.25rem; 
 }
@@ -1013,7 +1015,7 @@ input:checked + .slider:after {
 
 .card-footer {
     padding: 0.75rem 1.25rem;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: #17191a;
     border-top: 1px solid rgba(0, 0, 0, 0.125); 
 }
 
@@ -1368,7 +1370,7 @@ input:checked + .slider:after {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #404D52;
+    background-color: #17191a;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 20px;
