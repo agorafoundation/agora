@@ -25,21 +25,27 @@ const { Console } = require( 'console' );
  */
 // Save or update a shared entity.
 exports.saveSharedEntity = async ( req, res ) => {
-    // If not existing shared entity, create shared entity.
 
-    const owner_user_id = req.body.owner_user_id;
-    const share_user_id = req.body.share_user_id;
-    const entity_type = req.body.entity_type;
+    let sharedEntity = SharedEntity.emptySharedEntity();
 
-    let sharedEntity = await sharedEntityService.getSharedEntity( owner_user_id, share_user_id, entity_type );
+    let existingSharedEntity = await sharedEntityService.getSharedEntity( req.body.sharedEntityId );
 
     // Insert a new entry
-    if ( !sharedEntity ) {
-        sharedEntity = SharedEntity.ormSharedEntity( req.body );
+    if ( existingSharedEntity ) {
+        console.log( 'Existing shared entity.' );
+        sharedEntity = existingSharedEntity;
     }
 
-    const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
+    // These should be validated for correct inputs in the future
+    sharedEntity.entityId = req.body.entityId ?? sharedEntity.entityId;
+    sharedEntity.entityType = req.body.entityType ?? sharedEntity.entityType;
+    sharedEntity.shareUserId = req.body.shareUserId ?? sharedEntity.shareUserId;
+    sharedEntity.ownerUserId = req.body.ownerUserId ?? sharedEntity.ownerUserId;
+    sharedEntity.permissionLevel = req.body.permissionLevel ?? sharedEntity.permissionLevel;
+    sharedEntity.canCopy = req.body.canCopy ?? sharedEntity.canCopy;
 
+
+    const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
 
     if ( sharedEntity ){
         res.set( "x-agora-message-title", "Success" );
