@@ -196,7 +196,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
             workspace.visibility = req.body.visibility;   
         }
         else {
-            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
         }
         workspace.workspaceName = req.body.workspaceName;
         workspace.workspaceDescription = req.body.workspaceDescription;

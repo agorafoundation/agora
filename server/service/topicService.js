@@ -1148,7 +1148,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
         // Retrieve all user owned topics and public topics.
-        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 0) ORDER BY id";
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
         const values = [ true, ownerId ];
 
         // apply a default offset if none is provided
