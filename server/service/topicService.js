@@ -193,12 +193,13 @@ exports.getAllActiveTopics = async function() {
 
 /**
  * Get a topic by id
- * @param {Integer} topicId 
+ * @param {Integer} topicId
+ * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @returns topic
  */
-exports.getTopicById = async function( topicId ) {
-    let text = "SELECT * FROM topics WHERE id = $1";
-    let values = [ topicId ];
+exports.getTopicById = async function( topicId, ownerId ) {
+    let text = "SELECT * FROM topics WHERE id = $1 AND (owned_by = $2 OR visibility = 2)";
+    let values = [ topicId, ownerId ];
     try {
         let topic = "";
          

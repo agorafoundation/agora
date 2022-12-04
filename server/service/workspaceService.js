@@ -158,24 +158,25 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
 
 /**
  * Get an active workspace by id including associated topics
- * @param {Integer} workspaceId 
+ * @param {Integer} workspaceId
+ * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns workspace with topics
  */
-exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, isActive ) => {
+exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActive ) => {
 
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 AND (owned_by = $2 OR visibility = 2) group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-        values = [ workspaceId ];
+        values = [ workspaceId, ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 AND (owned_by = $3 OR visibility = 2) group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-        values = [ true, workspaceId ];
+        values = [ true, workspaceId, ownerId ];
     }
 
 
