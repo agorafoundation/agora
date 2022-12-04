@@ -298,7 +298,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
             topic.visibility = req.body.visibility;
         }
         else {
-            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
         }
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;
