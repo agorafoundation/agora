@@ -56,13 +56,20 @@
 }
 
 #tag-div {
-  width: 70%;
+  width: 15%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
 }
 
 .placeholder {
     border: none;
+    background: transparent;
+    color:white;
+    height: 30px;
     border-bottom: 1px solid lightgrey;
     padding-left: 0px;
+    margin-right: 3vw;
 }
 
 .placeholder:focus {
@@ -108,7 +115,7 @@
 
 .descriptionTA {
     resize: none;
-    height: 70px;
+    height: 30px;
     border: 1px solid lightgrey;
     padding-top: 10px;
     padding-left: 10px;
@@ -127,10 +134,11 @@
 }
 
 .label {
-    border-radius: 10px;
-    border: 1px solid #2c3e50;
     padding: 7px 5px;
     height: 35px;
+    margin-right: .5vw;
+    font-weight: bold;
+    color: white;
 }
 
 #workspace-empty-state {
@@ -343,11 +351,13 @@
   }
 
   .styled-tags {
-    display: inline;
+    display: flex;
     margin-right: 10px;
+    height:30px;
     background-color:aliceblue;
     padding: 5px 9px;
     border-radius: 20px;
+    align-items: center;
   }
 
 /* END Tags*/
