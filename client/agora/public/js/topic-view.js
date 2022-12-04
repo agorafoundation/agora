@@ -1530,7 +1530,7 @@ const addOrRemoveLike = ( e ) => {
 
 ////*Saving Title and Description/////
 
-const saveTitle = ( input ) => {
+const saveTitleOrDescription = ( ) => {
     const [ isTopic, id ] = getPrefixAndId();
         
     fetch( "api/v1/auth/workspaces", {
@@ -1538,18 +1538,15 @@ const saveTitle = ( input ) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
             "workspaceId": id,
-            "workspaceName": input,
+            "workspaceName":  document.getElementById( "workspace-title" ).value,
             "workspaceDescription": document.getElementById( "workspace-desc" ).value,
             "topics": topics,
             "active": true
             
         } )
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( data ) => {
-            console.log( data );
-        } );
+    } );
 }; 
 
 
-document.getElementById( "workspace-title" ).addEventListener( "input", saveTitle );
+document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
+document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
