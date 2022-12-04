@@ -248,7 +248,6 @@ async function saveWorkspace( topics ){
 
     const [ isTopic, id ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
-    console.log(name+ "asdasdadasdadsdas")
     let description = document.getElementById( "workspace-desc" ).value;
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
