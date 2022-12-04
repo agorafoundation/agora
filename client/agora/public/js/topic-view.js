@@ -204,8 +204,9 @@ function createTopic( id, name ) {
                 console.log( data );
                 // map the resulting topic id to the value used in topic elements
                 topics[numTopics] = data.topicId;
-                console.log( topics );
                 numTopics++;
+                console.log( topics );
+                saveWorkspace( topics );
             } );
     }
     else{
@@ -240,6 +241,32 @@ function updateTopic( name, resources ) {
 }
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
+/*WORKSPACE function */
+async function saveWorkspace( topics ){
+    const topicsList = Object.values( topics );
+
+
+    const [ isTopic, id ] = getPrefixAndId();
+    let name = document.getElementById( "workspace-title" ).value;
+    let description = document.getElementById( "workspace-desc" ).value;
+    fetch( "api/v1/auth/workspaces", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "workspaceId": id,
+            "workspaceName": name,
+            "workspaceDescription": description,
+            "topics": topicsList,
+            "active":true
+            
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+           
+        } );
+}
 
 
 
