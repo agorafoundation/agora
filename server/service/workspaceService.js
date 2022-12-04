@@ -69,7 +69,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
-        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 0 ) order by gl.id;";
+        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 2 ) order by gl.id;";
         let values = [ true, ownerId ];
 
         let workspaces = [];
