@@ -24,7 +24,7 @@ exports.getDashboard = async function( req, res ) {
 
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
-
+    
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
     // start the available topics out with the full owner topic set
@@ -33,9 +33,30 @@ exports.getDashboard = async function( req, res ) {
     // create an empty workspace to use if the user creates a new one
     let workspace = Workspace.emptyWorkspace();
 
-    if( workspaceId > 0 ) {
-        workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
+    for( let i =0; i < ownerWorkspaces.length; i++ ) {
 
+       
+         
+        // Get all topics Ids associated with our workspaceId.
+        let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceId );
+        
+        // Grab each topic by id and append it to our list of topics
+        for ( let index in topicsIds ) {
+            let topics = await topicService.getTopicById( topicsIds[index], false );
+
+            if ( topics ){ // Ensure retrieval of topics
+                ownerWorkspaces[i].topics.push( topics );
+            }
+            else {
+                console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+            }
+        }
+    
+
+    }
+    if( workspaceId > 0 ) {
+
+        workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
         // iterate through the workspaces assigned topics, remove them from the available list
         for( let i=0; i < workspace.topics.length; i++ ) {
             let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( workspace.topics[i].id );

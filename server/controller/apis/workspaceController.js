@@ -155,7 +155,9 @@ exports.getAllWorkspacesForAuthUser = async ( req, res ) => {
 
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.id, false );
-
+    
+        
+      
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces for user" );
     res.status( 200 ).json( ownerWorkspaces );
