@@ -9,104 +9,33 @@ name:"Steak12", desc:"very tasy"} ,{ name:"Steak13", desc:"very tasy"},{
 name:"Steak14", desc:"very tasy"} ,{ name:"Steak15", desc:"very tasy"},{
 name:"Steak16", desc:"very tasy"} ,{ name:"Steak17", desc:"very tasy"},{
 name:"Steak18", desc:"very tasy"}  ] %> 
-
-<% for(let j = 0; j < 4 ;j++) {%> 
-<div class="container pt-3 h-100">
-  
-  <h2 class="text-secondary    ">Recipes</h2>
-  <hr class="pb-0">
-
-<!--Carousel Wrapper-->
-<div id="suggestion-<%=j %>" class="carousel slide carousel-multi-item pt-0 " data-ride="carousel" data-interval="false" >
-  
-
-  
-  <!--Slides-->
-  <div class="carousel-inner" role="listbox">
-
-    <!--First slide-->
-    <% for(let i = 0; i + 3 < recipeList.length; i+=3) {%> 
-    <% if(i === 0) {%> 
+<body class="dashboard-content"
+  <% for(let j = 0; j < 4 ;j++) {%> 
+  <div class="container pt-3 h-100">
     
-    <div class="carousel-item active">
+    <h2 class="text-secondary    ">Recipes</h2>
+    <hr class="pb-0">
 
-      <div class="row pl-4">
-        <div class="col gallery-col">
-          <div class="card mb-1 h-100 ">
-            <div class="card-body">
-              
-              <h4 class="card-title"><%= recipeList[i].name %></h4>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                card's content.</p>
-            </div>
-            <div class="card-footer">
-              <% for(let i=0; i < 2; i++) { %>
-                <span class="badge badge-primary topic-badge">
-                  Lol
-                </span>
-              <% } %>
-              <span class="badge badge-dark note-badge">
-                Topic
-              </span>
-            </div>
-          </div>
-        </div>
+  <!--Carousel Wrapper-->
+  <div id="suggestion-<%=j %>" class="carousel slide carousel-multi-item pt-0 " data-ride="carousel" data-interval="false" >
+    
 
-        <div class="col clearfix d-none d-md-block gallery-col">
-          <div class="card mb-1 h-100">
-           
-            <div class="card-body">
-              <h4 class="card-title"><%= recipeList[i+1].name  %></h4>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                card's content.</p>
-            </div>
-            <div class="card-footer">
-              <% for(let i=0; i < 2; i++) { %>
-                <span class="badge badge-primary topic-badge">
-                  Lol
-                </span>
-              <% } %>
-              <span class="badge badge-dark note-badge">
-                Topic
-              </span>
-            </div>
-          </div>
-        </div>
+    
+    <!--Slides-->
+    <div class="carousel-inner" role="listbox">
 
-       <div class="col-md-4 clearfix d-none d-md-block gallery-col">
-          <div class="card mb-1 h-100">
-           
-            <div class="card-body">
-              <h4 class="card-title"><%= recipeList[i+2].name  %></h4>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                card's content.</p>
-            </div>
-            <div class="card-footer">
-              <% for(let i=0; i < 2; i++) { %>
-                <span class="badge badge-primary topic-badge">
-                  Lol
-                </span>
-                <% } %> 
-            
-              <span class="badge badge-dark note-badge">
-                Topic
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--First slide-->
+      <% for(let i = 0; i + 3 < recipeList.length; i+=3) {%> 
+      <% if(i === 0) {%> 
+      
+      <div class="carousel-item active">
 
-    </div>
-
-    <!--/.First slide-->
-    <% }else{ %>
-      <div class="carousel-item ">
-
-        <div class="row">
+        <div class="row pl-4">
           <div class="col gallery-col">
             <div class="card mb-1 h-100 ">
               <div class="card-body">
-                <h4 class="card-title"><%= recipeList[i].name  %></h4>
+                
+                <h4 class="card-title"><%= recipeList[i].name %></h4>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                   card's content.</p>
               </div>
@@ -122,12 +51,12 @@ name:"Steak18", desc:"very tasy"}  ] %>
               </div>
             </div>
           </div>
-  
+
           <div class="col clearfix d-none d-md-block gallery-col">
             <div class="card mb-1 h-100">
-             
+            
               <div class="card-body">
-                <h4 class="card-title"><%=recipeList[i+1].name  %></h4>
+                <h4 class="card-title"><%= recipeList[i+1].name  %></h4>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                   card's content.</p>
               </div>
@@ -143,12 +72,12 @@ name:"Steak18", desc:"very tasy"}  ] %>
               </div>
             </div>
           </div>
-  
-         <div class="col-md-4 clearfix d-none d-md-block gallery-col">
+
+        <div class="col-md-4 clearfix d-none d-md-block gallery-col">
             <div class="card mb-1 h-100">
-             
+            
               <div class="card-body">
-                <h4 class="card-title"><%= recipeList[i+2].name %></h4>
+                <h4 class="card-title"><%= recipeList[i+2].name  %></h4>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                   card's content.</p>
               </div>
@@ -166,34 +95,105 @@ name:"Steak18", desc:"very tasy"}  ] %>
             </div>
           </div>
         </div>
-  
+
       </div>
 
-      <% }//else %> 
-    <% } %>
-   
+      <!--/.First slide-->
+      <% }else{ %>
+        <div class="carousel-item ">
+
+          <div class="row">
+            <div class="col gallery-col">
+              <div class="card mb-1 h-100 ">
+                <div class="card-body">
+                  <h4 class="card-title"><%= recipeList[i].name  %></h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's content.</p>
+                </div>
+                <div class="card-footer">
+                  <% for(let i=0; i < 2; i++) { %>
+                    <span class="badge badge-primary topic-badge">
+                      Lol
+                    </span>
+                  <% } %>
+                  <span class="badge badge-dark note-badge">
+                    Topic
+                  </span>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col clearfix d-none d-md-block gallery-col">
+              <div class="card mb-1 h-100">
+              
+                <div class="card-body">
+                  <h4 class="card-title"><%=recipeList[i+1].name  %></h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's content.</p>
+                </div>
+                <div class="card-footer">
+                  <% for(let i=0; i < 2; i++) { %>
+                    <span class="badge badge-primary topic-badge">
+                      Lol
+                    </span>
+                  <% } %>
+                  <span class="badge badge-dark note-badge">
+                    Topic
+                  </span>
+                </div>
+              </div>
+            </div>
+    
+          <div class="col-md-4 clearfix d-none d-md-block gallery-col">
+              <div class="card mb-1 h-100">
+              
+                <div class="card-body">
+                  <h4 class="card-title"><%= recipeList[i+2].name %></h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's content.</p>
+                </div>
+                <div class="card-footer">
+                  <% for(let i=0; i < 2; i++) { %>
+                    <span class="badge badge-primary topic-badge">
+                      Lol
+                    </span>
+                    <% } %> 
+                
+                  <span class="badge badge-dark note-badge">
+                    Topic
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+        </div>
+
+        <% }//else %> 
+      <% } %>
+    
+        </div>
       </div>
+      <!--/.Third slide-->
     </div>
-    <!--/.Third slide-->
+    <!--/.Slides-->
   </div>
-  <!--/.Slides-->
-</div>
-<!--/.Carousel Wrapper-->
+  <!--/.Carousel Wrapper-->
 
-<a class=" " href="#suggestion-<%=j %>" data-slide="prev"><span class="material-symbols-outlined float-left my-auto"  >
-  arrow_back_ios_new
-  </span></a>
-<a class="" href="#suggestion-<%=j %>" data-slide="next"><span class="material-symbols-outlined my-auto ">
-  arrow_forward_ios
-  </span></a>
+  <a class=" " href="#suggestion-<%=j %>" data-slide="prev"><span class="material-symbols-outlined float-left my-auto"  >
+    arrow_back_ios_new
+    </span></a>
+  <a class="" href="#suggestion-<%=j %>" data-slide="next"><span class="material-symbols-outlined my-auto ">
+    arrow_forward_ios
+    </span></a>
+    
+
   
+  </div>
+  <br>
+  <br>
 
- 
-</div>
-<br>
-<br>
-
- <% } %> 
- 
- 
- 
+  <% } %> 
+</body>
+  
+  

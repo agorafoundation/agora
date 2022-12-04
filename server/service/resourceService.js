@@ -60,7 +60,7 @@ exports.getResourceById = async ( resourceId, active ) => {
  * @returns 
  */
 exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
-    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 0) ORDER BY id";
+    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
     let values = [ true, ownerId ];
 
     // apply a default offset if none is provided
@@ -162,7 +162,7 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
  * @returns 
  */
 exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
-    const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
+    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 2) and id = $3 order by id;";
     const values = [ true, ownerId, resourceId ];
 
     let resources = [];

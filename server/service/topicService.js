@@ -193,12 +193,13 @@ exports.getAllActiveTopics = async function() {
 
 /**
  * Get a topic by id
- * @param {Integer} topicId 
+ * @param {Integer} topicId
+ * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @returns topic
  */
-exports.getTopicById = async function( topicId ) {
-    let text = "SELECT * FROM topics WHERE id = $1";
-    let values = [ topicId ];
+exports.getTopicById = async function( topicId, ownerId ) {
+    let text = "SELECT * FROM topics WHERE id = $1 AND (owned_by = $2 OR visibility = 2)";
+    let values = [ topicId, ownerId ];
     try {
         let topic = "";
          
@@ -1148,7 +1149,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
         // Retrieve all user owned topics and public topics.
-        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 0) ORDER BY id";
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
         const values = [ true, ownerId ];
 
         // apply a default offset if none is provided
