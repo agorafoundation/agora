@@ -5,7 +5,7 @@
         <%- include('../../../partials/head'); %>
     </head>
 
-    <body>
+    <body class="dashboard-content">
         <!--File Upload Drop Zone-->
         <!-- <div class="drop-zone"> -->
             <!-- <span class="drop-zone__prompt"></span> -->
@@ -22,22 +22,21 @@
             <%- include('./open-topic.ejs');%>  
 
             <!--Workspace Title-->
-            <div class="header" id="title-div">
+            <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
                 <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
             </div>
-            <div class="header-div">
+            <div class="header-div" style="height: 8vh; background-color: #17191a; border-bottom: solid;border-color: #818181;">
 
                 <!--Workspace Description-->
-                <div class="header" id="description-div">
-                    <label class="label">Description</label>
-                    <textarea class="descriptionTA" id="workspace-desc" ></textarea>
-                </div>
-
-                <!--Tags-->
                 <div class="header" id="tag-div">
+                    <label class="label">Description:</label>
+                    <!--<textarea class="descriptionTA" id="workspace-desc" ></textarea>-->
+                    <input type="text" id="workspace-desc" class="placeholder" placeholder=" Add description...">
+                
 
-                    <label class="label">Tags</label>
-                    <input type="text" id="mySearch" class="placeholder" placeholder="start typing...">
+
+                    <label class="label">Tags:</label>
+                    <input type="text" id="mySearch" class="placeholder" placeholder="Start typing...">
                     <div id="curr-tags"></div>
                     <div id="new-tag-element" class="tag-list-element">+</div>
         
@@ -50,14 +49,14 @@
                 <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
 
                 <!--Discussions-->
-                <span class="material-symbols-outlined discussion-button" title="Discussons" data-toggle="modal" data-target="#discussion-modal" data-backdrop="false">
+                <span class="material-symbols-outlined discussion-button" title="Discussons" data-toggle="modal" data-target="#discussion-modal" data-backdrop="false" style="color:white">
                     forum
                 </span>
                 <%-include('./discussion-modal.ejs'); %>
                 <%-include('./comment-template.ejs'); %>
 
                 <!--Sharing-->
-                <span class="material-symbols-outlined share-button" title="Share" data-toggle="modal" data-target="#share-modal">
+                <span class="material-symbols-outlined share-button" title="Share" data-toggle="modal" data-target="#share-modal" style="color:white">
                     ios_share
                 </span>
                  <%- include('./share-modal.ejs'); %>
@@ -67,10 +66,10 @@
             <!--<%- include('./file-display'); %>-->
             <!-- </div> -->
 
-            <div id="topic-background">
+            <div id="topic-background" style="background-color:#17191a">
                 <!-- Tabs -->
-                <div class="tab">
-                    <span id="new-element" class="material-symbols-outlined">add</span>
+                <div class="tab" style="background-color: #17191a">
+                    <span id="new-element" class="material-symbols-outlined" style="color: white">add</span>
                 </div>
 
                 <!--Workspace Empty State -->
@@ -97,15 +96,6 @@
         </div>
     <!-- </div> -->
 
-     <!-- Footer-->
-     <footer class="footer text-center">
-        <%- include('../../../partials/footer'); %>
-    </footer>
-
-    <!-- Copyright Section-->
-    <div class="copyright py-4 text-center text-white">
-        <%- include('../../../partials/copyright'); %>
-    </div>
 
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
     <div class="scroll-to-top d-lg-none position-fixed">

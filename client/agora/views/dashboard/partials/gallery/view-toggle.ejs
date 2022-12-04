@@ -1,6 +1,6 @@
 <div id="gallery-header">
     <h1 class="text-secondary pt-3 pl-1 pb-0">My Notes</h1>
-    <div class="btn-group btn-group-toggle btn-workspace-topic-toggle mr-5" data-toggle="buttons" >
+    <div class="btn-group btn-group-toggle btn-workspace-topic-toggle mr-5" style="margin-right: 2vw;" data-toggle="buttons" >
         <label class="btn btn-secondary active">
         <input  type="radio" name="options" id="option1"  autocomplete="off"  onclick="toggleWorkspaceView()"> Workspace
         </label>
@@ -11,5 +11,21 @@
         <input type="radio" name="options" id="option2" autocomplete="off" onclick="toggleTopicView()" > Topic
         </label>
        
+        
+    </div>
+    
+    <div class="btn-group btn-group-toggle btn-workspace-topic-toggle mr-5" style="margin: 0;" data-toggle="buttons" >
+        <label class="btn btn-secondary active" title="Grid View">
+            <input  type="radio" name="options" autocomplete="off" checked onclick="toggleGrid()"> 
+            <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white">
+                grid_view
+            </span>
+        </label>
+        <label class="btn btn-secondary" title="List View">
+            <input type="radio" name="options" autocomplete="off" onclick="toggleList()" > 
+            <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white;">
+                format_list_bulleted
+            </span>
+        </label>
     </div>
 </div>
