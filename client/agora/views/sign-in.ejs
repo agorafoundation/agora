@@ -18,7 +18,7 @@
                 
                 <div class="text-left mt-4">
                     <div id="story1" class="row justify-content-left">
-                        <div class="col-lg-7">
+                        <div class="col-lg-6 signincontainer">
                             <% if(!!locals.message){ %>
                                 <div class="alert-message alert-message-success" role="alert">
                                     <h3 ><%= message %></h3>
@@ -45,27 +45,29 @@
                                     <div class="form-group">
 
                                         <input type="email" class="form-control form-control-lg" name="signInEmail" id="signInEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+                                          <br />
                                         <input type="password" class="form-control form-control-lg" id="siPassword" name="siPassword" placeholder="Password" title="Enter Password" required>
                                         
                                     </div>
-                                    <button type="submit" id="userManageButton" class="btn btn-primary btn-lg btn-block">Sign In</button>
+                                    <div class="signin-signup">
+                                    <button type="submit" id="userManageButton" class="btn btn-primary btn-lg btn-block signin-button">Sign In</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block"><a class="signuplink" href='/community'>Sign Up</a></button>
+                                    </div>
                                     <br />
+                                    <div class="forgot-reset">
+                                    <a href='/forgotPass' class="forgot-reset-a"> Forgot Password </a>
+                                    <a href='/forgotPass' class="forgot-reset-a"> Reset Password </a>
+                                    </div>
                                     
                                 </form>
                                 <br />
                             </section>
 
                         </div>
-                        <div class="col-lg-5">
-                            <div class="divider-custom">
-                                <div class="divider-custom-line divider-bg-color"></div>
-                                <div class="divider-custom-icon"><i class="fas fa-user-secret divider-color"></i></div>
-                                <div class="divider-custom-line divider-bg-color"></div>
+                        <div class="col-lg-6">
+                            <div>
+                            <img src="https://media.istockphoto.com/id/914788014/photo/businessman-using-tablet-and-set-up-network-connection-with-shield-guard-to-protected-from.jpg?s=612x612&w=0&k=20&c=sTSQpPMueaVhbLEBDNJYyQwfXy9i7bhLNC52U6YlI0s=" alt="Los Angeles" width="500" height="300"/>
                             </div>
-                            <h4>New User?</h4>
-                            <h5><a href='/community'>Create Account</a></h5>
-                            <h4>Forgotten Password?</h4>
-                            <h5><a href='/forgotPass'>Reset Password</a></h5>
                         </div>
                     </div>
                 </div>

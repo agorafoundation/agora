@@ -42,7 +42,7 @@
                         <div class="col-lg-7">
                             <!--<img src="/assets/img/henry-ix-trans-circle-800x800.png" class="img-fluid" /> -->
                             
-                            <section>
+                            <section class ="signincontainer">
 
                                 <% if(locals.redirect) { %>
                                 <form action="/user?redirect=<%- locals.redirect %>" method="POST">
@@ -65,11 +65,12 @@
                                         <br />
 
                                         <input type="input" class="form-control form-control-lg" name="firstName" id="firstName" placeholder="First Name" required>
+                                        <br />
                                         <input type="input" class="form-control form-control-lg" name="lastName" id="lastName" placeholder="Last Name" required>
                                         <br />
                                         <input type="password" class="form-control form-control-lg" id="psw" name="psw" placeholder="Password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="passwordToggle">
+                                            <input type="checkbox" class="custom-control-input" id="passwordToggle"> <br/>
                                             <label class="custom-control-label" for="passwordToggle">Show Password</label>
                                         </div>
                                         <div id="passwordRequirementsMessage" class="alert-message alert-message-success">
