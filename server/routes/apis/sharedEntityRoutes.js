@@ -17,4 +17,10 @@ router.route( '/' )
     }
     );
 
+router.route( '/copy/' ) 
+    .post( ( req, res ) => { 
+        sharedController.saveCopiedEntity( req, res );
+    }
+    );
+
 module.exports = router;
