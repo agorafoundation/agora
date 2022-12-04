@@ -45,21 +45,31 @@ exports.getAllVisibleWorkspaces = async ( req, res ) => {
 };
 
 exports.getWorkspaceById = async ( req, res ) => {
-    // get all the active workspaces by user 
-    let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, true );
-    if( workspace ) {
-        res.set( "x-agora-message-title", "Success" );
-        res.set( "x-agora-message-detail", "Returned workspace by id" );
-        res.status( 200 ).json( workspace );
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
     }
-    else {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Workspace not found" );
-        res.status( 404 ).json( message );
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
     }
-    
-    
+
+    if( authUserId > 0 ) {
+        // get all the active workspaces by user
+        let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
+        if ( workspace ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned workspace by id" );
+            res.status( 200 ).json( workspace );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Workspace not found" );
+            res.status( 404 ).json( message );
+        }
+    }
 };
 
 exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
