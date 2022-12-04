@@ -113,6 +113,12 @@ const resourceRoutes = require( './apis/resourceRoutes' );
 router.use( '/resources', resourceRoutes );
 
 /**
+ * Shared Entity APIs
+ */
+const sharedEntityRoutes = require( './apis/sharedEntityRoutes' );
+router.use( '/shared', sharedEntityRoutes );
+
+/**
  * User APIs
  */
 const userRoutes = require( './apis/userRoutes' );

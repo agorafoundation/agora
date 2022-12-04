@@ -1,6 +1,7 @@
 -- Agora base database setup
 
 -- setup (as root / postgres)
+drop database agora;
 create database agora;
 create user agora with encrypted password 'agora';
 grant all privileges on database agora to agora;
