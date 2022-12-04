@@ -65,6 +65,7 @@ router.route( '/' )
     .get( async function ( req, res ) {
         // get all the workspaces for this owner
         let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+      
         //console.log("------------- owner workspaces: " + JSON.stringify(ownerWorkspaces));
         let workspace = null;
         

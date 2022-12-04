@@ -105,15 +105,15 @@ function createTopic( id, name ) {
         topicTitle.value = "Untitled";
     }
 
-    let saveIcon = document.createElement( "span" );
-    saveIcon.classList.add( "material-symbols-outlined" );
-    saveIcon.classList.add( "saveBtn" );
-    saveIcon.id = "save" + numTopics;
-    saveIcon.innerHTML = "save_as";
-    saveIcon.onclick = () => {
-        let resources = getResources();
-        updateTopic( topicTitle.value, resources );
-    };
+    // let saveIcon = document.createElement( "span" );
+    // saveIcon.classList.add( "material-symbols-outlined" );
+    // saveIcon.classList.add( "saveBtn" );
+    // saveIcon.id = "save" + numTopics;
+    // saveIcon.innerHTML = "save_as";
+    // saveIcon.onclick = () => {
+    //     let resources = getResources();
+    //     updateTopic( topicTitle.value, resources );
+    // };
 
     let topicDivider = document.createElement( "div" );
     topicDivider.id = "topic-divider";
@@ -169,7 +169,7 @@ function createTopic( id, name ) {
     // Append all elements accordingly
     newTab.appendChild( topicContent );
     topicContent.appendChild( topicTitle );
-    topicContent.appendChild( saveIcon );
+    // topicContent.appendChild( saveIcon );
     topicContent.appendChild( topicDivider );
     topicContent.appendChild( resourcesZone );
     resourcesZone.appendChild( newDropZone );
@@ -205,8 +205,9 @@ function createTopic( id, name ) {
                 console.log( data );
                 // map the resulting topic id to the value used in topic elements
                 topics[numTopics] = data.topicId;
-                console.log( topics );
                 numTopics++;
+                console.log( topics );
+                saveWorkspace( topics );
             } );
     }
     else{
@@ -216,8 +217,10 @@ function createTopic( id, name ) {
 }
 
 // Updates topic name
-function updateTopic( name, resources ) {
+function updateTopic( name ) {
     let isRequired = [];
+    let resources = getResources();
+    console.log( resources );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
@@ -230,7 +233,8 @@ function updateTopic( name, resources ) {
             "topicId": id,
             "topicName": name ? name : "Untitled",
             "resources": resources ? resources : [],
-            "resourcesRequired": [ true, true ]
+            "resourcesRequired": isRequired,
+            "isRequired": true
         } )
     } )
         .then( response => response.json() )
@@ -241,6 +245,32 @@ function updateTopic( name, resources ) {
 }
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
+/*WORKSPACE function */
+async function saveWorkspace( topics ){
+    const topicsList = Object.values( topics );
+
+
+    const [ isTopic, id ] = getPrefixAndId();
+    let name = document.getElementById( "workspace-title" ).value;
+    let description = document.getElementById( "workspace-desc" ).value;
+    fetch( "api/v1/auth/workspaces", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "workspaceId": id,
+            "workspaceName": name,
+            "workspaceDescription": description,
+            "topics": topicsList,
+            "active":true
+            
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+           
+        } );
+}
 
 
 
@@ -468,7 +498,6 @@ let resources = {};
 // create a new resource
 function createResource( name, type, imagePath, id ) {
     if( !id ){
-    
         fetch( "api/v1/auth/resources", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -487,10 +516,13 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                // console.log( JSON.stringify( data ) );
                 console.log( data.resourceId );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 numResources++;
+
+                // map the new resource to the associated topic
+                let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+                updateTopic( topicTitle );
             } );
     }
     else{
@@ -513,7 +545,6 @@ function getResources() {
     let topicResources = document.querySelectorAll( '.drop-zone__title' );
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
-        console.log( topicResources[i] );
         if ( topicResources[i].style.display == 'none' ) {
             console.log( true );
         }
@@ -567,10 +598,10 @@ function createTextArea( name, id ) {
         title.className = "drop-zone__title";
         title.id = "input-title" + numResources;
         if( name ){
-            title.placeholder = name;
+            title.value = name;
         }
         else{
-            title.placeholder = "Untitled";
+            title.value = "Untitled";
         }
 
         // Edit icon
@@ -605,7 +636,7 @@ function createTextArea( name, id ) {
 
         // Append elemets accordingly
         activeTab.appendChild( title );
-        activeTab.appendChild( newTabIcon );
+        // activeTab.appendChild( newTabIcon );
         activeTab.appendChild( editIcon );
         activeTab.appendChild( doneIcon );
         activeTab.appendChild( sunEditor );
@@ -857,13 +888,14 @@ function updateThumbnail( dropZoneElement, file ) {
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
+        console.log( file );
         getFile( file ).then( url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
-            // createResource( file.name, 2, testResult );
+            // createResource( file.name, 2, url );
 
             createResource( file.name, 2, file.name );
-            console.log( url ) ;
+            // console.log( url ) ;
         } );
         
         mydiv.style.height = "500px";
@@ -912,9 +944,9 @@ function updateThumbnail( dropZoneElement, file ) {
 function getFile( file ) {
     return new Promise( ( resolve ) => {
         const fileReader = new FileReader();
-        fileReader.onloadend = ( e ) => { 
-            const testResult = `url('${fileReader.result}')`;
-            resolve( testResult );
+        fileReader.onloadend = ( ) => { 
+            const res = `url('${fileReader.result}')`;
+            resolve( res );
         };
         fileReader.readAsDataURL( file );
     } );
@@ -928,14 +960,22 @@ function getFile( file ) {
 document.addEventListener( "click", function( e ) {
     // toggle edit and done icons
     if ( ( e.target.id ).includes( "done" ) ) {
+        let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
-        document.getElementById( "edit-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
-        sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]].readOnly( true );
+        document.getElementById( "edit-icon" + val ).style.display = "block";
+        console.log( sunEditor["sunEditor" + val] );
+        sunEditor["sunEditor" + val][1].readOnly( true );
+
+        // actively get sun editor contents and make updates
+        let contents = sunEditor["sunEditor" + val][1].getContents();
+        let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        updateSunEditor( id, title, contents );
     }
     if ( ( e.target.id ).includes( "edit" ) ) {
         e.target.style.display = "none";
         document.getElementById( "done-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
-        sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]].readOnly( false );
+        sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]][1].readOnly( false );
     }
 
     // open suneditor in new tab
@@ -970,6 +1010,15 @@ document.addEventListener( "click", function( e ) {
         closeTabBtn.id = "close-tab" + tabName.slice( -1 );
         closeTabBtn.innerHTML = "&times;";
         document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+    }
+} );
+
+document.addEventListener( 'keyup', ( e ) => {
+    let ele = document.getElementById( e.target.id );
+    if ( e.target.tagName == 'INPUT' ) {
+        if ( ele.className == 'topic-title' ) {
+            updateTopic( ele.value );
+        } 
     }
 } );
 
@@ -1223,7 +1272,6 @@ const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
     const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
     let topics = await response.json();
-    //console.log( topics )
    
     if ( topics.length > 0 ) {
         for ( let i = 0; i < topics.length; i++ ) {
@@ -1235,20 +1283,28 @@ const renderTopics = async ( workspace ) => {
 };
 
 //change order so the create stuff will all happen after information is gathered
+let val = 1;
 async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
+    console.log( resources );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
-                if( resources[i].resourceContentHtml.length > 0 ){
-                    sunEditorList[docType1Count][1].insertHTML( resources[i].resourceContentHtml );
+                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
+                    sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
+                    val++;
                 }
+
+
+            }
+            else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
+                console.log( resources[i].resourceName );
             }
             
         }
@@ -1258,10 +1314,8 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
-    //console.log( topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    //console.log( data );
     return data;
 }
 
