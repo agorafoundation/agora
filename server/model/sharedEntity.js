@@ -5,28 +5,28 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
-function sharedEntity() {
-    this.shared_entity_id = -1;
-    this.entity_id = -1;
-    this.entity_type = -1;
-    this.share_user_id = -1;
-    this.owner_user_id = -1;
-    this.permission_level = -1;
-    this.can_copy = false;
+function SharedEntity() {
+    this.sharedEntityId = -1;
+    this.entityId = -1;
+    this.entityType = -1;
+    this.shareUserId = -1;
+    this.ownerUserId = -1;
+    this.permissionLevel = -1;
+    this.canCopy = false;
 }
 
 exports.emptySharedEntity = () => {
-    return new sharedEntity();
+    return new SharedEntity();
 };
 
 exports.ormSharedEntity = function ( row ) {
     let sharedEntity = exports.emptySharedEntity();
-    sharedEntity.shared_entity_id = row.shared_entity_id;
-    sharedEntity.entity_id = row.entity_id;
-    sharedEntity.entity_type = row.entity_type;
-    sharedEntity.share_user_id = row.share_user_id;
-    sharedEntity.owner_user_id = row.owner_user_id;
-    sharedEntity.permission_level = row.permission_level;
-    sharedEntity.can_copy = row.can_copy;
+    sharedEntity.sharedEntityId = row.shared_entity_id;
+    sharedEntity.entityId = row.entity_id;
+    sharedEntity.entityType = row.entity_type;
+    sharedEntity.shareUserId = row.share_user_id;
+    sharedEntity.ownerUserId = row.owner_user_id;
+    sharedEntity.permissionLevel = row.permission_level;
+    sharedEntity.canCopy = row.can_copy;
     return sharedEntity;
 };
