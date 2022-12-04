@@ -219,6 +219,7 @@ function createTopic( id, name ) {
 function updateTopic( name ) {
     let isRequired = [];
     let resources = getResources();
+    console.log( resources );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
@@ -1280,6 +1281,7 @@ const renderTopics = async ( workspace ) => {
 };
 
 //change order so the create stuff will all happen after information is gathered
+let val = 1;
 async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
@@ -1292,9 +1294,12 @@ async function renderTopic( topic ) {
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    sunEditorList[docType1Count][1].insertHTML( resources[i].resourceContentHtml );
+                    sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
+                    val++;
                 }
+
+
             }
             else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
                 console.log( resources[i].resourceName );
