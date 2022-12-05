@@ -96,7 +96,7 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
             
             // Grab each topic by id and append it to our list of topics
             for ( let index in topicsIds ) {
-                let topics = await topicService.getTopicById( topicsIds[index], authUserId);
+                let topics = await topicService.getTopicById( topicsIds[index], authUserId );
 
                 if ( topics ){ // Ensure retrieval of topics
                     topicsList.push( topics );

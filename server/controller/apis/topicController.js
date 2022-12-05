@@ -112,7 +112,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
 
             // Grab each resource by id and append it to our list of resources.
             for ( let index in resourceIds ) {
-                let resource = await resourceService.getResourceById( resourceIds[index], authUserId);
+                let resource = await resourceService.getResourceById( resourceIds[index], authUserId );
 
                 if ( resource ){ // Ensure retrieval of resource.
                     resourcesList.push( resource );
