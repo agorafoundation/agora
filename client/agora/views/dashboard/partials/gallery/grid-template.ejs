@@ -86,6 +86,7 @@
          //render workspaces
             
          for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
+          
             renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", ["Doc1","doc2"]) 
          }
         %>
@@ -94,7 +95,7 @@
             renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
             
          }%>
-         <%= console.log(ownerWorkspaces[0]) %>
+
          
            
     </div>

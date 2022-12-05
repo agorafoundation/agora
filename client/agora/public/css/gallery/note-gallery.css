@@ -1,10 +1,10 @@
 .topic-badge {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .note-badge {
   float: right;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .gallery-col {
@@ -91,6 +91,10 @@
 .btn-workspace-topic-toggle {
   margin-left: auto;
   margin-bottom: 0;
+}
+
+.delete-icon{
+  color:#FE6464;
 }
 
 /*rename modal*/
