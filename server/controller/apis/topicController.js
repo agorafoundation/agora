@@ -112,7 +112,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
 
             // Grab each resource by id and append it to our list of resources.
             for ( let index in resourceIds ) {
-                let resource = await resourceService.getResourceById( resourceIds[index], false );
+                let resource = await resourceService.getResourceById( resourceIds[index], authUserId );
 
                 if ( resource ){ // Ensure retrieval of resource.
                     resourcesList.push( resource );
@@ -282,7 +282,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         topic.topicId = req.body.topicId;
 
         // see if this is a modification of an existing topic
-        let existingTopic = await topicService.getTopicById( topic.topicId, false );
+        let existingTopic = await topicService.getTopicById( topic.topicId, authUserId );
 
         // if this is an update, replace the topic with the existing one as the starting point.
         if( existingTopic ) {
@@ -298,7 +298,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
             topic.visibility = req.body.visibility;
         }
         else {
-            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
         }
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;

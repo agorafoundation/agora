@@ -321,7 +321,43 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Goal"
+                $ref: "#/components/schemas/Workspace"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /workspaces/topics/{workspaceId}:
+    get:
+      tags:
+        - Workspaces
+      summary: Retrieves all topics for a given workspace.
+      parameters:
+        - in: path
+          name: workspaceId
+          schema:
+            type: integer
+          description: id of the workspace to retrieve corresponding Topics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Topic/response"
         headers:
           x-agora-message-title:
             schema:
@@ -363,7 +399,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Topic"
+                  $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -392,7 +428,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/Topic"
+              $ref: "#/components/schemas/Topic/request"
       responses:
         "201":
           description: New Topic created
@@ -400,7 +436,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Topic"
+                $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -416,7 +452,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Topic"
+                $ref: "#/components/schemas/Topic/response"
           headers:
             x-agora-message-title:
               schema:
@@ -445,7 +481,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Topic"
+                  $ref: "#/components/schemas/Topic/response"
         headers:
           x-agora-message-title:
             schema:
@@ -479,7 +515,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Topic"
+                $ref: "#/components/schemas/Topic/response"
         headers:
           x-agora-message-title:
             schema:
@@ -556,7 +592,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Resource"
+                  $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -585,7 +621,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/Resouce"
+              $ref: "#/components/schemas/Resource/request"
       responses:
         "201":
           description: New Resource created
@@ -593,7 +629,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Resource"
+                $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -609,7 +645,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Resource"
+                $ref: "#/components/schemas/Resource/response"
           headers:
             x-agora-message-title:
               schema:
@@ -643,7 +679,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Resource"
+                $ref: "#/components/schemas/Resource/response"
         headers:
           x-agora-message-title:
             schema:
@@ -674,7 +710,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Resource"
+                  $ref: "#/components/schemas/Resource/response"
         headers:
           x-agora-message-title:
             schema:
@@ -708,7 +744,42 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/Resource"
+                $ref: "#/components/schemas/Resource/response"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    delete:
+      tags:
+        - Resources
+      summary: Deletes existing resource by Id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the resource to delete
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Success"
         headers:
           x-agora-message-title:
             schema:
@@ -1329,6 +1400,130 @@ components:
           completable: true
           visibility: 0
           topics: [2, 3]
+      response:
+        type: object
+        required:
+          - workspaceName
+        properties:
+          id:
+            type: integer
+            description: Assigned automatically for new workspaces, used to update existing workspace if provided
+            uniqueItems: true
+          version:
+            type: integer
+            description: tracks the changes to workspaces and is automatically incremented on updates
+          workspaceName:
+            type: string
+            description: The tag
+          workspaceDescription:
+            type: string
+            description: Description of the workspace
+          workspaceImage:
+            type: string
+            description: filename of the associated image for the workspace
+          active:
+            type: boolean
+            description: Active status, inactive items will not be returned in most queries
+          completable:
+            type: boolean
+            description: Completable workspaces monitor progress of users through topics
+          visibility:
+            type: integer
+            description: Public = 0, Shared = 1, Private = 0
+          createTime:
+            type: timestamp
+            description: Automatically generated timestamp of record creation
+          ownedBy:
+            type: integer
+            description: Id of the user that first generated the tag
+        example:
+          rid: 1
+          id: 1
+          workspaceVersion: 1
+          workspaceName: "Learn how to use Agora"
+          workspaceDescription: "Follow the tutorials and other resources provided to learn the Agora system."
+          workspaceImage: "myImage.png"
+          active: true
+          completable: true
+          visibility: 0
+          version: 1
+          createTime: 2022-11-02T19:37:11.672Z
+    Workspaces:
+      type: array
+      items:
+        $ref: "#/components/schemas/Workspace"
+    Topic:
+      request:
+        type: object
+        required:
+          - topicName
+          - resources
+          - resourceRequired
+        properties:
+          topicId:
+            type: integer
+            description: Assigned automatically for new topics, used to update existing topic if provided
+            uniqueItems: true
+          topicType:
+            type: integer
+            description: The type
+          topicName:
+            type: string
+            description: The tag
+          topicDescription:
+            type: string
+            description: Description of the topic
+          topicImage:
+            type: string
+            description: filename of the associated image for the topic
+          topicHtml:
+            type: string
+            description: Embedded HTML
+          assessmentId:
+            type: integer
+            description: assessment tag
+          activityId:
+            type: integer
+            description: activity tag
+          hasAssessment:
+            type: boolean
+            description: Whether topic has assessment
+          hasActivity:
+            type: boolean
+            description: Whether topic has activity
+          active:
+            type: boolean
+            description: Active status, inactive items will not be returned in most queries
+          visibility:
+            type: integer
+            description: Public = 2, Shared = 1, Private = 0
+          createTime:
+            type: timestamp
+            description: Automatically generated timestamp of record creation
+          ownedBy:
+            type: integer
+            description: Id of the user that first generated the tag
+          resources:
+            type: array
+            description: List of resources for the topic
+          resourceRequired:
+            type: array
+            description: Should always be true for every resource in resource array
+        example:
+          topicId: -1
+          topicType: 1
+          topicName: "Understanding the Agora Dashboard"
+          topicDescription: "Follow the tutorials and other resources provided to learn the Agora Dashboard"
+          topicImage: "myImage.png"
+          topicHtml: '<div><img src="myImage.png"></div>'
+          hasActivity: false
+          hasAssessment: false
+          activityId: -1
+          assessmentId: -1
+          active: true
+          visibility: 0
+          resources: [ 1, 2, 4 ]
+          resourcesRequired: [ true, true, true ]
       response:
         type: object
         required:

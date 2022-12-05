@@ -255,7 +255,7 @@ exports.saveResource = async ( req, res, redirect ) => {
             resource.visibility = req.body.visibility;
         }
         else {
-            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
         }
 
         resource.resourceType = req.body.resourceType;

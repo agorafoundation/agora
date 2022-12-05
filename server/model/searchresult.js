@@ -22,7 +22,7 @@ exports.ormSearchResult = ( type, element ) => {
     switch( type ) {
     case "user":
         result.type = "user";
-        result.id = element.userId;
+        result.id = element.id;
         result.main = element.username;
         result.secondary = element.firstName + " " + element.lastName;
         break;

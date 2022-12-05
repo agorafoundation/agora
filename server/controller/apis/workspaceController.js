@@ -11,6 +11,8 @@ let path = require( 'path' );
 
 // import models
 const Workspace = require( '../../model/workspace' );
+// import controllers
+const {errorController} = require( "./apiErrorController" );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -18,6 +20,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import services
 const workspaceService = require( '../../service/workspaceService' );
 const userService = require( '../../service/userService' );
+const topicService = require( '../../service/topicService' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -42,22 +45,80 @@ exports.getAllVisibleWorkspaces = async ( req, res ) => {
 };
 
 exports.getWorkspaceById = async ( req, res ) => {
-    // get all the active workspaces by user 
-    let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, true );
-    if( workspace ) {
-        res.set( "x-agora-message-title", "Success" );
-        res.set( "x-agora-message-detail", "Returned workspace by id" );
-        res.status( 200 ).json( workspace );
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
     }
-    else {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Workspace not found" );
-        res.status( 404 ).json( message );
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
     }
-    
-    
+
+    if( authUserId > 0 ) {
+        // get all the active workspaces by user
+        let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
+        if ( workspace ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned workspace by id" );
+            res.status( 200 ).json( workspace );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Workspace not found" );
+            res.status( 404 ).json( message );
+        }
+    }
 };
+
+exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
+    
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if( authUserId > 0 ){
+
+        // Check if valid workspaceId given.
+        let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
+        if( workspace ) {
+
+            let topicsList = [];
+            
+            // Get all topics Ids associated with our workspaceId.
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceId );
+            
+            // Grab each topic by id and append it to our list of topics
+            for ( let index in topicsIds ) {
+                let topics = await topicService.getTopicById( topicsIds[index], authUserId );
+
+                if ( topics ){ // Ensure retrieval of topics
+                    topicsList.push( topics );
+                }
+                else {
+                    console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( topicsList );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+        }
+    }
+
+};
+
 
 exports.deleteWorkspaceById = async ( req, res ) => {
 
@@ -104,7 +165,9 @@ exports.getAllWorkspacesForAuthUser = async ( req, res ) => {
 
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.id, false );
-
+    
+        
+      
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces for user" );
     res.status( 200 ).json( ownerWorkspaces );
@@ -152,7 +215,6 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
     let workspace = Workspace.emptyWorkspace();
     
-
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -188,42 +250,29 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
             else {
                 console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
             }
-
         }
+
+        // Array of topics sent in request body that correspond to the workspace
+        workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
         if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }
         else {
-            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=0,Shared=1,Private=2" );
+            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
         }
         workspace.workspaceName = req.body.workspaceName;
         workspace.workspaceDescription = req.body.workspaceDescription;
         workspace.active = req.body.active;
         workspace.completable = req.body.completable;
-        
-        // check to see if the incoming message format is from the UI form or the API for active
-        /*
-        if( req.body.workspaceActive ) {
-            workspace.active = ( req.body.active == "on" ) ? true : false;
-        }
-        else if ( req.body.active ) {
-            workspace.active = req.body.active;
-        }
-        */
-
-        // check to see if the incoming message format is from the UI form or the API for completable
-        /*
-        if( req.body.workspaceCompletable ) {
-            workspace.completable = ( req.body.workspaceCompletable == "on" ) ? true : false;
-        }
-        else if ( req.body.completable ) {
-            workspace.completable = req.body.completable;
-        }
-        */
 
         workspace = await workspaceService.saveWorkspace( workspace );
+
+        if ( req.body.topics ){
+            let topicsSaved = await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
+            console.log( "@ -- @" + topicsSaved );
+        }
 
         /**
          * Once the workspace is saved, save the image if it is passed in the multipart form data

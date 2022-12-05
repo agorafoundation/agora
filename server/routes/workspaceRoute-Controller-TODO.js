@@ -83,7 +83,7 @@ router.route( '/' )
 router.route( '/:workspaceId' )
     .get( async ( req, res ) => {
         
-        // get the topic data
+        // get the workspace data
         let workspaceId = req.params.workspaceId;
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, true );
         //console.log("workspace: " + JSON.stringify(workspace));
@@ -94,6 +94,7 @@ router.route( '/:workspaceId' )
         req.session.save();
     }
     );
+
 
 
 router.route( '/enroll/:workspaceId' )

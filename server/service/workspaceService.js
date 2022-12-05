@@ -29,7 +29,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     if( ownerId > -1 ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 0 ) order by gl.id;";
+        const text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $2 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 2 ) order by gl.id;";
         const values = [ ownerId, true ];
 
         let workspaces = [];
@@ -69,7 +69,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
-        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 0 ) order by gl.id;";
+        let text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 group by id) goalmax on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 2 ) order by gl.id;";
         let values = [ true, ownerId ];
 
         let workspaces = [];
@@ -158,24 +158,25 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
 
 /**
  * Get an active workspace by id including associated topics
- * @param {Integer} workspaceId 
+ * @param {Integer} workspaceId
+ * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @param {boolean} isActive - if true require that the topic is active to return, false returns all topics both active and in-active.
  * @returns workspace with topics
  */
-exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, isActive ) => {
+exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActive ) => {
 
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 group by id) goalmax "
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where id = $1 AND (owned_by = $2 OR visibility = 2) group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-        values = [ workspaceId ];
+        values = [ workspaceId, ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 group by id) goalmax "
+        text = "select * from goals gl INNER JOIN (SELECT id, MAX(goal_version) AS max_version FROM goals where active = $1 AND id = $2 AND (owned_by = $3 OR visibility = 2) group by id) goalmax "
         + "on gl.id = goalmax.id AND gl.goal_version = goalmax.max_version order by gl.id;";
-        values = [ true, workspaceId ];
+        values = [ true, workspaceId, ownerId ];
     }
 
 
@@ -229,6 +230,32 @@ exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
             workspace = Workspace.ormWorkspace( res.rows[0] );
                   
         }
+        return workspace;
+        
+    }
+    catch( e ) {
+        console.log( e.stack );
+    }
+};
+
+/**
+ * Get the most recent version of an workspace by id
+ * @param {Integer} workspaceId 
+ * @returns workspace
+ */
+exports.getWorkspaceById = async ( workspaceId ) => {
+   
+    let text = "select * from goals WHERE id = $1;";
+    let values = [ workspaceId ];
+    try {
+        let workspace = "";
+         
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            workspace = Workspace.ormWorkspace( res.rows[0] );
+                  
+        }
+       
         return workspace;
         
     }
@@ -340,6 +367,65 @@ exports.saveWorkspace = async ( workspace ) => {
         return false;
     }
 };
+
+
+/**
+ * Will save or update topics associated with a workspace.  
+ * Topics are passed as an Array of integers.  This function will replace any existing topics for
+ * the workspace with the topics represented by the topic id's passed.
+ * @param {Integer} workspaceId id of the topic 
+ * @param {*} topicIds Array of topic id's to be associated with the woorkspace
+ * @returns true for success / false for failure
+ */                                               
+exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRequired ) {
+    // get the most recent version of the workspace
+    let text = "SELECT * from goals where id = $1";
+    let values = [ workspaceId ];
+    try {
+         
+        let res = await db.query( text, values );
+        
+        if( res.rowCount > 0 ) {
+
+            // first remove current resources associated with the topic
+            text = "DELETE FROM goal_path WHERE goal_rid = $1";
+            values = [ workspaceId ];
+
+            let res2 = await db.query( text, values );
+
+            // now loop through the array and add the new topics
+            /**
+             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+             * This probably means having the pathway be an array of objects containing id and isRequired
+             */
+            if( topicIds && topicIds.length > 0 ) {
+                for( let i=0; i < topicIds.length; i++ ) {  
+
+                    let isRequired = true;
+                    // always setting to true for now
+                    //if( topicsRequired.length > i ) {  
+                    //    isRequired = topicsRequired[i];
+                    //}
+
+                    text = "INSERT INTO goal_path (goal_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                    values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
+
+                    let res3 = await db.query( text, values );
+
+                    console.log( "In Loop - " + JSON.stringify( res3 ) );
+
+                }
+            }
+        }
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
+
+    return true;
+};
+
 
 /**
  * Will save or update pathway for workspace.  Pathway represents the topics associated with a workspace
@@ -717,4 +803,31 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
         console.log( e.stack );
         return false;
     }  
+};
+// Takes in a workspaceId and finds each topicId associated with it.
+exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
+
+    let text = "SELECT * from goal_path where goal_rid = $1";
+    let values = [ workspaceId ];
+    let topicIds = [];
+
+    try {
+
+        let res = await db.query( text, values );
+
+        // console.log( " RESPONSE : " + JSON.stringify( res ) );
+        if ( res.rowCount > 0 ){
+            for ( let i=0; i<res.rowCount; i++ ){
+                topicIds[i] = res.rows[i].topic_id;
+            }
+        }
+
+    }
+    catch ( e ) {
+        console.log( e.stack );
+        return false;
+    }
+
+    return topicIds;
+       
 };

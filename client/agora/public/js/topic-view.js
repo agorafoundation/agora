@@ -6,11 +6,9 @@ let activeHeightList = [];
 
 // Creates a height object for each open topic
 function createNewActiveHeight() {
-    let tabElements = document.querySelectorAll( ".tabcontent" );
-    activeHeightObj[tabElements[tabElements.length - 1].id] = 0;
-    activeHeightList.push(
-        activeHeightObj[tabElements[tabElements.length - 1].id]
-    );
+    let tabElements = document.querySelectorAll( '.tabcontent' );
+    activeHeightObj[tabElements[tabElements.length-1].id] = 0;
+    activeHeightList.push( activeHeightObj[tabElements[tabElements.length-1].id] );
 }
 
 // Implemented to ensure resources fill a 1200px space first and then grows as needed
@@ -18,90 +16,35 @@ function checkActiveHeight() {
     if ( activeHeightObj[tabName] < 1200 ) {
         let filler = document.createElement( "div" );
         filler.setAttribute( "id", "filler-space" );
-        filler.style.height = 1200 - activeHeightObj[tabName] + "px";
+        filler.style.height = ( 1200-activeHeightObj[tabName] ) + "px";
         activeTab.appendChild( filler );
     }
 }
 
-/* Tab Functions ------------------------------------------------------------------- */
-// Workspace empty state
-let activeTab = document.getElementById( "resources-zone0" );
 
-// Change tabs
-function openTab( name ) {
-    tabName = name;
-    let i, tabcontent, tablinks;
 
-    tabcontent = document.getElementsByClassName( "tabcontent" );
-    for ( i = 0; i < tabcontent.length; i++ ) {
-        tabcontent[i].style.display = "none";
-    }
 
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName( "tablinks" );
-    for ( i = 0; i < tablinks.length; i++ ) {
-        tablinks[i].className = tablinks[i].className.replace( " active", "" );
-        tablinks[i].style.backgroundColor = "#f1f1f1";
-    }
 
-    activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
+/* Topic Functions -------------------------------------------------------------------------- */
+let numTopics = 1;
+let topics = {};
 
-    // Show the current tab
-    document.getElementById( name ).style.display = "block";
-
-    // Set tab button to active
-    for ( i = 0; i < tablinks.length; i++ ) {
-        if ( tablinks[i].id.slice( -1 ) == name.slice( -1 ) ) {
-            tablinks[i].className += " active";
-            tablinks[i].style.backgroundColor = "#ddd";
-        }
-    }
-}
-
-let currTopicID = 1;
-async function createTopic() {
-    fetch( "api/v1/auth/topics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify( {
-            topicType: 1,
-            topicName: "Untitled",
-            topicDescription: "",
-            topicHtml: "",
-            assessmentId: 1,
-            hasActivity: false,
-            hasAssessment: false,
-            activityId: 1,
-            active: true,
-            visibility: 0,
-            createTime: Date.now(),
-        } ),
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( data ) => {
-            //console.log(JSON.stringify(data));
-            //console.log(data.topicId);
-        } );
-    createTopicTab( "Untitled" );
-}
-async function createTopicTab( name ) {
+// Creates a new topic
+function createTopic( id, name ) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
-    let lastTab = tabContent[tabContent.length - 1];
+    let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
 
     // Create the tab content and append to last tab
-    newTab.id = "topic" + currTopicID;
+    newTab.id = "topic" + numTopics;
     newTab.className = "tabcontent";
 
     // If no topics are open...
     if ( lastTab == null ) {
         let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
-        workspaceEmptyState.parentNode.insertBefore(
-            newTab,
-            workspaceEmptyState.nextSibling
-        );
+        workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
         workspaceEmptyState.style.display = "none";
-        document.getElementById( "topic-background" ).style.backgroundColor = "#ddd";
+        document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
     }
     else {
         lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
@@ -150,8 +93,33 @@ async function createTopicTab( name ) {
     let topicContent = document.createElement( "div" );
     topicContent.className = "topic-content";
 
+    let topicTitle = document.createElement( "input" );
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.style.borderRadius = "5px";
+    topicTitle.id = "topic-title" + numTopics;
+    if( name ){
+        topicTitle.value = name;
+    }
+    else{
+        topicTitle.value = "Untitled";
+    }
+
+    // let saveIcon = document.createElement( "span" );
+    // saveIcon.classList.add( "material-symbols-outlined" );
+    // saveIcon.classList.add( "saveBtn" );
+    // saveIcon.id = "save" + numTopics;
+    // saveIcon.innerHTML = "save_as";
+    // saveIcon.onclick = () => {
+    //     let resources = getResources();
+    //     updateTopic( topicTitle.value, resources );
+    // };
+
+    let topicDivider = document.createElement( "div" );
+    topicDivider.id = "topic-divider";
+
     let resourcesZone = document.createElement( "div" );
-    resourcesZone.id = "resources-zone" + currTopicID;
+    resourcesZone.id = "resources-zone" + numTopics;
     resourcesZone.className = "resources-zone";
 
     let emptyState = document.createElement( "div" );
@@ -171,25 +139,25 @@ async function createTopicTab( name ) {
     // Create a new tab button
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
-    tabBtn.id = "tablinks" + currTopicID;
-    if ( name ) {
+    tabBtn.id = "tablinks" + numTopics;
+    if( name ){
         tabBtn.innerHTML = name;
     }
-    else {
-        tabBtn.innerHTML = "Topic " + currTopicID;
+    else{
+        tabBtn.innerHTML = "Untitled";
     }
 
     // Create close tab button
     let closeTabBtn = document.createElement( "span" );
     closeTabBtn.className = "close-tab";
-    closeTabBtn.id = "close-tab" + currTopicID;
+    closeTabBtn.id = "close-tab" + numTopics;
     closeTabBtn.innerHTML = "&times;";
     tabBtn.appendChild( closeTabBtn );
 
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        }
+        } 
         else {
             openTab( newTab.id );
         }
@@ -200,6 +168,9 @@ async function createTopicTab( name ) {
 
     // Append all elements accordingly
     newTab.appendChild( topicContent );
+    topicContent.appendChild( topicTitle );
+    // topicContent.appendChild( saveIcon );
+    topicContent.appendChild( topicDivider );
     topicContent.appendChild( resourcesZone );
     resourcesZone.appendChild( newDropZone );
     resourcesZone.appendChild( emptyDropZone );
@@ -207,10 +178,143 @@ async function createTopicTab( name ) {
     emptyState.appendChild( label1 );
     emptyState.appendChild( label2 );
 
-    currTopicID++;
     createNewActiveHeight();
     openTab( newTab.id );
+
+    if( !id ) {
+        fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "topicType": 1,
+                "topicName": "Untitled",
+                "topicDescription": "",
+                "topicHtml": "",
+                "assessmentId": 1,
+                "hasActivity": false,
+                "hasAssessment": false,
+                "activityId": 1,
+                "active": true,
+                "visibility": 0,
+                "resources": [],
+                "createTime": Date.now(),
+            } )
+        } )
+            .then( response => response.json() )
+            .then( ( data ) => {
+                console.log( data );
+                // map the resulting topic id to the value used in topic elements
+                topics[numTopics] = data.topicId;
+                numTopics++;
+                console.log( topics );
+                saveWorkspace( topics );
+            } );
+    }
+    else{
+        topics[numTopics] = id;
+        numTopics ++;
+    }
 }
+
+// Updates topic name
+function updateTopic( name ) {
+    let isRequired = [];
+    let resources = getResources();
+    console.log( resources );
+    for( let i = 0; i < resources.length; i++ ){
+        isRequired.push( "true" );
+    }
+    console.log( isRequired );
+    let id = getCurrTopicID();
+    fetch( "api/v1/auth/topics", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "topicId": id,
+            "topicName": name ? name : "Untitled",
+            "resources": resources ? resources : [],
+            "resourcesRequired": isRequired,
+            "isRequired": true
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+            console.log( data.topicId );
+        } );
+}
+/* END Topic Functions -------------------------------------------------------------------------------------- */
+
+/*WORKSPACE function */
+async function saveWorkspace( topics ){
+    const topicsList = Object.values( topics );
+
+
+    const [ isTopic, id ] = getPrefixAndId();
+    let name = document.getElementById( "workspace-title" ).value;
+    let description = document.getElementById( "workspace-desc" ).value;
+    fetch( "api/v1/auth/workspaces", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "workspaceId": id,
+            "workspaceName": name,
+            "workspaceDescription": description,
+            "topics": topicsList,
+            "active":true
+            
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+           
+        } );
+}
+
+
+
+
+
+
+/* Tab Functions -------------------------------------------------------------------------------------------- */
+// Workspace empty state
+let activeTab = document.getElementById( "resources-zone0" );
+
+
+// Change tabs
+function openTab( name ) {
+    tabName = name;
+    console.log( tabName );
+    let i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName( "tabcontent" );
+    for ( i = 0; i < tabcontent.length; i++ ) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName( "tablinks" );
+    for ( i = 0; i < tablinks.length; i++ ) {
+        tablinks[i].className = tablinks[i].className.replace( " active", "" );
+        tablinks[i].style.backgroundColor = "#17191a";
+        tablinks[i].style.color = "white";
+    }
+
+    activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
+
+    // Show the current tab
+    document.getElementById( name ).style.display = "block";
+
+    // Set tab button to active
+    for ( i=0; i<tablinks.length; i++ ) {
+        if ( tablinks[i].id.slice( -1 ) == name.slice( -1 ) ) {
+            tablinks[i].className += " active";
+            tablinks[i].style.backgroundColor = "#3f3f3f";
+        }
+    }
+}
+
 function closeTab( id ) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let tablinks = document.getElementsByClassName( "tablinks" );
@@ -218,7 +322,7 @@ function closeTab( id ) {
     let tabLocation = -1;
 
     let i = 0;
-    while ( i < tabContent.length ) {
+    while ( i<tabContent.length ) {
     // Find the tab content to be deleted
         if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
             // Check if the target tab is the active tab
@@ -231,19 +335,15 @@ function closeTab( id ) {
     }
 
     if ( isActiveTab ) {
-        if ( tabLocation + 1 != tabContent.length ) {
-            // Open the tab to the right if there is one
-            openTab( tabContent[tabLocation + 1].id );
+        if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
+            openTab( tabContent[tabLocation+1].id );
         }
-        else if ( tabLocation - 1 >= 0 ) {
-            // Otherwise, open the tab to the left
-            openTab( tabContent[tabLocation - 1].id );
+        else if ( tabLocation-1 >= 0 ) {                                                          // Otherwise, open the tab to the left
+            openTab( tabContent[tabLocation-1].id );
         }
-        else if ( tabLocation - 1 < 0 ) {
-            // Show the workspace empty state if closing only open tab
+        else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
-            document.getElementById( "topic-background" ).style.backgroundColor =
-        "#f1f1f1";
+            document.getElementById( "topic-background" ).style.backgroundColor = "#17191a";
             activeTab = document.getElementById( "resources-zone0" );
         }
     }
@@ -252,10 +352,11 @@ function closeTab( id ) {
     tablinks[tabLocation].remove();
     tabContent[tabLocation].remove();
 }
+
 function getTabLocation( id ) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let location = -1;
-    for ( let i = 0; i < tabContent.length; i++ ) {
+    for ( let i=0; i<tabContent.length; i++ ) {
         if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
             location = i;
         }
@@ -263,6 +364,12 @@ function getTabLocation( id ) {
     return location;
 }
 /* END Tab Functions ------------------------------------------------------------------- */
+
+
+
+
+
+
 
 /* Tag Functions ------------------------------------------------------------------- */
 document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
@@ -306,13 +413,13 @@ function newTag( tagName ) {
     // check that selected tag doesn't already exist
     let isActiveTag = false;
     for ( let i = 0; i < currTagList.length; i++ ) {
-        if ( currTagList[i] === tagName ) {
+        if ( currTagList[i] ===  tagName ) {
             isActiveTag = true;
         }
     }
     if ( !isActiveTag ) {
         let wasSearched = false;
-        for ( let i = 0; i < searchList.length; i++ ) {
+        for ( let i=0; i<searchList.length; i++ ) {
             if ( searchList[i].innerHTML === tagName ) {
                 wasSearched = true;
             }
@@ -335,7 +442,7 @@ function newTag( tagName ) {
 
 // Add new tag by pressing enter key
 let ul = document.querySelector( ".tag-list" );
-document.addEventListener( "keyup", function ( e ) {
+document.addEventListener( "keyup", function( e ) {
     const tagName = document.getElementById( "mySearch" ).value;
     if ( e.key == "Enter" && ul.style.display == "block" ) {
         newTag( tagName );
@@ -352,7 +459,7 @@ function addTag( selectedTag ) {
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
-
+        
     // Create remove tag button
     let removeTagBtn = document.createElement( "span" );
     removeTagBtn.className = "close-tag";
@@ -361,9 +468,9 @@ function addTag( selectedTag ) {
     removeTagBtn.style.color = "#aaa";
 
     removeTagBtn.addEventListener( "click", () => {
-    // Get the id portion with the tag name
+        // Get the id portion with the tag name
         document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        for ( let i = 0; i < currTagList.length; i++ ) {
+        for ( let i=0; i<currTagList.length; i++ ) {
             if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
                 currTagList[i] = "";
             }
@@ -379,18 +486,87 @@ function addTag( selectedTag ) {
     newTag.appendChild( removeTagBtn );
     currTags.appendChild( newTag );
 }
-/* END Tag Functions ------------------------------------------------------------------- */
+/* END Tag Functions ----------------------------------------------------------------------------------- */
 
-/* Suneditor Creation -----------------------------------------------------------*/
-let numSunEditors = 0;
-let doneIconList = [];
-let editIconList = [];
-let newTabIconList = [];
-async function createTextArea( resourceName ) {
-    // Text area has to be created before suneditor initialization,
+
+
+
+
+
+/* Resource Functions --------------------------------------------------------------------------------- */
+let resources = {};
+// create a new resource
+function createResource( name, type, imagePath, id ) {
+    if( !id ){
+        fetch( "api/v1/auth/resources", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "resourceId": -1,
+                "resourceType": type,
+                "resourceName": name ? name : "Untitled",
+                "resourceDescription": "",
+                "resourceContentHtml": "",
+                "resourceImage": imagePath ? imagePath : "",
+                "resourceLink": "",
+                "isRequired": true,
+                "active": true,
+                "visibility": 0
+            } )
+        } )
+            .then( response => response.json() )
+            .then( ( data ) => {
+                console.log( data.resourceId );
+                resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+                numResources++;
+
+                // map the new resource to the associated topic
+                let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+                updateTopic( topicTitle );
+            } );
+    }
+    else{
+        resources[numResources] = [ id, getCurrTopicID() ];
+        numResources ++;
+       
+    }
+   
+}
+
+// get the topic id based on the currently visible topic tab
+function getCurrTopicID() {
+    let topicVal = tabName.match( /\d+/g )[0];
+    let topicID = topics[topicVal];
+    return topicID;
+}
+
+// returns an array of resource id's within a given topic, sorted by position
+function getResources() {
+    let topicResources = document.querySelectorAll( '.drop-zone__title' );
+    let sorted = [];
+    for ( let i=0; i<topicResources.length; i++ ) {
+        if ( topicResources[i].style.display == 'none' ) {
+            console.log( true );
+        }
+        let val = topicResources[i].id.match( /\d+/g )[0];
+        let propertyNames = Object.getOwnPropertyNames( resources );
+        for ( let j=0; j<propertyNames.length; j++ ) {
+            if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
+                sorted.push ( resources[val][0] );
+            }
+        }
+    }
+    console.log( sorted );
+    return sorted;
+}
+
+// Create the suneditor text area
+let numResources = 1;
+function createTextArea( name, id ) {
+    // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
-    let promise = new Promise( ( resolve ) => {
-    // workspace empty state
+    let promise =  new Promise( ( resolve ) => {
+        // workspace empty state
         if ( activeTab.id == "resources-zone0" ) {
             createTopic();
         }
@@ -417,60 +593,54 @@ async function createTextArea( resourceName ) {
         createDropZoneEventListeners( newDropZone, newDropZoneInput );
 
         // Title element
-        let title = document.createElement( "input" );
+        let title = document.createElement( 'input' );
         title.type = "text";
         title.className = "drop-zone__title";
-        if ( resourceName ) {
-            title.placeholder = resourceName;
+        title.id = "input-title" + numResources;
+        if( name ){
+            title.value = name;
         }
-        else {
-            title.placeholder = "Untitled";
+        else{
+            title.value = "Untitled";
         }
 
         // Edit icon
-        let editIcon = document.createElement( "span" );
+        let editIcon = document.createElement( 'span' );
         editIcon.setAttribute( "class", "material-symbols-outlined" );
-        editIcon.setAttribute( "id", "edit-icon" + numSunEditors );
+        editIcon.setAttribute( "id", "edit-icon" + numResources );
         editIcon.innerHTML = "edit";
         editIcon.style.display = "none";
 
         // Done icon
-        let doneIcon = document.createElement( "span" );
+        let doneIcon = document.createElement( 'span' );
         doneIcon.setAttribute( "class", "material-symbols-outlined" );
-        doneIcon.setAttribute( "id", "done-icon" + numSunEditors );
+        doneIcon.setAttribute( "id", "done-icon" + numResources );
         doneIcon.innerHTML = "done";
 
         // New Tab
-        let newTabIcon = document.createElement( "span" );
+        let newTabIcon = document.createElement( 'span' );
         newTabIcon.setAttribute( "class", "material-symbols-outlined" );
-        newTabIcon.setAttribute( "id", "open-tab-icon" + numSunEditors );
+        newTabIcon.setAttribute( "id", "open-tab-icon" + numResources );
         newTabIcon.innerHTML = "open_in_new";
 
         // Suneditor textarea
         let sunEditor = document.createElement( "textarea" );
-        sunEditor.setAttribute( "id", "sunEditor" + numSunEditors );
+        sunEditor.setAttribute( "id", "sunEditor" + numResources );
 
         // Remove empty state if necessary
         if ( activeTab.childElementCount > 0 ) {
             let location = getTabLocation( tabName );
-            document.querySelectorAll( ".empty-topic-dropzone" )[
-                location
-            ].style.display = "none";
-            document.querySelectorAll( ".first-dropzone" )[location].style.display =
-        "block";
+            document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+            document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
         }
 
         // Append elemets accordingly
         activeTab.appendChild( title );
-        activeTab.appendChild( newTabIcon );
+        // activeTab.appendChild( newTabIcon );
         activeTab.appendChild( editIcon );
         activeTab.appendChild( doneIcon );
         activeTab.appendChild( sunEditor );
         activeTab.appendChild( newDropZone );
-
-        doneIconList.push( doneIcon );
-        editIconList.push( editIcon );
-        newTabIconList.push( newTabIcon );
 
         // Maintain a baseline height until 1200px is exceeded
         activeHeightObj[tabName] += 800;
@@ -478,72 +648,125 @@ async function createTextArea( resourceName ) {
         resolve( "TA created" );
     } );
 
-    promise.then( ( value ) => {
-    //console.log(value);
-        createSunEditor();
-        numSunEditors++;
-    } );
-}
-
-let sunEditor = {};
-let sunEditorList = [];
-const createSunEditor = async () => {
-    // eslint-disable-next-line no-undef
-    sunEditor["sunEditor" + numSunEditors] = SUNEDITOR.create(
-        "sunEditor" + numSunEditors,
-        {
-            toolbarContainer: "#toolbar_container",
-            showPathLabel: false,
-            defaultTag: "p",
-            charCounter: true,
-            charCounterLabel: "Char Count",
-            width: "100%",
-            height: "auto",
-            minHeight: "800px",
-            defaultStyle: "font-size:15px;",
-            buttonList: [
-                [ "undo", "redo", "font", "fontSize", "formatBlock" ],
-                [ "fontColor", "hiliteColor", "textStyle" ],
-                [
-                    "bold",
-                    "underline",
-                    "italic",
-                    "strike",
-                    "subscript",
-                    "superscript",
-                    "removeFormat",
-                ],
-                [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
-                [
-                    "link",
-                    "image",
-                    "video",
-                    "showBlocks",
-                    "codeView",
-                    "preview",
-                    "print",
-                    "save",
-                    "fullScreen",
-                ],
-            ],
-            mode: "classic",
-            // eslint-disable-next-line no-undef
-            lang: SUNEDITOR_LANG.en,
-            "lang(In nodejs)": "en",
-            callBackSave: function ( contents ) {
-                alert( contents );
-                console.log( contents );
-            },
+    promise.then(
+        ( value ) => {
+            console.log( value );
+            createSunEditor();
+            if( name ){
+                createResource( name, 1, null, id  );
+            }
+            else{
+                createResource( null, 1, null );
+            }
         }
     );
+}
 
-    sunEditorList.push( sunEditor["sunEditor" + numSunEditors] );
+
+// Create the sun editor and initialize within designated text area
+let sunEditor = {};
+let sunEditorList = [];
+const createSunEditor = async() => {
+    // eslint-disable-next-line no-undef
+    sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
+        toolbarContainer: "#toolbar_container",
+        showPathLabel: false,
+        defaultTag: "p",
+        charCounter: true,
+        charCounterLabel: "Char Count",
+        width: "100%",
+        height: "auto",
+        minHeight: "800px",
+        defaultStyle: "font-size:15px;",
+        buttonList: [
+            [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
+            [ "fontColor", "hiliteColor", "textStyle" ],
+            [
+                "bold",
+                "underline",
+                "italic",
+                "strike",
+                "subscript",
+                "superscript",
+                "removeFormat",
+            ],
+            [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
+            [
+                "showBlocks",
+                "codeView",
+                "preview",
+                "print",
+                "save",
+                "fullScreen",
+            ],
+        ],
+        mode: "classic",
+        // eslint-disable-next-line no-undef
+        lang: SUNEDITOR_LANG.en,
+        "lang(In nodejs)": "en",
+        callBackSave: function ( contents ) {
+            alert( contents );
+            console.log( contents );
+        },
+    } ) ];
+
+    sunEditorList.push( sunEditor["sunEditor"+numResources] );
 };
-/* END Suneditor Creation -----------------------------------------------------------*/
 
-/* Suneditor onload functions */
-async function fillDocument() {}
-/*END Suneditor onload functions */
+// update the sun editor contents
+function updateSunEditor( id, name, contents ) {
+    fetch( "api/v1/auth/resources", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "resourceId":  id,
+            "resourceType": 1,
+            "resourceName": name ? name : "Untitled",
+            "resourceDescription": "",
+            "resourceContentHtml": contents ? contents : "",
+            "resourceImage": "",
+            "resourceLink": "",
+            "isRequired": false,
+            "active": true,
+            "visibility": 0
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( JSON.stringify( data ) );
+        } );
+}
+
+function getResourceID( val ) {
+    let resourceID = resources[val][0];
+    return resourceID;
+}
+
+/* Suneditor Events ------------------------------------------------------*/
+document.addEventListener( "mousemove", function() {
+    
+    for ( let i=0; i<sunEditorList.length; i++ ) {
+        sunEditorList[i][1].onChange = () => {
+            sunEditorList[i][1].save();
+
+            // actively get sun editor contents and make updates
+            let contents = sunEditorList[i][1].getContents();
+            let id = getResourceID( sunEditorList[i][0] );
+            let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            updateSunEditor( id, title, contents );
+        };
+        sunEditorList[i][1].onKeyUp = ( e ) => {
+            if ( e.key == "/" ) {
+                sunEditorList[i].insertHTML(
+                    '<div><button style=background:pink;>Hello</button></div>',
+                    true
+                );
+            }
+        };
+    }
+} );
+/* END Suneditor Events ---------------------------------------------------------------------------------*/
+
 
 /* Drag and Drop ------------------------------------------------------------------------- */
 /**
@@ -568,10 +791,8 @@ function createDropZoneEventListeners( dropZone, input ) {
 
         dropZone.firstElementChild.style.display = "block";
 
-        if (
-            activeTab.childElementCount == 1 ||
-      dropZone.className.includes( "empty-topic-dropzone" )
-        ) {
+        if ( activeTab.childElementCount == 1 ||
+      dropZone.className.includes( "empty-topic-dropzone" ) ) {
             dropZone.classList.add( "drop-zone--over" );
             dropZone.firstElementChild.style.display = "none";
         }
@@ -611,9 +832,9 @@ function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
-    }
+    } 
     // Div that holds the thumbnail
-    let mydiv = document.createElement( "div" );
+    let mydiv = document.createElement( 'div' );
     mydiv.className = "drop-zone-show";
 
     // Thumbnail element
@@ -622,20 +843,20 @@ function updateThumbnail( dropZoneElement, file ) {
     thumbnailElement.classList.add( "drop-zone__thumb" );
 
     // File input element
-    let inputfile = document.createElement( "input" );
+    let inputfile = document.createElement( 'input' );
     inputfile.type = "file";
     inputfile.name = "resourceImageField";
     inputfile.className = "drop-zone__input";
 
     // File title element
-    let inputTitle = document.createElement( "input" );
-    inputTitle.type = "text";
+    let inputTitle = document.createElement( 'div' );
+    inputTitle.id = "input-title" + numResources;
     inputTitle.className = "drop-zone__title";
 
     // Preview Icon
-    let previewIcon = document.createElement( "span" );
+    let previewIcon = document.createElement( 'span' );
     previewIcon.setAttribute( "class", "material-symbols-outlined" );
-    previewIcon.setAttribute( "id", "preview-icon" );
+    previewIcon.setAttribute( "id", "preview-icon" + numResources );
     previewIcon.innerHTML = "preview";
 
     // New drop zone
@@ -658,67 +879,57 @@ function updateThumbnail( dropZoneElement, file ) {
     if ( document.getElementById( "filler-space" ) ) {
         document.getElementById( "filler-space" ).remove();
     }
-
+  
     // Append the thumbnail to parent div
     // Set the title to the file name
     mydiv.appendChild( thumbnailElement );
     thumbnailElement.dataset.label = file.name;
-    inputTitle.value = file.name;
-
+    inputTitle.innerHTML = file.name;
+  
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        const reader = new FileReader();
+        console.log( file );
+        getFile( file ).then( url => {
+            thumbnailElement.style.backgroundImage = url;
+            // PayloadTooLargeError: request entity too large
+            // createResource( file.name, 2, url );
 
-        reader.readAsDataURL( file );
-        reader.onload = () => {
-            thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-        };
+            createResource( file.name, 2, file.name );
+            // console.log( url ) ;
+        } );
+        
         mydiv.style.height = "500px";
         activeHeightObj[tabName] += 500;
     }
     else {
-    // thumbnailElement.style.backgroundImage = 'url()';
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
+        createResource( file.name, 3, null );
     }
-
     mydiv.appendChild( inputfile );
 
     // Remove empty state if necessary
     let location = getTabLocation( tabName );
     if ( mydiv.childElementCount > 0 ) {
-        document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display =
-      "none";
-        document.querySelectorAll( ".first-dropzone" )[location].style.display =
-      "block";
+        document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+        document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
     }
 
     // File drop in topic empty state
-    if (
-        targetDropZone === document.querySelectorAll( ".empty-state" )[location + 1]
-    ) {
-        activeTab.firstChild.parentNode.insertBefore(
-            inputTitle,
-            activeTab.firstChild.nextSibling
-        );
+    if ( targetDropZone === document.querySelectorAll( ".empty-state" )[location+1] ) {
+        activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
         mydiv.parentNode.insertBefore( newDropZone, mydiv.nextSibling );
     }
     else {
-    // File drop in workspace empty state
+        // File drop in workspace empty state
         if ( dropZoneElement === document.querySelectorAll( ".drop-zone" )[0] ) {
-            activeTab.firstChild.parentNode.insertBefore(
-                inputTitle,
-                activeTab.firstChild.nextSibling
-            );
+            activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
         }
         else {
-            targetDropZone.parentNode.insertBefore(
-                inputTitle,
-                targetDropZone.nextSibling
-            );
+            targetDropZone.parentNode.insertBefore( inputTitle, targetDropZone.nextSibling );
         }
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
@@ -730,52 +941,41 @@ function updateThumbnail( dropZoneElement, file ) {
 }
 /* END Drag and Drop ------------------------------------------------------------------------- */
 
-/* Suneditor Events ------------------------------------------------------*/
-document.addEventListener( "mousemove", function () {
-    for ( let i = 0; i < sunEditorList.length; i++ ) {
-        sunEditorList[i].onFocus = () => {
-            document.getElementById( doneIconList[i].id ).style.display = "block";
-            document.getElementById( editIconList[i].id ).style.display = "none";
-            sunEditor["sunEditor" + i].readOnly( false );
+function getFile( file ) {
+    return new Promise( ( resolve ) => {
+        const fileReader = new FileReader();
+        fileReader.onloadend = ( ) => { 
+            const res = `url('${fileReader.result}')`;
+            resolve( res );
         };
-        sunEditorList[i].onChange = () => {
-            sunEditor["sunEditor" + i].save();
-        };
-        sunEditorList[i].onKeyUp = ( e ) => {
-            if ( e.key == "/" ) {
-                sunEditor["sunEditor" + i].insertHTML(
-                    "<div><button style=background:pink;>Hello</button></div>",
-                    true
-                );
-            }
-        };
-        sunEditorList[i].onImageUpload = () => {
-            // Image upload default does not automatically place cursor after image, so...
-            sunEditor["sunEditor" + i].appendContents( "" );
-        };
-    }
-} );
-/* END Suneditor Events ------------------------------------------------------*/
+        fileReader.readAsDataURL( file );
+    } );
+}
 
-document.addEventListener( "click", function ( e ) {
+/* END Resource Functions ---------------------------------------------------------------------------------*/
+
+
+
+
+document.addEventListener( "click", function( e ) {
     // toggle edit and done icons
-    if ( e.target.id.includes( "done" ) ) {
-        for ( let i = 0; i < doneIconList.length; i++ ) {
-            if ( doneIconList[i] === e.target ) {
-                document.getElementById( editIconList[i].id ).style.display = "block";
-                document.getElementById( doneIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor" + i].readOnly( true );
-            }
-        }
+    if ( ( e.target.id ).includes( "done" ) ) {
+        let val = e.target.id.match( /\d+/g )[0];
+        e.target.style.display = "none";
+        document.getElementById( "edit-icon" + val ).style.display = "block";
+        console.log( sunEditor["sunEditor" + val] );
+        sunEditor["sunEditor" + val][1].readOnly( true );
+
+        // actively get sun editor contents and make updates
+        let contents = sunEditor["sunEditor" + val][1].getContents();
+        let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        updateSunEditor( id, title, contents );
     }
-    if ( e.target.id.includes( "edit" ) ) {
-        for ( let i = 0; i < editIconList.length; i++ ) {
-            if ( editIconList[i] === e.target ) {
-                document.getElementById( doneIconList[i].id ).style.display = "block";
-                document.getElementById( editIconList[i].id ).style.display = "none";
-                sunEditor["sunEditor" + i].readOnly( false );
-            }
-        }
+    if ( ( e.target.id ).includes( "edit" ) ) {
+        e.target.style.display = "none";
+        document.getElementById( "done-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
+        sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]][1].readOnly( false );
     }
 
     // open suneditor in new tab
@@ -784,10 +984,7 @@ document.addEventListener( "click", function ( e ) {
     }
 
     // close tag list elements
-    if (
-        document.querySelector( ".tag-list" ) &&
-    document.querySelector( ".tag-list" ).style.display == "block"
-    ) {
+    if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
         document.querySelector( ".tag-list" ).style.display = "none";
         // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
@@ -798,20 +995,13 @@ document.addEventListener( "click", function ( e ) {
     //     document.querySelector( "#mySearch" ).value = "";
     // }
 
-    if (
-        document.getElementById( "tablinks" + tabName.slice( -1 ) ) &&
-    e.target.className != "topic-title"
-    ) {
-        if (
-            document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != ""
-        ) {
+    if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
+        if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
             // change the tab name to the new topic title
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML =
-        document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
-        }
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+        } 
         else {
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML =
-        "Untitled";
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
         }
 
         // replace the close tab button
@@ -819,11 +1009,20 @@ document.addEventListener( "click", function ( e ) {
         closeTabBtn.className = "close-tab";
         closeTabBtn.id = "close-tab" + tabName.slice( -1 );
         closeTabBtn.innerHTML = "&times;";
-        document
-            .getElementById( "tablinks" + tabName.slice( -1 ) )
-            .appendChild( closeTabBtn );
+        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
     }
 } );
+
+document.addEventListener( 'keyup', ( e ) => {
+    let ele = document.getElementById( e.target.id );
+    if ( e.target.tagName == 'INPUT' ) {
+        if ( ele.className == 'topic-title' ) {
+            updateTopic( ele.value );
+        } 
+    }
+} );
+
+
 
 /* Workspace Manager Modal ----------------------------------------------- */
 const modal = document.getElementById( "resource-modal-div" );
@@ -836,14 +1035,14 @@ const openTopicBtn = document.getElementById( "open-topic-div" );
 const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
-if ( openBtn ) {
+if( openBtn ) {
     openBtn.onclick = () => {
         modal.style.display = "block";
     };
 }
 
 //close the modal
-if ( closeBtns ) {
+if( closeBtns ) {
     closeBtns.forEach( ( btn ) => {
         btn.onclick = () => {
             if ( modal.style.display == "block" ) {
@@ -856,7 +1055,7 @@ if ( closeBtns ) {
     } );
 }
 
-window.onclick = function ( event ) {
+window.onclick = function( event ) {
     if ( event.target == modal ) {
         modal.style.display = "none";
     }
@@ -866,34 +1065,24 @@ window.onclick = function ( event ) {
 };
 
 // option hover events
-document.addEventListener( "mousemove", function ( e ) {
-    for (
-        let i = 0;
-        i < document.getElementsByClassName( "modal-icon" ).length;
-        i++
-    ) {
-        if (
-            e.target === document.getElementsByClassName( "modal-icon" )[i] ||
-      e.target === document.getElementsByClassName( "option" )[i]
-        ) {
+document.addEventListener( "mousemove", function( e ) {
+    for ( let i=0; i<document.getElementsByClassName( "modal-icon" ).length; i++ ) {
+        if ( e.target === document.getElementsByClassName( "modal-icon" )[i] ||
+        e.target === document.getElementsByClassName( "option" )[i] ) {
             document.getElementsByClassName( "modal-icon" )[i].style.color = "black";
             document.getElementsByClassName( "option" )[i].style.color = "black";
-            document.getElementsByClassName( "option" )[i].style.textDecoration =
-        "underline";
+            document.getElementsByClassName( "option" )[i].style.textDecoration = "underline";
         }
         else {
-            document.getElementsByClassName( "modal-icon" )[i].style.color =
-        "rgb(100, 98, 98)";
-            document.getElementsByClassName( "option" )[i].style.color =
-        "rgb(100, 98, 98)";
-            document.getElementsByClassName( "option" )[i].style.textDecoration =
-        "none";
+            document.getElementsByClassName( "modal-icon" )[i].style.color = "rgb(100, 98, 98)";
+            document.getElementsByClassName( "option" )[i].style.color = "rgb(100, 98, 98)";
+            document.getElementsByClassName( "option" )[i].style.textDecoration = "none";
         }
     }
 } );
 
 // option events
-if ( createDocBtn ) {
+if ( createDocBtn ) { 
     createDocBtn.onclick = () => {
         modal.style.display = "none";
         createTextArea();
@@ -909,26 +1098,28 @@ if ( fileUploadBtn ) {
     const pickerOpts = {
         types: [
             {
-                description: "Images",
+                description: 'Images',
                 accept: {
-                    "image/*": [ ".png", ".gif", ".jpeg", ".jpg" ],
-                },
+                    'image/*': [ '.png', '.gif', '.jpeg', '.jpg' ]
+                }
             },
         ],
         excludeAcceptAllOption: true,
-        multiple: false,
+        multiple: false
     };
 
-    fileUploadBtn.addEventListener( "click", async () => {
-        let promise = new Promise( ( resolve ) => {
+    fileUploadBtn.addEventListener( "click", async() => {
+        let promise =  new Promise( ( resolve ) => {
             let file = window.showOpenFilePicker( pickerOpts );
             resolve( file );
         } );
 
-        promise.then( ( value ) => {
-            // console.log(value[0]);
-            // console.log(value[0].name);
-        } );
+        promise.then(
+            ( value ) => {
+                console.log( value[0] );
+                console.log( value[0].name );
+            }
+        );
     } );
 }
 if ( openTopicBtn ) {
@@ -944,29 +1135,29 @@ const toggleProfileList = () => {
 
     if ( arrow.classList.contains( "down-arrow" ) ) {
         document.getElementById( "permissions-box" ).style.display = "none";
-        arrow.setAttribute( "class", "arrow up-arrow" );
+        arrow.setAttribute( 'class', 'arrow up-arrow' );
     }
     else {
         document.getElementById( "permissions-box" ).style.display = "flex";
-        arrow.setAttribute( "class", "arrow down-arrow" );
+        arrow.setAttribute( 'class', 'arrow down-arrow' );
     }
 };
 
-function toggleProfile( e ) {
+function toggleProfile ( e ) {
     let target = e.target;
     let box;
 
-    target.classList.contains( "permission-li" )
-        ? ( box = target.childNodes[3] )
-        : ( box = target.parentElement.childNodes[3] );
+    target.classList.contains( "permission-li" ) ? 
+        box = target.childNodes[3] : 
+        box = target.parentElement.childNodes[3];
 
-    box.checked ? ( box.checked = false ) : ( box.checked = true );
+    box.checked ?
+        box.checked = false :
+        box.checked = true;
 }
 
 if ( document.getElementById( "profiles-toggle" ) ) {
-    document
-        .getElementById( "profiles-toggle" )
-        .addEventListener( "click", toggleProfileList );
+    document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
 }
 
 var perms = document.getElementsByClassName( "permission-li" );
@@ -974,6 +1165,15 @@ var perms = document.getElementsByClassName( "permission-li" );
 for ( let i = 0; i < perms.length; i++ ) {
     perms[i].addEventListener( "click", toggleProfile );
 }
+
+
+
+
+
+
+
+
+
 
 /* File Dropdown ----------------------------------------- */
 
@@ -1016,30 +1216,6 @@ for ( let i = 0; i < perms.length; i++ ) {
 // }
 
 /* END File Dropdown ----------------------------------------- */
-
-// function toggleProfile( e ) {
-//     let target = e.target;
-//     let box;
-
-//     target.classList.contains( "permission-li" )
-//         ? ( box = target.childNodes[3] )
-//         : ( box = target.parentElement.childNodes[3] );
-
-//     box.checked ? ( box.checked = false ) : ( box.checked = true );
-// }
-
-// if ( document.getElementById( "profiles-toggle" ) ) {
-//     document
-//         .getElementById( "profiles-toggle" )
-//         .addEventListener( "click", toggleProfileList );
-// }
-
-// var perms = document.getElementsByClassName( "permission-li" );
-
-// for ( let i = 0; i < perms.length; i++ ) {
-//     perms[i].addEventListener( "click", toggleProfile );
-// }
-
 //////////////onload fetch functions //////////////////////
 
 
@@ -1047,10 +1223,15 @@ const prefixPattern = /#t/;
 
 const idPattern = /-([0-9]+)/;
 
-const idAndFetch = () => {
+const getPrefixAndId = () => {
+
     const url = window.location.href;
-    const id = idPattern.exec( url )[1];
-    const isTopic = prefixPattern.test( url );
+    return [ prefixPattern.test( url ), idPattern.exec( url )[1] ];
+};
+
+const idAndFetch = () => {
+
+    const [ isTopic, id ] = getPrefixAndId();
 
     if ( isTopic ) {
         fetch( "api/v1/auth/topics/" + id, {
@@ -1088,16 +1269,13 @@ const fillFields = ( title, description, image ) => {
 };
 
 const renderTopics = async ( workspace ) => {
-    const response = await fetch( "api/v1/auth/topics" );
+    const [ isTopic, id ] = getPrefixAndId();
+    const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
     let topics = await response.json();
-    //console.log( topics )
-    let topicList = [];
-    for( let i = 0; i < topics.length; i++ ) {
-        topicList.push( topics[i].topicId );
-    }
-    if ( topicList.length > 0 ) {
-        for ( let i = 0; i < topicList.length; i++ ) {
-            await renderTopic( topicList[i] );
+   
+    if ( topics.length > 0 ) {
+        for ( let i = 0; i < topics.length; i++ ) {
+            await renderTopic( topics[i] );
             
         }
     }
@@ -1105,34 +1283,39 @@ const renderTopics = async ( workspace ) => {
 };
 
 //change order so the create stuff will all happen after information is gathered
-async function renderTopic( topicId ) {
-    const response = await fetch( "api/v1/auth/topics/" + topicId );
-    const topicData = await response.json();
-    await createTopicTab( topicData.topicName );
-    const resources = await renderResources( topicId );
+let val = 1;
+async function renderTopic( topic ) {
+  
+    await createTopic( topic.topicId, topic.topicName );
+    const resources = await renderResources( topic.topicId );
+    console.log( resources );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName );
-                if( resources[i].resourceContentHtml.length > 0 ){
-                    sunEditorList[docType1Count].insertHTML( resources[i].resourceContentHtml );
+                await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
+                    sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
+                    val++;
                 }
+
+
+            }
+            else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
+                console.log( resources[i].resourceName );
             }
             
         }
         window.scrollTo( 0, 0 );
     }
-    return topicData;
+    return topics;
 }
 
 async function renderResources( topicId ) {
-    console.log( topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    //console.log( data );
     return data;
 }
 
@@ -1142,4 +1325,230 @@ window.addEventListener( "load", () => {
    
 } );
 
-/* END onload function */
+
+
+////////* discussions code *///////
+
+//////New Comment/////
+const addComment = async ( user, pfp, text, isTopic, id ) => {
+    if ( text ) {
+
+        let commentId, date, type;
+
+        date = new Date();
+
+        const hasComments = await document.querySelectorAll( ".comment-countable" ).length;
+
+        isTopic ? type = "topic" : type = "workspace";
+
+        id = parseInt( id, 10 );
+
+        if ( !hasComments ) {
+            console.log( "Creating discussion" );
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
+                { method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify( {  
+                        "parent_id": id,
+                        "parent_type": type,
+                        "discussion_text": "string"     
+                    } )
+                } );
+            /*.then( ( response ) => response.json() )
+            .then( ( data ) => {
+                console.log( data );
+            } );*/
+        }
+        
+        await fetch( "api/v1/auth/discussions/comment", 
+            { method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    "parent_id": id, 
+                    "parent_type": type,
+                    "comment_text": text
+                } ) 
+            } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                //console.log( data );
+                commentId = data.id;
+            } );
+            
+        ///UPDATING THE DOM///
+
+        //cloning the comment template so we can modify it then add it to the stream
+        let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+        //setting the attributes of the comment
+        newEl.style.display = "block";
+        newEl.id = commentId;
+        newEl.childNodes[1].childNodes[1].innerText = pfp;
+        newEl.childNodes[1].childNodes[3].innerText = user;
+        newEl.childNodes[3].innerText = text;
+        newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+        newEl.classList.add( "comment-countable" );
+
+        //make sure the like button works
+        newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+
+        //inserting the modified clone into the comment stream
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+
+        //removing the value from the textarea
+        document.getElementById( "discussion-textarea" ).innerText = '';
+    }
+    else {
+        window.alert( "You cannot leave a blank comment" );
+    }
+};
+
+
+//window.onload rendering comment
+const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, user_rating } ) => {
+
+    //cloning the comment template so we can modify it then add it to the stream
+    let newEl = document.getElementById( "comment-template" ).cloneNode( true );
+
+    //setting the attributes of the comment
+    newEl.style.display = "block";
+    newEl.id = id;
+    newEl.childNodes[1].childNodes[1].innerText = pfp;
+    newEl.childNodes[1].childNodes[3].innerText = user_id;
+    newEl.childNodes[3].innerText = comment_text;
+    newEl.childNodes[5].childNodes[5].innerText = created_at;
+    newEl.childNodes[5].childNodes[1].childNodes[3].innerText = likes;
+    newEl.classList.add( "comment-countable" );
+
+    let likeButton = newEl.querySelector( "#like-button" );
+
+    //make sure the like button works
+    likeButton.addEventListener( "click", addOrRemoveLike );
+
+    if ( user_rating ) {
+        newEl.classList.add( "liked" );
+        likeButton.childNodes[1].style.color = "gray";
+        likeButton.childNodes[3].style.color = "gray";
+        likeButton.style.outline = "none";
+    } 
+
+    //inserting the modified clone under the proper discussion
+    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+};
+
+const getDiscussions = async ( isTopic, id ) => {
+
+    let pageComments;
+
+    if ( isTopic ) {
+        await fetch( "api/v1/auth/discussions/topic/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
+            } );
+    } 
+    else {
+        await fetch( "api/v1/auth/discussions/workspace/" + id, {
+            headers: { "Content-Type": "application/json" }
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( data ) => {
+                data ?
+                    pageComments = data.comments :
+                    pageComments = null;
+            } );
+    }
+
+    if ( pageComments ) {
+        await pageComments.forEach( ( comment ) => {
+            loadComment( comment );
+        } );
+    }
+    
+};
+
+
+window.addEventListener( "load", () => {
+
+    const [ isTopic, id ] = getPrefixAndId();
+    
+    document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+        addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+    } );
+
+    getDiscussions( isTopic, id );
+} );
+
+
+///////Like Button////////
+
+const addOrRemoveLike = ( e ) => {
+
+    let goodElement;
+
+    //making sure the element we are clicking is the one we're looking to use
+    e.target.id ? 
+        goodElement = e.target.childNodes[3] : 
+        e.target.style ? 
+            goodElement = e.target.parentElement.childNodes[3] : 
+            goodElement = e.target;
+
+    let parentEl = goodElement.parentElement.parentElement.parentElement;
+
+    if ( parentEl.classList.contains( "liked" ) ) {
+        parentEl.classList.remove( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) - 1;
+        goodElement.parentElement.childNodes[1].style.color = "black";
+        goodElement.style.color = "black";
+        goodElement.parentElement.style.outline = "2px solid gray";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": false } )
+        } );
+    } 
+    else {
+        parentEl.classList.add( "liked" );
+        goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
+        goodElement.parentElement.childNodes[1].style.color = "gray";
+        goodElement.style.color = "gray";
+        goodElement.parentElement.style.outline = "none";
+
+        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( { "rating": true } )
+        } );
+    }
+};
+
+
+////*Saving Title and Description/////
+
+const saveTitleOrDescription = ( ) => {
+    const [ isTopic, id ] = getPrefixAndId();
+
+    const input = document.getElementById( "workspace-title" ).value;
+        
+    fetch( "api/v1/auth/workspaces", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "workspaceId": id,
+            "workspaceName":  input ? input : "Untitled",
+            "workspaceDescription": document.getElementById( "workspace-desc" ).value,
+            "topics": topics,
+            "active": true
+            
+        } )
+    } );
+}; 
+
+
+document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
+document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
