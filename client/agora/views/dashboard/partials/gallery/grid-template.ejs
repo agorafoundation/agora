@@ -1,6 +1,10 @@
 <% //name:string, description:string, tags:array, content:array %>
     <% const renderCard=(id,name,desc,tags,contentType, content)=> { 
-        
+      //stops text overflow
+      name = name.slice(0,18)
+      if(desc){
+        desc = desc.slice(0,180)
+      }
       if (contentType === "Topic") { %>
 
         <!--Topic Card -->

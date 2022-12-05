@@ -8,7 +8,10 @@
 
 <% //name:string, description:string, tags:array, content:array %>
     <% const renderListCard=(id,name,desc,tags,contentType, content)=> { 
-        
+        name = name.slice(0,18)
+      if(desc){
+        desc = desc.slice(0,180)
+      }
       if (contentType === "Topic") { %>
 
         <!--Topic List Member -->
