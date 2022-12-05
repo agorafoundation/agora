@@ -1185,14 +1185,22 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-  /search/{query}:
+  /search/:
     get:
       parameters:
-        - in: path
-          name: query
+        - in: query
+          name: q
           schema:
             type: string
           description: The keyword / query
+          required: true
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: ["all", "topics", "workspaces", "users", "resources"]
+            default: "all"
+          description: Filter out by users, topics, workspaces, and resources. Can also leave as default which will search all categories
       tags:
         - Search
       responses:
@@ -1202,7 +1210,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/SearchArray"
+                $ref: "#/components/schemas/Search"
           headers:
             x-agora-message-title:
               schema:
@@ -1506,23 +1514,44 @@ components:
     Search:
       type: object
       properties:
-        name:
+        search:
           type: string
-        id:
+        timeElapsed:
           type: integer
-        description:
-          type: string
-    SearchArray:
-      type: array
-      items:
-        $ref: "#/components/schemas/Search"
+        results:
+          type: array
+          items: 
+            type: object
+            $ref: '#/components/schemas/SearchItem'
       example:
-        - name: "Studying Help!"
-          id: 24
-          description: "This is to help people study!"
-        - name: "Robotics 101"
-          id: 76
-          description: "How to build a moon rover using PIDs"
+        search: "Hello There!"
+        timeElapsed: 123456
+        results:
+          - type: topic
+            main: Hello There!
+            secondary: Some description!!!!
+          - type: workspace
+            main: Hello There Everyone!
+            secondary: I want to welcome you!
+          - type: user
+            main: HelloThere!23
+            secondary: John Doe 
+          - type: resource
+            main: HelloThere! This is a resource for you!
+            secondary: This is a resource description!
+    SearchItem:
+      type: object
+      properties:
+        type:
+          type: string
+        main:
+          type: string
+        secondary:
+          type: string
+      example:
+        type: user
+        main: JohnDoe123
+        secondary: John Doe
     Resource:
       type: object
       required:
