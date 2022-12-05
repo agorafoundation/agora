@@ -35,14 +35,12 @@ exports.getDashboard = async function( req, res ) {
 
     for( let i =0; i < ownerWorkspaces.length; i++ ) {
 
-       
-         
         // Get all topics Ids associated with our workspaceId.
         let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceId );
         
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
-            let topics = await topicService.getTopicById( topicsIds[index], false );
+            let topics = await topicService.getTopicById( topicsIds[index], req.session.authUser.id );
 
             if ( topics ){ // Ensure retrieval of topics
                 ownerWorkspaces[i].topics.push( topics );
