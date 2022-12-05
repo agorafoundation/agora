@@ -47,10 +47,14 @@
               <div>
                 <% if (content) { %>
                   <ul class="list-group list-group-flush list-grid">
-                    <% content.slice(0,8).forEach((item) => { %>
+                    <% content.slice(0,8).forEach((item) => { 
+                      if(item) {
+                        //stops overflow of text
+                        item = item.slice(0,12)%>
                       <!--topicReroute() below has a filler id-->
-                      <li class="list-group-item item-list" title='Open <%=item%>' onclick="topicReroute(1, false, null)"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
-                    <% }) %>
+                      
+                      <li class="list-group-item item-list"  title='Open <%=item.slice(0,3)%>' > <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                    <% }}) %>
                   </ul>
                 <% } %>
               </div>
@@ -84,9 +88,11 @@
            
             <%
          //render workspaces
-            
+          
          for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
-            renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", ["Doc1","doc2"]) 
+          let topics = [];
+          topics = ownerWorkspaces[i].topics.map(a => a.topicName);
+            renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", topics); 
          }
         %>
             <% //render resources for Now
@@ -94,7 +100,7 @@
             renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
             
          }%>
-         <%= console.log(ownerWorkspaces[0]) %>
+         <%=//c console.log(ownerWorkspaces[0]) %>
          
            
     </div>
