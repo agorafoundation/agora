@@ -1528,15 +1528,19 @@ components:
         timeElapsed: 123456
         results:
           - type: topic
+            id: 1234
             main: Hello There!
             secondary: Some description!!!!
           - type: workspace
+            id: 3421
             main: Hello There Everyone!
             secondary: I want to welcome you!
           - type: user
+            id: 1234
             main: HelloThere!23
             secondary: John Doe 
           - type: resource
+            id: 1928
             main: HelloThere! This is a resource for you!
             secondary: This is a resource description!
     SearchItem:
@@ -1544,6 +1548,8 @@ components:
       properties:
         type:
           type: string
+        id:
+          type: integer
         main:
           type: string
         secondary:
