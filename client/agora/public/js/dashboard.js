@@ -741,8 +741,6 @@ const removeText = ( type ) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = ( e ) => {
     let parentId = getId( e );
-
-    console.log(parentId);
     
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "g-"; 
