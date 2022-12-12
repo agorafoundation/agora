@@ -628,3 +628,29 @@ CREATE INDEX IF NOT EXISTS idx_shared_share_user_id ON shared_entities (share_us
 CREATE INDEX IF NOT EXISTS idx_shared_owner_user_id ON shared_entities (owner_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
+
+/*
+-- The original version of the shared entity table that I created.  I'm leaving it here for reference. this was created for issue #125 
+
+-- sharing related tables
+CREATE TABLE IF NOT EXISTS shared (
+    shared_id SERIAL PRIMARY KEY,
+    entity_id INTEGER,          -- unique id number of the entity being shared
+    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
+    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
+    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
+    share_type INTEGER,         -- type of share, ENUM value: 1=public, 2=shared
+    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=disscussion, 3=edit
+    can_copy BOOLEAN,           -- can the shared entity be copied by another user?
+    active BOOLEAN,
+    create_time TIMESTAMP DEFAULT current_timestamp,
+    update_time TIMESTAMP
+);
+GRANT ALL PRIVILEGES ON TABLE shared TO agora;
+GRANT USAGE, SELECT ON SEQUENCE shared_shared_id_seq TO agora;
+
+CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared (shared_by_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared (shared_with_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared (entity_id);
+CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared (entity_type);
+*/
