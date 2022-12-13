@@ -30,7 +30,7 @@ exports.emptyAssessment = () => {
     return new assessment();
 };
 
-exports.ormAssessment = function (row) {
+exports.ormAssessment = function ( row ) {
     let assessment = exports.emptyAssessment();
     assessment.id = row.id;
     assessment.assessmentType = row.assessment_type;
