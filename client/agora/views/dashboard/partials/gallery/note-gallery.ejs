@@ -13,6 +13,7 @@
 
 <!--List Toggle-->
 <%- include('./list-toggle.ejs'); %>
+<%- include('../../../partials/welcome'); %>
 
 <!--Search bar-->
 <input id="topic-search" class="card-search" placeholder="Search" style="margin-right: 40px;" oninput="queryTopics(document.getElementById('topic-search').value, topicArr) "/>
@@ -23,3 +24,5 @@
   <%- include('./list-template.ejs'); %>
 
 </div>      
+
+

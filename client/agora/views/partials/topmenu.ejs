@@ -1,5 +1,12 @@
 <div class="container navbar-interior" style="margin-left:0px">
-    <a class="navbar-brand js-scroll-trigger" href="/"><img src="/assets/img/logos/agora-title.png" style="height:65px" /></a>
+    <span>
+        <a class="navbar-brand js-scroll-trigger" href="/">
+            <!-- <img class="d-none d-md-block" src="/assets/img/logos/agora-title.png?text=big+logo" style="height:65px" />
+            <img class="d-md-none" src="/assets/img/logos/agora.png?text=small+logo" style="height:65px" /> -->
+            <img src="/assets/img/logos/agora-title.png?text=big+logo" style="height:65px" />
+        </a>
+    </span>
+    
     <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button"
         data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
         aria-label="Toggle navigation">
@@ -7,40 +14,43 @@
         <i class="fas fa-bars"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive" style="padding-left: 3%;">
-        <ul class="navbar-nav agora-font" style="display:flex;">
-            <% if( process.env.AGORA_ABOUT_PAGE=='true' ) { %>
-                <% } %>
-                    <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                            href="/community">COMMUNITY</a></li> -->
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                            href="/dashboard">DASHBOARD</a></li>
-                    <% if( process.env.AGORA_PRODUCT_PAGE=='true' ) { %>
+        <ul class="nav navbar-nav ml-auto agora-font" style="display:flex;">
 
-                        <li class="nav-item mx-0 mx-lg-1"><a
-                                class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                                href="/codebot">Products</a></li>
-                        <% } %>
-                            <li class="nav-item mx-0 mx-lg-1"><a
-                                    class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/about">ABOUT</a>
-                            </li>
+            <% if(!locals.authUser) { %>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/signIn">SIGN IN</a>
+                </li>
+            <% } %>
+            
+            <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                    href="/community">COMMUNITY</a></li> -->
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                    href="/dashboard">DASHBOARD</a></li>
+            <% if( process.env.AGORA_PRODUCT_PAGE=='true' ) { %>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/codebot">Products</a>
+                </li>
+            <% } %>
+            <% if( process.env.AGORA_ABOUT_PAGE=='true' ) { %>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/about">ABOUT</a>
+                </li>
+            <% } %>
+
+            <% if(locals.authUser) { %>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
+                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                    </a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a href="/signOut" class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger">Sign Out</a>
+                </li>
+                
+            <% } %>
+            
         </ul>
 
     </div>
-    <div class="navbar-nav agora-font"
-        style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;">
-        <% if(!locals.authUser) { %>
-            <li class="nav-item mx-0 mx-lg-1"
-                style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;"><a
-                    class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/signIn">SIGN IN</a></li>
-            <% } else { %>
-                <li class="nav-item mx-0 mx-lg-1"
-                    style="display: flex;justify-content: flex-end;margin-left: auto;margin-right: 0;"><a
-                        class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover"
-                        href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;"><img
-                            src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>"
-                            alt="User Dash" title="User Dashboard" class="profile-top-image" /></a></li>
-                <a href="/signOut" style="padding-left: 1.5vw; color:white;"><img src="/assets/img/signout.png"
-                        alt="User Dash" title="User Dashboard" class="profile-top-image" /></a>
-                <% } %>
-    </div>
+    
 </div>
