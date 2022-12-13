@@ -10,8 +10,8 @@
     $( 'a.js-scroll-trigger[href*="#"]:not([href="#"])' ).click( function () {
         if (
             location.pathname.replace( /^\//, "" ) ==
-        this.pathname.replace( /^\//, "" ) &&
-      location.hostname == this.hostname
+            this.pathname.replace( /^\//, "" ) &&
+            location.hostname == this.hostname
         ) {
             var target = $( this.hash );
             target = target.length ? target : $( "[name=" + this.hash.slice( 1 ) + "]" );
@@ -81,3 +81,23 @@
             } );
     } );
 } ); // End of use strict
+
+let sideBarStatus = true;
+function toggleSidebar() {
+    if ( !sideBarStatus ) {
+        document.getElementById( "agoraSideBar" ).style.width = "250px";
+        document.body.style.marginLeft = "250px";
+    }
+    else {
+        document.getElementById( "agoraSideBar" ).style.width = "85px";
+        document.body.style.marginLeft = "85px";
+    }
+    sideBarStatus = !sideBarStatus;
+}
+
+// add events for toggle sidebar
+if( document.getElementById( "agoraSideBar" ) ) {
+    toggleSidebar();
+    document.getElementById( "agoraSideBar" ).addEventListener( "mouseover", toggleSidebar );
+    document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
+}

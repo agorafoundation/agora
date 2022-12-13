@@ -23,7 +23,7 @@ function assessment() {
     // and of course this assessmentId (pre and post mean more then one often, hense the array)
     // TODO: impletement this, in getTopicWithEverythingById? other places?
     this.completedAssessments = [];
-    
+
 }
 
 exports.emptyAssessment = () => {

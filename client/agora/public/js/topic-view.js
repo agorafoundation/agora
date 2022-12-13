@@ -1,3 +1,4 @@
+
 let tabName = "";
 
 // Workspace resizing
@@ -30,7 +31,7 @@ let numTopics = 1;
 let topics = {};
 
 // Creates a new topic
-function createTopic( id, name ) {
+const createTopic = async( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
@@ -182,7 +183,7 @@ function createTopic( id, name ) {
     openTab( newTab.id );
 
     if( !id ) {
-        fetch( "api/v1/auth/topics", {
+        const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
@@ -199,34 +200,35 @@ function createTopic( id, name ) {
                 "resources": [],
                 "createTime": Date.now(),
             } )
-        } )
-            .then( response => response.json() )
-            .then( ( data ) => {
-                console.log( data );
-                // map the resulting topic id to the value used in topic elements
-                topics[numTopics] = data.topicId;
-                numTopics++;
-                console.log( topics );
-                saveWorkspace( topics );
-            } );
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            // map the resulting topic id to the value used in topic elements
+            topics[numTopics] = data.topicId;
+            numTopics++;
+            //console.log( topics );
+            saveWorkspace( topics );
+        }
     }
     else{
         topics[numTopics] = id;
         numTopics ++;
     }
-}
+};
 
 // Updates topic name
-function updateTopic( name ) {
+const updateTopic = async( name ) => {
     let isRequired = [];
     let resources = getResources();
     console.log( resources );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
-    console.log( isRequired );
+    //console.log( isRequired );
     let id = getCurrTopicID();
-    fetch( "api/v1/auth/topics", {
+
+    const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
@@ -236,24 +238,26 @@ function updateTopic( name ) {
             "resourcesRequired": isRequired,
             "isRequired": true
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
-            console.log( data.topicId );
-        } );
-}
+    } );
+
+    if( response.ok ) {
+        const data = await response.json();
+        //console.log( JSON.stringify( data ) );
+        //console.log( data.topicId );
+    }
+};
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
-async function saveWorkspace( topics ){
+const saveWorkspace = async( topics ) => {
     const topicsList = Object.values( topics );
 
 
     const [ isTopic, id ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
     let description = document.getElementById( "workspace-desc" ).value;
-    fetch( "api/v1/auth/workspaces", {
+
+    const response = await fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
@@ -264,16 +268,13 @@ async function saveWorkspace( topics ){
             "active":true
             
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
-           
-        } );
-}
+    } );
 
-
-
+    if( response.ok ) {
+        const data = await response.json();
+        //console.log( JSON.stringify( data ) );
+    }
+};
 
 
 
@@ -285,7 +286,7 @@ let activeTab = document.getElementById( "resources-zone0" );
 // Change tabs
 function openTab( name ) {
     tabName = name;
-    console.log( tabName );
+    //console.log( tabName );
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -372,32 +373,34 @@ function getTabLocation( id ) {
 
 
 /* Tag Functions ------------------------------------------------------------------- */
-document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
-    let input, filter, ul, li, tag, i;
-    input = document.getElementById( "mySearch" );
-    filter = input.value.toUpperCase();
-    ul = document.querySelector( ".tag-list" );
-    li = ul.getElementsByTagName( "li" );
+if( document.getElementById( "mySearch" ) ) {
+    document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
+        let input, filter, ul, li, tag, i;
+        input = document.getElementById( "mySearch" );
+        filter = input.value.toUpperCase();
+        ul = document.querySelector( ".tag-list" );
+        li = ul.getElementsByTagName( "li" );
 
-    if ( filter == "" ) {
-        ul.style.display = "none";
-    }
-    else {
-        ul.style.display = "block";
-        // Hide items that don't match search query
-        for ( i = 0; i < li.length; i++ ) {
-            tag = li[i].innerHTML;
-            if ( tag.toUpperCase().indexOf( filter ) > -1 ) {
-                li[i].style.display = "block";
-            }
-            else {
-                li[i].style.display = "none";
+        if ( filter == "" ) {
+            ul.style.display = "none";
+        }
+        else {
+            ul.style.display = "block";
+            // Hide items that don't match search query
+            for ( i = 0; i < li.length; i++ ) {
+                tag = li[i].innerHTML;
+                if ( tag.toUpperCase().indexOf( filter ) > -1 ) {
+                    li[i].style.display = "block";
+                }
+                else {
+                    li[i].style.display = "none";
+                }
             }
         }
-    }
     // Always show new tag option
     // document.querySelector( "#new-tag-element" ).style.display = "block";
-} );
+    } );
+}
 
 // document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
 //     const tagName = document.getElementById( "mySearch" ).value;
@@ -516,7 +519,7 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( data.resourceId );
+                //console.log( data.resourceId );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 numResources++;
 
@@ -546,7 +549,7 @@ function getResources() {
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
         if ( topicResources[i].style.display == 'none' ) {
-            console.log( true );
+            //console.log( true );
         }
         let val = topicResources[i].id.match( /\d+/g )[0];
         let propertyNames = Object.getOwnPropertyNames( resources );
@@ -556,7 +559,7 @@ function getResources() {
             }
         }
     }
-    console.log( sorted );
+    //console.log( sorted );
     return sorted;
 }
 
@@ -650,7 +653,7 @@ function createTextArea( name, id ) {
 
     promise.then(
         ( value ) => {
-            console.log( value );
+            //console.log( value );
             createSunEditor();
             if( name ){
                 createResource( name, 1, null, id  );
@@ -706,7 +709,7 @@ const createSunEditor = async() => {
         "lang(In nodejs)": "en",
         callBackSave: function ( contents ) {
             alert( contents );
-            console.log( contents );
+            //console.log( contents );
         },
     } ) ];
 
@@ -733,7 +736,7 @@ function updateSunEditor( id, name, contents ) {
     } )
         .then( response => response.json() )
         .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
+            //console.log( JSON.stringify( data ) );
         } );
 }
 
@@ -775,8 +778,10 @@ document.addEventListener( "mousemove", function() {
 // Workspace empty state drop zone
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
-    let inputElement = dropZoneElement.lastElementChild;
-    createDropZoneEventListeners( dropZoneElement, inputElement );
+    if( dropZoneElement ){
+        let inputElement = dropZoneElement.lastElementChild;
+        createDropZoneEventListeners( dropZoneElement, inputElement );
+    }
 }
 
 // Get the target drop zone
@@ -888,7 +893,7 @@ function updateThumbnail( dropZoneElement, file ) {
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        console.log( file );
+        //console.log( file );
         getFile( file ).then( url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
@@ -963,7 +968,7 @@ document.addEventListener( "click", function( e ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
-        console.log( sunEditor["sunEditor" + val] );
+        //console.log( sunEditor["sunEditor" + val] );
         sunEditor["sunEditor" + val][1].readOnly( true );
 
         // actively get sun editor contents and make updates
@@ -1116,8 +1121,8 @@ if ( fileUploadBtn ) {
 
         promise.then(
             ( value ) => {
-                console.log( value[0] );
-                console.log( value[0].name );
+                //console.log( value[0] );
+                //console.log( value[0].name );
             }
         );
     } );
@@ -1226,14 +1231,15 @@ const idPattern = /-([0-9]+)/;
 const getPrefixAndId = () => {
 
     const url = window.location.href;
-    return [ prefixPattern.test( url ), idPattern.exec( url )[1] ];
+    let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
+    return [ prefixPattern.test( url ), urlId ];
 };
 
 const idAndFetch = () => {
 
     const [ isTopic, id ] = getPrefixAndId();
 
-    if ( isTopic ) {
+    if ( isTopic && id > 0 ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1247,7 +1253,7 @@ const idAndFetch = () => {
                 );
             } );
     }
-    else {
+    else if ( id > 0 ) {
         fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1270,15 +1276,18 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
-    let topics = await response.json();
+    if( id > 0 ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
+        let topics = await response.json();
    
-    if ( topics.length > 0 ) {
-        for ( let i = 0; i < topics.length; i++ ) {
-            await renderTopic( topics[i] );
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderTopic( topics[i] );
             
-        }
+            }
+        }   
     }
+    
    
 };
 
@@ -1288,7 +1297,7 @@ async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
-    console.log( resources );
+    //console.log( resources );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
@@ -1304,7 +1313,7 @@ async function renderTopic( topic ) {
 
             }
             else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
-                console.log( resources[i].resourceName );
+                //console.log( resources[i].resourceName );
             }
             
         }
@@ -1344,7 +1353,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         id = parseInt( id, 10 );
 
         if ( !hasComments ) {
-            console.log( "Creating discussion" );
+            //console.log( "Creating discussion" );
             await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
                 { method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1440,27 +1449,28 @@ const getDiscussions = async ( isTopic, id ) => {
 
     let pageComments;
 
-    if ( isTopic ) {
-        await fetch( "api/v1/auth/discussions/topic/" + id, {
-            headers: { "Content-Type": "application/json" }
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( data ) => {
-                data ?
-                    pageComments = data.comments :
-                    pageComments = null;
-            } );
+    if ( isTopic && id > 0 ) {
+
+        const response = await fetch( "/api/v1/auth/discussions/topic/" + id, { headers: { "Content-Type": "application/json" } } );
+        if ( response.ok ) {
+            const data = await response.json();
+            ( data ) ? pageComments = data.comments : pageComments = null;
+        }
+        else {
+            //console.log( response.status );
+        }
     } 
-    else {
-        await fetch( "api/v1/auth/discussions/workspace/" + id, {
-            headers: { "Content-Type": "application/json" }
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( data ) => {
-                data ?
-                    pageComments = data.comments :
-                    pageComments = null;
-            } );
+    else if( id > 0 ) {
+
+        const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
+        if ( response.ok ) {
+            const data = await response.json();
+            ( data ) ? pageComments = data.comments : pageComments = null;
+        }
+        else {
+            //console.log( response.status );
+        }
+            
     }
 
     if ( pageComments ) {
@@ -1476,9 +1486,16 @@ window.addEventListener( "load", () => {
 
     const [ isTopic, id ] = getPrefixAndId();
     
-    document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
-        addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
-    } );
+    if( document.getElementById( "post-comment-btn" ) ) {
+        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+        } );
+    }
+    if( document.getElementById( "post-topic-btn" ) ) {
+        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+        } );
+    }   
 
     getDiscussions( isTopic, id );
 } );
@@ -1550,5 +1567,9 @@ const saveTitleOrDescription = ( ) => {
 }; 
 
 
-document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
-document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
+if( document.getElementById( "workspace-title" ) ) {
+    document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
+}
+if( document.getElementById( "workspace-desc" ) ) {
+    document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
+}

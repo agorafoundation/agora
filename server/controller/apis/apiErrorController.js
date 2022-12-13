@@ -7,8 +7,12 @@
  */
 exports.errorController = ( error, res ) => {
 
-    res.set( "x-agora-message-title", error.messageTitle );
-    res.set( "x-agora-message-detail", error.messageBody );
+    if( res ) {
+        res.set( "x-agora-message-title", error.messageTitle );
+        res.set( "x-agora-message-detail", error.messageBody );
 
-    return res.status( error.statusCode ).json( error );
+        return res.status( error.statusCode ).json( error );
+    }
+
+    return error;
 };
