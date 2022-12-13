@@ -372,32 +372,34 @@ function getTabLocation( id ) {
 
 
 /* Tag Functions ------------------------------------------------------------------- */
-document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
-    let input, filter, ul, li, tag, i;
-    input = document.getElementById( "mySearch" );
-    filter = input.value.toUpperCase();
-    ul = document.querySelector( ".tag-list" );
-    li = ul.getElementsByTagName( "li" );
+if( document.getElementById( "mySearch" ) ) {
+    document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
+        let input, filter, ul, li, tag, i;
+        input = document.getElementById( "mySearch" );
+        filter = input.value.toUpperCase();
+        ul = document.querySelector( ".tag-list" );
+        li = ul.getElementsByTagName( "li" );
 
-    if ( filter == "" ) {
-        ul.style.display = "none";
-    }
-    else {
-        ul.style.display = "block";
-        // Hide items that don't match search query
-        for ( i = 0; i < li.length; i++ ) {
-            tag = li[i].innerHTML;
-            if ( tag.toUpperCase().indexOf( filter ) > -1 ) {
-                li[i].style.display = "block";
-            }
-            else {
-                li[i].style.display = "none";
+        if ( filter == "" ) {
+            ul.style.display = "none";
+        }
+        else {
+            ul.style.display = "block";
+            // Hide items that don't match search query
+            for ( i = 0; i < li.length; i++ ) {
+                tag = li[i].innerHTML;
+                if ( tag.toUpperCase().indexOf( filter ) > -1 ) {
+                    li[i].style.display = "block";
+                }
+                else {
+                    li[i].style.display = "none";
+                }
             }
         }
-    }
     // Always show new tag option
     // document.querySelector( "#new-tag-element" ).style.display = "block";
-} );
+    } );
+}
 
 // document.getElementById( "new-tag-element" ).addEventListener( "click", () => {
 //     const tagName = document.getElementById( "mySearch" ).value;
@@ -775,8 +777,10 @@ document.addEventListener( "mousemove", function() {
 // Workspace empty state drop zone
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
-    let inputElement = dropZoneElement.lastElementChild;
-    createDropZoneEventListeners( dropZoneElement, inputElement );
+    if( dropZoneElement ){
+        let inputElement = dropZoneElement.lastElementChild;
+        createDropZoneEventListeners( dropZoneElement, inputElement );
+    }
 }
 
 // Get the target drop zone
@@ -1226,14 +1230,15 @@ const idPattern = /-([0-9]+)/;
 const getPrefixAndId = () => {
 
     const url = window.location.href;
-    return [ prefixPattern.test( url ), idPattern.exec( url )[1] ];
+    let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
+    return [ prefixPattern.test( url ), urlId ];
 };
 
 const idAndFetch = () => {
 
     const [ isTopic, id ] = getPrefixAndId();
 
-    if ( isTopic ) {
+    if ( isTopic && id > 0 ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1247,7 +1252,7 @@ const idAndFetch = () => {
                 );
             } );
     }
-    else {
+    else if ( id > 0 ) {
         fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1270,15 +1275,18 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
-    let topics = await response.json();
+    if( id > 0 ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
+        let topics = await response.json();
    
-    if ( topics.length > 0 ) {
-        for ( let i = 0; i < topics.length; i++ ) {
-            await renderTopic( topics[i] );
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderTopic( topics[i] );
             
-        }
+            }
+        }   
     }
+    
    
 };
 
@@ -1440,8 +1448,8 @@ const getDiscussions = async ( isTopic, id ) => {
 
     let pageComments;
 
-    if ( isTopic ) {
-        await fetch( "api/v1/auth/discussions/topic/" + id, {
+    if ( isTopic && id > 0 ) {
+        await fetch( "/api/v1/auth/discussions/topic/" + id, {
             headers: { "Content-Type": "application/json" }
         } )
             .then( ( response ) => response.json() )
@@ -1451,8 +1459,8 @@ const getDiscussions = async ( isTopic, id ) => {
                     pageComments = null;
             } );
     } 
-    else {
-        await fetch( "api/v1/auth/discussions/workspace/" + id, {
+    else if( id > 0 ) {
+        await fetch( "/api/v1/auth/discussions/workspace/" + id, {
             headers: { "Content-Type": "application/json" }
         } )
             .then( ( response ) => response.json() )
@@ -1476,9 +1484,16 @@ window.addEventListener( "load", () => {
 
     const [ isTopic, id ] = getPrefixAndId();
     
-    document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
-        addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
-    } );
+    if( document.getElementById( "post-comment-btn" ) ) {
+        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+        } );
+    }
+    if( document.getElementById( "post-topic-btn" ) ) {
+        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
+            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
+        } );
+    }   
 
     getDiscussions( isTopic, id );
 } );
@@ -1550,5 +1565,9 @@ const saveTitleOrDescription = ( ) => {
 }; 
 
 
-document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
-document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
+if( document.getElementById( "workspace-title" ) ) {
+    document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
+}
+if( document.getElementById( "workspace-desc" ) ) {
+    document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
+}

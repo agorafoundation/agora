@@ -1117,4 +1117,4 @@ const toggleList = () => {
     document.getElementById( "list-container" ).style.display = "block";
 };
 
-window.onload( toggleGrid() );
+//window.onload( toggleGrid() );

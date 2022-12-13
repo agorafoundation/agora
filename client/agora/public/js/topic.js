@@ -338,11 +338,8 @@ function checkboxClick( e ) {
 
 
 window.addEventListener( 'load', () => {
-    let id = window.location.hash;
-    console.log( id );
     // look for any accordions, apply click event to open
     if( document.getElementsByClassName( 'accordion-container' ) ) {
-        const accordion = document.getElementsByClassName( 'accordion' );
         const accordionLabel = document.getElementsByClassName( 'accordion-label' );
         for ( let i=0; i<accordionLabel.length; i++ ) {
             accordionLabel[i].addEventListener( 'click', function () {
@@ -354,8 +351,7 @@ window.addEventListener( 'load', () => {
 
     if( document.getElementById( 'currentStepField' ) ) {
         let currentStep = document.getElementById( 'currentStepField' ).value;
-        let workspaceId = document.getElementById( 'workspaceIdField' ).value;
-        let topicId = document.getElementById( 'topicIdField' ).value;
+
         //console.log(currentStep);
         switch( currentStep ) {
         case "1": {
