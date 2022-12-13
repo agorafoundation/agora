@@ -207,7 +207,7 @@ const createTopic = async( id, name ) => {
             // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
             numTopics++;
-            console.log( topics );
+            //console.log( topics );
             saveWorkspace( topics );
         }
     }
@@ -225,7 +225,7 @@ const updateTopic = async( name ) => {
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
-    console.log( isRequired );
+    //console.log( isRequired );
     let id = getCurrTopicID();
 
     const response = await fetch( "api/v1/auth/topics", {
@@ -242,8 +242,8 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( JSON.stringify( data ) );
-        console.log( data.topicId );
+        //console.log( JSON.stringify( data ) );
+        //console.log( data.topicId );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
@@ -272,7 +272,7 @@ const saveWorkspace = async( topics ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( JSON.stringify( data ) );
+        //console.log( JSON.stringify( data ) );
     }
 };
 
@@ -286,7 +286,7 @@ let activeTab = document.getElementById( "resources-zone0" );
 // Change tabs
 function openTab( name ) {
     tabName = name;
-    console.log( tabName );
+    //console.log( tabName );
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -519,7 +519,7 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( data.resourceId );
+                //console.log( data.resourceId );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 numResources++;
 
@@ -549,7 +549,7 @@ function getResources() {
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
         if ( topicResources[i].style.display == 'none' ) {
-            console.log( true );
+            //console.log( true );
         }
         let val = topicResources[i].id.match( /\d+/g )[0];
         let propertyNames = Object.getOwnPropertyNames( resources );
@@ -559,7 +559,7 @@ function getResources() {
             }
         }
     }
-    console.log( sorted );
+    //console.log( sorted );
     return sorted;
 }
 
@@ -653,7 +653,7 @@ function createTextArea( name, id ) {
 
     promise.then(
         ( value ) => {
-            console.log( value );
+            //console.log( value );
             createSunEditor();
             if( name ){
                 createResource( name, 1, null, id  );
@@ -709,7 +709,7 @@ const createSunEditor = async() => {
         "lang(In nodejs)": "en",
         callBackSave: function ( contents ) {
             alert( contents );
-            console.log( contents );
+            //console.log( contents );
         },
     } ) ];
 
@@ -736,7 +736,7 @@ function updateSunEditor( id, name, contents ) {
     } )
         .then( response => response.json() )
         .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
+            //console.log( JSON.stringify( data ) );
         } );
 }
 
@@ -893,7 +893,7 @@ function updateThumbnail( dropZoneElement, file ) {
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        console.log( file );
+        //console.log( file );
         getFile( file ).then( url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
@@ -968,7 +968,7 @@ document.addEventListener( "click", function( e ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
-        console.log( sunEditor["sunEditor" + val] );
+        //console.log( sunEditor["sunEditor" + val] );
         sunEditor["sunEditor" + val][1].readOnly( true );
 
         // actively get sun editor contents and make updates
@@ -1121,8 +1121,8 @@ if ( fileUploadBtn ) {
 
         promise.then(
             ( value ) => {
-                console.log( value[0] );
-                console.log( value[0].name );
+                //console.log( value[0] );
+                //console.log( value[0].name );
             }
         );
     } );
@@ -1297,7 +1297,7 @@ async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
-    console.log( resources );
+    //console.log( resources );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
@@ -1313,7 +1313,7 @@ async function renderTopic( topic ) {
 
             }
             else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
-                console.log( resources[i].resourceName );
+                //console.log( resources[i].resourceName );
             }
             
         }
@@ -1353,7 +1353,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         id = parseInt( id, 10 );
 
         if ( !hasComments ) {
-            console.log( "Creating discussion" );
+            //console.log( "Creating discussion" );
             await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
                 { method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1457,7 +1457,7 @@ const getDiscussions = async ( isTopic, id ) => {
             ( data ) ? pageComments = data.comments : pageComments = null;
         }
         else {
-            console.log( response.status );
+            //console.log( response.status );
         }
     } 
     else if( id > 0 ) {
@@ -1468,7 +1468,7 @@ const getDiscussions = async ( isTopic, id ) => {
             ( data ) ? pageComments = data.comments : pageComments = null;
         }
         else {
-            console.log( response.status );
+            //console.log( response.status );
         }
             
     }
