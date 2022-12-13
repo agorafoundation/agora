@@ -1,3 +1,5 @@
+<!-- Defuct - URBG - 20221213 -->
+
 <% if(locals.authUser) { 
     if(locals.authUser.member) {
         %>
@@ -7,7 +9,7 @@
     } 
     else {
         %>
-        <p class="welcome-text">Welcome, <%= (!!locals.authUser.firstName)?authUser.firstName:'' %>!<span> - You have <%- authUser.availableAccessTokens %> tokens</span><br />
+        <p class="welcome-text">Welcome, <%= (!!locals.authUser.firstName)?authUser.firstName:'' %>!<br />
         <span class="signout-link"><a href="/signOut">[ SIGN OUT ]</a></span></p>
         <% 
     }    
