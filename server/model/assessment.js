@@ -23,14 +23,14 @@ function assessment() {
     // and of course this assessmentId (pre and post mean more then one often, hense the array)
     // TODO: impletement this, in getTopicWithEverythingById? other places?
     this.completedAssessments = [];
-    
+
 }
 
 exports.emptyAssessment = () => {
     return new assessment();
 };
 
-exports.ormAssessment = function ( row ) {
+exports.ormAssessment = function (row) {
     let assessment = exports.emptyAssessment();
     assessment.id = row.id;
     assessment.assessmentType = row.assessment_type;
