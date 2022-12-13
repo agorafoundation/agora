@@ -24,9 +24,7 @@ if ( document.getElementById( "expansionArrow" ) ) {
  * When toggling resource types set the correct editor in the UI
  */
 function toggleSunEditor() {
-    console.log(
-        "Type value is: " + document.getElementById( "resourceType" ).value
-    );
+
     if ( document.getElementById( "resourceType" ).value == "3" ) {
         document.getElementById( "resourceEditor" ).style.display = "none";
         document.getElementById( "suneditor_resourceEditor" ).style.display = "none";
@@ -50,7 +48,7 @@ function toggleSunEditor() {
 // sun editor for resource
 let resourceEditor = null;
 if ( document.getElementById( "resourceEditor" ) ) {
-    console.log( "initializing the sun editor" );
+    //console.log( "initializing the sun editor" );
     // eslint-disable-next-line no-undef
     resourceEditor = SUNEDITOR.create( "resourceEditor", {
         toolbarContainer: "#toolbar_container",
@@ -94,7 +92,7 @@ if ( document.getElementById( "resourceEditor" ) ) {
         ],
         callBackSave: function ( contents, isChanged ) {
             alert( contents );
-            console.log( contents );
+            //console.log( contents );
         },
     } );
 
@@ -135,10 +133,10 @@ if (
     // attach the event to make them editible
     document.querySelectorAll( '[name="topicType"]' ).forEach( ( topicTypeBox ) => {
         topicTypeBox.addEventListener( "click", () => {
-            console.log(
-                "clicked: " +
-        document.querySelector( 'input[name="topicType"]:checked' ).value
-            );
+        //     console.log(
+        //         "clicked: " +
+        // document.querySelector( 'input[name="topicType"]:checked' ).value
+        //     );
             if (
                 document.querySelector( 'input[name="topicType"]:checked' ).value == 1
             ) {
@@ -200,7 +198,7 @@ function updateWorkspaceModal( workspace, workspaceImagePath ) {
     if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
         document.getElementById( "workspaceId" ).value = workspace.id;
 
-        console.log( workspace.visibility );
+        //console.log( workspace.visibility );
         if ( workspace.visibility === 0 ) {
             document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
             document.getElementById( "workspaceVisibilityShared" ).checked = false;
@@ -256,7 +254,7 @@ function updateTopicModal( topic, topicImagePath ) {
     if ( document.getElementById( "create-topic-modal" ) && topic ) {
         document.getElementById( "topicId" ).value = topic.id;
 
-        console.log( topic.visibility );
+        //console.log( topic.visibility );
         if ( topic.visibility === 0 ) {
             document.getElementById( "topicVisibilityPrivate" ).checked = true;
             document.getElementById( "topicVisibilityShared" ).checked = false;
@@ -343,7 +341,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
             //console.log(JSON.stringify(res));
             res.json().then( ( data ) => {
                 const resource = data[0];
-                console.log( "Client side resource check: " + JSON.stringify( resource ) );
+                //console.log( "Client side resource check: " + JSON.stringify( resource ) );
                 document.getElementById( "resourceId" ).value = resource.id;
 
                 if ( resource.resourceImage ) {
@@ -516,20 +514,18 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     }
 };
 
-const deleteResource = ( id, prefix ) => {
+const deleteResource = async ( id, prefix ) => {
     if ( prefix === "g-" ) {
-        fetch( "api/v1/auth/workspaces/" + id, {
-            method: "DELETE",
-        } )
-            .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+        const response = await fetch( "api/v1/auth/workspaces/" + id, { method: "DELETE" } );
+        if( response.ok ) {
+            await response.json();
+        }
     } 
     else {
-        fetch( "api/v1/auth/topics/" + id, {
-            method: "DELETE"
-        } )
-            .then( response => response.json() )
-            .then( response => console.log( JSON.stringify( response ) ) );
+        const response = await fetch( "api/v1/auth/topics/" + id, { method: "DELETE" } );
+        if( response.ok ) {
+            await response.json();
+        }
     }
 };
 

@@ -1,3 +1,4 @@
+
 let tabName = "";
 
 // Workspace resizing
@@ -30,7 +31,7 @@ let numTopics = 1;
 let topics = {};
 
 // Creates a new topic
-function createTopic( id, name ) {
+const createTopic = async( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
@@ -182,7 +183,7 @@ function createTopic( id, name ) {
     openTab( newTab.id );
 
     if( !id ) {
-        fetch( "api/v1/auth/topics", {
+        const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
@@ -199,25 +200,25 @@ function createTopic( id, name ) {
                 "resources": [],
                 "createTime": Date.now(),
             } )
-        } )
-            .then( response => response.json() )
-            .then( ( data ) => {
-                console.log( data );
-                // map the resulting topic id to the value used in topic elements
-                topics[numTopics] = data.topicId;
-                numTopics++;
-                console.log( topics );
-                saveWorkspace( topics );
-            } );
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            // map the resulting topic id to the value used in topic elements
+            topics[numTopics] = data.topicId;
+            numTopics++;
+            console.log( topics );
+            saveWorkspace( topics );
+        }
     }
     else{
         topics[numTopics] = id;
         numTopics ++;
     }
-}
+};
 
 // Updates topic name
-function updateTopic( name ) {
+const updateTopic = async( name ) => {
     let isRequired = [];
     let resources = getResources();
     console.log( resources );
@@ -226,7 +227,8 @@ function updateTopic( name ) {
     }
     console.log( isRequired );
     let id = getCurrTopicID();
-    fetch( "api/v1/auth/topics", {
+
+    const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
@@ -236,24 +238,26 @@ function updateTopic( name ) {
             "resourcesRequired": isRequired,
             "isRequired": true
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
-            console.log( data.topicId );
-        } );
-}
+    } );
+
+    if( response.ok ) {
+        const data = await response.json();
+        console.log( JSON.stringify( data ) );
+        console.log( data.topicId );
+    }
+};
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
-async function saveWorkspace( topics ){
+const saveWorkspace = async( topics ) => {
     const topicsList = Object.values( topics );
 
 
     const [ isTopic, id ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
     let description = document.getElementById( "workspace-desc" ).value;
-    fetch( "api/v1/auth/workspaces", {
+
+    const response = await fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
@@ -264,16 +268,13 @@ async function saveWorkspace( topics ){
             "active":true
             
         } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            console.log( JSON.stringify( data ) );
-           
-        } );
-}
+    } );
 
-
-
+    if( response.ok ) {
+        const data = await response.json();
+        console.log( JSON.stringify( data ) );
+    }
+};
 
 
 
@@ -1449,26 +1450,27 @@ const getDiscussions = async ( isTopic, id ) => {
     let pageComments;
 
     if ( isTopic && id > 0 ) {
-        await fetch( "/api/v1/auth/discussions/topic/" + id, {
-            headers: { "Content-Type": "application/json" }
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( data ) => {
-                data ?
-                    pageComments = data.comments :
-                    pageComments = null;
-            } );
+
+        const response = await fetch( "/api/v1/auth/discussions/topic/" + id, { headers: { "Content-Type": "application/json" } } );
+        if ( response.ok ) {
+            const data = await response.json();
+            ( data ) ? pageComments = data.comments : pageComments = null;
+        }
+        else {
+            console.log( response.status );
+        }
     } 
     else if( id > 0 ) {
-        await fetch( "/api/v1/auth/discussions/workspace/" + id, {
-            headers: { "Content-Type": "application/json" }
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( data ) => {
-                data ?
-                    pageComments = data.comments :
-                    pageComments = null;
-            } );
+
+        const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
+        if ( response.ok ) {
+            const data = await response.json();
+            ( data ) ? pageComments = data.comments : pageComments = null;
+        }
+        else {
+            console.log( response.status );
+        }
+            
     }
 
     if ( pageComments ) {

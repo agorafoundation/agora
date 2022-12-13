@@ -82,7 +82,7 @@
     } );
 } ); // End of use strict
 
-let sideBarStatus = false;
+let sideBarStatus = true;
 function toggleSidebar() {
     if ( !sideBarStatus ) {
         document.getElementById( "agoraSideBar" ).style.width = "250px";
@@ -96,5 +96,8 @@ function toggleSidebar() {
 }
 
 // add events for toggle sidebar
-document.getElementById( "agoraSideBar" ).addEventListener( "mouseover", toggleSidebar );
-document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
+if( document.getElementById( "agoraSideBar" ) ) {
+    toggleSidebar();
+    document.getElementById( "agoraSideBar" ).addEventListener( "mouseover", toggleSidebar );
+    document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
+}
