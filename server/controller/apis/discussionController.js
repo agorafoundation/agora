@@ -11,11 +11,11 @@ const {errorController} = require( "./apiErrorController" );
 
 // Get
 
-exports.getDiscussionByGoalId = async ( req, res ) => {
+exports.getDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    // get the discussion by goal id
+    // get the discussion by workspace id
     let discussion = await discussionService.getDiscussion( "goal", id, req.user.id );
 
     if( !discussion ) {
@@ -45,7 +45,7 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
 
 // Update
 
-exports.updateDiscussionByGoalId = async ( req, res ) => {
+exports.updateDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
@@ -77,7 +77,7 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
 // Create
 
-exports.createDiscussionByGoalId = async ( req, res ) => {
+exports.createDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 

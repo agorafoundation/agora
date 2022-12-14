@@ -15,11 +15,11 @@ router.use( bodyParser.urlencoded( {
 router.use( bodyParser.json() );
 
 // service requires
-let goalService = require( '../../service/goalService' );
+let workspaceService = require( '../../service/workspaceService' );
 let topicService = require( '../../service/topicService' );
 
 // model requires
-let Goal = require( '../../model/goal' );
+let Workspace = require( '../../model/workspace' );
 const { localsName } = require( 'ejs' );
 
 // import multer (file upload) and setup
@@ -31,7 +31,7 @@ let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_P
 let FRONT_END = process.env.FRONT_END_NAME;
 let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
 
-// set the max image size for avatars and resource, topic and goal icons
+// set the max image size for avatars and resource, topic and workspace icons
 let maxSize = 1 * 1024 * 1024;
 
 // Start multer
@@ -52,23 +52,24 @@ let storage = multer.diskStorage( {
     },
     filename: function ( req, file, cb ) {
         let filename = Date.now() + file.originalname;
-        req.session.savedGoalFileName = filename;
+        req.session.savedWorkspaceFileName = filename;
         cb( null, filename );
     }
 } );
-let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'goalImage' );
+let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSize: maxSize } } ).single( 'workspaceImage' );
 // end multer
 
 
 
 router.route( '/' )
     .get( async function ( req, res ) {
-        // get all the goals for this owner
-        let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
-        //console.log("------------- owner goals: " + JSON.stringify(ownerGoals));
-        let goal = null;
+        // get all the workspaces for this owner
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+      
+        //console.log("------------- owner workspaces: " + JSON.stringify(ownerWorkspaces));
+        let workspace = null;
         
-        res.render( './admin/adminGoal', {ownerGoals: ownerGoals, goal: goal} );
+        res.render( './admin/adminWorkspace', {ownerWorkspaces: ownerWorkspaces, workspace: workspace} );
       
     } )
     .post( async function( req, res ) {
@@ -79,51 +80,51 @@ router.route( '/' )
     );
 
 
-router.route( '/:goalId' )
+router.route( '/:workspaceId' )
     .get( async function ( req, res ) {
         let message = '';
         if( req.locals && req.locals.message ) {
             message = req.locals.message;
         }
         
-        let goalId = req.params.goalId;
+        let workspaceId = req.params.workspaceId;
 
-        // get all the goals for this owner
-        let ownerGoals = await goalService.getAllGoalsForOwner( req.session.authUser.id, false );
+        // get all the workspaces for this owner
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
 
         // get all the topics for this owner
         let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
-        let goal = Goal.emptyGoal();
-        if( goalId > 0 ) {
-            goal = await goalService.getActiveGoalWithTopicsById( goalId, false );
+        let workspace = Workspace.emptyWorkspace();
+        if( workspaceId > 0 ) {
+            workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
 
-            // iterate through the goals assigned topics, remove them from the available list
-            for( let i=0; i < goal.topics.length; i++ ) {
-                let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( goal.topics[i].id );
+            // iterate through the workspaces assigned topics, remove them from the available list
+            for( let i=0; i < workspace.topics.length; i++ ) {
+                let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( workspace.topics[i].id );
                 
                 ~redundantTopic && availableTopics.splice( redundantTopic, 1 );
             }
 
-            // get the topics that are not currently assigned to this goal
+            // get the topics that are not currently assigned to this workspace
 
         }
         else {
-            goal.ownedBy = req.session.authUser.id;
-            goal.goalVersion = 1;
+            workspace.ownedBy = req.session.authUser.id;
+            workspace.workspaceVersion = 1;
         }
       
         
-        // make sure the user has access to this goal (is owner)
-        if( goal.ownedBy === req.session.authUser.id ) {
-            res.render( './admin/adminGoal', {ownerGoals: ownerGoals, goal: goal, availableTopics: availableTopics} );
+        // make sure the user has access to this workspace (is owner)
+        if( workspace.ownedBy === req.session.authUser.id ) {
+            res.render( './admin/adminWorkspace', {ownerWorkspaces: ownerWorkspaces, workspace: workspace, availableTopics: availableTopics} );
         }
         else {
             message = 'Access Denied';
             let message2 = 'You do not have access to the requested resource';
-            res.render( './admin/adminGoal', {ownerGoals: ownerGoals, goal: null, message: message, message2: message2} );
+            res.render( './admin/adminWorkspace', {ownerWorkspaces: ownerWorkspaces, workspace: null, message: message, message2: message2} );
         }
     }
     );

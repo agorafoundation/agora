@@ -15,10 +15,10 @@ exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
             discussion_text
         )
         SELECT parent.id, $1, $3
-        FROM $5 parent
+        FROM ${parentTable} parent
         WHERE parent.id = $2 AND parent.owned_by = $4;
     `;
-    const values = [ type, id, userId, discussion_text, parentTable ];
+    const values = [ type, +id, userId, discussion_text ];
     
     try {
         
@@ -62,7 +62,7 @@ exports.getDiscussion = async ( type, id, userId ) => {
 
         const disc = discussion.ormDiscussion( res.rows[0] );
         
-        const comments = await this.getCommentsForDiscussion( id, type );
+        const comments = await this.getCommentsForDiscussion( id, type, userId );
 
         if( comments ) {
             disc.comments = comments;
@@ -94,7 +94,7 @@ exports.updateDiscussion = async ( type, id, userId, updatedDiscussion ) => {
             discussion_text: updatedDiscussion.discussion_text
         };
 
-        // TODO: include auth verification in this, userId must match the goal or topic owner
+        // TODO: include auth verification in this, userId must match the workspace or topic owner
         // Should rely on other teams to implement this function
         const text = `
             UPDATE discussions
@@ -175,7 +175,7 @@ exports.createComment = async ( userId, commentToMake ) => {
             ) VALUES ($1, $2, $3, $4)
             RETURNING *
         `;
-        const values = [ commentToMake.parent_id, commentToMake.parent_type, commentToMake.comment_text, userId ];
+        const values = [ commentToMake.parent_id, commentToMake.parent_type === "topic" ? "topic" : "goal", commentToMake.comment_text, userId ];
 
         const res = await db.query( text, values );
 
@@ -229,11 +229,25 @@ exports.deleteComment = async ( commentId, userId ) => {
 };
 
 // Not secure, called internally ONLY, we expect auth checks to be done before this is called
-exports.getCommentsForDiscussion = async ( id, type ) => {
+exports.getCommentsForDiscussion = async ( id, type, userId ) => {
     try {
         
         const text = `
-            SELECT C.comment_id, C.comment_text, C.parent_id, C.parent_type, C.user_id, C.creation_date, C.updated_date, SUM(CASE WHEN R.rating = TRUE THEN 1 ELSE 0 END) as likes, SUM(CASE WHEN R.rating = FALSE THEN 1 ELSE 0 END) as dislikes
+            SELECT 
+                C.comment_id, 
+                C.comment_text, 
+                C.parent_id, 
+                C.parent_type, 
+                C.user_id, 
+                C.creation_date, 
+                C.updated_date, 
+                SUM(CASE WHEN R.rating = TRUE THEN 1 ELSE 0 END) as likes, 
+                SUM(CASE WHEN R.rating = FALSE THEN 1 ELSE 0 END) as dislikes,
+                SUM(CASE 
+                    WHEN R.rating = TRUE AND R.user_id = $3 THEN 1 
+                    WHEN R.rating = FALSE AND R.user_id = $3 THEN -1 
+                    ELSE 0 END
+                ) as user_rating
             FROM discussion_comments C
             LEFT JOIN discussion_comment_ratings R ON C.comment_id = R.comment_id
             WHERE C.parent_id = $1
@@ -242,7 +256,7 @@ exports.getCommentsForDiscussion = async ( id, type ) => {
             ORDER BY C.creation_date ASC
         `; 
 
-        const values = [ id, type ];
+        const values = [ id, type, userId ];
 
         let res = await db.query( text, values );
 

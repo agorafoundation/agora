@@ -8,7 +8,7 @@
 // dependencies
 
 // services
-const goalService = require( '../service/goalService' );
+const workspaceService = require( '../service/workspaceService' );
 const eventService = require( '../service/eventService' );
 const productService = require ( '../service/productService' );
 
@@ -16,13 +16,13 @@ exports.getCommunityDashboard = async ( req, res ) => {
 
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
 
-    // get all the current goals and topics to display
-    const availableGoals = await goalService.getAllVisibleGoalsWithTopics( req.session.authUser.id );
+    // get all the current workspaces and topics to display
+    const availableWorkspaces = await workspaceService.getAllVisibleWorkspacesWithTopics( req.session.authUser.id );
 
     // get the events feed
     const feed = await eventService.communityEventFeed( 10 );
 
-    res.render( 'community/community', {user: req.session.authUser, availableGoals: availableGoals, feed: feed} );
+    res.render( 'community/community', {user: req.session.authUser, availableWorkspaces: availableWorkspaces, feed: feed} );
 };
 
 exports.joinPage = async ( req, res ) => {

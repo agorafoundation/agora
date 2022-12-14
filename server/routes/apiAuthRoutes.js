@@ -95,10 +95,10 @@ const tagRoutes = require( './apis/tagRoutes' );
 router.use( '/tags', tagRoutes );
 
 /**
- * Goal APIs
+ * Workspace APIs
  */
-const goalRoutes = require( './apis/goalRoutes' );
-router.use( '/goals', goalRoutes );
+const workspaceRoutes = require( './apis/workspaceRoutes' );
+router.use( '/workspaces', workspaceRoutes );
 
 /**
  * Topic APIs
@@ -113,6 +113,12 @@ const resourceRoutes = require( './apis/resourceRoutes' );
 router.use( '/resources', resourceRoutes );
 
 /**
+ * Shared Entity APIs
+ */
+const sharedEntityRoutes = require( './apis/sharedEntityRoutes' );
+router.use( '/shared', sharedEntityRoutes );
+
+/**
  * User APIs
  */
 const userRoutes = require( './apis/userRoutes' );
@@ -124,6 +130,11 @@ router.use( '/user', userRoutes );
 const discussionRoutes = require( './apis/discussionRoutes' );
 router.use( '/discussions', discussionRoutes );
 
+/**
+ * Search APIs
+ */
+const searchRoutes = require( './apis/searchRoutes' );
+router.use( '/search', searchRoutes );
 
 /**
  * Stripe APIs

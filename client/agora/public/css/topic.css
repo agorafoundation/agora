@@ -5,7 +5,6 @@
 
 .topic-content {
     width: 100%;
-    display: flex;
     justify-content: center;
     border-radius: 20px;
     border:1px solid lightgray;
@@ -17,32 +16,60 @@
     padding-bottom: 50px;
 }
 
+.topic-title {
+  width: 40%;
+  margin-left: 15px;
+  margin-top: 30px;
+  border: 1px solid lightgrey;
+  padding: 10px 7px;
+}
+
+.topic-title:focus {
+  border: 1px solid #2c3e50;
+  outline: 0;
+}
+
+#topic-divider {
+  margin-top: 25px;
+  border-top: 1px solid lightgrey;
+}
+
 .header-div {
-    font-size: large;
-    display: flex;
+    display:  flex;
     justify-content: flex-start;
-    flex-direction: column;
+    flex-direction: row;
+    height: 90px;
 }
 
 .header {
-    padding: 10px 10px;
-    position: relative;
+    font-size: small;
 }
 
 #title-div {
-    font-size: xx-large;
+    font-size: x-large;
 }
 
 #description-div {
-    display: flex;
-    flex-direction: row;
-    padding-top: 20px
+  width: 30%;
+  display: flex;
+  flex-direction: row;
+}
+
+#tag-div {
+  width: 15%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
 }
 
 .placeholder {
     border: none;
+    background: transparent;
+    color:white;
+    height: 30px;
     border-bottom: 1px solid lightgrey;
     padding-left: 0px;
+    margin-right: 3vw;
 }
 
 .placeholder:focus {
@@ -73,7 +100,6 @@
 .textarea-div {
     resize: vertical;
     margin: 5px;
-    margin-bottom: 40px;
     width: 100%;
     height: 300px;
     padding: 5px;
@@ -89,14 +115,12 @@
 
 .descriptionTA {
     resize: none;
-    width: 40%;
-    height: 50px;
+    height: 30px;
     border: 1px solid lightgrey;
     padding-top: 10px;
     padding-left: 10px;
     margin-left: 20px;
     margin-bottom: 10px;
-    font-size: medium;
     border-style: dashed;
 }
 
@@ -110,10 +134,11 @@
 }
 
 .label {
-    border-radius: 20px;
-    border: 1px solid #2c3e50;
-    padding: 10px 10px;
-    font-size: large;
+    padding: 7px 5px;
+    height: 35px;
+    margin-right: .5vw;
+    font-weight: bold;
+    color: white;
 }
 
 #workspace-empty-state {
@@ -230,10 +255,7 @@
     cursor: pointer;
     padding: 14px 10px;
     transition: 0.3s;
-    border-top: none;
-    border-left: none;
-    border-bottom: none;
-    border-right: 1px solid rgb(177, 172, 172);
+    border: none;
   }
   
 .tabcontent {
@@ -262,11 +284,10 @@
 
 /* Tags --------------------------------------*/
 #mySearch {
-    width: 10%;
-    font-size: 18px;
+    /* width: 10%; */
     padding: 11px;
     border-bottom: 1px solid #ddd;
-    font-size: medium;
+    font-size: small;
     margin-left: 5px;
     outline: none;
     display: inline;
@@ -277,16 +298,12 @@
 }
 
 .tag-list .new-tag{
-    position: absolute;
-    top: 75px;
-    left: 90px;
     background-color: white;
     display: none;
     z-index: 1;
 }
   
 .tag-list .tag-list-element .new-tag{
-    padding: 12px;
     color: black;
     display: block;
 }
@@ -296,12 +313,20 @@
 }
 
 .tag-list-element  {
-    margin-left: 3%;
-    font-size: medium;
+    font-size: small;
     display: none;
-    width: 190px;
     border-width: 1px;
     cursor: pointer;
+}
+
+.tag-list-element:hover {
+  text-decoration: underline;
+}
+
+.tag-list {
+  width: 19%;
+  margin-left: 50px;
+  background-color: white;
 }
 
 .close-tag {
@@ -311,24 +336,28 @@
 }
 
 .new-tag {
+  border-style: dashed;
     margin-top: 0;
 }
 
   #curr-tags {
     width: 60%;
-    display: inline;
+    display: flex;
+    flex-direction: row;
     float: right;
-    margin-right: 20%;
+    margin-right: 10%;
     margin-top: 1%;
     font-size: smaller;
   }
 
   .styled-tags {
-    display: inline;
+    display: flex;
     margin-right: 10px;
+    height:30px;
     background-color:aliceblue;
     padding: 5px 9px;
     border-radius: 20px;
+    align-items: center;
   }
 
 /* END Tags*/
@@ -368,7 +397,7 @@
     margin-top: 10px;
     width: 99%;
     height: 20px;
-    background-color: rgb(18, 79, 132);
+    background-color:#2c3e50;
     display: none;
   }
     
@@ -623,3 +652,93 @@
   .aux-button:focus {
     outline: none;
   }
+
+  .discussion-button {
+    position: absolute;
+    right: 80px;
+    top: -20px;
+  }
+
+  .discussion-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 5px;
+    border-radius: 5px;
+    word-wrap: break-word;
+    border: 1px solid black;
+    margin-bottom: 5px;
+    overflow: auto;
+    font-size: 14px;
+  }
+
+  .discussion-modal-pos {
+    left: 30%; 
+    top: 35px; 
+    z-index: 1000;
+  }
+
+  .discussion-modal-edges {
+    box-shadow: 0px 1px 2px 0px rgba(0.5, 0.5, 0.5, 0.5); 
+    border-radius: 15px
+  }
+
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+.post-comment-btn {
+  margin-left: 85%; 
+  border-radius: 5px; 
+  background-color: #5f89e0; 
+  color: white; 
+  border: none
+} 
+
+.post-comment-btn:hover {
+  background-color: #8aa9e7;
+  outline: 1px solid gray;
+}
+
+.discussion-user {
+  padding: 0; 
+  margin: 6px 0 0 10px;
+}
+
+.comment-body {
+  margin-left: 5px; 
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.comment-footer {
+  margin: 10px 0 0 5px
+}
+
+.like-button {
+  background-color: lightgray; 
+  border-radius: 10%; 
+  outline: 2px solid gray;
+  border: none;
+}
+
+.footer-hr {
+  width: 30px; 
+  transform: rotate(.25turn); 
+  margin: 15px 0 0 0;
+}
+
+.like-icon {
+  margin: 0; 
+  font-size: 22px;
+}
+
+.post-date {
+  font-size: 14px;
+  margin-top: 6px;
+}

@@ -1,6 +1,6 @@
 /**
- * Client side js to filter elementes (Goals, Topics, and Resources) by 
- * Tags, search terms, selections (Goals filter topics and resources, 
+ * Client side js to filter elementes (Workspaces, Topics, and Resources) by 
+ * Tags, search terms, selections (Workspaces filter topics and resources, 
  * topics filter resources)
  * 
  */

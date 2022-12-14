@@ -26,7 +26,7 @@ const CompletedResource = require( '../model/completedResource' );
 // any cross services required
 const userService = require( '../service/userService' );
 const assessmentService = require( '../service/assessmentService' );
-const Goal = require( "../model/goal" );
+const Workspace = require( "../model/workspace" );
 
 
 /**
@@ -193,12 +193,13 @@ exports.getAllActiveTopics = async function() {
 
 /**
  * Get a topic by id
- * @param {Integer} topicId 
+ * @param {Integer} topicId
+ * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @returns topic
  */
-exports.getTopicById = async function( topicId ) {
-    let text = "SELECT * FROM topics WHERE id = $1";
-    let values = [ topicId ];
+exports.getTopicById = async function( topicId, ownerId ) {
+    let text = "SELECT * FROM topics WHERE id = $1 AND (owned_by = $2 OR visibility = 2)";
+    let values = [ topicId, ownerId ];
     try {
         let topic = "";
          
@@ -489,7 +490,33 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     }
 };
 
+// Takes in a topicId and finds each resourceId associated with it.
+exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 
+    let text = "SELECT * from topic_resource where topic_id = $1";
+    let values = [ topicId ];
+    let resourceIds = [];
+
+    try {
+
+        let res = await db.query( text, values );
+
+        // console.log( " RESPONSE : " + JSON.stringify( res ) );
+        if ( res.rowCount > 0 ){
+            for ( let i=0; i<res.rowCount; i++ ){
+                resourceIds[i] = res.rows[i].resource_id;
+            }
+        }
+
+    }
+    catch ( e ) {
+        console.log( e.stack );
+        return false;
+    }
+
+    return resourceIds;
+       
+};
 
 /**
  * Saves a topic to the database, creates a new record if no id is assigned, updates existing record if there is an id.
@@ -1121,7 +1148,7 @@ exports.getRecentTopicEnrollmentEvents = async function( limit ) {
 exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
-
+        // Retrieve all user owned topics and public topics.
         let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
         const values = [ true, ownerId ];
 
@@ -1166,7 +1193,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 // Similar to getAllVisibleTopics, but does not show user specific topics.
 exports.getAllPublicTopics = async ( limit, offset ) => {
 
-    let text = "select * from topics WHERE active = $1 and visibility = 2 ORDER BY id";
+    let text = "select * from topics WHERE active = $1 and visibility = 0 ORDER BY id";
     const values = [ true ];
 
     // apply a default offset if none is provided
@@ -1208,8 +1235,12 @@ exports.deleteTopicById = async ( topicId, authUserId ) => {
 
     try {
         let res = await db.query( text, values );
-        return true;
-
+        if( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     catch ( e ) {
         console.log( e.stack );

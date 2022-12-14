@@ -1,6 +1,7 @@
 -- Agora base database setup
 
 -- setup (as root / postgres)
+drop database agora;
 create database agora;
 create user agora with encrypted password 'agora';
 grant all privileges on database agora to agora;
@@ -605,9 +606,32 @@ CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
 
 GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
 
+--   Shared Entity tables
 
---   Sharing related Tables
+CREATE TABLE IF NOT EXISTS shared_entities (
+    shared_entity_id SERIAL PRIMARY KEY,
+    entity_id INTEGER,          -- unique id number of the entity being shared
+    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
+    share_user_id INTEGER,      -- user id of the user who the entity was shared with
+    owner_user_id INTEGER,      -- user id of the user who shared the entity
+    -- share_type INTEGER,      -- type of share, ENUM value: 1=public, 2=shared (Commented out - would a publicly visible item have entries in this table?)
+    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=discussion, 3=edit
+    can_copy BOOLEAN,           -- can the shared entity be copied by another user?
+    create_time TIMESTAMP DEFAULT current_timestamp,
+    update_time TIMESTAMP
+);
+GRANT ALL PRIVILEGES ON TABLE shared_entities TO agora;
+GRANT USAGE, SELECT ON SEQUENCE shared_entities_shared_entity_id_seq TO agora;
 
+CREATE INDEX IF NOT EXISTS idx_shared_share_user_id ON shared_entities (share_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_owner_user_id ON shared_entities (owner_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
+CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
+
+/*
+-- The original version of the shared entity table that I created.  I'm leaving it here for reference. this was created for issue #125 
+
+-- sharing related tables
 CREATE TABLE IF NOT EXISTS shared (
     shared_id SERIAL PRIMARY KEY,
     entity_id INTEGER,          -- unique id number of the entity being shared
@@ -628,3 +652,4 @@ CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared (shared_by_use
 CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared (shared_with_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared (entity_type);
+*/

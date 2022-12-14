@@ -9,10 +9,14 @@
 const fs = require( 'fs' );
 let path = require( 'path' );
 
+// import controllers
+const {errorController} = require( "./apiErrorController" );
+
 // import services
 const topicService = require( '../../service/topicService' );
 const assessmentService = require( '../../service/assessmentService' );
 const activityService = require( '../../service/activityService' );
+const resourceService = require ( '../../service/resourceService' );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -30,7 +34,7 @@ let TOPIC_PATH = process.env.TOPIC_IMAGE_PATH;
 // topic file path
 const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
-// set the max image size for avatars and topic, topic and goal icons
+// set the max image size for avatars and topic, topic and workspace icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
@@ -82,6 +86,53 @@ exports.getAllPublicTopics = async ( req, res ) => {
         res.set( "x-agora-message-detail", "Topic not found" );
         res.status( 404 ).json( message );
     }
+};
+
+exports.getAllResourcesForTopicId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.id;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.id;
+    }
+
+    if( authUserId > 0 ){
+
+        // Check if valid topicId given.
+        let topic = await topicService.getTopicById( req.params.topicId, authUserId );
+        if( topic ) {
+
+            let resourcesList = [];
+
+            // Get all resource Ids associated with our topicId.
+            let resourceIds = await topicService.getAllResourceIdsFromTopic( topic.topicId );
+
+            // Grab each resource by id and append it to our list of resources.
+            for ( let index in resourceIds ) {
+                let resource = await resourceService.getResourceById( resourceIds[index], authUserId );
+
+                if ( resource ){ // Ensure retrieval of resource.
+                    resourcesList.push( resource );
+                }
+                else {
+                    console.log( "Error retrieving resource " + resourceIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( resourcesList );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+        }
+    }
+    
 };
 
 exports.getTopicById = async ( req, res ) => {
@@ -190,11 +241,12 @@ exports.saveTopicImage = async( req, res, topicId, filename ) => {
     // save image in db and delete old file  
     if( topicId > 0 ) {
         topicService.updateTopicImage( topicId, filename ).then( ( rValue ) => {
+            if ( rValue === filename ) {
+                console.log( 'No image update occurred - exiting image update function.' );
+                return false;
+            }
 
-            if( rValue && rValue.length > 0 && ( rValue != 'topic-default.png' 
-                || rValue != 'notebook-pen.svg' 
-                || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' ) ) {
+            if( rValue && rValue.length > 0 && rValue != 'multiple-layers.svg' ) {
                 console.log( "removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue );
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH + rValue, ( err ) => {
                     if( err ) {
@@ -230,7 +282,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         topic.topicId = req.body.topicId;
 
         // see if this is a modification of an existing topic
-        let existingTopic = await topicService.getTopicById( topic.topicId, false );
+        let existingTopic = await topicService.getTopicById( topic.topicId, authUserId );
 
         // if this is an update, replace the topic with the existing one as the starting point.
         if( existingTopic ) {
@@ -242,8 +294,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            topic.visibility = req.body.visibility;
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
+        }
         topic.topicType = req.body.topicType;
-        topic.visibility = req.body.visibility;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
 
@@ -262,7 +319,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
         
         // check to see if the incoming message format is from the UI form or the API
-        topic.active = false; // Defaulted to false if not specified.
+        // topic.active = false; // Defaulted to false if not specified.
         if( req.body.active ) {
             topic.active = req.body.active;
         }
@@ -484,9 +541,10 @@ exports.deleteTopicById = async ( req, res ) => {
         res.status( 200 ).json( "Success" );
     }
     else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No topics were found meeting the query criteria" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "No topics were found meeting the query criteria" );
-        res.status( 404 ).send( "No topics Found" );
+        res.status( 404 ).json( message );
     }
 
 };

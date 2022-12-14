@@ -1,10 +1,10 @@
 .topic-badge {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .note-badge {
   float: right;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .gallery-col {
@@ -88,9 +88,13 @@
   align-items: center;
 }
 
-.btn-goal-topic-toggle {
+.btn-workspace-topic-toggle {
   margin-left: auto;
   margin-bottom: 0;
+}
+
+.delete-icon{
+  color:#FE6464;
 }
 
 /*rename modal*/
@@ -118,7 +122,7 @@
 }
 /* document icon */
 .document-icon {
-  color: blue;
+  color: #3f3f3f;
 }
 
 #to-be-deleted-name {
@@ -163,7 +167,7 @@
 .list-toggle-btn {
   position: absolute;
   top: 2.2%;
-  right: 275px;
+  right: 300px;
   height: 40px;
   width: 30px;
 }

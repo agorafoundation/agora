@@ -1,20 +1,10 @@
-<!DOCTYPE html>
 
-<html>
-
-  <head>
-    <script src="../../../../public/js/dashboard"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    <%- include('../../../partials/head.ejs'); %>
-  </head>
-
-  <body>
-    <!--Declaring ejs function to display cards-->
-    <%- include('./delete-modal.ejs'); %>
-    <%- include('./rename-modal.ejs'); %>
-    <%- include('./alert-toast.ejs'); %>
-    <%- include('./new-topic-goal.ejs'); %>
-    <% //name:string, description:string, tags:array, content:array %>
+<!--Declaring ejs function to display cards-->
+<%- include('./delete-modal.ejs'); %>
+<%- include('./rename-modal.ejs'); %>
+<%- include('./alert-toast.ejs'); %>
+<%- include('./new-topic-workspace.ejs'); %>
+<% //name:string, description:string, tags:array, content:array %>
     
 
 
@@ -25,12 +15,13 @@
 <%- include('./list-toggle.ejs'); %>
 
 <!--Search bar-->
-<input id="topic-search" class="card-search" placeholder="Search" oninput="queryTopics(document.getElementById('topic-search').value, topicArr)"/>
+<input id="topic-search" class="card-search" placeholder="Search" style="margin-right: 40px;" oninput="queryTopics(document.getElementById('topic-search').value, topicArr) "/>
 
-  <hr class="mt-0">
-  <div class="container" id="main-container">
-    <%- include('./grid-template.ejs'); %>
-    <%- include('./list-template.ejs'); %>
-    
-    </div>      
-</html>
+<hr class="mt-0">
+<div class="container" id="main-container">
+  <%- include('./grid-template.ejs'); %>
+  <%- include('./list-template.ejs'); %>
+
+</div>      
+
+

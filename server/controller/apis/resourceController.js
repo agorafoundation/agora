@@ -25,11 +25,12 @@ const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 // resource file path
 const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 
-// set the max image size for avatars and resource, topic and goal icons
+// set the max image size for avatars and resource, topic and workspace icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
+const { Console } = require( 'console' );
 
 
 /**
@@ -125,7 +126,7 @@ exports.getResourceById = async ( req, res ) => {
     }
 
     // get all the active resources by Id
-    let resource = await resourceService.getAllActiveResourcesForOwnerById( authUserId, req.params.id );
+    let resource = await resourceService.getAllActiveResourcesForOwnerById( authUserId, req.params.resourceId );
 
     if( resource ) {
         res.set( "x-agora-message-title", "Success" );
@@ -199,13 +200,17 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
     // save image in db and delete old file  
     if( resourceId > 0 ) {
         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
+            if ( rValue === filename ) {
+                console.log( 'No image update occurred - exiting image update function.' );
+                return false;
+            }
 
-            if( rValue && rValue.length > 0 && ( rValue != 'resource-default.png' 
-                || rValue != 'notebook-pen.svg' 
-                || rValue != 'cell-molecule.svg' 
-                || rValue != 'code.svg' ) ) {
-                console.log( "removing: " + UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue );
-                fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH + rValue, ( err ) => {
+            if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
+                || rValue != "notebook-pen.svg" 
+                || rValue != "cell-molecule.svg" 
+                || rValue != "code.svg" ) ) {
+                console.log( "removing: " + resourceUploadPath + rValue );
+                fs.unlink( ( resourceUploadPath ) + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[resourceController] file delete error status: " + err );
                         return false;
@@ -220,7 +225,7 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 };
 
 exports.saveResource = async ( req, res, redirect ) => {
-
+    console.log( req.files );
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -246,8 +251,14 @@ exports.saveResource = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+            resource.visibility = req.body.visibility;
+        }
+        else {
+            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
+        }
+
         resource.resourceType = req.body.resourceType;
-        resource.visibility = req.body.visibility;
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
 
@@ -283,7 +294,8 @@ exports.saveResource = async ( req, res, redirect ) => {
         /**
          * once the resource is saved, save the image if it is passed
          */ 
-
+        console.log( "req.files is " + req.files );
+        console.log( "req.body.resourceImage is " + req.body.resourceImage );
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
         if ( req.body.resourceModified && !req.files ) {
             // do nothing we are going to keep the original file
@@ -291,7 +303,10 @@ exports.saveResource = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
-            if( resource.resourceType == 1 ) {
+            if ( req.body.resourceImage ) {
+                this.saveResourceImage( req, res, resource.resourceId, req.body.resourceImage );
+            }
+            else if( resource.resourceType == 1 ) {
                 this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
             }
             else if ( resource.resourceType == 2 ) {
@@ -425,9 +440,10 @@ exports.deleteResourceById = async ( req, res ) => {
         res.status( 200 ).json( "Success" );
     }
     else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No resources were found meeting the query criteria" );
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "No resources were found meeting the query criteria" );
-        res.status( 404 ).send( "No resources Found" );
+        res.status( 404 ).json( message );
     }
 
 };
