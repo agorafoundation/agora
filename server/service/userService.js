@@ -178,16 +178,13 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, beginning_programming, intermediate_programming, advanced_programming,'
-            + 'mobile_development, robotics_programming, web_applications, web3, iot_programming, database_design, relational_database, nosql_database, object_relational_mapping, stripe_id, available_access_tokens)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
-            record.mobileDevelopment, record.roboticsProgramming, record.webApplications, record.web3, record.iotProgramming, record.databaseDesign, record.relationalDatabase, 
-            record.noSqlDatabase, record.objectRelationalMapping, record.stripeId, 1 ];
+        let text = 'INSERT INTO users(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1 ];
 
         try {
              
-            let response = await db.query( text, values );
+            await db.query( text, values );
             
             
             // create the users role
@@ -215,16 +212,12 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4, beginning_programming=$5, intermediate_programming=$6, advanced_programming=$7,'
-            + 'mobile_development=$8, robotics_programming=$9, web_applications=$10, web3=$11, iot_programming=$12, database_design=$13, relational_database=$14, nosql_database=$15,'
-            + 'object_relational_mapping=$16 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
-            record.mobileDevelopment, record.roboticsProgramming, record.webApplications, record.web3, record.iotProgramming, record.databaseDesign, record.relationalDatabase, 
-            record.noSqlDatabase, record.objectRelationalMapping ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive ];
 
         try {
             
-            let response = await db.query( text, values );
+            await db.query( text, values );
             
         }
         catch( e ) {
