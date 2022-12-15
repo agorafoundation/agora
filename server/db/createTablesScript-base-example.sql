@@ -284,10 +284,10 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
 insert into user_role (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
 insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
-
+CREATE TYPE visibility AS ENUM ('private', 'public');
 
 -- workspace and related <- workspaceService
-CREATE TABLE IF NOT EXISTS workspace (
+CREATE TABLE IF NOT EXISTS workspaces (
     rid SERIAL PRIMARY KEY,
     workspace_id INTEGER,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
@@ -296,14 +296,16 @@ CREATE TABLE IF NOT EXISTS workspace (
     workspace_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
+    visibility visibility, 
     create_time TIMESTAMP DEFAULT current_timestamp,
 	lastmodified TIMESTAMP,
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE workspace TO agora;
+GRANT ALL PRIVILEGES ON TABLE workspaces TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspace (workspace_id, workspace_version);
+CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspaces (workspace_id, workspace_version);
+CREATE INDEX IF NOT EXISTS idx_workspace_visibility ON workspaces (visibility);
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     topic_id SERIAL PRIMARY KEY,
@@ -316,6 +318,7 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     has_assessment BOOLEAN DEFAULT false,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
+    visibility visibility, 
     topic_type INTEGER,     -- Enumeration -> 0 = Research, 1 = Educational
     create_time TIMESTAMP DEFAULT current_timestamp,
 	lastmodified TIMESTAMP,
@@ -323,10 +326,10 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
 );
 
 GRANT ALL PRIVILEGES ON TABLE topics TO agora;
+CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 
-
-CREATE TABLE IF NOT EXISTS workspace_path (
+CREATE TABLE IF NOT EXISTS workspace_paths (
     workspace_path_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
     topic_id INTEGER,
@@ -344,7 +347,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_path_workspace_rid ON workspace_path (w
 
 -- used to track a users interest in completing a goal (and at a specific goal version so the correct path can be identified)
 -- also tracks actually completion of a goal.
-CREATE TABLE IF NOT EXISTS user_workspace (
+CREATE TABLE IF NOT EXISTS user_workspaces (
     user_workspace_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
     user_id INTEGER,
@@ -397,6 +400,7 @@ CREATE TABLE IF NOT EXISTS resources (
     resource_link VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
+    visibility visibility,
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
@@ -404,6 +408,7 @@ CREATE TABLE IF NOT EXISTS resources (
 GRANT ALL PRIVILEGES ON TABLE resources TO agora; 
 
 CREATE INDEX IF NOT EXISTS idx_resounces_owned_by ON resources (owned_by);
+CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
 
 CREATE TABLE IF NOT EXISTS tags (
     tag_id SERIAL PRIMARY KEY,
@@ -607,15 +612,17 @@ CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
 GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
 
 --   Shared Entity tables
+CREATE TYPE shared_entity_type AS ENUM ('workspace', 'topic', 'resource');
+CREATE TYPE shared_permission_level AS ENUM ('view', 'discussion', 'edit');
 
 CREATE TABLE IF NOT EXISTS shared_entities (
     shared_entity_id SERIAL PRIMARY KEY,
     entity_id INTEGER,          -- unique id number of the entity being shared
-    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
-    share_user_id INTEGER,      -- user id of the user who the entity was shared with
-    owner_user_id INTEGER,      -- user id of the user who shared the entity
-    -- share_type INTEGER,      -- type of share, ENUM value: 1=public, 2=shared (Commented out - would a publicly visible item have entries in this table?)
-    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=discussion, 3=edit
+    entity_type shared_entity_type,      
+    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
+    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
+    -- share_type INTEGER,      -- removed as each entity has visibility settings for public / private. Entries in this table are exceptions to private
+    permission_level shared_permission_level,  
     can_copy BOOLEAN,           -- can the shared entity be copied by another user?
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
@@ -628,28 +635,3 @@ CREATE INDEX IF NOT EXISTS idx_shared_owner_user_id ON shared_entities (owner_us
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
 
-/*
--- The original version of the shared entity table that I created.  I'm leaving it here for reference. this was created for issue #125 
-
--- sharing related tables
-CREATE TABLE IF NOT EXISTS shared (
-    shared_id SERIAL PRIMARY KEY,
-    entity_id INTEGER,          -- unique id number of the entity being shared
-    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
-    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
-    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
-    share_type INTEGER,         -- type of share, ENUM value: 1=public, 2=shared
-    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=disscussion, 3=edit
-    can_copy BOOLEAN,           -- can the shared entity be copied by another user?
-    active BOOLEAN,
-    create_time TIMESTAMP DEFAULT current_timestamp,
-    update_time TIMESTAMP
-);
-GRANT ALL PRIVILEGES ON TABLE shared TO agora;
-GRANT USAGE, SELECT ON SEQUENCE shared_shared_id_seq TO agora;
-
-CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared (shared_by_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared (shared_with_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared (entity_id);
-CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared (entity_type);
-*/

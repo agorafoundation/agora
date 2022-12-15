@@ -30,13 +30,13 @@ exports.getAllTags = async ( limit, offset ) => {
     if ( !offset ) offset = 0;
 
     if( limit ) {
-        text += " ORDER BY id LIMIT $1 OFFSET $2";
+        text += " ORDER BY tag_id LIMIT $1 OFFSET $2";
 
         values.push( limit );
         values.push( offset );
     }
     else {
-        text += " ORDER BY id LIMIT 100 OFFSET $1";
+        text += " ORDER BY tag_id LIMIT 100 OFFSET $1";
         values.push( offset );
     }
 
@@ -67,7 +67,7 @@ exports.getAllTags = async ( limit, offset ) => {
  * @returns Tag or false if not found
  */
 exports.getTagById = async function( tagId ) {
-    let text = "SELECT * FROM tags WHERE id = $1";
+    let text = "SELECT * FROM tags WHERE tag_id = $1";
     let values = [ tagId ];
 
     try {
@@ -119,7 +119,7 @@ exports.getTagByTagName = async ( tagName ) => {
  * @returns 
  */
 exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
-    const text = "SELECT * FROM tags WHERE active = $1 and owned_by = $2 and id = $3 order by id;";
+    const text = "SELECT * FROM tags WHERE active = $1 and owned_by = $2 and tag_id = $3 order by tag_id;";
     const values = [ true, ownerId, tagId ];
 
     let tags = [];
@@ -146,7 +146,7 @@ exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
  * @returns All tags as a list
  */
 exports.getAllTagsForOwner = async function( ownerId ) {
-    const text = "SELECT * FROM tags WHERE owned_by = $1 order by id;";
+    const text = "SELECT * FROM tags WHERE owned_by = $1 order by tag_id;";
     const values = [ ownerId ];
 
     let tags = [];
@@ -182,7 +182,7 @@ exports.saveTag = async function( tag, updateFlag ) {
         if( tag.id > 0 || updateFlag ) {
             
             // update
-            let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE id = $3;";
+            let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE tag_id = $3;";
             let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.id ];
     
             try {
@@ -196,7 +196,7 @@ exports.saveTag = async function( tag, updateFlag ) {
         }
         else {
             // insert
-            let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING id;";
+            let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING tag_id;";
             let values = [ tag.tag.toLowerCase(), tag.ownedBy ];
 
             try {
@@ -226,7 +226,7 @@ exports.saveTag = async function( tag, updateFlag ) {
  * @returns {boolean} success
  */
 exports.deleteTagById = async ( tagId ) => {
-    let text = "DELETE FROM tags WHERE id = $1";
+    let text = "DELETE FROM tags WHERE tag_id = $1";
     let values = [ tagId ];
 
     try {

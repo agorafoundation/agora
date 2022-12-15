@@ -189,7 +189,7 @@ exports.getTopicsByTerm = async ( term, userId ) => {
 exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
         SELECT *
-        FROM goals 
+        FROM resources 
         WHERE goal_name ILIKE '%' || $1 || '%' 
         OR goal_description ILIKE '%' || $1 || '%'
         AND owned_by = $2

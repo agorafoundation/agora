@@ -1,3 +1,10 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2022 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
+
 const discussion = require( "../model/discussion" );
 const comment = require( "../model/comment" );
 const db = require( "../db/connection" );
@@ -6,7 +13,7 @@ const db = require( "../db/connection" );
 exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
 
     // this is safe because we know the routes that call this function on use these two
-    const parentTable = type === "goal" ? "goals" : "topics";
+    const parentTable = type === "workspace" ? "workspaces" : "topics";
 
     const text = `
         INSERT INTO discussions (
@@ -175,7 +182,7 @@ exports.createComment = async ( userId, commentToMake ) => {
             ) VALUES ($1, $2, $3, $4)
             RETURNING *
         `;
-        const values = [ commentToMake.parent_id, commentToMake.parent_type === "topic" ? "topic" : "goal", commentToMake.comment_text, userId ];
+        const values = [ commentToMake.parent_id, commentToMake.parent_type === "topic" ? "topic" : "workspace", commentToMake.comment_text, userId ];
 
         const res = await db.query( text, values );
 

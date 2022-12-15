@@ -34,7 +34,7 @@ const saltRounds = 10;
 const crypto = require( 'crypto' );
 
 exports.saveUserRole = async function( record ) {
-    let text = 'INSERT INTO user_role(user_id, role_id, active, end_time)'
+    let text = 'INSERT INTO user_roles (user_id, role_id, active, end_time)'
             + 'VALUES($1, $2, $3, $4)';
     let values = [ record.userId, record.roleId, record.active, record.endTime ];
     try {
@@ -51,7 +51,7 @@ exports.saveUserRole = async function( record ) {
 };
 
 exports.getActiveRoleById = async function( roleId ) {
-    let text = "SELECT * FROM roles WHERE active = $1 AND id = $2";
+    let text = "SELECT * FROM roles WHERE active = $1 AND role_id = $2";
     let values = [ true, roleId ];
     
     try {
@@ -90,7 +90,7 @@ exports.getActiveRoleByName = async function( name ) {
 };
 
 exports.getActiveRolesForUserId = async function( userId ) {
-    let text = "SELECT * FROM user_role WHERE active = $1 AND user_id = $2";
+    let text = "SELECT * FROM user_roles WHERE active = $1 AND user_id = $2";
     let values = [ true, userId ];
     
     let roles = [];
@@ -115,7 +115,7 @@ exports.getActiveRolesForUserId = async function( userId ) {
 
 exports.useAccessTokensById = async function( userId, numberOfTokens ) {
     if( userId > 0 && numberOfTokens > 0 ) {
-        let text = "UPDATE users SET available_access_tokens=available_access_tokens - $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens - $1 WHERE user_id=$2";
         let values = [ numberOfTokens, userId ];
         //console.log("taking away a token");
         try {

@@ -26,11 +26,11 @@ exports.getAssessmentById = async function( assessmentId, active ) {
     let text = "";
     let values = [];
     if( active ) {
-        text = "SELECT * FROM assessments WHERE active = $1 AND id = $2";
+        text = "SELECT * FROM assessments WHERE active = $1 AND assessment_id = $2";
         values = [ true, parseInt( assessmentId ) ];
     }
     else {
-        text = "SELECT * FROM assessments WHERE id = $1";
+        text = "SELECT * FROM assessments WHERE assessment_id = $1";
         values = [ parseInt( assessmentId ) ];
     }
     
@@ -43,11 +43,11 @@ exports.getAssessmentById = async function( assessmentId, active ) {
 
             // find the questions associated with the assessment
             if( active ) {
-                text = "SELECT * FROM assessment_question WHERE active = $1 AND assessment_id = $2";
+                text = "SELECT * FROM assessment_questions WHERE active = $1 AND assessment_id = $2";
                 values = [ true, assessment.id ];
             }
             else {
-                text = "SELECT * FROM assessment_question WHERE assessment_id = $1";
+                text = "SELECT * FROM assessment_questions WHERE assessment_id = $1";
                 values = [ assessment.id ];
             }
             
@@ -59,11 +59,11 @@ exports.getAssessmentById = async function( assessmentId, active ) {
 
                     // find the options associated with each question
                     if( active ) {
-                        text = "SELECT * FROM assessment_question_option WHERE active = $1 AND assessment_question_id = $2";
+                        text = "SELECT * FROM assessment_question_options WHERE active = $1 AND assessment_question_id = $2";
                         values = [ true, question.id ];
                     }
                     else {
-                        text = "SELECT * FROM assessment_question_option WHERE assessment_question_id = $1";
+                        text = "SELECT * FROM assessment_question_options WHERE assessment_question_id = $1";
                         values = [ question.id ];
                     }
                     
@@ -100,7 +100,7 @@ exports.getAssessmentById = async function( assessmentId, active ) {
 exports.getNextTopicAssessmentNumber = async function( assessmentId, userId ) {
     if( assessmentId ) {
         // query : select assessment_id, user_id, max(topic_assessment_number) from completed_assessment where assessment_id = 2 and user_id = 1 group by user_id, assessment_id;
-        let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessment where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
+        let text = "select assessment_id, user_id, max(topic_assessment_number) as num_assessments from completed_assessments where assessment_id = $1 and user_id = $2 group by user_id, assessment_id;";
         let values = [ assessmentId, userId ];
 
         try {
@@ -167,14 +167,14 @@ exports.removeCompletedAssessmentFromEnrollment = async function ( completedAsse
     if( completedAssessmentId > 0 ) {
 
         // update
-        let text = "UPDATE completed_assessment SET active = $1 WHERE id = $2;";
+        let text = "UPDATE completed_assessments SET active = $1 WHERE completed_assessment_id = $2;";
         let values = [ false, completedAssessmentId ];
 
         try {
             await db.query( text, values );
             
             // also remove the completed assessment id from the enrollment table
-            text = "UPDATE user_topic SET post_completed_assessment_id = $1 WHERE id = $2;";
+            text = "UPDATE user_topics SET post_completed_assessment_id = $1 WHERE user_topic_id = $2;";
             values = [ -1, enrollmentId ];
 
             try {
@@ -280,7 +280,7 @@ exports.saveAssessment = async function( assessment ) {
         
         // save the assessment
         if( assessment ) {
-            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;";
+            let text = "INSERT INTO assessments (assessment_type, assessment_name, assessment_description, pre_threshold, post_threshold, is_required, active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING assessment_id;";
             let values = [ assessment.assessmentType, assessment.assessmentName, assessment.assessmentDescription, assessment.preThreshold, assessment.postThreshold, assessment.isRequired, true ];
 
             try {
@@ -292,7 +292,7 @@ exports.saveAssessment = async function( assessment ) {
                     // save the questions
                     if( assessment.questions ) {
                         for( let i = 0; i < assessment.questions.length; i++ ) {
-                            text = "INSERT INTO assessment_question (assessment_id, question, is_required, correct_option_id, active) VALUES ($1, $2, $3, $4, $5) RETURNING id;";
+                            text = "INSERT INTO assessment_questions (assessment_id, question, is_required, correct_option_id, active) VALUES ($1, $2, $3, $4, $5) RETURNING assessment_question_id;";
                             values = [ assessment.id, assessment.questions[i].question, assessment.questions[i].isRequired, assessment.questions[i].correctOptionId, assessment.questions[i].active ];
 
                             try {
@@ -305,7 +305,7 @@ exports.saveAssessment = async function( assessment ) {
                                     // save the question options
                                     if( assessment.questions[i].options ) {
                                         for( let j = 0; j < assessment.questions[i].options.length; j++ ) {
-                                            text = "INSERT INTO assessment_question_option (assessment_question_id, option_number, option_answer, active) VALUES ($1, $2, $3, $4) RETURNING id;";
+                                            text = "INSERT INTO assessment_question_options (assessment_question_id, option_number, option_answer, active) VALUES ($1, $2, $3, $4) RETURNING assessment_question_option_id;";
                                             values = [ assessment.questions[i].id, assessment.questions[i].options[j].optionNumber, assessment.questions[i].options[j].optionAnswer, assessment.questions[i].options[j].active ];
 
                                             try {
@@ -316,21 +316,21 @@ exports.saveAssessment = async function( assessment ) {
 
                                                     // update the correct option id with the actual id number and not the option index
                                                     if( ( j + 1 ) == assessment.questions[i].correctOptionId ) {
-                                                        text = "UPDATE assessment_question SET correct_option_id = $1 WHERE id = $2;";
+                                                        text = "UPDATE assessment_questions SET correct_option_id = $1 WHERE assessment_question_id = $2;";
                                                         values = [ assessment.questions[i].options[j].id, assessment.questions[i].id ];
 
                                                         try {
                                                             let res4 = await db.query( text, values );
                                                         }
                                                         catch( e ) {
-                                                            console.log( "[ERR]: Error updating assessment_question table with correct_option_id - " + e );
+                                                            console.log( "[ERR]: Error updating assessment_questions table with correct_option_id - " + e );
                                                             return false;
                                                         }
                                                     }
                                                 }
                                             }
                                             catch( e ) {
-                                                console.log( "[ERR]: Inserting into assessment_question_option - " + e );
+                                                console.log( "[ERR]: Inserting into assessment_question_options - " + e );
                                                 return false;
                                             }
                                         }
@@ -338,7 +338,7 @@ exports.saveAssessment = async function( assessment ) {
                                 }
                             }
                             catch( e ) {
-                                console.log( "[ERR]: Inserting into assessment_question - " + e );
+                                console.log( "[ERR]: Inserting into assessment_questions - " + e );
                                 return false;
                             }
                         }
@@ -346,7 +346,7 @@ exports.saveAssessment = async function( assessment ) {
                 }
             }
             catch( e ) {
-                console.log( "[ERR]: Inserting assessment - " + e );
+                console.log( "[ERR]: Inserting assessments - " + e );
                 return false;
             }
         }

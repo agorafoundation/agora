@@ -61,7 +61,7 @@ exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
         }
         // New entry to be added to our table. Retrieve our shared_entity_id after to inform our user.
         else {
-            let text = "INSERT INTO shared_entities (entity_id, entity_type, share_user_id, owner_user_id, permission_level, can_copy) VALUES ($1, $2, $3, $4, $5, $6) returning shared_entity_id;";
+            let text = "INSERT INTO shared_entities (entity_id, entity_type, shared_with_user_id, shared_by_user_id, permission_level, can_copy) VALUES ($1, $2, $3, $4, $5, $6) returning shared_entity_id;";
             let values = [ sharedEntity.entityId, sharedEntity.entityType, sharedEntity.shareUserId, sharedEntity.ownerUserId, sharedEntity.permissionLevel, sharedEntity.canCopy ];
 
 

@@ -79,7 +79,7 @@ exports.createOrder = async function( order ) {
  * @returns Product associated with id or false in none found.
  */
 exports.getOrderById = async function( id ) {
-    const text = "SELECT * FROM orders WHERE id = $1";
+    const text = "SELECT * FROM orders WHERE order_id = $1";
     const values = [ id ];
     
     try {
@@ -269,7 +269,7 @@ exports.getProductByStripePriceId = async function( stripePriceId ) {
  * @returns Product associated with id or false in none found.
  */
 exports.getProductById = async function( id ) {
-    const text = "SELECT * FROM products WHERE id = $1";
+    const text = "SELECT * FROM products WHERE product_id = $1";
     const values = [ id ];
     
     try {
@@ -295,7 +295,7 @@ exports.getProductById = async function( id ) {
  */
 exports.getActiveProductWithProductImagesById = async function( productId ) {
     
-    const text = "SELECT * FROM products WHERE active = $1 AND id = $2";
+    const text = "SELECT * FROM products WHERE active = $1 AND product_id = $2";
     const values = [ true, productId ];
     let product = null;
     
