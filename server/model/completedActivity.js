@@ -20,7 +20,7 @@ exports.emptyCompletedActivity = () => {
 
 exports.ormCompletedActivity = function ( row ) {
     let completedActivity = exports.emptyCompletedActivity();
-    completedActivity.id = row.id;
+    completedActivity.id = row.completed_activity_id;
     completedActivity.activityId = row.activity_id;
     completedActivity.userId = row.user_id;
     completedActivity.submissionText = row.submission_text;

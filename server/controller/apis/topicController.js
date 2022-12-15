@@ -14,8 +14,6 @@ const {errorController} = require( "./apiErrorController" );
 
 // import services
 const topicService = require( '../../service/topicService' );
-const assessmentService = require( '../../service/assessmentService' );
-const activityService = require( '../../service/activityService' );
 const resourceService = require ( '../../service/resourceService' );
 
 // import util Models
@@ -23,8 +21,6 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
 const Topic = require( '../../model/topic' );
-const Assessment = require( '../../model/assessment' );
-const Activity = require( '../../model/activity' );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -161,7 +157,7 @@ exports.getTopicById = async ( req, res ) => {
     }   
 
     // topic file path
-    const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
+    // const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
 };
 

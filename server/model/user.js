@@ -47,7 +47,7 @@ exports.createUser = function( email, username, profileFilename, emailValidated,
 
 exports.ormUser = function( userRow ) {
     let user = exports.emptyUser();
-    user.id = userRow.id;
+    user.id = userRow.user_id;
     user.email = userRow.email;
     user.username = userRow.username;
     user.profileFilename = userRow.profile_filename;

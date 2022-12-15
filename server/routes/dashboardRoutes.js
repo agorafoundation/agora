@@ -22,7 +22,7 @@ router.use( bodyParser.json() );
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
-const WORKSPACE_PATH = process.env.GOAL_IMAGE_PATH;
+const WORKSPACE_PATH = process.env.WORKSPACE_IMAGE_PATH;
 const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
 // setup fileupload (works with enctype="multipart/form-data" encoding in request)

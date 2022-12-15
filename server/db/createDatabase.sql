@@ -62,15 +62,15 @@ GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_users_email ON users (LOWER(email));
 
-CREATE TABLE IF NOT EXISTS sessions (
-  session_id varchar NOT NULL COLLATE "default",
+CREATE TABLE IF NOT EXISTS session (
+  sid varchar NOT NULL COLLATE "default",
   sess json NOT NULL,
   expire timestamp(6) NOT NULL,
   CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
 );
 
-GRANT ALL PRIVILEGES ON TABLE sessions TO agora;
-CREATE INDEX IF NOT EXISTS idx_sessions_expire ON sessions (expire);
+GRANT ALL PRIVILEGES ON TABLE session TO agora;
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session ("expire");
 
 CREATE TABLE IF NOT EXISTS products (
     product_id SERIAL PRIMARY KEY,
@@ -269,8 +269,8 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
 
 -- insert into user_role_goal (user_id, role_id, active) values (1, 1, true);
 -- creator waiting for the first user
-insert into user_role (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
-insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
+insert into user_roles (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
+insert into user_roles (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
 CREATE TYPE visibility AS ENUM ('private', 'public');
 
@@ -326,10 +326,10 @@ CREATE TABLE IF NOT EXISTS workspace_paths (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE workspace_path TO agora;
-GRANT USAGE, SELECT ON SEQUENCE workspace_path_workspace_path_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE workspace_paths TO agora;
+GRANT USAGE, SELECT ON SEQUENCE workspace_paths_workspace_path_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_workspace_path_workspace_rid ON workspace_path (workspace_rid);
+CREATE INDEX IF NOT EXISTS idx_workspace_paths_workspace_rid ON workspace_paths (workspace_rid);
 
 
 
@@ -344,11 +344,11 @@ CREATE TABLE IF NOT EXISTS user_workspaces (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE user_workspace TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_workspace_user_workspace_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE user_workspaces TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_workspaces_user_workspace_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_workspace_workspace_rid ON user_workspace (workspace_rid);
-CREATE INDEX IF NOT EXISTS idx_user_workspace_user_id ON user_workspace (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_workspaces_workspace_rid ON user_workspaces (workspace_rid);
+CREATE INDEX IF NOT EXISTS idx_user_workspaces_user_id ON user_workspaces (user_id);
 
 
 -- Effectively an enrollment 
@@ -527,8 +527,9 @@ CREATE TABLE IF NOT EXISTS completed_assessment_questions (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
+
 GRANT ALL PRIVILEGES ON TABLE completed_assessment_questions TO agora;
-GRANT USAGE, SELECT ON SEQUENCE completed_assessment_questions_completed_assessment_question_id_seq TO agora;
+--GRANT USAGE, SELECT ON SEQUENCE completed_assessment_questions_completed_a_q_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_assessment_question_id ON completed_assessment_questions (assessment_question_id);
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_completed_assessment_id ON completed_assessment_questions (completed_assessment_id);
@@ -568,7 +569,6 @@ CREATE INDEX IF NOT EXISTS idx_completed_activities_activity_id ON completed_act
 CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 
 CREATE TABLE IF NOT EXISTS discussions (
-	discussion_id SERIAL PRIMARY KEY,
     parent_id INTEGER,
     parent_type discussion_parents,
     discussion_text VARCHAR,
@@ -618,8 +618,8 @@ CREATE TABLE IF NOT EXISTS shared_entities (
 GRANT ALL PRIVILEGES ON TABLE shared_entities TO agora;
 GRANT USAGE, SELECT ON SEQUENCE shared_entities_shared_entity_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_shared_share_user_id ON shared_entities (share_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_owner_user_id ON shared_entities (owner_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared_entities (shared_by_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared_entities (shared_with_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
 

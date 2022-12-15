@@ -40,7 +40,7 @@ exports.createOrder = function ( productId, quantity, userId, stripeSessionData,
 
 exports.ormOrder = function ( orderRow ) {
     let order = exports.emptyOrder();
-    order.id = orderRow.id;
+    order.id = orderRow.order_id;
     order.productId = orderRow.product_id;
     order.quantity = orderRow.quantity;
     order.userId = orderRow.user_id;

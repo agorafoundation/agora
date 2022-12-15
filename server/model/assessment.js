@@ -32,7 +32,7 @@ exports.emptyAssessment = () => {
 
 exports.ormAssessment = function ( row ) {
     let assessment = exports.emptyAssessment();
-    assessment.id = row.id;
+    assessment.id = row.assessment_id;
     assessment.assessmentType = row.assessment_type;
     assessment.assessmentName = row.assessment_name;
     assessment.assessmentDescription = row.assessment_description;

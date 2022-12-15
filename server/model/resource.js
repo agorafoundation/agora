@@ -15,7 +15,7 @@ function resource() {
     this.resourceLink = "";
     this.isRequired = -1;
     this.active = true;
-    this.visibility = 2;
+    this.visibility = "private";
     this.createTime;
     this.ownedBy = -1;
 }
@@ -26,7 +26,7 @@ exports.emptyResource = () => {
 
 exports.ormResource = function ( row ) {
     let resource = exports.emptyResource();
-    resource.resourceId = row.id;
+    resource.resourceId = row.resource_id;
     resource.resourceType = row.resource_type;
     resource.resourceName = row.resource_name;
     resource.resourceDescription = row.resource_description;

@@ -24,7 +24,7 @@ exports.emptyAssessmentQuestion = () => {
 
 exports.ormAssessmentQuestion = function ( row ) {
     let assessmentQuestion = exports.emptyAssessmentQuestion();
-    assessmentQuestion.id = row.id;
+    assessmentQuestion.id = row.assessment_question_id;
     assessmentQuestion.assessmentId = row.assessment_id;
     assessmentQuestion.question = row.question;
     assessmentQuestion.isRequired = row.is_required;

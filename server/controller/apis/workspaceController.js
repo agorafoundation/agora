@@ -25,7 +25,7 @@ const topicService = require( '../../service/topicService' );
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
 let FRONT_END = process.env.FRONT_END_NAME;
-let WORKSPACE_PATH = process.env.GOAL_IMAGE_PATH;
+let WORKSPACE_PATH = process.env.WORKSPACE_IMAGE_PATH;
 
 // set the max image size for avatars and icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;

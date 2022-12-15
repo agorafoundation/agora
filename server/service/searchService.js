@@ -190,8 +190,8 @@ exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
         SELECT *
         FROM resources 
-        WHERE goal_name ILIKE '%' || $1 || '%' 
-        OR goal_description ILIKE '%' || $1 || '%'
+        WHERE workspace_name ILIKE '%' || $1 || '%' 
+        OR workspace_description ILIKE '%' || $1 || '%'
         AND owned_by = $2
     `;
     const values = [ term, userId ];

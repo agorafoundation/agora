@@ -33,7 +33,7 @@ exports.createProduct = function ( productType, productName, productDescription1
 
 exports.ormProduct = function ( productRow ) {
     let product = exports.emptyProduct();
-    product.id = productRow.id;
+    product.id = productRow.product_id;
     product.productType = productRow.product_type;
     product.productName = productRow.product_name;
     product.productDescription1 = productRow.product_description_1;

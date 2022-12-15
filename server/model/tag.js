@@ -18,7 +18,7 @@ exports.emptyTag = () => {
 
 exports.ormTag = ( row ) => {
     let tag = exports.emptyTag();
-    tag.id = row.id;
+    tag.id = row.tag_id;
     tag.tag = row.tag;
     tag.lastUsed = row.last_used;
     tag.ownedBy = row.owned_by;

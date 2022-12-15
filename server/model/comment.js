@@ -18,7 +18,7 @@ exports.emptyComment = () => {
 exports.ormComment = ( row ) => {
     let comment = exports.emptyComment();
 
-    comment.id = row.comment_id;
+    comment.id = row.discussion_comment_id;
     comment.parent_id = row.parent_id;
     comment.parent_type = row.parent_type;
     comment.comment_text = row.comment_text;

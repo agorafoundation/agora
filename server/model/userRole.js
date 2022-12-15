@@ -20,7 +20,7 @@ exports.emptyUserRole = () => {
 
 exports.ormUserRole = function ( row ) {
     let userRole = exports.emptyUserRole();
-    userRole.id = row.id;
+    userRole.id = row.user_role_id;
     userRole.userId = row.user_id;
     userRole.roleId = row.role_id;
     userRole.active = row.active;

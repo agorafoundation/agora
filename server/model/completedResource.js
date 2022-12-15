@@ -24,7 +24,7 @@ exports.emptyCompletedResource = () => {
 
 exports.ormCompletedResource = function ( row ) {
     let completedResource = exports.emptyCompletedResource();
-    completedResource.id = row.id;
+    completedResource.id = row._completed_resource_id;
     completedResource.resourceId = row.resource_id;
     completedResource.userId = row.user_id;
     completedResource.submissionText = row.submission_text;

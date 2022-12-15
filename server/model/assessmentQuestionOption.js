@@ -20,7 +20,7 @@ exports.emptyAssessmentQuestionOption = () => {
 
 exports.ormAssessmentQuestionOption = function ( row ) {
     let assessmentQuestionOption = exports.emptyAssessmentQuestionOption();
-    assessmentQuestionOption.id = row.id;
+    assessmentQuestionOption.id = row.assessment_question_option_id;
     assessmentQuestionOption.assessmentQuestionId = row.assessment_question_id;
     assessmentQuestionOption.optionNumber = row.option_number;
     assessmentQuestionOption.optionAnswer = row.option_answer;

@@ -87,7 +87,7 @@
                                 for( let i=0; i < user.enrollments.length; i++ ) {
                                     if( user.enrollments[i].isCompleted ) {
                                         %>
-                                        <img src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" title="<%- user.enrollments[i].workspace.workspaceName %>" alt="<%- user.enrollments[i].workspace.workspaceName %>" class="badge-image" />
+                                        <img src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" title="<%- user.enrollments[i].workspace.workspaceName %>" alt="<%- user.enrollments[i].workspace.workspaceName %>" class="badge-image" />
                                         <%
                                     }
                                 }

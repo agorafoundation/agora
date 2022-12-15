@@ -15,7 +15,7 @@ function workspace() {
     this.active = true;
     this.completable = false;
     this.createTime;
-    this.visibility = 2;
+    this.visibility = "private";
     this.ownedBy = -1;
 
     this.topics = [];
@@ -28,11 +28,11 @@ exports.emptyWorkspace = () => {
 exports.ormWorkspace = function ( row ) {
     let workspace = exports.emptyWorkspace();
     workspace.rid = row.rid;
-    workspace.workspaceId = row.id; // TODO: Once database change goes through, this will need to be updated to row.workspaceId.
-    workspace.workspaceVersion = row.goal_version;
-    workspace.workspaceName = row.goal_name;
-    workspace.workspaceDescription = row.goal_description;
-    workspace.workspaceImage = row.goal_image;
+    workspace.workspaceId = row.workspace_id; // TODO: Once database change goes through, this will need to be updated to row.workspaceId.
+    workspace.workspaceVersion = row.workspace_version;
+    workspace.workspaceName = row.workspace_name;
+    workspace.workspaceDescription = row.workspace_description;
+    workspace.workspaceImage = row.workspace_image;
     workspace.active = row.active;
     workspace.completable = row.completable;
     workspace.createTime = row.create_time;

@@ -27,7 +27,7 @@ exports.createProductImage = function ( productId, imageName, imageDescription1,
 
 exports.ormProductImage = function( productImageRow ) {
     let productImage = exports.emptyProductImage();
-    productImage.id = productImageRow.id;
+    productImage.id = productImageRow.product_image_id;
     productImage.productId = productImageRow.product_id;
     productImage.imageName = productImageRow.image_name;
     productImage.imageDescription1 = productImageRow.image_description_1;

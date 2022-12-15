@@ -19,7 +19,7 @@ exports.emptyCompletedAssessmentQuestion = () => {
 
 exports.ormCompletedAssessmentQuestion = function ( row ) {
     let completedAssessmentQuestion = exports.emptyCompletedAssessmentQuestion();
-    completedAssessmentQuestion.id = row.id;
+    completedAssessmentQuestion.id = row.completed_assessment_question_id;
     completedAssessmentQuestion.completedAssessmentId = row.completed_assessment_id;
     completedAssessmentQuestion.assessmentQuestionId = row.assessment_question_id;
     completedAssessmentQuestion.assessmentQuestionOptionId = row.assessment_question_option_id;

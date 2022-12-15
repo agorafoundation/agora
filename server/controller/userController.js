@@ -37,8 +37,12 @@ exports.createUser = async function( req, res ) {
 
             // create a stripe account and retrieve the generated id
             let fullname = req.body.firstName + " " + req.body.lastName;
-            let stripeId = await stripeService.createStripeCustomer( email, fullname );
-
+            
+            let stripeId = "null";
+            if( process.env.STRIPE_TOGGLE == "true" ) {
+                stripeId = await stripeService.createStripeCustomer( email, fullname );
+            }
+            
             let hashedPassword = await userService.passwordHasher( req.body.psw );
 
             user = User.createUser( email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );

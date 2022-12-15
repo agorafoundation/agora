@@ -1,5 +1,5 @@
 <!--
-<i class="fas fa-2x fa-plus-circle triadic" data-toggle="modal" data-target="#create-workspace-modal" onclick='updateWorkspaceModal(<%- JSON.stringify(workspace).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' ></i>
+<i class="fas fa-2x fa-plus-circle triadic" data-toggle="modal" data-target="#create-workspace-modal" onclick='updateWorkspaceModal(<%- JSON.stringify(workspace).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.WORKSPACE_IMAGE_WEB_PATH %>");' ></i>
 <span class="font-weight-bold text-secondary title-font-size text-uppercase"> | Workspaces</span>
 <br />
 
@@ -8,13 +8,13 @@ if(ownerWorkspaces && ownerWorkspaces.length > 0) {
     for(let i=0; i < ownerWorkspaces.length; i++) {
         %>
 
-        <a class="card" style="width: 100%;" data-toggle="modal" data-target="#create-workspace-modal" onclick='updateWorkspaceModal(<%- JSON.stringify(ownerWorkspaces[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.GOAL_IMAGE_WEB_PATH %>");' id="workspace_<%- ownerWorkspaces[i].id %>">
+        <a class="card" style="width: 100%;" data-toggle="modal" data-target="#create-workspace-modal" onclick='updateWorkspaceModal(<%- JSON.stringify(ownerWorkspaces[i]).replace(/[\/\(\)\']/g, "&apos;") %>, "<%- process.env.WORKSPACE_IMAGE_WEB_PATH %>");' id="workspace_<%- ownerWorkspaces[i].id %>">
             <div class="card-body-low-padding" name="enrolled_card">
                 <div class="card">
                     <div class="card-header" id="headingOne">
                         <h5 class="mb-0">
                         <button class="btn tetradic3" aria-expanded="false" aria-controls="collapseOne">
-                            <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- ownerWorkspaces[i].workspaceImage %>" />
+                            <img class="img-supersmall" src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- ownerWorkspaces[i].workspaceImage %>" />
                             <%- ownerWorkspaces[i].workspaceName %>
                         </button>
                         

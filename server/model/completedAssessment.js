@@ -30,7 +30,7 @@ exports.emptyCompletedAssessment = () => {
 
 exports.ormCompletedAssessment = function ( row ) {
     let completedAssessment = exports.emptyCompletedAssessment();
-    completedAssessment.id = row.id;
+    completedAssessment.id = row.completed_assessment_id;
     completedAssessment.assessmentId = row.assessment_id;
     completedAssessment.userId = row.user_id;
     completedAssessment.topicAssessmentNumber = row.topic_assessment_number;

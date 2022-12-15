@@ -22,7 +22,7 @@ exports.emptyActivity = () => {
 
 exports.ormActivity = function ( row ) {
     let activity = exports.emptyActivity();
-    activity.id = row.id;
+    activity.id = row.activity_id;
     activity.activityType = row.activity_type;
     activity.activityName = row.activity_name;
     activity.activityDescription = row.activity_description;

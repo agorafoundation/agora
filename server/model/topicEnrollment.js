@@ -39,7 +39,7 @@ exports.emptyTopicEnrollment = () => {
 
 exports.ormTopicEnrollment = function ( row ) {
     let topicEnrollment = exports.emptyTopicEnrollment();
-    topicEnrollment.id = row.id;
+    topicEnrollment.id = row.topic_enrollment_id;
     topicEnrollment.topicId = row.topic_id;
     topicEnrollment.userId = row.user_id;
     topicEnrollment.isIntroComplete = row.is_intro_complete;

@@ -29,7 +29,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     if( ownerId > -1 ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 1 ) order by gl.workspace_id;";
+        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 1 ) order by gl.workspace_id;";
         const values = [ ownerId, true ];
 
         let workspaces = [];
@@ -69,7 +69,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
-        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 1 ) order by gl.workspace_id;";
+        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 1 ) order by gl.workspace_id;";
         let values = [ true, ownerId ];
 
         let workspaces = [];
@@ -78,7 +78,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
             
             let res = await db.query( text, values );
             for( let i=0; i<res.rows.length; i++ ) {
-                text = "select * from goal_paths where active = $1 and goal_rid = $2 order by position;";
+                text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
                 values = [ true, res.rows[i].rid ];
                 let topics = [];
                 let res2 = await db.query( text, values );
@@ -125,14 +125,14 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version and gl.owned_by = $1 order by gl.workspace_id;";
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.workspace_id;";
         values = [ ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version and gl.owned_by = $2 order by gl.workspace_id;";
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax "
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.workspace_id;";
         values = [ true, ownerId ];
     }
 
@@ -168,14 +168,14 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where workspace_id = $1 AND (owned_by = $2 OR visibility = 2) group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version order by gl.workspace_id;";
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 AND (owned_by = $2 OR visibility = 2) group by workspace_id) goalmax "
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ workspaceId, ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where active = $1 AND workspace_id = $2 AND (owned_by = $3 OR visibility = 2) group by workspace_id) goalmax "
-        + "on gl.id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version order by gl.workspace_id;";
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 AND workspace_id = $2 AND (owned_by = $3 OR visibility = 2) group by workspace_id) goalmax "
+        + "on gl.id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ true, workspaceId, ownerId ];
     }
 
@@ -185,7 +185,7 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
          
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
-            text = "select * from goal_paths where active = $1 and goal_rid = $2 order by position;";
+            text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
             values = [ true, res.rows[0].rid ];
             let topics = [];
             let res2 = await db.query( text, values );
@@ -219,8 +219,8 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
  * @returns workspace
  */
 exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
-    let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(goal_version) AS max_version FROM workspaces where workspace_id = $1 group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.goal_version = goalmax.max_version order by gl.workspace_id;";
+    let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 group by workspace_id) goalmax "
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
     let values = [ workspaceId ];
     try {
         let workspace = "";
@@ -278,7 +278,7 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
     if( workspace ) {
         try {
             // retrieve the current filename so that we can delete it after.
-            let text = "SELECT goal_image FROM workspaces WHERE rid = $1";
+            let text = "SELECT workspace_image FROM workspaces WHERE rid = $1";
             let values = [ workspace.rid ];
 
             // perform the query
@@ -286,11 +286,11 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
             
             // set the prevFileName with the prev name
             if( res.rows.length > 0 ) {
-                prevFileName = res.rows[0].goal_image;
+                prevFileName = res.rows[0].workspace_image;
             }
 
             // create the update query to set the new name
-            text = "UPDATE workspaces SET goal_image = $2 WHERE rid = $1";
+            text = "UPDATE workspaces SET workspace_image = $2 WHERE rid = $1";
             values = [ workspace.rid, filename ];
 
             // perform query
@@ -321,7 +321,7 @@ exports.saveWorkspace = async ( workspace ) => {
         if( workspace.workspaceId > 0 ) {
             // update
             console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "UPDATE workspaces SET goal_version = $1, goal_name = $2, goal_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING rid;";
+            let text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING rid;";
             let values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
     
             try {
@@ -337,7 +337,7 @@ exports.saveWorkspace = async ( workspace ) => {
         else {
             // get the current max workspace id
             console.log( "[workspaceController.saveWorkspace]: New Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "select max(id) from workspaces;";
+            let text = "select max(workspace_id) from workspaces;";
             let values = [];
             try {
                 let res = await db.query( text, values );
@@ -345,7 +345,7 @@ exports.saveWorkspace = async ( workspace ) => {
                 workspace.workspaceId++;
                 if( res.rowCount > 0 ) {
                     // insert
-                    text = "INSERT INTO workspaces (workspace_id, goal_version, goal_name, goal_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, rid;";
+                    text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, rid;";
                     values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
                     
                     let res2 = await db.query( text, values );
@@ -388,7 +388,7 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
         if( res.rowCount > 0 ) {
 
             // first remove current resources associated with the topic
-            text = "DELETE FROM goal_path WHERE goal_rid = $1";
+            text = "DELETE FROM workspace_paths WHERE workspace_rid = $1";
             values = [ workspaceId ];
 
             let res2 = await db.query( text, values );
@@ -407,7 +407,7 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
                     //    isRequired = topicsRequired[i];
                     //}
 
-                    text = "INSERT INTO goal_paths (goal_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                    text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
                     values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
 
                     let res3 = await db.query( text, values );
@@ -437,7 +437,7 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
  */
 exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway ) => {
     // get the most recent version of the workspace
-    let text = "SELECT rid, MAX(goal_version) as version from workspaces where workspace_id = $1 group by rid";
+    let text = "SELECT rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by rid";
     let values = [ workspaceId ];
 
     try {
@@ -453,7 +453,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
              * matures this should be re-evaluated.
              */
             // first remove current workspace enrollments
-            text = "DELETE FROM goal_paths WHERE goal_rid=$1";
+            text = "DELETE FROM workspace_paths WHERE workspace_rid=$1";
             let values = [ res.rows[0].rid ];
 
             let res2 = await db.query( text, values );
@@ -465,7 +465,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
              */
             if( pathway && pathway.length > 0 ) {
                 for( let i=0; i < pathway.length; i++ ) {
-                    text = "INSERT INTO goal_paths (goal_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                    text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
                     values = [ res.rows[0].rid, pathway[i], ( i + 1 ), true, true ];
 
                     let res3 = await db.query( text, values );
@@ -491,7 +491,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
  */
 exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, workspaceId ) => {
     // get the most recent version of the workspace
-    let text = "SELECT rid, MAX(goal_version) as version from workspaces where workspace_id = $1 group by rid";
+    let text = "SELECT rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by rid";
     let values = [ workspaceId ];
 
     try {
@@ -518,7 +518,7 @@ exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, work
  */
 exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion ) => {
     // check this userId and workspaceRid combination does not already exist
-    let text = "SELECT * FROM user_goals WHERE active = $1 AND user_id = $2 AND goal_rid = $3";
+    let text = "SELECT * FROM user_workspaces WHERE active = $1 AND user_id = $2 AND workspace_rid = $3";
     let values = [ true, userId, workspaceRid ];
 
     try {
@@ -526,7 +526,7 @@ exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion
         let response = await db.query( text, values );
 
         if( !response.rowCount > 0 ) {       
-            text = 'INSERT INTO user_goals (goal_rid, user_id, active, is_completed)'
+            text = 'INSERT INTO user_workspaces (workspace_rid, user_id, active, is_completed)'
                 + 'VALUES($1, $2, $3, $4)';
             values = [ workspaceRid, userId, true, false ];
 
@@ -553,7 +553,7 @@ exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion
  * @returns true if successful
  */
 exports.completeWorkspaceEnrollment = async ( userId, workspaceRid ) => {
-    let text = "UPDATE user_goals SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND goal_rid = $4;";
+    let text = "UPDATE user_workspaces SET is_completed = $1, completed_date = NOW() WHERE active = $2 AND user_id = $3 AND workspace_rid = $4;";
     let values = [ true, true, userId, workspaceRid ];
 
     try {
@@ -575,7 +575,7 @@ exports.completeWorkspaceEnrollment = async ( userId, workspaceRid ) => {
  */
 exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid ) => {
     console.log( "params: userId " + userId + " workspaceRid: " + workspaceRid );
-    let text = "SELECT ug.* FROM user_goals ug where ug.user_id = $1 AND ug.goal_rid = $2 and active = $3;";
+    let text = "SELECT ug.* FROM user_workspaces ug where ug.user_id = $1 AND ug.workspace_rid = $2 and active = $3;";
     let values = [ userId, workspaceRid, true ];
     
     let workspace;
@@ -586,7 +586,7 @@ exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid
             for( let i=0; i<res.rows.length; i++ ) {
                 // get the workspace for each user_workspace
                 text = "SELECT * FROM workspaces WHERE active = $1 AND rid = $2;";
-                values = [ true, res.rows[i].goal_rid ];
+                values = [ true, res.rows[i].workspace_rid ];
 
                 let res2 = await db.query( text, values );
 
@@ -662,7 +662,7 @@ exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid
  */
 exports.getActiveEnrollmentsForUserId = async ( userId ) => {
 
-    let text = "select * from user_goals where user_id = $1 and active = $2;";
+    let text = "select * from user_workspaces where user_id = $1 and active = $2;";
     let values = [ userId, true ];
 
     // this one was the last query used when workspace_version was part of the workspaces key and part of the foriegn key of user_workspace.
@@ -691,7 +691,7 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
 
                 // get the workspace for each user_workspace
                 text = "SELECT * FROM workspaces WHERE rid = $1;";
-                values = [ res.rows[i].goal_rid ];
+                values = [ res.rows[i].workspace_rid ];
 
                 let res2 = await db.query( text, values );
 
@@ -716,7 +716,7 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
 
 exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_id, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.create_time as create_time from users ud, workspaces mod, user_goals mode where mode.user_id = ud.user_id AND mode.goal_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as workspace_id, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.create_time as create_time from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -728,14 +728,14 @@ exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
             for( let i=0; i<res.rows.length; i++ ) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
-                event.eventItemId = res.rows[i].goal_rid;
+                event.eventItemId = res.rows[i].workspace_rid;
                 event.eventItem = "Workspace Enrollment";
                 event.eventType = "Workspace Enrollment";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].create_time;
-                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> <span style='color:darkblue'>Enrolled in <img src='" + process.env.GOAL_IMAGE_WEB_PATH + res.rows[i].goal_image + "' alt='Workspace Badge' title='Workspace Badge' class='profile-top-image' /> </span><a href='/community/workspace/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a> <span style='color:darkblue'>Enrolled in <img src='" + process.env.WORKSPACE_IMAGE_WEB_PATH + res.rows[i].workspace_image + "' alt='Workspace Badge' title='Workspace Badge' class='profile-top-image' /> </span><a href='/community/workspace/" + res.rows[i].workspace_id + "'>" + res.rows[i].workspace_name + "</a>";
                 event.eventImage = res.rows[i].user_image;
-                event.eventImage2 = res.rows[i].goal_image;
+                event.eventImage2 = res.rows[i].workspace_image;
                 enrollmentEvents.push( event );
             }
         }
@@ -771,7 +771,7 @@ exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
 
 exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as goal_rid, mod.goal_name as goal_name, mod.goal_image as goal_image, mode.completed_date as completed_date from users ud, workspaces mod, user_goals mode where mode.user_id = ud.user_id AND mode.goal_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as workspace_rid, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.completed_date as completed_date from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -783,14 +783,14 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
             for( let i=0; i<res.rows.length; i++ ) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
-                event.eventItemId = res.rows[i].goal_rid;
+                event.eventItemId = res.rows[i].workspace_rid;
                 event.eventItem = "Workspace Completion!";
                 event.eventType = "Workspace Completion!";
                 event.eventUsername = res.rows[i].username;
                 event.eventTime = res.rows[i].completed_date;
-                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a><span style='color:darkgreen'><strong> completed </strong></span> <img src='" + process.env.GOAL_IMAGE_WEB_PATH + res.rows[i].goal_image + "' alt='Workspace Badge' title='Workspace Badge' class='profile-top-image' /> <a href='/community/workspace/" + res.rows[i].goal_id + "'>" + res.rows[i].goal_name + "</a>";
+                event.eventTitle = "<a href='/user/" + res.rows[i].user_id + "'>" + res.rows[i].username + "</a><span style='color:darkgreen'><strong> completed </strong></span> <img src='" + process.env.WORKSPACE_IMAGE_WEB_PATH + res.rows[i].workspace_image + "' alt='Workspace Badge' title='Workspace Badge' class='profile-top-image' /> <a href='/community/workspace/" + res.rows[i].workspace_id + "'>" + res.rows[i].workspace_name + "</a>";
                 event.eventImage = res.rows[i].user_image;
-                event.eventImage2 = res.rows[i].goal_image;
+                event.eventImage2 = res.rows[i].workspace_image;
                 enrollmentEvents.push( event );
             }
         }
@@ -807,7 +807,7 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
 // Takes in a workspaceId and finds each topicId associated with it.
 exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
 
-    let text = "SELECT * from goal_paths where goal_rid = $1";
+    let text = "SELECT * from workspace_paths where workspace_rid = $1";
     let values = [ workspaceId ];
     let topicIds = [];
 
