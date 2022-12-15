@@ -66,18 +66,7 @@ if( document.getElementById( 'userManageButton' ) ) {
                 document.getElementById( 'firstName' ).disabled = false;
                 document.getElementById( 'lastName' ).disabled = false;
     
-                document.getElementById( 'beginningProgramming' ).disabled = false;
-                document.getElementById( 'intermediateProgramming' ).disabled = false;
-                document.getElementById( 'advancedProgramming' ).disabled = false;
-                document.getElementById( 'mobileDevelopment' ).disabled = false;
-                document.getElementById( 'roboticsProgramming' ).disabled = false;
-                document.getElementById( 'webApplications' ).disabled = false;
-                document.getElementById( 'web3' ).disabled = false;
-                document.getElementById( 'iotProgramming' ).disabled = false;
-                document.getElementById( 'databaseDesign' ).disabled = false;
-                document.getElementById( 'relationalDatabase' ).disabled = false;
-                document.getElementById( 'noSqlDatabase' ).disabled = false;
-                document.getElementById( 'objectRelationalMapping' ).disabled = false;  
+                // TODO:Tags code removed to enable previous interests, not sure if tags will need to be re-enabled when impletemented
             }
         }
     } );

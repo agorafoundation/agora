@@ -6,8 +6,7 @@
  */
 
 class User {
-    constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-        mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens ) {
+    constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
 
         this.id -1;
         this.email = email;
@@ -19,18 +18,6 @@ class User {
         this.hashedPassword = hashedPassword;
         this.roleId = roleId;
         this.subscriptionActive =subscriptionActive;
-        this.beginningProgramming = beginningProgramming;
-        this.intermediateProgramming = intermediateProgramming;
-        this.advancedProgramming = advancedProgramming;
-        this.mobileDevelopment = mobileDevelopment;
-        this.roboticsProgramming = roboticsProgramming;
-        this.webApplications = webApplications;
-        this.web3 = web3;
-        this.iotProgramming = iotProgramming;
-        this.databaseDesign = databaseDesign;
-        this.relationalDatabase = relationalDatabase;
-        this.noSqlDatabase = noSqlDatabase;
-        this.objectRelationalMapping = objectRelationalMapping;
         this.stripeId = stripeId;
         this.availableAccessTokens = availableAccessTokens;
 
@@ -49,10 +36,8 @@ exports.emptyUser = () => {
     return new User();
 };
 
-exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-    mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens ) {
-    let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, beginningProgramming, intermediateProgramming, advancedProgramming, 
-        mobileDevelopment, roboticsProgramming, webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, availableAccessTokens );
+exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
     newUser.id = -1;
     return newUser;
 };
@@ -71,18 +56,6 @@ exports.ormUser = function( userRow ) {
     user.firstName = userRow.first_name;
     user.lastName = userRow.last_name;
     user.subscriptionActive = userRow.subscription_active;
-    user.beginningProgramming = userRow.beginning_programming;
-    user.intermediateProgramming = userRow.intermediate_programming;
-    user.advancedProgramming = userRow.advanced_programming;
-    user.mobileDevelopment = userRow.mobile_development;
-    user.roboticsProgramming = userRow.robotics_programming;
-    user.webApplications = userRow.web_applications;
-    user.web3 = userRow.web3;
-    user.iotProgramming = userRow.iot_programming;
-    user.databaseDesign = userRow.database_design;
-    user.relationalDatabase = userRow.relational_database;
-    user.noSqlDatabase = userRow.nosql_database;
-    user.objectRelationalMapping = userRow.object_relational_mapping;
     user.stripeId = userRow.stripe_id;
     user.availableAccessTokens = userRow.available_access_tokens;
     return user;
