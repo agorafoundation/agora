@@ -6,7 +6,7 @@
  */
 
 function product( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage ) {
-    this.id = -1;
+    this.productId = -1;
     this.productType = productType;
     this.productName = productName;
     this.productDescription1 = productDescription1;
@@ -27,13 +27,13 @@ exports.emptyProduct = () => {
 
 exports.createProduct = function ( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage ) {
     let newProduct = new product( productType, productName, productDescription1, productDescription2, productPurchaseText, stripeProductId, stripePriceId, price, productUrl, productStaticImage );
-    newProduct.id = -1;
+    newProduct.productId = -1;
     return newProduct;
 };
 
 exports.ormProduct = function ( productRow ) {
     let product = exports.emptyProduct();
-    product.id = productRow.product_id;
+    product.productId = productRow.product_id;
     product.productType = productRow.product_type;
     product.productName = productRow.product_name;
     product.productDescription1 = productRow.product_description_1;

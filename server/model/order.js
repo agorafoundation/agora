@@ -6,7 +6,7 @@
  */
 
 function order( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax ) {
-    this.id = -1;
+    this.orderId = -1;
     this.productId = productId;
     this.quantity = quantity;
     this.userId = userId;
@@ -34,13 +34,13 @@ exports.emptyOrder = () => {
 
 exports.createOrder = function ( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax ) {
     let newOrder = new order( productId, quantity, userId, stripeSessionData, stripeCustomerData, mailAddress1, mailAddress2, mailCity, mailState, mailZip, mailCountry, orderStatus, paymentIntent, mode, stripeEmail, amount, subTotal, automaticTax, tax );
-    newOrder.id = -1;
+    newOrder.orderId = -1;
     return newOrder;
 };
 
 exports.ormOrder = function ( orderRow ) {
     let order = exports.emptyOrder();
-    order.id = orderRow.order_id;
+    order.orderId = orderRow.order_id;
     order.productId = orderRow.product_id;
     order.quantity = orderRow.quantity;
     order.userId = orderRow.user_id;

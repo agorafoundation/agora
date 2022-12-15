@@ -6,7 +6,7 @@
  */
 
 function completedActivity() {
-    this.id = -1;
+    this.completedActivityId = -1;
     this.activityId = -1;
     this.userId = -1;
     this.submissionText = "";
@@ -20,7 +20,7 @@ exports.emptyCompletedActivity = () => {
 
 exports.ormCompletedActivity = function ( row ) {
     let completedActivity = exports.emptyCompletedActivity();
-    completedActivity.id = row.completed_activity_id;
+    completedActivity.completedActivityId = row.completed_activity_id;
     completedActivity.activityId = row.activity_id;
     completedActivity.userId = row.user_id;
     completedActivity.submissionText = row.submission_text;

@@ -8,7 +8,7 @@
 class User {
     constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
 
-        this.id -1;
+        this.userId -1;
         this.email = email;
         this.username = username;
         this.profileFilename = profileFilename;
@@ -38,7 +38,7 @@ exports.emptyUser = () => {
 
 exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
     let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
-    newUser.id = -1;
+    newUser.userId = -1;
     return newUser;
 };
 
@@ -47,7 +47,7 @@ exports.createUser = function( email, username, profileFilename, emailValidated,
 
 exports.ormUser = function( userRow ) {
     let user = exports.emptyUser();
-    user.id = userRow.user_id;
+    user.userId = userRow.user_id;
     user.email = userRow.email;
     user.username = userRow.username;
     user.profileFilename = userRow.profile_filename;

@@ -6,7 +6,7 @@
  */
 
 function topicEnrollment() {
-    this.id = -1;
+    this.topicEnrollmentId = -1;
     this.topicId = -1;
     this.userId = -1;
     this.isIntroComplete = false;
@@ -39,7 +39,7 @@ exports.emptyTopicEnrollment = () => {
 
 exports.ormTopicEnrollment = function ( row ) {
     let topicEnrollment = exports.emptyTopicEnrollment();
-    topicEnrollment.id = row.topic_enrollment_id;
+    topicEnrollment.topicEnrollmentId = row.topic_enrollment_id;
     topicEnrollment.topicId = row.topic_id;
     topicEnrollment.userId = row.user_id;
     topicEnrollment.isIntroComplete = row.is_intro_complete;

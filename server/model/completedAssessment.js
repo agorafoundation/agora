@@ -9,7 +9,7 @@ let Assessment = require( './assessment' );
 
 
 function completedAssessment() {
-    this.id = -1;
+    this.completedAssessmentId = -1;
     this.assessmentId = -1;
     this.userId = -1;
     this.topicAssessmentNumber = -1;
@@ -30,7 +30,7 @@ exports.emptyCompletedAssessment = () => {
 
 exports.ormCompletedAssessment = function ( row ) {
     let completedAssessment = exports.emptyCompletedAssessment();
-    completedAssessment.id = row.completed_assessment_id;
+    completedAssessment.completedAssessmentId = row.completed_assessment_id;
     completedAssessment.assessmentId = row.assessment_id;
     completedAssessment.userId = row.user_id;
     completedAssessment.topicAssessmentNumber = row.topic_assessment_number;

@@ -6,7 +6,7 @@
  */
 
 function assessmentQuestionOption() {
-    this.id = -1;
+    this.assessmentQuestionOptionId = -1;
     this.assessmentQuestionId = -1;
     this.optionNumber = -1;
     this.optionAnswer = "";
@@ -20,7 +20,7 @@ exports.emptyAssessmentQuestionOption = () => {
 
 exports.ormAssessmentQuestionOption = function ( row ) {
     let assessmentQuestionOption = exports.emptyAssessmentQuestionOption();
-    assessmentQuestionOption.id = row.assessment_question_option_id;
+    assessmentQuestionOption.assessmentQuestionOptionId = row.assessment_question_option_id;
     assessmentQuestionOption.assessmentQuestionId = row.assessment_question_id;
     assessmentQuestionOption.optionNumber = row.option_number;
     assessmentQuestionOption.optionAnswer = row.option_answer;
