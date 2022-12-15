@@ -74,7 +74,7 @@
                                     %>
                                     <form action="/a/resource" enctype="multipart/form-data" method="POST" id='creatorResourceForm'>
                                         <div class="form-group">
-                                            <input type="hidden" name="resourceId" value="<%- resource.id %>" />
+                                            <input type="hidden" name="resourceId" value="<%- resource.resourceId %>" />
                                             <select name="resourceType" id="resourceType" class="form-control form-control-lg">
                                                 <%
                                                 if(resource.resourceType === 1) {

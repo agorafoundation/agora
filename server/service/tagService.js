@@ -179,11 +179,11 @@ exports.getAllTagsForOwner = async function( ownerId ) {
 exports.saveTag = async function( tag, updateFlag ) {
     // check to see if an id exists - insert / update check
     if( tag ) {
-        if( tag.id > 0 || updateFlag ) {
+        if( tag.tagId > 0 || updateFlag ) {
             
             // update
             let text = "UPDATE tags SET tag = $1, last_used = NOW(), owned_by = $2 WHERE tag_id = $3;";
-            let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.id ];
+            let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.tagId ];
     
             try {
                 let res = await db.query( text, values );
@@ -203,7 +203,7 @@ exports.saveTag = async function( tag, updateFlag ) {
                 let res2 = await db.query( text, values );
     
                 if( res2.rowCount > 0 ) {
-                    tag.id = res2.rows[0].id;
+                    tag.tagId = res2.rows[0].id;
                 }
                 
             }

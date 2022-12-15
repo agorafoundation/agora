@@ -37,7 +37,7 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
-    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.id );
+    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
@@ -49,10 +49,10 @@ exports.getWorkspaceById = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -77,10 +77,10 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ){
@@ -124,10 +124,10 @@ exports.deleteWorkspaceById = async ( req, res ) => {
 
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if ( authUserId > 0 ) {
@@ -164,7 +164,7 @@ exports.getAllWorkspacesForAuthUser = async ( req, res ) => {
     console.log( "The rquest: " + JSON.stringify( req.user ) );
 
     // get all the workspaces for this owner
-    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.id, false );
+    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.userId, false );
     
         
       
@@ -218,10 +218,10 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
     
     workspace.ownedBy = authUserId; 

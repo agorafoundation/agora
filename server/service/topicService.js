@@ -295,7 +295,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
                     //console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
                     text = "SELECT * from assessment_questions where assessment_id = $1 and active = $2";
-                    values = [ assessment.id, true ];
+                    values = [ assessment.assessmentId, true ];
                     let res3 = await db.query( text, values );
 
                     // attach the questions
@@ -404,7 +404,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                     }
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.preAssessment.id, true ];
+                    values = [ topicEnrollment.preassessment.assessmentId, true ];
                     let res3 = await db.query( text, values );
                     // attach the completed questions
                     for( let i=0; i < res3.rowCount; i++ ) {
@@ -434,7 +434,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 
                     // get the completed questions to attach to the completed assessment
                     text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.postAssessment.id, true ];
+                    values = [ topicEnrollment.postassessment.assessmentId, true ];
                     let res4 = await db.query( text, values );
                     // attach the completed questions
                     for( let i=0; i < res4.rowCount; i++ ) {
@@ -653,24 +653,24 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             topicEnrollment.preAssessment.percentageCorrect = await assessmentService.evaluateAssessment( topicEnrollment.topic.assessment, topicEnrollment.preAssessment );
 
             if( topicEnrollment.preCompletedAssessmentId > 0 ) {
-                console.log( "[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.id );
+                console.log( "[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId );
             }
             else {
                 text = "INSERT INTO completed_assessments (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING completed_assessment_id;";
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, topicEnrollment.preAssessment.percentageCorrect, true ];
+                values = [ topicEnrollment.topic.assessment.assessmentId, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, topicEnrollment.preAssessment.percentageCorrect, true ];
 
                 let res = await db.query( text, values );
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
                     topicEnrollment.preCompletedAssessmentId = res.rows[0].id;
-                    topicEnrollment.preAssessment.id = res.rows[0].id;
+                    topicEnrollment.preassessment.assessmentId = res.rows[0].id;
                     //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.preCompletedAssessmentId);
 
                     // save all the associated questions
                     if( topicEnrollment.preAssessment.completedQuestions ) {
                         for( let j=0; j < topicEnrollment.preAssessment.completedQuestions.length; j++ ) {
                             text = "INSERT INTO completed_assessment_questions (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING completed_assessment_question_id;";
-                            values = [ topicEnrollment.preAssessment.id, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
+                            values = [ topicEnrollment.preassessment.assessmentId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await db.query( text, values );
                             topicEnrollment.preAssessment.completedQuestions[j].id = res2.rows[0].id;
@@ -694,26 +694,26 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             topicEnrollment.postAssessment.percentageCorrect = await assessmentService.evaluateAssessment( topicEnrollment.topic.assessment, topicEnrollment.postAssessment );
             
             if( topicEnrollment.postCompletedAssessmentId > 0 ) {
-                console.log( "[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id );
+                console.log( "[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId );
             }
             else {
 
                 text = "INSERT INTO completed_assessments (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING completed_assessment_id;";
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, topicEnrollment.postAssessment.percentageCorrect, true ];
+                values = [ topicEnrollment.topic.assessment.assessmentId, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, topicEnrollment.postAssessment.percentageCorrect, true ];
 
                 let res = await db.query( text, values );
 
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
                     topicEnrollment.postCompletedAssessmentId = res.rows[0].id;
-                    topicEnrollment.postAssessment.id = res.rows[0].id;
+                    topicEnrollment.postassessment.assessmentId = res.rows[0].id;
                     //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
 
                     // save all the associated questions
                     if( topicEnrollment.postAssessment.completedQuestions ) {
                         for( let j=0; j < topicEnrollment.postAssessment.completedQuestions.length; j++ ) {
                             text = "INSERT INTO completed_assessment_questions (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING completed_assessment_question_id;";
-                            values = [ topicEnrollment.postAssessment.id, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
+                            values = [ topicEnrollment.postassessment.assessmentId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await db.query( text, values );
                             topicEnrollment.postAssessment.completedQuestions[j].id = res2.rows[0].id;
@@ -738,17 +738,17 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
 
                 let res = await db.query( text, values );
 
-                //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
+                //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId);
             }
             else {
                 text = "INSERT INTO completed_activities (activity_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING completed_activity_id;";
-                values = [ topicEnrollment.topic.activity.id, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
+                values = [ topicEnrollment.topic.activity.activityId, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
 
                 let res = await db.query( text, values );
 
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.completedActivity.id = res.rows[0].id;
+                    topicEnrollment.completedactivity.activityId = res.rows[0].id;
                     topicEnrollment.completedActivityId = res.rows[0].id;
                     console.log( "[DEBUG]: Checking that the fk is being added for the activityId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.completedActivityId );
                 }
@@ -783,7 +783,7 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
                     else {
                         // insert
                         text = "INSERT INTO completed_resources (resource_id, user_id, submission_text ) VALUES ( $1, $2, $3 );";
-                        values = [ resource.id, topicEnrollment.userId, topicEnrollment.completedResources[i].submissionText ];
+                        values = [ resource.resourceId, topicEnrollment.userId, topicEnrollment.completedResources[i].submissionText ];
 
                         let res = await db.query( text, values );
                     }
@@ -802,10 +802,10 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
         // first see if we are doing an udpate or insert based on whether we have an id already.
         if( topicEnrollment.completedDate == "SET" ) {
             topicEnrollment.completedDate = new Date( Date.now()+( 1000*60*( -( new Date() ).getTimezoneOffset() ) ) ).toISOString().replace( 'T', ' ' ).replace( 'Z', '' );
-            if( topicEnrollment && topicEnrollment.id > 0 ) {
+            if( topicEnrollment && topicEnrollment.topicEnrollmentId > 0 ) {
                 // UPDATE    
                 text = "UPDATE user_topics SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = $8, active = $6, update_time = NOW() WHERE user_topic_id = $7;";
-                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id, topicEnrollment.completedDate ];
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.topicEnrollmentId, topicEnrollment.completedDate ];
                 try { 
                     let res = await db.query( text, values );
     
@@ -825,15 +825,15 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
     
                 // last step, update the topicEnrollment id!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.id = res.rows[0].id;
+                    topicEnrollment.topicEnrollmentId = res.rows[0].id;
                 }
             }
         }
         else {
-            if( topicEnrollment && topicEnrollment.id > 0 ) {
+            if( topicEnrollment && topicEnrollment.topicEnrollmentId > 0 ) {
                 // UPDATE    
                 text = "UPDATE user_topics SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, active = $5, update_time = NOW() WHERE user_topic_id = $6;";
-                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.id ];
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.topicEnrollmentId ];
                 try { 
                     let res = await db.query( text, values );
     
@@ -853,7 +853,7 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
     
                 // last step, update the topicEnrollment id!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.id = res.rows[0].id;
+                    topicEnrollment.topicEnrollmentId = res.rows[0].id;
                 }
             }
         }
@@ -926,7 +926,7 @@ exports.getCompletedResourceByResourceAndUserId = async function( resourceId, us
 
 exports.saveCompletedResourceStatus = async function( completedResource ) {
     // check to see if there is alreadly a saved record
-    if( completedResource.id > 0 ) {
+    if( completedresource.resourceId > 0 ) {
         // update
         let text = "UPDATE completed_resources SET submission_text = $1, active = $2, update_time = NOW() where resource_id = $3 AND user_id = $4";
         let values = [ completedResource.submissionText, completedResource.active, completedResource.resourceId, completedResource.userId ];
@@ -951,7 +951,7 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
             let res = await db.query( text, values );
 
             if( res.rowCount > 0 ) {
-                completedResource.id = res.rows[0].id;
+                completedresource.resourceId = res.rows[0].id;
             }
     
             

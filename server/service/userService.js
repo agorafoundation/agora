@@ -191,13 +191,13 @@ exports.saveUser = async function( record ) {
             // create the users role
             // get the new user
             let newUser = await exports.getUserByEmail( record.email );
-            console.log( "new user id: " + newUser.id );
+            console.log( "new user id: " + newuser.userId );
             const uRole = await exports.getActiveRoleByName( "User" );
-            console.log( "user role id: " + uRole.id );
+            console.log( "user role id: " + urode.roleId );
             // create the UserRole
             let userRole = UserRole.emptyUserRole();
-            userRole.userId = newUser.id;
-            userRole.roleId = uRole.id;
+            userRole.userId = newuser.userId;
+            userRole.roleId = urode.roleId;
             userRole.active = true;
             userRole.endTime = 'infinity';
 
@@ -272,7 +272,7 @@ exports.getActiveUserById = async function( id ) {
             let user = User.ormUser( res.rows[0] );
 
             // get roles for the user
-            let userRoles = await exports.getActiveRolesForUserId( user.id );
+            let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
             // append the roles
             user.roles = userRoles;
@@ -290,15 +290,15 @@ exports.getActiveUserById = async function( id ) {
             user.codebot = await productService.verifyUserCodeBotPurchase( user );
 
             // get enrolled paths for user, 
-            //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
+            //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, false);
 
             // get completed paths for the user
-            //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
+            //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, true);
 
-            let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
+            let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.userId );
 
             // get enrolled topics for user
-            let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    
+            let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.userId );    
 
             // note if the user is a member
             user.member = await topicService.verifyUserHasMembershipAccessRole( user );
@@ -395,7 +395,7 @@ exports.getUserByEmailWithRoles = async function( email ) {
     let user = await exports.getUserByEmail( email );
 
     // get roles for the user
-    let userRoles = await exports.getActiveRolesForUserId( user.id );
+    let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
     // append the roles
     user.roles = userRoles;
@@ -408,21 +408,21 @@ exports.setUserSession = async function( email ) {
     let user = await exports.getUserByEmail( email );
     
     // get roles for the user
-    let userRoles = await exports.getActiveRolesForUserId( user.id );
+    let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
     // append the roles
     user.roles = userRoles;
 
     // get enrolled paths for user, 
-    //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
+    //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, false);
 
     // get completed paths for the user
-    //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
+    //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, true);
 
-    let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
+    let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.userId );
 
     // get enrolled topics for user
-    let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    
+    let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.userId );    
 
     // note if the user is a member
     user.member = await topicService.verifyUserHasMembershipAccessRole( user );

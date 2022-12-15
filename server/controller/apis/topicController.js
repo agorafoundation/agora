@@ -39,10 +39,10 @@ exports.getAllVisibleTopics = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -64,10 +64,10 @@ exports.getAllPublicTopics = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -89,10 +89,10 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ){
@@ -135,10 +135,10 @@ exports.getTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ){
@@ -169,10 +169,10 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     // get all the active topics
@@ -201,10 +201,10 @@ exports.saveCompletedTopic = async function( req, res ) {
 
     if( req.session.currentTopic && req.session.authUser ) {
 
-        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.id );
+        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authuser.userId );
         if( !completedTopic ) {
             completedTopic = Topic.emptyTopic( );
-            completedTopic.userId = req.session.authUser.id;
+            completedTopic.userId = req.session.authuser.userId;
             completedTopic.topicId = topicId;
         }
         completedTopic.active = status;
@@ -267,10 +267,10 @@ exports.saveTopic = async ( req, res, redirect ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -344,7 +344,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             let activity = await activityService.saveActivity(req.body.activity); 
 
-            topic.activityId = activity.id;
+            topic.activityId = activity.activityId;
             topic.activity = activity;
             topic.activity.creationTime = Date.now();
 
@@ -360,7 +360,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             let assessment = await assessmentService.saveAssessment(req.body.assessment);
             //assessmentService.getAssessmentById(ass.id);  -- test and fix getAssessmentById
-            topic.assessmentId = assessment.id;
+            topic.assessmentId = assessment.assessmentId;
             topic.assessment = assessment;
             topic.assessment.creationTime = Date.now();
 
@@ -522,10 +522,10 @@ exports.deleteTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     const topicId = req.params.topicId;

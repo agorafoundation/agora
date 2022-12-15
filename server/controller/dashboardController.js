@@ -23,10 +23,10 @@ exports.getDashboard = async function( req, res ) {
     let workspaceId = req.params.workspaceId;
 
     // get all the workspaces for this owner
-    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authuser.userId, false );
     
     // get all the topics for this owner
-    let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
+    let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authuser.userId, true );
     // start the available topics out with the full owner topic set
     let availableTopics = ownerTopics;
 
@@ -40,7 +40,7 @@ exports.getDashboard = async function( req, res ) {
         
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
-            let topics = await topicService.getTopicById( topicsIds[index], req.session.authUser.id );
+            let topics = await topicService.getTopicById( topicsIds[index], req.session.authuser.userId );
 
             if ( topics ){ // Ensure retrieval of topics
                 ownerWorkspaces[i].topics.push( topics );
@@ -66,7 +66,7 @@ exports.getDashboard = async function( req, res ) {
 
     }
     else {
-        workspace.ownedBy = req.session.authUser.id;
+        workspace.ownedBy = req.session.authuser.userId;
         workspace.workspaceVersion = 1;
     }
 
@@ -74,7 +74,7 @@ exports.getDashboard = async function( req, res ) {
     let topic = Topic.emptyTopic( );
 
     // get all the resources for this owner
-    let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.id );
+    let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authuser.userId );
     
     let resource = Resource.emptyResource( );
 
@@ -93,7 +93,7 @@ exports.getDashboard = async function( req, res ) {
     }
 
     // make sure the user has access to this workspace (is owner)
-    if( workspace.ownedBy === req.session.authUser.id ) {
+    if( workspace.ownedBy === req.session.authuser.userId ) {
         res.render( 'dashboard/dashboard', { ownerWorkspaces: ownerWorkspaces, workspace: workspace, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
     else {

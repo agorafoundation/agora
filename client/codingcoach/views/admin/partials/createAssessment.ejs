@@ -5,8 +5,8 @@ if(topic) {
     if(topic.assessment) {
         // 
         %>
-        <div id="topicAssessment-<%- topic.assessment.id %>" name="topicAssessment" class="assessment-group">
-            <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.id %>" />
+        <div id="topicAssessment-<%- topic.assessment.assessmentId %>" name="topicAssessment" class="assessment-group">
+            <input type="hidden" name="topicAssessmentId" value="<%- topic.assessment.assessmentId %>" />
             Name: <input type="input" class="form-control form-control-lg" name="topicAssessmentName" value="<%- topic.assessment.assessmentName %>" id="topicAssessmentName" placeholder="Assessment Title" required>
             Desciption: <input type="input" class="form-control form-control-lg" name="topicAssessmentDescription" value="<%- topic.assessment.assessmentDescription %>" id="topicAssessmentDescription" placeholder="Description">
             Pre Assessment Threshold: <input type="input" class="form-control form-control-lg" name="topicAssessmentPreThreshold" value="<%- topic.assessment.preThreshold %>" id="topicAssessmentPreThreshold" placeholder="90" required>

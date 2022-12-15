@@ -16,7 +16,7 @@ exports.getDiscussionByWorkspaceId = async ( req, res ) => {
     const id = req.params.id;
 
     // get the discussion by workspace id
-    let discussion = await discussionService.getDiscussion( "goal", id, req.user.id );
+    let discussion = await discussionService.getDiscussion( "goal", id, req.user.userId );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -32,7 +32,7 @@ exports.getDiscussionByTopicId = async ( req, res ) => {
     const id = req.params.id;
 
     // get the discussion by topic id
-    let discussion = await discussionService.getDiscussion( "topic", id, req.user.id );
+    let discussion = await discussionService.getDiscussion( "topic", id, req.user.userId );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -49,7 +49,7 @@ exports.updateDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "goal", id, req.user.id, req.body );
+    let discussion = await discussionService.updateDiscussion( "goal", id, req.user.userId, req.body );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -64,7 +64,7 @@ exports.updateDiscussionByTopicId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "topic", id, req.user.id, req.body );
+    let discussion = await discussionService.updateDiscussion( "topic", id, req.user.userId, req.body );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -81,7 +81,7 @@ exports.createDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, req.user.id, req.body.discussion_text );
+    let discussion = await discussionService.createDiscussion( "goal", id, req.user.userId, req.body.discussion_text );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -96,7 +96,7 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "topic", id, req.user.id, req.body.discussion_text );
+    let discussion = await discussionService.createDiscussion( "topic", id, req.user.userId, req.body.discussion_text );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -111,7 +111,7 @@ exports.createDiscussionByTopicId = async ( req, res ) => {
 
 exports.createComment = async ( req, res ) => {
 
-    let comment = await discussionService.createComment( req.user.id, req.body );
+    let comment = await discussionService.createComment( req.user.userId, req.body );
 
     if( !comment ) {
         return errorController( ApiMessage.createInternalServerError(), res );
@@ -126,7 +126,7 @@ exports.editComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
 
-    let comment = await discussionService.editComment( commentId, req.user.id, req.body );
+    let comment = await discussionService.editComment( commentId, req.user.userId, req.body );
 
     if( !comment ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
@@ -141,7 +141,7 @@ exports.deleteComment = async ( req, res ) => {
 
     const commentId = req.params.commentId;
 
-    let comment = await discussionService.deleteComment( commentId, req.user.id );
+    let comment = await discussionService.deleteComment( commentId, req.user.userId );
 
     if( !comment ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
@@ -160,7 +160,7 @@ exports.setRating = async ( req, res ) => {
     const commentId = req.params.commentId;
     const userRating = req.body.rating;
 
-    let rating = await discussionService.setCommentRating( commentId, userRating, req.user.id );
+    let rating = await discussionService.setCommentRating( commentId, userRating, req.user.userId );
 
     if( !rating ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );
@@ -175,7 +175,7 @@ exports.removeRating = async ( req, res ) => {
 
     const commentId = req.params.commentId;
 
-    let rating = await discussionService.removeCommentRating( commentId, req.user.id );
+    let rating = await discussionService.removeCommentRating( commentId, req.user.userId );
 
     if( !rating ) {
         return errorController( ApiMessage.createNotFoundError( "Comment" ), res );

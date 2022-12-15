@@ -64,7 +64,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 router.route( '/' )
     .get( async function ( req, res ) {
         // get all the workspaces for this owner
-        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authuser.userId, false );
       
         //console.log("------------- owner workspaces: " + JSON.stringify(ownerWorkspaces));
         let workspace = null;
@@ -90,10 +90,10 @@ router.route( '/:workspaceId' )
         let workspaceId = req.params.workspaceId;
 
         // get all the workspaces for this owner
-        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authuser.userId, false );
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authuser.userId, true );
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
@@ -112,13 +112,13 @@ router.route( '/:workspaceId' )
 
         }
         else {
-            workspace.ownedBy = req.session.authUser.id;
+            workspace.ownedBy = req.session.authuser.userId;
             workspace.workspaceVersion = 1;
         }
       
         
         // make sure the user has access to this workspace (is owner)
-        if( workspace.ownedBy === req.session.authUser.id ) {
+        if( workspace.ownedBy === req.session.authuser.userId ) {
             res.render( './admin/adminWorkspace', {ownerWorkspaces: ownerWorkspaces, workspace: workspace, availableTopics: availableTopics} );
         }
         else {

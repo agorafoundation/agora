@@ -73,7 +73,7 @@
                                     %>
                                     <form action="/a/workspace" id="workspaceForm" enctype="multipart/form-data" method="POST">
                                         <div class="form-group">
-                                            <input type="hidden" name="workspaceId" value="<%- workspace.id %>" />
+                                            <input type="hidden" name="workspaceId" value="<%- workspace.workspaceId %>" />
                                             Version: <input type="input" class="form-control form-control-lg" name="workspaceVersion" value="<%- workspace.workspaceVersion %>" id="workspaceVersion" placeholder="Version" disabled>
                                             Name: <input type="input" class="form-control form-control-lg" name="workspaceName" value="<%- workspace.workspaceName %>" id="workspaceName" placeholder="Name" required>
                                             Desciption: <input type="input" class="form-control form-control-lg" name="workspaceDescription" value="<%- workspace.workspaceDescription %>" id="workspaceDescription" placeholder="Description">

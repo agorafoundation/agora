@@ -196,7 +196,7 @@ if ( document.getElementById( "activity-accordion" ) ) {
  */
 function updateWorkspaceModal( workspace, workspaceImagePath ) {
     if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
-        document.getElementById( "workspaceId" ).value = workspace.id;
+        document.getElementById( "workspaceId" ).value = workspace.workspaceId;
 
         //console.log( workspace.visibility );
         if ( workspace.visibility === 0 ) {
@@ -252,7 +252,7 @@ function updateWorkspaceModal( workspace, workspaceImagePath ) {
  */
 function updateTopicModal( topic, topicImagePath ) {
     if ( document.getElementById( "create-topic-modal" ) && topic ) {
-        document.getElementById( "topicId" ).value = topic.id;
+        document.getElementById( "topicId" ).value = topic.topicId;
 
         //console.log( topic.visibility );
         if ( topic.visibility === 0 ) {
@@ -342,7 +342,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
             res.json().then( ( data ) => {
                 const resource = data[0];
                 //console.log( "Client side resource check: " + JSON.stringify( resource ) );
-                document.getElementById( "resourceId" ).value = resource.id;
+                document.getElementById( "resourceId" ).value = resource.resourceId;
 
                 if ( resource.resourceImage ) {
                     // set the modification flag

@@ -44,11 +44,11 @@ exports.getAssessmentById = async function( assessmentId, active ) {
             // find the questions associated with the assessment
             if( active ) {
                 text = "SELECT * FROM assessment_questions WHERE active = $1 AND assessment_id = $2";
-                values = [ true, assessment.id ];
+                values = [ true, assessment.assessmentId ];
             }
             else {
                 text = "SELECT * FROM assessment_questions WHERE assessment_id = $1";
-                values = [ assessment.id ];
+                values = [ assessment.assessmentId ];
             }
             
 
@@ -130,7 +130,7 @@ exports.evaluateAssessment = async function( assessment, completedAssessment ) {
     let totalQuestions = 0;
     let totalCorrect = 0;
 
-    if( assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.id == completedAssessment.assessmentId ) {
+    if( assessment && assessment.questions && completedAssessment && completedAssessment.completedQuestions && assessment.assessmentId == completedAssessment.assessmentId ) {
         for( let i=0; i < assessment.questions.length; i++ ) {
             
             totalQuestions++;
@@ -215,15 +215,15 @@ exports.saveAssessment = async function( assessment ) {
          * already been completed.  So for now, I am commenting the section out that was aiming to delete the historial assessment, as
          * we want to retain the correct version that the user completed.
          *
-        if(assessment.id > 0) {
+        if(assessment.assessmentId > 0) {
             //console.log(" ----- deleting the old the assesment -----");
             // delete all existing data for this assessment
 
             // get the existing db oldAssessment in order to delete it first
-            let oldAssessment = await exports.getActiveAssessmentById(assessment.id); // now getAssessmentById
+            let oldAssessment = await exports.getActiveAssessmentById(assessment.assessmentId); // now getAssessmentById
 
             console.log("old assessment -------------------");
-            console.log("looking for assessment with id : " + assessment.id)
+            console.log("looking for assessment with id : " + assessment.assessmentId)
             console.log(JSON.stringify(oldAssessment));
             console.log("-----------------------------------");
 
@@ -261,7 +261,7 @@ exports.saveAssessment = async function( assessment ) {
 
             // delete the assessment
             let text = "DELETE FROM assessments WHERE id = $1;";
-            let values = [ oldAssessment.id ];
+            let values = [ oldassessment.assessmentId ];
     
             try {
                 let res = await db.query(text, values);
@@ -287,13 +287,13 @@ exports.saveAssessment = async function( assessment ) {
                 let res = await db.query( text, values );
                 if( res.rowCount > 0 ) {
                     // get the id
-                    assessment.id = res.rows[0].id;
+                    assessment.assessmentId = res.rows[0].id;
 
                     // save the questions
                     if( assessment.questions ) {
                         for( let i = 0; i < assessment.questions.length; i++ ) {
                             text = "INSERT INTO assessment_questions (assessment_id, question, is_required, correct_option_id, active) VALUES ($1, $2, $3, $4, $5) RETURNING assessment_question_id;";
-                            values = [ assessment.id, assessment.questions[i].question, assessment.questions[i].isRequired, assessment.questions[i].correctOptionId, assessment.questions[i].active ];
+                            values = [ assessment.assessmentId, assessment.questions[i].question, assessment.questions[i].isRequired, assessment.questions[i].correctOptionId, assessment.questions[i].active ];
 
                             try {
                                 let res2 = await db.query( text, values );

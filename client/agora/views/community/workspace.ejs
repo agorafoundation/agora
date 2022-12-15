@@ -17,7 +17,7 @@
             // check to see that the workspace is active
             if(workspace.active) {
                 // check to see that the user is enrolled!
-                if(user && user.enrollments && user.enrollments.filter(enrollment => enrollment.workspace.id == workspace.id).length > 0) {
+                if(user && user.enrollments && user.enrollments.filter(enrollment => enrollment.workspace.workspaceId == workspace.workspaceId).length > 0) {
                 %>
                     <div class="container navbar-interior font-weight-bold text-primary">
                         <%- include('../partials/community-menu') %>

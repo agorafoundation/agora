@@ -3,7 +3,7 @@
     let finishedTopics = 0;
 
     // get the total number of topics for this workspace
-    let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.id == workspace.id && enrollment.isCompleted).length > 0 : false;
+    let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.workspaceId == workspace.workspaceId && enrollment.isCompleted).length > 0 : false;
     
     if(user.topicEnrollments) {
         // check to see if any of the topics are complete if so, increment the number
@@ -26,7 +26,7 @@
         %>
         <h3>The Workspace is ready to be finished!</h3>
         <form id="workspace-form" action="/community/workspace" method="POST">
-            <input type="hidden" value="<%- workspace.id %>" class="form-control form-control-lg" name="workspaceId" id="workspaceId" required>
+            <input type="hidden" value="<%- workspace.workspaceId %>" class="form-control form-control-lg" name="workspaceId" id="workspaceId" required>
             <input type="hidden" value="<%- workspace.version %>" class="form-control form-control-lg" name="workspaceVersion" id="workspaceVersion" required>
             <button type="submit" id="workspace-submit" class="btn btn-primary btn-lg">Mark Completed</button>
         </form>

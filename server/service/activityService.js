@@ -49,11 +49,11 @@ exports.saveActivity = async function( activity ) {
     // check to see if an id exists - insert / update check
     if( activity ) {
 
-        if( activity.id > 0 ) {
+        if( activity.activityId > 0 ) {
             
             // update
             let text = "UPDATE activities SET activity_type = $1, activity_name = $2, activity_description = $3, activity_html=$4, is_required=$5, active = $6, WHERE activity_id = $7;";
-            let values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active, activity.id ];
+            let values = [ activity.activityType, activity.activityName, activity.activityDescription, activity.activityHtml, activity.isRequired, activity.active, activity.activityId ];
     
             try {
                 let res = await db.query( text, values );
@@ -73,7 +73,7 @@ exports.saveActivity = async function( activity ) {
             try {
                 let res = await db.query( text, values );
                 if( res.rowCount > 0 ) {
-                    activity.id = res.rows[0].id;
+                    activity.activityId = res.rows[0].id;
                 }
                 
             }

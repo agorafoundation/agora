@@ -23,7 +23,7 @@
                 let completedQuestion = null;
                 if( topicEnrollment.preAssessment && topicEnrollment.preAssessment.completedQuestions ) {
                     for( k=0; k < topicEnrollment.preAssessment.completedQuestions.length; k++ ) {
-                        if( topicEnrollment.preAssessment.assessmentId == topicEnrollment.preAssessment.assessment.id && topicEnrollment.preAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.preAssessment.assessment.questions[ i ].id ) {
+                        if( topicEnrollment.preAssessment.assessmentId == topicEnrollment.preAssessment.assessment.assessmentId && topicEnrollment.preAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.preAssessment.assessment.questions[ i ].id ) {
                             completedQuestion = topicEnrollment.preAssessment.completedQuestions[ k ];
                         }
                     }
@@ -94,7 +94,7 @@
                 let completedQuestion = null;
                 if( topicEnrollment.postAssessment && topicEnrollment.postAssessment.completedQuestions ) {
                     for( k=0; k < topicEnrollment.postAssessment.completedQuestions.length; k++ ) {
-                        if( topicEnrollment.postAssessment.assessmentId == topicEnrollment.postAssessment.assessment.id && topicEnrollment.postAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.postAssessment.assessment.questions[ i ].id ) {
+                        if( topicEnrollment.postAssessment.assessmentId == topicEnrollment.postAssessment.assessment.assessmentId && topicEnrollment.postAssessment.completedQuestions[ k ].assessmentQuestionId == topicEnrollment.postAssessment.assessment.questions[ i ].id ) {
                             completedQuestion = topicEnrollment.postAssessment.completedQuestions[ k ];
                         }
                     }

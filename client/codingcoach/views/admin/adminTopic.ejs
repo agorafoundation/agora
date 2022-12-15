@@ -74,7 +74,7 @@
                                     %>
                                     <form action="/a/topic" enctype="multipart/form-data" method="POST" id='creatorTopicForm'>
                                         <div class="form-group">
-                                            <input type="hidden" name="topicId" value="<%- topic.id %>" />
+                                            <input type="hidden" name="topicId" value="<%- topic.topicId %>" />
                                             Name: <input type="input" class="form-control form-control-lg" name="topicName" value="<%- topic.topicName %>" id="topicName" placeholder="Name" required>
                                             Desciption: <input type="input" class="form-control form-control-lg" name="topicDescription" value="<%- topic.topicDescription %>" id="topicDescription" placeholder="Description">
                                             Image: <img class="img-supersmall" src="<%= process.env.TOPIC_IMAGE_WEB_PATH%><%- topic.topicImage %>" />

@@ -45,10 +45,10 @@ exports.getAllVisibleResources = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     //console.log("auth user id; " + authUserId);
@@ -77,7 +77,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
  */
 exports.getAllSharedResourcesForUser = async ( req, res ) => {
     // get all the shared resources for this user
-    let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authUser.id );
+    let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authuser.userId );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all shared resources for user" );
@@ -93,10 +93,10 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     // get all the active resources
@@ -119,10 +119,10 @@ exports.getResourceById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     // get all the active resources by Id
@@ -143,7 +143,7 @@ exports.getResourceById = async ( req, res ) => {
 
 exports.getAllResourcesForAuthUser = async ( req, res ) => {
     // get all the resources for this owner
-    let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id, false );
+    let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authuser.userId, false );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all resources for user" );
@@ -164,10 +164,10 @@ exports.saveCompletedResource = async function( req, res ) {
 
     if( req.session.currentTopic && req.session.authUser ) {
         // call service?
-        let completedResource = await topicService.getCompletedResourceByResourceAndUserId( resourceId, req.session.authUser.id );
+        let completedResource = await topicService.getCompletedResourceByResourceAndUserId( resourceId, req.session.authuser.userId );
         if( !completedResource ) {
             completedResource = CompletedResource.emptyCompletedResource( );
-            completedResource.userId = req.session.authUser.id;
+            completedResource.userId = req.session.authuser.userId;
             completedResource.resourceId = resourceId;
         }
         completedResource.active = status;
@@ -178,9 +178,9 @@ exports.saveCompletedResource = async function( req, res ) {
 
         // update the session
         let replaced = false;
-        if( req.session.currentTopic.completedResources.length > 0 && completeResource.id > 0 ) {
+        if( req.session.currentTopic.completedResources.length > 0 && completeresource.resourceId > 0 ) {
             for( let i=0; i < req.session.currentTopic.completedResources.length; i++ ) {
-                if( req.session.currentTopic.completedResources[ i ].id == completeResource.id ) {
+                if( req.session.currentTopic.completedResources[ i ].id == completeresource.resourceId ) {
                     req.session.currentTopic.completedResources[ i ] = completeResource;
                     replaced = true;
                     break;
@@ -231,10 +231,10 @@ exports.saveResource = async ( req, res, redirect ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -425,10 +425,10 @@ exports.deleteResourceById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authuser.userId;
     }
 
     const resourceId = req.params.resourceId;

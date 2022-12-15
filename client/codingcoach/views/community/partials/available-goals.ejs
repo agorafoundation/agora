@@ -2,8 +2,8 @@
 let availableCount = 0;
 if(availableWorkspaces) {
     for(let i=0; i<availableWorkspaces.length; i++) {
-        let enrolled = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.id == availableWorkspaces[i].id && enrollment.isCompleted == false).length > 0 : false;
-        let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.id == availableWorkspaces[i].id && enrollment.isCompleted == true).length > 0 : false;
+        let enrolled = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.workspaceId == availableWorkspaces[i].id && enrollment.isCompleted == false).length > 0 : false;
+        let completed = (user.enrollments) ? user.enrollments.filter(enrollment => enrollment.workspace.workspaceId == availableWorkspaces[i].id && enrollment.isCompleted == true).length > 0 : false;
     
         if(!enrolled && !completed) {
             availableCount++;
