@@ -36,15 +36,10 @@ router.route( '/codebot' )
 
 
 // temp testing
-router.route( '/note' )
-    .get( ( req, res ) => {
-        res.render( 'dashboard/partials/topic/edit-note.ejs' );
-    }
-    );
-router.route( '/topic' )
-    .get( ( req, res ) => {
-        res.render( 'dashboard/partials/topic/topic-view.ejs' );
-    }
-    );  
+// router.route( '/note' )
+//     .get( ( req, res ) => {
+//         res.render( 'dashboard/partials/topic/edit-note.ejs' );
+//     }
+//     );
 
 module.exports = router;

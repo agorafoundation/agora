@@ -256,11 +256,11 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
-        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+        if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }
         else {
-            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
+            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private' " );
         }
         workspace.workspaceName = req.body.workspaceName;
         workspace.workspaceDescription = req.body.workspaceDescription;

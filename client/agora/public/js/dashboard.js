@@ -430,7 +430,7 @@ const createNewTopic = async () => {
             "topicName": "Untitled",
             "topicDescription": "",
             "active": true,
-            "visibility": 0,
+            "visibility": "private",
         } )
     } )
         .then( response => response.json() )
@@ -449,7 +449,7 @@ const createNewWorkspace = async () => {
             "workspaceImage": "myImage.png",
             "active": true,
             "completable": true,
-            "visibility": 0,
+            "visibility": "private",
         } )
     } )
         .then( response => response.json() )
@@ -479,7 +479,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
                 "workspaceImage": "myImage.png",
                 "active": true,
                 "completable": true,
-                "visibility": 0,
+                "visibility": "private",
             } )
         } )
             .then( response => response.json() )
@@ -504,7 +504,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
                 "hasAssessment": false,
                 "activityId": 1,
                 "active": true,
-                "visibility": 0,
+                "visibility": "private",
             } )
         } )
             .then( response => response.json() )

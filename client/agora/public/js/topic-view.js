@@ -196,7 +196,7 @@ const createTopic = async( id, name ) => {
                 "hasAssessment": false,
                 "activityId": 1,
                 "active": true,
-                "visibility": 0,
+                "visibility": "private",
                 "resources": [],
                 "createTime": Date.now(),
             } )
@@ -514,7 +514,7 @@ function createResource( name, type, imagePath, id ) {
                 "resourceLink": "",
                 "isRequired": true,
                 "active": true,
-                "visibility": 0
+                "visibility": "private"
             } )
         } )
             .then( response => response.json() )
@@ -731,7 +731,7 @@ function updateSunEditor( id, name, contents ) {
             "resourceLink": "",
             "isRequired": false,
             "active": true,
-            "visibility": 0
+            "visibility": "private"
         } )
     } )
         .then( response => response.json() )
