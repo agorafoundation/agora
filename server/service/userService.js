@@ -136,7 +136,7 @@ exports.useAccessTokensById = async function( userId, numberOfTokens ) {
 exports.addAccessTokensToUserById = async function( userId, numberOfTokens ) {
     //console.log("adding tokens - userId : " + userId + " tokens: " + numberOfTokens);
     if( userId > 0 && numberOfTokens > 0 ) {
-        let text = "UPDATE users SET available_access_tokens=available_access_tokens + $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens + $1 WHERE user_id=$2";
         let values = [ numberOfTokens, userId ];
         try {
              
@@ -178,7 +178,7 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens)'
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens)'
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
         let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1 ];
 
@@ -260,7 +260,7 @@ exports.reValidateEmail = async function( email ) {
  * @returns User associated with id with an active status or false in none found.
  */
 exports.getActiveUserById = async function( id ) {
-    const text = "SELECT * FROM users WHERE id = $1;";
+    const text = "SELECT * FROM users WHERE user_id = $1;";
     const values = [ id ];
     
     try {
@@ -580,7 +580,7 @@ exports.verifyEmailTokenVerifyCombo = async ( email, token ) => {
                 let values = [ email, token, true, "" ];
                 
                 try {
-                    let response = await db.query( text, values );
+                    await db.query( text, values );
                     
                     return true;
                 }
@@ -696,7 +696,7 @@ exports.checkPassword = async function( email, enteredPassword ) {
 };
 
 exports.logUserSession = async function( userId, ipAddress, device ) {
-    let text = 'INSERT INTO user_sessions(user_id, ip_address, client_type, client_name, client_version, client_engine, client_engine_version, os_name, os_version, os_platform, device_type, device_brand, device_model, bot)'
+    let text = 'INSERT INTO user_sessions (user_id, ip_address, client_type, client_name, client_version, client_engine, client_engine_version, os_name, os_version, os_platform, device_type, device_brand, device_model, bot)'
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)';
 
     // null checks on device    
@@ -770,8 +770,8 @@ exports.getRecentNewUserEvents = async function( limit ) {
  */
 exports.getRecentSupportingMembers = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ur.id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.id as id "
-     + "from user_role ur inner join users as ud on ur.user_id = ud.id inner join roles as r on ur.role_id = r.id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
+    let text = "select ur.user_role_id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.user_id as id "
+     + "from user_role ur inner join users as ud on ur.user_id = ud.user_id inner join roles as r on ur.role_id = r.role_id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
     let values = [ limit ];
     
     try {
