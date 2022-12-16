@@ -289,7 +289,6 @@ exports.saveTopic = async ( req, res, redirect ) => {
             topic.creationTime = Date.now();
         }
 
-        console.log( "topic: " + JSON.stringify( topic ) );
         // add changes from the body if they are passed
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             topic.visibility = req.body.visibility;
@@ -383,6 +382,9 @@ exports.saveTopic = async ( req, res, redirect ) => {
             resources = [1, 2, 3, 4]
             resourcesRequired = [false, false, true, true]
         */
+
+        console.log( "about to save topic: " + JSON.stringify( topic ) + "\n\n" );
+
 
         topic = await topicService.saveTopic( topic );
 

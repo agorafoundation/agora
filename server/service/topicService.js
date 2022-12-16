@@ -527,7 +527,6 @@ exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 exports.saveTopic = async function( topic ) {
     // check to see if an id exists - insert / update check
     if( topic ) {
-        console.log( "saving topic: " + JSON.stringify( topic ) );
         if( topic.topicId > 0 ) {
             
             // update
@@ -553,7 +552,7 @@ exports.saveTopic = async function( topic ) {
                 let res = await db.query( text, values );
                 if( res.rowCount > 0 ) {
                     
-                    topic.topicId = res.rows[0].id;
+                    topic.topicId = res.rows[0].topic_id;
                 }
                 
             }
