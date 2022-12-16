@@ -68,7 +68,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 router.route( '/' )
     .get( async function ( req, res ) {
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authuser.userId );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId );
         //console.log("------------- owner topics: " + JSON.stringify(ownerTopics));
         let topic = null;
         
@@ -109,12 +109,12 @@ router.route( '/' )
                             topic.topicImage = req.session.savedTopicFileName;
                         } 
 
-                        topic.ownedBy = req.session.authuser.userId;
+                        topic.ownedBy = req.session.authUser.userId;
                         
                     } );
                 }
                 else {
-                    topic.ownedBy = req.session.authuser.userId; 
+                    topic.ownedBy = req.session.authUser.userId; 
                     
                     if( req.session.savedTopicFileName ) {
                         topic.topicImage = req.session.savedTopicFileName;
@@ -281,7 +281,7 @@ router.route( '/:topicId' )
         let topicId = req.params.topicId;
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authuser.userId, false );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId, false );
 
         // get the topic by id
         let topic = Topic.emptyTopic();
@@ -289,11 +289,11 @@ router.route( '/:topicId' )
             topic = await topicService.getTopicWithEverythingById( topicId, false );
         }
         else {
-            topic.ownedBy = req.session.authuser.userId;
+            topic.ownedBy = req.session.authUser.userId;
         }
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner( req.session.authuser.userId );
+        let ownerResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.userId );
 
         // start the available topics out with the full owner resource set
         let availableResources = ownerResources;
@@ -312,7 +312,7 @@ router.route( '/:topicId' )
         //console.log("Resources after removal: " + JSON.stringify(availableResources));
         
         // make sure the user has access to this topic (is owner)
-        if( topic.ownedBy === req.session.authuser.userId ) {
+        if( topic.ownedBy === req.session.authUser.userId ) {
             res.render( './admin/adminTopic', {ownerTopics: ownerTopics, topic: topic, availableResources: availableResources} );
         }
         else {

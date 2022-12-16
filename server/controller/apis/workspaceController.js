@@ -52,7 +52,7 @@ exports.getWorkspaceById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -80,7 +80,7 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -127,7 +127,7 @@ exports.deleteWorkspaceById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if ( authUserId > 0 ) {
@@ -159,7 +159,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( req, res ) => {
 
 
 
-exports.getAllWorkspacesForAuthUser = async ( req, res ) => {
+exports.getAllWorkspacesForauthUser = async ( req, res ) => {
     
     console.log( "The rquest: " + JSON.stringify( req.user ) );
 
@@ -221,7 +221,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
     
     workspace.ownedBy = authUserId; 
@@ -256,6 +256,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
+        console.log( req.body.visibility + " vis:" );
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }

@@ -16,7 +16,7 @@ exports.getDiscussionByWorkspaceId = async ( req, res ) => {
     const id = req.params.id;
 
     // get the discussion by workspace id
-    let discussion = await discussionService.getDiscussion( "goal", id, req.user.userId );
+    let discussion = await discussionService.getDiscussion( "workspace", id, req.user.userId );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -49,7 +49,7 @@ exports.updateDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.updateDiscussion( "goal", id, req.user.userId, req.body );
+    let discussion = await discussionService.updateDiscussion( "workspace", id, req.user.userId, req.body );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );
@@ -81,7 +81,7 @@ exports.createDiscussionByWorkspaceId = async ( req, res ) => {
 
     const id = req.params.id;
 
-    let discussion = await discussionService.createDiscussion( "goal", id, req.user.userId, req.body.discussion_text );
+    let discussion = await discussionService.createDiscussion( "workspace", id, req.user.userId, req.body.discussion_text );
 
     if( !discussion ) {
         return errorController( ApiMessage.createNotFoundError( "Discussion" ), res );

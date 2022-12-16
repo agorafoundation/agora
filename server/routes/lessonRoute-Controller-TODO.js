@@ -67,7 +67,7 @@ router.route( '/override/:workspaceId/:topicId/:step' )
         let access = false;
         if( req.session.authUser ) {
             // check that the user is enrolled!
-            access = await topicService.verifyTopicAccess( req.session.authuser.userId, topicId );
+            access = await topicService.verifyTopicAccess( req.session.authUser.userId, topicId );
 
             if( access ) {
                 
@@ -81,7 +81,7 @@ router.route( '/override/:workspaceId/:topicId/:step' )
                 }
                 else {
                     // there is no current topic or a new topic has been choosen
-                    currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authuser.userId, topicId, true );
+                    currentEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.userId, topicId, true );
                     currentTopic = currentEnrollment.topic;
 
                     // set the session
@@ -135,7 +135,7 @@ router.route( '/update/:finishedStep' )
             if( finishedStep == 2 ) {
                 // create the completed assessment 
                 let ca = CompletedAssessment.emptyCompletedAssessment();
-                ca.userId = req.session.authuser.userId;
+                ca.userId = req.session.authUser.userId;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
 
                 // populate the assessment for this completedAssessment
@@ -173,7 +173,7 @@ router.route( '/update/:finishedStep' )
                     req.session.currentTopic.isCompleted = true;
                     req.session.currentTopic.completedDate = "SET";
 
-                    await userService.addAccessTokensToUserById( req.session.authuser.userId, 1 );
+                    await userService.addAccessTokensToUserById( req.session.authUser.userId, 1 );
 
                     // add a message
                     req.session.messageTitle = 'You are ready to move on!';
@@ -215,7 +215,7 @@ router.route( '/update/:finishedStep' )
             if( finishedStep == 4 ) {
                 let completedActivity = CompletedActivity.emptyCompletedActivity();
                 completedActivity.submissionText = req.query.submission_text;
-                completedActivity.userId = req.session.authuser.userId;
+                completedActivity.userId = req.session.authUser.userId;
                 completedActivity.activityId = req.session.currentTopic.topic.activityId;
                 req.session.currentTopic.completedActivity = completedActivity;
 
@@ -229,14 +229,14 @@ router.route( '/update/:finishedStep' )
             if( finishedStep == 5 ) {
                 // create the completed assessment 
                 let ca = CompletedAssessment.emptyCompletedAssessment();
-                ca.userId = req.session.authuser.userId;
+                ca.userId = req.session.authUser.userId;
                 ca.assessmentId = req.session.currentTopic.topic.assessmentId;
 
                 // populate the assessment for this completedAssessment
                 ca.assessment = await assessmentService.getAssessmentById( ca.assessmentId, false );
 
                 // get the next topicAssessmentNumber
-                ca.topicAssessmentNumber = await assessmentService.getNextTopicAssessmentNumber( req.session.currentTopic.topic.assessmentId, req.session.authuser.userId );
+                ca.topicAssessmentNumber = await assessmentService.getNextTopicAssessmentNumber( req.session.currentTopic.topic.assessmentId, req.session.authUser.userId );
                 ca.topicAssessmentNumber++;     // increment to next unused number
 
                 // go through all the questions and look for the anwser
@@ -291,7 +291,7 @@ router.route( '/update/:finishedStep' )
                         req.session.currentTopic.isCompleted = true;
                         req.session.currentTopic.completedDate = "SET";
 
-                        await userService.addAccessTokensToUserById( req.session.authuser.userId, 1 );
+                        await userService.addAccessTokensToUserById( req.session.authUser.userId, 1 );
                     }
 
                     // save the data
@@ -396,7 +396,7 @@ router.route( '/:workspaceId/:topicId' )
         let access = false;
         if( req.session.authUser ) {
             // check that the user is enrolled!
-            access = await topicService.verifyTopicAccess( req.session.authuser.userId, topicId );
+            access = await topicService.verifyTopicAccess( req.session.authUser.userId, topicId );
             // if the user is not, see if we can enroll them
             if( !access ) {
                 // check to see if the user is a member and grant access if they are
@@ -404,7 +404,7 @@ router.route( '/:workspaceId/:topicId' )
                     // save the enrollment for the user in the workspace
                     let te = TopicEnrollment.emptyTopicEnrollment();
                     te.topicId = topicId;
-                    te.userId = req.session.authuser.userId;
+                    te.userId = req.session.authUser.userId;
                     await topicService.saveTopicEnrollment( te );
                     // reset the session
                     const rUser = await userService.setUserSession( req.session.authUser.email );
@@ -415,7 +415,7 @@ router.route( '/:workspaceId/:topicId' )
 
                     // user has access set the page up with enrollment data
                     // get the topic data
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authuser.userId, topicId, true );
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.userId, topicId, true );
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step
@@ -557,7 +557,7 @@ router.route( '/:workspaceId/:topicId' )
                 else {
 
                     // the user has access but the session does not have the topic enrollment data yet
-                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authuser.userId, topicId, true );
+                    let topicEnrollment = await topicService.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything( req.session.authUser.userId, topicId, true );
                     //console.log("TopicEnrollment: " + JSON.stringify(topicEnrollment));
 
                     // get the current step

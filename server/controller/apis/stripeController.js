@@ -203,7 +203,7 @@ exports.successFounders = async function( req, res ) {
                 // create the UserRole
                 let userRole = UserRole.emptyUserRole();
                 userRole.userId = user.userId;
-                userRole.roleId = urode.roleId;
+                userRole.roleId = uRole.roleId;
                 userRole.active = true;
                 userRole.endTime = 'infinity';
 

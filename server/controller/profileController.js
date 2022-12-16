@@ -36,7 +36,7 @@ exports.manageProfile = async function ( req, res ) {
         req.session.authUser = authUser;
         res.locals.authUser = req.session.authUser;
         // get user orders
-        const orders = await productService.getOrdersByUserId( authuser.userId );
+        const orders = await productService.getOrdersByUserId( authUser.userId );
 
         // get all products ordered
         let products = [];

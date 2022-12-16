@@ -473,7 +473,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
-                "workspaceId": id,
+                "workspaceId": workspaceId,
                 "workspaceName": name,
                 "workspaceDescription": description,
                 "workspaceImage": "myImage.png",
@@ -493,7 +493,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( {
-                "topicId": id,
+                "topicId": topicId,
                 "topicType": 1,
                 "topicName": name,
                 "topicDescription": description,
@@ -514,15 +514,15 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     }
 };
 
-const deleteResource = async ( id, prefix ) => {
+const deleteResource = async ( resourceId, prefix ) => {
     if ( prefix === "g-" ) {
-        const response = await fetch( "api/v1/auth/workspaces/" + id, { method: "DELETE" } );
+        const response = await fetch( "api/v1/auth/workspaces/" + resourceId, { method: "DELETE" } );
         if( response.ok ) {
             await response.json();
         }
     } 
     else {
-        const response = await fetch( "api/v1/auth/topics/" + id, { method: "DELETE" } );
+        const response = await fetch( "api/v1/auth/topics/" + resourceId, { method: "DELETE" } );
         if( response.ok ) {
             await response.json();
         }

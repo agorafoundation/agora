@@ -60,10 +60,10 @@ router.route( '/' )
 
         if( req.session && req.session.authUser && workspaceRid && workspaceVersion ) {
             // verify that the user is enrolled in the workspace and that the workspaces topics are complete
-            let userWorkspace = await workspaceService.getEnrolledWorkspaceByUserAndWorkspaceRid( req.session.authuser.userId, workspaceRid.rid );
+            let userWorkspace = await workspaceService.getEnrolledWorkspaceByUserAndWorkspaceRid( req.session.authUser.userId, workspaceRid.rid );
 
             if( userWorkspace ) {
-                await workspaceService.completeWorkspaceEnrollment( req.session.authuser.userId, workspaceRid.rid );
+                await workspaceService.completeWorkspaceEnrollment( req.session.authUser.userId, workspaceRid.rid );
 
                 // reset the session
                 const rUser = await userService.setUserSession( req.session.authUser.email );
@@ -103,7 +103,7 @@ router.route( '/enroll/:workspaceId' )
         if( req.session.authUser ) {
 
             // save the enrollment for the user in the workspace
-            await workspaceService.saveWorkspaceEnrollmentMostRecentWorkspaceVersion( req.session.authuser.userId, workspaceId );
+            await workspaceService.saveWorkspaceEnrollmentMostRecentWorkspaceVersion( req.session.authUser.userId, workspaceId );
 
             // reset the session
             const rUser = await userService.setUserSession( req.session.authUser.email );

@@ -253,7 +253,7 @@ const saveWorkspace = async( topics ) => {
     const topicsList = Object.values( topics );
 
 
-    const [ isTopic, id ] = getPrefixAndId();
+    const [ isTopic, workspaceId ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
     let description = document.getElementById( "workspace-desc" ).value;
 
@@ -261,7 +261,7 @@ const saveWorkspace = async( topics ) => {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
-            "workspaceId": id,
+            "workspaceId": workspaceId,
             "workspaceName": name,
             "workspaceDescription": description,
             "topics": topicsList,

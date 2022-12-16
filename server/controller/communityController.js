@@ -17,7 +17,7 @@ exports.getCommunityDashboard = async ( req, res ) => {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
 
     // get all the current workspaces and topics to display
-    const availableWorkspaces = await workspaceService.getAllVisibleWorkspacesWithTopics( req.session.authuser.userId );
+    const availableWorkspaces = await workspaceService.getAllVisibleWorkspacesWithTopics( req.session.authUser.userId );
 
     // get the events feed
     const feed = await eventService.communityEventFeed( 10 );

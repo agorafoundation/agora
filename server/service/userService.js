@@ -193,11 +193,11 @@ exports.saveUser = async function( record ) {
             let newUser = await exports.getUserByEmail( record.email );
             console.log( "new user id: " + newuser.userId );
             const uRole = await exports.getActiveRoleByName( "User" );
-            console.log( "user role id: " + urode.roleId );
+            console.log( "user role id: " + uRole.roleId );
             // create the UserRole
             let userRole = UserRole.emptyUserRole();
             userRole.userId = newuser.userId;
-            userRole.roleId = urode.roleId;
+            userRole.roleId = uRole.roleId;
             userRole.active = true;
             userRole.endTime = 'infinity';
 

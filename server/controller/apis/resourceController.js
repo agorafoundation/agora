@@ -48,7 +48,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     //console.log("auth user id; " + authUserId);
@@ -77,7 +77,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
  */
 exports.getAllSharedResourcesForUser = async ( req, res ) => {
     // get all the shared resources for this user
-    let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authuser.userId );
+    let sharedResources = await resourceService.getAllSharedResourcesForUser( req.session.authUser.userId );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all shared resources for user" );
@@ -96,7 +96,7 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     // get all the active resources
@@ -122,7 +122,7 @@ exports.getResourceById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     // get all the active resources by Id
@@ -141,9 +141,9 @@ exports.getResourceById = async ( req, res ) => {
     }
 };
 
-exports.getAllResourcesForAuthUser = async ( req, res ) => {
+exports.getAllResourcesForauthUser = async ( req, res ) => {
     // get all the resources for this owner
-    let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authuser.userId, false );
+    let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.userId, false );
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all resources for user" );
@@ -164,10 +164,10 @@ exports.saveCompletedResource = async function( req, res ) {
 
     if( req.session.currentTopic && req.session.authUser ) {
         // call service?
-        let completedResource = await topicService.getCompletedResourceByResourceAndUserId( resourceId, req.session.authuser.userId );
+        let completedResource = await topicService.getCompletedResourceByResourceAndUserId( resourceId, req.session.authUser.userId );
         if( !completedResource ) {
             completedResource = CompletedResource.emptyCompletedResource( );
-            completedResource.userId = req.session.authuser.userId;
+            completedResource.userId = req.session.authUser.userId;
             completedResource.resourceId = resourceId;
         }
         completedResource.active = status;
@@ -178,9 +178,9 @@ exports.saveCompletedResource = async function( req, res ) {
 
         // update the session
         let replaced = false;
-        if( req.session.currentTopic.completedResources.length > 0 && completeresource.resourceId > 0 ) {
+        if( req.session.currentTopic.completedResources.length > 0 && completeResource.resourceId > 0 ) {
             for( let i=0; i < req.session.currentTopic.completedResources.length; i++ ) {
-                if( req.session.currentTopic.completedResources[ i ].id == completeresource.resourceId ) {
+                if( req.session.currentTopic.completedResources[ i ].id == completeResource.resourceId ) {
                     req.session.currentTopic.completedResources[ i ] = completeResource;
                     replaced = true;
                     break;
@@ -234,7 +234,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -428,7 +428,7 @@ exports.deleteResourceById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     const resourceId = req.params.resourceId;

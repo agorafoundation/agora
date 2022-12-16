@@ -42,7 +42,7 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -67,7 +67,7 @@ exports.getAllPublicTopics = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -92,7 +92,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -138,7 +138,7 @@ exports.getTopicById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -172,7 +172,7 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     // get all the active topics
@@ -201,10 +201,10 @@ exports.saveCompletedTopic = async function( req, res ) {
 
     if( req.session.currentTopic && req.session.authUser ) {
 
-        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authuser.userId );
+        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.userId );
         if( !completedTopic ) {
             completedTopic = Topic.emptyTopic( );
-            completedTopic.userId = req.session.authuser.userId;
+            completedTopic.userId = req.session.authUser.userId;
             completedTopic.topicId = topicId;
         }
         completedTopic.active = status;
@@ -270,7 +270,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -525,7 +525,7 @@ exports.deleteTopicById = async ( req, res ) => {
         authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authuser.userId;
+        authUserId = req.session.authUser.userId;
     }
 
     const topicId = req.params.topicId;
