@@ -276,7 +276,7 @@ CREATE TYPE visibility AS ENUM ('private', 'public');
 
 -- workspace and related <- workspaceService
 CREATE TABLE IF NOT EXISTS workspaces (
-    rid SERIAL PRIMARY KEY,
+    workspace_rid SERIAL PRIMARY KEY,
     workspace_id INTEGER,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     workspace_name VARCHAR,

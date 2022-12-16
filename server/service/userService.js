@@ -191,12 +191,12 @@ exports.saveUser = async function( record ) {
             // create the users role
             // get the new user
             let newUser = await exports.getUserByEmail( record.email );
-            console.log( "new user id: " + newuser.userId );
+            console.log( "new user id: " + newUser.userId );
             const uRole = await exports.getActiveRoleByName( "User" );
             console.log( "user role id: " + uRole.roleId );
             // create the UserRole
             let userRole = UserRole.emptyUserRole();
-            userRole.userId = newuser.userId;
+            userRole.userId = newUser.userId;
             userRole.roleId = uRole.roleId;
             userRole.active = true;
             userRole.endTime = 'infinity';
@@ -727,7 +727,7 @@ exports.logUserSession = async function( userId, ipAddress, device ) {
     }
 };
 
-exports.getRecentNewUserEvents = async function( limit ) {
+exports.getRecentnewUserEvents = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
     let text = "select * from users order by create_time desc limit $1;";
     let values = [ limit ];

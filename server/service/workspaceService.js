@@ -29,7 +29,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     if( ownerId > -1 ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 1 ) order by gl.workspace_id;";
+        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' ) order by gl.workspace_id;";
         const values = [ ownerId, true ];
 
         let workspaces = [];
@@ -69,7 +69,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
     if( ownerId > -1 ) {
 
-        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 1 ) order by gl.workspace_id;";
+        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 'public' ) order by gl.workspace_id;";
         let values = [ true, ownerId ];
 
         let workspaces = [];
@@ -79,7 +79,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
             let res = await db.query( text, values );
             for( let i=0; i<res.rows.length; i++ ) {
                 text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
-                values = [ true, res.rows[i].rid ];
+                values = [ true, res.rows[i].workspace_rid ];
                 let topics = [];
                 let res2 = await db.query( text, values );
 
@@ -168,25 +168,26 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 AND (owned_by = $2 OR visibility = 2) group by workspace_id) goalmax "
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 AND (owned_by = $2 OR visibility = 'public') group by workspace_id) goalmax "
         + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ workspaceId, ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 AND workspace_id = $2 AND (owned_by = $3 OR visibility = 2) group by workspace_id) goalmax "
-        + "on gl.id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
+        text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 AND workspace_id = $2 AND (owned_by = $3 OR visibility = 'public') group by workspace_id) goalmax "
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ true, workspaceId, ownerId ];
     }
 
 
     try {
         let workspace = null;
-         
+        console.log( " text: " + text + " values: " + values );
         let res = await db.query( text, values );
+        console.log( " res.rowCount: " + res.rowCount + "" );
         if( res.rowCount > 0 ) {
             text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
-            values = [ true, res.rows[0].rid ];
+            values = [ true, res.rows[0].workspace_rid ];
             let topics = [];
             let res2 = await db.query( text, values );
 
@@ -278,8 +279,8 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
     if( workspace ) {
         try {
             // retrieve the current filename so that we can delete it after.
-            let text = "SELECT workspace_image FROM workspaces WHERE rid = $1";
-            let values = [ workspace.rid ];
+            let text = "SELECT workspace_image FROM workspaces WHERE workspace_rid = $1";
+            let values = [ workspace.workspaceRid ];
 
             // perform the query
             let res = await db.query( text, values );
@@ -290,8 +291,8 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
             }
 
             // create the update query to set the new name
-            text = "UPDATE workspaces SET workspace_image = $2 WHERE rid = $1";
-            values = [ workspace.rid, filename ];
+            text = "UPDATE workspaces SET workspace_image = $2 WHERE workspace_rid = $1";
+            values = [ workspace.workspaceRid, filename ];
 
             // perform query
             await db.query( text, values );
@@ -321,12 +322,12 @@ exports.saveWorkspace = async ( workspace ) => {
         if( workspace.workspaceId > 0 ) {
             // update
             console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING rid;";
+            let text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING workspace_rid;";
             let values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
     
             try {
                 let res = await db.query( text, values );
-                workspace.rid = res.rows[0].rid;
+                workspace.workspaceRid = res.rows[0].workspace_rid;
             }
             catch( e ) {
                 console.log( "[ERR]: Error updating workspace - " + e );
@@ -345,14 +346,14 @@ exports.saveWorkspace = async ( workspace ) => {
                 workspace.workspaceId++;
                 if( res.rowCount > 0 ) {
                     // insert
-                    text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, rid;";
+                    text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, workspace_rid;";
                     values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
                     
                     let res2 = await db.query( text, values );
         
                     if( res2.rowCount > 0 ) {
-                        workspace.workspaceId = res2.rows[0].id;
-                        workspace.rid = res2.rows[0].rid;
+                        workspace.workspaceId = res2.rows[0].workspace_id;
+                        workspace.workspaceRid = res2.rows[0].workspace_rid;
                     }
                 }
             }
@@ -437,7 +438,7 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
  */
 exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway ) => {
     // get the most recent version of the workspace
-    let text = "SELECT rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by rid";
+    let text = "SELECT workspace_rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by workspace_rid";
     let values = [ workspaceId ];
 
     try {
@@ -454,7 +455,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
              */
             // first remove current workspace enrollments
             text = "DELETE FROM workspace_paths WHERE workspace_rid=$1";
-            let values = [ res.rows[0].rid ];
+            let values = [ res.rows[0].workspace_rid ];
 
             let res2 = await db.query( text, values );
 
@@ -466,7 +467,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
             if( pathway && pathway.length > 0 ) {
                 for( let i=0; i < pathway.length; i++ ) {
                     text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
-                    values = [ res.rows[0].rid, pathway[i], ( i + 1 ), true, true ];
+                    values = [ res.rows[0].workspace_rid, pathway[i], ( i + 1 ), true, true ];
 
                     let res3 = await db.query( text, values );
                 }
@@ -491,7 +492,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
  */
 exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, workspaceId ) => {
     // get the most recent version of the workspace
-    let text = "SELECT rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by rid";
+    let text = "SELECT workspace_rid, MAX(workspace_version) as version from workspaces where workspace_id = $1 group by workspace_rid";
     let values = [ workspaceId ];
 
     try {
@@ -585,7 +586,7 @@ exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid
         if( res.rows.length > 0 ) {
             for( let i=0; i<res.rows.length; i++ ) {
                 // get the workspace for each user_workspace
-                text = "SELECT * FROM workspaces WHERE active = $1 AND rid = $2;";
+                text = "SELECT * FROM workspaces WHERE active = $1 AND workspace_rid = $2;";
                 values = [ true, res.rows[i].workspace_rid ];
 
                 let res2 = await db.query( text, values );
@@ -690,7 +691,7 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
                 let enrollment = WorkspaceEnrollment.ormWorkspaceEnrollment( res.rows[i] );
 
                 // get the workspace for each user_workspace
-                text = "SELECT * FROM workspaces WHERE rid = $1;";
+                text = "SELECT * FROM workspaces WHERE workspace_rid = $1;";
                 values = [ res.rows[i].workspace_rid ];
 
                 let res2 = await db.query( text, values );
@@ -716,7 +717,7 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
 
 exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as workspace_id, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.create_time as create_time from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.workspace_rid as workspace_id, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.create_time as create_time from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.workspace_rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -771,7 +772,7 @@ exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
 
 exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.rid as workspace_rid, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.completed_date as completed_date from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
+    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.workspace_rid as workspace_rid, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.completed_date as completed_date from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.workspace_rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
     
     try {

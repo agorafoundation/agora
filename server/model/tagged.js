@@ -24,7 +24,7 @@ class tagged {
         this.useCount = 0;
         this.lastUsed;
         this.active = true;
-        this.visibility = 2;
+        this.visibility = 'public';
     }
 }
 

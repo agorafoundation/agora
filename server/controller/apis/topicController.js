@@ -289,12 +289,13 @@ exports.saveTopic = async ( req, res, redirect ) => {
             topic.creationTime = Date.now();
         }
 
+        console.log( "topic: " + JSON.stringify( topic ) );
         // add changes from the body if they are passed
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             topic.visibility = req.body.visibility;
         }
         else {
-            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private'" );
+            console.error( "[topicController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private'" );
         }
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;

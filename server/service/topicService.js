@@ -199,7 +199,7 @@ exports.getAllActiveTopics = async function() {
  * @returns topic
  */
 exports.getTopicById = async function( topicId, ownerId ) {
-    let text = "SELECT * FROM topics WHERE topic_id = $1 AND (owned_by = $2 OR visibility = 1)";
+    let text = "SELECT * FROM topics WHERE topic_id = $1 AND (owned_by = $2 OR visibility = 'public')";
     let values = [ topicId, ownerId ];
     try {
         let topic = "";
@@ -1150,7 +1150,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
         // Retrieve all user owned topics and public topics.
-        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY topic_id";
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 'public') ORDER BY topic_id";
         const values = [ true, ownerId ];
 
         // apply a default offset if none is provided
@@ -1194,7 +1194,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 // Similar to getAllVisibleTopics, but does not show user specific topics.
 exports.getAllPublicTopics = async ( limit, offset ) => {
 
-    let text = "select * from topics WHERE active = $1 and visibility = 0 ORDER BY topic_id";
+    let text = "select * from topics WHERE active = $1 and visibility = 'public' ORDER BY topic_id";
     const values = [ true ];
 
     // apply a default offset if none is provided

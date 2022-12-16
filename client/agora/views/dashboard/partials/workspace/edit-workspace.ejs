@@ -37,7 +37,7 @@
                                             <!-- Visibility -->
                                             <select name="workspaceVisibility" id="workspaceVisibility" class="form-control form-control-lg">
                                                 <%
-                                                if(workspace.visibility === 0) {
+                                                if(workspace.visibility === 'private') {
                                                     %>
                                                     <option value="0" selected>Private</option>
                                                     <%
@@ -49,19 +49,7 @@
                                                 }
                                                 %>
                                                 <%
-                                                if(workspace.visibility === 1) {
-                                                    %>
-                                                    <option value="1" selected>Shared</option>
-                                                    <%
-                                                }
-                                                else {
-                                                    %>
-                                                    <option value="1">Shared</option>
-                                                    <%
-                                                }
-                                                %>
-                                                <%
-                                                if(workspace.visibility === 2) {
+                                                if(workspace.visibility === 'public') {
                                                     %>
                                                     <option value="2" selected>Public</option>
                                                     <%

@@ -60,10 +60,10 @@ router.route( '/' )
 
         if( req.session && req.session.authUser && workspaceRid && workspaceVersion ) {
             // verify that the user is enrolled in the workspace and that the workspaces topics are complete
-            let userWorkspace = await workspaceService.getEnrolledWorkspaceByUserAndWorkspaceRid( req.session.authUser.userId, workspaceRid.rid );
+            let userWorkspace = await workspaceService.getEnrolledWorkspaceByUserAndWorkspaceRid( req.session.authUser.userId, workspaceRid.workspaceRid );
 
             if( userWorkspace ) {
-                await workspaceService.completeWorkspaceEnrollment( req.session.authUser.userId, workspaceRid.rid );
+                await workspaceService.completeWorkspaceEnrollment( req.session.authUser.userId, workspaceRid.workspaceRid );
 
                 // reset the session
                 const rUser = await userService.setUserSession( req.session.authUser.email );

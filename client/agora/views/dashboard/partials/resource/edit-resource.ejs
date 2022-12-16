@@ -80,7 +80,7 @@
                                             <!-- Visibility -->
                                             <select name="visibility" id="resourceVisibility" class="form-control form-control-lg">
                                                 <%
-                                                if(resource.visibility === 0) {
+                                                if(resource.visibility === 'private') {
                                                     %>
                                                     <option value="0" selected>Private</option>
                                                     <%
@@ -92,19 +92,7 @@
                                                 }
                                                 %>
                                                 <%
-                                                if(resource.visibility === 1) {
-                                                    %>
-                                                    <option value="1" selected>Shared</option>
-                                                    <%
-                                                }
-                                                else {
-                                                    %>
-                                                    <option value="1">Shared</option>
-                                                    <%
-                                                }
-                                                %>
-                                                <%
-                                                if(resource.visibility === 2) {
+                                                if(resource.visibility === 'public') {
                                                     %>
                                                     <option value="2" selected>Public</option>
                                                     <%

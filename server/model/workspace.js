@@ -6,7 +6,7 @@
  */
 
 function workspace() {
-    this.rid = -1;
+    this.workspaceRid = -1;
     this.workspaceId = -1;
     this.workspaceVersion = 1;
     this.workspaceName = "";
@@ -27,7 +27,7 @@ exports.emptyWorkspace = () => {
 
 exports.ormWorkspace = function ( row ) {
     let workspace = exports.emptyWorkspace();
-    workspace.rid = row.rid;
+    workspace.workspaceRid = row.workspace_rid;
     workspace.workspaceId = row.workspace_id; // TODO: Once database change goes through, this will need to be updated to row.workspaceId.
     workspace.workspaceVersion = row.workspace_version;
     workspace.workspaceName = row.workspace_name;

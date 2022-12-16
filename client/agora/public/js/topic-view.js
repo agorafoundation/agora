@@ -183,6 +183,7 @@ const createTopic = async( id, name ) => {
     openTab( newTab.id );
 
     if( !id ) {
+        console.log( "/topics 2" );
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -227,7 +228,7 @@ const updateTopic = async( name ) => {
     }
     //console.log( isRequired );
     let id = getCurrTopicID();
-
+    console.log( "/topics 3" );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -1238,7 +1239,7 @@ const getPrefixAndId = () => {
 const idAndFetch = () => {
 
     const [ isTopic, id ] = getPrefixAndId();
-
+    console.log( "/topics 4" );
     if ( isTopic && id > 0 ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1323,6 +1324,7 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
+    console.log( "/topics 5" );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     return data;

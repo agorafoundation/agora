@@ -20,7 +20,7 @@ exports.communityEventFeed = async function( limit ) {
     let eventList = [];
 
     // get the new user events
-    let list1 = await userService.getRecentNewUserEvents( limit );
+    let list1 = await userService.getRecentnewUserEvents( limit );
 
     // get recent enrollments
     let list2 = await workspaceService.getRecentWorkspaceEnrollmentEvents( limit );

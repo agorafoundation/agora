@@ -199,17 +199,12 @@ function updateWorkspaceModal( workspace, workspaceImagePath ) {
         document.getElementById( "workspaceId" ).value = workspace.workspaceId;
 
         //console.log( workspace.visibility );
-        if ( workspace.visibility === 0 ) {
+        if ( workspace.visibility === 'private' ) {
             document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
             document.getElementById( "workspaceVisibilityShared" ).checked = false;
             document.getElementById( "workspaceVisibilityPublic" ).checked = false;
         }
-        else if ( workspace.visibility === 1 ) {
-            document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
-            document.getElementById( "workspaceVisibilityShared" ).checked = true;
-            document.getElementById( "workspaceVisibilityPublic" ).checked = false;
-        }
-        else if ( workspace.visibility === 2 ) {
+        else if ( workspace.visibility === 'public' ) {
             document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
             document.getElementById( "workspaceVisibilityShared" ).checked = false;
             document.getElementById( "workspaceVisibilityPublic" ).checked = true;
@@ -255,17 +250,12 @@ function updateTopicModal( topic, topicImagePath ) {
         document.getElementById( "topicId" ).value = topic.topicId;
 
         //console.log( topic.visibility );
-        if ( topic.visibility === 0 ) {
+        if ( topic.visibility === 'private' ) {
             document.getElementById( "topicVisibilityPrivate" ).checked = true;
             document.getElementById( "topicVisibilityShared" ).checked = false;
             document.getElementById( "topicVisibilityPublic" ).checked = false;
         }
-        else if ( topic.visibility === 1 ) {
-            document.getElementById( "topicVisibilityPrivate" ).checked = false;
-            document.getElementById( "topicVisibilityShared" ).checked = true;
-            document.getElementById( "topicVisibilityPublic" ).checked = false;
-        }
-        else if ( topic.visibility === 2 ) {
+        else if ( topic.visibility === 'public' ) {
             document.getElementById( "topicVisibilityPrivate" ).checked = false;
             document.getElementById( "topicVisibilityShared" ).checked = false;
             document.getElementById( "topicVisibilityPublic" ).checked = true;
@@ -420,7 +410,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 
 //creates a empty topic
 const createNewTopic = async () => {
-    
+    console.log( "about to send topic!!!!!" );
     const temp = fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -430,7 +420,7 @@ const createNewTopic = async () => {
             "topicName": "Untitled",
             "topicDescription": "",
             "active": true,
-            "visibility": "private",
+            "topicVisibility": "private",
         } )
     } )
         .then( response => response.json() )
@@ -489,6 +479,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     //if topic
     } 
     else {
+        console.log( "/topics 1" );
         fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
@@ -504,7 +495,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
                 "hasAssessment": false,
                 "activityId": 1,
                 "active": true,
-                "visibility": "private",
+                "topicVisibility": "private",
             } )
         } )
             .then( response => response.json() )
