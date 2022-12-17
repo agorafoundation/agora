@@ -10,22 +10,44 @@ const comment = require( "../model/comment" );
 const db = require( "../db/connection" );
 
 // Essentially acts as enabling a discussion
-exports.createDiscussion = async ( type, id, discussion_text, userId ) => {
+exports.createDiscussion = async ( type, id, discussion_text, creatorId, ownerId ) => {
 
     // this is safe because we know the routes that call this function on use these two
-    const parentTable = type === "workspace" ? "workspaces" : "topics";
+    console.log( "the type is " + type + ' nd the rest: ' + id + " " + discussion_text + " " + creatorId + " owner: " + ownerId );
+    const parentTable = type === "workspace" ? "workspace" : "topic";
 
-    const text = `
+    let text = '';
+    if( parentTable === "topic" ) {
+        text = `
         INSERT INTO discussions (
             parent_id,
             parent_type,
-            discussion_text
+            discussion_text,
+            user_id
         )
-        SELECT parent.id, $1, $3
-        FROM ${parentTable} parent
-        WHERE parent.id = $2 AND parent.owned_by = $4;
+        SELECT topic_id, 'topic', $2, $3
+        FROM topics parent
+        WHERE parent.topic_id = $1;
     `;
-    const values = [ type, +id, userId, discussion_text ];
+    }
+    else {
+        text = `
+        INSERT INTO discussions (
+            parent_id,
+            parent_type,
+            discussion_text,
+            user_id
+        )
+        SELECT workspace_id, 'workspace', $2, $3
+        FROM workspaces parent
+        WHERE parent.workspace_id = $1;
+    `;
+
+    }
+
+
+    
+    const values = [ id, discussion_text, creatorId ];
     
     try {
         
@@ -126,12 +148,12 @@ exports.setCommentRating = async ( commentId, rating, userId ) =>  {
     try {
         const text  = `
             INSERT INTO discussion_comment_ratings(
-                comment_id,
+                discussion_comment_id,
                 user_id,
                 rating
             ) 
             VALUES ($1, $3, $2)
-            ON CONFLICT (comment_id, user_id)
+            ON CONFLICT (discussion_comment_id, user_id)
             DO
                 UPDATE SET rating = $2
         `;
@@ -153,7 +175,7 @@ exports.removeCommentRating = async ( commentId, userId ) => {
     try {
         const text  = `
             DELETE FROM discussion_comment_ratings
-            WHERE comment_id = $1
+            WHERE discussion_comment_id = $1
             AND user_id = $2
         `;
 
@@ -206,7 +228,7 @@ exports.editComment = async ( commentId, userId, editedComment ) => {
 
     // The try catch will fail even if the query is successful if no rows are returned
     try {
-        const text = `UPDATE discussion_comments SET comment_text = $3, updated_date = $4 WHERE comment_id = $1 AND user_id = $2 RETURNING *`;
+        const text = `UPDATE discussion_comments SET comment_text = $3, updated_date = $4 WHERE discussion_comment_id = $1 AND user_id = $2 RETURNING *`;
         const values = [ commentId, userId, updated.comment_text, new Date().toISOString() ];
 
         let res = await db.query( text, values );
@@ -222,7 +244,7 @@ exports.deleteComment = async ( commentId, userId ) => {
 
     // The try catch will fail even if the query is successful if no rows are returned
     try {
-        const text = `DELETE FROM discussion_comments WHERE comment_id = $1 AND user_id = $2 RETURNING *`;
+        const text = `DELETE FROM discussion_comments WHERE discussion_comment_id = $1 AND user_id = $2 RETURNING *`;
         const values = [ commentId, userId ];
 
         let res = await db.query( text, values );
@@ -241,7 +263,7 @@ exports.getCommentsForDiscussion = async ( id, type, userId ) => {
         
         const text = `
             SELECT 
-                C.comment_id, 
+                C.discussion_comment_id, 
                 C.comment_text, 
                 C.parent_id, 
                 C.parent_type, 
@@ -256,10 +278,10 @@ exports.getCommentsForDiscussion = async ( id, type, userId ) => {
                     ELSE 0 END
                 ) as user_rating
             FROM discussion_comments C
-            LEFT JOIN discussion_comment_ratings R ON C.comment_id = R.comment_id
+            LEFT JOIN discussion_comment_ratings R ON C.discussion_comment_id = R.discussion_comment_id
             WHERE C.parent_id = $1
             AND C.parent_type = $2
-            GROUP BY C.comment_id, R.comment_id
+            GROUP BY C.discussion_comment_id, R.discussion_comment_id
             ORDER BY C.creation_date ASC
         `; 
 

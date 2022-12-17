@@ -571,6 +571,7 @@ CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 CREATE TABLE IF NOT EXISTS discussions (
     parent_id INTEGER,
     parent_type discussion_parents,
+    user_id INTEGER,
     discussion_text VARCHAR,
     CONSTRAINT discussion_parent PRIMARY KEY (parent_id, parent_type)
 );
@@ -591,10 +592,10 @@ GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
 
 
 CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
-    comment_id INTEGER,
+    discussion_comment_id INTEGER,
     user_id INTEGER,
     rating BOOLEAN,
-    CONSTRAINT user_rating PRIMARY KEY (comment_id, user_id)
+    CONSTRAINT user_rating PRIMARY KEY (discussion_comment_id, user_id)
 );
 
 GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;

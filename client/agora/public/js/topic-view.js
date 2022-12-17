@@ -228,7 +228,7 @@ const updateTopic = async( name ) => {
     }
     //console.log( isRequired );
     let id = getCurrTopicID();
-    console.log( "/topics 3" );
+    console.log( "/topics 3 for id: " + id );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -243,8 +243,8 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        //console.log( JSON.stringify( data ) );
-        //console.log( data.topicId );
+        console.log( "topic data" + JSON.stringify( data ) );
+        console.log( data.topicId );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
@@ -501,6 +501,7 @@ function addTag( selectedTag ) {
 let resources = {};
 // create a new resource
 function createResource( name, type, imagePath, id ) {
+    console.log( "about to create a resource??? " + name + " " + type + " " + imagePath + " " + id );
     if( !id ){
         fetch( "api/v1/auth/resources", {
             method: "POST",
@@ -520,7 +521,7 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                //console.log( data.resourceId );
+                console.log( "in then " + data.resourceId );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 numResources++;
 
@@ -540,13 +541,16 @@ function createResource( name, type, imagePath, id ) {
 // get the topic id based on the currently visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
+    console.log( "topicVal: " + topicVal );
     let topicID = topics[topicVal];
+    console.log( "topicID: " + topicID );
     return topicID;
 }
 
 // returns an array of resource id's within a given topic, sorted by position
 function getResources() {
     let topicResources = document.querySelectorAll( '.drop-zone__title' );
+    console.log( "topicResources: " + JSON.stringify( topicResources ) );
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
         if ( topicResources[i].style.display == 'none' ) {
@@ -719,6 +723,7 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
+    console.log( "updateSunEditor: " + id + " " + name + " " + contents );
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -1233,6 +1238,7 @@ const getPrefixAndId = () => {
 
     const url = window.location.href;
     let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
+    console.log( "urlId: " + urlId );
     return [ prefixPattern.test( url ), urlId ];
 };
 
@@ -1298,13 +1304,13 @@ async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
-    //console.log( resources );
+    console.log( "resorces retrieved : " + JSON.stringify( resources ) );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                await createTextArea( resources[i].resourceName, resources[i].id );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
                     sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
@@ -1314,7 +1320,7 @@ async function renderTopic( topic ) {
 
             }
             else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
-                //console.log( resources[i].resourceName );
+                console.log( "other resource type??? " + resources[i].resourceName );
             }
             
         }
@@ -1324,7 +1330,7 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( "/topics 5" );
+    console.log( "/topics 5 for topic id: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     return data;
@@ -1333,6 +1339,7 @@ async function renderResources( topicId ) {
 window.addEventListener( "load", () => {
     idAndFetch();
     renderTopics();
+    console.log( "when does this happen?" );
    
 } );
 

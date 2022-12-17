@@ -108,6 +108,10 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
  * @returns 
  */
 exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
+    // this query is wrong.. here is the schema
+    // agora=> select * from shared_entities;
+    // shared_entity_id | entity_id | entity_type | shared_by_user_id | shared_with_user_id | permission_level | can_copy | create_time | update_time
+
     let text = "SELECT * FROM shared table WHERE userId = $1 AND resourceId = $2 active = $3;";
     let values = [ userId, resourceId, true ];
 
@@ -162,7 +166,7 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
  * @returns 
  */
 exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
-    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') and id = $3 order by id;";
+    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') and resource_id = $3 order by resource_id;";
     const values = [ true, ownerId, resourceId ];
 
     let resources = [];
@@ -322,7 +326,7 @@ exports.saveResource = async ( resource ) => {
                 let res2 = await db.query( text, values );
     
                 if( res2.rowCount > 0 ) {
-                    resource.resourceId = res2.rows[0].id; // TODO: Once database change goes through, this will need to be changed to .resourceId.
+                    resource.resourceId = res2.rows[0].resourceS_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.
                 }
                 
             }

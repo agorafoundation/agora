@@ -290,16 +290,19 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
+        console.log( "visibility: (incomming) " + req.body.visibility );
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             topic.visibility = req.body.visibility;
         }
         else {
-            console.error( "[topicController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private'" );
+            console.error( "[topicController.saveTopic]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private'" );
         }
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
 
+        console.log( "topicType: " + topic.topicType );
+        
         if( topic.topicType == 3 ) {
             
             topic.topicHtml = req.body.embedded_submission_text_topic;
@@ -383,15 +386,14 @@ exports.saveTopic = async ( req, res, redirect ) => {
             resourcesRequired = [false, false, true, true]
         */
 
-        console.log( "about to save topic: " + JSON.stringify( topic ) + "\n\n" );
-
+        //console.log( "about to save topic: " + JSON.stringify( topic ) + "\n\n" );
 
         topic = await topicService.saveTopic( topic );
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
             let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, req.body.resources, req.body.resourcesRequired );
-            console.log( "@ -- @" +resourcesSaved );
+            //console.log( "@ -- @" +resourcesSaved );
         }
 
         
