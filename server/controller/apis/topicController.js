@@ -290,7 +290,6 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
-        console.log( "visibility: (incomming) " + req.body.visibility );
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             topic.visibility = req.body.visibility;
         }
@@ -300,8 +299,6 @@ exports.saveTopic = async ( req, res, redirect ) => {
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
-
-        console.log( "topicType: " + topic.topicType );
         
         if( topic.topicType == 3 ) {
             

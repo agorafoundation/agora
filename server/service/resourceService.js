@@ -136,8 +136,6 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
  */
 exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
 
-    console.log( "[resourceService]: ownerId/authUserId - " + ownerId );
-
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by resource_id;";
     const values = [ true, ownerId ];
 
@@ -326,7 +324,8 @@ exports.saveResource = async ( resource ) => {
                 let res2 = await db.query( text, values );
     
                 if( res2.rowCount > 0 ) {
-                    resource.resourceId = res2.rows[0].resourceS_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.
+                    resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
+                    console.log( " ----------------- Resource ID: " + resource.resourceId );
                 }
                 
             }

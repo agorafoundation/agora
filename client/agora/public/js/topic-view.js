@@ -183,7 +183,6 @@ const createTopic = async( id, name ) => {
     openTab( newTab.id );
 
     if( !id ) {
-        console.log( "/topics 2" );
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -222,13 +221,10 @@ const createTopic = async( id, name ) => {
 const updateTopic = async( name ) => {
     let isRequired = [];
     let resources = getResources();
-    console.log( resources );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
-    //console.log( isRequired );
     let id = getCurrTopicID();
-    console.log( "/topics 3 for id: " + id );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -243,8 +239,6 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "topic data" + JSON.stringify( data ) );
-        console.log( data.topicId );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
@@ -499,10 +493,13 @@ function addTag( selectedTag ) {
 
 /* Resource Functions --------------------------------------------------------------------------------- */
 let resources = {};
+let numResources = 1;
+
 // create a new resource
 function createResource( name, type, imagePath, id ) {
-    console.log( "about to create a resource??? " + name + " " + type + " " + imagePath + " " + id );
+    console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
+        console.log( "testing 1" );
         fetch( "api/v1/auth/resources", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -521,8 +518,9 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "in then " + data.resourceId );
+                console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+                console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
 
                 // map the new resource to the associated topic
@@ -531,6 +529,7 @@ function createResource( name, type, imagePath, id ) {
             } );
     }
     else{
+        console.log( "testing 2" );
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
        
@@ -541,16 +540,13 @@ function createResource( name, type, imagePath, id ) {
 // get the topic id based on the currently visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
-    console.log( "topicVal: " + topicVal );
     let topicID = topics[topicVal];
-    console.log( "topicID: " + topicID );
     return topicID;
 }
 
 // returns an array of resource id's within a given topic, sorted by position
 function getResources() {
     let topicResources = document.querySelectorAll( '.drop-zone__title' );
-    console.log( "topicResources: " + JSON.stringify( topicResources ) );
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
         if ( topicResources[i].style.display == 'none' ) {
@@ -564,12 +560,11 @@ function getResources() {
             }
         }
     }
-    //console.log( sorted );
     return sorted;
 }
 
 // Create the suneditor text area
-let numResources = 1;
+
 function createTextArea( name, id ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
@@ -658,7 +653,6 @@ function createTextArea( name, id ) {
 
     promise.then(
         ( value ) => {
-            //console.log( value );
             createSunEditor();
             if( name ){
                 createResource( name, 1, null, id  );
@@ -714,7 +708,6 @@ const createSunEditor = async() => {
         "lang(In nodejs)": "en",
         callBackSave: function ( contents ) {
             alert( contents );
-            //console.log( contents );
         },
     } ) ];
 
@@ -723,7 +716,8 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
-    console.log( "updateSunEditor: " + id + " " + name + " " + contents );
+    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -1238,14 +1232,12 @@ const getPrefixAndId = () => {
 
     const url = window.location.href;
     let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
-    console.log( "urlId: " + urlId );
     return [ prefixPattern.test( url ), urlId ];
 };
 
 const idAndFetch = () => {
 
     const [ isTopic, id ] = getPrefixAndId();
-    console.log( "/topics 4" );
     if ( isTopic && id > 0 ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1304,7 +1296,6 @@ async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
-    console.log( "resorces retrieved : " + JSON.stringify( resources ) );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
@@ -1330,7 +1321,7 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( "/topics 5 for topic id: " + topicId );
+    console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     return data;
@@ -1339,7 +1330,6 @@ async function renderResources( topicId ) {
 window.addEventListener( "load", () => {
     idAndFetch();
     renderTopics();
-    console.log( "when does this happen?" );
    
 } );
 
