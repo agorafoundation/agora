@@ -8,6 +8,9 @@ grant all privileges on database agora to agora;
 grant connect on database agora to agora;
 \c agora agora
 
+-- include the uuid extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- create and inserts
 
 CREATE TABLE IF NOT EXISTS cc_sponsors (
@@ -276,7 +279,7 @@ CREATE TYPE visibility AS ENUM ('private', 'public');
 
 -- workspace and related <- workspaceService
 CREATE TABLE IF NOT EXISTS workspaces (
-    workspace_rid SERIAL PRIMARY KEY,
+    workspace_rid uuid DEFAULT uuid_generate_v4(),
     workspace_id INTEGER,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     workspace_name VARCHAR,
@@ -319,7 +322,7 @@ CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 CREATE TABLE IF NOT EXISTS workspace_paths (
     workspace_path_id SERIAL PRIMARY KEY,
-    workspace_rid INTEGER,
+    workspace_rid uuid,
     topic_id INTEGER,
     position INTEGER,
     is_required BOOLEAN,
@@ -337,7 +340,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_paths_workspace_rid ON workspace_paths 
 -- also tracks actually completion of a goal.
 CREATE TABLE IF NOT EXISTS user_workspaces (
     user_workspace_id SERIAL PRIMARY KEY,
-    workspace_rid INTEGER,
+    workspace_rid uuid,
     user_id INTEGER,
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
