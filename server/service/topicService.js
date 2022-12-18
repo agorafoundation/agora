@@ -925,7 +925,7 @@ exports.getCompletedResourceByResourceAndUserId = async function( resourceId, us
 
 exports.saveCompletedResourceStatus = async function( completedResource ) {
     // check to see if there is alreadly a saved record
-    if( completedresource.resourceId > 0 ) {
+    if( completedResource.resourceId > 0 ) {
         // update
         let text = "UPDATE completed_resources SET submission_text = $1, active = $2, update_time = NOW() where resource_id = $3 AND user_id = $4";
         let values = [ completedResource.submissionText, completedResource.active, completedResource.resourceId, completedResource.userId ];
@@ -950,7 +950,7 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
             let res = await db.query( text, values );
 
             if( res.rowCount > 0 ) {
-                completedresource.resourceId = res.rows[0].id;
+                completedResource.resourceId = res.rows[0].id;
             }
     
             

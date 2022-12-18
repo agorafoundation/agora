@@ -463,7 +463,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
-                "workspaceId": workspaceId,
+                "workspaceId": id,
                 "workspaceName": name,
                 "workspaceDescription": description,
                 "workspaceImage": "myImage.png",
@@ -484,7 +484,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( {
-                "topicId": topicId,
+                "topicId": id,
                 "topicType": 1,
                 "topicName": name,
                 "topicDescription": description,
