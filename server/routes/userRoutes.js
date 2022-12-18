@@ -63,6 +63,8 @@ router.route( '/revalidate/:email' )
 router.route( '/uploadProfilePicture' )
     .post( async ( req, res ) => {
 
+        console.log( "upload 1!" );
+
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
             await userController.saveProfileImage( req, res, req.session.authUser.email, 'profile-default.png' );

@@ -254,10 +254,12 @@ exports.reValidateEmail = async function( req, res ) {
 
 exports.saveProfileImage = async function( req, res, email, filename ) {
 
+    console.log( "upload 2!" );
+    
     // save image in db and delete old file  
     if( email ) {
         userService.updateProfileFilename( email, filename ).then( async ( rValue ) => {
-            if( rValue && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
+            if( rValue && ( rValue != 'profile-default.png' || rValue != 'peak.svg' ) ) {
                 await fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH + rValue, ( err ) => {
                     if( err ) {
                         console.log( "[userController] file delete error status: " + err );
