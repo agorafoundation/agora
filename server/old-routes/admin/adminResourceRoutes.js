@@ -62,7 +62,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 router.route( '/' )
     .get( async function ( req, res ) {
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id );
+        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.userId );
         //console.log("------------- owner resources: " + JSON.stringify(ownerResources));
         let resource = null;
         
@@ -81,7 +81,7 @@ router.route( '/' )
                 // save image          
                     
                 let resource = Resource.emptyResource();
-                resource.id = req.body.resourceId;
+                resource.resourceId = req.body.resourceId;
 
                 resource.resourceType = req.body.resourceType;
                 resource.resourceName = req.body.resourceName;
@@ -99,17 +99,17 @@ router.route( '/' )
                 resource.isRequired = req.body.isRequired;
             
                 // get the existing data
-                if( resource.id ) {
+                if( resource.resourceId ) {
 
-                    resourceService.getResourceById( resource.id ).then( ( dbResource ) => {
-                        resource.id = dbResource.id;
+                    resourceService.getResourceById( resource.resourceId ).then( ( dbResource ) => {
+                        resource.resourceId = dbresource.resourceId;
                         resource.resourceImage = dbResource.resourceImage;
 
                         if( req.session.savedResourceFileName ) {
                             resource.resourceImage = req.session.savedResourceFileName;
                         } 
 
-                        resource.ownedBy = req.session.authUser.id;
+                        resource.ownedBy = req.session.authUser.userId;
                         resourceService.saveResource( resource ).then( ( savedResource ) => {
                             res.locals.message = "Resource Saved Successfully";
                         } );
@@ -118,7 +118,7 @@ router.route( '/' )
                 }
                 else {
                     
-                    resource.ownedBy = req.session.authUser.id; 
+                    resource.ownedBy = req.session.authUser.userId; 
 
                     resourceService.saveResource( resource ).then( ( savedResource ) => {
                         res.locals.message = "Resource Saved Successfully";
@@ -126,7 +126,7 @@ router.route( '/' )
 
                 }
                 
-                res.redirect( 303, '/a/resource/' + resource.id );
+                res.redirect( 303, '/a/resource/' + resource.resourceId );
 
             }  
         } );
@@ -147,19 +147,19 @@ router.route( '/:resourceId' )
         let resourceId = req.params.resourceId;
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.id );
+        let ownerResources = await resourceService.getAllResourcesForOwner( req.session.authUser.userId );
 
         let resource = Resource.emptyResource();
         if( resourceId > 0 ) {
             resource = await resourceService.getResourceById( resourceId );
         }
         else {
-            resource.ownedBy = req.session.authUser.id;
+            resource.ownedBy = req.session.authUser.userId;
         }
       
         
         // make sure the user has access to this resource (is owner)
-        if( resource.ownedBy === req.session.authUser.id ) {
+        if( resource.ownedBy === req.session.authUser.userId ) {
             res.render( './admin/adminResource', {ownerResources: ownerResources, resource: resource} );
         }
         else {

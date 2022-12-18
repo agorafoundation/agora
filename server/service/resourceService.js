@@ -22,7 +22,7 @@ const Resource = require( '../model/resource' );
  * @returns {Resource}
  */
 exports.getResourceById = async ( resourceId, active ) => {
-    let text = "SELECT * FROM resources WHERE id = $1";
+    let text = "SELECT * FROM resources WHERE resource_id = $1";
     if( active ) {
         text += "AND active = $2";
     }
@@ -60,7 +60,7 @@ exports.getResourceById = async ( resourceId, active ) => {
  * @returns 
  */
 exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
-    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
+    let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') ORDER BY resource_id";
     let values = [ true, ownerId ];
 
     // apply a default offset if none is provided
@@ -101,13 +101,17 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
 
 
 /**
- * TODO: This method is a stub as currently there is no way to get all shared resources for a user
+ * TODO:shared This method is a stub as currently there is no way to get all shared resources for a user
  * When the shared resource model is implemented this method will be updated to return all shared resources for a user
  * @param {int} userId 
  * @param {int} resourceId
  * @returns 
  */
 exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
+    // this query is wrong.. here is the schema
+    // agora=> select * from shared_entities;
+    // shared_entity_id | entity_id | entity_type | shared_by_user_id | shared_with_user_id | permission_level | can_copy | create_time | update_time
+
     let text = "SELECT * FROM shared table WHERE userId = $1 AND resourceId = $2 active = $3;";
     let values = [ userId, resourceId, true ];
 
@@ -132,9 +136,7 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
  */
 exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
 
-    console.log( "[resourceService]: ownerId/authUserId - " + ownerId );
-
-    const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by id;";
+    const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by resource_id;";
     const values = [ true, ownerId ];
 
     let resources = [];
@@ -162,7 +164,7 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
  * @returns 
  */
 exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
-    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 2) and id = $3 order by id;";
+    const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') and resource_id = $3 order by resource_id;";
     const values = [ true, ownerId, resourceId ];
 
     let resources = [];
@@ -194,7 +196,7 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
  * @returns All resources as a list
  */
 exports.getAllResourcesForOwner = async ( ownerId ) => {
-    const text = "SELECT * FROM resources WHERE owned_by = $1 order by id;";
+    const text = "SELECT * FROM resources WHERE owned_by = $1 order by resource_id;";
     const values = [ ownerId ];
 
     let resources = [];
@@ -225,7 +227,7 @@ exports.getAllResourcesForOwner = async ( ownerId ) => {
 exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) => {
     if( completedResourceId > 0 ) {
         // update
-        let text = "UPDATE completed_resource SET active = $1, update_time = NOW() WHERE id = $2;";
+        let text = "UPDATE completed_resources SET active = $1, update_time = NOW() WHERE completed_resource_id = $2;";
         let values = [ false, completedResourceId ];
 
         try {
@@ -233,7 +235,7 @@ exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) 
             return true;
         }
         catch( e ) {
-            console.log( "[ERR]: Error updating completedResource - " + e );
+            console.log( "[ERR]: Error updating completedResources - " + e );
             return false;
         }
         
@@ -257,7 +259,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
     if( resource ) {
         try {
             // retrieve the current filename so that we can delete it after.
-            let text = "SELECT resource_image FROM resources WHERE id = $1";
+            let text = "SELECT resource_image FROM resources WHERE resource_id = $1";
             let values = [ resourceId ];
 
             // perform the query
@@ -269,7 +271,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
             }
 
             // cerate the update query to set the new name
-            text = "UPDATE resources SET resource_image = $2 WHERE id = $1";
+            text = "UPDATE resources SET resource_image = $2 WHERE resource_id = $1";
             values = [ resourceId, filename ];
 
             // perform query
@@ -300,14 +302,14 @@ exports.saveResource = async ( resource ) => {
         if( resource.resourceId > 0 ) {
             
             // update
-            let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE id = $11;";
+            let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE resource_id = $11;";
             let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
     
             try {
                 let res = await db.query( text, values );
             }
             catch( e ) {
-                console.log( "[ERR]: Error updating resource - " + e );
+                console.log( "[ERR]: Error updating resources - " + e );
                 return false;
             }
             
@@ -315,19 +317,20 @@ exports.saveResource = async ( resource ) => {
         else {
             
             // insert
-            let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;";
+            let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING resource_id;";
             let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility ];
 
             try {
                 let res2 = await db.query( text, values );
     
                 if( res2.rowCount > 0 ) {
-                    resource.resourceId = res2.rows[0].id; // TODO: Once database change goes through, this will need to be changed to .resourceId.
+                    resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
+                    console.log( " ----------------- Resource ID: " + resource.resourceId );
                 }
                 
             }
             catch( e ) {
-                console.log( "[ERR]: Error inserting resource - " + e );
+                console.log( "[ERR]: Error inserting resources - " + e );
                 return false;
             }
         }
@@ -340,7 +343,7 @@ exports.saveResource = async ( resource ) => {
 
 // Removes a resource given an ID
 exports.deleteResourceById = async ( resourceId, ownerId ) => {
-    let text = "DELETE FROM resources WHERE id = $1 and owned_by = $2";
+    let text = "DELETE FROM resources WHERE resource_id = $1 and owned_by = $2";
     let values = [ resourceId, ownerId ];
 
     try {

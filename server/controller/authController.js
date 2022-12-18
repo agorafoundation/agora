@@ -36,7 +36,7 @@ exports.basicAuth = async ( email, password, req ) => {
                 const uRole = await userService.getActiveRoleByName( "User" );
 
                 // verify the user has the required role
-                if( user.roles && user.roles.filter( role => role.id === uRole.id ).length > 0 ) {
+                if( user.roles && user.roles.filter( role => role.roleId === uRole.roleId ).length > 0 ) {
 
                     // parse and log the User client data if enabled
                     if( process.env.REQUEST_DATA_LOGGING ) {
@@ -59,7 +59,7 @@ exports.basicAuth = async ( email, password, req ) => {
 
                         var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                         
-                        userService.logUserSession( user.id, ip, device );
+                        userService.logUserSession( user.userId, ip, device );
                     }
 
                     return user;
@@ -109,7 +109,7 @@ exports.signIn = async function( req, res ) {
                     //console.log("uRole: " + JSON.stringify(uRole));
 
                     // decision on wether user has an authorized role
-                    if( user.roles && user.roles.filter( role => role.id === uRole.id ).length > 0 ) {
+                    if( user.roles && user.roles.filter( role => role.roleId === uRole.roleId ).length > 0 ) {
                         // assign the user to the session
                         req.session.authUser = user;
 
@@ -139,7 +139,7 @@ exports.signIn = async function( req, res ) {
 
                             // log the data
                             if( user && device ) {
-                                userService.logUserSession( user.id, ip, device );
+                                userService.logUserSession( user.userId, ip, device );
 
                             }
                         }

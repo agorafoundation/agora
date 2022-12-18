@@ -196,7 +196,7 @@ const createTopic = async( id, name ) => {
                 "hasAssessment": false,
                 "activityId": 1,
                 "active": true,
-                "visibility": 0,
+                "visibility": "private",
                 "resources": [],
                 "createTime": Date.now(),
             } )
@@ -221,13 +221,10 @@ const createTopic = async( id, name ) => {
 const updateTopic = async( name ) => {
     let isRequired = [];
     let resources = getResources();
-    console.log( resources );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
-    //console.log( isRequired );
     let id = getCurrTopicID();
-
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -242,8 +239,6 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        //console.log( JSON.stringify( data ) );
-        //console.log( data.topicId );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
@@ -253,7 +248,7 @@ const saveWorkspace = async( topics ) => {
     const topicsList = Object.values( topics );
 
 
-    const [ isTopic, id ] = getPrefixAndId();
+    const [ isTopic, workspaceId ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
     let description = document.getElementById( "workspace-desc" ).value;
 
@@ -261,7 +256,7 @@ const saveWorkspace = async( topics ) => {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
-            "workspaceId": id,
+            "workspaceId": workspaceId,
             "workspaceName": name,
             "workspaceDescription": description,
             "topics": topicsList,
@@ -498,9 +493,13 @@ function addTag( selectedTag ) {
 
 /* Resource Functions --------------------------------------------------------------------------------- */
 let resources = {};
+let numResources = 1;
+
 // create a new resource
 function createResource( name, type, imagePath, id ) {
+    console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
+        console.log( "testing 1" );
         fetch( "api/v1/auth/resources", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -514,13 +513,14 @@ function createResource( name, type, imagePath, id ) {
                 "resourceLink": "",
                 "isRequired": true,
                 "active": true,
-                "visibility": 0
+                "visibility": "private"
             } )
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                //console.log( data.resourceId );
+                console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+                console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
 
                 // map the new resource to the associated topic
@@ -529,6 +529,7 @@ function createResource( name, type, imagePath, id ) {
             } );
     }
     else{
+        console.log( "testing 2" );
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
        
@@ -559,12 +560,11 @@ function getResources() {
             }
         }
     }
-    //console.log( sorted );
     return sorted;
 }
 
 // Create the suneditor text area
-let numResources = 1;
+
 function createTextArea( name, id ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
@@ -653,7 +653,6 @@ function createTextArea( name, id ) {
 
     promise.then(
         ( value ) => {
-            //console.log( value );
             createSunEditor();
             if( name ){
                 createResource( name, 1, null, id  );
@@ -709,7 +708,6 @@ const createSunEditor = async() => {
         "lang(In nodejs)": "en",
         callBackSave: function ( contents ) {
             alert( contents );
-            //console.log( contents );
         },
     } ) ];
 
@@ -718,6 +716,8 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
+    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -731,7 +731,7 @@ function updateSunEditor( id, name, contents ) {
             "resourceLink": "",
             "isRequired": false,
             "active": true,
-            "visibility": 0
+            "visibility": "private"
         } )
     } )
         .then( response => response.json() )
@@ -1238,7 +1238,6 @@ const getPrefixAndId = () => {
 const idAndFetch = () => {
 
     const [ isTopic, id ] = getPrefixAndId();
-
     if ( isTopic && id > 0 ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1297,13 +1296,12 @@ async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
-    //console.log( resources );
     if ( resources.length > 0 ) {
         let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                await createTextArea( resources[i].resourceName, resources[i].id );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
                     sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
                     docType1Count++;
@@ -1313,7 +1311,7 @@ async function renderTopic( topic ) {
 
             }
             else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
-                //console.log( resources[i].resourceName );
+                console.log( "other resource type??? " + resources[i].resourceName );
             }
             
         }
@@ -1323,6 +1321,7 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
+    console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     return data;

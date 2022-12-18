@@ -149,6 +149,12 @@ const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
 
 /**
+ * Topic / Main editor routes
+ */
+const topicRoutes = require( "./routes/topicRoutes" );
+app.use( "/topic", topicRoutes );
+
+/**
  * API Routes
  * API master route file, requires each individual API routing file
  */

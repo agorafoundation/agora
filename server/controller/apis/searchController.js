@@ -18,7 +18,7 @@ exports.getSearchResult = async ( req, res ) => {
         return errorController( ApiMessage.createBadRequestError( [ "Invalid search type" ] ), res );
     }
 
-    const results = await searchService.getSearchResults( req.query.q, req.user.id, type );
+    const results = await searchService.getSearchResults( req.query.q, req.user.userId, type );
 
     if( !results ) {
         return errorController( ApiMessage.createNotFoundError( "Search Results" ), res );

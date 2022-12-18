@@ -196,20 +196,15 @@ if ( document.getElementById( "activity-accordion" ) ) {
  */
 function updateWorkspaceModal( workspace, workspaceImagePath ) {
     if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
-        document.getElementById( "workspaceId" ).value = workspace.id;
+        document.getElementById( "workspaceId" ).value = workspace.workspaceId;
 
         //console.log( workspace.visibility );
-        if ( workspace.visibility === 0 ) {
+        if ( workspace.visibility === 'private' ) {
             document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
             document.getElementById( "workspaceVisibilityShared" ).checked = false;
             document.getElementById( "workspaceVisibilityPublic" ).checked = false;
         }
-        else if ( workspace.visibility === 1 ) {
-            document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
-            document.getElementById( "workspaceVisibilityShared" ).checked = true;
-            document.getElementById( "workspaceVisibilityPublic" ).checked = false;
-        }
-        else if ( workspace.visibility === 2 ) {
+        else if ( workspace.visibility === 'public' ) {
             document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
             document.getElementById( "workspaceVisibilityShared" ).checked = false;
             document.getElementById( "workspaceVisibilityPublic" ).checked = true;
@@ -252,20 +247,15 @@ function updateWorkspaceModal( workspace, workspaceImagePath ) {
  */
 function updateTopicModal( topic, topicImagePath ) {
     if ( document.getElementById( "create-topic-modal" ) && topic ) {
-        document.getElementById( "topicId" ).value = topic.id;
+        document.getElementById( "topicId" ).value = topic.topicId;
 
         //console.log( topic.visibility );
-        if ( topic.visibility === 0 ) {
+        if ( topic.visibility === 'private' ) {
             document.getElementById( "topicVisibilityPrivate" ).checked = true;
             document.getElementById( "topicVisibilityShared" ).checked = false;
             document.getElementById( "topicVisibilityPublic" ).checked = false;
         }
-        else if ( topic.visibility === 1 ) {
-            document.getElementById( "topicVisibilityPrivate" ).checked = false;
-            document.getElementById( "topicVisibilityShared" ).checked = true;
-            document.getElementById( "topicVisibilityPublic" ).checked = false;
-        }
-        else if ( topic.visibility === 2 ) {
+        else if ( topic.visibility === 'public' ) {
             document.getElementById( "topicVisibilityPrivate" ).checked = false;
             document.getElementById( "topicVisibilityShared" ).checked = false;
             document.getElementById( "topicVisibilityPublic" ).checked = true;
@@ -342,7 +332,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
             res.json().then( ( data ) => {
                 const resource = data[0];
                 //console.log( "Client side resource check: " + JSON.stringify( resource ) );
-                document.getElementById( "resourceId" ).value = resource.id;
+                document.getElementById( "resourceId" ).value = resource.resourceId;
 
                 if ( resource.resourceImage ) {
                     // set the modification flag
@@ -420,7 +410,7 @@ function updateResourceModal( resourceId, resourceImagePath ) {
 
 //creates a empty topic
 const createNewTopic = async () => {
-    
+    console.log( "about to send topic!!!!!" );
     const temp = fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -430,7 +420,7 @@ const createNewTopic = async () => {
             "topicName": "Untitled",
             "topicDescription": "",
             "active": true,
-            "visibility": 0,
+            "topicVisibility": "private",
         } )
     } )
         .then( response => response.json() )
@@ -449,7 +439,7 @@ const createNewWorkspace = async () => {
             "workspaceImage": "myImage.png",
             "active": true,
             "completable": true,
-            "visibility": 0,
+            "visibility": "private",
         } )
     } )
         .then( response => response.json() )
@@ -473,13 +463,13 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
-                "workspaceId": id,
+                "workspaceId": workspaceId,
                 "workspaceName": name,
                 "workspaceDescription": description,
                 "workspaceImage": "myImage.png",
                 "active": true,
                 "completable": true,
-                "visibility": 0,
+                "visibility": "private",
             } )
         } )
             .then( response => response.json() )
@@ -489,11 +479,12 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     //if topic
     } 
     else {
+        console.log( "/topics 1" );
         fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( {
-                "topicId": id,
+                "topicId": topicId,
                 "topicType": 1,
                 "topicName": name,
                 "topicDescription": description,
@@ -504,7 +495,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
                 "hasAssessment": false,
                 "activityId": 1,
                 "active": true,
-                "visibility": 0,
+                "topicVisibility": "private",
             } )
         } )
             .then( response => response.json() )
@@ -514,15 +505,15 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     }
 };
 
-const deleteResource = async ( id, prefix ) => {
+const deleteResource = async ( resourceId, prefix ) => {
     if ( prefix === "g-" ) {
-        const response = await fetch( "api/v1/auth/workspaces/" + id, { method: "DELETE" } );
+        const response = await fetch( "api/v1/auth/workspaces/" + resourceId, { method: "DELETE" } );
         if( response.ok ) {
             await response.json();
         }
     } 
     else {
-        const response = await fetch( "api/v1/auth/topics/" + id, { method: "DELETE" } );
+        const response = await fetch( "api/v1/auth/topics/" + resourceId, { method: "DELETE" } );
         if( response.ok ) {
             await response.json();
         }

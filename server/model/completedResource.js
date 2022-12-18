@@ -6,7 +6,7 @@
  */
 
 function completedResource() {
-    this.id = -1;
+    this.completedResourceId = -1;
     this.resourceId = -1;
     this.userId = -1;
     this.submissionText = "";
@@ -24,7 +24,7 @@ exports.emptyCompletedResource = () => {
 
 exports.ormCompletedResource = function ( row ) {
     let completedResource = exports.emptyCompletedResource();
-    completedResource.id = row.id;
+    completedResource.completedResourceId = row._completed_resource_id;
     completedResource.resourceId = row.resource_id;
     completedResource.userId = row.user_id;
     completedResource.submissionText = row.submission_text;

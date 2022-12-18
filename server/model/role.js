@@ -6,7 +6,7 @@
  */
 
 function role() {
-    this.id = -1;
+    this.roleId = -1;
     this.roleName = "";
     this.roleDescription = "";
     this.active = true;
@@ -20,7 +20,7 @@ exports.emptyRole = () => {
 
 exports.ormRole = function ( row ) {
     let role = exports.emptyRole();
-    role.id = row.id;
+    role.roleId = row.role_id;
     role.roleName = row.role_name;
     role.roleDescription = row.role_description;
     role.active = row.active;

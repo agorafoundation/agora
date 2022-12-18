@@ -35,28 +35,17 @@ exports.createUser = async function( req, res ) {
 
             let subscriptionActive = true;
 
-            let beginningProgramming = ( req.body.beginningProgramming == "on" ) ? true : false;
-            let intermediateProgramming = ( req.body.intermediateProgramming == "on" ) ? true : false;
-            let advancedProgramming = ( req.body.advancedProgramming == "on" ) ? true : false;
-            let mobileDevelopment = ( req.body.mobileDevelopment == "on" ) ? true : false;
-            let roboticsProgramming = ( req.body.roboticsProgramming == "on" ) ? true : false;
-            let webApplications = ( req.body.webApplications == "on" ) ? true : false;
-            let web3 = ( req.body.web3 == "on" ) ? true : false;
-            let iotProgramming = ( req.body.iotProgramming == "on" ) ? true : false;
-            let databaseDesign = ( req.body.databaseDesign == "on" ) ? true : false;
-            let relationalDatabase = ( req.body.relationalDatabase == "on" ) ? true : false;
-            let noSqlDatabase = ( req.body.noSqlDatabase == "on" ) ? true : false;
-            let objectRelationalMapping = ( req.body.objectRelationalMapping == "on" ) ? true : false;
-
             // create a stripe account and retrieve the generated id
             let fullname = req.body.firstName + " " + req.body.lastName;
-            let stripeId = await stripeService.createStripeCustomer( email, fullname );
-
+            
+            let stripeId = "null";
+            if( process.env.STRIPE_TOGGLE == "true" ) {
+                stripeId = await stripeService.createStripeCustomer( email, fullname );
+            }
+            
             let hashedPassword = await userService.passwordHasher( req.body.psw );
 
-            user = User.createUser( email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive,
-                beginningProgramming, intermediateProgramming, advancedProgramming, mobileDevelopment, roboticsProgramming,
-                webApplications, web3, iotProgramming, databaseDesign, relationalDatabase, noSqlDatabase, objectRelationalMapping, stripeId, 0 );
+            user = User.createUser( email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );
             
             // save the user to the database!
             userService.saveUser( user ).then( ( insertResult ) => {
@@ -173,35 +162,13 @@ exports.updateUser = async function( req, res ){
         let user = await userService.getUserByEmail( email );
 
         let subscriptionActive = ( req.body.subscriptionActive == "on" ) ? true : false;
-        let beginningProgramming = ( req.body.beginningProgramming == "on" ) ? true : false;
-        let intermediateProgramming = ( req.body.intermediateProgramming == "on" ) ? true : false;
-        let advancedProgramming = ( req.body.advancedProgramming == "on" ) ? true : false;
-        let mobileDevelopment = ( req.body.mobileDevelopment == "on" ) ? true : false;
-        let roboticsProgramming = ( req.body.roboticsProgramming == "on" ) ? true : false;
-        let webApplications = ( req.body.webApplications == "on" ) ? true : false;
-        let web3 = ( req.body.web3 == "on" ) ? true : false;
-        let iotProgramming = ( req.body.iotProgramming == "on" ) ? true : false;
-        let databaseDesign = ( req.body.databaseDesign == "on" ) ? true : false;
-        let relationalDatabase = ( req.body.relationalDatabase == "on" ) ? true : false;
-        let noSqlDatabase = ( req.body.noSqlDatabase == "on" ) ? true : false;
-        let objectRelationalMapping = ( req.body.objectRelationalMapping == "on" ) ? true : false;
 
         user.email = email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.subscriptionActive =subscriptionActive;
-        user.beginningProgramming = beginningProgramming;
-        user.intermediateProgramming = intermediateProgramming;
-        user.advancedProgramming = advancedProgramming;
-        user.mobileDevelopment = mobileDevelopment;
-        user.roboticsProgramming = roboticsProgramming;
-        user.webApplications = webApplications;
-        user.web3 = web3;
-        user.iotProgramming = iotProgramming;
-        user.databaseDesign = databaseDesign;
-        user.relationalDatabase = relationalDatabase;
-        user.noSqlDatabase = noSqlDatabase;
-        user.objectRelationalMapping = objectRelationalMapping;
+
+        // TODO:Tags may need to parsed here when form is submitted, previously interests were done here.
 
         // save the user to the database!
         userService.saveUser( user ).then( () => {

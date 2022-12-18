@@ -15,7 +15,7 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
             <div contenteditable="true" class="discussion-textarea" id="discussion-textarea"></div>
             <button class="post-comment-btn" id="post-comment-btn">Send</button>
             <!--<% comments.forEach((comment)=> { %>
-                <div class="flex-column comment-countable" id="comment-<%=comment.id%>">
+                <div class="flex-column comment-countable" id="comment-<%=comment.commentId%>">
                     <div class="flex-row">
                         <span class="material-symbols-outlined" style="margin: 0"><%= comment.pfp %></span>
                         <span class="discussion-user"><%= comment.user %></span>

@@ -45,7 +45,7 @@
                             <%- include('./partials/topic-enrollment-options'); %>
                             <input type="hidden" id="currentStepField" value="<%- (!!currentStep)?currentStep:'' %>" />
                             <input type="hidden" id="workspaceIdField" value="<%- (!!workspaceId)?workspaceId:'' %>" />
-                            <input type="hidden" id="topicIdField" value="<%- (!!topic)?topic.id:'' %>" />
+                            <input type="hidden" id="topicIdField" value="<%- (!!topic)?topic.topicId:'' %>" />
                             <%- (!!hasAccess)?include('./partials/topic-navigation'):''; %>
                             
                             

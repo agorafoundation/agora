@@ -5,7 +5,7 @@
 
 class tag {
     constructor( ) {
-        this.id = -1;
+        this.tagId = -1;
         this.tag = "";
         this.lastUsed;
         this.ownedBy = -1;
@@ -18,7 +18,7 @@ exports.emptyTag = () => {
 
 exports.ormTag = ( row ) => {
     let tag = exports.emptyTag();
-    tag.id = row.id;
+    tag.tagId = row.tag_id;
     tag.tag = row.tag;
     tag.lastUsed = row.last_used;
     tag.ownedBy = row.owned_by;

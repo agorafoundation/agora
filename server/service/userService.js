@@ -34,12 +34,13 @@ const saltRounds = 10;
 const crypto = require( 'crypto' );
 
 exports.saveUserRole = async function( record ) {
-    let text = 'INSERT INTO user_role(user_id, role_id, active, end_time)'
-            + 'VALUES($1, $2, $3, $4)';
+    let text = 'INSERT INTO user_roles (user_id, role_id, active, end_time)'
+            + 'VALUES($1, $2, $3, $4);';
+    console.log( "record: " + record );
     let values = [ record.userId, record.roleId, record.active, record.endTime ];
     try {
          
-        let response = await db.query( text, values );
+        await db.query( text, values );
         
         return true;
     }
@@ -51,7 +52,7 @@ exports.saveUserRole = async function( record ) {
 };
 
 exports.getActiveRoleById = async function( roleId ) {
-    let text = "SELECT * FROM roles WHERE active = $1 AND id = $2";
+    let text = "SELECT * FROM roles WHERE active = $1 AND role_id = $2";
     let values = [ true, roleId ];
     
     try {
@@ -90,7 +91,7 @@ exports.getActiveRoleByName = async function( name ) {
 };
 
 exports.getActiveRolesForUserId = async function( userId ) {
-    let text = "SELECT * FROM user_role WHERE active = $1 AND user_id = $2";
+    let text = "SELECT * FROM user_roles WHERE active = $1 AND user_id = $2";
     let values = [ true, userId ];
     
     let roles = [];
@@ -115,7 +116,7 @@ exports.getActiveRolesForUserId = async function( userId ) {
 
 exports.useAccessTokensById = async function( userId, numberOfTokens ) {
     if( userId > 0 && numberOfTokens > 0 ) {
-        let text = "UPDATE users SET available_access_tokens=available_access_tokens - $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens - $1 WHERE user_id=$2";
         let values = [ numberOfTokens, userId ];
         //console.log("taking away a token");
         try {
@@ -136,7 +137,7 @@ exports.useAccessTokensById = async function( userId, numberOfTokens ) {
 exports.addAccessTokensToUserById = async function( userId, numberOfTokens ) {
     //console.log("adding tokens - userId : " + userId + " tokens: " + numberOfTokens);
     if( userId > 0 && numberOfTokens > 0 ) {
-        let text = "UPDATE users SET available_access_tokens=available_access_tokens + $1 WHERE id=$2";
+        let text = "UPDATE users SET available_access_tokens=available_access_tokens + $1 WHERE user_id=$2";
         let values = [ numberOfTokens, userId ];
         try {
              
@@ -178,28 +179,25 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users(email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, beginning_programming, intermediate_programming, advanced_programming,'
-            + 'mobile_development, robotics_programming, web_applications, web3, iot_programming, database_design, relational_database, nosql_database, object_relational_mapping, stripe_id, available_access_tokens)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
-            record.mobileDevelopment, record.roboticsProgramming, record.webApplications, record.web3, record.iotProgramming, record.databaseDesign, record.relationalDatabase, 
-            record.noSqlDatabase, record.objectRelationalMapping, record.stripeId, 1 ];
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1 ];
 
         try {
              
-            let response = await db.query( text, values );
+            await db.query( text, values );
             
             
             // create the users role
             // get the new user
             let newUser = await exports.getUserByEmail( record.email );
-            
+            console.log( "new user id: " + newUser.userId );
             const uRole = await exports.getActiveRoleByName( "User" );
-
+            console.log( "user role id: " + uRole.roleId );
             // create the UserRole
             let userRole = UserRole.emptyUserRole();
-            userRole.userId = newUser.id;
-            userRole.roleId = uRole.id;
+            userRole.userId = newUser.userId;
+            userRole.roleId = uRole.roleId;
             userRole.active = true;
             userRole.endTime = 'infinity';
 
@@ -215,16 +213,12 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4, beginning_programming=$5, intermediate_programming=$6, advanced_programming=$7,'
-            + 'mobile_development=$8, robotics_programming=$9, web_applications=$10, web3=$11, iot_programming=$12, database_design=$13, relational_database=$14, nosql_database=$15,'
-            + 'object_relational_mapping=$16 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive, record.beginningProgramming, record.intermediateProgramming, record.advancedProgramming,
-            record.mobileDevelopment, record.roboticsProgramming, record.webApplications, record.web3, record.iotProgramming, record.databaseDesign, record.relationalDatabase, 
-            record.noSqlDatabase, record.objectRelationalMapping ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive ];
 
         try {
             
-            let response = await db.query( text, values );
+            await db.query( text, values );
             
         }
         catch( e ) {
@@ -267,7 +261,7 @@ exports.reValidateEmail = async function( email ) {
  * @returns User associated with id with an active status or false in none found.
  */
 exports.getActiveUserById = async function( id ) {
-    const text = "SELECT * FROM users WHERE id = $1;";
+    const text = "SELECT * FROM users WHERE user_id = $1;";
     const values = [ id ];
     
     try {
@@ -278,7 +272,7 @@ exports.getActiveUserById = async function( id ) {
             let user = User.ormUser( res.rows[0] );
 
             // get roles for the user
-            let userRoles = await exports.getActiveRolesForUserId( user.id );
+            let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
             // append the roles
             user.roles = userRoles;
@@ -296,15 +290,15 @@ exports.getActiveUserById = async function( id ) {
             user.codebot = await productService.verifyUserCodeBotPurchase( user );
 
             // get enrolled paths for user, 
-            //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
+            //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, false);
 
             // get completed paths for the user
-            //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
+            //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, true);
 
-            let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
+            let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.userId );
 
             // get enrolled topics for user
-            let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    
+            let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.userId );    
 
             // note if the user is a member
             user.member = await topicService.verifyUserHasMembershipAccessRole( user );
@@ -401,7 +395,7 @@ exports.getUserByEmailWithRoles = async function( email ) {
     let user = await exports.getUserByEmail( email );
 
     // get roles for the user
-    let userRoles = await exports.getActiveRolesForUserId( user.id );
+    let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
     // append the roles
     user.roles = userRoles;
@@ -414,21 +408,21 @@ exports.setUserSession = async function( email ) {
     let user = await exports.getUserByEmail( email );
     
     // get roles for the user
-    let userRoles = await exports.getActiveRolesForUserId( user.id );
+    let userRoles = await exports.getActiveRolesForUserId( user.userId );
 
     // append the roles
     user.roles = userRoles;
 
     // get enrolled paths for user, 
-    //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, false);
+    //let paths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, false);
 
     // get completed paths for the user
-    //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.id, true);
+    //let completedPaths = await workspaceService.getActiveEnrolledWorkspacesForUserId(user.userId, true);
 
-    let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.id );
+    let enrollments = await workspaceService.getActiveEnrollmentsForUserId( user.userId );
 
     // get enrolled topics for user
-    let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.id );    
+    let topics = await topicService.getActiveTopicEnrollmentsForUserId( user.userId );    
 
     // note if the user is a member
     user.member = await topicService.verifyUserHasMembershipAccessRole( user );
@@ -587,7 +581,7 @@ exports.verifyEmailTokenVerifyCombo = async ( email, token ) => {
                 let values = [ email, token, true, "" ];
                 
                 try {
-                    let response = await db.query( text, values );
+                    await db.query( text, values );
                     
                     return true;
                 }
@@ -703,7 +697,7 @@ exports.checkPassword = async function( email, enteredPassword ) {
 };
 
 exports.logUserSession = async function( userId, ipAddress, device ) {
-    let text = 'INSERT INTO user_sessions(user_id, ip_address, client_type, client_name, client_version, client_engine, client_engine_version, os_name, os_version, os_platform, device_type, device_brand, device_model, bot)'
+    let text = 'INSERT INTO user_sessions (user_id, ip_address, client_type, client_name, client_version, client_engine, client_engine_version, os_name, os_version, os_platform, device_type, device_brand, device_model, bot)'
             + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)';
 
     // null checks on device    
@@ -733,7 +727,7 @@ exports.logUserSession = async function( userId, ipAddress, device ) {
     }
 };
 
-exports.getRecentNewUserEvents = async function( limit ) {
+exports.getRecentnewUserEvents = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
     let text = "select * from users order by create_time desc limit $1;";
     let values = [ limit ];
@@ -777,8 +771,8 @@ exports.getRecentNewUserEvents = async function( limit ) {
  */
 exports.getRecentSupportingMembers = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ur.id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.id as id "
-     + "from user_role ur inner join users as ud on ur.user_id = ud.id inner join roles as r on ur.role_id = r.id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
+    let text = "select ur.user_role_id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.user_id as id "
+     + "from user_role ur inner join users as ud on ur.user_id = ud.user_id inner join roles as r on ur.role_id = r.role_id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
     let values = [ limit ];
     
     try {

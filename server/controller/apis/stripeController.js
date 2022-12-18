@@ -202,8 +202,8 @@ exports.successFounders = async function( req, res ) {
 
                 // create the UserRole
                 let userRole = UserRole.emptyUserRole();
-                userRole.userId = user.id;
-                userRole.roleId = uRole.id;
+                userRole.userId = user.userId;
+                userRole.roleId = uRole.roleId;
                 userRole.active = true;
                 userRole.endTime = 'infinity';
 
@@ -247,7 +247,7 @@ exports.successToken = async function( req, res ) {
             if( orderRes ) {
                 // add a token to the users account
                 
-                await userService.addAccessTokensToUserById( user.id, order.quantity );
+                await userService.addAccessTokensToUserById( user.userId, order.quantity );
             }
             // reset the session
             const rUser = await userService.setUserSession( req.session.authUser.email );

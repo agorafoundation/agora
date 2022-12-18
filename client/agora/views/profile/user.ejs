@@ -88,7 +88,7 @@
                                 for( let i=0; i < user.enrollments.length; i++ ) {
                                     if( user.enrollments[i].isCompleted ) {
                                         %>
-                                        <img src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" title="<%- user.enrollments[i].workspace.workspaceName %>" alt="<%- user.enrollments[i].workspace.workspaceName %>" class="badge-image" />
+                                        <img src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" title="<%- user.enrollments[i].workspace.workspaceName %>" alt="<%- user.enrollments[i].workspace.workspaceName %>" class="badge-image" />
                                         <%
                                     }
                                 }
@@ -111,124 +111,20 @@
                         <div class="col-lg-4">
                             
                             <h5><%- (!!user)?user.username:'' %>'s Interests</h5>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.beginningProgramming) { %>
-                                    <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" disabled />
-                                <% } %>
-
-                                <label class="custom-control-label" for="beginningProgramming">Beginning Programming</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.intermediateProgramming) { %>
-                                    <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="intermediateProgramming">Intermediate Programming</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.advancedProgramming) { %>
-                                    <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="advancedProgramming">Advanced Programming</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.mobileDevelopment) { %>
-                                    <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="mobileDevelopment">Mobile Development</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.roboticsProgramming) { %>
-                                    <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="roboticsProgramming">Robotics Programming</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.webApplications) { %>
-                                    <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="webApplications">Web Applications</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.web3) { %>
-                                    <input type="checkbox" class="custom-control-input" id="web3" name="web3" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="web3" name="web3" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="web3">Web 3 / Blockchain</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.iotProgramming) { %>
-                                    <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" disabled />
-                                <% } %>
-
-                                <label class="custom-control-label" for="iotProgramming">Internet of Things (IoT) Programming</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.databaseDesign) { %>
-                                    <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="databaseDesign">Database Design</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.relationalDatabase) { %>
-                                    <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" disabled />
-                                <% } %>
-
-                                <label class="custom-control-label" for="relationalDatabase">Relational Databases</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.noSqlDatabase) { %>
-                                    <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="noSqlDatabase">NoSQL Databases</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <% if(user.objectRelationalMapping) { %>
-                                    <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" checked disabled />
-                                <% } else { %>
-                                    <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" disabled />
-                                <% } %>
-                                
-                                <label class="custom-control-label" for="objectRelationalMapping">Object Relational Mapping</label>
-                            </div>
+                            <h5>Letting us know which topics your are most intested in helps us find related research and
+                                collaborators that might be of interest to you (optional)</h5>
+                            <p>TODO:Tags Tag selection will go here</p> 
+                            
                             
                             
                         </div>
                         
 
-                        <div class="col-lg-8">
+                        <!-- <div class="col-lg-8">
                             <h4>Currently Enrolled In:</h4>
                             <%- include('../community/partials/enrolled-workspaces') %>
 
-                        </div>
+                        </div> -->
                         
                     </div>
                 </div>

@@ -25,7 +25,7 @@ const topicService = require( '../../service/topicService' );
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
 let FRONT_END = process.env.FRONT_END_NAME;
-let WORKSPACE_PATH = process.env.GOAL_IMAGE_PATH;
+let WORKSPACE_PATH = process.env.WORKSPACE_IMAGE_PATH;
 
 // set the max image size for avatars and icons
 const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
@@ -37,7 +37,7 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
-    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.id );
+    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
     
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
@@ -49,12 +49,12 @@ exports.getWorkspaceById = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
-
+    console.log( "trying to retrieve: " + req.params.workspaceId + " for user: " + authUserId );
     if( authUserId > 0 ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
@@ -77,10 +77,10 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -124,10 +124,10 @@ exports.deleteWorkspaceById = async ( req, res ) => {
 
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if ( authUserId > 0 ) {
@@ -159,12 +159,12 @@ exports.getAllVisibleWorkspacesWithTopics = async ( req, res ) => {
 
 
 
-exports.getAllWorkspacesForAuthUser = async ( req, res ) => {
+exports.getAllWorkspacesForauthUser = async ( req, res ) => {
     
     console.log( "The rquest: " + JSON.stringify( req.user ) );
 
     // get all the workspaces for this owner
-    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.id, false );
+    let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.userId, false );
     
         
       
@@ -218,10 +218,10 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
     
     workspace.ownedBy = authUserId; 
@@ -256,11 +256,12 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
-        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+        console.log( req.body.visibility + " vis:" );
+        if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }
         else {
-            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
+            console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private' " );
         }
         workspace.workspaceName = req.body.workspaceName;
         workspace.workspaceDescription = req.body.workspaceDescription;

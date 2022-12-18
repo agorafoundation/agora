@@ -35,7 +35,7 @@
                             <h2>Manage your Account</h2>
                             <% if(!user.emailValidated){ %>
                                 <div class="alert-message alert-message-warning" role="alert">
-                                    <h3 >Email not verified!</h3>
+                                    <h3>Email not verified!</h3>
                                     <p>Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a></p>
                                 </div>
                             <% } %>
@@ -65,115 +65,9 @@
                                             <label class="custom-control-label" for="subscriptionActive">Subcription Active <- Turn on or off emails from us</label>
                                         </div>
                                         <br />
-                                        <h5>Your Interests (Helps us find the best courses and collaborators for you!)</h5>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.beginningProgramming) { %>
-                                                <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="beginningProgramming" name="beginningProgramming">
-                                            <% } %>
-
-                                            <label class="custom-control-label" for="beginningProgramming">Beginning Programming</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.intermediateProgramming) { %>
-                                                <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="intermediateProgramming" name="intermediateProgramming">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="intermediateProgramming">Intermediate Programming</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.advancedProgramming) { %>
-                                                <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="advancedProgramming" name="advancedProgramming">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="advancedProgramming">Advanced Programming</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.mobileDevelopment) { %>
-                                                <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="mobileDevelopment" name="mobileDevelopment">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="mobileDevelopment">Mobile Development</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.roboticsProgramming) { %>
-                                                <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="roboticsProgramming" name="roboticsProgramming">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="roboticsProgramming">Robotics Programming</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.webApplications) { %>
-                                                <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="webApplications" name="webApplications">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="webApplications">Web Applications</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.web3) { %>
-                                                <input type="checkbox" class="custom-control-input" id="web3" name="web3" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="web3" name="web3">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="web3">Web 3 / Blockchain</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.iotProgramming) { %>
-                                                <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="iotProgramming" name="iotProgramming">
-                                            <% } %>
-
-                                            <label class="custom-control-label" for="iotProgramming">Internet of Things (IoT) Programming</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.databaseDesign) { %>
-                                                <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="databaseDesign" name="databaseDesign">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="databaseDesign">Database Design</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.relationalDatabase) { %>
-                                                <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="relationalDatabase" name="relationalDatabase">
-                                            <% } %>
-
-                                            <label class="custom-control-label" for="relationalDatabase">Relational Databases</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.noSqlDatabase) { %>
-                                                <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="noSqlDatabase" name="noSqlDatabase">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="noSqlDatabase">NoSQL Databases</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox">
-                                            <% if(user.objectRelationalMapping) { %>
-                                                <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping" checked>
-                                            <% } else { %>
-                                                <input type="checkbox" class="custom-control-input" id="objectRelationalMapping" name="objectRelationalMapping">
-                                            <% } %>
-                                            
-                                            <label class="custom-control-label" for="objectRelationalMapping">Object Relational Mapping</label>
-                                        </div>
+                                        <h5>Letting us know which topics your are most intested in helps us find related research and
+                                            collaborators that might be of interest to you (optional)</h5>
+                                        <p>TODO:Tags Tag selection will go here</p> 
                                       
                                     </div>
                                     <button type="submit" id="userManageButton" class="btn btn-primary btn-lg btn-block">Update Information</button>
@@ -197,7 +91,8 @@
                             </form>
                             
 
-                            <%
+                            <!-- All users are creators in agora, this is a relic from cc -->
+                            <!-- <%
                             if(user.roles.filter(role => role.roleName === "Creator").length > 0) {
                                 %>
                                 <hr />
@@ -212,15 +107,16 @@
                                 </a> 
                                 <%
                             }
-                            %>
+                            %> -->
 
-                            <div class="divider-custom">
+                            <!-- <div class="divider-custom">
                                 <div class="divider-custom-line divider-bg-color"></div>
                                 <div class="divider-custom-icon"><i class="fas fa-chalkboard-teacher divider-color"></i></div>
                                 <div class="divider-custom-line divider-bg-color"></div>
-                            </div>
+                            </div> -->
 
-                            <h2>Membership</h2>
+                            <!-- TODO:Sharing revisit if this space should be reused for sharing when completed -->
+                            <!-- <h2>Membership</h2>
 
                             <% 
                             if(products && products.length > 0) {
@@ -255,7 +151,7 @@
                                 </div> 
                                 <%
                             }
-                            %>
+                            %> -->
                             
                             <div class="divider-custom">
                                 <div class="divider-custom-line divider-bg-color"></div>

@@ -6,7 +6,7 @@
  */
 
 function workspaceEnrollment() {
-    this.id = -1;
+    this.workspaceEnrollmentId = -1;
     this.workspaceRid = -1;
     this.userId = -1;
     this.isCompleted = false;
@@ -24,9 +24,9 @@ exports.emptyWorkspaceEnrollment = () => {
 
 exports.ormWorkspaceEnrollment = function ( row ) {
     let workspaceEnrollment = exports.emptyWorkspaceEnrollment();
-    workspaceEnrollment.id = row.id;
-    workspaceEnrollment.workspaceRid = row.goal_rid;
-    workspaceEnrollment.workspaceVersion = row.goal_version;
+    workspaceEnrollment.workspaceEnrollmentId = row.workspace_enrollment_id;
+    workspaceEnrollment.workspaceRid = row.workspace_rid;
+    workspaceEnrollment.workspaceVersion = row.workspace_version;
     workspaceEnrollment.userId = row.user_id;
     workspaceEnrollment.isCompleted = row.is_completed;
     workspaceEnrollment.active = row.active;

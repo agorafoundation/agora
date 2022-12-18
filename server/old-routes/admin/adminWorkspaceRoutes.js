@@ -29,7 +29,7 @@ let path = require( 'path' );
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', process.env.STORAGE_BASE_PATH );
 let FRONT_END = process.env.FRONT_END_NAME;
-let IMAGE_PATH = process.env.GOAL_IMAGE_PATH;
+let IMAGE_PATH = process.env.WORKSPACE_IMAGE_PATH;
 
 // set the max image size for avatars and resource, topic and workspace icons
 let maxSize = 1 * 1024 * 1024;
@@ -64,7 +64,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 router.route( '/' )
     .get( async function ( req, res ) {
         // get all the workspaces for this owner
-        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.userId, false );
       
         //console.log("------------- owner workspaces: " + JSON.stringify(ownerWorkspaces));
         let workspace = null;
@@ -90,10 +90,10 @@ router.route( '/:workspaceId' )
         let workspaceId = req.params.workspaceId;
 
         // get all the workspaces for this owner
-        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.id, false );
+        let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.userId, false );
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, true );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId, true );
         // start the available topics out with the full owner topic set
         let availableTopics = ownerTopics;
 
@@ -112,13 +112,13 @@ router.route( '/:workspaceId' )
 
         }
         else {
-            workspace.ownedBy = req.session.authUser.id;
+            workspace.ownedBy = req.session.authUser.userId;
             workspace.workspaceVersion = 1;
         }
       
         
         // make sure the user has access to this workspace (is owner)
-        if( workspace.ownedBy === req.session.authUser.id ) {
+        if( workspace.ownedBy === req.session.authUser.userId ) {
             res.render( './admin/adminWorkspace', {ownerWorkspaces: ownerWorkspaces, workspace: workspace, availableTopics: availableTopics} );
         }
         else {

@@ -1,5 +1,6 @@
 -- Agora base database setup
 
+
 -- setup (as root / postgres)
 drop database agora;
 create database agora;
@@ -11,7 +12,7 @@ grant connect on database agora to agora;
 -- create and inserts
 
 CREATE TABLE IF NOT EXISTS cc_sponsors (
-    id SERIAL PRIMARY KEY,
+    cc_sponsor_id SERIAL PRIMARY KEY,
     gh_action VARCHAR,
     gh_sponsorship_id VARCHAR,
     gh_sponsorship_created_at VARCHAR,
@@ -35,10 +36,10 @@ CREATE TABLE IF NOT EXISTS cc_sponsors (
 );
 
 GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO agora;
-GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_cc_sponsor_id_seq TO agora;
 
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
+    user_id SERIAL PRIMARY KEY,
     email VARCHAR,
     username VARCHAR,
     profile_filename VARCHAR,
@@ -51,25 +52,13 @@ CREATE TABLE IF NOT EXISTS users (
     password_token_expiration BIGINT,
     role_id INTEGER DEFAULT 0,
     subscription_active BOOLEAN,
-    beginning_programming BOOLEAN,
-    intermediate_programming BOOLEAN,
-    advanced_programming BOOLEAN,
-    mobile_development BOOLEAN,
-    robotics_programming BOOLEAN,
-    web_applications BOOLEAN,
-    web3 BOOLEAN,
-    iot_programming BOOLEAN,
-    database_design BOOLEAN,
-    relational_database BOOLEAN,
-    nosql_database BOOLEAN,
-    object_relational_mapping BOOLEAN,
     stripe_id VARCHAR,
     available_access_tokens INTEGER,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 GRANT ALL PRIVILEGES ON TABLE users TO agora;
-GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_users_email ON users (LOWER(email));
@@ -85,7 +74,7 @@ GRANT ALL PRIVILEGES ON TABLE session TO agora;
 CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session ("expire");
 
 CREATE TABLE IF NOT EXISTS products (
-    id SERIAL PRIMARY KEY,
+    product_id SERIAL PRIMARY KEY,
     product_type VARCHAR,
     product_name VARCHAR,
     product_description_1 VARCHAR,
@@ -101,11 +90,11 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 GRANT ALL PRIVILEGES ON TABLE products TO agora;
-GRANT USAGE, SELECT ON SEQUENCE products_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
 
 CREATE TABLE IF NOT EXISTS product_images (
-    id SERIAL PRIMARY KEY,
+    product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
     image_description_1 VARCHAR,
@@ -117,7 +106,7 @@ CREATE TABLE IF NOT EXISTS product_images (
 
 
 GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
-GRANT USAGE, SELECT ON SEQUENCE product_images_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE product_images_product_image_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
 
 
@@ -194,7 +183,7 @@ VALUES (
 
 
 CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL PRIMARY KEY,
+    order_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER,
     user_id INTEGER,
@@ -219,11 +208,11 @@ CREATE TABLE IF NOT EXISTS orders (
 
 GRANT ALL PRIVILEGES ON TABLE orders TO agora;
 CREATE INDEX IF NOT EXISTS idx_orders_product_id ON orders (product_id);
-GRANT USAGE, SELECT ON SEQUENCE orders_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE orders_order_id_seq TO agora;
 
 
 CREATE TABLE IF NOT EXISTS user_sessions (
-    id SERIAL PRIMARY KEY,
+    user_session_id SERIAL PRIMARY KEY,
     user_id INTEGER,
     create_time TIMESTAMP DEFAULT current_timestamp,
     ip_address VARCHAR,
@@ -244,11 +233,11 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 
 GRANT ALL PRIVILEGES ON TABLE user_sessions TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions (user_id);
-GRANT USAGE, SELECT ON SEQUENCE user_sessions_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_sessions_user_session_id_seq TO agora;
 
 
 CREATE TABLE IF NOT EXISTS roles (
-    id SERIAL PRIMARY KEY,
+    role_id SERIAL PRIMARY KEY,
     role_name VARCHAR,
     role_description VARCHAR,
     active BOOLEAN,
@@ -256,7 +245,7 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 GRANT ALL PRIVILEGES ON TABLE roles TO agora;
-GRANT USAGE, SELECT ON SEQUENCE roles_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE roles_role_id_seq TO agora;
 
 insert into roles (role_name, role_description, active) values ('Administrator', 'Administrator', true);
 insert into roles (role_name, role_description, active) values ('User', 'General authenticated access', true);
@@ -265,48 +254,50 @@ insert into roles (role_name, role_description, active) values ('Creator', 'Cont
 
 
 
-CREATE TABLE IF NOT EXISTS user_role (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user_roles (
+    user_role_id SERIAL PRIMARY KEY,
     user_id INTEGER,
     role_id INTEGER,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
     end_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE user_role TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_role_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE user_roles TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_roles_user_role_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_role_user_id ON user_role (user_id);
-CREATE INDEX IF NOT EXISTS idx_user_role_role_id ON user_role (role_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_user_id ON user_roles (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
 
 -- insert into user_role_goal (user_id, role_id, active) values (1, 1, true);
 -- creator waiting for the first user
-insert into user_role (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
-insert into user_role (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
+insert into user_roles (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
+insert into user_roles (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
+CREATE TYPE visibility AS ENUM ('private', 'public');
 
-
--- goals and related <- goalService
-CREATE TABLE IF NOT EXISTS goals (
-    rid SERIAL PRIMARY KEY,
-    id INTEGER,
-    goal_version INTEGER,       -- every time a goal or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
-    goal_name VARCHAR,
-    goal_description VARCHAR,
-    goal_image VARCHAR,
+-- workspace and related <- workspaceService
+CREATE TABLE IF NOT EXISTS workspaces (
+    workspace_rid SERIAL PRIMARY KEY,
+    workspace_id INTEGER,
+    workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
+    workspace_name VARCHAR,
+    workspace_description VARCHAR,
+    workspace_image VARCHAR,
     active BOOLEAN,
     completable BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
+    visibility visibility, 
     create_time TIMESTAMP DEFAULT current_timestamp,
+	lastmodified TIMESTAMP,
     owned_by INTEGER
 );
 
-GRANT ALL PRIVILEGES ON TABLE goals TO agora;
-CREATE INDEX IF NOT EXISTS idx_goals_visibility ON goals (visibility);
+GRANT ALL PRIVILEGES ON TABLE workspaces TO agora;
 
+CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspaces (workspace_id, workspace_version);
+CREATE INDEX IF NOT EXISTS idx_workspace_visibility ON workspaces (visibility);
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
-    id SERIAL PRIMARY KEY,
+    topic_id SERIAL PRIMARY KEY,
     topic_name VARCHAR,
     topic_description VARCHAR,
     topic_image VARCHAR,
@@ -316,9 +307,10 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     has_assessment BOOLEAN DEFAULT false,
     activity_id INTEGER,  -- id of lab or activity associated with topic, all topics should have one
     active BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
+    visibility visibility, 
     topic_type INTEGER,     -- Enumeration -> 0 = Research, 1 = Educational
     create_time TIMESTAMP DEFAULT current_timestamp,
+	lastmodified TIMESTAMP,
     owned_by INTEGER
 );
 
@@ -326,38 +318,38 @@ GRANT ALL PRIVILEGES ON TABLE topics TO agora;
 CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
 
-CREATE TABLE IF NOT EXISTS goal_path (
-    id SERIAL PRIMARY KEY,
-    goal_rid INTEGER,
+CREATE TABLE IF NOT EXISTS workspace_paths (
+    workspace_path_id SERIAL PRIMARY KEY,
+    workspace_rid INTEGER,
     topic_id INTEGER,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE goal_path TO agora;
-GRANT USAGE, SELECT ON SEQUENCE goal_path_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE workspace_paths TO agora;
+GRANT USAGE, SELECT ON SEQUENCE workspace_paths_workspace_path_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_goal_path_goal_rid ON goal_path (goal_rid);
+CREATE INDEX IF NOT EXISTS idx_workspace_paths_workspace_rid ON workspace_paths (workspace_rid);
 
 
 
 -- used to track a users interest in completing a goal (and at a specific goal version so the correct path can be identified)
 -- also tracks actually completion of a goal.
-CREATE TABLE IF NOT EXISTS user_goal (
-    id SERIAL PRIMARY KEY,
-    goal_rid INTEGER,
+CREATE TABLE IF NOT EXISTS user_workspaces (
+    user_workspace_id SERIAL PRIMARY KEY,
+    workspace_rid INTEGER,
     user_id INTEGER,
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE user_goal TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_goal_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE user_workspaces TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_workspaces_user_workspace_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_goal_goal_rid ON user_goal (goal_rid);
-CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_workspaces_workspace_rid ON user_workspaces (workspace_rid);
+CREATE INDEX IF NOT EXISTS idx_user_workspaces_user_id ON user_workspaces (user_id);
 
 
 -- Effectively an enrollment 
@@ -366,8 +358,8 @@ CREATE INDEX IF NOT EXISTS idx_user_goal_user_id ON user_goal (user_id);
 -- querying in this matter can progmattically determine completion, but it
 -- would not actually be recorded anywhere in the db. Further if the path 
 -- changed 
-CREATE TABLE IF NOT EXISTS user_topic (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user_topics (
+    user_topic_id SERIAL PRIMARY KEY,
     topic_id INTEGER,
     user_id INTEGER,
     is_intro_complete BOOLEAN,
@@ -380,15 +372,15 @@ CREATE TABLE IF NOT EXISTS user_topic (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE user_topic TO agora;
-GRANT USAGE, SELECT ON SEQUENCE user_topic_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE user_topics TO agora;
+GRANT USAGE, SELECT ON SEQUENCE user_topics_user_topic_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_user_topic_topic_id ON user_topic (topic_id);
-CREATE INDEX IF NOT EXISTS idx_user_topic_user_id ON user_topic (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_topics_topic_id ON user_topics (topic_id);
+CREATE INDEX IF NOT EXISTS idx_user_topics_user_id ON user_topics (user_id);
 
 
 CREATE TABLE IF NOT EXISTS resources (
-    id SERIAL PRIMARY KEY,
+    resource_id SERIAL PRIMARY KEY,
     resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
     resource_description VARCHAR,
@@ -397,43 +389,44 @@ CREATE TABLE IF NOT EXISTS resources (
     resource_link VARCHAR,
     is_required BOOLEAN,
     active BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
+    visibility visibility,
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora; 
-CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
+
 CREATE INDEX IF NOT EXISTS idx_resounces_owned_by ON resources (owned_by);
+CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
 
 CREATE TABLE IF NOT EXISTS tags (
-    id SERIAL PRIMARY KEY,
+    tag_id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
     last_used TIMESTAMP,
     owned_by INTEGER
 );
 
 GRANT ALL PRIVILEGES ON TABLE tags TO agora;
-GRANT USAGE, SELECT ON SEQUENCE tags_id_seq TO agora;
+GRANT USAGE, SELECT ON SEQUENCE tags_tag_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
 
-CREATE TABLE IF NOT EXISTS tag_association (
-    id SERIAL PRIMARY KEY,
+
+CREATE TABLE IF NOT EXISTS tag_associations (
+    tag_association_id SERIAL PRIMARY KEY,
     entity_type INTEGER, --  1-goal, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
     use_count INTEGER, -- incremented when user finds entity via tag lookup
     last_used TIMESTAMP,
     active BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
 
 
 -- make resources many to many with topics instead of many to one
-CREATE TABLE IF NOT EXISTS topic_resource (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS topic_resources (
+    topic_resource_id SERIAL PRIMARY KEY,
     topic_id INTEGER,
     resource_id INTEGER,
     position INTEGER,
@@ -442,18 +435,18 @@ CREATE TABLE IF NOT EXISTS topic_resource (
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by integer
 );
-GRANT ALL PRIVILEGES ON TABLE topic_resource TO agora;
-GRANT USAGE, SELECT ON SEQUENCE topic_resource_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE topic_resources TO agora;
+GRANT USAGE, SELECT ON SEQUENCE topic_resources_topic_resource_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_topic_resource_topic_id ON topic_resource (topic_id);
-CREATE INDEX IF NOT EXISTS idx_topic_resource_resource_id ON topic_resource (resource_id);
-CREATE INDEX IF NOT EXISTS idx_topic_resource_owned_by ON topic_resource (owned_by);
+CREATE INDEX IF NOT EXISTS idx_topic_resources_topic_id ON topic_resources (topic_id);
+CREATE INDEX IF NOT EXISTS idx_topic_resources_resource_id ON topic_resources (resource_id);
+CREATE INDEX IF NOT EXISTS idx_topic_resources_owned_by ON topic_resources (owned_by);
 
 
 -- maintains a record of resources reviewed by the user within a topic
 -- when combined with user_topic (pre_completed_assessment_id, post_completed_assessment_id and completed_activity_id) denotes completed topic
-CREATE TABLE IF NOT EXISTS completed_resource (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS completed_resources (
+    completed_resource_id SERIAL PRIMARY KEY,
     resource_id INTEGER,
     user_id INTEGER,
     submission_text VARCHAR, -- is the user going to actually submit something here ever?
@@ -461,15 +454,15 @@ CREATE TABLE IF NOT EXISTS completed_resource (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE completed_resource TO agora;
-GRANT USAGE, SELECT ON SEQUENCE completed_resource_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE completed_resources TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_resources_completed_resource_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_completed_resource_resource_id ON completed_resource (resource_id);
-CREATE INDEX IF NOT EXISTS idx_completed_resource_user_id ON completed_resource (user_id);
+CREATE INDEX IF NOT EXISTS idx_completed_resources_resource_id ON completed_resources (resource_id);
+CREATE INDEX IF NOT EXISTS idx_completed_resources_user_id ON completed_resources (user_id);
 
 
 CREATE TABLE IF NOT EXISTS assessments (
-    id SERIAL PRIMARY KEY,
+    assessment_id SERIAL PRIMARY KEY,
     assessment_type INTEGER,   -- ?? 1-pre/post eval, 2.. quiz?, etc not sure if this is needed depends on how tests are done outside of pre/post assessments
     assessment_name VARCHAR,  
     assessment_description VARCHAR,
@@ -484,9 +477,8 @@ GRANT ALL PRIVILEGES ON TABLE assessments TO agora;
 
 
 
-
-CREATE TABLE IF NOT EXISTS assessment_question (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS assessment_questions (
+    assessment_question_id SERIAL PRIMARY KEY,
     assessment_id INTEGER,   
     question VARCHAR,  
     is_required BOOLEAN,
@@ -495,12 +487,12 @@ CREATE TABLE IF NOT EXISTS assessment_question (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE assessment_question TO agora;
-CREATE INDEX IF NOT EXISTS idx_assessment_question_assessment_id ON assessment_question (assessment_id);
+GRANT ALL PRIVILEGES ON TABLE assessment_questions TO agora;
+CREATE INDEX IF NOT EXISTS idx_assessment_questions_assessment_id ON assessment_questions (assessment_id);
 
 
-CREATE TABLE IF NOT EXISTS assessment_question_option (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS assessment_question_options (
+    assessment_question_option_id SERIAL PRIMARY KEY,
     assessment_question_id INTEGER,   
     option_number INTEGER,
     option_answer VARCHAR,  
@@ -508,12 +500,12 @@ CREATE TABLE IF NOT EXISTS assessment_question_option (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
-GRANT ALL PRIVILEGES ON TABLE assessment_question_option TO agora;
-CREATE INDEX IF NOT EXISTS idx_assessment_question_option_assessment_question_id ON assessment_question_option (assessment_question_id);
+GRANT ALL PRIVILEGES ON TABLE assessment_question_options TO agora;
+CREATE INDEX IF NOT EXISTS idx_assessment_question_options_assessment_question_id ON assessment_question_options (assessment_question_id);
 
 
-CREATE TABLE IF NOT EXISTS completed_assessment (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS completed_assessments (
+    completed_assessment_id SERIAL PRIMARY KEY,
     assessment_id INTEGER,
     user_id INTEGER,
     topic_assessment_number INTEGER,    -- 1-Pre, 2-Post, 3-Post-retake 1, 4-post-retake 2, etc
@@ -522,29 +514,30 @@ CREATE TABLE IF NOT EXISTS completed_assessment (
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE completed_assessment TO agora;
-GRANT USAGE, SELECT ON SEQUENCE completed_assessment_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE completed_assessments TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_assessments_completed_assessment_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_completed_assessment_assessment_id ON completed_assessment (assessment_id);
-CREATE INDEX IF NOT EXISTS idx_completed_assessment_user_id ON completed_assessment (user_id);
+CREATE INDEX IF NOT EXISTS idx_completed_assessments_assessment_id ON completed_assessments (assessment_id);
+CREATE INDEX IF NOT EXISTS idx_completed_assessments_user_id ON completed_assessments (user_id);
 
-CREATE TABLE IF NOT EXISTS completed_assessment_question (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS completed_assessment_questions (
+    completed_assessment_question_id SERIAL PRIMARY KEY,
     completed_assessment_id INTEGER,
     assessment_question_id INTEGER,
     assessment_question_option_id INTEGER,  -- this is the users chosen answer
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
 );
-GRANT ALL PRIVILEGES ON TABLE completed_assessment_question TO agora;
-GRANT USAGE, SELECT ON SEQUENCE completed_assessment_question_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_completed_assessment_question_assessment_question_id ON completed_assessment_question (assessment_question_id);
-CREATE INDEX IF NOT EXISTS idx_completed_assessment_question_completed_assessment_id ON completed_assessment_question (completed_assessment_id);
+GRANT ALL PRIVILEGES ON TABLE completed_assessment_questions TO agora;
+--GRANT USAGE, SELECT ON SEQUENCE completed_assessment_questions_completed_a_q_id_seq TO agora;
+
+CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_assessment_question_id ON completed_assessment_questions (assessment_question_id);
+CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_completed_assessment_id ON completed_assessment_questions (completed_assessment_id);
 
 
 CREATE TABLE IF NOT EXISTS activities (
-    id SERIAL PRIMARY KEY,
+    activity_id SERIAL PRIMARY KEY,
     activity_type INTEGER,   -- ?? TODO: what types will there be, do i need this? activities currently a design STUB
     activity_name VARCHAR,  
     activity_description VARCHAR,
@@ -557,8 +550,8 @@ CREATE TABLE IF NOT EXISTS activities (
 GRANT ALL PRIVILEGES ON TABLE activities TO agora;
 
 
-CREATE TABLE IF NOT EXISTS completed_activity (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS completed_activities (
+    completed_activity_id SERIAL PRIMARY KEY,
     activity_id INTEGER,
     user_id INTEGER,
     submission_text VARCHAR,
@@ -566,19 +559,20 @@ CREATE TABLE IF NOT EXISTS completed_activity (
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
 );
-GRANT ALL PRIVILEGES ON TABLE completed_activity TO agora;
-GRANT USAGE, SELECT ON SEQUENCE completed_activity_id_seq TO agora;
+GRANT ALL PRIVILEGES ON TABLE completed_activities TO agora;
+GRANT USAGE, SELECT ON SEQUENCE completed_activities_completed_activity_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_completed_activity_activity_id ON completed_activity (activity_id);
+CREATE INDEX IF NOT EXISTS idx_completed_activities_activity_id ON completed_activities (activity_id);
 
 
 -- Discussion API tables
 
-CREATE TYPE discussion_parents AS ENUM ('goal', 'topic');
+CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 
 CREATE TABLE IF NOT EXISTS discussions (
     parent_id INTEGER,
     parent_type discussion_parents,
+    user_id INTEGER,
     discussion_text VARCHAR,
     CONSTRAINT discussion_parent PRIMARY KEY (parent_id, parent_type)
 );
@@ -586,7 +580,7 @@ CREATE TABLE IF NOT EXISTS discussions (
 GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
 
 CREATE TABLE IF NOT EXISTS discussion_comments (
-    comment_id SERIAL PRIMARY KEY,
+    discussion_comment_id SERIAL PRIMARY KEY,
     parent_id INTEGER, 
     parent_type discussion_parents,
     comment_text VARCHAR,
@@ -599,24 +593,26 @@ GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
 
 
 CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
-    comment_id INTEGER,
+    discussion_comment_id INTEGER,
     user_id INTEGER,
     rating BOOLEAN,
-    CONSTRAINT user_rating PRIMARY KEY (comment_id, user_id)
+    CONSTRAINT user_rating PRIMARY KEY (discussion_comment_id, user_id)
 );
 
 GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
 
 --   Shared Entity tables
+CREATE TYPE shared_entity_type AS ENUM ('workspace', 'topic', 'resource');
+CREATE TYPE shared_permission_level AS ENUM ('view', 'discussion', 'edit');
 
 CREATE TABLE IF NOT EXISTS shared_entities (
     shared_entity_id SERIAL PRIMARY KEY,
     entity_id INTEGER,          -- unique id number of the entity being shared
-    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
-    share_user_id INTEGER,      -- user id of the user who the entity was shared with
-    owner_user_id INTEGER,      -- user id of the user who shared the entity
-    -- share_type INTEGER,      -- type of share, ENUM value: 1=public, 2=shared (Commented out - would a publicly visible item have entries in this table?)
-    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=discussion, 3=edit
+    entity_type shared_entity_type,      
+    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
+    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
+    -- share_type INTEGER,      -- removed as each entity has visibility settings for public / private. Entries in this table are exceptions to private
+    permission_level shared_permission_level,  
     can_copy BOOLEAN,           -- can the shared entity be copied by another user?
     create_time TIMESTAMP DEFAULT current_timestamp,
     update_time TIMESTAMP
@@ -624,33 +620,8 @@ CREATE TABLE IF NOT EXISTS shared_entities (
 GRANT ALL PRIVILEGES ON TABLE shared_entities TO agora;
 GRANT USAGE, SELECT ON SEQUENCE shared_entities_shared_entity_id_seq TO agora;
 
-CREATE INDEX IF NOT EXISTS idx_shared_share_user_id ON shared_entities (share_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_owner_user_id ON shared_entities (owner_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared_entities (shared_by_user_id);
+CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared_entities (shared_with_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
 
-/*
--- The original version of the shared entity table that I created.  I'm leaving it here for reference. this was created for issue #125 
-
--- sharing related tables
-CREATE TABLE IF NOT EXISTS shared (
-    shared_id SERIAL PRIMARY KEY,
-    entity_id INTEGER,          -- unique id number of the entity being shared
-    entity_type INTEGER,        -- type of entity being shared, ENUM value: 1=goal / workspace, 2=topic, 3=resource
-    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
-    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
-    share_type INTEGER,         -- type of share, ENUM value: 1=public, 2=shared
-    permission_level INTEGER,   -- permission level of the shared entity, ENUM value: 1=view, 2=disscussion, 3=edit
-    can_copy BOOLEAN,           -- can the shared entity be copied by another user?
-    active BOOLEAN,
-    create_time TIMESTAMP DEFAULT current_timestamp,
-    update_time TIMESTAMP
-);
-GRANT ALL PRIVILEGES ON TABLE shared TO agora;
-GRANT USAGE, SELECT ON SEQUENCE shared_shared_id_seq TO agora;
-
-CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared (shared_by_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared (shared_with_user_id);
-CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared (entity_id);
-CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared (entity_type);
-*/

@@ -6,7 +6,7 @@
  */
 
 function assessment() {
-    this.id = -1;
+    this.assessmentId = -1;
     this.assessmentType = -1;
     this.assessmentName = "";
     this.assessmentDescription = "";
@@ -32,7 +32,7 @@ exports.emptyAssessment = () => {
 
 exports.ormAssessment = function ( row ) {
     let assessment = exports.emptyAssessment();
-    assessment.id = row.id;
+    assessment.assessmentId = row.assessment_id;
     assessment.assessmentType = row.assessment_type;
     assessment.assessmentName = row.assessment_name;
     assessment.assessmentDescription = row.assessment_description;

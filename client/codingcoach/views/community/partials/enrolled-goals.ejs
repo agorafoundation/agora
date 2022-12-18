@@ -5,13 +5,13 @@ if(user.enrollments) {
         if(!user.enrollments[i].isCompleted && user.enrollments[i].workspace.active) {
             enrolledFlag = true;
             %>
-            <a class="card" style="width: 100%;" href="/community/workspace/<%- user.enrollments[i].workspace.id %>" id="topic_<%- user.enrollments[i].workspace.id %>">
+            <a class="card" style="width: 100%;" href="/community/workspace/<%- user.enrollments[i].workspace.workspaceId %>" id="topic_<%- user.enrollments[i].workspace.workspaceId %>">
                 <div class="card-body-low-padding" name="enrolled_card">
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
                             <button class="btn" aria-expanded="false" aria-controls="collapseOne">
-                                <img class="img-supersmall" src="<%= process.env.GOAL_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" />
+                                <img class="img-supersmall" src="<%= process.env.WORKSPACE_IMAGE_WEB_PATH%><%- user.enrollments[i].workspace.workspaceImage %>" />
                                 <%- user.enrollments[i].workspace.workspaceName %>
                             </button>
                             </h5>

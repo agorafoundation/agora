@@ -6,7 +6,7 @@
  */
 
 function userRole() {
-    this.id = -1;
+    this.userRoleId = -1;
     this.userId = "";
     this.roleId = "";
     this.active = true;
@@ -20,7 +20,7 @@ exports.emptyUserRole = () => {
 
 exports.ormUserRole = function ( row ) {
     let userRole = exports.emptyUserRole();
-    userRole.id = row.id;
+    userRole.userRoleId = row.user_role_id;
     userRole.userId = row.user_id;
     userRole.roleId = row.role_id;
     userRole.active = row.active;

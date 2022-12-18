@@ -68,7 +68,7 @@ let upload = multer( { storage: storage, fileFilter:fileFilter, limits: { fileSi
 router.route( '/' )
     .get( async function ( req, res ) {
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId );
         //console.log("------------- owner topics: " + JSON.stringify(ownerTopics));
         let topic = null;
         
@@ -86,7 +86,7 @@ router.route( '/' )
             else {
                 // create topic        
                 let topic = Topic.emptyTopic();
-                topic.id = req.body.topicId;
+                topic.topicId = req.body.topicId;
 
                 topic.topicName = req.body.topicName;
                 topic.topicDescription = req.body.topicDescription;
@@ -98,10 +98,10 @@ router.route( '/' )
                 }
 
                 // if there an existing image for this topic populate it incase the user did not change it, also set the owned by to the orginal
-                //console.log("cheking the id: " + topic.id);
-                if( topic.id > 0 ) {
-                    topicService.getTopicById( topic.id ).then( ( dbTopic ) => {
-                        topic.id = dbTopic.id;
+                //console.log("cheking the id: " + topic.topicId);
+                if( topic.topicId > 0 ) {
+                    topicService.getTopicById( topic.topicId ).then( ( dbTopic ) => {
+                        topic.topicId = dbtopic.topicId;
                         topic.topicImage = dbTopic.topicImage;
 
                         // save the image if one is provided
@@ -109,12 +109,12 @@ router.route( '/' )
                             topic.topicImage = req.session.savedTopicFileName;
                         } 
 
-                        topic.ownedBy = req.session.authUser.id;
+                        topic.ownedBy = req.session.authUser.userId;
                         
                     } );
                 }
                 else {
-                    topic.ownedBy = req.session.authUser.id; 
+                    topic.ownedBy = req.session.authUser.userId; 
                     
                     if( req.session.savedTopicFileName ) {
                         topic.topicImage = req.session.savedTopicFileName;
@@ -152,7 +152,7 @@ router.route( '/' )
                     }
                 }
                 else {
-                    topic.assessment.id = topic.assessmentId;
+                    topic.assessment.assessmentId = topic.assessmentId;
                 }
 
                 // TODO: is there anything to do with assessment type?? currently hard coding 1, isRequired is currently deemed to be true for all assessments.
@@ -227,11 +227,11 @@ router.route( '/' )
                 // save the activity
                 activityService.saveActivity( topic.activity ).then( ( returnedActivity ) => {
                     topic.activity = returnedActivity;
-                    topic.activityId = returnedActivity.id;
+                    topic.activityId = returnedactivity.activityId;
                     
                     // save the assessment
                     assessmentService.saveAssessment( topic.assessment ).then( ( returnedAssessment ) => {
-                        topic.assessmentId = returnedAssessment.id;
+                        topic.assessmentId = returnedassessment.assessmentId;
 
                         // save the topic
                         topicService.saveTopic( topic ).then( ( savedTopic ) => {
@@ -245,13 +245,13 @@ router.route( '/' )
                                     selectedTopicResourcesRequired = req.body.selectedTopicResourcesRequired.split( "," );
                                 }
                                 selectedTopicResources = req.body.selectedTopicResources.split( "," );
-                                topicService.saveResourcesForTopic( savedTopic.id, selectedTopicResources, selectedTopicResourcesRequired );
+                                topicService.saveResourcesForTopic( savedtopic.topicId, selectedTopicResources, selectedTopicResourcesRequired );
                             }
 
                             // save the assessment
 
                             res.locals.message = "Topic Saved Successfully";
-                            res.redirect( 303, '/a/topic/' + savedTopic.id );
+                            res.redirect( 303, '/a/topic/' + savedtopic.topicId );
                         } );
                     } );
 
@@ -281,7 +281,7 @@ router.route( '/:topicId' )
         let topicId = req.params.topicId;
 
         // get all the topics for this owner
-        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.id, false );
+        let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId, false );
 
         // get the topic by id
         let topic = Topic.emptyTopic();
@@ -289,11 +289,11 @@ router.route( '/:topicId' )
             topic = await topicService.getTopicWithEverythingById( topicId, false );
         }
         else {
-            topic.ownedBy = req.session.authUser.id;
+            topic.ownedBy = req.session.authUser.userId;
         }
 
         // get all the resources for this owner
-        let ownerResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.id );
+        let ownerResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.userId );
 
         // start the available topics out with the full owner resource set
         let availableResources = ownerResources;
@@ -312,7 +312,7 @@ router.route( '/:topicId' )
         //console.log("Resources after removal: " + JSON.stringify(availableResources));
         
         // make sure the user has access to this topic (is owner)
-        if( topic.ownedBy === req.session.authUser.id ) {
+        if( topic.ownedBy === req.session.authUser.userId ) {
             res.render( './admin/adminTopic', {ownerTopics: ownerTopics, topic: topic, availableResources: availableResources} );
         }
         else {

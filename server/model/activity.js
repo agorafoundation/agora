@@ -6,7 +6,7 @@
  */
 
 function activity() {
-    this.id = -1;
+    this.activityId = -1;
     this.activityType = 1;
     this.activityName = "";
     this.activityDescription = "";
@@ -22,7 +22,7 @@ exports.emptyActivity = () => {
 
 exports.ormActivity = function ( row ) {
     let activity = exports.emptyActivity();
-    activity.id = row.id;
+    activity.activityId = row.activity_id;
     activity.activityType = row.activity_type;
     activity.activityName = row.activity_name;
     activity.activityDescription = row.activity_description;

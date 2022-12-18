@@ -79,7 +79,7 @@ exports.createOrder = async function( order ) {
  * @returns Product associated with id or false in none found.
  */
 exports.getOrderById = async function( id ) {
-    const text = "SELECT * FROM orders WHERE id = $1";
+    const text = "SELECT * FROM orders WHERE order_id = $1";
     const values = [ id ];
     
     try {
@@ -134,7 +134,7 @@ exports.getOrdersByUserId = async function( userId ) {
 exports.verifyUserCodeBotPurchase = async function( user ) {
     if( user ) {
         // get user orders
-        const orders = await exports.getOrdersByUserId( user.id );
+        const orders = await exports.getOrdersByUserId( user.userId );
 
         // get all products ordered
         let products = [];
@@ -193,7 +193,7 @@ exports.getAllProductsWithImages = async function() {
         
         for( let i=0; i<res.rows.length; i++ ) {
             let product = Product.ormProduct( res.rows[i] );
-            product.images = await exports.getAllActiveProductImageForProductById( product.id );
+            product.images = await exports.getAllActiveProductImageForProductById( product.productId );
             products.push( product );
         }
 
@@ -220,7 +220,7 @@ exports.getAllActviteTokenAndMembershipProductsWithImages = async function() {
         
         for( let i=0; i<res.rows.length; i++ ) {
             let product = Product.ormProduct( res.rows[i] );
-            product.images = await exports.getAllActiveProductImageForProductById( product.id );
+            product.images = await exports.getAllActiveProductImageForProductById( product.productId );
             products.push( product );
                 
         }
@@ -269,7 +269,7 @@ exports.getProductByStripePriceId = async function( stripePriceId ) {
  * @returns Product associated with id or false in none found.
  */
 exports.getProductById = async function( id ) {
-    const text = "SELECT * FROM products WHERE id = $1";
+    const text = "SELECT * FROM products WHERE product_id = $1";
     const values = [ id ];
     
     try {
@@ -295,7 +295,7 @@ exports.getProductById = async function( id ) {
  */
 exports.getActiveProductWithProductImagesById = async function( productId ) {
     
-    const text = "SELECT * FROM products WHERE active = $1 AND id = $2";
+    const text = "SELECT * FROM products WHERE active = $1 AND product_id = $2";
     const values = [ true, productId ];
     let product = null;
     
@@ -317,7 +317,7 @@ exports.getActiveProductWithProductImagesById = async function( productId ) {
 
     // if there is a product, get the images
     if( product ) {
-        let productImages = await exports.getAllActiveProductImageForProductById( product.id );
+        let productImages = await exports.getAllActiveProductImageForProductById( product.productId );
         // attach the images to the product array
         if( productImages ) {
             product.images = productImages;

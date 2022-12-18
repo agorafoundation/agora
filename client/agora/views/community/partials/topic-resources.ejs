@@ -6,7 +6,7 @@ if(topicEnrollment && topicEnrollment.topic && topicEnrollment.topic.resources) 
         let resourceCompleted = false;
         if(topicEnrollment.completedResources.length > 0) {
             for(let j=0; j < topicEnrollment.completedResources.length; j++) {
-                if(topicEnrollment.completedResources[j].resourceId == topicEnrollment.topic.resources[i].id && topicEnrollment.completedResources[j].userId == user.id && topicEnrollment.completedResources[j].active) {
+                if(topicEnrollment.completedResources[j].resourceId == topicEnrollment.topic.resources[i].id && topicEnrollment.completedResources[j].userId == user.userId && topicEnrollment.completedResources[j].active) {
                     resourceCompleted = true;
                     break;
                 }

@@ -6,7 +6,7 @@
  */
 
 function productImage( productId, imageName, imageDescription1, imageDescription2, imageUrl ) {
-    this.id = -1;
+    this.productImageId = -1;
     this.productId = productId;
     this.imageName = imageName;
     this.imageDescription1 = imageDescription1;
@@ -21,13 +21,13 @@ exports.emptyProductImage = () => {
 
 exports.createProductImage = function ( productId, imageName, imageDescription1, imageDescription2, imageUrl ) {
     let newProductImage = new productImage( productId, imageName, imageDescription1, imageDescription2, imageUrl );
-    newProductImage.id = -1;
+    newProductImage.productImageId = -1;
     return newProductImage;
 };
 
 exports.ormProductImage = function( productImageRow ) {
     let productImage = exports.emptyProductImage();
-    productImage.id = productImageRow.id;
+    productImage.productImageId = productImageRow.product_image_id;
     productImage.productId = productImageRow.product_id;
     productImage.imageName = productImageRow.image_name;
     productImage.imageDescription1 = productImageRow.image_description_1;

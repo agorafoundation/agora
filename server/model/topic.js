@@ -20,7 +20,7 @@ function topic() {
     this.hasAssessment = false;
     this.activityId = -1;
     this.active = true;
-    this.visibility = 2;
+    this.visibility = "private";
     this.createTime;
     this.ownedBy = -1;
 
@@ -36,7 +36,7 @@ exports.emptyTopic = () => {
 
 exports.ormTopic = function ( row ) {
     let topic = exports.emptyTopic();
-    topic.topicId = row.id; // TODO: Once database change goes through, this will need to be row.topicId;
+    topic.topicId = row.topic_id; // TODO: Once database change goes through, this will need to be row.topicId;
     topic.topicType = row.topic_type;
     topic.topicName = row.topic_name;
     topic.topicDescription = row.topic_description;

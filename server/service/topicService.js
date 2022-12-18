@@ -193,12 +193,13 @@ exports.getAllActiveTopics = async function() {
 
 /**
  * Get a topic by id
+ * TODO:shared This API and ones like it should either stick only with owership or incoporate visibility and sharing
  * @param {Integer} topicId
  * @param {Integer} ownerId - the ID of the requester, used to validate visibility
  * @returns topic
  */
 exports.getTopicById = async function( topicId, ownerId ) {
-    let text = "SELECT * FROM topics WHERE id = $1 AND (owned_by = $2 OR visibility = 2)";
+    let text = "SELECT * FROM topics WHERE topic_id = $1 AND (owned_by = $2 OR visibility = 'public')";
     let values = [ topicId, ownerId ];
     try {
         let topic = "";
@@ -226,12 +227,12 @@ exports.getAllTopicsForOwner = async function( ownerId, isActive ) {
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "SELECT * FROM topics WHERE owned_by = $1 order by id;";  
+        text = "SELECT * FROM topics WHERE owned_by = $1 order by topic_id;";  
         values = [ ownerId ];
     }
     else {
         // default to only retreiving active topics
-        text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by id;";
+        text = "SELECT * FROM topics WHERE active = $1 and owned_by = $2 order by topic_id;";
         values = [ true, ownerId ];
     }
 
@@ -263,12 +264,12 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
     let text = "";
     let values = [];
     if( !isActive ) {
-        text = "SELECT * FROM topics WHERE id = $1";
+        text = "SELECT * FROM topics WHERE topic_id = $1";
         values = [ topicId ];
     }   
     else {
         // default to true (require active)
-        text = "SELECT * FROM topics WHERE active = $1 AND id = $2";
+        text = "SELECT * FROM topics WHERE active = $1 AND topic_id = $2";
         values = [ true, topicId ];
 
     }
@@ -283,7 +284,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
 
             // get the assessment
             if( topic.assessmentId > 0 ) {
-                text = "SELECT * from assessments where id = $1 and active = $2";
+                text = "SELECT * from assessments where assessment_id = $1 and active = $2";
                 values = [ topic.assessmentId, true ];
                 let res2 = await db.query( text, values );
 
@@ -293,8 +294,8 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
                     let assessment = Assessment.ormAssessment( res2.rows[0] );
                     //console.log("assessment object: " + JSON.stringify(assessment))
                     // populate the questions for the assessment
-                    text = "SELECT * from assessment_question where assessment_id = $1 and active = $2";
-                    values = [ assessment.id, true ];
+                    text = "SELECT * from assessment_questions where assessment_id = $1 and active = $2";
+                    values = [ assessment.assessmentId, true ];
                     let res3 = await db.query( text, values );
 
                     // attach the questions
@@ -302,7 +303,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
                         let question = AssessmentQuestion.ormAssessmentQuestion( res3.rows[i] );
 
                         // populate the options for each question
-                        text = "SELECT * from assessment_question_option where assessment_question_id = $1 and active = $2 ORDER BY option_number asc";
+                        text = "SELECT * from assessment_question_options where assessment_question_id = $1 and active = $2 ORDER BY option_number asc";
                         values = [ question.id, true ];
                         let res4 = await db.query( text, values );
 
@@ -320,7 +321,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
 
             // get the activity_id
             if( topic.activityId > 0 ) {
-                text = "SELECT * from activities where id = $1 and active = $2";
+                text = "SELECT * from activities where activity_id = $1 and active = $2";
                 values = [ topic.activityId, true ];
                 let res5 = await db.query( text, values );
 
@@ -335,7 +336,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
 
             // get the completed resources, completed resources have a many to many relationship with topics (possibly with more items in the future),
             // so we first have to get all the resources associated with the topic from topic_resource then populate the in the model.
-            text = "SELECT r.id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resource AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
+            text = "SELECT r.resource_id, r.resource_type, r.resource_name, r.resource_description, r.resource_content_html, r.resource_image, r.resource_link, tr.is_required, r.active, r.create_time, tr.owned_by FROM resources AS r, topic_resources AS tr WHERE tr.resource_id = r.id AND tr.topic_id = $1 and tr.active = $2 AND r.active = $3 ORDER BY tr.position;";
             values = [ topic.topicId, true, true ];
             let res6 = await db.query( text, values );
 
@@ -373,7 +374,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
  * @returns TopicEnrollment with supporting data
  */
 exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function( userId, topicId, getFullTopic ) {
-    let text = "SELECT * FROM user_topic WHERE active = $1 AND user_id = $2 AND topic_id = $3";
+    let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2 AND topic_id = $3";
     let values = [ true, userId, topicId ];
     let topicEnrollment = null;
     try {
@@ -389,7 +390,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
             // get the completed pre assessment
             if( topicEnrollment.preCompletedAssessmentId > 0 ) {
-                text = "SELECT * from completed_assessment where id = $1 AND topic_assessment_number = $2 AND active = $3";
+                text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
                 values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
                 let res2 = await db.query( text, values );
 
@@ -402,8 +403,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                         topicEnrollment.preAssessment.assessment = await assessmentService.getAssessmentById( topicEnrollment.preAssessment.assessmentId, false );
                     }
                     // get the completed questions to attach to the completed assessment
-                    text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.preAssessment.id, true ];
+                    text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
+                    values = [ topicEnrollment.preassessment.assessmentId, true ];
                     let res3 = await db.query( text, values );
                     // attach the completed questions
                     for( let i=0; i < res3.rowCount; i++ ) {
@@ -416,7 +417,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             
             // get the post assessment
             if( topicEnrollment.postCompletedAssessmentId > 0 ) {
-                text = "SELECT * from completed_assessment where id = $1 AND topic_assessment_number = $2 AND active = $3";
+                text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
                 values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
                 let res3 = await db.query( text, values );
                 if( res3.rowCount > 0 ) {
@@ -432,8 +433,8 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
                     }
 
                     // get the completed questions to attach to the completed assessment
-                    text = "SELECT * from completed_assessment_question where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.postAssessment.id, true ];
+                    text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
+                    values = [ topicEnrollment.postassessment.assessmentId, true ];
                     let res4 = await db.query( text, values );
                     // attach the completed questions
                     for( let i=0; i < res4.rowCount; i++ ) {
@@ -446,7 +447,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 
             // get the completed activity
             if( topicEnrollment.completedActivityId > 0 ) {
-                text = "SELECT * from completed_activity where id = $1 and active = $2";
+                text = "SELECT * from completed_activities where completed_activity_id = $1 and active = $2";
                 values = [ topicEnrollment.completedActivityId, true ];
                 let res5 = await db.query( text, values );
                 if( res5.rowCount > 0 ) {
@@ -456,13 +457,13 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
             }
 
             // get the completed resources
-            text = "SELECT * FROM topic_resource WHERE topic_id = $1 and active = $2";
+            text = "SELECT * FROM topic_resources WHERE topic_id = $1 and active = $2";
             values = [ topicEnrollment.topicId, true ];
             let res6 = await db.query( text, values );
             //let resources = [];
             for( let i=0; i < res6.rowCount; i++ ) {
 
-                text = "SELECT * from completed_resource where resource_id = $1 AND user_id = $2 and active = $3";
+                text = "SELECT * from completed_resources where resource_id = $1 AND user_id = $2 and active = $3";
                 values = [ res6.rows[i].resource_id, topicEnrollment.userId, true ];
                 let res7 = await db.query( text, values );
 
@@ -493,7 +494,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
 // Takes in a topicId and finds each resourceId associated with it.
 exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 
-    let text = "SELECT * from topic_resource where topic_id = $1";
+    let text = "SELECT * from topic_resources where topic_id = $1";
     let values = [ topicId ];
     let resourceIds = [];
 
@@ -526,11 +527,10 @@ exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 exports.saveTopic = async function( topic ) {
     // check to see if an id exists - insert / update check
     if( topic ) {
-        console.log( "saving topic: " + JSON.stringify( topic ) );
         if( topic.topicId > 0 ) {
             
             // update
-            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE id = $10;";
+            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE topic_id = $10;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
     
             try {
@@ -544,7 +544,7 @@ exports.saveTopic = async function( topic ) {
         }
         else {
             // insert
-            let text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) RETURNING id;";
+            let text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) RETURNING topic_id;";
             let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility, topic.topicType, topic.hasAssessment ];
 
             try {
@@ -552,7 +552,7 @@ exports.saveTopic = async function( topic ) {
                 let res = await db.query( text, values );
                 if( res.rowCount > 0 ) {
                     
-                    topic.topicId = res.rows[0].id;
+                    topic.topicId = res.rows[0].topic_id;
                 }
                 
             }
@@ -578,7 +578,7 @@ exports.saveTopic = async function( topic ) {
  */                                               
 exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesRequired ) {
     // get the most recent version of the topic
-    let text = "SELECT * from topics where id = $1";
+    let text = "SELECT * from topics where topic_id = $1";
     let values = [ topicId ];
     try {
          
@@ -587,7 +587,7 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
         if( res.rowCount > 0 ) {
 
             // first remove current resources associated with the topic
-            text = "DELETE FROM topic_resource WHERE topic_id = $1";
+            text = "DELETE FROM topic_resources WHERE topic_id = $1";
             values = [ topicId ];
 
             let res2 = await db.query( text, values );
@@ -603,7 +603,7 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
                     if( resourcesRequired.length > i ) {
                         isRequired = resourcesRequired[i];
                     }
-                    text = "INSERT INTO topic_resource (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
+                    text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
                     values = [ topicId, resourceIds[i], ( i + 1 ), isRequired, true, res.rows[0].ownedBy ];
 
                     let res3 = await db.query( text, values );
@@ -652,24 +652,24 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             topicEnrollment.preAssessment.percentageCorrect = await assessmentService.evaluateAssessment( topicEnrollment.topic.assessment, topicEnrollment.preAssessment );
 
             if( topicEnrollment.preCompletedAssessmentId > 0 ) {
-                console.log( "[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.id );
+                console.log( "[INFO]: Completed Pre Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId );
             }
             else {
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING id;";
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, topicEnrollment.preAssessment.percentageCorrect, true ];
+                text = "INSERT INTO completed_assessments (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING completed_assessment_id;";
+                values = [ topicEnrollment.topic.assessment.assessmentId, topicEnrollment.userId, topicEnrollment.preAssessment.topicAssessmentNumber, topicEnrollment.preAssessment.percentageCorrect, true ];
 
                 let res = await db.query( text, values );
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
                     topicEnrollment.preCompletedAssessmentId = res.rows[0].id;
-                    topicEnrollment.preAssessment.id = res.rows[0].id;
+                    topicEnrollment.preassessment.assessmentId = res.rows[0].id;
                     //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.preCompletedAssessmentId);
 
                     // save all the associated questions
                     if( topicEnrollment.preAssessment.completedQuestions ) {
                         for( let j=0; j < topicEnrollment.preAssessment.completedQuestions.length; j++ ) {
-                            text = "INSERT INTO completed_assessment_question (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING id;";
-                            values = [ topicEnrollment.preAssessment.id, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
+                            text = "INSERT INTO completed_assessment_questions (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING completed_assessment_question_id;";
+                            values = [ topicEnrollment.preassessment.assessmentId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.preAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await db.query( text, values );
                             topicEnrollment.preAssessment.completedQuestions[j].id = res2.rows[0].id;
@@ -693,26 +693,26 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             topicEnrollment.postAssessment.percentageCorrect = await assessmentService.evaluateAssessment( topicEnrollment.topic.assessment, topicEnrollment.postAssessment );
             
             if( topicEnrollment.postCompletedAssessmentId > 0 ) {
-                console.log( "[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id );
+                console.log( "[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId );
             }
             else {
 
-                text = "INSERT INTO completed_assessment (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING id;";
-                values = [ topicEnrollment.topic.assessment.id, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, topicEnrollment.postAssessment.percentageCorrect, true ];
+                text = "INSERT INTO completed_assessments (assessment_id, user_id, topic_assessment_number, percentage_correct, completion_time, active) VALUES ($1, $2, $3, $4, now(), $5) RETURNING completed_assessment_id;";
+                values = [ topicEnrollment.topic.assessment.assessmentId, topicEnrollment.userId, topicEnrollment.postAssessment.topicAssessmentNumber, topicEnrollment.postAssessment.percentageCorrect, true ];
 
                 let res = await db.query( text, values );
 
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
                     topicEnrollment.postCompletedAssessmentId = res.rows[0].id;
-                    topicEnrollment.postAssessment.id = res.rows[0].id;
+                    topicEnrollment.postassessment.assessmentId = res.rows[0].id;
                     //console.log("[DEBUG]: Checking that the fk is being added for the assessmentId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.postCompletedAssessmentId);
 
                     // save all the associated questions
                     if( topicEnrollment.postAssessment.completedQuestions ) {
                         for( let j=0; j < topicEnrollment.postAssessment.completedQuestions.length; j++ ) {
-                            text = "INSERT INTO completed_assessment_question (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING id;";
-                            values = [ topicEnrollment.postAssessment.id, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
+                            text = "INSERT INTO completed_assessment_questions (completed_assessment_id, assessment_question_id, assessment_question_option_id, active) VALUES ($1, $2, $3, $4) RETURNING completed_assessment_question_id;";
+                            values = [ topicEnrollment.postassessment.assessmentId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionId, topicEnrollment.postAssessment.completedQuestions[j].assessmentQuestionOptionId, true ];
 
                             let res2 = await db.query( text, values );
                             topicEnrollment.postAssessment.completedQuestions[j].id = res2.rows[0].id;
@@ -732,22 +732,22 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             // Activities can be updated
             if( topicEnrollment.completedActivityId > 0 ) {
                 // update to existing completed_activity
-                text = "UPDATE completed_activity SET submission_text = $1, active = $2, update_time = NOW() WHERE id = $3;";
+                text = "UPDATE completed_activities SET submission_text = $1, active = $2, update_time = NOW() WHERE completed_activity_id = $3;";
                 values = [ topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active, topicEnrollment.completedActivityId ];
 
                 let res = await db.query( text, values );
 
-                //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.id);
+                //console.log("[INFO]: Completed Post Assessment row already exists! enrollement data: " + topicEnrollment.topicEnrollmentId);
             }
             else {
-                text = "INSERT INTO completed_activity (activity_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING id;";
-                values = [ topicEnrollment.topic.activity.id, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
+                text = "INSERT INTO completed_activities (activity_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING completed_activity_id;";
+                values = [ topicEnrollment.topic.activity.activityId, topicEnrollment.userId, topicEnrollment.completedActivity.submissionText, topicEnrollment.completedActivity.active ];
 
                 let res = await db.query( text, values );
 
                 // last step, update the fk in topicEnrollment!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.completedActivity.id = res.rows[0].id;
+                    topicEnrollment.completedactivity.activityId = res.rows[0].id;
                     topicEnrollment.completedActivityId = res.rows[0].id;
                     console.log( "[DEBUG]: Checking that the fk is being added for the activityId you should see this if it is working it can be REMOVED! id: " + topicEnrollment.completedActivityId );
                 }
@@ -774,15 +774,15 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
                     // check to see if this completed resource already has a record to update or is new
                     if( topicEnrollment.completedResources[i].id > 0 ) {
                         // update
-                        text = "UPDATE completed_resource SET submission_text = $1, update_time = NOW() WHERE id = $2;";
+                        text = "UPDATE completed_resources SET submission_text = $1, update_time = NOW() WHERE completed_resource_id = $2;";
                         values = [ topicEnrollment.completedResources[i].submissionText, topicEnrollment.completedResources[i].id ];
 
                         let res = await db.query( text, values );
                     }
                     else {
                         // insert
-                        text = "INSERT INTO completed_resource (resource_id, user_id, submission_text ) VALUES ( $1, $2, $3 );";
-                        values = [ resource.id, topicEnrollment.userId, topicEnrollment.completedResources[i].submissionText ];
+                        text = "INSERT INTO completed_resources (resource_id, user_id, submission_text ) VALUES ( $1, $2, $3 );";
+                        values = [ resource.resourceId, topicEnrollment.userId, topicEnrollment.completedResources[i].submissionText ];
 
                         let res = await db.query( text, values );
                     }
@@ -801,10 +801,10 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
         // first see if we are doing an udpate or insert based on whether we have an id already.
         if( topicEnrollment.completedDate == "SET" ) {
             topicEnrollment.completedDate = new Date( Date.now()+( 1000*60*( -( new Date() ).getTimezoneOffset() ) ) ).toISOString().replace( 'T', ' ' ).replace( 'Z', '' );
-            if( topicEnrollment && topicEnrollment.id > 0 ) {
+            if( topicEnrollment && topicEnrollment.topicEnrollmentId > 0 ) {
                 // UPDATE    
-                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = $8, active = $6, update_time = NOW() WHERE id = $7;";
-                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.id, topicEnrollment.completedDate ];
+                text = "UPDATE user_topics SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, is_completed = $5, completed_date = $8, active = $6, update_time = NOW() WHERE user_topic_id = $7;";
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, topicEnrollment.active, topicEnrollment.topicEnrollmentId, topicEnrollment.completedDate ];
                 try { 
                     let res = await db.query( text, values );
     
@@ -817,22 +817,22 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             }
             else {
                 // INSERT 
-                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $9, $8 ) RETURNING id;";
+                text = "INSERT INTO user_topics (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, completed_date, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $9, $8 ) RETURNING user_topic_id;";
                 values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true, topicEnrollment.completedDate ];
     
                 let res = await db.query( text, values );
     
                 // last step, update the topicEnrollment id!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.id = res.rows[0].id;
+                    topicEnrollment.topicEnrollmentId = res.rows[0].id;
                 }
             }
         }
         else {
-            if( topicEnrollment && topicEnrollment.id > 0 ) {
+            if( topicEnrollment && topicEnrollment.topicEnrollmentId > 0 ) {
                 // UPDATE    
-                text = "UPDATE user_topic SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, active = $5, update_time = NOW() WHERE id = $6;";
-                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.id ];
+                text = "UPDATE user_topics SET is_intro_complete = $1, pre_completed_assessment_id = $2, post_completed_assessment_id = $3, completed_activity_id = $4, active = $5, update_time = NOW() WHERE user_topic_id = $6;";
+                values = [ topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.active, topicEnrollment.topicEnrollmentId ];
                 try { 
                     let res = await db.query( text, values );
     
@@ -845,14 +845,14 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
             }
             else {
                 // INSERT 
-                text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id;";
+                text = "INSERT INTO user_topics (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING user_topic_id;";
                 values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, true ];
     
                 let res = await db.query( text, values );
     
                 // last step, update the topicEnrollment id!
                 if( res.rowCount > 0 ) {
-                    topicEnrollment.id = res.rows[0].id;
+                    topicEnrollment.topicEnrollmentId = res.rows[0].id;
                 }
             }
         }
@@ -878,14 +878,14 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
  */
 exports.saveTopicEnrollment = async function( topicEnrollment ) {
     // check this userId and topicId combination does not already exist
-    let text = "SELECT * FROM user_topic WHERE active = $1 AND user_id = $2 AND topic_id = $3";
+    let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2 AND topic_id = $3";
     let values = [ true, topicEnrollment.userId, topicEnrollment.topicId ];
 
     try {
          
         let response = await db.query( text, values );
         if( !response.rowCount > 0 ) {
-            text = "INSERT INTO user_topic (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 );";
+            text = "INSERT INTO user_topics (topic_id, user_id, is_intro_complete, pre_completed_assessment_id, post_completed_assessment_id, completed_activity_id, is_completed, active ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 );";
             values = [ topicEnrollment.topicId, topicEnrollment.userId, topicEnrollment.isIntroComplete, topicEnrollment.preCompletedAssessmentId, topicEnrollment.postCompletedAssessmentId, topicEnrollment.completedActivityId, topicEnrollment.isCompleted, true ];
 
             let response = await db.query( text, values );
@@ -904,7 +904,7 @@ exports.saveTopicEnrollment = async function( topicEnrollment ) {
 
 
 exports.getCompletedResourceByResourceAndUserId = async function( resourceId, userId ) {
-    let text = "SELECT * FROM completed_resource WHERE resource_id = $1 AND user_id = $2;";
+    let text = "SELECT * FROM completed_resources WHERE resource_id = $1 AND user_id = $2;";
     let values = [ resourceId, userId ];
 
     try {
@@ -925,9 +925,9 @@ exports.getCompletedResourceByResourceAndUserId = async function( resourceId, us
 
 exports.saveCompletedResourceStatus = async function( completedResource ) {
     // check to see if there is alreadly a saved record
-    if( completedResource.id > 0 ) {
+    if( completedresource.resourceId > 0 ) {
         // update
-        let text = "UPDATE completed_resource SET submission_text = $1, active = $2, update_time = NOW() where resource_id = $3 AND user_id = $4";
+        let text = "UPDATE completed_resources SET submission_text = $1, active = $2, update_time = NOW() where resource_id = $3 AND user_id = $4";
         let values = [ completedResource.submissionText, completedResource.active, completedResource.resourceId, completedResource.userId ];
         try {
              
@@ -943,14 +943,14 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
     }
     else {
         // insert
-        let text = "INSERT INTO completed_resource (resource_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING id";
+        let text = "INSERT INTO completed_resources (resource_id, user_id, submission_text, active) VALUES ($1, $2, $3, $4) RETURNING completed_resource_id";
         let values = [ completedResource.resourceId, completedResource.userId, completedResource.submissionText, completedResource.active ];
         try {
              
             let res = await db.query( text, values );
 
             if( res.rowCount > 0 ) {
-                completedResource.id = res.rows[0].id;
+                completedresource.resourceId = res.rows[0].id;
             }
     
             
@@ -976,7 +976,7 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
  * @returns List<topic> a list of the topic objects the user is enrolled in
  */
 exports.getActiveEnrolledTopicsForUserId = async function( userId ) {
-    let text = "SELECT * FROM user_topic WHERE active = $1 AND user_id = $2";
+    let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2";
     let values = [ true, userId ];
     
     let topics = [];
@@ -986,7 +986,7 @@ exports.getActiveEnrolledTopicsForUserId = async function( userId ) {
         
         if( res.rows.length > 0 ) {
             for( let i=0; i<res.rows.length; i++ ) {
-                text = "SELECT * FROM topics WHERE active = $1 AND id = $2;";
+                text = "SELECT * FROM topics WHERE active = $1 AND topic_id = $2;";
                 values = [ true, res.rows[i].topic_id ];
 
                 let res2 = await db.query( text, values );
@@ -1012,7 +1012,7 @@ exports.getActiveEnrolledTopicsForUserId = async function( userId ) {
  * @returns List<topic> a list of the topic objects the user is enrolled in
  */
 exports.getActiveTopicEnrollmentsForUserId = async function( userId ) {
-    let text = "SELECT * FROM user_topic WHERE active = $1 AND user_id = $2";
+    let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2";
     let values = [ true, userId ];
     
     let enrollments = [];
@@ -1027,7 +1027,7 @@ exports.getActiveTopicEnrollmentsForUserId = async function( userId ) {
                 let enrollment = TopicEnrollment.ormTopicEnrollment( res.rows[i] );
 
                 // get the topic for each user_topic
-                text = "SELECT * FROM topics WHERE active = $1 AND id = $2 ";
+                text = "SELECT * FROM topics WHERE active = $1 AND topic_id = $2 ";
                 values = [ true, res.rows[i].topic_id ];
 
                 let res2 = await db.query( text, values );
@@ -1068,7 +1068,7 @@ exports.updateTopicImage = async ( topicId, filename ) => {
     if( topic ) {
         try {
             // retrieve the current filename so that we can delete it after.
-            let text = "SELECT topic_image FROM topics WHERE id = $1";
+            let text = "SELECT topic_images FROM topics WHERE topic_image_id = $1";
             let values = [ topicId ];
 
             // perform the query
@@ -1080,7 +1080,7 @@ exports.updateTopicImage = async ( topicId, filename ) => {
             }
 
             // cerate the update query to set the new name
-            text = "UPDATE topics SET topic_image = $2 WHERE id = $1";
+            text = "UPDATE topics SET topic_image = $2 WHERE topic_id = $1";
             values = [ topicId, filename ];
 
             // perform query
@@ -1101,7 +1101,7 @@ exports.updateTopicImage = async ( topicId, filename ) => {
 
 exports.getRecentTopicEnrollmentEvents = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ud.id as user_id, ud.username as username, ud.profile_filename as user_image, mod.id as topic_id, mod.topic_name as topic, mod.topic_image as topic_image, mode.create_time as create_time from users ud, topics mod, user_topic mode where mode.user_id = ud.id AND mode.topic_id = mod.id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
+    let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.topic_id as topic_id, mod.topic_name as topic, mod.topic_image as topic_image, mode.create_time as create_time from users ud, topics mod, user_topic mode where mode.user_id = ud.id AND mode.topic_id = mod.topic_id and mode.active = true AND mod.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
     
     try {
@@ -1149,7 +1149,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
     if( ownerId > -1 ) {
         // Retrieve all user owned topics and public topics.
-        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 2) ORDER BY id";
+        let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 'public') ORDER BY topic_id";
         const values = [ true, ownerId ];
 
         // apply a default offset if none is provided
@@ -1193,7 +1193,7 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 // Similar to getAllVisibleTopics, but does not show user specific topics.
 exports.getAllPublicTopics = async ( limit, offset ) => {
 
-    let text = "select * from topics WHERE active = $1 and visibility = 0 ORDER BY id";
+    let text = "select * from topics WHERE active = $1 and visibility = 'public' ORDER BY topic_id";
     const values = [ true ];
 
     // apply a default offset if none is provided
@@ -1230,7 +1230,7 @@ exports.getAllPublicTopics = async ( limit, offset ) => {
 };
 
 exports.deleteTopicById = async ( topicId, authUserId ) => {
-    let text = "DELETE FROM topics WHERE id = $1 and owned_by = $2";
+    let text = "DELETE FROM topics WHERE topic_id = $1 and owned_by = $2";
     let values = [ topicId, authUserId ];
 
     try {

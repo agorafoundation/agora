@@ -6,7 +6,7 @@
  */
 
 function completedAssessmentQuestion() {
-    this.id = -1;
+    this.completedAssessmentQuestionId = -1;
     this.completedAssessmentId = -1;
     this.assessmentQuestionId = -1;
     this.assessmentQuestionOptionId = -1;
@@ -19,7 +19,7 @@ exports.emptyCompletedAssessmentQuestion = () => {
 
 exports.ormCompletedAssessmentQuestion = function ( row ) {
     let completedAssessmentQuestion = exports.emptyCompletedAssessmentQuestion();
-    completedAssessmentQuestion.id = row.id;
+    completedAssessmentQuestion.completedAssessmentQuestionId = row.completed_assessment_question_id;
     completedAssessmentQuestion.completedAssessmentId = row.completed_assessment_id;
     completedAssessmentQuestion.assessmentQuestionId = row.assessment_question_id;
     completedAssessmentQuestion.assessmentQuestionOptionId = row.assessment_question_option_id;

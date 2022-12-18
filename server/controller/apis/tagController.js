@@ -101,10 +101,10 @@ exports.saveTag = async function( req, res, redirect ) {
         tag.ownedBy = req.body.ownedBy;
     }
     else if( req && req.user ) {
-        tag.ownedBy = req.user.id;
+        tag.ownedBy = req.user.userId;
     }
     else if ( req && req.session && req.session.authUser ) {
-        tag.ownedBy = req.session.authUser.id;
+        tag.ownedBy = req.session.authUser.userId;
     }
 
     // save the tag

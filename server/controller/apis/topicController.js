@@ -14,8 +14,6 @@ const {errorController} = require( "./apiErrorController" );
 
 // import services
 const topicService = require( '../../service/topicService' );
-const assessmentService = require( '../../service/assessmentService' );
-const activityService = require( '../../service/activityService' );
 const resourceService = require ( '../../service/resourceService' );
 
 // import util Models
@@ -23,8 +21,6 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import models
 const Topic = require( '../../model/topic' );
-const Assessment = require( '../../model/assessment' );
-const Activity = require( '../../model/activity' );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -43,10 +39,10 @@ exports.getAllVisibleTopics = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -68,10 +64,10 @@ exports.getAllPublicTopics = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -93,10 +89,10 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -139,10 +135,10 @@ exports.getTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ){
@@ -161,7 +157,7 @@ exports.getTopicById = async ( req, res ) => {
     }   
 
     // topic file path
-    const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
+    // const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
 
 };
 
@@ -173,10 +169,10 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     // get all the active topics
@@ -205,10 +201,10 @@ exports.saveCompletedTopic = async function( req, res ) {
 
     if( req.session.currentTopic && req.session.authUser ) {
 
-        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.id );
+        let completedTopic = await topicService.getCompletedTopicByTopicAndUserId( topicId, req.session.authUser.userId );
         if( !completedTopic ) {
             completedTopic = Topic.emptyTopic( );
-            completedTopic.userId = req.session.authUser.id;
+            completedTopic.userId = req.session.authUser.userId;
             completedTopic.topicId = topicId;
         }
         completedTopic.active = status;
@@ -271,10 +267,10 @@ exports.saveTopic = async ( req, res, redirect ) => {
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     if( authUserId > 0 ) {
@@ -294,16 +290,16 @@ exports.saveTopic = async ( req, res, redirect ) => {
         }
 
         // add changes from the body if they are passed
-        if ( req.body.visibility == 0 || req.body.visibility == 1 || req.body.visibility == 2 ) { // TODO: this checking needs to be done via frontend form validation
+        if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             topic.visibility = req.body.visibility;
         }
         else {
-            console.error( "[goalController.saveGoal]: NON-VALID 'visibility' VALUE REQUESTED - Public=2,Shared=1,Private=0" );
+            console.error( "[topicController.saveTopic]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private'" );
         }
         topic.topicType = req.body.topicType;
         topic.topicName = req.body.topicName;
         topic.topicDescription = req.body.topicDescription;
-
+        
         if( topic.topicType == 3 ) {
             
             topic.topicHtml = req.body.embedded_submission_text_topic;
@@ -348,7 +344,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             let activity = await activityService.saveActivity(req.body.activity); 
 
-            topic.activityId = activity.id;
+            topic.activityId = activity.activityId;
             topic.activity = activity;
             topic.activity.creationTime = Date.now();
 
@@ -364,7 +360,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
             let assessment = await assessmentService.saveAssessment(req.body.assessment);
             //assessmentService.getAssessmentById(ass.id);  -- test and fix getAssessmentById
-            topic.assessmentId = assessment.id;
+            topic.assessmentId = assessment.assessmentId;
             topic.assessment = assessment;
             topic.assessment.creationTime = Date.now();
 
@@ -387,12 +383,14 @@ exports.saveTopic = async ( req, res, redirect ) => {
             resourcesRequired = [false, false, true, true]
         */
 
+        //console.log( "about to save topic: " + JSON.stringify( topic ) + "\n\n" );
+
         topic = await topicService.saveTopic( topic );
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
             let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, req.body.resources, req.body.resourcesRequired );
-            console.log( "@ -- @" +resourcesSaved );
+            //console.log( "@ -- @" +resourcesSaved );
         }
 
         
@@ -526,10 +524,10 @@ exports.deleteTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
     let authUserId;
     if( req.user ) {
-        authUserId = req.user.id;
+        authUserId = req.user.userId;
     }
     else if( req.session.authUser ) {
-        authUserId = req.session.authUser.id;
+        authUserId = req.session.authUser.userId;
     }
 
     const topicId = req.params.topicId;
