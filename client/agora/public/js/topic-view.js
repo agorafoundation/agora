@@ -465,6 +465,26 @@ function addTag( selectedTag ) {
     removeTagBtn.innerHTML = "&times;";
     removeTagBtn.style.color = "#aaa";
 
+    // make the fetch call to save the tag
+    fetch( "api/v1/auth/tags", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify( {
+            "tag": newTag.innerHTML
+        } )
+    } )
+        .then( response => response.json() )
+        .then( ( data ) => {
+            console.log( "new tag data: " + JSON.stringify( data ) );
+            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            console.log( "added tag: " + JSON.stringify( resources[numResources] ) );
+            numResources++;
+
+            // map the new resource to the associated topic
+            let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+            updateTopic( topicTitle );
+        } );
+
     removeTagBtn.addEventListener( "click", () => {
         // Get the id portion with the tag name
         document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
