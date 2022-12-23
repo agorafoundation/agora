@@ -30,7 +30,11 @@ router.route( '/:id' )
     }
     ); 
 
-
+router.route( '/tagged' )
+    .post( async ( req, res ) => {
+        tagController.tagged( req, res, false );
+    }
+    );
 
 
 

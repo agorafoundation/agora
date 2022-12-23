@@ -6,41 +6,40 @@
  * entity_type INTEGER, --  1-workspace, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
-    use_count INTEGER, -- incremented when user finds entity via tag lookup
+    lookup_count INTEGER, -- incremented when user finds entity via tag lookup, tracks popularity of this tag
     last_used TIMESTAMP,
     active BOOLEAN,
-    visibility INTEGER,     -- Enumeration -> 0 = Private / none, 1 = Shared with groups or individuals, 2 = Public
     create_time TIMESTAMP DEFAULT current_timestamp
  */
 
-const tag = require( './tag' );
+const Tag = require( './tag' );
 
 class tagged {
     constructor( ) {
-        this.tag = new tag.emptyTag();
-        this.entityType = new EntityType.UNKNOWN;
+        this.tag = Tag.emptyTag();
+        this.tagAssociationId = -1;
+        this.entityType = EntityType.UNKNOWN;
         this.entityId = -1;
         this.userId = -1;
-        this.useCount = 0;
+        this.lookupCount = 0;
         this.lastUsed;
         this.active = true;
-        this.visibility = 'public';
     }
 }
 
-exports.emptyTag = () => {
+exports.emptyTagged = () => {
     return new tagged();
 };
 
 exports.ormTagged = ( row ) => {
-    let tagged = exports.emptyTag();   // requires a query to the tag table in the service
+    let tagged = exports.emptyTagged();   // requires a query to the tag table in the service
+    tagged.tagAssociationId = row.tag_association_id;
     tagged.entityType = EntityType[row.entity_type];
     tagged.entityId = row.entity_id;
     tagged.userId = row.user_id;
-    tagged.useCount = row.use_count;
+    tagged.lookupCount = row.lookup_count;
     tagged.lastUsed = row.last_used;
     tagged.active = row.active;
-    tagged.visibility = row.visibility;
     return tagged;
 };
 
@@ -48,5 +47,6 @@ const EntityType = {
     UNKNOWN: 0,
     WORKSPACE: 1,
     TOPIC: 2,
-    RESOURCE: 3
+    RESOURCE: 3,
+    USER: 4
 };

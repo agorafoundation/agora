@@ -186,7 +186,7 @@ exports.saveTag = async function( tag, updateFlag ) {
             let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.tagId ];
     
             try {
-                let res = await db.query( text, values );
+                await db.query( text, values );
             }
             catch( e ) {
                 console.log( "[ERR]: Error updating tag - " + e );
@@ -196,16 +196,16 @@ exports.saveTag = async function( tag, updateFlag ) {
         }
         else {
             // insert
+            console.log( "Inserting tag: " + tag.tag );
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING tag_id;";
-            let values = [ tag.tag.toLowerCase(), tag.ownedBy ];
+            let values = [ tag.tag.toString().toLowerCase(), tag.ownedBy ];
 
             try {
-                let res2 = await db.query( text, values );
+                let res = await db.query( text, values );
     
-                if( res2.rowCount > 0 ) {
-                    tag.tagId = res2.rows[0].id;
-                }
-                
+                if( res.rowCount > 0 ) {
+                    tag.tagId = res.rows[0].id;
+                }                
             }
             catch( e ) {
                 console.log( "[ERR]: Error inserting tag - " + e );
@@ -217,6 +217,47 @@ exports.saveTag = async function( tag, updateFlag ) {
     else {
         return false;
     }
+};
+
+exports.saveTagged = async ( tagged ) => {
+    if( tagged ) {
+        if( tagged.tagAssociationId > 0 ) {          
+            console.log( "2" );  
+
+            // update
+            let text = "UPDATE tag_associations SET entity_type = $1, entity_id = $2, user_id = $3, lookup_count=$4, last_used=now() WHERE tag_association_id = $5;";
+            let values = [ tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.id ];
+    
+            try {
+                await db.query( text, values );
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error updating tagged - " + e );
+                return false;
+            }
+        }
+        else {
+            // insert
+            console.log( "3" );
+            let text = "INSERT INTO tag_associations ( entity_type, entity_id, user_id, lookup_count, last_used ) VALUES ($1, $2, $3, $4, now()) RETURNING tag_association_id;";
+            let values = [ tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount ];
+    
+            try {
+                let res = await db.query( text, values );
+                if( res.rowCount > 0 ) {
+                    tagged.tagId = res.rows[0].tag_association_id;
+                }
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error inserting tagged - " + e );
+                return false;
+            }
+        }
+    }
+    else {
+        console.log( "[ERR]: no tagged object passed to saveTagged" );
+    }
+    
 };
 
 

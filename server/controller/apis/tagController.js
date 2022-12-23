@@ -69,6 +69,96 @@ exports.deleteTagById = async ( req, res ) => {
     }
 };
 
+/**
+ * Save or update a tag association with a entity and user.
+ * @param {HTTP Request} req 
+ * @param {HTTP Response} res 
+ * @param {boolean} redirect 
+ * @returns Tagged object
+ */
+exports.tagged = async ( req, res, redirect ) => {
+    let tagged = Tagged.emptyTagged();
+
+    // check to see if there is an existing tag with the same name since we do not want dups
+    let existingTag = await tagService.getTagByTagName( req.body.tag );
+
+    // parse the tag from the tagged object property
+    let tag = Tag.emptyTag();
+
+    // check to see if there is an existing tag with the same name since we do not want dups
+    let existingTagName = await tagService.getTagByTagName( req.body.tag.tag );
+    tag = ( existingTagName ) ? existingTagName : tag;
+    
+    // get the tag name
+    tag.tag = req.body.tag.tag;
+
+    tag.lastUsed = Date.now();
+    
+    // get the owner used the passed data if present otherwise check for the API user or 
+    // the user session
+    if( req.body.tag.ownedBy ) {
+        tag.ownedBy = req.body.tag.ownedBy;
+    }
+    else if( req && req.user ) {
+        tag.ownedBy = req.user.userId;
+    }
+    else if ( req && req.session && req.session.authUser ) {
+        tag.ownedBy = req.session.authUser.userId;
+    }
+
+    // save the tag
+    if( existingTagName ) {
+        tag = await tagService.saveTag( tag, true );
+    }
+    else {
+        tag = await tagService.saveTag( tag );
+    }
+    
+    console.log( JSON.stringify( req.body ) );
+    // verify we have all required data (enitity type / id, user id)
+
+    if( req.body.entityType && req.body.entityId > 0 && req.body.userId > 0 ) {
+        // create the tag association from the submitted data
+        tagged.tag = tag;
+        tagged.entityType = req.body.entityType;
+        tagged.entityId = req.body.entityId;
+        tagged.userId = req.body.userId;
+        tagged.active = req.body.active;
+
+        // save the tag association 
+        console.log( "about to save" );
+        tagged = await tagService.saveTagged( tagged );
+    } 
+
+    if( tagged ) {
+        req.session.messageType = "success";
+        req.session.messageTitle = "Tag Saved";
+        req.session.messageBody = "Tag " + tag.tagName + " saved successfully!";
+    }
+    else {
+        req.session.messageType = "error";
+        req.session.messageTitle = "Error saving Tag <br />";
+        req.session.messageBody = "There was a problem saving the tag. <br />";
+    }
+
+    if( redirect ) {
+        return tag;
+    }
+    else {
+        if ( existingTag ) {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Updated existing Tag by Tag name" );
+            res.status( 200 ).send( JSON.stringify( tag ) );
+        }
+        else {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Created new tag" );
+            res.status( 201 ).send( JSON.stringify( tag ) );
+        }
+    }
+};
 
 /**
  * Manages saving new Tags while ensuring that the tag itself is unique. Tag names will be 

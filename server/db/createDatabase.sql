@@ -410,13 +410,14 @@ GRANT ALL PRIVILEGES ON TABLE tags TO agora;
 GRANT USAGE, SELECT ON SEQUENCE tags_tag_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
 
+CREATE TYPE tag_entity_types AS ENUM ('UNKNOWN', 'WORKSPACE', 'TOPIC', 'RESOURCE', 'USER');
 
 CREATE TABLE IF NOT EXISTS tag_associations (
     tag_association_id SERIAL PRIMARY KEY,
-    entity_type INTEGER, --  1-goal, 2-topic, 3-resource, 
+    entity_type tag_entity_types, --  1-goal, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
-    use_count INTEGER, -- incremented when user finds entity via tag lookup
+    lookup_count INTEGER, -- incremented when user finds entity via tag lookup, tracks popularity.
     last_used TIMESTAMP,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp
