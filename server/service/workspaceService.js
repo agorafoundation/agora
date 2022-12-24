@@ -182,9 +182,9 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
 
     try {
         let workspace = null;
-        console.log( " text: " + text + " values: " + values );
+        //console.log( " text: " + text + " values: " + values );
         let res = await db.query( text, values );
-        console.log( " res.rowCount: " + res.rowCount + "" );
+        //console.log( " res.rowCount: " + res.rowCount + "" );
         if( res.rowCount > 0 ) {
             text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
             values = [ true, res.rows[0].workspace_rid ];

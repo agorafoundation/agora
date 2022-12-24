@@ -497,6 +497,18 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
                 currTagList[i] = "";
             }
         }
+
+        const [ isTopic, id ] = getPrefixAndId();
+        const tagType = isTopic ? "topic" : "workspace";
+
+        // call the .delete on the tagged
+        console.log( "tag name to elete: " + selectedTag.innerHTML );
+        fetch( "api/v1/auth/tags/tagged/" + selectedTag.innerHTML + "/" + tagType + "/" + id, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        } );
+            
+
     } );
     removeTagBtn.addEventListener( "mouseenter", () => {
         removeTagBtn.style.color = "black";

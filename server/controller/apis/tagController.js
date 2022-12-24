@@ -176,8 +176,6 @@ exports.getTaggedEntity = async function( req, res ) {
 exports.tagged = async ( req, res, redirect ) => {
     let tagged = Tagged.emptyTagged();
 
-    console.log( "incomming request: ", JSON.stringify( req.body ) );
-
     // check to see if there is an existing tag with the same name since we do not want dups
     let existingTag = await tagService.getTagByTagName( req.body.tag );
 
@@ -226,11 +224,9 @@ exports.tagged = async ( req, res, redirect ) => {
             tagged.userId = req.user.userId;
         }
         else if ( req && req.session && req.session.authUser ) {
-            tag.userId = req.session.authUser.userId;
+            tagged.userId = req.session.authUser.userId;
         }
         tagged.active = req.body.active;
-
-        console.log( "about to save tagged: " + JSON.stringify( tagged ) );
 
         // save the tag association 
         tagged = await tagService.saveTagged( tagged );
@@ -268,8 +264,18 @@ exports.tagged = async ( req, res, redirect ) => {
 
 exports.deleteTagged = async function( req, res ) {
     let success = false;
-    if( req.params.tagId > 0 && req.params.entityType && req.params.entityId && req.params.userId ) {
-        success = await tagService.deleteTagged( req.params.tagId, req.params.entityType, req.params.entityId, req.params.userId );
+    if( req.params.tagName && req.params.entityType && req.params.entityId ) {
+        let tag = await tagService.getTagByTagName( req.params.tagName );
+        let userId = -1;
+        if( req && req.user ) {
+            userId = req.user.userId;
+        }
+        else if ( req && req.session && req.session.authUser ) {
+            userId = req.session.authUser.userId;
+        }
+
+        success = await tagService.deleteTagged( tag.tagId, req.params.entityType, req.params.entityId, userId );
+
     }
 
     if( success ) {

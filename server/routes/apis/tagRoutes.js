@@ -42,10 +42,10 @@ router.route( '/tagged/:entityType/:entityId' )
     }
     );
 
-router.route( '/tagged/:tagId/:entityType/:entityId/:userId' )
+router.route( '/tagged/:tagName/:entityType/:entityId' )
     .delete( async ( req, res ) => {
         tagController.deleteTagged( req, res );
     }
-    );        
+    );     
 
 module.exports = router;
