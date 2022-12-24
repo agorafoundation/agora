@@ -280,6 +280,25 @@ exports.saveTagged = async ( tagged ) => {
     
 };
 
+exports.deleteTagged = async ( entityType, entityId, userId ) => {
+
+    if( entityType && entityId > 0 && userId > 0 ) {
+        let text = "DELETE FROM tag_associations WHERE entity_type = $1 AND entity_id = $2 AND user_id = $3;";
+        let values = [ entityType, entityId, userId ];
+
+        try {
+            await db.query( text, values );
+            return true;
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error deleting tagged - " + e );
+            return false;
+        }
+    }
+    
+};
+
+
 
 /**
  * Delete a tag by the passed id
@@ -291,7 +310,7 @@ exports.deleteTagById = async ( tagId ) => {
     let values = [ tagId ];
 
     try {
-        let res = await db.query( text, values );
+        await db.query( text, values );
         return true;
         
     }

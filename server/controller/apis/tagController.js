@@ -253,3 +253,21 @@ exports.tagged = async ( req, res, redirect ) => {
         }
     }
 };
+
+exports.deleteTagged = async function( req, res ) {
+    let success = false;
+    if( req.params.entityType && req.params.entityId && req.params.userId ) {
+        success = await tagService.deleteTagged( req.params.entityType, req.params.entityId, req.params.userId );
+    }
+
+    if( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Tag association deleted" );
+        res.status( 200 ).send( "Tag association deleted" );
+    }
+    else {
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
+        res.status( 404 ).send( "No Tags Found" );
+    }
+};
