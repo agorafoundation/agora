@@ -1508,7 +1508,6 @@ components:
         - tag
         - entityType
         - entityId
-        - userId
       properties:
         id:
           type: integer
@@ -1544,7 +1543,7 @@ components:
           tag: Learning Python
           ownedBy: 1
           lastUsed: 2022-08-07T14:04:17.935Z
-        entityType: "RESOURCE"
+        entityType: "resource"
         entityId: 1
         userId: 1
         lookupCount: -1

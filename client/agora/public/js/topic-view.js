@@ -433,7 +433,7 @@ function newTag( tagName ) {
         // create the tag and add to existing tags
         li.setAttribute( "class", "tag-list-element" );
         li.innerHTML = tagName;
-        addTag( li );
+        addTagToWorkspace( li );
         currTagList.push( tagName );
     }
 }
@@ -450,9 +450,13 @@ document.addEventListener( "keyup", function( e ) {
     }
 } );
 
-function addTag( selectedTag ) {
+function addTagToWorkspace( selectedTag ) {
     const currTags = document.getElementById( "curr-tags" );
     const newTag = document.createElement( "div" );
+
+    const [ isTopic, workspaceId ] = getPrefixAndId();
+    const tagType = isTopic ? "topic" : "workspace";
+
 
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
@@ -466,23 +470,21 @@ function addTag( selectedTag ) {
     removeTagBtn.style.color = "#aaa";
 
     // make the fetch call to save the tag
-    fetch( "api/v1/auth/tags", {
+    fetch( "api/v1/auth/tags/tagged", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
-            "tag": newTag.innerHTML
+            "tag": {
+                "tag": newTag.innerHTML
+            },
+            entityType: tagType,
+            entityId: workspaceId,
+            active: true
         } )
     } )
         .then( response => response.json() )
         .then( ( data ) => {
-            console.log( "new tag data: " + JSON.stringify( data ) );
-            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-            console.log( "added tag: " + JSON.stringify( resources[numResources] ) );
-            numResources++;
-
-            // map the new resource to the associated topic
-            let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-            updateTopic( topicTitle );
+            console.log( "success saving tagged" );
         } );
 
     removeTagBtn.addEventListener( "click", () => {

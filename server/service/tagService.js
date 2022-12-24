@@ -196,7 +196,6 @@ exports.saveTag = async function( tag, updateFlag ) {
         }
         else {
             // insert
-            console.log( "Inserting tag: " + tag.tag );
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING tag_id;";
             let values = [ tag.tag.toString().toLowerCase(), tag.ownedBy ];
 

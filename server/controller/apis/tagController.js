@@ -176,6 +176,8 @@ exports.getTaggedEntity = async function( req, res ) {
 exports.tagged = async ( req, res, redirect ) => {
     let tagged = Tagged.emptyTagged();
 
+    console.log( "incomming request: ", JSON.stringify( req.body ) );
+
     // check to see if there is an existing tag with the same name since we do not want dups
     let existingTag = await tagService.getTagByTagName( req.body.tag );
 
@@ -212,13 +214,23 @@ exports.tagged = async ( req, res, redirect ) => {
     }
     
     // verify we have all required data (enitity type / id, user id)
-    if( req.body.entityType && req.body.entityId > 0 && req.body.userId > 0 ) {
+    if( req.body.entityType && req.body.entityId > 0 ) {
         // create the tag association from the submitted data
         tagged.tag = tag;
         tagged.entityType = req.body.entityType;
         tagged.entityId = req.body.entityId;
-        tagged.userId = req.body.userId;
+        if( req.body.userId ) {
+            tagged.userId = req.body.userId;
+        }
+        else if( req && req.user ) {
+            tagged.userId = req.user.userId;
+        }
+        else if ( req && req.session && req.session.authUser ) {
+            tag.userId = req.session.authUser.userId;
+        }
         tagged.active = req.body.active;
+
+        console.log( "about to save tagged: " + JSON.stringify( tagged ) );
 
         // save the tag association 
         tagged = await tagService.saveTagged( tagged );
