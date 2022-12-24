@@ -256,8 +256,8 @@ exports.tagged = async ( req, res, redirect ) => {
 
 exports.deleteTagged = async function( req, res ) {
     let success = false;
-    if( req.params.entityType && req.params.entityId && req.params.userId ) {
-        success = await tagService.deleteTagged( req.params.entityType, req.params.entityId, req.params.userId );
+    if( req.params.tagId > 0 && req.params.entityType && req.params.entityId && req.params.userId ) {
+        success = await tagService.deleteTagged( req.params.tagId, req.params.entityType, req.params.entityId, req.params.userId );
     }
 
     if( success ) {

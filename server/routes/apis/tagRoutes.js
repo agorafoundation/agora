@@ -38,9 +38,14 @@ router.route( '/tagged' )
 
 router.route( '/tagged/:entityType/:entityId' )
     .get( async ( req, res ) => {
-        console.log( "tagged resource" );
         tagController.getTaggedEntity( req, res );
     }
     );
+
+router.route( '/tagged/:tagId/:entityType/:entityId/:userId' )
+    .delete( async ( req, res ) => {
+        tagController.deleteTagged( req, res );
+    }
+    );        
 
 module.exports = router;

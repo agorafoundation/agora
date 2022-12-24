@@ -272,29 +272,34 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-  /tags/tagged/{entityType}/{entityId}/{userId}:
+  /tags/tagged/{tagId}/{entityType}/{entityId}/{userId}:
     delete:
       tags:
         - Tagged
-      summary: Deletes a tag association, removing the tag from an entity (by entityType, entityId) for owner (userId)
+      summary: Deletes a tag association, removing the tag (tagId) from an entity (by entityType, entityId) for owner (userId)
       parameters:
+        - in: path
+          name: tagId
+          schema:
+            type: integer
+            description: id of the tag to remove the association from
         - in: path
           name: entityType
           schema:
             type: string
             enum: ["unknown", "workspace", "topic", "resource", "user"]
             default: "unknown"
-            description: Type of the entity to find associated tags for
+            description: Type of the entity to remove the association from
         - in: path
           name: entityId
           schema:
             type: integer
-            description: id of the entity to find associated tags for
+            description: id of the entity to remove the association from
         - in: path
           name: userId
           schema:
             type: integer
-            description: id of the user that created the tag association with the entity provided
+            description: id of the user that created the tag association with the tag and entity provided
       responses:
         "200":
           description: OK
