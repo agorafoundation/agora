@@ -229,6 +229,97 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         "403":
           $ref: "#/components/responses/ForbiddenError"
+  /tags/tagged/{entityType}/{entityId}:
+    get:
+      tags:
+        - Tagged
+      summary: Retrieves Tags associated with an entity (by type and id)
+      parameters:
+        - in: path
+          name: entityType
+          schema:
+            type: string
+            enum: ["unknown", "workspace", "topic", "resource", "user"]
+            default: "unknown"
+            description: Type of the entity to find associated tags for
+        - in: path
+          name: entityId
+          schema:
+            type: integer
+            description: id of the entity to find associated tags for
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tags"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /tags/tagged/{entityType}/{entityId}/{userId}:
+    delete:
+      tags:
+        - Tagged
+      summary: Deletes a tag association, removing the tag from an entity (by entityType, entityId) for owner (userId)
+      parameters:
+        - in: path
+          name: entityType
+          schema:
+            type: string
+            enum: ["unknown", "workspace", "topic", "resource", "user"]
+            default: "unknown"
+            description: Type of the entity to find associated tags for
+        - in: path
+          name: entityId
+          schema:
+            type: integer
+            description: id of the entity to find associated tags for
+        - in: path
+          name: userId
+          schema:
+            type: integer
+            description: id of the user that created the tag association with the entity provided
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tag"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /workspaces:
     get:
       tags:
@@ -1423,8 +1514,8 @@ components:
           description: Tag that is being associated with a user and entity, Tag.tag property should contain the name of the tag to associate
         entityType:
           type: string
-          enum: ["UNKNOWN", "WORKSPACE", "TOPIC", "RESOURCE", "USER"]
-          default: "UNKNOWN"
+          enum: ["unknown", "workspace", "topic", "resource", "user"]
+          default: "unknown"
           description: Type of the entity that is being associated with the tag
         entityId:
           type: integer

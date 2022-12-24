@@ -410,10 +410,11 @@ GRANT ALL PRIVILEGES ON TABLE tags TO agora;
 GRANT USAGE, SELECT ON SEQUENCE tags_tag_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
 
-CREATE TYPE tag_entity_types AS ENUM ('UNKNOWN', 'WORKSPACE', 'TOPIC', 'RESOURCE', 'USER');
+CREATE TYPE tag_entity_types AS ENUM ('unknown', 'workspace', 'topic', 'resource', 'user');
 
 CREATE TABLE IF NOT EXISTS tag_associations (
     tag_association_id SERIAL PRIMARY KEY,
+    tag_id INTEGER, -- fk to tag
     entity_type tag_entity_types, --  1-goal, 2-topic, 3-resource, 
     entity_id INTEGER, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag

@@ -204,7 +204,7 @@ exports.saveTag = async function( tag, updateFlag ) {
                 let res = await db.query( text, values );
     
                 if( res.rowCount > 0 ) {
-                    tag.tagId = res.rows[0].id;
+                    tag.tagId = res.rows[0].tag_id;
                 }                
             }
             catch( e ) {
@@ -219,14 +219,35 @@ exports.saveTag = async function( tag, updateFlag ) {
     }
 };
 
+exports.getTaggedEntity = async ( entityType, entityId ) => {
+    if( entityType && entityId ) {
+        let text = "SELECT * FROM tag_associations WHERE entity_type = $1 and entity_id = $2;";
+        let values = [ entityType, entityId ];
+
+        try {
+            let res = await db.query( text, values );
+            let tags = [];
+            if( res.rowCount > 0 ) {
+                for( let i=0; i<res.rows.length; i++ ) {
+                    tags.push( await this.getTagById( res.rows[i].tag_id ) );
+                }
+            }
+            return tags;
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error retrieving tagged entity - " + e );
+            return false;
+        }
+    }
+};
+
 exports.saveTagged = async ( tagged ) => {
     if( tagged ) {
         if( tagged.tagAssociationId > 0 ) {          
-            console.log( "2" );  
 
             // update
-            let text = "UPDATE tag_associations SET entity_type = $1, entity_id = $2, user_id = $3, lookup_count=$4, last_used=now() WHERE tag_association_id = $5;";
-            let values = [ tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.id ];
+            let text = "UPDATE tag_associations SET tag_id = $1 entity_type = $2, entity_id = $3, user_id = $4, lookup_count=$5, last_used=now(), active = $6 WHERE tag_association_id = $7;";
+            let values = [ tagged.tag.tagId, tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.active, tagged.id ];
     
             try {
                 await db.query( text, values );
@@ -238,9 +259,8 @@ exports.saveTagged = async ( tagged ) => {
         }
         else {
             // insert
-            console.log( "3" );
-            let text = "INSERT INTO tag_associations ( entity_type, entity_id, user_id, lookup_count, last_used ) VALUES ($1, $2, $3, $4, now()) RETURNING tag_association_id;";
-            let values = [ tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount ];
+            let text = "INSERT INTO tag_associations ( tag_id, entity_type, entity_id, user_id, lookup_count, last_used, active ) VALUES ($1, $2, $3, $4, $5, now(), $6) RETURNING tag_association_id;";
+            let values = [ tagged.tag.tagId, tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.active ];
     
             try {
                 let res = await db.query( text, values );

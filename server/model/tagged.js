@@ -18,7 +18,7 @@ class tagged {
     constructor( ) {
         this.tag = Tag.emptyTag();
         this.tagAssociationId = -1;
-        this.entityType = EntityType.UNKNOWN;
+        this.entityType = EntityType.unknown;
         this.entityId = -1;
         this.userId = -1;
         this.lookupCount = 0;
@@ -44,9 +44,9 @@ exports.ormTagged = ( row ) => {
 };
 
 const EntityType = {
-    UNKNOWN: 0,
-    WORKSPACE: 1,
-    TOPIC: 2,
-    RESOURCE: 3,
-    USER: 4
+    unknown: 0,
+    workspace: 1,
+    topic: 2,
+    resource: 3,
+    user: 4
 };
