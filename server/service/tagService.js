@@ -186,7 +186,7 @@ exports.saveTag = async function( tag, updateFlag ) {
             let values = [ tag.tag.toLowerCase(), tag.ownedBy, tag.tagId ];
     
             try {
-                let res = await db.query( text, values );
+                await db.query( text, values );
             }
             catch( e ) {
                 console.log( "[ERR]: Error updating tag - " + e );
@@ -197,15 +197,14 @@ exports.saveTag = async function( tag, updateFlag ) {
         else {
             // insert
             let text = "INSERT INTO tags ( tag, last_used, owned_by) VALUES ($1, NOW(), $2) RETURNING tag_id;";
-            let values = [ tag.tag.toLowerCase(), tag.ownedBy ];
+            let values = [ tag.tag.toString().toLowerCase(), tag.ownedBy ];
 
             try {
-                let res2 = await db.query( text, values );
+                let res = await db.query( text, values );
     
-                if( res2.rowCount > 0 ) {
-                    tag.tagId = res2.rows[0].id;
-                }
-                
+                if( res.rowCount > 0 ) {
+                    tag.tagId = res.rows[0].tag_id;
+                }                
             }
             catch( e ) {
                 console.log( "[ERR]: Error inserting tag - " + e );
@@ -219,6 +218,86 @@ exports.saveTag = async function( tag, updateFlag ) {
     }
 };
 
+exports.getTaggedEntity = async ( entityType, entityId ) => {
+    if( entityType && entityId ) {
+        let text = "SELECT * FROM tag_associations WHERE entity_type = $1 and entity_id = $2;";
+        let values = [ entityType, entityId ];
+
+        try {
+            let res = await db.query( text, values );
+            let tags = [];
+            if( res.rowCount > 0 ) {
+                for( let i=0; i<res.rows.length; i++ ) {
+                    tags.push( await this.getTagById( res.rows[i].tag_id ) );
+                }
+            }
+            return tags;
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error retrieving tagged entity - " + e );
+            return false;
+        }
+    }
+};
+
+exports.saveTagged = async ( tagged ) => {
+    if( tagged ) {
+        if( tagged.tagAssociationId > 0 ) {          
+
+            // update
+            let text = "UPDATE tag_associations SET tag_id = $1 entity_type = $2, entity_id = $3, user_id = $4, lookup_count=$5, last_used=now(), active = $6 WHERE tag_association_id = $7;";
+            let values = [ tagged.tag.tagId, tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.active, tagged.id ];
+    
+            try {
+                await db.query( text, values );
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error updating tagged - " + e );
+                return false;
+            }
+        }
+        else {
+            // insert
+            let text = "INSERT INTO tag_associations ( tag_id, entity_type, entity_id, user_id, lookup_count, last_used, active ) VALUES ($1, $2, $3, $4, $5, now(), $6) RETURNING tag_association_id;";
+            let values = [ tagged.tag.tagId, tagged.entityType, tagged.entityId, tagged.userId, tagged.lookupCount, tagged.active ];
+    
+            try {
+                let res = await db.query( text, values );
+                if( res.rowCount > 0 ) {
+                    tagged.tagId = res.rows[0].tag_association_id;
+                }
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error inserting tagged - " + e );
+                return false;
+            }
+        }
+    }
+    else {
+        console.log( "[ERR]: no tagged object passed to saveTagged" );
+    }
+    
+};
+
+exports.deleteTagged = async ( tagId, entityType, entityId, userId ) => {
+
+    if( entityType && entityId > 0 && userId > 0 ) {
+        let text = "DELETE FROM tag_associations WHERE tag_id = $1 AND entity_type = $2 AND entity_id = $3 AND user_id = $4;";
+        let values = [ tagId, entityType, entityId, userId ];
+
+        try {
+            await db.query( text, values );
+            return true;
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error deleting tagged - " + e );
+            return false;
+        }
+    }
+    
+};
+
+
 
 /**
  * Delete a tag by the passed id
@@ -230,7 +309,7 @@ exports.deleteTagById = async ( tagId ) => {
     let values = [ tagId ];
 
     try {
-        let res = await db.query( text, values );
+        await db.query( text, values );
         return true;
         
     }

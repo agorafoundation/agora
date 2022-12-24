@@ -403,7 +403,7 @@ if( document.getElementById( "mySearch" ) ) {
 // } );
 
 let currTagList = [];
-function newTag( tagName ) {
+function newTag( tagName, isNewSave ) {
     const ul = document.querySelector( ".tag-list" );
     const li = document.createElement( "li" );
     const searchList = document.querySelectorAll( ".tag-list-element" );
@@ -426,14 +426,14 @@ function newTag( tagName ) {
             // Add the new tag to the search list if it doesn't already exist
             ul.appendChild( li );
             li.addEventListener( "click", () => {
-                newTag( tagName );
+                newTag( tagName, isNewSave );
             } );
         }
 
         // create the tag and add to existing tags
         li.setAttribute( "class", "tag-list-element" );
         li.innerHTML = tagName;
-        addTag( li );
+        addTagToWorkspace( li, isNewSave );
         currTagList.push( tagName );
     }
 }
@@ -443,16 +443,20 @@ let ul = document.querySelector( ".tag-list" );
 document.addEventListener( "keyup", function( e ) {
     const tagName = document.getElementById( "mySearch" ).value;
     if ( e.key == "Enter" && ul.style.display == "block" ) {
-        newTag( tagName );
+        newTag( tagName, true );
         document.querySelector( ".tag-list" ).style.display = "none";
         // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
     }
 } );
 
-function addTag( selectedTag ) {
+function addTagToWorkspace( selectedTag, isNewSave ) {
     const currTags = document.getElementById( "curr-tags" );
     const newTag = document.createElement( "div" );
+
+    const [ isTopic, workspaceId ] = getPrefixAndId();
+    const tagType = isTopic ? "topic" : "workspace";
+
 
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
@@ -465,6 +469,26 @@ function addTag( selectedTag ) {
     removeTagBtn.innerHTML = "&times;";
     removeTagBtn.style.color = "#aaa";
 
+    // make the fetch call to save the tag
+    if( isNewSave ) {
+        fetch( "api/v1/auth/tags/tagged", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "tag": {
+                    "tag": newTag.innerHTML
+                },
+                entityType: tagType,
+                entityId: workspaceId,
+                active: true
+            } )
+        } )
+            .then( response => response.json() )
+            .then( ( data ) => {
+                console.log( "success saving tagged" );
+            } );
+    }
+
     removeTagBtn.addEventListener( "click", () => {
         // Get the id portion with the tag name
         document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
@@ -473,6 +497,18 @@ function addTag( selectedTag ) {
                 currTagList[i] = "";
             }
         }
+
+        const [ isTopic, id ] = getPrefixAndId();
+        const tagType = isTopic ? "topic" : "workspace";
+
+        // call the .delete on the tagged
+        console.log( "tag name to elete: " + selectedTag.innerHTML );
+        fetch( "api/v1/auth/tags/tagged/" + selectedTag.innerHTML + "/" + tagType + "/" + id, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        } );
+            
+
     } );
     removeTagBtn.addEventListener( "mouseenter", () => {
         removeTagBtn.style.color = "black";
@@ -1268,6 +1304,36 @@ const idAndFetch = () => {
     }
 };
 
+const getTags = async () => {
+    const [ isTopic, id ] = getPrefixAndId();
+    if ( isTopic && id > 0 ) {
+        fetch( "api/v1/auth/tags/tagged/topic/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                for( let i = 0; i < response.length; i++ ) {
+                    newTag( response[i].tag, false );
+                }
+
+                
+            } );
+    }
+    else if ( id > 0 ) {
+        fetch( "api/v1/auth/tags/tagged/workspace/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                for( let i = 0; i < response.length; i++ ) {
+                    newTag( response[i].tag, false );
+                }
+            } );
+    }
+};
+
 const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
@@ -1329,6 +1395,7 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
+    getTags();
     renderTopics();
    
 } );

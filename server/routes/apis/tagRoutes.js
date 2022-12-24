@@ -30,8 +30,22 @@ router.route( '/:id' )
     }
     ); 
 
+router.route( '/tagged' )
+    .post( async ( req, res ) => {
+        tagController.tagged( req, res, false );
+    }
+    );
 
+router.route( '/tagged/:entityType/:entityId' )
+    .get( async ( req, res ) => {
+        tagController.getTaggedEntity( req, res );
+    }
+    );
 
-
+router.route( '/tagged/:tagName/:entityType/:entityId' )
+    .delete( async ( req, res ) => {
+        tagController.deleteTagged( req, res );
+    }
+    );     
 
 module.exports = router;

@@ -54,7 +54,6 @@ exports.getWorkspaceById = async ( req, res ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
-    console.log( "trying to retrieve: " + req.params.workspaceId + " for user: " + authUserId );
     if( authUserId > 0 ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );

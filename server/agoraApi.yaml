@@ -177,6 +177,149 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /tags/Tagged:
+    post:
+      tags:
+        - Tagged
+      summary: Associates a tag with an entity (by provided type and id), and a user (by user id). 
+      requestBody:
+        description: Include a Tagged object to save in JSON format including a tag property with the .tag property containing the name of the tag *NOTE* - For the Tag object, only the tag member is required, id will be ignored, lastUsed will be used if provided and override the default behavior of assigning the authenticed user id, lastUsed will be updated to the current time.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Tagged"
+      responses:
+        "201":
+          description: New Tag association created
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tagged"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "200":
+          description: Updated existing record - the tag association already existed, current record used.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tagged"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+  /tags/tagged/{entityType}/{entityId}:
+    get:
+      tags:
+        - Tagged
+      summary: Retrieves Tags associated with an entity (by type and id)
+      parameters:
+        - in: path
+          name: entityType
+          schema:
+            type: string
+            enum: ["unknown", "workspace", "topic", "resource", "user"]
+            default: "unknown"
+            description: Type of the entity to find associated tags for
+        - in: path
+          name: entityId
+          schema:
+            type: integer
+            description: id of the entity to find associated tags for
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tags"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /tags/tagged/{tagId}/{entityType}/{entityId}:
+    delete:
+      tags:
+        - Tagged
+      summary: Deletes a tag association, removing the tag (tagName) from an entity (by entityType, entityId) for owner (authorized api or client session user)
+      parameters:
+        - in: path
+          name: tagName
+          schema:
+            type: integer
+            description: tag to remove the association from
+        - in: path
+          name: entityType
+          schema:
+            type: string
+            enum: ["unknown", "workspace", "topic", "resource", "user"]
+            default: "unknown"
+            description: Type of the entity to remove the association from
+        - in: path
+          name: entityId
+          schema:
+            type: integer
+            description: id of the entity to remove the association from
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Tag"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /workspaces:
     get:
       tags:
@@ -1346,7 +1489,7 @@ components:
           type: string
           description: date the tag was last used or updated. This should be set to the current time any time a tag is applied using the tagged object
       example:
-        id: 10
+        id: -1
         tag: Learning Python
         ownedBy: 1
         lastUsed: 2022-08-07T14:04:17.935Z
@@ -1354,8 +1497,57 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Tag"
+    Tagged:
+      type: object
+      required:
+        - tag
+        - entityType
+        - entityId
+      properties:
+        id:
+          type: integer
+          description: Assigned automatically for new tags, used to update existing tag if provided
+        tag:
+          type: object
+          $ref: "#/components/schemas/Tag"
+          description: Tag that is being associated with a user and entity, Tag.tag property should contain the name of the tag to associate
+        entityType:
+          type: string
+          enum: ["unknown", "workspace", "topic", "resource", "user"]
+          default: "unknown"
+          description: Type of the entity that is being associated with the tag
+        entityId:
+          type: integer
+          description: Id of the entity that is being associated with the tag
+        userId:
+          type: integer
+          description: Id of the user that is associating this tag to the entity
+        lookupCount:
+          type: integer
+          description: incremented when user finds entity association via this tag, tracks popularity of this tag
+        lastUsed:
+          type: string
+          description: date the tag was last used or updated. This should be set to the current time any time a tag is applied using the tagged object, will be automatically set when saved
+        active:
+          type: boolean
+          description: Active status, inactive items will not be returned in most queries
+      example:
+        id: -1
+        tag: 
+          id: -1
+          tag: Learning Python
+          ownedBy: 1
+          lastUsed: 2022-08-07T14:04:17.935Z
+        entityType: "resource"
+        entityId: 1
+        userId: 1
+        lookupCount: -1
+        lastUsed: 2022-08-07T14:04:17.935Z
+        active: true
     Workspace:
       request:
+        id: -1
+        tag:
         type: object
         required:
           - workspaceName
@@ -1383,8 +1575,10 @@ components:
             type: boolean
             description: Completable workspaces monitor progress of users through topics
           visibility:
-            type: integer
-            description: Public = 0, Shared = 1, Private = 0
+            type: string
+            enum: ["private", "public"]
+            default: "public"
+            description: Share visibily, defaults to public
           createTime:
             type: timestamp
             description: Automatically generated timestamp of record creation
@@ -1398,7 +1592,7 @@ components:
           workspaceImage: "myImage.png"
           active: true
           completable: true
-          visibility: 0
+          visibility: "private"
           topics: [2, 3]
       response:
         type: object
@@ -1428,8 +1622,10 @@ components:
             type: boolean
             description: Completable workspaces monitor progress of users through topics
           visibility:
-            type: integer
-            description: Public = 0, Shared = 1, Private = 0
+            type: string
+            enum: ["private", "public"]
+            default: "public"
+            description: Share visibily, defaults to public
           createTime:
             type: timestamp
             description: Automatically generated timestamp of record creation
@@ -1445,7 +1641,7 @@ components:
           workspaceImage: "myImage.png"
           active: true
           completable: true
-          visibility: 0
+          visibility: "private"
           version: 1
           createTime: 2022-11-02T19:37:11.672Z
     Workspaces:
@@ -1495,8 +1691,10 @@ components:
             type: boolean
             description: Active status, inactive items will not be returned in most queries
           visibility:
-            type: integer
-            description: Public = 2, Shared = 1, Private = 0
+            type: string
+            enum: ["private", "public"]
+            default: "public"
+            description: Share visibily, defaults to public
           createTime:
             type: timestamp
             description: Automatically generated timestamp of record creation
@@ -1521,7 +1719,7 @@ components:
           activityId: -1
           assessmentId: -1
           active: true
-          visibility: 0
+          visibility: "private"
           resources: [ 1, 2, 4 ]
           resourcesRequired: [ true, true, true ]
       response:
@@ -1552,8 +1750,10 @@ components:
             type: boolean
             description: Completable workspaces monitor progress of users through topics
           visibility:
-            type: integer
-            description: Public = 0, Shared = 1, Private = 0
+            type: string
+            enum: ["private", "public"]
+            default: "public"
+            description: Share visibily, defaults to public
           createTime:
             type: timestamp
             description: Automatically generated timestamp of record creation
@@ -1569,7 +1769,7 @@ components:
           workspaceImage: "myImage.png"
           active: true
           completable: true
-          visibility: 0
+          visibility: "private"
           version: 1
           createTime: 2022-11-02T19:37:11.672Z
     Workspaces:
@@ -1616,8 +1816,10 @@ components:
           type: boolean
           description: Active status, inactive items will not be returned in most queries
         visibility:
-          type: integer
-          description: Public = 2, Shared = 1, Private = 0
+          type: string
+          enum: ["private", "public"]
+          default: "public"
+          description: Share visibily, defaults to public
         createTime:
           type: timestamp
           description: Automatically generated timestamp of record creation
@@ -1636,7 +1838,7 @@ components:
         hasAssessment: false
         activityId: 1
         active: true
-        visibility: 0
+        visibility: "private"
         createTime: "2022-08-07T06:58:53.744Z"
         ownedBy: 1
     Topics:
@@ -1787,8 +1989,10 @@ components:
           type: boolean
           description: Active status, inactive items will not be returned in most queries
         visibility:
-          type: integer
-          description: Public = 2, Shared = 1, Private = 0
+          type: string
+          enum: ["private", "public"]
+          default: "public"
+          description: Share visibily, defaults to public
         createTime:
           type: timestamp
           description: Automatically generated timestamp of record creation
@@ -1805,7 +2009,7 @@ components:
         resourceLink: "https://resourcelink.com/"
         isRequired: 1
         active: true
-        visibility: 0
+        visibility: "private"
         createTime: "2022-08-07T06:58:53.744Z"
         ownedBy: 1
     Resources:
