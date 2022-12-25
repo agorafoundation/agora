@@ -1357,21 +1357,21 @@ const renderTopics = async ( workspace ) => {
 };
 
 //change order so the create stuff will all happen after information is gathered
-let val = 1;
+//let val = 1;
 async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
-        let docType1Count = 0;
+        //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //if resource is a document
             if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].id );
+                await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    sunEditor["sunEditor"+( val )][1].insertHTML( resources[i].resourceContentHtml );
-                    docType1Count++;
-                    val++;
+                    sunEditor["sunEditor"+( resources[i].resourceId )][1].insertHTML( resources[i].resourceContentHtml );
+                    //docType1Count++;
+                    //val++;
                 }
 
 
