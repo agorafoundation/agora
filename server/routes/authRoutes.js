@@ -30,8 +30,10 @@ router.route( '/signOut' )
     .get( ( req, res ) => {
         req.session.destroy( ( error ) => {
             if ( error ) throw error;
-            res.render( 'sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." } );
         } );
+        req.session = null;
+        req.user = null;
+        res.render( 'sign-in', { message: "You have been signed out!", message2: "Thank you for being a part of our community! Hope to see you again soon." } );
     }
     );
 

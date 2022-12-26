@@ -143,18 +143,27 @@ exports.signIn = async function( req, res ) {
 
                             }
                         }
+
+                        console.log( "redirect: " + req.query.redirect );
                         
                         if( req.query.redirect ) {
+                            console.log( "1" );
                             res.redirect( 303, req.query.redirect );
                         }
                         else if( req.session.authUser.emailValidated ) {
-                            res.redirect( 303, '/community' );
+                            console.log( "2" );
+                            res.redirect( 303, '/dashboard' );
                         }
                         else {
-                            res.redirect( 303, '/profile/manageProfile' );
+                            req.session.messageType = "info";
+                            req.session.messageTitle = "Email not verified!";
+                            req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
+                            console.log( "3" );
+                            res.redirect( 303, '/dashboard' );
                         }
                     }
                     else {
+                        console.log( "4" );
                         res.render( 'sign-in', {
                             redirect: req.query.redirect,
                             passwordMessage: "You are not authorized!"} );

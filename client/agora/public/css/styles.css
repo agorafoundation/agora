@@ -5373,6 +5373,12 @@ a.close.disabled {
   pointer-events: none;
 }
 
+/* modification to toast-container to prevent blocking clicks no elements behind it before it is activated */
+.toast-container
+{
+  pointer-events: none;
+}
+
 .toast {
   flex-basis: 350px;
   max-width: 350px;

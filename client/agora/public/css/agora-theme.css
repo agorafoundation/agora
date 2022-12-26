@@ -1362,41 +1362,6 @@ input:checked + .slider:after {
     font-size: 1.4rem;
     padding: 7px 10px;
 }
-/* SIDE MENu */
-.sidebar {
-    height: 100%;
-    width: 85px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #17191a;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 20px;
-    white-space: nowrap;
-}
-
-.sidebar a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar a:hover {
-    color: #f1f1f1;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
 
 .material-icons,
 .icon-text {

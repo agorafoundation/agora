@@ -8,14 +8,8 @@
     
 
 
-<!--View Toggle-->
-<%- include('./view-toggle.ejs'); %>  
-
-<!--List Toggle-->
-<%- include('./list-toggle.ejs'); %>
-
-<!--Search bar-->
-<input id="topic-search" class="card-search" placeholder="Search" style="margin-right: 40px;" oninput="queryTopics(document.getElementById('topic-search').value, topicArr) "/>
+<!-- dashboard control bar-->
+<%- include('./control-bar.ejs'); %>  
 
 <hr class="mt-0">
 <div class="container" id="main-container">
