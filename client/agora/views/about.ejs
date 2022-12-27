@@ -7,16 +7,13 @@
 
 <body id="page-top">
     <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
         <%- include('./partials/topmenu'); %>
     </nav>
 
 
     <!-- Page Content -->
     <section class="page-section page-section-top-padded mb-0" id="about">
-        <div class="container navbar-interior font-weight-bold text-primary">
-            <%- include('./partials/welcome'); %>
-        </div>
         <div class="container">
             <!-- About Section Heading-->
             <div class="divider-custom">
@@ -33,7 +30,7 @@
                 </div>
                 -->
             <!-- About Section Button-->
-            <div class="text-left mt-4">
+            <div class="text-left mt-4 main-content">
                 <div id="story1" class="row justify-content-left">
                     <div class="col-lg-7 order-lg-1">
                         <h2>Agora</h2>
@@ -153,9 +150,7 @@
     </section>
 
     <!-- Footer-->
-    <footer class="footer text-center">
-        <%- include('./partials/footer'); %>
-    </footer>
+    <%- include('./partials/footer'); %>
     <!-- Copyright Section-->
     <div class="copyright py-4 text-center text-white">
         <%- include('./partials/copyright'); %>

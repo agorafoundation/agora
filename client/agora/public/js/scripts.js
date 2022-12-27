@@ -90,7 +90,9 @@ function toggleSidebar() {
     }
     else {
         document.getElementById( "agoraSideBar" ).style.width = "85px";
-        document.body.style.marginLeft = "85px";
+        if( window.innerWidth > 650 ) {
+            document.body.style.marginLeft = "85px";
+        }
     }
     sideBarStatus = !sideBarStatus;
 }
@@ -101,3 +103,17 @@ if( document.getElementById( "agoraSideBar" ) ) {
     document.getElementById( "agoraSideBar" ).addEventListener( "mouseover", toggleSidebar );
     document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
 }
+
+addEventListener( "resize", ( event ) => {
+    if( window.innerWidth > 992 ) {
+        //document.body.style.marginLeft = "85px";
+    }
+    else {
+        document.body.style.marginLeft = "0px";
+    }
+} );
+
+// else {
+//     console.log( "testinhg" );
+//     document.body.style.marginLeft = "5px";
+// }

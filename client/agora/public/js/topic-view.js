@@ -441,13 +441,16 @@ function newTag( tagName, isNewSave ) {
 // Add new tag by pressing enter key
 let ul = document.querySelector( ".tag-list" );
 document.addEventListener( "keyup", function( e ) {
-    const tagName = document.getElementById( "mySearch" ).value;
-    if ( e.key == "Enter" && ul.style.display == "block" ) {
-        newTag( tagName, true );
-        document.querySelector( ".tag-list" ).style.display = "none";
-        // document.querySelector( "#new-tag-element" ).style.display = "none";
-        document.querySelector( "#mySearch" ).value = "";
+    if(  document.getElementById( "mySearch" ) ) {
+        const tagName = document.getElementById( "mySearch" ).value;
+        if ( e.key == "Enter" && ul.style.display == "block" ) {
+            newTag( tagName, true );
+            document.querySelector( ".tag-list" ).style.display = "none";
+            // document.querySelector( "#new-tag-element" ).style.display = "none";
+            document.querySelector( "#mySearch" ).value = "";
+        }
     }
+    
 } );
 
 function addTagToWorkspace( selectedTag, isNewSave ) {

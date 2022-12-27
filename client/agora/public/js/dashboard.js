@@ -1104,4 +1104,57 @@ const toggleList = () => {
     document.getElementById( "list-container" ).style.display = "block";
 };
 
+const logout = () => {
+    if( confirm( "Are you sure you want to logout?" ) === true ){
+        window.location.href = "/signout";
+    }
+};
+
+// set the initial selections in the control bar
+window.addEventListener( 'load', () => {
+    if( document.getElementById( "controlbar-buttons-group-1" ) ) {
+        document.getElementById( "all-initial-selection" ).classList.add( "active" );
+    }
+    if( document.getElementById( "controlbar-buttons-group-2" ) ) {
+        document.getElementById( "grid-initial-selection" ).classList.add( "active" );
+    }
+} );
+
+// manage highlighting of control bar buttons
+if( document.getElementById( "controlbar-buttons-group-1" ) ) {
+    document.getElementById( "controlbar-buttons-group-1" ).addEventListener( 'click', ( e ) => {
+        const target = e.target;
+        if( document.getElementById( "all-initial-selection" ).classList.contains( "active" ) ) {
+            document.getElementById( "all-initial-selection" ).classList.remove( "active" );
+        }
+        // if( target.classList.contains( "controlbar-buttons-group-1" ) ) {
+        //     const buttons = target.querySelectorAll( ".controlbar-buttons-group-1" );
+        //     console.log( "length 1 : " + buttons.length ); 
+        //     for( let i = 0; i < buttons.length; i++ ) {
+        //         buttons[i].classList.remove( "active" );
+        //     }
+        //     target.classList.add( "active" );
+        // }
+    } );
+}
+
+if( document.getElementById( "controlbar-buttons-group-2" ) ) {
+    document.getElementById( "controlbar-buttons-group-2" ).addEventListener( 'click', ( e ) => {
+        const target = e.target;
+        if( document.getElementById( "grid-initial-selection" ).classList.contains( "active" ) ) {
+            document.getElementById( "grid-initial-selection" ).classList.remove( "active" );
+        }
+        // const buttons = target.querySelectorAll( ".controlbar-buttons-group-2" );
+        // console.log( "length 2 : " + buttons.length );   
+        // for( let i = 0; i < buttons.length; i++ ) {
+        //     buttons[i].classList.remove( "active" );
+        // }
+        // target.classList.add( "active" );
+        
+    } );
+}
+
+
+
+
 //window.onload( toggleGrid() );

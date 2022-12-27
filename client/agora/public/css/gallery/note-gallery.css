@@ -1,3 +1,21 @@
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.5rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.badge-dark {
+  color: #fff;
+  background-color: #343a40;
+}
+
 .topic-badge {
   font-size: 0.75rem;
 }
@@ -133,10 +151,8 @@
 }
 
 .card-search {
-  position: absolute;
-  right: 410px;
   top: 25px;
-  height: 29px;
+  height: 40px;
   padding: 7px;
   margin: 0;
   background-color: #bbb;

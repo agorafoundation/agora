@@ -71,7 +71,7 @@ router.route( '/workspace' )
     .post( async ( req, res ) => {
 
         // save the workspace
-        let rWorkspace = await workspaceController.saveWorkspace( req, res, true );
+        await workspaceController.saveWorkspace( req, res, true );
         
         res.redirect( 303, '/dashboard' );
     }
@@ -86,7 +86,7 @@ router.route( '/resource' )
     .post( async ( req, res ) => {
         
         // save the resource
-        let rResource = await resourceController.saveResource( req, res, true );
+        await resourceController.saveResource( req, res, true );
 
         res.redirect( 303, '/dashboard' );
     }
