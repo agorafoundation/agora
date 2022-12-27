@@ -1,6 +1,6 @@
 <div id="gallery-header">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row pt-2 pb-2">
             <!-- <div class="col-md-2">
                 <h4 class="text-primary ">Dashboard</h4>
             </div> -->
@@ -10,13 +10,13 @@
             </div>
     
             <div class="btn-toolbar col-md-8" role="toolbar" aria-label="Dashboard Tools">
-                <div class="btn-group me-2" role="group" aria-label="Types">
+                <div id="controlbar-buttons-group-1" class="controlbar-buttons btn-group me-2" role="group" aria-label="Types">
                     <button type="button" class="btn btn-primary" onclick="toggleWorkspaceView()">Workspace</button>
-                    <button type="button" class="btn btn-primary" onclick="toggleAllView()" checked>All</button>
+                    <button id="all-initial-selection" type="button" class="btn btn-primary" onclick="toggleAllView()" checked>All</button>
                     <button type="button" class="btn btn-primary" onclick="toggleTopicView()">Topics</button>
                 </div>
-                <div class="btn-group me-2" role="group" aria-label="View">
-                    <button type="button" class="btn btn-secondary" onclick="toggleGrid()" checked>
+                <div id="controlbar-buttons-group-2" class="controlbar-buttons btn-group me-2" role="group" aria-label="View">
+                    <button id="grid-initial-selection" type="button" class="btn btn-secondary" onclick="toggleGrid()" checked>
                         <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white">
                             grid_view
                         </span>
@@ -28,7 +28,7 @@
                     </button>
                 </div>
                 <div class="btn-group" role="group" aria-label="Sign Out">
-                    <button type="button" class="btn btn-dark">
+                    <button type="button" class="btn btn-dark" onclick="logout()">
                         <span class="material-symbols-outlined" style="font-size: 20px; margin: 0; padding: 0; color: white">
                             logout
                         </span>

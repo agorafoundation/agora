@@ -190,14 +190,14 @@
     text-align: center;
 
     z-index: 5;
-    background-color: white;
+    background-color: #78C0CA;
 }
 
 .burger-navbar .menu-items li {
     margin-bottom: 1.2rem;
     font-size: 1.5rem;
     font-weight: 500;
-
+    list-style-type: none;
 }
 
 .logo {
@@ -246,7 +246,7 @@
     }
 }
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 992px) {
     .sidebar {
         display: none;
     }

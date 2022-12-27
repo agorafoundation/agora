@@ -90,7 +90,6 @@ function toggleSidebar() {
     }
     else {
         document.getElementById( "agoraSideBar" ).style.width = "85px";
-        console.log( "width: " + window.innerWidth );
         if( window.innerWidth > 650 ) {
             document.body.style.marginLeft = "85px";
         }
@@ -106,9 +105,8 @@ if( document.getElementById( "agoraSideBar" ) ) {
 }
 
 addEventListener( "resize", ( event ) => {
-    console.log( "resize" );
-    if( window.innerWidth > 650 ) {
-        document.body.style.marginLeft = "85px";
+    if( window.innerWidth > 992 ) {
+        //document.body.style.marginLeft = "85px";
     }
     else {
         document.body.style.marginLeft = "0px";
