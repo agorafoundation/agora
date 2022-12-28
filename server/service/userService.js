@@ -771,8 +771,8 @@ exports.getRecentnewUserEvents = async function( limit ) {
  */
 exports.getRecentSupportingMembers = async function( limit ) {
     limit = ( !limit ) ? 10 : limit;
-    let text = "select ur.user_role_id as user_role_id, r.id as role_id, ud.id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.user_id as id "
-     + "from user_role ur inner join users as ud on ur.user_id = ud.user_id inner join roles as r on ur.role_id = r.role_id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
+    let text = "select ur.user_role_id as user_role_id, r.role_id as role_id, ud.user_id as users_id, r.role_name as role_name, ud.username as username, ud.profile_filename as profile_filename, ur.create_time as create_time, ud.user_id as id "
+     + "from user_roles ur inner join users as ud on ur.user_id = ud.user_id inner join roles as r on ur.role_id = r.role_id where ur.role_id in (3) and end_time > now() order by ur.create_time desc limit $1;";
     let values = [ limit ];
     
     try {

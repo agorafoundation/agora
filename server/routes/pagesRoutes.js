@@ -35,11 +35,4 @@ router.route( '/codebot' )
 
 
 
-// temp testing
-// router.route( '/note' )
-//     .get( ( req, res ) => {
-//         res.render( 'dashboard/partials/topic/edit-note.ejs' );
-//     }
-//     );
-
 module.exports = router;
