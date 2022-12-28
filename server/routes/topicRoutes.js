@@ -11,7 +11,7 @@ var router = express.Router( );
 
 router.route( '/' )
     .get( ( req, res ) => {
-        res.render( 'dashboard/partials/topic/topic-view.ejs' );
+        res.render( 'dashboard/partials/topic/topic-view' );
     }
     );  
 
