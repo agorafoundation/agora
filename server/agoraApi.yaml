@@ -2,10 +2,10 @@ openapi: 3.0.2
 info:
   title: Agora API
   version: 1.0.0
-  description: Agora's super cool API. You can find out more about Agora at [https://freeagora.com](https://freeagora.com)
-  termsOfService: https://freeagora.com/terms/
+  description: Agora's super cool API. You can find out more about Agora at [https://freeagora.org](https://freeagora.org)
+  termsOfService: https://freeagora.org/terms/
   contact:
-    email: api@freeagora.com
+    email: api@freeagora.org
   license:
     name: BSD 3-Clause License
     url: https://opensource.org/licenses/BSD-3-Clause
@@ -1445,7 +1445,7 @@ paths:
 
 servers:
   - url: http://localhost:4200/api/v1/auth
-  - url: http://freeagora.com/api/v1/auth
+  - url: http://freeagora.org/api/v1/auth
 components:
   securitySchemes:
     basicAuth: # <-- arbitrary name for the security scheme
