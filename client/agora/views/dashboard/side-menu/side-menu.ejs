@@ -1,46 +1,50 @@
 
 <nav>
-    <div class="burger-navbar">
-        <div class="container burger-nav-container">
-            <input class="checkbox a-light" type="checkbox" name="" id="" />
-            
-            <span class="button-right" class="navbar-toggler navbar-toggler-right font-weight-bold bg-secondary text-white rounded">
-                <div class="hamburger-lines" >
-                    <span class="line line1"></span>
-                    <span class="line line2"></span>
-                    <span class="line line3"></span>
+    <div class="side-menu-wrapper">
+        <div class="burger-navbar">
+            <div class="container burger-nav-container">
+                <input class="checkbox" type="checkbox" name="" id="" />
+                
+                <span class="button-right" class="navbar-toggler navbar-toggler-right font-weight-bold bg-secondary text-white rounded">
+                    <div class="hamburger-lines" >
+                        <span class="line line1"></span>
+                        <span class="line line2"></span>
+                        <span class="line line3"></span>
+                    </div>
+    
+                </span>
+    
+                <div class="menu-items">
+                    <a href="/">
+                        <img src="/assets/img/logos/agora.png" style="height:50px" />
+                    </a><br>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/note">Topic</a></li>
+                    <!-- <li><a href="/community">Community</a></li> -->
+    
                 </div>
-
-            </span>
-
-            <div class="menu-items">
-                <a href="/">
-                    <img src="/assets/img/logos/agora.png" style="height:50px" />
-                </a><br>
-                <li><a href="/">Home</a></li>
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/note">Topic</a></li>
-                <!-- <li><a href="/community">Community</a></li> -->
-
             </div>
         </div>
+        <div id="agoraSideBar" class="sidebar">
+            <a href="/">
+                <img src="/assets/img/logos/agora.png" style="height:50px" />
+                <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home</a></span>
+            </a><br>
+            <a href="/dashboard">
+                <i class="material-icons">remove_from_queue</i>
+                <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</span></a><br>
+            <!-- <a href="/community">
+                <i class="material-icons">groups</i>
+                <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Community</span></a><br> -->
+            <a href="/profile/manageProfile"
+                style="width:100%; position: absolute;bottom: 0;border-top:solid;border-radius:2px;">
+                <i class="material-icons">person</i>
+                <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Profile</span>
+            </a><br>
+        </div>
     </div>
+    
 </nav>
 
-<div id="agoraSideBar" class="sidebar">
-    <a href="/">
-        <img src="/assets/img/logos/agora.png" style="height:50px" />
-        <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home</a></span>
-    </a><br>
-    <a href="/dashboard">
-        <i class="material-icons">remove_from_queue</i>
-        <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</span></a><br>
-    <!-- <a href="/community">
-        <i class="material-icons">groups</i>
-        <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Community</span></a><br> -->
-    <a href="/profile/manageProfile"
-        style="width:100%; position: absolute;bottom: 0;border-top:solid;border-radius:2px;">
-        <i class="material-icons">person</i>
-        <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Profile</span>
-    </a><br>
-</div>
+
