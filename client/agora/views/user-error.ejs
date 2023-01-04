@@ -11,44 +11,48 @@
 
 
         <!-- About Section-->
-        <section class="page-section-top-padded mb-0" id="about">
-            <div class="container">
-                <!-- About Section Heading-->
-                <div class="divider-custom">
-                    <div class="divider-custom-line divider-bg-color"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-school divider-color"></i></div>
-                    <div class="divider-custom-line divider-bg-color"></div>
-                </div>
-                <% if(!!locals.error_message){ %>
-                    <div class="alert-message alert-message-danger" role="alert">
-                        <h3 ><%= error_message %></h3>
+        <content>
+            <section class="page-section main-content mt-3 masthead-jr" id="about">
+                <div class="container">
+                    <!-- About Section Heading-->
+                    <div class="divider-custom">
+                        <div class="divider-custom-line divider-bg-color"></div>
+                        <div class="divider-custom-icon"><i class="fas fa-school divider-color"></i></div>
+                        <div class="divider-custom-line divider-bg-color"></div>
                     </div>
-                    
-                <% } %>
-                <!-- About Section Content-->
-                <!--
-                <div class="row">
-                    <div class="col-lg-4 ml-auto"><p class="lead">About the site</p></div>
-                    <div class="col-lg-4 mr-auto"><p class="lead">About me</p></div>
-                </div>
-                -->
-                <!-- About Section Button-->
-                <div class="text-left mt-4">
-                    <div id="story1" class="row justify-content-left">
-                        <div class="col-lg-7">
-                            <h2>oops!! Something went wrong... :(</h2>
-                            <p>If you are looking to manage your account check here: <a href='/profile/manageProfile'>Manage Account</a></p>
-                            <p>If you are trying to create an account click here: <a href='/community'>Create Account</a></p>
+                    <% if(!!locals.error_message){ %>
+                        <div class="alert-message alert-message-danger" role="alert">
+                            <h3 ><%= error_message %></h3>
                         </div>
-                        <div class="col-lg-5">
-                            <!--<img src="/assets/img/henry-ix-trans-circle-800x800.png" class="img-fluid" /> -->
-                            <img src="/assets/img/robot-fun.png" class="img-fluid" />
-                            
+                        
+                    <% } %>
+                    <!-- About Section Content-->
+                    <!--
+                    <div class="row">
+                        <div class="col-lg-4 ml-auto"><p class="lead">About the site</p></div>
+                        <div class="col-lg-4 mr-auto"><p class="lead">About me</p></div>
+                    </div>
+                    -->
+                    <!-- About Section Button-->
+                    <div class="text-left mt-4">
+                        <div id="story1" class="row justify-content-left">
+                            <div class="col-lg-7">
+                                <h2>oops!! Something went wrong... :(</h2>
+                                <p>If you are looking to manage your account check here: <a href='/profile/manageProfile'>Manage Account</a></p>
+                                <p>If you are trying to create an account click here: <a href='/community'>Create Account</a></p>
+                            </div>
+                            <div class="col-lg-5">
+                                <!--<img src="/assets/img/henry-ix-trans-circle-800x800.png" class="img-fluid" /> -->
+                                <img src="/assets/img/robots-bg/android-chrome-512x512.png" class="img-fluid" />
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </content>
+
+        
 
         <!-- Footer-->
         <%- include('./partials/footer'); %>

@@ -310,6 +310,15 @@ a.text-secondary:hover, a.text-secondary:focus {
     padding-bottom: 6rem;
 }
 
+.masthead-jr {
+    padding-top: calc(4rem + 104px);
+    padding-bottom: 4rem;
+}
+
+.masthead-jr-top {
+    padding-top: calc(4rem + 104px);
+}
+
 .masthead .masthead-heading {
     z-index: 2;
     font-size: 2.75rem;
