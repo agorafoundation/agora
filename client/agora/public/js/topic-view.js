@@ -1240,16 +1240,16 @@ for ( let i = 0; i < perms.length; i++ ) {
 // }
 
 // // Checks if someone is clicking off modal and then closes it
-// $('body').click(function (ev) {
-//     if (document.getElementById('file-display').getAttribute('class') !== 'hidden') {
-//         if (ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring') {
-//         document.getElementById('file-display').setAttribute('class','hidden');
+// document.body.addEventListener( 'click', ( ev ) => {
+//     if ( document.getElementById( 'file-display' ).getAttribute( 'class' ) !== 'hidden' ) {
+//         if ( ev.target.id !== 'file-display-content' && ev.target.id !== 'show-files' && ev.target.id !== "file-display-name" && ev.target.id !== "file-display-icon" && ev.target.id !== "show-files" && ev.target.id !== 'new-file-icon' && ev.target.id !== 'new-file-coloring' ) {
+//             document.getElementById( 'file-display' ).setAttribute( 'class', 'hidden' );
 //         }
-
 //     }
-// if (ev.target.id !== 'ellipsis')
-//     document.getElementById('dropdown-content').setAttribute('style','');
-// });
+//     if ( ev.target.id !== 'ellipsis' ) {
+//         document.getElementById( 'dropdown-content' ).setAttribute( 'style', '' );
+//     }
+// } );
 
 // const onClickTesting = () => {
 //     console.log("clicked");
