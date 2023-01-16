@@ -233,6 +233,7 @@ const updateTopic = async( name ) => {
             "topicName": name ? name : "Untitled",
             "resources": resources ? resources : [],
             "resourcesRequired": isRequired,
+            "visibility": "private",
             "isRequired": true
         } )
     } );
@@ -260,8 +261,8 @@ const saveWorkspace = async( topics ) => {
             "workspaceName": name,
             "workspaceDescription": description,
             "topics": topicsList,
-            "active":true
-            
+            "active":true,
+            "visibility": "private"
         } )
     } );
 
@@ -538,7 +539,7 @@ let numResources = 1;
 function createResource( name, type, imagePath, id ) {
     console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
-        console.log( "testing 1" );
+        //console.log( "testing 1" );
         fetch( "api/v1/auth/resources", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -564,6 +565,7 @@ function createResource( name, type, imagePath, id ) {
 
                 // map the new resource to the associated topic
                 let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+                console.log( "topic title: " + topicTitle );
                 updateTopic( topicTitle );
             } );
     }
@@ -1152,18 +1154,9 @@ if ( fileUploadBtn ) {
         multiple: false
     };
 
-    fileUploadBtn.addEventListener( "click", async() => {
-        let promise =  new Promise( ( resolve ) => {
-            let file = window.showOpenFilePicker( pickerOpts );
-            resolve( file );
-        } );
+    fileUploadBtn.addEventListener( "mousedown", async() => {
+        //let file = await window.showOpenFilePicker( pickerOpts );
 
-        promise.then(
-            ( value ) => {
-                //console.log( value[0] );
-                //console.log( value[0].name );
-            }
-        );
     } );
 }
 if ( openTopicBtn ) {
@@ -1379,7 +1372,10 @@ async function renderTopic( topic ) {
 
 
             }
-            else if ( resources[i].resourceType == 2 || resources[i].resourceType == 3 ) {
+            else if( resources[i].resourceType == 3 ) {
+                
+            }
+            else if ( resources[i].resourceType == 2 ) {
                 console.log( "other resource type??? " + resources[i].resourceName );
             }
             
@@ -1629,8 +1625,8 @@ const saveTitleOrDescription = ( ) => {
             "workspaceName":  input ? input : "Untitled",
             "workspaceDescription": document.getElementById( "workspace-desc" ).value,
             "topics": topics,
-            "active": true
-            
+            "active": true,
+            "visibility": "private"
         } )
     } );
 }; 

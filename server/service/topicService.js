@@ -577,6 +577,7 @@ exports.saveTopic = async function( topic ) {
  * @returns true for success / false for failure
  */                                               
 exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesRequired ) {
+    console.log( "saveResourcesForTopic: " + topicId + " " + resourceIds + " " + resourcesRequired );
     // get the most recent version of the topic
     let text = "SELECT * from topics where topic_id = $1";
     let values = [ topicId ];
@@ -1068,7 +1069,7 @@ exports.updateTopicImage = async ( topicId, filename ) => {
     if( topic ) {
         try {
             // retrieve the current filename so that we can delete it after.
-            let text = "SELECT topic_images FROM topics WHERE topic_image_id = $1";
+            let text = "SELECT topic_image FROM topics WHERE topic_id = $1";
             let values = [ topicId ];
 
             // perform the query
