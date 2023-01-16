@@ -233,7 +233,7 @@ const updateTopic = async( name ) => {
             "topicName": name ? name : "Untitled",
             "resources": resources ? resources : [],
             "resourcesRequired": isRequired,
-            "visibility": "public",
+            "visibility": "private",
             "isRequired": true
         } )
     } );
@@ -261,8 +261,8 @@ const saveWorkspace = async( topics ) => {
             "workspaceName": name,
             "workspaceDescription": description,
             "topics": topicsList,
-            "active":true
-            
+            "active":true,
+            "visibility": "private"
         } )
     } );
 
@@ -1625,8 +1625,8 @@ const saveTitleOrDescription = ( ) => {
             "workspaceName":  input ? input : "Untitled",
             "workspaceDescription": document.getElementById( "workspace-desc" ).value,
             "topics": topics,
-            "active": true
-            
+            "active": true,
+            "visibility": "private"
         } )
     } );
 }; 
