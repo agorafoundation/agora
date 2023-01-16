@@ -1373,7 +1373,7 @@ async function renderTopic( topic ) {
 
             }
             else if( resources[i].resourceType == 3 ) {
-                
+                // todo: add code to deal with resource type 3
             }
             else if ( resources[i].resourceType == 2 ) {
                 console.log( "other resource type??? " + resources[i].resourceName );
