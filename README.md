@@ -1,4 +1,4 @@
-![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/agora-title.png?raw=true)
+![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/Agora-Logo-1-wText-1080.png?raw=true)
 ## To create the single best place to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy.
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus

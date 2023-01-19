@@ -633,6 +633,14 @@ a:hover {
     margin-left: 50px;
 }
 
+.side-menu-home {
+    padding-left:3.5em;
+}
+
+.side-menu-icon {
+    padding-left:2em;
+}
+
 .material-icons,
 .icon-text {
     vertical-align: middle;
