@@ -588,6 +588,7 @@ function createResource( name, type, imagePath, id ) {
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
+    console.log( "returning topic id: " + topicID );
     return topicID;
 }
 
@@ -1361,6 +1362,7 @@ const renderTopics = async ( workspace ) => {
 
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
+let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
@@ -1368,11 +1370,18 @@ async function renderTopic( topic ) {
     if ( resources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
+            console.log( "resource: " + i + " of " + resources.length );
+            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    sunEditor["sunEditor"+( resources[i].resourceId )][1].insertHTML( resources[i].resourceContentHtml );
+                    totalTopicsRendered++; 
+                    let editor = "sunEditor" + ( totalTopicsRendered );
+                    console.log( editor );
+                    console.log( sunEditor[editor] );
+                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+
                     //docType1Count++;
                     //val++;
                 }
@@ -1396,6 +1405,7 @@ async function renderResources( topicId ) {
     console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
+    console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
 }
 
