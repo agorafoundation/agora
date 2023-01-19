@@ -800,7 +800,12 @@ a:hover {
     color: #f1f1f1;
 }
 
-
+.menuLogo {
+    position:absolute;
+    height: 50px;
+    left: 20px;
+    margin-right: 20px;
+}
 .logo {
     position: absolute;
     top: 5px;
