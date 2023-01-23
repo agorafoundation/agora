@@ -583,6 +583,9 @@ const toggleAllView = () => {
     }
 };
 
+// default to workspace, option to change removed - URBG 20230123 - see https://github.com/briangormanly/agora/issues/357
+toggleWorkspaceView();
+
 //////More Options Helpers//////
 
 //makes sure event pointer detects the proper element
