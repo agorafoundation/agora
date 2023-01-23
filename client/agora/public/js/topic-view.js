@@ -31,12 +31,39 @@ function checkActiveHeight() {
 
 
 
-
 /* Topic Functions -------------------------------------------------------------------------- */
 let numTopics = 1;
 let topics = {};
 
-// Creates a new topic
+// // Creates a new topic
+// const createTopic = async( id, name ) => {
+//     tabcontent = document.getElementsByClassName( "tabcontent" );
+//     for ( i = 0; i < tabcontent.length; i++ ) {
+//         tabcontent[i].style.display = "none";
+//     }
+
+//     // Get all elements with class="tablinks" and remove the class "active"
+//     tablinks = document.getElementsByClassName( "tablinks" );
+//     for ( i = 0; i < tablinks.length; i++ ) {
+//         tablinks[i].className = tablinks[i].className.replace( " active", "" );
+//         tablinks[i].style.backgroundColor = "#f1f1f1";
+//     }
+
+//     activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
+
+//     // Show the current tab
+//     document.getElementById( name ).style.display = "block";
+
+//     // Set tab button to active
+//     for ( i=0; i<tablinks.length; i++ ) {
+//         if ( tablinks[i].id.slice( -1 ) == name.slice( -1 ) ) {
+//             tablinks[i].className += " active";
+//             tablinks[i].style.backgroundColor = "#ddd";
+//         }
+//     }
+// }
+
+let currTopicID = 1;
 const createTopic = async( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
@@ -824,6 +851,7 @@ document.addEventListener( "mousemove", function() {
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
 // Workspace empty state drop zone
+filenum = 0;
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
     if( dropZoneElement ){
@@ -883,16 +911,31 @@ function createDropZoneEventListeners( dropZone, input ) {
  */
 function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
+    filenum ++;
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
     } 
     // Div that holds the thumbnail
     let mydiv = document.createElement( 'div' );
     mydiv.className = "drop-zone-show";
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        const pdf = document.createElement( "iframe" );
+        pdf.id = "viewer";
+        pdf.setAttribute( "style", "width: 100%; border: none; height:900px;" );
+        mydiv.appendChild( pdf );
+        mydiv.style.border = 'none';
+        console.log( "pdf detected" );
+    }
+    else{
+
+    }
 
     // Thumbnail element
     let thumbnailElement = dropZoneElement.querySelector( ".drop-zone__thumb" );
     thumbnailElement = document.createElement( "div" );
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        thumbnailElement.setAttribute( "style", "height:20%;" );
+    }
     thumbnailElement.classList.add( "drop-zone__thumb" );
 
     // File input element
@@ -909,8 +952,10 @@ function updateThumbnail( dropZoneElement, file ) {
     // Preview Icon
     let previewIcon = document.createElement( 'span' );
     previewIcon.setAttribute( "class", "material-symbols-outlined" );
-    previewIcon.setAttribute( "id", "preview-icon" + numResources );
+    previewIcon.setAttribute( "id", "preview-icon"+filenum + numResources );
+    previewIcon.setAttribute( "onclick", "previewFile()" ); // URBG line brought in from richie-preview / pdf was not in
     previewIcon.innerHTML = "preview";
+
 
     // New drop zone
     let newDropZone = document.createElement( "div" );
@@ -1560,7 +1605,9 @@ const getDiscussions = async ( isTopic, id ) => {
             loadComment( comment );
         } );
     }
-    
+  
+
+
 };
 
 
@@ -1654,4 +1701,31 @@ if( document.getElementById( "workspace-title" ) ) {
 }
 if( document.getElementById( "workspace-desc" ) ) {
     document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
+}
+
+function previewFile(){
+    file = inputElement.files[0];
+    console.log( file.type );
+    if ( file.type.startsWith( "application/pdf" ) ) {
+        pdffile_url=URL.createObjectURL( file );
+        $( '#viewer' ).attr( 'src', pdffile_url );
+    }
+    
+    //This is the application type for docx for some reason
+    else if( file.type.startsWith( "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ) ) {
+        console.log( "Docx preview" );
+
+        
+
+        //sun editor container div
+        let seDiv = ( document.getElementsByClassName( "se-wrapper-inner" )[1] );
+
+        //Set the Document options.
+        var docxOptions = Object.assign( docx.defaultOptions, {
+            useMathMLPolyfill: true
+        } );
+
+        //Render the Word Document.
+        docx.renderAsync( file, seDiv, null, docxOptions );
+    }
 }
