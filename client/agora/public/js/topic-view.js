@@ -851,7 +851,7 @@ document.addEventListener( "mousemove", function() {
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
  */
 // Workspace empty state drop zone
-filenum = 0;
+let filenum = 0;
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
     if( dropZoneElement ){
@@ -911,7 +911,7 @@ function createDropZoneEventListeners( dropZone, input ) {
  */
 function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
-    filenum ++;
+    filenum++;
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
     } 
@@ -927,7 +927,8 @@ function updateThumbnail( dropZoneElement, file ) {
         console.log( "pdf detected" );
     }
     else{
-
+        // Thumbnail element other then pdf
+        console.log( "not pdf" );
     }
 
     // Thumbnail element
