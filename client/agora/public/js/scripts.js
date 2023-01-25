@@ -36,3 +36,15 @@ if( document.getElementById( "agoraSideBar" ) ) {
     document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
 }
 
+//Modal Popup Controller
+function toggleModal( id ){
+    var e = document.getElementById( id );
+
+    if( e.style.display == 'block' ) {
+        e.style.display = 'none';
+    }
+    else {
+        e.style.display = 'block'; 
+    }
+}
+

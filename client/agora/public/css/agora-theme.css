@@ -269,7 +269,30 @@ a.text-secondary:hover, a.text-secondary:focus {
 }
 
 
+/* modal for terms and privacy */
+/* .popup-position {
+    display:none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.7);
+    width: 100%;
+    height: 100%;
 
+}
+#termsBox-wrapper {
+    text-align: left;
+} */
+
+/* #termsBox-container {
+
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    margin: 70px auto;
+} */
+/* end modal for terms and privacy */
 
 /* website topmenu responsive */
 .ml-auto,
