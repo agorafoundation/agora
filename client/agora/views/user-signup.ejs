@@ -11,6 +11,10 @@
         <%- include('./partials/topmenu'); %>
     </nav>
 
+    <!-- include the modals for the privacy policy and terms of service -->
+    <%- include('./website/privacy'); %>
+    <%- include('./website/terms'); %>
+
 
     <!-- Page Content -->
     <content>
@@ -94,6 +98,19 @@
                                         <h5>Letting us know which topics your are most intested in helps us find related research and
                                             collaborators that might be of interest to you (optional)</h5>
                                         <p>TODO:Tags Tag selection will go here</p> 
+                                        <p>Please read our 
+                                        
+                                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#termsModal">
+                                            Terms of Service
+                                        </button>
+                                        
+                                        and 
+                                        
+                                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                                            Privacy Policy
+                                        </button>
+                                        </p>
+                                        <h4>You are agreeing to them by joining!</h4>
                                         <button type="submit" id="userButton" class="btn btn-primary btn-lg btn-block" disabled>Join the Agora Community!</button>
                                         <br />
     
