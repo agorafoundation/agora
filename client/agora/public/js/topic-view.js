@@ -726,7 +726,7 @@ const createSunEditor = async() => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "800px",
+        minHeight: "200px",
         defaultStyle: "font-size:15px;",
         buttonList: [
             [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
@@ -740,6 +740,7 @@ const createSunEditor = async() => {
                 "superscript",
                 "removeFormat",
             ],
+            [ 'link', 'image', 'video' ],
             [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
             [
                 "showBlocks",
