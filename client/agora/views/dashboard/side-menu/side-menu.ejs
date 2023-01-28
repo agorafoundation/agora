@@ -37,11 +37,15 @@
             <!-- <a href="/community">
                 <i class="material-icons">groups</i>
                 <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Community</span></a><br> -->
+            
+
+            <% if(locals.authUser) { %>
             <a href="/profile/manageProfile"
-                style="width:100%; position: absolute;bottom: 0;border-top:solid;border-radius:2px;">
-                <i class="material-icons">person</i>
-                <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Profile</span>
+                style="width:100%; position: absolute;bottom: 0; left: -15px;border-top:solid;border-radius:2px;">
+                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                <span class="icon-text">&nbsp;&nbsp;&nbsp;User Profile</span>
             </a><br>
+            <% } %>
         </div>
     </div>
     
