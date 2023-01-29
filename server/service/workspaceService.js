@@ -496,7 +496,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
         }
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - save path to most recent version - " + e );
         return false;
     }
 
@@ -526,7 +526,7 @@ exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, work
         }
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - save workspace enrollment most recent version - " + e );
         return false;
     }
 };
@@ -534,11 +534,10 @@ exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, work
 /**
  * Add a user enrollment to the specified version of a workspace 
  * @param {Integer} userId id of user to enroll
- * @param {Integer} workspaceId id of workspace (Workspace identifier is id + version)
- * @param {Integer} workspaceVersion version of workspace
+ * @param {Integer} workspaceRid rid of workspace (Workspace unique identifier)
  * @returns true for successful operation or false if enrollment fails
  */
-exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion ) => {
+exports.saveWorkspaceEnrollment = async ( userId, workspaceRid ) => {
     // check this userId and workspaceRid combination does not already exist
     let text = "SELECT * FROM user_workspaces WHERE active = $1 AND user_id = $2 AND workspace_rid = $3";
     let values = [ true, userId, workspaceRid ];
@@ -562,7 +561,7 @@ exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion
         return true;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - save workspace enrollment - " + e );
         return false;
     }
 };
@@ -570,8 +569,7 @@ exports.saveWorkspaceEnrollment = async ( userId, workspaceRid, workspaceVersion
 /**
  * Update the user workspace enrollment and mark completed.
  * @param {Integer} userId 
- * @param {Integer} workspaceId 
- * @param {Integer} workspaceVersion 
+ * @param {Integer} workspaceRid 
  * @returns true if successful
  */
 exports.completeWorkspaceEnrollment = async ( userId, workspaceRid ) => {
@@ -591,8 +589,7 @@ exports.completeWorkspaceEnrollment = async ( userId, workspaceRid ) => {
 /**
  * Gets a workspace by workspace id and version if the user id passed is currently enrolled in the workspace.
  * @param {Integer} userId 
- * @param {Integer} workspaceId 
- * @param {Integer} workspaceVersion 
+ * @param {Integer} workspaceRid 
  * @returns workspace if the user is actively enrolled
  */
 exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid ) => {
@@ -624,7 +621,8 @@ exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid
         return workspace ;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - get enrolled workspace by user and workspace rid - " + e );
+        return false;
     }
 };
 
@@ -731,7 +729,8 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
         return enrollments;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - get active enrollment for user Id - " + e );
+        return false;
     }
 };
 
@@ -767,7 +766,7 @@ exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
         return enrollmentEvents;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - get recent workspace enrollment events - " + e );
         return false;
     }  
 };
@@ -786,7 +785,7 @@ exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
         }
     }
     catch ( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - delete workspace by id - " + e );
         return false;
     }
 };
@@ -822,15 +821,15 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
         return enrollmentEvents;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - get recent workspace completion events - " + e );
         return false;
     }  
 };
 // Takes in a workspaceId and finds each topicId associated with it.
-exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
+exports.getAllTopicsIdsForWorkspace = async function ( workspaceRid ) {
 
     let text = "SELECT * from workspace_paths where workspace_rid = $1";
-    let values = [ workspaceId ];
+    let values = [ workspaceRid ];
     let topicIds = [];
 
     try {
@@ -846,7 +845,7 @@ exports.getAllTopicsIdsForWorkspace = async function ( workspaceId ) {
 
     }
     catch ( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: [workspace] - get all topic ids for workspace - " + e );
         return false;
     }
 
