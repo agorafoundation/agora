@@ -239,10 +239,12 @@ exports.saveResource = async ( req, res, redirect ) => {
 
     if( authUserId > 0 ) {
 
-        resource.resourceId = req.body.resourceId;
+        if( req.body.resourceId != null && req.body.resourceId != -1 ) {
+            resource.resourceId = req.body.resourceId;
+        }
 
         // see if this is a modification of an existing resource
-        let existingResource = await resourceService.getResourceById( resource.resourceId, false );
+        let existingResource = await resourceService.getResourceById( resource.resourceId.toString(), false );
 
         // if this is an update, replace the resource with the existing one as the starting point.
         if( existingResource ) {

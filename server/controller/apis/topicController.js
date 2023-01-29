@@ -275,10 +275,12 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
     if( authUserId > 0 ) {
 
-        topic.topicId = req.body.topicId;
+        if( req.body.topicId != null && req.body.topicId != -1 ) {
+            topic.topicId = req.body.topicId;
+        }
 
         // see if this is a modification of an existing topic
-        let existingTopic = await topicService.getTopicById( topic.topicId, authUserId );
+        let existingTopic = await topicService.getTopicById( topic.topicId.toString(), authUserId );
 
         // if this is an update, replace the topic with the existing one as the starting point.
         if( existingTopic ) {

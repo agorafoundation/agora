@@ -297,7 +297,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspaces (wor
 CREATE INDEX IF NOT EXISTS idx_workspace_visibility ON workspaces (visibility);
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
-    topic_id SERIAL PRIMARY KEY,
+    topic_id UUID PRIMARY KEY,
     topic_name VARCHAR,
     topic_description VARCHAR,
     topic_image VARCHAR,
@@ -321,7 +321,7 @@ CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 CREATE TABLE IF NOT EXISTS workspace_paths (
     workspace_path_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
-    topic_id INTEGER,
+    topic_id UUID,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
@@ -360,7 +360,7 @@ CREATE INDEX IF NOT EXISTS idx_user_workspaces_user_id ON user_workspaces (user_
 -- changed 
 CREATE TABLE IF NOT EXISTS user_topics (
     user_topic_id SERIAL PRIMARY KEY,
-    topic_id INTEGER,
+    topic_id uuid,
     user_id INTEGER,
     is_intro_complete BOOLEAN,
     pre_completed_assessment_id INTEGER,
@@ -380,7 +380,7 @@ CREATE INDEX IF NOT EXISTS idx_user_topics_user_id ON user_topics (user_id);
 
 
 CREATE TABLE IF NOT EXISTS resources (
-    resource_id SERIAL PRIMARY KEY,
+    resource_id uuid PRIMARY KEY,
     resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
     resource_description VARCHAR,
@@ -429,8 +429,8 @@ CREATE TABLE IF NOT EXISTS tag_associations (
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resources (
     topic_resource_id SERIAL PRIMARY KEY,
-    topic_id INTEGER,
-    resource_id INTEGER,
+    topic_id uuid,
+    resource_id uuid,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
@@ -449,7 +449,7 @@ CREATE INDEX IF NOT EXISTS idx_topic_resources_owned_by ON topic_resources (owne
 -- when combined with user_topic (pre_completed_assessment_id, post_completed_assessment_id and completed_activity_id) denotes completed topic
 CREATE TABLE IF NOT EXISTS completed_resources (
     completed_resource_id SERIAL PRIMARY KEY,
-    resource_id INTEGER,
+    resource_id uuid,
     user_id INTEGER,
     submission_text VARCHAR, -- is the user going to actually submit something here ever?
     active BOOLEAN,

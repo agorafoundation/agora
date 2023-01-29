@@ -5,8 +5,11 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// import uuid generator
+const { v4: uuidv4 } = require( "uuid" );
+
 function resource() {
-    this.resourceId = -1;
+    this.resourceId = uuidv4();
     this.resourceType = 1;
     this.resourceName = "";
     this.resourceDescription = "";

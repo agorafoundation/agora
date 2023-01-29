@@ -222,7 +222,6 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
  * @returns workspace
  */
 exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
-    console.log( "the value to work with : " + workspaceId );
     let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 group by workspace_id) goalmax "
         + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
     let values = [ workspaceId ];

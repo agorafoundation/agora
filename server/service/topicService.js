@@ -376,123 +376,123 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
  *                               along with all supporting data (calls getTopicWithEverythingById())
  * @returns TopicEnrollment with supporting data
  */
-exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function( userId, topicId, getFullTopic ) {
-    let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2 AND topic_id = $3";
-    let values = [ true, userId, topicId ];
-    let topicEnrollment = null;
-    try {
+// exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function( userId, topicId, getFullTopic ) {
+//     let text = "SELECT * FROM user_topics WHERE active = $1 AND user_id = $2 AND topic_id = $3";
+//     let values = [ true, userId, topicId ];
+//     let topicEnrollment = null;
+//     try {
          
-        let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
-            topicEnrollment = TopicEnrollment.ormTopicEnrollment( res.rows[0] );
+//         let res = await db.query( text, values );
+//         if( res.rowCount > 0 ) {
+//             topicEnrollment = TopicEnrollment.ormTopicEnrollment( res.rows[0] );
 
-            // get the full topic?
-            if( getFullTopic ) {
-                topicEnrollment.topic = await exports.getTopicWithEverythingById( topicEnrollment.topicId, true );
-            }
+//             // get the full topic?
+//             if( getFullTopic ) {
+//                 topicEnrollment.topic = await exports.getTopicWithEverythingById( topicEnrollment.topicId, true );
+//             }
             
-            // get the completed pre assessment
-            if( topicEnrollment.preCompletedAssessmentId > 0 ) {
-                text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
-                values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
-                let res2 = await db.query( text, values );
+//             // get the completed pre assessment
+//             if( topicEnrollment.preCompletedAssessmentId > 0 ) {
+//                 text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
+//                 values = [ topicEnrollment.preCompletedAssessmentId, 1, true ];
+//                 let res2 = await db.query( text, values );
 
-                if( res2.rowCount > 0 ) {
-                    topicEnrollment.preAssessment = await CompletedAssessment.ormCompletedAssessment( res2.rows[0] );
+//                 if( res2.rowCount > 0 ) {
+//                     topicEnrollment.preAssessment = await CompletedAssessment.ormCompletedAssessment( res2.rows[0] );
 
-                    // populate the assessment for this completedAssessment
-                    console.log( "checking assessment Id for pre assessment: " + topicEnrollment.preAssessment.assessmentId );
-                    if( topicEnrollment.preAssessment.assessmentId ) {
-                        topicEnrollment.preAssessment.assessment = await assessmentService.getAssessmentById( topicEnrollment.preAssessment.assessmentId, false );
-                    }
-                    // get the completed questions to attach to the completed assessment
-                    text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.preassessment.assessmentId, true ];
-                    let res3 = await db.query( text, values );
-                    // attach the completed questions
-                    for( let i=0; i < res3.rowCount; i++ ) {
-                        let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion( res3.rows[i] );
+//                     // populate the assessment for this completedAssessment
+//                     console.log( "checking assessment Id for pre assessment: " + topicEnrollment.preAssessment.assessmentId );
+//                     if( topicEnrollment.preAssessment.assessmentId ) {
+//                         topicEnrollment.preAssessment.assessment = await assessmentService.getAssessmentById( topicEnrollment.preAssessment.assessmentId, false );
+//                     }
+//                     // get the completed questions to attach to the completed assessment
+//                     text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
+//                     values = [ topicEnrollment.preassessment.assessmentId, true ];
+//                     let res3 = await db.query( text, values );
+//                     // attach the completed questions
+//                     for( let i=0; i < res3.rowCount; i++ ) {
+//                         let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion( res3.rows[i] );
 
-                        topicEnrollment.preAssessment.completedQuestions.push( question );
-                    }
-                }
-            }
+//                         topicEnrollment.preAssessment.completedQuestions.push( question );
+//                     }
+//                 }
+//             }
             
-            // get the post assessment
-            if( topicEnrollment.postCompletedAssessmentId > 0 ) {
-                text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
-                values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
-                let res3 = await db.query( text, values );
-                if( res3.rowCount > 0 ) {
-                    topicEnrollment.postAssessment = await CompletedAssessment.ormCompletedAssessment( res3.rows[0] );
+//             // get the post assessment
+//             if( topicEnrollment.postCompletedAssessmentId > 0 ) {
+//                 text = "SELECT * from completed_assessments where completed_assessment_id = $1 AND topic_assessment_number = $2 AND active = $3";
+//                 values = [ topicEnrollment.postCompletedAssessmentId, 2, true ];
+//                 let res3 = await db.query( text, values );
+//                 if( res3.rowCount > 0 ) {
+//                     topicEnrollment.postAssessment = await CompletedAssessment.ormCompletedAssessment( res3.rows[0] );
 
-                    // populate the assessment for this completedAssessment
-                    console.log( "checking assessment Id for post assessment: " + topicEnrollment.postAssessment.assessmentId );
+//                     // populate the assessment for this completedAssessment
+//                     console.log( "checking assessment Id for post assessment: " + topicEnrollment.postAssessment.assessmentId );
 
-                    // populate the assessment for this completedAssessment
-                    if( topicEnrollment.postAssessment.assessmentId ) {
-                        topicEnrollment.postAssessment.assessment = await assessmentService.getAssessmentById( topicEnrollment.postAssessment.assessmentId, false );
-                        console.log( "returned assessment: " + topicEnrollment.postAssessment.assessment );
-                    }
+//                     // populate the assessment for this completedAssessment
+//                     if( topicEnrollment.postAssessment.assessmentId ) {
+//                         topicEnrollment.postAssessment.assessment = await assessmentService.getAssessmentById( topicEnrollment.postAssessment.assessmentId, false );
+//                         console.log( "returned assessment: " + topicEnrollment.postAssessment.assessment );
+//                     }
 
-                    // get the completed questions to attach to the completed assessment
-                    text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
-                    values = [ topicEnrollment.postassessment.assessmentId, true ];
-                    let res4 = await db.query( text, values );
-                    // attach the completed questions
-                    for( let i=0; i < res4.rowCount; i++ ) {
-                        let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion( res4.rows[i] );
+//                     // get the completed questions to attach to the completed assessment
+//                     text = "SELECT * from completed_assessment_questions where completed_assessment_id = $1 and active = $2";
+//                     values = [ topicEnrollment.postassessment.assessmentId, true ];
+//                     let res4 = await db.query( text, values );
+//                     // attach the completed questions
+//                     for( let i=0; i < res4.rowCount; i++ ) {
+//                         let question = CompletedAssessmentQuestion.ormCompletedAssessmentQuestion( res4.rows[i] );
 
-                        topicEnrollment.postAssessment.completedQuestions.push( question );
-                    }
-                }
-            }
+//                         topicEnrollment.postAssessment.completedQuestions.push( question );
+//                     }
+//                 }
+//             }
 
-            // get the completed activity
-            if( topicEnrollment.completedActivityId > 0 ) {
-                text = "SELECT * from completed_activities where completed_activity_id = $1 and active = $2";
-                values = [ topicEnrollment.completedActivityId, true ];
-                let res5 = await db.query( text, values );
-                if( res5.rowCount > 0 ) {
-                    // model it
-                    topicEnrollment.completedActivity = CompletedActivity.ormCompletedActivity( res5.rows[0] );
-                }
-            }
+//             // get the completed activity
+//             if( topicEnrollment.completedActivityId > 0 ) {
+//                 text = "SELECT * from completed_activities where completed_activity_id = $1 and active = $2";
+//                 values = [ topicEnrollment.completedActivityId, true ];
+//                 let res5 = await db.query( text, values );
+//                 if( res5.rowCount > 0 ) {
+//                     // model it
+//                     topicEnrollment.completedActivity = CompletedActivity.ormCompletedActivity( res5.rows[0] );
+//                 }
+//             }
 
-            // get the completed resources
-            text = "SELECT * FROM topic_resources WHERE topic_id = $1 and active = $2";
-            values = [ topicEnrollment.topicId, true ];
-            let res6 = await db.query( text, values );
-            //let resources = [];
-            for( let i=0; i < res6.rowCount; i++ ) {
+//             // get the completed resources
+//             text = "SELECT * FROM topic_resources WHERE topic_id = $1 and active = $2";
+//             values = [ topicEnrollment.topicId, true ];
+//             let res6 = await db.query( text, values );
+//             //let resources = [];
+//             for( let i=0; i < res6.rowCount; i++ ) {
 
-                text = "SELECT * from completed_resources where resource_id = $1 AND user_id = $2 and active = $3";
-                values = [ res6.rows[i].resource_id, topicEnrollment.userId, true ];
-                let res7 = await db.query( text, values );
+//                 text = "SELECT * from completed_resources where resource_id = $1 AND user_id = $2 and active = $3";
+//                 values = [ res6.rows[i].resource_id, topicEnrollment.userId, true ];
+//                 let res7 = await db.query( text, values );
 
-                //let completedResources = [];
-                for( let i=0; i < res7.rowCount; i++ ) {
-                    topicEnrollment.completedResources.push( CompletedResource.ormCompletedResource( res7.rows[i] ) );
-                }
-            }
-        }
-        else {
-            // no record
+//                 //let completedResources = [];
+//                 for( let i=0; i < res7.rowCount; i++ ) {
+//                     topicEnrollment.completedResources.push( CompletedResource.ormCompletedResource( res7.rows[i] ) );
+//                 }
+//             }
+//         }
+//         else {
+//             // no record
             
-            return false;
-        }
+//             return false;
+//         }
         
-        // console.log("------------------------");
-        // console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
-        // console.log("------------------------");
-        return topicEnrollment;
-    }
-    catch( e ) {
+//         // console.log("------------------------");
+//         // console.log("Full TopicEnrollment: " + JSON.stringify(topicEnrollment));
+//         // console.log("------------------------");
+//         return topicEnrollment;
+//     }
+//     catch( e ) {
         
-        console.log( "[ERR]: Error [Topic] - getActiveTopicEnrollmentsByUserAndTopicIdWithEverything - " + e );
-        return false;
-    }
-};
+//         console.log( "[ERR]: Error [Topic] - getActiveTopicEnrollmentsByUserAndTopicIdWithEverything - " + e );
+//         return false;
+//     }
+// };
 
 // Takes in a topicId and finds each resourceId associated with it.
 exports.getAllResourceIdsFromTopic = async function ( topicId ) {
@@ -530,41 +530,58 @@ exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 exports.saveTopic = async function( topic ) {
     // check to see if an id exists - insert / update check
     if( topic ) {
-        if( topic.topicId > 0 ) {
-            
-            // update
-            let text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE topic_id = $10;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
-    
-            try {
-                let res = await db.query( text, values );
-            }
-            catch( e ) {
-                console.log( "[ERR]: Error updating topic - " + e );
-                return false;
-            }
-            
-        }
-        else {
-            // insert
-            let text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) RETURNING topic_id;";
-            let values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility, topic.topicType, topic.hasAssessment ];
 
-            try {
+        console.log( "topic incoming id; " + topic.topicId );
 
-                let res = await db.query( text, values );
-                if( res.rowCount > 0 ) {
-                    
-                    topic.topicId = res.rows[0].topic_id;
+        // query to see if the topicId exists
+        let text = "SELECT * FROM topics WHERE topic_id = $1";
+        let values = [ topic.topicId ];
+
+        try {
+            let res = await db.query( text, values );
+
+            if( res.rowCount > 0 ) {
+                console.log( "update" );
+                // update
+                text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE topic_id = $10;";
+                values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
+        
+                try {
+                    res = await db.query( text, values );
                 }
-                
+                catch( e ) {
+                    console.log( "[ERR]: Error updating topic - " + e );
+                    return false;
+                }
+            }     
+            else {
+                console.log( "insert " + topic.topicId );
+                // insert
+                text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment, topic_id ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 ) RETURNING topic_id;";
+                values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility, topic.topicType, topic.hasAssessment, topic.topicId ];
+    
+                try {
+    
+                    res = await db.query( text, values );
+                    if( res.rowCount > 0 ) {   
+                        topic.topicId = res.rows[0].topic_id;
+                    }
+                    
+                }
+                catch( e ) {
+                    console.log( "[ERR]: Error inserting topic - " + e );
+                    return false;
+                }
             }
-            catch( e ) {
-                console.log( "[ERR]: Error inserting topic - " + e );
-                return false;
-            }
+            return topic;
+            
+
         }
-        return topic;
+        catch( e ) {
+            console.log( "[ERR]: saveTopic - checking to see if topicId exists - " + e );
+            return false;
+        }
+        
     }
     else {
         return false;

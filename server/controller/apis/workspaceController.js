@@ -219,7 +219,6 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
 exports.saveWorkspace = async ( req, res, redirect ) => {
 
     let workspace = Workspace.emptyWorkspace();
-    console.log( "generated uuid: " + workspace.workspaceId );
     
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -262,7 +261,6 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
-        console.log( req.body.visibility + " vis:" );
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }
