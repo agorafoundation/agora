@@ -284,14 +284,12 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // if this is an update, replace the topic with the existing one as the starting point.
         if( existingTopic ) {
-            console.log( "existing topic" );
             topic = existingTopic;
         }
         else {
             topic.creationTime = Date.now();
         }
 
-        console.log( "topic: " + JSON.stringify( req.body ) );
 
         // add changes from the body if they are passed
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation

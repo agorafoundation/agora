@@ -55,10 +55,8 @@ exports.getWorkspaceById = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
     if( authUserId > 0 ) {
-        console.log( "getWorkspaceById-1" );
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
-        console.log( "getWorkspaceById-2" );
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
@@ -85,23 +83,17 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
     }
 
     if( authUserId > 0 ){
-        console.log( "getAllTopicsForWorkspaceId-1" );
         // Check if valid workspaceId given.
         let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
-        console.log( "getAllTopicsForWorkspaceId-2" );
         if( workspace ) {
 
             let topicsList = [];
-            console.log( "getAllTopicsForWorkspaceId-3" );
             // Get all topics Ids associated with our workspaceId.
             let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
-            console.log( "getAllTopicsForWorkspaceId-4" );
             
             // Grab each topic by id and append it to our list of topics
             for ( let index in topicsIds ) {
-                console.log( "getAllTopicsForWorkspaceId-5" );
                 let topics = await topicService.getTopicById( topicsIds[index], authUserId );
-                console.log( "getAllTopicsForWorkspaceId-6" );
 
                 if ( topics ){ // Ensure retrieval of topics
                     topicsList.push( topics );
@@ -275,7 +267,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace = await workspaceService.saveWorkspace( workspace );
 
         if ( req.body.topics ){
-            await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
+            await workspaceService.saveTopicsForWorkspace( workspace.workspaceRid, req.body.topics, req.body.topicsRequired );
         }
 
         /**

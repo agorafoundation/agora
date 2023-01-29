@@ -330,7 +330,6 @@ exports.saveResource = async ( resource ) => {
         
                     if( res2.rowCount > 0 ) {
                         resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
-                        console.log( " ----------------- Resource ID: " + resource.resourceId );
                     }
                     
                 }

@@ -382,14 +382,14 @@ exports.saveWorkspace = async ( workspace ) => {
  * Will save or update topics associated with a workspace.  
  * Topics are passed as an Array of integers.  This function will replace any existing topics for
  * the workspace with the topics represented by the topic id's passed.
- * @param {Integer} workspaceId id of the topic 
+ * @param {Integer} workspaceRid id of the topic 
  * @param {*} topicIds Array of topic id's to be associated with the woorkspace
  * @returns true for success / false for failure
  */                                               
-exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRequired ) {
+exports.saveTopicsForWorkspace = async function( workspaceRid, topicIds, topicsRequired ) {
     // get the most recent version of the workspace
-    let text = "SELECT * from workspaces where workspace_id = $1";
-    let values = [ workspaceId ];
+    let text = "SELECT * from workspaces where workspace_rid = $1";
+    let values = [ workspaceRid ];
     try {
          
         let res = await db.query( text, values );
@@ -418,7 +418,7 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
                         //}
 
                         text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
-                        values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
+                        values = [ workspaceRid, topicIds[i], ( i + 1 ), true, true ];
 
                         try{
                             let res3 = await db.query( text, values );
