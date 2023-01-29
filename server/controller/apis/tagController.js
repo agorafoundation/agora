@@ -212,7 +212,7 @@ exports.tagged = async ( req, res, redirect ) => {
     }
     
     // verify we have all required data (enitity type / id, user id)
-    if( req.body.entityType && req.body.entityId > 0 ) {
+    if( req.body.entityType && req.body.entityId ) {
         // create the tag association from the submitted data
         tagged.tag = tag;
         tagged.entityType = req.body.entityType;

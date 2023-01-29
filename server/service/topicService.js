@@ -26,7 +26,6 @@ const CompletedResource = require( '../model/completedResource' );
 // any cross services required
 const userService = require( '../service/userService' );
 const assessmentService = require( '../service/assessmentService' );
-const Workspace = require( "../model/workspace" );
 
 
 /**
@@ -159,7 +158,8 @@ exports.getAllActiveTopicsForOwner = async function( ownerId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get all active topics fro owner - " + e );
+        return false;
     }
 };
 
@@ -187,7 +187,8 @@ exports.getAllActiveTopics = async function() {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get all active topics - " + e );
+        return false;
     }
 };
 
@@ -213,7 +214,8 @@ exports.getTopicById = async function( topicId, ownerId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get all topic by id - " + e );
+        return false;
     }
 };
 
@@ -250,7 +252,8 @@ exports.getAllTopicsForOwner = async function( ownerId, isActive ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get all topics fro owner - " + e );
+        return false;
     }
 };
 
@@ -357,7 +360,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
         }
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get topic with everything by id - " + e );
         return false;
     }
 };
@@ -486,7 +489,7 @@ exports.getActiveTopicEnrollmentsByUserAndTopicIdWithEverything = async function
     }
     catch( e ) {
         
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - getActiveTopicEnrollmentsByUserAndTopicIdWithEverything - " + e );
         return false;
     }
 };
@@ -511,7 +514,7 @@ exports.getAllResourceIdsFromTopic = async function ( topicId ) {
 
     }
     catch ( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get all resources from topic - " + e );
         return false;
     }
 
@@ -613,7 +616,7 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
         }
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - save resources for topic - " + e );
         return false;
     }
 
@@ -863,8 +866,7 @@ exports.saveTopicEnrollmentWithEverything = async function( topicEnrollment ) {
 
     }
     catch( e ) {
-        console.log( e.stack );
-        
+        console.log( "[ERR]: Error [Topic] - save topic enrollment with everything - " + e );
         return false;
     }
 };
@@ -898,7 +900,7 @@ exports.saveTopicEnrollment = async function( topicEnrollment ) {
         return true;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - save topic enrollment - " + e );
         return false;
     }
 };
@@ -919,7 +921,7 @@ exports.getCompletedResourceByResourceAndUserId = async function( resourceId, us
         return false;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get completed resources by resource and user id - " + e );
         return false;
     }
 };
@@ -938,7 +940,7 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
             return completedResource;
         }
         catch( e ) {
-            console.log( e.stack );
+            console.log( "[ERR]: Error [Topic] - save completed resource status update - " + e );
             return false;
         }
     }
@@ -958,8 +960,7 @@ exports.saveCompletedResourceStatus = async function( completedResource ) {
             return completedResource;
         }
         catch( e ) {
-            console.log( e.stack );
-            
+            console.log( "[ERR]: Error [Topic] - save completed resource status insert - " + e );
             return false;
         }
     }
@@ -1000,7 +1001,8 @@ exports.getActiveEnrolledTopicsForUserId = async function( userId ) {
         return topics;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get active enrolled topics by user id - " + e );
+        return false;
     }
 };
 
@@ -1049,7 +1051,8 @@ exports.getActiveTopicEnrollmentsForUserId = async function( userId ) {
         return enrollments;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get active topic enrollements - " + e );
+        return false;
     }
 };
 
@@ -1089,7 +1092,8 @@ exports.updateTopicImage = async ( topicId, filename ) => {
             
         }
         catch( e ) {
-            console.log( e.stack );
+            console.log( "[ERR]: Error [Topic] - update topic image - " + e );
+            return false;
         }
 
         return prevFileName;
@@ -1131,7 +1135,7 @@ exports.getRecentTopicEnrollmentEvents = async function( limit ) {
         return enrollmentEvents;
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - get recent topic enrollment events - " + e );
         return false;
     }
 };
@@ -1181,8 +1185,8 @@ exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
         }
         catch( e ) {
-            console.log( e.stack );
-            //return false;
+            console.log( "[ERR]: Error [Topic] - get all visible topics - " + e );
+            return false;
         }
 
     }
@@ -1225,8 +1229,8 @@ exports.getAllPublicTopics = async ( limit, offset ) => {
 
     }
     catch( e ) {
-        console.log( e.stack );
-        //return false;
+        console.log( "[ERR]: Error [Topic] - get all published topics - " + e );
+        return false;
     }
 };
 
@@ -1244,7 +1248,7 @@ exports.deleteTopicById = async ( topicId, authUserId ) => {
         }
     }
     catch ( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Topic] - delete topic by id - " + e );
         return false;
     }
 };

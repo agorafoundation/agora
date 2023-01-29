@@ -47,7 +47,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
             
         }
         catch( e ) {
-            console.log( e.stack );
+            console.log( "[ERR]: Error getting visible workspaces - " + e );
             return false;
         }
 
@@ -104,7 +104,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
             
         }
         catch( e ) {
-            console.log( e.stack );
+            console.log( "[ERR]: Error getting visible workspaces with topics - " + e );
             return false;
         }
     }
@@ -151,7 +151,8 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error getting all workspaces for owner - " + e );
+        return false;
     }
 };
 
@@ -210,7 +211,8 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error getting active workspaces with topics by id - " + e );
+        return false;
     }
 };
 
@@ -220,6 +222,7 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
  * @returns workspace
  */
 exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
+    console.log( "the value to work with : " + workspaceId );
     let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 group by workspace_id) goalmax "
         + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
     let values = [ workspaceId ];
@@ -235,7 +238,8 @@ exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: getting most recent workspace by Id - " + e );
+        return false;
     }
 };
 
@@ -261,7 +265,8 @@ exports.getWorkspaceById = async ( workspaceId ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error getting workspace by Id - " + e );
+        return false;
     }
 };
 
@@ -299,7 +304,8 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
             
         }
         catch( e ) {
-            console.log( e.stack );
+            console.log( "[ERR]: Error updating workspace image - " + e );
+            return false;
         }
 
         return prevFileName;
@@ -319,49 +325,52 @@ exports.saveWorkspace = async ( workspace ) => {
     // check to see if an id exists - insert / update check
     //console.log( "about to save workspace " + JSON.stringify( workspace ) );
     if( workspace ) {
-        if( workspace.workspaceId > 0 ) {
-            // update
-            console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING workspace_rid;";
-            let values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
+        // query to see if the workspace exists
+        let text = "SELECT * FROM workspaces WHERE workspace_id = $1";
+        let values = [ workspace.workspaceId ];
+        try {
+            let res = await db.query( text, values );
+            if( res.rowCount > 0 ) {
+                // row exists, update
+                //console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) + " id : " + workspace.workspaceId );
+                text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING workspace_rid;";
+                values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
     
-            try {
-                let res = await db.query( text, values );
-                workspace.workspaceRid = res.rows[0].workspace_rid;
-            }
-            catch( e ) {
-                console.log( "[ERR]: Error updating workspace - " + e );
-                return false;
-            }
-            
-        }
-        else {
-            // get the current max workspace id
-            console.log( "[workspaceController.saveWorkspace]: New Workspace in DB - " + JSON.stringify( workspace ) );
-            let text = "select max(workspace_id) from workspaces;";
-            let values = [];
-            try {
-                let res = await db.query( text, values );
-                workspace.workspaceId = res.rows[0].max; 
-                workspace.workspaceId++;
-                if( res.rowCount > 0 ) {
-                    // insert
-                    text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, workspace_rid;";
-                    values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
-                    
-                    let res2 = await db.query( text, values );
-        
-                    if( res2.rowCount > 0 ) {
-                        workspace.workspaceId = res2.rows[0].workspace_id;
-                        workspace.workspaceRid = res2.rows[0].workspace_rid;
-                    }
+                try {
+                    res = await db.query( text, values );
+                    workspace.workspaceRid = res.rows[0].workspace_rid;
+                }
+                catch( e ) {
+                    console.log( "[ERR]: Error updating workspace - " + e );
+                    return false;
                 }
             }
-            catch( e ) {
-                console.log( "[ERR]: Error inserting workspace - " + e );
-                return false;
+            else {
+                // row does not exist, insert
+                text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, workspace_rid;";
+                values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
+            
+                try {
+                    res = await db.query( text, values );
+                }
+                catch( e ) {
+                    console.log( "[ERR]: Error inserting workspace - " + e );
+                    return false;
+                }
+
+                if( res.rowCount > 0 ) {
+                    workspace.workspaceId = res.rows[0].workspace_id;
+                    workspace.workspaceRid = res.rows[0].workspace_rid;
+                }
             }
+
         }
+        catch( e ) {
+            console.log( "[ERR]: Error querying to determine if workspace exists - " + e );
+            return false;
+        }
+
+        
         return workspace;
     }
     else {
@@ -390,37 +399,49 @@ exports.saveTopicsForWorkspace = async function( workspaceId, topicIds, topicsRe
 
             // first remove current resources associated with the topic
             text = "DELETE FROM workspace_paths WHERE workspace_rid = $1";
-            values = [ workspaceId ];
+            values = [ res.rows[0].workspace_rid ];
 
-            let res2 = await db.query( text, values );
+            try {
+                let res2 = await db.query( text, values );
 
-            // now loop through the array and add the new topics
-            /**
-             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
-             * This probably means having the pathway be an array of objects containing id and isRequired
-             */
-            if( topicIds && topicIds.length > 0 ) {
-                for( let i=0; i < topicIds.length; i++ ) {  
+                // now loop through the array and add the new topics
+                /**
+                 * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+                 * This probably means having the pathway be an array of objects containing id and isRequired
+                 */
+                if( topicIds && topicIds.length > 0 ) {
+                    for( let i=0; i < topicIds.length; i++ ) {  
 
-                    let isRequired = true;
-                    // always setting to true for now
-                    //if( topicsRequired.length > i ) {  
-                    //    isRequired = topicsRequired[i];
-                    //}
+                        let isRequired = true;
+                        // always setting to true for now
+                        //if( topicsRequired.length > i ) {  
+                        //    isRequired = topicsRequired[i];
+                        //}
 
-                    text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
-                    values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
+                        text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
+                        values = [ workspaceId, topicIds[i], ( i + 1 ), true, true ];
 
-                    let res3 = await db.query( text, values );
+                        try{
+                            let res3 = await db.query( text, values );
 
-                    console.log( "In Loop - " + JSON.stringify( res3 ) );
-
+                            console.log( "In Loop - " + JSON.stringify( res3 ) );
+                        }
+                        catch( e ) {
+                            console.log( "[ERR]: Error inserting workspace_path - " + e );
+                            return false;
+                        }
+                    }
                 }
             }
+            catch( e ) {
+                console.log( "[ERR]: Error deleting workspace paths - " + e );
+                return false;
+            }
+            
         }
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error looking up workspace by id - " + e );
         return false;
     }
 

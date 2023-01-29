@@ -61,7 +61,7 @@ exports.createDiscussion = async ( type, id, discussion_text, creatorId, ownerId
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error creating discussion - " + e );
         return false;
     }
 };
@@ -101,7 +101,7 @@ exports.getDiscussion = async ( type, id, userId ) => {
 
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error getting discussion - " + e );
         return false;
     }
 
@@ -139,7 +139,7 @@ exports.updateDiscussion = async ( type, id, userId, updatedDiscussion ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error updating discussion - " + e );
         return false;
     }
 };
@@ -166,7 +166,7 @@ exports.setCommentRating = async ( commentId, rating, userId ) =>  {
 
     }
     catch ( e ) {
-        console.error( e.stack );
+        console.log( "[ERR]: Error setting comment rating on discussion - " + e );
         return false;
     }
 };
@@ -187,7 +187,7 @@ exports.removeCommentRating = async ( commentId, userId ) => {
 
     }
     catch ( e ) {
-        console.error( e.stack );
+        console.log( "[ERR]: Error removing comment rating on discussion - " + e );
         return false;
     }
 };
@@ -212,7 +212,7 @@ exports.createComment = async ( userId, commentToMake ) => {
 
     }
     catch( e ) { 
-        console.log( e.stack );
+        console.log( "[ERR]: Error creating comment on discussion - " + e );
         return false;
     }
 };
@@ -235,7 +235,7 @@ exports.editComment = async ( commentId, userId, editedComment ) => {
         return comment.ormComment( res.rows[0] ); // give back the edited comment
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error editing comment on discussion- " + e );
         return false;
     }
 };
@@ -252,7 +252,7 @@ exports.deleteComment = async ( commentId, userId ) => {
         return comment.ormComment( res.rows[0] );
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error deleting comment on discussion - " + e );
         return false;
     }
 };
@@ -292,7 +292,7 @@ exports.getCommentsForDiscussion = async ( id, type, userId ) => {
         return res.rows.map( comment.ormComment );
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error getting comments for discussion - " + e );
         return false;
     }
 };

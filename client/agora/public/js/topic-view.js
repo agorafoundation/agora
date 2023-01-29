@@ -481,6 +481,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
     // make the fetch call to save the tag
     if( isNewSave ) {
+        console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
         fetch( "api/v1/auth/tags/tagged", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -550,7 +551,6 @@ function createResource( name, type, imagePath, id ) {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
-                "resourceId": -1,
                 "resourceType": type,
                 "resourceName": name ? name : "Untitled",
                 "resourceDescription": "",
@@ -1267,25 +1267,33 @@ for ( let i = 0; i < perms.length; i++ ) {
 
 const prefixPattern = /#t/;
 
-const idPattern = /-([0-9]+)/;
+//const idPattern = /-([0-9]+)/;
+const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
 const getPrefixAndId = () => {
 
     const url = window.location.href;
-    let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
+    let urlId = null;
+    let tempUuid =  ( uuidPattern.exec( url ) );
+    if( tempUuid ) {
+        urlId = tempUuid[0];
+    }
+
     return [ prefixPattern.test( url ), urlId ];
 };
 
 const idAndFetch = () => {
-
+    console.log( '1' );
     const [ isTopic, id ] = getPrefixAndId();
-    if ( isTopic && id > 0 ) {
+    console.log( isTopic, id );
+    if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
+                console.log( "response: ", response );
                 fillFields(
                     response.topicName,
                     response.topicDescription,
@@ -1293,7 +1301,7 @@ const idAndFetch = () => {
                 );
             } );
     }
-    else if ( id > 0 ) {
+    else if ( id ) {
         fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1311,7 +1319,7 @@ const idAndFetch = () => {
 
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
-    if ( isTopic && id > 0 ) {
+    if ( isTopic && id ) {
         fetch( "api/v1/auth/tags/tagged/topic/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1325,7 +1333,7 @@ const getTags = async () => {
                 
             } );
     }
-    else if ( id > 0 ) {
+    else if ( id ) {
         fetch( "api/v1/auth/tags/tagged/workspace/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1346,7 +1354,7 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    if( id > 0 ) {
+    if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
    
@@ -1532,7 +1540,7 @@ const getDiscussions = async ( isTopic, id ) => {
 
     let pageComments;
 
-    if ( isTopic && id > 0 ) {
+    if ( isTopic && id ) {
 
         const response = await fetch( "/api/v1/auth/discussions/topic/" + id, { headers: { "Content-Type": "application/json" } } );
         if ( response.ok ) {
@@ -1543,7 +1551,7 @@ const getDiscussions = async ( isTopic, id ) => {
             //console.log( response.status );
         }
     } 
-    else if( id > 0 ) {
+    else if( id ) {
 
         const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
         if ( response.ok ) {

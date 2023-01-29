@@ -23,10 +23,12 @@ exports.getDashboard = async function( req, res ) {
     let workspaceId = req.params.workspaceId;
 
     // get all the workspaces for this owner
+    console.log( 'w1' );
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.userId, false );
-    
+    console.log( 'w2' );
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId, true );
+    console.log( 'w3' );
     // start the available topics out with the full owner topic set
     let availableTopics = ownerTopics;
 
@@ -34,13 +36,16 @@ exports.getDashboard = async function( req, res ) {
     let workspace = Workspace.emptyWorkspace();
 
     for( let i =0; i < ownerWorkspaces.length; i++ ) {
-
         // Get all topics Ids associated with our workspaceId.
-        let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceId );
+        console.log( 'w4' );
+        let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceRid );
+        console.log( 'w5' );
         
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
+            console.log( 'w6' );
             let topics = await topicService.getTopicById( topicsIds[index], req.session.authUser.userId );
+            console.log( 'w7' );
 
             if ( topics ){ // Ensure retrieval of topics
                 ownerWorkspaces[i].topics.push( topics );
@@ -53,10 +58,12 @@ exports.getDashboard = async function( req, res ) {
 
     }
     if( workspaceId > 0 ) {
-
+        console.log( 'w8' );
         workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
+        console.log( 'w9' );
         // iterate through the workspaces assigned topics, remove them from the available list
         for( let i=0; i < workspace.topics.length; i++ ) {
+            console.log( 'w10' );
             let redundantTopic = ownerTopics.map( ot => ot.id ).indexOf( workspace.topics[i].id );
             
             ~redundantTopic && availableTopics.splice( redundantTopic, 1 );
@@ -74,7 +81,9 @@ exports.getDashboard = async function( req, res ) {
     let topic = Topic.emptyTopic( );
 
     // get all the resources for this owner
+    console.log( 'w11' );
     let availableResources = await resourceService.getAllActiveResourcesForOwner( req.session.authUser.userId );
+    console.log( 'w12' );
     
     let resource = Resource.emptyResource( );
 

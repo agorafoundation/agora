@@ -5,9 +5,12 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// import uuid generator
+const { v4: uuidv4 } = require( "uuid" );
+
 function workspace() {
     this.workspaceRid = -1;
-    this.workspaceId = -1;
+    this.workspaceId = uuidv4();
     this.workspaceVersion = 1;
     this.workspaceName = "";
     this.workspaceDescription = "";
@@ -28,7 +31,7 @@ exports.emptyWorkspace = () => {
 exports.ormWorkspace = function ( row ) {
     let workspace = exports.emptyWorkspace();
     workspace.workspaceRid = row.workspace_rid;
-    workspace.workspaceId = row.workspace_id; // TODO: Once database change goes through, this will need to be updated to row.workspaceId.
+    workspace.workspaceId = row.workspace_id;
     workspace.workspaceVersion = row.workspace_version;
     workspace.workspaceName = row.workspace_name;
     workspace.workspaceDescription = row.workspace_description;

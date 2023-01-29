@@ -55,8 +55,10 @@ exports.getWorkspaceById = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
     if( authUserId > 0 ) {
+        console.log( "getWorkspaceById-1" );
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
+        console.log( "getWorkspaceById-2" );
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
@@ -83,19 +85,23 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
     }
 
     if( authUserId > 0 ){
-
+        console.log( "getAllTopicsForWorkspaceId-1" );
         // Check if valid workspaceId given.
         let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
+        console.log( "getAllTopicsForWorkspaceId-2" );
         if( workspace ) {
 
             let topicsList = [];
-            
+            console.log( "getAllTopicsForWorkspaceId-3" );
             // Get all topics Ids associated with our workspaceId.
-            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceId );
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
+            console.log( "getAllTopicsForWorkspaceId-4" );
             
             // Grab each topic by id and append it to our list of topics
             for ( let index in topicsIds ) {
+                console.log( "getAllTopicsForWorkspaceId-5" );
                 let topics = await topicService.getTopicById( topicsIds[index], authUserId );
+                console.log( "getAllTopicsForWorkspaceId-6" );
 
                 if ( topics ){ // Ensure retrieval of topics
                     topicsList.push( topics );
@@ -213,6 +219,7 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
 exports.saveWorkspace = async ( req, res, redirect ) => {
 
     let workspace = Workspace.emptyWorkspace();
+    console.log( "generated uuid: " + workspace.workspaceId );
     
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
@@ -226,17 +233,17 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     workspace.ownedBy = authUserId; 
 
     if( authUserId > 0 ) {
-
-        workspace.workspaceId = req.body.workspaceId;
+        if( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
+            workspace.workspaceId = req.body.workspaceId;
+        }
 
         // see if this is a modification of an existing workspace
-        let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId );
+        let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId.toString() );
 
         // if this is an update replace the workspace with teh existing one as the starting point
         if( existingWorkspace ) {
             
             workspace = existingWorkspace;
-            console.log( "[workspaceController.saveWorkspace]: Existing Workspace found by workspaceId - " + JSON.stringify( existingWorkspace ) );
   
             if( ( existingWorkspace.visibility != req.body.visibility )
                 || ( existingWorkspace.workspaceName != req.body.workspaceName )
@@ -244,7 +251,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 || ( existingWorkspace.active != req.body.active )
                 || ( existingWorkspace.completable != req.body.completable ) ) {
                 workspace.workspaceVersion++;
-                console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
+                //console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
             }
             else {
                 console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
@@ -270,8 +277,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace = await workspaceService.saveWorkspace( workspace );
 
         if ( req.body.topics ){
-            let topicsSaved = await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
-            console.log( "@ -- @" + topicsSaved );
+            await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
         }
 
         /**

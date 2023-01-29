@@ -56,7 +56,7 @@ exports.getAllTags = async ( limit, offset ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get all tags - " + e );
         return false;
     }
 };
@@ -84,7 +84,7 @@ exports.getTagById = async function( tagId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get tag by id - " + e );
         return false;
     }
 };
@@ -107,7 +107,7 @@ exports.getTagByTagName = async ( tagName ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get tag by name - " + e );
         return false;
     }
 };
@@ -136,7 +136,8 @@ exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get active tags for owner by id - " + e );
+        return false;
     }
 
 };
@@ -163,7 +164,8 @@ exports.getAllTagsForOwner = async function( ownerId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get all tags for owner - " + e );
+        return false;
     }
 
 };
@@ -314,7 +316,7 @@ exports.deleteTagById = async ( tagId ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - delete tag by id - " + e );
         return false;
     }
 };

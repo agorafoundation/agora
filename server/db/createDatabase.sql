@@ -1,5 +1,5 @@
 -- Agora base database setup
-
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- setup (as root / postgres)
 drop database agora;
@@ -278,7 +278,7 @@ CREATE TYPE visibility AS ENUM ('private', 'public');
 -- workspace and related <- workspaceService
 CREATE TABLE IF NOT EXISTS workspaces (
     workspace_rid SERIAL PRIMARY KEY,
-    workspace_id INTEGER,
+    workspace_id UUID NOT NULL,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     workspace_name VARCHAR,
     workspace_description VARCHAR,
@@ -416,7 +416,7 @@ CREATE TABLE IF NOT EXISTS tag_associations (
     tag_association_id SERIAL PRIMARY KEY,
     tag_id INTEGER, -- fk to tag
     entity_type tag_entity_types, --  1-goal, 2-topic, 3-resource, 
-    entity_id INTEGER, -- fk to entity id for entity_type
+    entity_id uuid, -- fk to entity id for entity_type
     user_id INTEGER, -- fk of user that set tag
     lookup_count INTEGER, -- incremented when user finds entity via tag lookup, tracks popularity.
     last_used TIMESTAMP,
@@ -572,7 +572,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_activities_activity_id ON completed_act
 CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 
 CREATE TABLE IF NOT EXISTS discussions (
-    parent_id INTEGER,
+    parent_id uuid,
     parent_type discussion_parents,
     user_id INTEGER,
     discussion_text VARCHAR,
