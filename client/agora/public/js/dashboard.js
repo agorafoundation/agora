@@ -8,411 +8,406 @@
 /**
  * Expand metadata area
  */
-if ( document.getElementById( "expansionArrow" ) ) {
-    [ "expansionArrow", "expansionArrowUp" ].forEach( ( el ) => {
-        document.getElementById( el ).addEventListener( "click", () => {
-            if (
-                document.getElementById( "additionalMetadata" ).style.display === "none"
-            ) {
-                document.getElementById( "additionalMetadata" ).style.display = "block";
-                document.getElementById( "expansionArrow" ).style.display = "none";
-                document.getElementById( "expansionArrowUp" ).style.display = "block";
-            }
-            else {
-                document.getElementById( "additionalMetadata" ).style.display = "none";
-                document.getElementById( "expansionArrowUp" ).style.display = "none";
-                document.getElementById( "expansionArrow" ).style.display = "block";
-            }
-        } );
-    } );
-}
+// if ( document.getElementById( "expansionArrow" ) ) {
+//     [ "expansionArrow", "expansionArrowUp" ].forEach( ( el ) => {
+//         document.getElementById( el ).addEventListener( "click", () => {
+//             if (
+//                 document.getElementById( "additionalMetadata" ).style.display === "none"
+//             ) {
+//                 document.getElementById( "additionalMetadata" ).style.display = "block";
+//                 document.getElementById( "expansionArrow" ).style.display = "none";
+//                 document.getElementById( "expansionArrowUp" ).style.display = "block";
+//             }
+//             else {
+//                 document.getElementById( "additionalMetadata" ).style.display = "none";
+//                 document.getElementById( "expansionArrowUp" ).style.display = "none";
+//                 document.getElementById( "expansionArrow" ).style.display = "block";
+//             }
+//         } );
+//     } );
+// }
 
 /**
  * When toggling resource types set the correct editor in the UI
  */
-function toggleSunEditor() {
+// function toggleSunEditor() {
 
-    if ( document.getElementById( "resourceType" ).value == "3" ) {
-        document.getElementById( "resourceEditor" ).style.display = "none";
-        document.getElementById( "suneditor_resourceEditor" ).style.display = "none";
-        document.getElementById( "embedded_submission_text_resource" ).style.display =
-      "block";
-    }
-    else if ( document.getElementById( "resourceType" ).value == "2" ) {
-        document.getElementById( "resourceEditor" ).style.display = "none";
-        document.getElementById( "suneditor_resourceEditor" ).style.display = "none";
-        document.getElementById( "embedded_submission_text_resource" ).style.display =
-      "none";
-    }
-    else {
-        document.getElementById( "resourceEditor" ).style.display = "none";
-        document.getElementById( "suneditor_resourceEditor" ).style.display = "block";
-        document.getElementById( "embedded_submission_text_resource" ).style.display =
-      "none";
-    }
-}
+//     if ( document.getElementById( "resourceType" ).value == "3" ) {
+//         document.getElementById( "resourceEditor" ).style.display = "none";
+//         document.getElementById( "suneditor_resourceEditor" ).style.display = "none";
+//         document.getElementById( "embedded_submission_text_resource" ).style.display =
+//       "block";
+//     }
+//     else if ( document.getElementById( "resourceType" ).value == "2" ) {
+//         document.getElementById( "resourceEditor" ).style.display = "none";
+//         document.getElementById( "suneditor_resourceEditor" ).style.display = "none";
+//         document.getElementById( "embedded_submission_text_resource" ).style.display =
+//       "none";
+//     }
+//     else {
+//         document.getElementById( "resourceEditor" ).style.display = "none";
+//         document.getElementById( "suneditor_resourceEditor" ).style.display = "block";
+//         document.getElementById( "embedded_submission_text_resource" ).style.display =
+//       "none";
+//     }
+// }
 
-// sun editor for resource
-let resourceEditor = null;
-if ( document.getElementById( "resourceEditor" ) ) {
-    //console.log( "initializing the sun editor" );
-    // eslint-disable-next-line no-undef
-    resourceEditor = SUNEDITOR.create( "resourceEditor", {
-        toolbarContainer: "#toolbar_container",
-        showPathLabel: false,
-        width: "auto",
-        height: "auto",
-        minHeight: "150px",
-        maxHeight: "700px",
-        buttonList: [
-            [ "undo", "redo", "font", "fontSize", "formatBlock" ],
-            [
-                "bold",
-                "underline",
-                "italic",
-                "strike",
-                "subscript",
-                "superscript",
-                "removeFormat",
-            ],
-            [
-                "fontColor",
-                "hiliteColor",
-                "outdent",
-                "indent",
-                "align",
-                "horizontalRule",
-                "list",
-                "table",
-            ],
-            [
-                "link",
-                "image",
-                "video",
-                "fullScreen",
-                "showBlocks",
-                "codeView",
-                "preview",
-                "print",
-                "save",
-            ],
-        ],
-        callBackSave: function ( contents, isChanged ) {
-            alert( contents );
-            //console.log( contents );
-        },
-    } );
+// // sun editor for resource
+// let resourceEditor = null;
+// if ( document.getElementById( "resourceEditor" ) ) {
+//     //console.log( "initializing the sun editor" );
+//     // eslint-disable-next-line no-undef
+//     resourceEditor = SUNEDITOR.create( "resourceEditor", {
+//         toolbarContainer: "#toolbar_container",
+//         showPathLabel: false,
+//         width: "auto",
+//         height: "auto",
+//         minHeight: "150px",
+//         maxHeight: "700px",
+//         buttonList: [
+//             [ "undo", "redo", "font", "fontSize", "formatBlock" ],
+//             [
+//                 "bold",
+//                 "underline",
+//                 "italic",
+//                 "strike",
+//                 "subscript",
+//                 "superscript",
+//                 "removeFormat",
+//             ],
+//             [
+//                 "fontColor",
+//                 "hiliteColor",
+//                 "outdent",
+//                 "indent",
+//                 "align",
+//                 "horizontalRule",
+//                 "list",
+//                 "table",
+//             ],
+//             [
+//                 "link",
+//                 "image",
+//                 "video",
+//                 "fullScreen",
+//                 "showBlocks",
+//                 "codeView",
+//                 "preview",
+//                 "print",
+//                 "save",
+//             ],
+//         ],
+//         callBackSave: function ( contents, isChanged ) {
+//             alert( contents );
+//             //console.log( contents );
+//         },
+//     } );
 
-    resourceEditor.onChange = ( contents, core ) => {
-        resourceEditor.save();
-    };
+//     resourceEditor.onChange = ( contents, core ) => {
+//         resourceEditor.save();
+//     };
 
-    document.getElementById( "resourceType" ).addEventListener( "change", () => {
-        toggleSunEditor();
-    } );
+//     document.getElementById( "resourceType" ).addEventListener( "change", () => {
+//         toggleSunEditor();
+//     } );
 
     
-    toggleSunEditor();
-}
+//     toggleSunEditor();
+// }
 
-function auto_grow( element ) {
-    element.style.height = "5px";
-    element.style.height = element.scrollHeight + "px";
-}
+// if (
+//     document.getElementsByName( "topicType" ) &&
+//   document.getElementsByName( "topicType" ).length > 0
+// ) {
+//     if ( document.querySelector( 'input[name="topicType"]:checked' ).value == 1 ) {
+//     //console.log('1');
+//         document.getElementById( "acivity-accordion-group" ).style.display = "block";
+//         document.getElementById( "assessment-accordion-group" ).style.display =
+//       "block";
+//     }
+//     else {
+//     //console.log('2');
+//         document.getElementById( "acivity-accordion-group" ).style.display = "none";
+//         document.getElementById( "assessment-accordion-group" ).style.display =
+//       "none";
+//     }
 
-if (
-    document.getElementsByName( "topicType" ) &&
-  document.getElementsByName( "topicType" ).length > 0
-) {
-    if ( document.querySelector( 'input[name="topicType"]:checked' ).value == 1 ) {
-    //console.log('1');
-        document.getElementById( "acivity-accordion-group" ).style.display = "block";
-        document.getElementById( "assessment-accordion-group" ).style.display =
-      "block";
-    }
-    else {
-    //console.log('2');
-        document.getElementById( "acivity-accordion-group" ).style.display = "none";
-        document.getElementById( "assessment-accordion-group" ).style.display =
-      "none";
-    }
+//     // attach the event to make them editible
+//     document.querySelectorAll( '[name="topicType"]' ).forEach( ( topicTypeBox ) => {
+//         topicTypeBox.addEventListener( "click", () => {
+//         //     console.log(
+//         //         "clicked: " +
+//         // document.querySelector( 'input[name="topicType"]:checked' ).value
+//         //     );
+//             if (
+//                 document.querySelector( 'input[name="topicType"]:checked' ).value == 1
+//             ) {
+//                 //console.log('1');
+//                 document.getElementById( "acivity-accordion-group" ).style.display =
+//           "block";
+//                 document.getElementById( "assessment-accordion-group" ).style.display =
+//           "block";
+//             }
+//             else {
+//                 //console.log('2');
+//                 // make sure option were not selected by cleaning them
+//                 if ( document.getElementById( "topicHasAssessment" ).checked ) {
+//                     document.getElementById( "assessment-accordion" ).click();
+//                 }
+//                 if ( document.getElementById( "topicHasActivity" ).checked ) {
+//                     document.getElementById( "activity-accordion" ).click();
+//                 }
 
-    // attach the event to make them editible
-    document.querySelectorAll( '[name="topicType"]' ).forEach( ( topicTypeBox ) => {
-        topicTypeBox.addEventListener( "click", () => {
-        //     console.log(
-        //         "clicked: " +
-        // document.querySelector( 'input[name="topicType"]:checked' ).value
-        //     );
-            if (
-                document.querySelector( 'input[name="topicType"]:checked' ).value == 1
-            ) {
-                //console.log('1');
-                document.getElementById( "acivity-accordion-group" ).style.display =
-          "block";
-                document.getElementById( "assessment-accordion-group" ).style.display =
-          "block";
-            }
-            else {
-                //console.log('2');
-                // make sure option were not selected by cleaning them
-                if ( document.getElementById( "topicHasAssessment" ).checked ) {
-                    document.getElementById( "assessment-accordion" ).click();
-                }
-                if ( document.getElementById( "topicHasActivity" ).checked ) {
-                    document.getElementById( "activity-accordion" ).click();
-                }
+//                 document.getElementById( "acivity-accordion-group" ).style.display =
+//           "none";
+//                 document.getElementById( "assessment-accordion-group" ).style.display =
+//           "none";
+//             }
+//         } );
+//     } );
+// }
 
-                document.getElementById( "acivity-accordion-group" ).style.display =
-          "none";
-                document.getElementById( "assessment-accordion-group" ).style.display =
-          "none";
-            }
-        } );
-    } );
-}
+// /**
+//  * The following two functions show or hide the assessment and activity panels and check the hasAssessment / hasAcitvity
+//  * checkbox based on whether the user interacts with the accordion
+//  * These areas only show if the topicType = educational
+//  */
+// if ( document.getElementById( "assessment-accordion" ) ) {
+//     document
+//         .getElementById( "assessment-accordion" )
+//         .addEventListener( "click", () => {
+//             document.getElementById( "topicHasAssessment" ).checked =
+//         !document.getElementById( "topicHasAssessment" ).checked;
+//         } );
+// }
 
-/**
- * The following two functions show or hide the assessment and activity panels and check the hasAssessment / hasAcitvity
- * checkbox based on whether the user interacts with the accordion
- * These areas only show if the topicType = educational
- */
-if ( document.getElementById( "assessment-accordion" ) ) {
-    document
-        .getElementById( "assessment-accordion" )
-        .addEventListener( "click", () => {
-            document.getElementById( "topicHasAssessment" ).checked =
-        !document.getElementById( "topicHasAssessment" ).checked;
-        } );
-}
+// if ( document.getElementById( "activity-accordion" ) ) {
+//     document
+//         .getElementById( "activity-accordion" )
+//         .addEventListener( "click", () => {
+//             document.getElementById( "topicHasActivity" ).checked =
+//         !document.getElementById( "topicHasActivity" ).checked;
+//         } );
+// }
 
-if ( document.getElementById( "activity-accordion" ) ) {
-    document
-        .getElementById( "activity-accordion" )
-        .addEventListener( "click", () => {
-            document.getElementById( "topicHasActivity" ).checked =
-        !document.getElementById( "topicHasActivity" ).checked;
-        } );
-}
+// /**
+//  * When user selects an existing workspace that they wish to edit this function will populate the DOM
+//  * using the passed workspace so the form is ready for modification of the object.
+//  * @param {*} workspace <- workspace used to popluate the form
+//  * @param {*} workspaceImagePath <- base path for the image url
+//  */
+// function updateWorkspaceModal( workspace, workspaceImagePath ) {
+//     if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
+//         document.getElementById( "workspaceId" ).value = workspace.workspaceId;
 
-/**
- * When user selects an existing workspace that they wish to edit this function will populate the DOM
- * using the passed workspace so the form is ready for modification of the object.
- * @param {*} workspace <- workspace used to popluate the form
- * @param {*} workspaceImagePath <- base path for the image url
- */
-function updateWorkspaceModal( workspace, workspaceImagePath ) {
-    if ( document.getElementById( "create-workspace-modal" ) && workspace ) {
-        document.getElementById( "workspaceId" ).value = workspace.workspaceId;
+//         //console.log( workspace.visibility );
+//         if ( workspace.visibility === 'private' ) {
+//             document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
+//             document.getElementById( "workspaceVisibilityShared" ).checked = false;
+//             document.getElementById( "workspaceVisibilityPublic" ).checked = false;
+//         }
+//         else if ( workspace.visibility === 'public' ) {
+//             document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
+//             document.getElementById( "workspaceVisibilityShared" ).checked = false;
+//             document.getElementById( "workspaceVisibilityPublic" ).checked = true;
+//         }
 
-        //console.log( workspace.visibility );
-        if ( workspace.visibility === 'private' ) {
-            document.getElementById( "workspaceVisibilityPrivate" ).checked = true;
-            document.getElementById( "workspaceVisibilityShared" ).checked = false;
-            document.getElementById( "workspaceVisibilityPublic" ).checked = false;
-        }
-        else if ( workspace.visibility === 'public' ) {
-            document.getElementById( "workspaceVisibilityPrivate" ).checked = false;
-            document.getElementById( "workspaceVisibilityShared" ).checked = false;
-            document.getElementById( "workspaceVisibilityPublic" ).checked = true;
-        }
+//         document.getElementById( "workspaceVersion" ).value = workspace.workspaceVersion;
+//         document.getElementById( "workspaceName" ).value = workspace.workspaceName;
+//         document.getElementById( "workspaceDescription" ).value = workspace.workspaceDescription;
 
-        document.getElementById( "workspaceVersion" ).value = workspace.workspaceVersion;
-        document.getElementById( "workspaceName" ).value = workspace.workspaceName;
-        document.getElementById( "workspaceDescription" ).value = workspace.workspaceDescription;
+//         if ( workspace.workspaceImage ) {
+//             document.getElementById( "workspaceImageEl" ).src =
+//         workspaceImagePath + workspace.workspaceImage;
+//         }
+//         else {
+//             document.getElementById( "workspaceImageEl" ).src = "data:,";
+//             document.getElementById( "formFile" ).value = "";
+//         }
 
-        if ( workspace.workspaceImage ) {
-            document.getElementById( "workspaceImageEl" ).src =
-        workspaceImagePath + workspace.workspaceImage;
-        }
-        else {
-            document.getElementById( "workspaceImageEl" ).src = "data:,";
-            document.getElementById( "formFile" ).value = "";
-        }
+//         if ( workspace.active ) {
+//             document.getElementById( "workspaceActive" ).checked = true;
+//         }
+//         else {
+//             document.getElementById( "workspaceActive" ).checked = false;
+//         }
 
-        if ( workspace.active ) {
-            document.getElementById( "workspaceActive" ).checked = true;
-        }
-        else {
-            document.getElementById( "workspaceActive" ).checked = false;
-        }
+//         if ( workspace.completable ) {
+//             document.getElementById( "workspaceCompletable" ).checked = true;
+//         }
+//         else {
+//             document.getElementById( "workspaceCompletable" ).checked = false;
+//         }
+//     }
+// }
 
-        if ( workspace.completable ) {
-            document.getElementById( "workspaceCompletable" ).checked = true;
-        }
-        else {
-            document.getElementById( "workspaceCompletable" ).checked = false;
-        }
-    }
-}
+// /**
+//  * When user selects an existing topic that they wish to edit this function will populate the DOM
+//  * using the passed topic so the form is ready for modification of the object.
+//  * @param {*} topic <- topic used to popluate the form
+//  * @param {*} topicImagePath <- base path for the image url
+//  */
+// function updateTopicModal( topic, topicImagePath ) {
+//     if ( document.getElementById( "create-topic-modal" ) && topic ) {
+//         document.getElementById( "topicId" ).value = topic.topicId;
 
-/**
- * When user selects an existing topic that they wish to edit this function will populate the DOM
- * using the passed topic so the form is ready for modification of the object.
- * @param {*} topic <- topic used to popluate the form
- * @param {*} topicImagePath <- base path for the image url
- */
-function updateTopicModal( topic, topicImagePath ) {
-    if ( document.getElementById( "create-topic-modal" ) && topic ) {
-        document.getElementById( "topicId" ).value = topic.topicId;
+//         //console.log( topic.visibility );
+//         if ( topic.visibility === 'private' ) {
+//             document.getElementById( "topicVisibilityPrivate" ).checked = true;
+//             document.getElementById( "topicVisibilityShared" ).checked = false;
+//             document.getElementById( "topicVisibilityPublic" ).checked = false;
+//         }
+//         else if ( topic.visibility === 'public' ) {
+//             document.getElementById( "topicVisibilityPrivate" ).checked = false;
+//             document.getElementById( "topicVisibilityShared" ).checked = false;
+//             document.getElementById( "topicVisibilityPublic" ).checked = true;
+//         }
 
-        //console.log( topic.visibility );
-        if ( topic.visibility === 'private' ) {
-            document.getElementById( "topicVisibilityPrivate" ).checked = true;
-            document.getElementById( "topicVisibilityShared" ).checked = false;
-            document.getElementById( "topicVisibilityPublic" ).checked = false;
-        }
-        else if ( topic.visibility === 'public' ) {
-            document.getElementById( "topicVisibilityPrivate" ).checked = false;
-            document.getElementById( "topicVisibilityShared" ).checked = false;
-            document.getElementById( "topicVisibilityPublic" ).checked = true;
-        }
+//         document.getElementById( "topicName" ).value = topic.topicName;
+//         document.getElementById( "topicDescription" ).value = topic.topicDescription;
 
-        document.getElementById( "topicName" ).value = topic.topicName;
-        document.getElementById( "topicDescription" ).value = topic.topicDescription;
+//         if ( topic.topicImage ) {
+//             document.getElementById( "topicImage" ).src =
+//         topicImagePath + topic.topicImage;
+//         }
+//         else {
+//             document.getElementById( "topicImage" ).src = "data:,";
+//             document.getElementById( "formFile" ).value = "";
+//         }
 
-        if ( topic.topicImage ) {
-            document.getElementById( "topicImage" ).src =
-        topicImagePath + topic.topicImage;
-        }
-        else {
-            document.getElementById( "topicImage" ).src = "data:,";
-            document.getElementById( "formFile" ).value = "";
-        }
+//         if ( topic.active ) {
+//             document.getElementById( "topicActive" ).checked = true;
+//         }
+//         else {
+//             document.getElementById( "topicActive" ).checked = false;
+//         }
 
-        if ( topic.active ) {
-            document.getElementById( "topicActive" ).checked = true;
-        }
-        else {
-            document.getElementById( "topicActive" ).checked = false;
-        }
+//         if ( topic.completable ) {
+//             document.getElementById( "topicCompletable" ).checked = true;
+//         }
+//         else {
+//             document.getElementById( "topicCompletable" ).checked = false;
+//         }
+//     }
+// }
 
-        if ( topic.completable ) {
-            document.getElementById( "topicCompletable" ).checked = true;
-        }
-        else {
-            document.getElementById( "topicCompletable" ).checked = false;
-        }
-    }
-}
+// function newResourceModel() {
+//     document.getElementById( "resourceModified" ).value = false;
+//     document.getElementById( "resourceId" ).value = -1;
 
-function newResourceModel() {
-    document.getElementById( "resourceModified" ).value = false;
-    document.getElementById( "resourceId" ).value = -1;
+//     document.getElementById( "resourceType" ).value = 1;
+//     document.getElementById( "resourceVisibility" ).value = 2;
 
-    document.getElementById( "resourceType" ).value = 1;
-    document.getElementById( "resourceVisibility" ).value = 2;
+//     document.getElementById( "resourceActive" ).checked = true;
+//     document.getElementById( "isRequired" ).checked = false;
 
-    document.getElementById( "resourceActive" ).checked = true;
-    document.getElementById( "isRequired" ).checked = false;
+//     document.getElementById( "resourceName" ).value = "";
+//     document.getElementById( "resourceDescription" ).value = "";
 
-    document.getElementById( "resourceName" ).value = "";
-    document.getElementById( "resourceDescription" ).value = "";
+//     document.getElementById( "resourceLink" ).value = "";
 
-    document.getElementById( "resourceLink" ).value = "";
+//     // clear the contents of the wysiwyg editor
+//     resourceEditor.setContents( "" );
 
-    // clear the contents of the wysiwyg editor
-    resourceEditor.setContents( "" );
+//     if ( document.querySelector( ".drop-zone__thumb" ) ) {
+//         document.querySelector( ".drop-zone__thumb" ).remove();
 
-    if ( document.querySelector( ".drop-zone__thumb" ) ) {
-        document.querySelector( ".drop-zone__thumb" ).remove();
+//         // add the prompt back in
+//         let prompt = document.createElement( "span" );
+//         prompt.className = "drop-zone__prompt";
+//         prompt.innerHTML = "Drop file here or click to upload";
+//         document.querySelector( ".drop-zone" ).appendChild( prompt );
+//     }
+// }
 
-        // add the prompt back in
-        let prompt = document.createElement( "span" );
-        prompt.className = "drop-zone__prompt";
-        prompt.innerHTML = "Drop file here or click to upload";
-        document.querySelector( ".drop-zone" ).appendChild( prompt );
-    }
-}
+// /**
+//  * When user selects an existing resource that they wish to edit this function will populate the DOM
+//  * using the passed resource so the form is ready for modification of the object.
+//  * @param {*} resource <- resource used to popluate the form
+//  * @param {*} resourceImagePath <- base path for the image url
+//  */
+// function updateResourceModal( resourceId, resourceImagePath ) {
+//     if ( document.getElementById( "create-resource-modal" ) && resourceId ) {
+//     // fetch the resource
+//         fetch( "/api/v1/auth/resources/" + resourceId ).then( ( res ) => {
+//             //console.log(JSON.stringify(res));
+//             res.json().then( ( data ) => {
+//                 const resource = data[0];
+//                 //console.log( "Client side resource check: " + JSON.stringify( resource ) );
+//                 document.getElementById( "resourceId" ).value = resource.resourceId;
 
-/**
- * When user selects an existing resource that they wish to edit this function will populate the DOM
- * using the passed resource so the form is ready for modification of the object.
- * @param {*} resource <- resource used to popluate the form
- * @param {*} resourceImagePath <- base path for the image url
- */
-function updateResourceModal( resourceId, resourceImagePath ) {
-    if ( document.getElementById( "create-resource-modal" ) && resourceId ) {
-    // fetch the resource
-        fetch( "/api/v1/auth/resources/" + resourceId ).then( ( res ) => {
-            //console.log(JSON.stringify(res));
-            res.json().then( ( data ) => {
-                const resource = data[0];
-                //console.log( "Client side resource check: " + JSON.stringify( resource ) );
-                document.getElementById( "resourceId" ).value = resource.resourceId;
+//                 if ( resource.resourceImage ) {
+//                     // set the modification flag
+//                     document.getElementById( "resourceModified" ).value = true;
 
-                if ( resource.resourceImage ) {
-                    // set the modification flag
-                    document.getElementById( "resourceModified" ).value = true;
+//                     if ( document.querySelectorAll( ".drop-zone__input" ) ) {
+//                         const inputElement =
+//               document.querySelectorAll( ".drop-zone__input" )[0];
+//                         const dropZoneElement = inputElement.closest( ".drop-zone" );
+//                         let thumbnailElement =
+//               dropZoneElement.querySelector( ".drop-zone__thumb" );
 
-                    if ( document.querySelectorAll( ".drop-zone__input" ) ) {
-                        const inputElement =
-              document.querySelectorAll( ".drop-zone__input" )[0];
-                        const dropZoneElement = inputElement.closest( ".drop-zone" );
-                        let thumbnailElement =
-              dropZoneElement.querySelector( ".drop-zone__thumb" );
+//                         // First time - remove the prompt
+//                         if ( dropZoneElement.querySelector( ".drop-zone__prompt" ) ) {
+//                             dropZoneElement.querySelector( ".drop-zone__prompt" ).remove();
+//                         }
 
-                        // First time - remove the prompt
-                        if ( dropZoneElement.querySelector( ".drop-zone__prompt" ) ) {
-                            dropZoneElement.querySelector( ".drop-zone__prompt" ).remove();
-                        }
+//                         // First time - there is no thumbnail element, so lets create it
+//                         if ( !thumbnailElement ) {
+//                             thumbnailElement = document.createElement( "div" );
+//                             thumbnailElement.classList.add( "drop-zone__thumb" );
+//                             dropZoneElement.appendChild( thumbnailElement );
+//                         }
 
-                        // First time - there is no thumbnail element, so lets create it
-                        if ( !thumbnailElement ) {
-                            thumbnailElement = document.createElement( "div" );
-                            thumbnailElement.classList.add( "drop-zone__thumb" );
-                            dropZoneElement.appendChild( thumbnailElement );
-                        }
+//                         thumbnailElement.dataset.label = resource.resourceImage;
+//                         thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage
+//                         }')`;
+//                     }
+//                 }
+//                 else {
+//                     // clear
+//                     if ( document.querySelector( ".drop-zone__thumb" ) ) {
+//                         document.querySelector( ".drop-zone__thumb" ).remove();
 
-                        thumbnailElement.dataset.label = resource.resourceImage;
-                        thumbnailElement.style.backgroundImage = `url('${resourceImagePath + resource.resourceImage
-                        }')`;
-                    }
-                }
-                else {
-                    // clear
-                    if ( document.querySelector( ".drop-zone__thumb" ) ) {
-                        document.querySelector( ".drop-zone__thumb" ).remove();
+//                         // add the prompt back in
+//                         let prompt = document.createElement( "span" );
+//                         prompt.className = "drop-zone__prompt";
+//                         prompt.innerHTML = "Drop file here or click to upload";
+//                         document.querySelector( ".drop-zone" ).appendChild( prompt );
+//                     }
+//                 }
 
-                        // add the prompt back in
-                        let prompt = document.createElement( "span" );
-                        prompt.className = "drop-zone__prompt";
-                        prompt.innerHTML = "Drop file here or click to upload";
-                        document.querySelector( ".drop-zone" ).appendChild( prompt );
-                    }
-                }
+//                 document.getElementById( "resourceType" ).value = resource.resourceType;
+//                 document.getElementById( "resourceVisibility" ).value =
+//           resource.visibility;
 
-                document.getElementById( "resourceType" ).value = resource.resourceType;
-                document.getElementById( "resourceVisibility" ).value =
-          resource.visibility;
+//                 if ( resource.active ) {
+//                     document.getElementById( "resourceActive" ).checked = true;
+//                 }
+//                 else {
+//                     document.getElementById( "resourceActive" ).checked = false;
+//                 }
 
-                if ( resource.active ) {
-                    document.getElementById( "resourceActive" ).checked = true;
-                }
-                else {
-                    document.getElementById( "resourceActive" ).checked = false;
-                }
+//                 if ( resource.isRequired ) {
+//                     document.getElementById( "isRequired" ).checked = true;
+//                 }
+//                 else {
+//                     document.getElementById( "isRequired" ).checked = false;
+//                 }
 
-                if ( resource.isRequired ) {
-                    document.getElementById( "isRequired" ).checked = true;
-                }
-                else {
-                    document.getElementById( "isRequired" ).checked = false;
-                }
+//                 document.getElementById( "resourceName" ).value = resource.resourceName;
+//                 document.getElementById( "resourceDescription" ).value =
+//           resource.resourceDescription;
 
-                document.getElementById( "resourceName" ).value = resource.resourceName;
-                document.getElementById( "resourceDescription" ).value =
-          resource.resourceDescription;
+//                 // add the html text to the wysiwyg editor
+//                 resourceEditor.setContents( resource.resourceContentHtml );
+//                 document.getElementById( "resourceLink" ).value = resource.resourceLink;
 
-                // add the html text to the wysiwyg editor
-                resourceEditor.setContents( resource.resourceContentHtml );
-                document.getElementById( "resourceLink" ).value = resource.resourceLink;
-
-                toggleSunEditor();
-            } );
-        } );
-    }
-}
+//                 toggleSunEditor();
+//             } );
+//         } );
+//     }
+// }
 
 
 //creates a empty topic
@@ -563,6 +558,9 @@ const toggleWorkspaceView = () => {
     }
 };
 
+
+
+// currently not used because the default view is workspace - URBG 20230123 - there used to be the ability to show topics
 const toggleTopicView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
@@ -582,6 +580,11 @@ const toggleAllView = () => {
     
     }
 };
+// end currently not used
+
+
+// default to workspace, option to change removed - URBG 20230123 - see https://github.com/briangormanly/agora/issues/357
+toggleWorkspaceView();
 
 //////More Options Helpers//////
 

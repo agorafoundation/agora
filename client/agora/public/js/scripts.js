@@ -36,3 +36,4 @@ if( document.getElementById( "agoraSideBar" ) ) {
     document.getElementById( "agoraSideBar" ).addEventListener( "mouseout", toggleSidebar );
 }
 
+

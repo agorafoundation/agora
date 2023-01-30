@@ -5,6 +5,12 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+/**
+ * This JS file is legacy from coding coach.
+ * I want to keep it around because it has all the client side logic that was used for the 
+ * assessment creation and editing.  I want to keep it around for reference.
+ */
+
 //const { ConfigurationServicePlaceholders } = require("aws-sdk/lib/config_service_placeholders");
 
 
