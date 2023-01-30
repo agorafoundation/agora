@@ -1283,7 +1283,6 @@ const getPrefixAndId = () => {
 };
 
 const idAndFetch = () => {
-    console.log( '1' );
     const [ isTopic, id ] = getPrefixAndId();
     console.log( isTopic, id );
     if ( isTopic && id ) {

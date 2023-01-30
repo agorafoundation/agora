@@ -481,7 +481,6 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     //if topic
     } 
     else {
-        console.log( "/topics 1" );
         fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },

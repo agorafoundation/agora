@@ -26,7 +26,7 @@ const Event = require( '../model/event' );
  */
 exports.getAllVisibleWorkspaces = async ( ownerId ) => {
 
-    if( ownerId > -1 ) {
+    if( ownerId ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
         const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' ) order by gl.workspace_id;";
@@ -67,7 +67,7 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
  */
 exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
-    if( ownerId > -1 ) {
+    if( ownerId ) {
 
         let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 'public' ) order by gl.workspace_id;";
         let values = [ true, ownerId ];
@@ -423,7 +423,6 @@ exports.saveTopicsForWorkspace = async function( workspaceRid, topicIds, topicsR
                         try{
                             let res3 = await db.query( text, values );
 
-                            console.log( "In Loop - " + JSON.stringify( res3 ) );
                         }
                         catch( e ) {
                             console.log( "[ERR]: Error inserting workspace_path - " + e );

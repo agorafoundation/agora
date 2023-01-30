@@ -53,7 +53,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
 
     //console.log("auth user id; " + authUserId);
     
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
 
@@ -225,7 +225,6 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 };
 
 exports.saveResource = async ( req, res, redirect ) => {
-    console.log( req.files );
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -237,7 +236,7 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
 
         if( req.body.resourceId != null && req.body.resourceId != -1 ) {
             resource.resourceId = req.body.resourceId;

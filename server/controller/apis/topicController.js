@@ -45,7 +45,7 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         let topics = await topicService.getAllVisibleTopics( authUserId, req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all visible topics" );
@@ -70,7 +70,7 @@ exports.getAllPublicTopics = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         let topics = await topicService.getAllPublicTopics( req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all public topics" );
@@ -95,7 +95,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ){
+    if( authUserId ){
 
         // Check if valid topicId given.
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
@@ -133,6 +133,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
 
 exports.getTopicById = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
+    console.log( "t-2" );
     let authUserId;
     if( req.user ) {
         authUserId = req.user.userId;
@@ -140,8 +141,9 @@ exports.getTopicById = async ( req, res ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
+    console.log( "auth user id: " + authUserId );
 
-    if( authUserId > 0 ){
+    if( authUserId ){
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
         if( topic ) {
             res.set( "x-agora-message-title", "Success" );
@@ -154,7 +156,13 @@ exports.getTopicById = async ( req, res ) => {
             res.set( "x-agora-message-detail", "Topic not found" );
             res.status( 404 ).json( message );
         }
-    }   
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 401, "Unauthorized", "Unauthorized user" );
+        res.set( "x-agora-message-title", "Unauthorized" );
+        res.set( "x-agora-message-detail", "Unauthorized user" );
+        res.status( 401 ).json( message );
+    }
 
     // topic file path
     // const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
@@ -273,7 +281,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
 
         if( req.body.topicId != null && req.body.topicId != -1 ) {
             topic.topicId = req.body.topicId;

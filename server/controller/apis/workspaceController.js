@@ -37,8 +37,9 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
+    console.log( '1' );
     let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
-    
+    console.log( '2' );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
     res.status( 200 ).json( workspaces );
@@ -54,7 +55,7 @@ exports.getWorkspaceById = async ( req, res ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
         if ( workspace ) {
@@ -82,7 +83,7 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ){
+    if( authUserId ){
         // Check if valid workspaceId given.
         let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
         if( workspace ) {
@@ -127,7 +128,7 @@ exports.deleteWorkspaceById = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if ( authUserId > 0 ) {
+    if ( authUserId ) {
         const workspaceId = req.params.workspaceId;
         let success = await workspaceService.deleteWorkspaceById( workspaceId, authUserId );
 
@@ -222,8 +223,9 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     }
     
     workspace.ownedBy = authUserId; 
+    //console.log( "workspace owned by: " + workspace.ownedBy + " from " + authUserId ); 
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         if( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
             workspace.workspaceId = req.body.workspaceId;
         }
@@ -381,11 +383,11 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     }
     
     if( redirect ) {
-        console.log( "workspaceController.saveWorkspace() - END - Redirect" );
+        //console.log( "workspaceController.saveWorkspace() - END - Redirect" );
         return workspace;
     }
     else {
-        console.log( "workspaceController.saveWorkspace() - END - Non-Redirect " );
+        //console.log( "workspaceController.saveWorkspace() - END - Non-Redirect " );
         res.setHeader( 'Content-Type', 'application/json' );
         res.send( JSON.stringify( workspace ) );
     }

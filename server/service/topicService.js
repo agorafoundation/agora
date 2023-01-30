@@ -1164,7 +1164,7 @@ exports.getRecentTopicEnrollmentEvents = async function( limit ) {
  */
 exports.getAllVisibleTopics = async ( ownerId, limit, offset ) => {
 
-    if( ownerId > -1 ) {
+    if( ownerId ) {
         // Retrieve all user owned topics and public topics.
         let text = "select * from topics WHERE active = $1 and (owned_by = $2 OR visibility = 'public') ORDER BY topic_id";
         const values = [ true, ownerId ];
