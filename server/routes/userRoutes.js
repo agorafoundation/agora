@@ -2,7 +2,7 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 // dependencies
@@ -41,7 +41,7 @@ router.route( '/' )
 
         // check to see if this is an update
         if( req.body._method && req.body._method == "PATCH" ) {
-            // update the user 
+            // update the user
             userController.updateUser( req, res );
 
         }
@@ -56,7 +56,7 @@ router.route( '/' )
 // verify email existence
 router.route( '/revalidate/:email' )
     .get( async function( req, res ) {
-        userController.reValidateEmail( req, res );
+        await userController.reValidateEmail( req, res );
     }
     );
 

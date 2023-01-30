@@ -2,15 +2,15 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 const express = require( 'express' );
 const router = express.Router( );
- 
+
 // import controllers
 const resourceController = require( '../../controller/apis/resourceController' );
- 
+
 /*
  * Resources can be requested the following ways
  * / <- all visible resources for the auth user (all resources a user can see, owned, shared with user, or set to public visibility)
@@ -18,14 +18,14 @@ const resourceController = require( '../../controller/apis/resourceController' )
  * /shared <- all resources that are shared with the user but not their own
  * /visible <- all resources that are publicly visible
  * /sharedAndVisible <- all resources that are shared or visible to the user but are not their own
- */ 
+ */
 
 // resources /api/v1/auth/resources/
 router.route( '/' )
     .get( async function ( req, res ) {
-        resourceController.getAllVisibleResources( req, res );
-    } )    
-    .post( ( req, res ) => { 
+        await resourceController.getAllVisibleResources( req, res );
+    } )
+    .post( ( req, res ) => {
         resourceController.saveResource( req, res );
     }
     );
@@ -35,34 +35,34 @@ router.route( '/' )
  */
 router.route( '/user/:id' )
     .get( async ( req, res ) => {
-        resourceController.getAllActiveResourcesForUser( req, res );
+        await resourceController.getAllActiveResourcesForUser( req, res );
     }
     );
 
 router.route( '/shared' )
     .get( async ( req, res ) => {
-        resourceController.getAllSharedResourcesForUser( req, res );
+        await resourceController.getAllSharedResourcesForUser( req, res );
     } );
 
 // resources /api/v1/auth/resources/:resourceId
 router.route( '/:resourceId' )
     .get( async function ( req, res ) {
-        resourceController.getResourceById( req, res );
-    
+        await resourceController.getResourceById( req, res );
+
     } )
     .delete( async ( req, res ) => {
-        resourceController.deleteResourceById( req, res );
+        await resourceController.deleteResourceById( req, res );
     }
     );
 
 
 
- 
+
 router.route( '/resource/completed' )
     .post( async ( req, res ) => {
-        resourceController.saveCompletedResource( req, res );
+        await resourceController.saveCompletedResource( req, res );
     }
     );
- 
- 
+
+
 module.exports = router;

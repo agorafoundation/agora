@@ -2,7 +2,7 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 let tabName = "";
@@ -164,7 +164,7 @@ const createTopic = async( id, name ) => {
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        } 
+        }
         else {
             openTab( newTab.id );
         }
@@ -457,7 +457,7 @@ document.addEventListener( "keyup", function( e ) {
             document.querySelector( "#mySearch" ).value = "";
         }
     }
-    
+
 } );
 
 function addTagToWorkspace( selectedTag, isNewSave ) {
@@ -471,7 +471,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
-        
+
     // Create remove tag button
     let removeTagBtn = document.createElement( "span" );
     removeTagBtn.className = "close-tag";
@@ -517,7 +517,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         } );
-            
+
 
     } );
     removeTagBtn.addEventListener( "mouseenter", () => {
@@ -546,21 +546,25 @@ function createResource( name, type, imagePath, id ) {
     console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
         //console.log( "testing 1" );
+        let formData = new FormData();
+        let file = document.querySelector( 'input[type="file"]' );
+        console.log( file );
+        formData.append( "resourceId", -1 );
+        formData.append( "resourceType", type );
+        formData.append( "resourceName", name ? name : "Untitled" );
+        formData.append( "resourceDescription", "" );
+        formData.append( "resourceContentHtml", "" );
+        formData.append( "resourceImage", imagePath ? imagePath : "" );
+        formData.append( "resourceLink", "" );
+        formData.append( "isRequired", true );
+        formData.append( "active", true );
+        formData.append( "visibility", "private" );
+        formData.append( "file", file.files[-1] );
+
         fetch( "api/v1/auth/resources", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "resourceId": -1,
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
+            headers: {'Content-Type': "multipart/form-data"},
+            body: formData
         } )
             .then( response => response.json() )
             .then( ( data ) => {
@@ -579,9 +583,9 @@ function createResource( name, type, imagePath, id ) {
         console.log( "testing 2" );
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
-       
+
     }
-   
+
 }
 
 // get the topic id based on the currently visible topic tab
@@ -614,8 +618,8 @@ function getResources() {
 // Create the suneditor text area
 
 function createTextArea( name, id ) {
-    // Text area has to be created before suneditor initialization, 
-    // so we have to return a promise indicating whether or not text area has been successfully created
+    // Text area has to be created before suneditor initialization,
+    // so we have to return a promise indicating whether text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
         // workspace empty state
         if ( activeTab.id == "resources-zone0" ) {
@@ -729,7 +733,7 @@ const createSunEditor = async() => {
         minHeight: "800px",
         defaultStyle: "font-size:15px;",
         buttonList: [
-            [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
+            [ "undo", "redo", "font", "fontSize", "formatBlock" ],
             [ "fontColor", "hiliteColor", "textStyle" ],
             [
                 "bold",
@@ -765,7 +769,7 @@ const createSunEditor = async() => {
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
-    
+
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -795,7 +799,7 @@ function getResourceID( val ) {
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    
+
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
             sunEditorList[i][1].save();
@@ -885,7 +889,7 @@ function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
-    } 
+    }
     // Div that holds the thumbnail
     let mydiv = document.createElement( 'div' );
     mydiv.className = "drop-zone-show";
@@ -932,25 +936,25 @@ function updateThumbnail( dropZoneElement, file ) {
     if ( document.getElementById( "filler-space" ) ) {
         document.getElementById( "filler-space" ).remove();
     }
-  
+
     // Append the thumbnail to parent div
     // Set the title to the file name
     mydiv.appendChild( thumbnailElement );
     thumbnailElement.dataset.label = file.name;
     inputTitle.innerHTML = file.name;
-  
+
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
         //console.log( file );
         getFile( file ).then( url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
-            // createResource( file.name, 2, url );
+            createResource( file.name, 2, url );
 
-            createResource( file.name, 2, file.name );
+            // createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
-        
+
         mydiv.style.height = "500px";
         activeHeightObj[tabName] += 500;
     }
@@ -997,7 +1001,7 @@ function updateThumbnail( dropZoneElement, file ) {
 function getFile( file ) {
     return new Promise( ( resolve ) => {
         const fileReader = new FileReader();
-        fileReader.onloadend = ( ) => { 
+        fileReader.onloadend = ( ) => {
             const res = `url('${fileReader.result}')`;
             resolve( res );
         };
@@ -1052,7 +1056,7 @@ document.addEventListener( "click", function( e ) {
         if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
             // change the tab name to the new topic title
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
-        } 
+        }
         else {
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
         }
@@ -1071,7 +1075,7 @@ document.addEventListener( 'keyup', ( e ) => {
     if ( e.target.tagName == 'INPUT' ) {
         if ( ele.className == 'topic-title' ) {
             updateTopic( ele.value );
-        } 
+        }
     }
 } );
 
@@ -1135,7 +1139,7 @@ document.addEventListener( "mousemove", function( e ) {
 } );
 
 // option events
-if ( createDocBtn ) { 
+if ( createDocBtn ) {
     createDocBtn.onclick = () => {
         modal.style.display = "none";
         createTextArea();
@@ -1192,8 +1196,8 @@ function toggleProfile ( e ) {
     let target = e.target;
     let box;
 
-    target.classList.contains( "permission-li" ) ? 
-        box = target.childNodes[3] : 
+    target.classList.contains( "permission-li" ) ?
+        box = target.childNodes[3] :
         box = target.parentElement.childNodes[3];
 
     box.checked ?
@@ -1321,7 +1325,7 @@ const getTags = async () => {
                     newTag( response[i].tag, false );
                 }
 
-                
+
             } );
     }
     else if ( id > 0 ) {
@@ -1348,23 +1352,23 @@ const renderTopics = async ( workspace ) => {
     if( id > 0 ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
-   
+
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderTopic( topics[i] );
-            
+
             }
-        }   
+        }
     }
-    
-   
+
+
 };
 
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-  
+
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
@@ -1376,7 +1380,7 @@ async function renderTopic( topic ) {
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    totalTopicsRendered++; 
+                    totalTopicsRendered++;
                     let editor = "sunEditor" + ( totalTopicsRendered );
                     console.log( editor );
                     console.log( sunEditor[editor] );
@@ -1394,7 +1398,7 @@ async function renderTopic( topic ) {
             else if ( resources[i].resourceType == 2 ) {
                 console.log( "other resource type??? " + resources[i].resourceName );
             }
-            
+
         }
         window.scrollTo( 0, 0 );
     }
@@ -1413,7 +1417,7 @@ window.addEventListener( "load", () => {
     idAndFetch();
     getTags();
     renderTopics();
-   
+
 } );
 
 
@@ -1436,13 +1440,13 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
 
         if ( !hasComments ) {
             //console.log( "Creating discussion" );
-            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id,
                 { method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify( {  
+                    body: JSON.stringify( {
                         "parent_id": id,
                         "parent_type": type,
-                        "discussion_text": "string"     
+                        "discussion_text": "string"
                     } )
                 } );
             /*.then( ( response ) => response.json() )
@@ -1450,22 +1454,22 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
                 console.log( data );
             } );*/
         }
-        
-        await fetch( "api/v1/auth/discussions/comment", 
+
+        await fetch( "api/v1/auth/discussions/comment",
             { method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify( {
-                    "parent_id": id, 
+                    "parent_id": id,
                     "parent_type": type,
                     "comment_text": text
-                } ) 
+                } )
             } )
             .then( ( response ) => response.json() )
             .then( ( data ) => {
                 //console.log( data );
                 commentId = data.id;
             } );
-            
+
         ///UPDATING THE DOM///
 
         //cloning the comment template so we can modify it then add it to the stream
@@ -1484,7 +1488,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
 
         //inserting the modified clone into the comment stream
-        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );
 
         //removing the value from the textarea
         document.getElementById( "discussion-textarea" ).innerText = '';
@@ -1521,10 +1525,10 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
         likeButton.childNodes[1].style.color = "gray";
         likeButton.childNodes[3].style.color = "gray";
         likeButton.style.outline = "none";
-    } 
+    }
 
     //inserting the modified clone under the proper discussion
-    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );
 };
 
 const getDiscussions = async ( isTopic, id ) => {
@@ -1541,7 +1545,7 @@ const getDiscussions = async ( isTopic, id ) => {
         else {
             //console.log( response.status );
         }
-    } 
+    }
     else if( id > 0 ) {
 
         const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
@@ -1552,7 +1556,7 @@ const getDiscussions = async ( isTopic, id ) => {
         else {
             //console.log( response.status );
         }
-            
+
     }
 
     if ( pageComments ) {
@@ -1560,14 +1564,14 @@ const getDiscussions = async ( isTopic, id ) => {
             loadComment( comment );
         } );
     }
-    
+
 };
 
 
 window.addEventListener( "load", () => {
 
     const [ isTopic, id ] = getPrefixAndId();
-    
+
     if( document.getElementById( "post-comment-btn" ) ) {
         document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
             addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
@@ -1577,7 +1581,7 @@ window.addEventListener( "load", () => {
         document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
             addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
         } );
-    }   
+    }
 
     getDiscussions( isTopic, id );
 } );
@@ -1590,10 +1594,10 @@ const addOrRemoveLike = ( e ) => {
     let goodElement;
 
     //making sure the element we are clicking is the one we're looking to use
-    e.target.id ? 
-        goodElement = e.target.childNodes[3] : 
-        e.target.style ? 
-            goodElement = e.target.parentElement.childNodes[3] : 
+    e.target.id ?
+        goodElement = e.target.childNodes[3] :
+        e.target.style ?
+            goodElement = e.target.parentElement.childNodes[3] :
             goodElement = e.target;
 
     let parentEl = goodElement.parentElement.parentElement.parentElement;
@@ -1610,7 +1614,7 @@ const addOrRemoveLike = ( e ) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify( { "rating": false } )
         } );
-    } 
+    }
     else {
         parentEl.classList.add( "liked" );
         goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
@@ -1633,7 +1637,7 @@ const saveTitleOrDescription = ( ) => {
     const [ isTopic, id ] = getPrefixAndId();
 
     const input = document.getElementById( "workspace-title" ).value;
-        
+
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -1646,7 +1650,7 @@ const saveTitleOrDescription = ( ) => {
             "visibility": "private"
         } )
     } );
-}; 
+};
 
 
 if( document.getElementById( "workspace-title" ) ) {
