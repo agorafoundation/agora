@@ -56,7 +56,7 @@ exports.getAllTags = async ( limit, offset ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get all tags - " + e );
         return false;
     }
 };
@@ -84,7 +84,7 @@ exports.getTagById = async function( tagId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get tag by id - " + e );
         return false;
     }
 };
@@ -107,7 +107,7 @@ exports.getTagByTagName = async ( tagName ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get tag by name - " + e );
         return false;
     }
 };
@@ -136,7 +136,8 @@ exports.getAllActiveTagsForOwnerById = async function( ownerId, tagId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get active tags for owner by id - " + e );
+        return false;
     }
 
 };
@@ -163,7 +164,8 @@ exports.getAllTagsForOwner = async function( ownerId ) {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - get all tags for owner - " + e );
+        return false;
     }
 
 };
@@ -281,7 +283,7 @@ exports.saveTagged = async ( tagged ) => {
 
 exports.deleteTagged = async ( tagId, entityType, entityId, userId ) => {
 
-    if( entityType && entityId > 0 && userId > 0 ) {
+    if( tagId >= 0 && entityType && entityId && userId ){
         let text = "DELETE FROM tag_associations WHERE tag_id = $1 AND entity_type = $2 AND entity_id = $3 AND user_id = $4;";
         let values = [ tagId, entityType, entityId, userId ];
 
@@ -314,7 +316,7 @@ exports.deleteTagById = async ( tagId ) => {
         
     }
     catch( e ) {
-        console.log( e.stack );
+        console.log( "[ERR]: Error [Tags] - delete tag by id - " + e );
         return false;
     }
 };

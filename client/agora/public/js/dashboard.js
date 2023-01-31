@@ -5,6 +5,8 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+
+
 /**
  * Expand metadata area
  */
@@ -445,7 +447,7 @@ const createNewWorkspace = async () => {
         } )
     } )
         .then( response => response.json() )
-        .then( response => window.location.href = "/topic#g-" + response.workspaceId );
+        .then( response => window.location.href = "/topic#w-" + response.workspaceId );
 };
 
 
@@ -460,7 +462,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     }
 
     //if workspace
-    if( prefix === "g-" ) {
+    if( prefix === "w-" ) {
         fetch( "api/v1/auth/workspaces", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -481,7 +483,6 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     //if topic
     } 
     else {
-        console.log( "/topics 1" );
         fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
@@ -508,7 +509,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
 };
 
 const deleteResource = async ( resourceId, prefix ) => {
-    if ( prefix === "g-" ) {
+    if ( prefix === "w-" ) {
         const response = await fetch( "api/v1/auth/workspaces/" + resourceId, { method: "DELETE" } );
         if( response.ok ) {
             await response.json();
@@ -655,7 +656,7 @@ const createToast = ( text ) => {
 const fillNameandDescription = ( e ) => {
     let parentId = getId( e );
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+    isTopic( e ) ? prefix = "t-" : prefix = "w-";
 
     let parentNameId = "card-title-" + parentId;
     let parentDescId = "card-desc-" + parentId;
@@ -740,7 +741,7 @@ const showDeleteModal = ( e ) => {
     let parentId = getId( e );
     
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "g-"; 
+    isTopic( e ) ? prefix = "t-" : prefix = "w-"; 
    
     let parentNameId = prefix + "lv-card-title-" + parentId;
    
@@ -820,7 +821,7 @@ const topicReroute = ( id, newTab, prefix ) => {
 const openInNewTab = ( e ) => {
     let parentId = getId( e );
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+    isTopic( e ) ? prefix = "t-" : prefix = "w-";
 
     topicReroute( parentId, true, prefix );
 
@@ -840,7 +841,7 @@ const copyLink = ( e ) => {
     let parentId = getId( e );
 
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+    isTopic( e ) ? prefix = "t-" : prefix = "w-";
 
     navigator.clipboard.writeText( "http://localhost:4200/topic#" + prefix + parentId );
 
@@ -865,7 +866,7 @@ const duplicateWorkspace = async ( e ) => {
     let parentId = getId( e );
    
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "g-";
+    isTopic( e ) ? prefix = "t-" : prefix = "w-";
 
     let gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
     let listParent = document.getElementById( prefix + "lv-" + parentId );
@@ -959,7 +960,7 @@ var duplicateCards = document
 
 
 const placeElement = ( gridElement, listElement, gridContainer, listContainer, prefix ) => {
-    if ( prefix === "g-" ) {
+    if ( prefix === "w-" ) {
         gridContainer.insertBefore( gridElement, gridContainer.childNodes[2] );
 
         listContainer.insertBefore( listElement, listContainer.childNodes[2] );

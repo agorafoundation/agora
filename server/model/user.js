@@ -5,10 +5,13 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// import uuid generator
+const { v4: uuidv4 } = require( "uuid" );
+
 class User {
     constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
 
-        this.userId -1;
+        this.userId = uuidv4();
         this.email = email;
         this.username = username;
         this.profileFilename = profileFilename;
@@ -38,7 +41,6 @@ exports.emptyUser = () => {
 
 exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
     let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
-    newUser.userId = -1;
     return newUser;
 };
 

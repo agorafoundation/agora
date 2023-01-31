@@ -30,7 +30,6 @@ exports.getSearchResults = async ( term, userId, type = "all" ) => {
     const searchResults = [];
 
 
-    console.log( users, resources, topics, workspaces );
 
     // transform results from users, resources, topics, workspaces into searchResult objects
     users?.forEach( element => {
@@ -52,8 +51,6 @@ exports.getSearchResults = async ( term, userId, type = "all" ) => {
     } );
 
 
-    console.log( searchResults );
-    console.log( term );
 
     
     // do some stuff with the results

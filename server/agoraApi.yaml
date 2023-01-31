@@ -272,17 +272,17 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-  /tags/tagged/{tagId}/{entityType}/{entityId}:
+  /tags/tagged/{tag}/{entityType}/{entityId}:
     delete:
       tags:
         - Tagged
       summary: Deletes a tag association, removing the tag (tagName) from an entity (by entityType, entityId) for owner (authorized api or client session user)
       parameters:
         - in: path
-          name: tagName
+          name: tag (tag name)
           schema:
-            type: integer
-            description: tag to remove the association from
+            type: string
+            description: name given to tag to remove the association from
         - in: path
           name: entityType
           schema:

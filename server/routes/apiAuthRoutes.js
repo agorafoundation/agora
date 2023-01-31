@@ -30,11 +30,14 @@ router.use( function ( req, res, next ) {
     const authHeader = req.headers.authorization;
     if( !authHeader ){
         // authentication token missing
-
+        console.log( 'unauth' );
+        const message = ApiMessage.createApiMessage( 401, "Unauthorized", "API requires authentication" );
         res.set( "x-agora-message-title", "Unauthorized" );
         res.set( "x-agora-message-detail", "API requires authentication" );
-        res.status( 401 );
-        next( 'Authentication not provided!' );
+        res.status( 401 ).json( message );
+        
+        
+        //next( 'Authentication not provided!' );
 
     }
     else {

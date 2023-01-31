@@ -179,9 +179,9 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1 ];
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
 
         try {
              
@@ -265,11 +265,12 @@ exports.getActiveUserById = async function( id ) {
     const values = [ id ];
     
     try {
-         
+        console.log( "u-1" );
         let res = await db.query( text, values );
-        
+        console.log( "u-2" );
         if( res.rows.length > 0 ) {
             let user = User.ormUser( res.rows[0] );
+            console.log( "u-1 user: " + JSON.stringify( user ) );
 
             // get roles for the user
             let userRoles = await exports.getActiveRolesForUserId( user.userId );
