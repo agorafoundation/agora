@@ -24,7 +24,7 @@
             </div>
             <div class="card-footer">
               <% for(let i=0; i < tags.length; i++) { %>
-                <span class="badge badge-primary topic-badge">
+                <span class="badge badge-med topic-badge">
                   <%= tags[i]%>
                 </span>
               <% } %>
@@ -65,7 +65,7 @@
             </div>
             <div class="card-footer" >
               <% for(let i=0; i < tags.length; i++) { %>
-                <span class="badge badge-primary topic-badge">
+                <span class="badge badge-med topic-badge">
                   <%= tags[i]%>
                 </span>
               <% } %>
@@ -93,16 +93,18 @@
             <%
          //render workspaces
           
-         for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
+        for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
           let topics = [];
+          let tags = [];
           topics = ownerWorkspaces[i].topics.map(a => a.topicName);
-            renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,["Bio","Chem"],"Workspace", topics); 
-         }
+          tags = ownerWorkspaces[i].tags.map(a => a.tag);
+          renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,tags,"Workspace", topics); 
+        }
         %>
             <% //render resources for Now
         for (let i = 0; i <  ownerTopics.length ; i++) { 
             
-            renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null) 
+            renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Biom","Chem"],"Topic", null) 
             
          }%>
          <%=//c console.log(ownerWorkspaces[0]) %>

@@ -17,6 +17,7 @@ const Resource = require( '../model/resource' );
 const workspaceService = require( '../service/workspaceService' );
 const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
+const tagService = require( '../service/tagService' );
 
 exports.getDashboard = async function( req, res ) {
     
@@ -47,7 +48,9 @@ exports.getDashboard = async function( req, res ) {
                 console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
             }
         }
-    
+
+        // get all the tags for this workspace
+        ownerWorkspaces[i].tags = await tagService.getTaggedEntity( 'workspace', ownerWorkspaces[i].workspaceId );    
 
     }
     if( workspaceId > 0 ) {

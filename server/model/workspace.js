@@ -22,6 +22,7 @@ function workspace() {
     this.ownedBy = -1;
 
     this.topics = [];
+    this.tags = [];
 }
 
 exports.emptyWorkspace = () => {

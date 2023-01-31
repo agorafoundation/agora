@@ -513,8 +513,8 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
         const tagType = isTopic ? "topic" : "workspace";
 
         // call the .delete on the tagged
-        console.log( "tag name to elete: " + selectedTag.innerHTML );
-        fetch( "api/v1/auth/tags/tagged/" + selectedTag.innerHTML + "/" + tagType + "/" + id, {
+        console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) );
+        fetch( "api/v1/auth/tags/tagged/" + selectedTag.id + "/" + tagType + "/" + id, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         } );
