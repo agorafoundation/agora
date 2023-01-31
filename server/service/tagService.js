@@ -283,7 +283,7 @@ exports.saveTagged = async ( tagged ) => {
 
 exports.deleteTagged = async ( tagId, entityType, entityId, userId ) => {
 
-    if( entityType && entityId > 0 && userId > 0 ) {
+    if( tagId >= 0 && entityType && entityId && userId ){
         let text = "DELETE FROM tag_associations WHERE tag_id = $1 AND entity_type = $2 AND entity_id = $3 AND user_id = $4;";
         let values = [ tagId, entityType, entityId, userId ];
 

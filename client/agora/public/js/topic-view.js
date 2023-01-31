@@ -481,7 +481,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
     // make the fetch call to save the tag
     if( isNewSave ) {
-        console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
+        //console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
         fetch( "api/v1/auth/tags/tagged", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -496,7 +496,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "success saving tagged" );
+                //console.log( "success saving tagged" );
             } );
     }
 
@@ -513,8 +513,8 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
         const tagType = isTopic ? "topic" : "workspace";
 
         // call the .delete on the tagged
-        console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) );
-        fetch( "api/v1/auth/tags/tagged/" + selectedTag.id + "/" + tagType + "/" + id, {
+        //console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id );
+        fetch( "api/v1/auth/tags/tagged/" + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         } );
@@ -544,9 +544,8 @@ let numResources = 1;
 
 // create a new resource
 function createResource( name, type, imagePath, id ) {
-    console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
+    //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
-        //console.log( "testing 1" );
         fetch( "api/v1/auth/resources", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -564,19 +563,18 @@ function createResource( name, type, imagePath, id ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "new resource data: " + JSON.stringify( data ) );
+                //console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-                console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
+                //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
 
                 // map the new resource to the associated topic
                 let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-                console.log( "topic title: " + topicTitle );
+                //console.log( "topic title: " + topicTitle );
                 updateTopic( topicTitle );
             } );
     }
     else{
-        console.log( "testing 2" );
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
        
@@ -588,7 +586,7 @@ function createResource( name, type, imagePath, id ) {
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
-    console.log( "returning topic id: " + topicID );
+    //console.log( "returning topic id: " + topicID );
     return topicID;
 }
 
@@ -765,7 +763,7 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
-    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
     
     fetch( "api/v1/auth/resources", {
         method: "POST",
@@ -1284,7 +1282,7 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
-    console.log( isTopic, id );
+    //console.log( isTopic, id );
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1292,7 +1290,6 @@ const idAndFetch = () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                console.log( "response: ", response );
                 fillFields(
                     response.topicName,
                     response.topicDescription,
@@ -1378,16 +1375,16 @@ async function renderTopic( topic ) {
     if ( resources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
-            console.log( "resource: " + i + " of " + resources.length );
-            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
                     totalTopicsRendered++; 
                     let editor = "sunEditor" + ( totalTopicsRendered );
-                    console.log( editor );
-                    console.log( sunEditor[editor] );
+                    //console.log( editor );
+                    //console.log( sunEditor[editor] );
                     sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
 
                     //docType1Count++;
@@ -1410,10 +1407,10 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( "render resources call: " + topicId );
+    //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    console.log( "render resources response: " + JSON.stringify( data ) );
+    //console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
 }
 

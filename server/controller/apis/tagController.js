@@ -273,7 +273,6 @@ exports.deleteTagged = async function( req, res ) {
         else if ( req && req.session && req.session.authUser ) {
             userId = req.session.authUser.userId;
         }
-
         success = await tagService.deleteTagged( tag.tagId, req.params.entityType, req.params.entityId, userId );
 
     }
