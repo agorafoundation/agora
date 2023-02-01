@@ -53,7 +53,7 @@ exports.getAllVisibleResources = async ( req, res ) => {
 
     //console.log("auth user id; " + authUserId);
     
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
 
@@ -225,7 +225,6 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 };
 
 exports.saveResource = async ( req, res, redirect ) => {
-    console.log( req.files );
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -237,12 +236,14 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ) {
+    if( authUserId ) {
 
-        resource.resourceId = req.body.resourceId;
+        if( req.body.resourceId != null && req.body.resourceId != -1 ) {
+            resource.resourceId = req.body.resourceId;
+        }
 
         // see if this is a modification of an existing resource
-        let existingResource = await resourceService.getResourceById( resource.resourceId, false );
+        let existingResource = await resourceService.getResourceById( resource.resourceId.toString(), false );
 
         // if this is an update, replace the resource with the existing one as the starting point.
         if( existingResource ) {
@@ -294,8 +295,8 @@ exports.saveResource = async ( req, res, redirect ) => {
         /**
          * once the resource is saved, save the image if it is passed
          */ 
-        console.log( "req.files is " + req.files );
-        console.log( "req.body.resourceImage is " + req.body.resourceImage );
+        //console.log( "req.files is " + req.files );
+        //console.log( "req.body.resourceImage is " + req.body.resourceImage );
         // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
         if ( req.body.resourceModified && !req.files ) {
             // do nothing we are going to keep the original file

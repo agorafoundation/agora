@@ -1,5 +1,5 @@
 -- Agora base database setup
-
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- setup (as root / postgres)
 drop database agora;
@@ -39,7 +39,7 @@ GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO agora;
 GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_cc_sponsor_id_seq TO agora;
 
 CREATE TABLE IF NOT EXISTS users (
-    user_id SERIAL PRIMARY KEY,
+    user_id uuid PRIMARY KEY,
     email VARCHAR,
     username VARCHAR,
     profile_filename VARCHAR,
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 GRANT ALL PRIVILEGES ON TABLE users TO agora;
-GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
+--GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_users_email ON users (LOWER(email));
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER,
-    user_id INTEGER,
+    user_id uuid,
     stripe_session_data jsonb,
     stripe_customer_data jsonb,
     mail_address_1 VARCHAR,
@@ -213,7 +213,7 @@ GRANT USAGE, SELECT ON SEQUENCE orders_order_id_seq TO agora;
 
 CREATE TABLE IF NOT EXISTS user_sessions (
     user_session_id SERIAL PRIMARY KEY,
-    user_id INTEGER,
+    user_id uuid,
     create_time TIMESTAMP DEFAULT current_timestamp,
     ip_address VARCHAR,
     client_type VARCHAR,
@@ -256,7 +256,7 @@ insert into roles (role_name, role_description, active) values ('Creator', 'Cont
 
 CREATE TABLE IF NOT EXISTS user_roles (
     user_role_id SERIAL PRIMARY KEY,
-    user_id INTEGER,
+    user_id uuid,
     role_id INTEGER,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
@@ -270,15 +270,15 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
 
 -- insert into user_role_goal (user_id, role_id, active) values (1, 1, true);
 -- creator waiting for the first user
-insert into user_roles (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
-insert into user_roles (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
+-- insert into user_roles (user_id, role_id, active, end_time) values (1, 1, true, 'infinity');
+-- insert into user_roles (user_id, role_id, active, end_time) values (1, 4, true, 'infinity');
 
 CREATE TYPE visibility AS ENUM ('private', 'public');
 
 -- workspace and related <- workspaceService
 CREATE TABLE IF NOT EXISTS workspaces (
     workspace_rid SERIAL PRIMARY KEY,
-    workspace_id INTEGER,
+    workspace_id UUID NOT NULL,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
     workspace_name VARCHAR,
     workspace_description VARCHAR,
@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS workspaces (
     visibility visibility, 
     create_time TIMESTAMP DEFAULT current_timestamp,
 	lastmodified TIMESTAMP,
-    owned_by INTEGER
+    owned_by uuid
 );
 
 GRANT ALL PRIVILEGES ON TABLE workspaces TO agora;
@@ -297,7 +297,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspaces (wor
 CREATE INDEX IF NOT EXISTS idx_workspace_visibility ON workspaces (visibility);
 
 CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
-    topic_id SERIAL PRIMARY KEY,
+    topic_id UUID PRIMARY KEY,
     topic_name VARCHAR,
     topic_description VARCHAR,
     topic_image VARCHAR,
@@ -311,7 +311,7 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
     topic_type INTEGER,     -- Enumeration -> 0 = Research, 1 = Educational
     create_time TIMESTAMP DEFAULT current_timestamp,
 	lastmodified TIMESTAMP,
-    owned_by INTEGER
+    owned_by uuid
 );
 
 GRANT ALL PRIVILEGES ON TABLE topics TO agora;
@@ -321,7 +321,7 @@ CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 CREATE TABLE IF NOT EXISTS workspace_paths (
     workspace_path_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
-    topic_id INTEGER,
+    topic_id UUID,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
@@ -339,7 +339,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_paths_workspace_rid ON workspace_paths 
 CREATE TABLE IF NOT EXISTS user_workspaces (
     user_workspace_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
-    user_id INTEGER,
+    user_id uuid,
     is_completed BOOLEAN,
     completed_date TIMESTAMP,
     active BOOLEAN,
@@ -360,8 +360,8 @@ CREATE INDEX IF NOT EXISTS idx_user_workspaces_user_id ON user_workspaces (user_
 -- changed 
 CREATE TABLE IF NOT EXISTS user_topics (
     user_topic_id SERIAL PRIMARY KEY,
-    topic_id INTEGER,
-    user_id INTEGER,
+    topic_id uuid,
+    user_id uuid,
     is_intro_complete BOOLEAN,
     pre_completed_assessment_id INTEGER,
     post_completed_assessment_id INTEGER,
@@ -380,7 +380,7 @@ CREATE INDEX IF NOT EXISTS idx_user_topics_user_id ON user_topics (user_id);
 
 
 CREATE TABLE IF NOT EXISTS resources (
-    resource_id SERIAL PRIMARY KEY,
+    resource_id uuid PRIMARY KEY,
     resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
     resource_description VARCHAR,
@@ -391,7 +391,7 @@ CREATE TABLE IF NOT EXISTS resources (
     active BOOLEAN,
     visibility visibility,
     create_time TIMESTAMP DEFAULT current_timestamp,
-    owned_by INTEGER
+    owned_by uuid
 );
 
 GRANT ALL PRIVILEGES ON TABLE resources TO agora; 
@@ -403,7 +403,7 @@ CREATE TABLE IF NOT EXISTS tags (
     tag_id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
     last_used TIMESTAMP,
-    owned_by INTEGER
+    owned_by uuid
 );
 
 GRANT ALL PRIVILEGES ON TABLE tags TO agora;
@@ -416,8 +416,8 @@ CREATE TABLE IF NOT EXISTS tag_associations (
     tag_association_id SERIAL PRIMARY KEY,
     tag_id INTEGER, -- fk to tag
     entity_type tag_entity_types, --  1-goal, 2-topic, 3-resource, 
-    entity_id INTEGER, -- fk to entity id for entity_type
-    user_id INTEGER, -- fk of user that set tag
+    entity_id uuid, -- fk to entity id for entity_type
+    user_id uuid, -- fk of user that set tag
     lookup_count INTEGER, -- incremented when user finds entity via tag lookup, tracks popularity.
     last_used TIMESTAMP,
     active BOOLEAN,
@@ -429,13 +429,13 @@ CREATE TABLE IF NOT EXISTS tag_associations (
 -- make resources many to many with topics instead of many to one
 CREATE TABLE IF NOT EXISTS topic_resources (
     topic_resource_id SERIAL PRIMARY KEY,
-    topic_id INTEGER,
-    resource_id INTEGER,
+    topic_id uuid,
+    resource_id uuid,
     position INTEGER,
     is_required BOOLEAN,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
-    owned_by integer
+    owned_by uuid
 );
 GRANT ALL PRIVILEGES ON TABLE topic_resources TO agora;
 GRANT USAGE, SELECT ON SEQUENCE topic_resources_topic_resource_id_seq TO agora;
@@ -449,8 +449,8 @@ CREATE INDEX IF NOT EXISTS idx_topic_resources_owned_by ON topic_resources (owne
 -- when combined with user_topic (pre_completed_assessment_id, post_completed_assessment_id and completed_activity_id) denotes completed topic
 CREATE TABLE IF NOT EXISTS completed_resources (
     completed_resource_id SERIAL PRIMARY KEY,
-    resource_id INTEGER,
-    user_id INTEGER,
+    resource_id uuid,
+    user_id uuid,
     submission_text VARCHAR, -- is the user going to actually submit something here ever?
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
@@ -509,7 +509,7 @@ CREATE INDEX IF NOT EXISTS idx_assessment_question_options_assessment_question_i
 CREATE TABLE IF NOT EXISTS completed_assessments (
     completed_assessment_id SERIAL PRIMARY KEY,
     assessment_id INTEGER,
-    user_id INTEGER,
+    user_id uuid,
     topic_assessment_number INTEGER,    -- 1-Pre, 2-Post, 3-Post-retake 1, 4-post-retake 2, etc
     percentage_correct DECIMAL(4,3),    -- ex: .923 (92.3%), 1.000 (100%)
     completion_time TIMESTAMP,          -- Incase computation of corrcect percentage is different or re-done from intial record create
@@ -555,7 +555,7 @@ GRANT ALL PRIVILEGES ON TABLE activities TO agora;
 CREATE TABLE IF NOT EXISTS completed_activities (
     completed_activity_id SERIAL PRIMARY KEY,
     activity_id INTEGER,
-    user_id INTEGER,
+    user_id uuid,
     submission_text VARCHAR,
     active BOOLEAN,
     create_time TIMESTAMP DEFAULT current_timestamp,
@@ -572,9 +572,9 @@ CREATE INDEX IF NOT EXISTS idx_completed_activities_activity_id ON completed_act
 CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 
 CREATE TABLE IF NOT EXISTS discussions (
-    parent_id INTEGER,
+    parent_id uuid,
     parent_type discussion_parents,
-    user_id INTEGER,
+    user_id uuid,
     discussion_text VARCHAR,
     CONSTRAINT discussion_parent PRIMARY KEY (parent_id, parent_type)
 );
@@ -588,7 +588,7 @@ CREATE TABLE IF NOT EXISTS discussion_comments (
     comment_text VARCHAR,
     creation_date TIMESTAMP DEFAULT current_timestamp,
   	updated_date TIMESTAMP DEFAULT current_timestamp,
-    user_id INTEGER
+    user_id uuid
 );
 
 GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
@@ -596,7 +596,7 @@ GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
 
 CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
     discussion_comment_id INTEGER,
-    user_id INTEGER,
+    user_id uuid,
     rating BOOLEAN,
     CONSTRAINT user_rating PRIMARY KEY (discussion_comment_id, user_id)
 );

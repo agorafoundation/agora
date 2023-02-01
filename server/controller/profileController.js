@@ -14,15 +14,27 @@ const userService = require( '../service/userService' );
 
 exports.getProfile = async function( req, res ) {
     // get the user data
-    let userId = req.params.userId;
+    let userId = req.params.userId.toString();
     let user = null;
-    if( userId >= 0 ) {
+    if( userId ) {
         user = await userService.getActiveUserById( userId );
+
+        if( user ) {
+            res.render( 'profile/user', {user: user} );
+        }
+        else {
+            res.render( 'index' );
+        }
+
+        
+    }
+    else {
+        res.render( 'index' );
     }
 
     //console.log("returned user: " + JSON.stringify(user));
     
-    res.render( 'profile/user', {user: user} );
+    
 };
 
 

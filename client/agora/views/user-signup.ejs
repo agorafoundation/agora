@@ -11,6 +11,10 @@
         <%- include('./partials/topmenu'); %>
     </nav>
 
+    <!-- include the modals for the privacy policy and terms of service -->
+    <%- include('./website/privacy'); %>
+    <%- include('./website/terms'); %>
+
 
     <!-- Page Content -->
     <content>
@@ -41,7 +45,7 @@
                                 <h2>Join Agora!</h2>
                                 <h5>A forever free environment where you can learn, research, and keep all your notes for
                                     life! Your data will never be sold or shared!</h5>
-                                <img src="/assets/img/logos/agora-logo-2023-1.png" class="website-image website-image-95"
+                                <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95"
                                     style="height:70%" />
                                 <p></p>
                             </div>
@@ -94,6 +98,19 @@
                                         <h5>Letting us know which topics your are most intested in helps us find related research and
                                             collaborators that might be of interest to you (optional)</h5>
                                         <p>TODO:Tags Tag selection will go here</p> 
+                                        <p>Please read our 
+                                        
+                                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#termsModal">
+                                            Terms of Service
+                                        </button>
+                                        
+                                        and 
+                                        
+                                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                                            Privacy Policy
+                                        </button>
+                                        </p>
+                                        <h4>You are agreeing to them by joining!</h4>
                                         <button type="submit" id="userButton" class="btn btn-primary btn-lg btn-block" disabled>Join the Agora Community!</button>
                                         <br />
     

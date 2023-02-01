@@ -8,8 +8,11 @@
 let Assessment = require( './assessment' );
 let Activity = require( './activity' );
 
+// import uuid generator
+const { v4: uuidv4 } = require( "uuid" );
+
 function topic() {
-    this.topicId = -1;
+    this.topicId = uuidv4();
     this.topicType = 0;
     this.topicName = "";
     this.topicDescription = "";

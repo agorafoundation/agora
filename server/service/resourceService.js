@@ -299,42 +299,52 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
 exports.saveResource = async ( resource ) => {
     // check to see if an id exists - insert / update check
     if( resource ) {
-        if( resource.resourceId > 0 ) {
+        // query to see if the resourceId exists
+        let text = "SELECT resource_id FROM resources WHERE resource_id = $1;";
+        let values = [ resource.resourceId ];
+        try {
+            let res = await db.query( text, values );
+            if( res.rowCount > 0 ) {
             
-            // update
-            let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE resource_id = $11;";
-            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
-    
-            try {
-                let res = await db.query( text, values );
-            }
-            catch( e ) {
-                console.log( "[ERR]: Error updating resources - " + e );
-                return false;
-            }
-            
-        }
-        else {
-            
-            // insert
-            let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING resource_id;";
-            let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility ];
-
-            try {
-                let res2 = await db.query( text, values );
-    
-                if( res2.rowCount > 0 ) {
-                    resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
-                    console.log( " ----------------- Resource ID: " + resource.resourceId );
+                // update
+                let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE resource_id = $11;";
+                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
+        
+                try {
+                    let res = await db.query( text, values );
+                }
+                catch( e ) {
+                    console.log( "[ERR]: Error updating resources - " + e );
+                    return false;
                 }
                 
             }
-            catch( e ) {
-                console.log( "[ERR]: Error inserting resources - " + e );
-                return false;
+            else {
+                
+                // insert
+                let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility, resource_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING resource_id;";
+                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
+    
+                try {
+                    let res2 = await db.query( text, values );
+        
+                    if( res2.rowCount > 0 ) {
+                        resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
+                    }
+                    
+                }
+                catch( e ) {
+                    console.log( "[ERR]: Error inserting resources - " + e );
+                    return false;
+                }
             }
+            return resource;
         }
-        return resource;
+        catch( e ) {
+            console.log( "[ERR]: saveResource - error checking to see if resourceId exists - " + e );
+            return false;
+        }
+        
     }
     else {
         return false;

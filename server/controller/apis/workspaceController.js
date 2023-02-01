@@ -37,8 +37,9 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
+    console.log( '1' );
     let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
-    
+    console.log( '2' );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
     res.status( 200 ).json( workspaces );
@@ -54,7 +55,7 @@ exports.getWorkspaceById = async ( req, res ) => {
     else if( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
-    if( authUserId > 0 ) {
+    if( authUserId ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
         if ( workspace ) {
@@ -82,16 +83,14 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId > 0 ){
-
+    if( authUserId ){
         // Check if valid workspaceId given.
         let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
         if( workspace ) {
 
             let topicsList = [];
-            
             // Get all topics Ids associated with our workspaceId.
-            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceId );
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
             
             // Grab each topic by id and append it to our list of topics
             for ( let index in topicsIds ) {
@@ -129,7 +128,7 @@ exports.deleteWorkspaceById = async ( req, res ) => {
         authUserId = req.session.authUser.userId;
     }
 
-    if ( authUserId > 0 ) {
+    if ( authUserId ) {
         const workspaceId = req.params.workspaceId;
         let success = await workspaceService.deleteWorkspaceById( workspaceId, authUserId );
 
@@ -224,19 +223,20 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     }
     
     workspace.ownedBy = authUserId; 
+    //console.log( "workspace owned by: " + workspace.ownedBy + " from " + authUserId ); 
 
-    if( authUserId > 0 ) {
-
-        workspace.workspaceId = req.body.workspaceId;
+    if( authUserId ) {
+        if( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
+            workspace.workspaceId = req.body.workspaceId;
+        }
 
         // see if this is a modification of an existing workspace
-        let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId );
+        let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId.toString() );
 
         // if this is an update replace the workspace with teh existing one as the starting point
         if( existingWorkspace ) {
             
             workspace = existingWorkspace;
-            console.log( "[workspaceController.saveWorkspace]: Existing Workspace found by workspaceId - " + JSON.stringify( existingWorkspace ) );
   
             if( ( existingWorkspace.visibility != req.body.visibility )
                 || ( existingWorkspace.workspaceName != req.body.workspaceName )
@@ -244,7 +244,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 || ( existingWorkspace.active != req.body.active )
                 || ( existingWorkspace.completable != req.body.completable ) ) {
                 workspace.workspaceVersion++;
-                console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
+                //console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
             }
             else {
                 console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
@@ -255,7 +255,6 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace.topics = req.body.topics;
 
         // add changes from the body if they are passed
-        console.log( req.body.visibility + " vis:" );
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
             workspace.visibility = req.body.visibility;   
         }
@@ -270,8 +269,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         workspace = await workspaceService.saveWorkspace( workspace );
 
         if ( req.body.topics ){
-            let topicsSaved = await workspaceService.saveTopicsForWorkspace( workspace.workspaceId, req.body.topics, req.body.topicsRequired );
-            console.log( "@ -- @" + topicsSaved );
+            await workspaceService.saveTopicsForWorkspace( workspace.workspaceRid, req.body.topics, req.body.topicsRequired );
         }
 
         /**
@@ -385,11 +383,11 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     }
     
     if( redirect ) {
-        console.log( "workspaceController.saveWorkspace() - END - Redirect" );
+        //console.log( "workspaceController.saveWorkspace() - END - Redirect" );
         return workspace;
     }
     else {
-        console.log( "workspaceController.saveWorkspace() - END - Non-Redirect " );
+        //console.log( "workspaceController.saveWorkspace() - END - Non-Redirect " );
         res.setHeader( 'Content-Type', 'application/json' );
         res.send( JSON.stringify( workspace ) );
     }
