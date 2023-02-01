@@ -542,13 +542,10 @@ let resources = {};
 let numResources = 1;
 
 // create a new resource
-function createResource( name, type, imagePath, id ) {
+function createResource( name, type, imagePath, id, file ) {
     console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
-        //console.log( "testing 1" );
         let formData = new FormData();
-        let file = document.querySelector( 'input[type="file"]' );
-        console.log( file );
         formData.append( "resourceId", -1 );
         formData.append( "resourceType", type );
         formData.append( "resourceName", name ? name : "Untitled" );
@@ -559,7 +556,7 @@ function createResource( name, type, imagePath, id ) {
         formData.append( "isRequired", true );
         formData.append( "active", true );
         formData.append( "visibility", "private" );
-        formData.append( "file", file.files[-1] );
+        formData.append( "files", file );
 
         fetch( "api/v1/auth/resources", {
             method: "POST",
@@ -950,9 +947,9 @@ function updateThumbnail( dropZoneElement, file ) {
         getFile( file ).then( url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
-            createResource( file.name, 2, url );
+            // createResource( file.name, 2, url );
 
-            // createResource( file.name, 2, file.name );
+            createResource( file.name, 2, file.name, -1, file );
             // console.log( url ) ;
         } );
 

@@ -226,7 +226,6 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
 exports.saveResource = async ( req, res, redirect ) => {
 
-    console.log( JSON.stringify( req ) );
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
