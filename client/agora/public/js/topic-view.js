@@ -481,6 +481,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
     // make the fetch call to save the tag
     if( isNewSave ) {
+        //console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
         fetch( "api/v1/auth/tags/tagged", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -495,7 +496,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "success saving tagged" );
+                //console.log( "success saving tagged" );
             } );
     }
 
@@ -512,8 +513,8 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
         const tagType = isTopic ? "topic" : "workspace";
 
         // call the .delete on the tagged
-        console.log( "tag name to elete: " + selectedTag.innerHTML );
-        fetch( "api/v1/auth/tags/tagged/" + selectedTag.innerHTML + "/" + tagType + "/" + id, {
+        //console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id );
+        fetch( "api/v1/auth/tags/tagged/" + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         } );
@@ -542,42 +543,38 @@ let resources = {};
 let numResources = 1;
 
 // create a new resource
-function createResource( name, type, imagePath, id, file ) {
-    console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
+function createResource( name, type, imagePath, id ) {
+    //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
-        let formData = new FormData();
-        formData.append( "resourceId", -1 );
-        formData.append( "resourceType", type );
-        formData.append( "resourceName", name ? name : "Untitled" );
-        formData.append( "resourceDescription", "" );
-        formData.append( "resourceContentHtml", "" );
-        formData.append( "resourceImage", imagePath ? imagePath : "" );
-        formData.append( "resourceLink", "" );
-        formData.append( "isRequired", true );
-        formData.append( "active", true );
-        formData.append( "visibility", "private" );
-        formData.append( "files", file );
-
         fetch( "api/v1/auth/resources", {
             method: "POST",
-            headers: {'Content-Type': "multipart/form-data"},
-            body: formData
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "resourceType": type,
+                "resourceName": name ? name : "Untitled",
+                "resourceDescription": "",
+                "resourceContentHtml": "",
+                "resourceImage": imagePath ? imagePath : "",
+                "resourceLink": "",
+                "isRequired": true,
+                "active": true,
+                "visibility": "private"
+            } )
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "new resource data: " + JSON.stringify( data ) );
+                //console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-                console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
+                //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
 
                 // map the new resource to the associated topic
                 let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-                console.log( "topic title: " + topicTitle );
+                //console.log( "topic title: " + topicTitle );
                 updateTopic( topicTitle );
             } );
     }
     else{
-        console.log( "testing 2" );
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
 
@@ -589,7 +586,7 @@ function createResource( name, type, imagePath, id, file ) {
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
-    console.log( "returning topic id: " + topicID );
+    //console.log( "returning topic id: " + topicID );
     return topicID;
 }
 
@@ -766,7 +763,7 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
-    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
 
     fetch( "api/v1/auth/resources", {
         method: "POST",
@@ -1268,19 +1265,25 @@ for ( let i = 0; i < perms.length; i++ ) {
 
 const prefixPattern = /#t/;
 
-const idPattern = /-([0-9]+)/;
+//const idPattern = /-([0-9]+)/;
+const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
 const getPrefixAndId = () => {
 
     const url = window.location.href;
-    let urlId = ( idPattern.exec( url ) ) ? idPattern.exec( url )[1] : -1;
+    let urlId = null;
+    let tempUuid =  ( uuidPattern.exec( url ) );
+    if( tempUuid ) {
+        urlId = tempUuid[0];
+    }
+
     return [ prefixPattern.test( url ), urlId ];
 };
 
 const idAndFetch = () => {
-
     const [ isTopic, id ] = getPrefixAndId();
-    if ( isTopic && id > 0 ) {
+    //console.log( isTopic, id );
+    if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1294,7 +1297,7 @@ const idAndFetch = () => {
                 );
             } );
     }
-    else if ( id > 0 ) {
+    else if ( id ) {
         fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1312,7 +1315,7 @@ const idAndFetch = () => {
 
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
-    if ( isTopic && id > 0 ) {
+    if ( isTopic && id ) {
         fetch( "api/v1/auth/tags/tagged/topic/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1326,7 +1329,7 @@ const getTags = async () => {
 
             } );
     }
-    else if ( id > 0 ) {
+    else if ( id ) {
         fetch( "api/v1/auth/tags/tagged/workspace/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1347,7 +1350,7 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    if( id > 0 ) {
+    if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
 
@@ -1372,16 +1375,16 @@ async function renderTopic( topic ) {
     if ( resources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
-            console.log( "resource: " + i + " of " + resources.length );
-            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
                     totalTopicsRendered++;
                     let editor = "sunEditor" + ( totalTopicsRendered );
-                    console.log( editor );
-                    console.log( sunEditor[editor] );
+                    //console.log( editor );
+                    //console.log( sunEditor[editor] );
                     sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
 
                     //docType1Count++;
@@ -1404,10 +1407,10 @@ async function renderTopic( topic ) {
 }
 
 async function renderResources( topicId ) {
-    console.log( "render resources call: " + topicId );
+    //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    console.log( "render resources response: " + JSON.stringify( data ) );
+    //console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
 }
 
@@ -1533,7 +1536,7 @@ const getDiscussions = async ( isTopic, id ) => {
 
     let pageComments;
 
-    if ( isTopic && id > 0 ) {
+    if ( isTopic && id ) {
 
         const response = await fetch( "/api/v1/auth/discussions/topic/" + id, { headers: { "Content-Type": "application/json" } } );
         if ( response.ok ) {
@@ -1544,7 +1547,7 @@ const getDiscussions = async ( isTopic, id ) => {
             //console.log( response.status );
         }
     }
-    else if( id > 0 ) {
+    else if( id ) {
 
         const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
         if ( response.ok ) {

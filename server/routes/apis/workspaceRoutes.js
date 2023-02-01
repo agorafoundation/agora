@@ -45,6 +45,7 @@ router.route( '/:workspaceId' )
         workspaceController.deleteWorkspaceById( req, res );
     }
     );
+
 // Topics /api/v1/auth/workspaces/topics/:workspaceId
 // workspaces /api/v1/auth/workspaces/topics/:workspaceId
 

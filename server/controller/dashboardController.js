@@ -17,6 +17,7 @@ const Resource = require( '../model/resource' );
 const workspaceService = require( '../service/workspaceService' );
 const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
+const tagService = require( '../service/tagService' );
 
 exports.getDashboard = async function( req, res ) {
     
@@ -24,7 +25,6 @@ exports.getDashboard = async function( req, res ) {
 
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.session.authUser.userId, false );
-    
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( req.session.authUser.userId, true );
     // start the available topics out with the full owner topic set
@@ -34,9 +34,8 @@ exports.getDashboard = async function( req, res ) {
     let workspace = Workspace.emptyWorkspace();
 
     for( let i =0; i < ownerWorkspaces.length; i++ ) {
-
         // Get all topics Ids associated with our workspaceId.
-        let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceId );
+        let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceRid );
         
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
@@ -49,11 +48,12 @@ exports.getDashboard = async function( req, res ) {
                 console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
             }
         }
-    
+
+        // get all the tags for this workspace
+        ownerWorkspaces[i].tags = await tagService.getTaggedEntity( 'workspace', ownerWorkspaces[i].workspaceId );    
 
     }
     if( workspaceId > 0 ) {
-
         workspace = await workspaceService.getActiveWorkspaceWithTopicsById( workspaceId, false );
         // iterate through the workspaces assigned topics, remove them from the available list
         for( let i=0; i < workspace.topics.length; i++ ) {

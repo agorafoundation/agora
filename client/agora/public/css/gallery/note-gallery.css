@@ -15,6 +15,10 @@
   color: #fff;
   background-color: #343a40;
 }
+.badge-med {
+  color: #fff;
+  background-color: #2C8895;
+}
 
 .topic-badge {
   font-size: 0.75rem;
