@@ -191,7 +191,7 @@ const createTopic = async( id, name ) => {
     if( !id ) {
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': ''},
             body: JSON.stringify( {
                 "topicType": 1,
                 "topicName": "Untitled",
@@ -543,23 +543,27 @@ let resources = {};
 let numResources = 1;
 
 // create a new resource
-function createResource( name, type, imagePath, id ) {
+function createResource( name, type, imagePath, id, file ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
+
+        const formData = new FormData();
+        formData.append( 'resourceType', type );
+        formData.append( 'resourceName', name ? name : 'Untitled' );
+        formData.append( 'resourceDescription', '' );
+        formData.append( 'resourceContentHtml', '' );
+        formData.append( 'resourceImage', imagePath ? imagePath : '' );
+        formData.append( 'resourceLink', '' );
+        formData.append( 'isRequired', 'true' );
+        formData.append( 'active', 'true' );
+        formData.append( 'visibility', 'private' );
+        formData.append( 'files', file );
+
+        console.log( formData.get( 'files' ) );
         fetch( "api/v1/auth/resources", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
+            // headers: { 'Content-Type': 'multipart/form-data' },
+            body: formData
         } )
             .then( response => response.json() )
             .then( ( data ) => {
@@ -946,7 +950,7 @@ function updateThumbnail( dropZoneElement, file ) {
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
 
-            createResource( file.name, 2, file.name, -1, file );
+            createResource( file.name, 2, file.name, null, file );
             // console.log( url ) ;
         } );
 

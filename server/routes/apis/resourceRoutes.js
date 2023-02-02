@@ -25,8 +25,8 @@ router.route( '/' )
     .get( async function ( req, res ) {
         await resourceController.getAllVisibleResources( req, res );
     } )
-    .post( ( req, res ) => {
-        resourceController.saveResource( req, res );
+    .post( async function ( req, res ) {
+        await resourceController.saveResource( req, res );
     }
     );
 

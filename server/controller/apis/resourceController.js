@@ -31,6 +31,7 @@ const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
 const { Console } = require( 'console' );
+const bodyParser = require( "body-parser" );
 
 
 /**
