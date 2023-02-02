@@ -237,7 +237,18 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.userId;
     }
 
+
+    if ( !req.files || Object.keys( req.files ).length === 0 ) {
+        console.log( "no files were uploaded" );
+    }
+    else {
+        console.log( "files were uploaded" );
+    }
+
     if( authUserId ) {
+
+        console.log( "req.files: " + JSON.stringify( req.files ) );
+        console.log( "req.resourceName: " + JSON.stringify( req.resourceName ) );
 
         if( req.body.resourceId != null && req.body.resourceId != -1 ) {
             resource.resourceId = req.body.resourceId;

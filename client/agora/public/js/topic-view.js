@@ -559,15 +559,14 @@ function createResource( name, type, imagePath, id, file ) {
         formData.append( 'visibility', 'private' );
         formData.append( 'files', file );
 
-        console.log( formData.get( 'files' ) );
+        console.log( formData );
         fetch( "api/v1/auth/resources", {
-            method: "POST",
-            // headers: { 'Content-Type': 'multipart/form-data' },
+            method: 'POST',
             body: formData
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                //console.log( "new resource data: " + JSON.stringify( data ) );
+                console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
