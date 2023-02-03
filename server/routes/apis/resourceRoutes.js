@@ -8,8 +8,31 @@
 const express = require( 'express' );
 const router = express.Router( );
 
+const fs = require( 'fs' );
+let path = require( 'path' );
+
+// setup fileupload (works with enctype="multipart/form-data" encoding in request)
+const fileUpload = require( "express-fileupload" );
+router.use(
+    fileUpload()
+);
+
+const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
+const FRONT_END = process.env.FRONT_END_NAME;
+const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
+
+// resource file path
+const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
+
+// set the max image size for avatars and resource, topic and workspace icons
+const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
+const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
+
+
 // import controllers
 const resourceController = require( '../../controller/apis/resourceController' );
+
+
 
 /*
  * Resources can be requested the following ways
@@ -26,7 +49,48 @@ router.route( '/' )
         await resourceController.getAllVisibleResources( req, res );
     } )
     .post( async function ( req, res ) {
-        await resourceController.saveResource( req, res );
+
+
+
+        //console.log( "req.files: " + JSON.stringify( req.files ) );
+        //console.log( "req.body: " + JSON.stringify( req.body ) );
+
+        let filename = "";
+
+        if ( !req.files || Object.keys( req.files ).length === 0 ) {
+            console.log( "no files were uploaded" );
+        }
+        else {
+            const file = req.files.files;
+            const timeStamp = Date.now();
+            // check the file size
+            //console.log( JSON.stringify( file.size ) );
+            if( file.size > maxSize ) {
+                console.log( `File ${file.name} size limit has been exceeded for resource` );
+
+
+
+            }
+            else {
+                console.log( "I GET HERE 6" );
+                filename = timeStamp + file.name;
+                await file.mv( resourceUploadPath + filename, async ( err ) => {
+                    if ( err ) {
+                        console.log( "Error uploading profile picture : " + err );
+                        
+                    }
+                    else {
+                        console.log( "I GET HERE 7" );
+                        //await resourceController.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
+                    }
+                } );
+            }
+        }
+
+        await resourceController.saveResource( req, res, filename );
+
+
+        
     }
     );
 

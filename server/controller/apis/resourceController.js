@@ -6,8 +6,6 @@
  */
 
 // dependencies
-const fs = require( 'fs' );
-let path = require( 'path' );
 
 // import services
 const topicService = require( '../../service/topicService' );
@@ -17,17 +15,17 @@ const resourceService = require( '../../service/resourceService' );
 const CompletedResource = require( '../../model/completedResource' );
 const Resource = require( '../../model/resource' );
 
-// set up file paths for user profile images
-const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
-const FRONT_END = process.env.FRONT_END_NAME;
-const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
+// // set up file paths for user profile images
+// const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
+// const FRONT_END = process.env.FRONT_END_NAME;
+// const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
-// resource file path
-const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
+// // resource file path
+// const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 
-// set the max image size for avatars and resource, topic and workspace icons
-const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
-const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
+// // set the max image size for avatars and resource, topic and workspace icons
+// const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
+// const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
 const { Console } = require( 'console' );
@@ -196,36 +194,36 @@ exports.saveCompletedResource = async function( req, res ) {
     res.send();
 };
 
-exports.saveResourceImage = async( req, res, resourceId, filename ) => {
+// exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
-    // save image in db and delete old file
-    if( resourceId > 0 ) {
-        resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
-            if ( rValue === filename ) {
-                console.log( 'No image update occurred - exiting image update function.' );
-                return false;
-            }
+//     // save image in db and delete old file
+//     if( resourceId > 0 ) {
+//         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
+//             if ( rValue === filename ) {
+//                 console.log( 'No image update occurred - exiting image update function.' );
+//                 return false;
+//             }
 
-            if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
-                || rValue != "notebook-pen.svg"
-                || rValue != "cell-molecule.svg"
-                || rValue != "code.svg" ) ) {
-                console.log( "removing: " + resourceUploadPath + rValue );
-                fs.unlink( ( resourceUploadPath ) + rValue, ( err ) => {
-                    if( err ) {
-                        console.log( "[resourceController] file delete error status: " + err );
-                        return false;
-                    }
+//             if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
+//                 || rValue != "notebook-pen.svg"
+//                 || rValue != "cell-molecule.svg"
+//                 || rValue != "code.svg" ) ) {
+//                 console.log( "removing: " + resourceUploadPath + rValue );
+//                 fs.unlink( ( resourceUploadPath ) + rValue, ( err ) => {
+//                     if( err ) {
+//                         console.log( "[resourceController] file delete error status: " + err );
+//                         return false;
+//                     }
 
-                } );
-            }
-        } );
-    }
+//                 } );
+//             }
+//         } );
+//     }
 
-    return true;
-};
+//     return true;
+// };
 
-exports.saveResource = async ( req, res, redirect ) => {
+exports.saveResource = async ( req, res, filename, redirect ) => {
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -238,17 +236,9 @@ exports.saveResource = async ( req, res, redirect ) => {
     }
 
 
-    if ( !req.files || Object.keys( req.files ).length === 0 ) {
-        console.log( "no files were uploaded" );
-    }
-    else {
-        console.log( "files were uploaded" );
-    }
-
     if( authUserId ) {
 
-        console.log( "req.files: " + JSON.stringify( req.files ) );
-        console.log( "req.resourceName: " + JSON.stringify( req.resourceName ) );
+        
 
         if( req.body.resourceId != null && req.body.resourceId != -1 ) {
             resource.resourceId = req.body.resourceId;
@@ -274,6 +264,11 @@ exports.saveResource = async ( req, res, redirect ) => {
         resource.resourceType = req.body.resourceType;
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
+
+        // set the file name if it is passed
+        if( filename ) {
+            resource.resourceImage = filename;
+        }
 
         if( resource.resourceType == 3 ) {
 
@@ -305,101 +300,20 @@ exports.saveResource = async ( req, res, redirect ) => {
         resource = await resourceService.saveResource( resource );
 
         console.log( "I GET HERE 4" );
-        /**
-         * once the resource is saved, save the image if it is passed
-         */
-        //console.log( "req.files is " + req.files );
-        //console.log( "req.body.resourceImage is " + req.body.resourceImage );
-        // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
-        if ( req.body.resourceModified && !req.files ) {
-            // do nothing we are going to keep the original file
-            console.log( "resource trigger modification clause" );
-        }
-        else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded
-            console.log( "I GET HERE 000" );
-            // no files uploaded
-            if ( req.body.resourceImage ) {
-                this.saveResourceImage( req, res, resource.resourceId, req.body.resourceImage );
-            }
-            else if( resource.resourceType == 1 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
-            }
-            else if ( resource.resourceType == 2 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'cell-molecule.svg' );
-            }
-            else if( resource.resourceType == 3 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'code.svg' );
-            }
-            else {
-                this.saveResourceImage( req, res, resource.resourceId, 'resource-default.png' );
-            }
-        }
-        else {
-            console.log( "I GET HERE 5" );
-            // files included
-            const file = req.files.resourceImageField;
-            const timeStamp = Date.now();
+       
+       
+       
+       
+       
+        // /**
+        //  * once the resource is saved, save the image if it is passed
+        //  */
+        // //console.log( "req.files is " + req.files );
+        // //console.log( "req.body.resourceImage is " + req.body.resourceImage );
+        // // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
+        
+        
 
-            // check the file size
-            if( file.size > maxSize ) {
-                console.log( `File ${file.name} size limit has been exceeded for resource` );
-
-                if( redirect ) {
-                    req.session.messageType = "warn";
-                    req.session.messageTitle = "Image too large!";
-                    req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
-                    res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
-                    res.status( 422 ).json( message );
-                }
-
-            }
-            else if( resource ) {
-                console.log( "I GET HERE 6" );
-                await file.mv( resourceUploadPath + timeStamp + file.name, async ( err ) => {
-                    if ( err ) {
-                        console.log( "Error uploading profile picture : " + err );
-                        if( redirect ) {
-                            req.session.messageType = "error";
-                            req.session.messageTitle = "Error saving image!";
-                            req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                            res.redirect( 303, '/dashboard' );
-                            return resource;
-                        }
-                        else {
-                            const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.set( "x-agora-message-title", "Error saving image!" );
-                            res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.status( 422 ).json( message );
-                        }
-                    }
-                    else {
-                        console.log( "I GET HERE 7" );
-                        await this.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
-                    }
-                } );
-            }
-            else {
-                if( redirect ) {
-                    req.session.messageType = "error";
-                    req.session.messageTitle = "Error saving image!";
-                    req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.set( "x-agora-message-title", "Error saving image!" );
-                    res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.status( 422 ).json( message );
-                }
-            }
-        }
 
         // redirect to the call the calling controller or return the resource if origin was an API call
         if( resource ) {

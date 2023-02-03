@@ -547,6 +547,7 @@ function createResource( name, type, imagePath, id, file ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
 
+        
         const formData = new FormData();
         formData.append( 'resourceType', type );
         formData.append( 'resourceName', name ? name : 'Untitled' );
