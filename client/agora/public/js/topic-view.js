@@ -726,6 +726,7 @@ const createSunEditor = async() => {
         height: "auto",
         minHeight: "200px",
         defaultStyle: "font-size:15px;",
+        katex: katex, 
         buttonList: [
             [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
             [ "fontColor", "hiliteColor", "textStyle" ],
@@ -738,7 +739,7 @@ const createSunEditor = async() => {
                 "superscript",
                 "removeFormat",
             ],
-            [ 'link', 'image', 'video' ],
+            [ 'link', 'image', 'video', 'math' ],
             [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
             [
                 "showBlocks",
