@@ -726,6 +726,7 @@ const createSunEditor = async() => {
         height: "auto",
         minHeight: "200px",
         defaultStyle: "font-size:15px;",
+        // eslint-disable-next-line no-undef
         katex: katex, 
         buttonList: [
             [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
