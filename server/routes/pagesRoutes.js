@@ -22,6 +22,18 @@ router.route( '/about' )
     }
     );
 
+router.route( '/privacy' )
+    .get( ( req, res ) => {
+        res.render( 'privacy' );
+    }
+    );
+
+router.route( '/tos' )
+    .get( ( req, res ) => {
+        res.render( 'terms-of-service' );
+    }   
+    );
+
 router.route( '/codebot' )
     .get( ( req, res ) => {
 
