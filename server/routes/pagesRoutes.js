@@ -24,13 +24,13 @@ router.route( '/about' )
 
 router.route( '/privacy' )
     .get( ( req, res ) => {
-        res.render( 'privacy' );
+        res.render( './website/privacy' );
     }
     );
 
 router.route( '/tos' )
     .get( ( req, res ) => {
-        res.render( 'terms-of-service' );
+        res.render( './website/terms' );
     }   
     );
 
