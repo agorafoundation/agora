@@ -50,11 +50,6 @@ router.route( '/' )
     } )
     .post( async function ( req, res ) {
 
-
-
-        //console.log( "req.files: " + JSON.stringify( req.files ) );
-        //console.log( "req.body: " + JSON.stringify( req.body ) );
-
         let filename = "";
 
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
@@ -72,15 +67,13 @@ router.route( '/' )
 
             }
             else {
-                console.log( "I GET HERE 6" );
                 filename = timeStamp + file.name;
                 await file.mv( resourceUploadPath + filename, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
-                        
+
                     }
                     else {
-                        console.log( "I GET HERE 7" );
                         //await resourceController.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
                     }
                 } );
@@ -90,7 +83,7 @@ router.route( '/' )
         await resourceController.saveResource( req, res, filename );
 
 
-        
+
     }
     );
 
@@ -125,6 +118,12 @@ router.route( '/:resourceId' )
 router.route( '/resource/completed' )
     .post( async ( req, res ) => {
         await resourceController.saveCompletedResource( req, res );
+    }
+    );
+
+router.route(  '/resource/image' )
+    .post( async ( req, res ) => {
+        await resourceController.getResourceImage( req, res);
     }
     );
 

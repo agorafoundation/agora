@@ -6,6 +6,7 @@
  */
 
 // dependencies
+const fs = require( 'fs' );
 
 // import services
 const topicService = require( '../../service/topicService' );
@@ -238,7 +239,7 @@ exports.saveResource = async ( req, res, filename, redirect ) => {
 
     if( authUserId ) {
 
-        
+
 
         if( req.body.resourceId != null && req.body.resourceId != -1 ) {
             resource.resourceId = req.body.resourceId;
@@ -300,19 +301,19 @@ exports.saveResource = async ( req, res, filename, redirect ) => {
         resource = await resourceService.saveResource( resource );
 
         console.log( "I GET HERE 4" );
-       
-       
-       
-       
-       
+
+
+
+
+
         // /**
         //  * once the resource is saved, save the image if it is passed
         //  */
         // //console.log( "req.files is " + req.files );
         // //console.log( "req.body.resourceImage is " + req.body.resourceImage );
         // // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
-        
-        
+
+
 
 
         // redirect to the call the calling controller or return the resource if origin was an API call
@@ -377,5 +378,27 @@ exports.deleteResourceById = async ( req, res ) => {
         res.set( "x-agora-message-detail", "No resources were found meeting the query criteria" );
         res.status( 404 ).json( message );
     }
+
+};
+
+/**
+ * Gets the image File for the specified resource
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.getResourceImage = async ( req, res ) => {
+
+    let imageName = req.body.imageName;
+
+    fs.readFile( 'client/agora/public/assets/uploads/resource/resource-default.png', function( err, data ) {
+        if ( err ) {
+            return console.error( err );
+        }
+        console.log( "Data read : " + data.toString() );
+    } );
+
+    res.set( "img", require( '/client/agora/public/assets/uploads/resource/' + 'resource-default.png' ) );
+    res.status( 200 ).json( "Success" );
 
 };

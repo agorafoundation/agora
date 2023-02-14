@@ -547,7 +547,7 @@ function createResource( name, type, imagePath, id, file ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
 
-        
+
         const formData = new FormData();
         formData.append( 'resourceType', type );
         formData.append( 'resourceName', name ? name : 'Untitled' );
@@ -731,7 +731,7 @@ const createSunEditor = async() => {
         minHeight: "200px",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
-        katex: katex, 
+        katex: katex,
         buttonList: [
             [ "undo", "redo", "font", "fontSize", "formatBlock" ],
             [ "fontColor", "hiliteColor", "textStyle" ],
@@ -868,6 +868,7 @@ function createDropZoneEventListeners( dropZone, input ) {
         if ( e.dataTransfer.files.length && e.dataTransfer.files[0] ) {
             if ( e.dataTransfer.files[0].size <= 1048576 ) {
                 input.files = e.dataTransfer.files;
+                console.log( e.dataTransfer.files[0] );
                 updateThumbnail( dropZone, e.dataTransfer.files[0] );
             }
             else {
@@ -1403,7 +1404,22 @@ async function renderTopic( topic ) {
                 // todo: add code to deal with resource type 3
             }
             else if ( resources[i].resourceType == 2 ) {
-                console.log( "other resource type??? " + resources[i].resourceName );
+                /*
+                console.log( "Other Resource Type: " + resources[i].resourceName );
+                let input = document.createElement( "input" );
+                input.setAttribute( "type", "file" );
+                input.setAttribute( "name", "resourceImageField" );
+                input.setAttribute( "class", "drop-zone__input" );
+                updateThumbnail( input, resources[i] );
+                 */
+                await fetch( "api/v1/auth/resource/image",
+                    { method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify( {
+                            "imageName": resources[i].resourceImage
+                        } )
+                    } )
+                    .then( ( response ) => console.log( response ) );
             }
 
         }
