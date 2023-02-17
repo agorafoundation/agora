@@ -13,6 +13,16 @@ const authController = require( '../controller/authController' );
 
 
 
+router.route( '/google-auth' )
+    .post( async ( req, res ) => {
+        console.log( "google auth" );
+
+        await authController.googleSignIn( req, res );
+        // Use the googleUser information to authenticate the user
+
+    } );
+
+
 router.route( '/signIn' )
     .get( ( req, res ) => {
         // see if a redirect parameter was passed and pass it through to the view to include in the sign in post.
@@ -22,7 +32,7 @@ router.route( '/signIn' )
         res.render( 'sign-in', {redirect: req.query.redirect} );
     } )
     .post( ( req, res ) => {
-        authController.signIn( req, res );
+        authController.passwordSignIn( req, res );
     }
     );
 
