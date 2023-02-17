@@ -15,7 +15,6 @@ const authController = require( '../controller/authController' );
 
 router.route( '/google-auth' )
     .post( async ( req, res ) => {
-        console.log( "google auth" );
 
         await authController.googleSignIn( req, res );
         // Use the googleUser information to authenticate the user

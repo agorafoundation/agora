@@ -82,7 +82,6 @@ exports.basicAuth = async ( email, password, req ) => {
 const { OAuth2Client } = require( 'google-auth-library' );
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-console.log( 'GOOGLE_CLIENT_ID: ' + GOOGLE_CLIENT_ID );
 
 const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 
@@ -90,7 +89,6 @@ const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 exports.googleSignIn = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
 
-    console.log( "about to send id token: " + req.body.credential );
     if( req.body.credential ) {
         const ticket = await client.verifyIdToken( {
             idToken: req.body.credential,
@@ -100,14 +98,6 @@ exports.googleSignIn = async function( req, res ) {
         } );
         const payload = ticket.getPayload();
         const userid = payload['sub'];
-        console.log( " paylooad : " + payload );
-        console.log( " userid : " + userid );
-        console.log( "email: " + payload['email'] );
-        console.log( "name: " + payload['name'] );
-        console.log( "picture: " + payload['picture'] );
-        console.log( "given_name: " + payload['given_name'] );
-        console.log( "family_name: " + payload['family_name'] );
-        console.log( " locale: " + payload['locale'] );
 
         let user = await userService.getUserByEmail( payload['email'] );
 
@@ -118,16 +108,15 @@ exports.googleSignIn = async function( req, res ) {
             signIn( req, res );
         }
         else {
-            if( req.query.redirect ) {
-                res.render( 'sign-in', {
-                    redirect: req.query.redirect,
-                    passwordMessage: "Incorrect Username / Password!"} );
-            }
-            else {
-                res.render( 'sign-in', {passwordMessage: "Incorrect Username / Password!"} );
-            }
+            req.session.messageType = "info";
+            req.session.messageTitle = "User Account Not Found";
+            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
+            res.redirect( 303, '/dashboard' );
         }
         
+    }
+    else {
+        res.render( 'sign-in', {passwordMessage: "Google login failure"} );
     }
     // If request specified a G Suite domain:
     // const domain = payload['hd'];
@@ -186,7 +175,7 @@ const signIn = async function( req, res ) {
 
     // now that we know they have valid password, get the whole user with role and topic data
     let user = await userService.setUserSession( req.body.signInEmail );
-    console.log( "full user output: " + JSON.stringify( user ) );
+    //console.log( "full user output: " + JSON.stringify( user ) );
 
     const uRole = await userService.getActiveRoleByName( "User" );
     //console.log("uRole: " + JSON.stringify(uRole));
@@ -227,26 +216,22 @@ const signIn = async function( req, res ) {
             }
         }
 
-        console.log( "redirect: " + req.query.redirect );
+        //console.log( "redirect: " + req.query.redirect );
         
         if( req.query.redirect ) {
-            console.log( "1" );
             res.redirect( 303, req.query.redirect );
         }
         else if( req.session.authUser.emailValidated ) {
-            console.log( "2" );
             res.redirect( 303, '/dashboard' );
         }
         else {
             req.session.messageType = "info";
             req.session.messageTitle = "Email not verified!";
             req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
-            console.log( "3" );
             res.redirect( 303, '/dashboard' );
         }
     }
     else {
-        console.log( "4" );
         res.render( 'sign-in', {
             redirect: req.query.redirect,
             passwordMessage: "You are not authorized!"} );

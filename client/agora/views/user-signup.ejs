@@ -3,6 +3,9 @@
 
 <head>
     <%- include('./partials/head'); %>
+
+    <!-- special meta tag for the login page-->
+    <meta name="google-signin-client_id" content="328875261192-odgaujp0hr7beav0int9nk72mafqcl7l.apps.googleusercontent.com">
 </head>
 
 <body id="page-top">
@@ -45,6 +48,25 @@
                                 <h2>Join Agora!</h2>
                                 <h5>A forever free environment where you can learn, research, and keep all your notes for
                                     life! Your data will never be sold or shared!</h5>
+                                <p>Join with your Google account</p>
+                                <div id="g_id_onload"
+                                    data-client_id="328875261192-odgaujp0hr7beav0int9nk72mafqcl7l.apps.googleusercontent.com"
+                                    data-context="signup"
+                                    data-ux_mode="popup"
+                                    data-login_uri="/user/google"
+                                    data-nonce=""
+                                    data-auto_prompt="false">
+                                </div>
+
+                                <div class="g_id_signin"
+                                    data-type="standard"
+                                    data-shape="pill"
+                                    data-theme="filled_black"
+                                    data-text="signup_with"
+                                    data-size="large"
+                                    data-logo_alignment="left"
+                                    data-width="300">
+                                </div>
                                 <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95"
                                     style="height:70%" />
                                 <p></p>
@@ -135,6 +157,10 @@
         <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i
                 class="fa fa-chevron-up"></i></a>
     </div>
+
+    <!-- special include for the sign-in page -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <%- include('./partials/jsincludes'); %>
 
 </body>

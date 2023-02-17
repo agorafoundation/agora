@@ -15,137 +15,182 @@ const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
 const IMAGE_PATH = process.env.AVATAR_IMAGE_PATH;
 
-/**
- * Creates a user
- * @param {} req 
- * @param {*} res 
- */
-exports.createUser = async function( req, res ) {
-    res.setHeader( 'Content-Type', 'text/html' );
-    let user = "";
+const { OAuth2Client } = require( 'google-auth-library' );
 
-    
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
+
+
+exports.googleSignUp = async function( req, res ) {
+    res.setHeader( 'Content-Type', 'text/html' );
+    req.session.messageType = null;
+    req.session.messageTitle = null;
+    req.session.messageBody = null;
+
+
+    if( req.body.credential ) {
+        const ticket = await client.verifyIdToken( {
+            idToken: req.body.credential,
+            audience: GOOGLE_CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+            // Or, if multiple clients access the backend:
+            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        } );
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+
+        let profileImage = 'profile-default.png';
+        if( payload['picture'] ) {
+            profileImage = payload['picture'];
+        }
+
+        // randomly generate a 7 character extesion
+        const extension = createRandomExtension( 7 );
+        const usename = payload['given_name'] + "-" + extension;
+
+        createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+        
+    }
+    else {
+        res.render( 'user-signup', {error_message: "Google Authentication failure"} );
+    }
+
+
+};
+
+
+exports.createUserForm = async function( req, res ) {
+    res.setHeader( 'Content-Type', 'text/html' );
+
     if( req && req.body ) {
         if( req.body.userEmail ) {
 
             // create model
             let email = req.body.userEmail;
             let username = req.body.userUsername;
-            //console.log(email);
+            let firstName = req.body.firstName;
+            let lastName = req.body.lastName;
 
-            let subscriptionActive = true;
-
-            // create a stripe account and retrieve the generated id
-            let fullname = req.body.firstName + " " + req.body.lastName;
+            let profileImage = 'profile-default.png';
             
-            let stripeId = "null";
-            if( process.env.STRIPE_TOGGLE == "true" ) {
-                stripeId = await stripeService.createStripeCustomer( email, fullname );
-            }
-            
-            let hashedPassword = await userService.passwordHasher( req.body.psw );
+            createUser( email, username, firstName, lastName, req.body.userPassword, profileImage, req, res, false );
 
-            user = User.createUser( email, username, 'profile-default.png', false, req.body.firstName, req.body.lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );
-            
-            // save the user to the database!
-            userService.saveUser( user ).then( ( insertResult ) => {
-                if( req.body.userEmail && insertResult ) {
-                    // send verification email
-                    if( process.env.EMAIL_TOGGLE == "true" ) {
-                        let secure = ( process.env.EMAIL_SECURE === 'true' );
-                        let transporter = nodemailer.createTransport( {
-                            host: process.env.EMAIL_HOST,
-                            secure: secure,
-                            port: process.env.EMAIL_PORT,
-                            auth: {
-                                user: process.env.EMAIL,
-                                pass: process.env.EMAIL_PASSWORD,
-                            },
-                        } );
-
-                        let siteUrl = "";
-                        if( process.env.SITE_PORT && process.env.SITE_PORT > 0 ) {
-                            siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST + ':' +process.env.SITE_PORT;
-                        }
-                        else {
-                            siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
-                        }
-
-                        const mailOptions = {
-                            from: process.env.EMAIL_FROM, // sender address
-                            to: req.body.userEmail,
-                            subject: "Verify your email", // Subject line
-                            html: "<p>Hello, we hope this email finds you well!</p>"
-                                + "<p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community."
-                                + "Complete the process by <strong><a href='" + siteUrl + "/verifyEmail/" + req.body.userEmail + "/" + insertResult + "'>clicking this link!</a></strong></p>"
-                                + "<p>Carpe Diem!</p>"
-                                + "<p>The Agora Team</p>", // plain text body
-                        };
-
-                        transporter.sendMail( mailOptions, function( err, info ) {
-
-                            if ( err ) {
-                                // handle error
-                                console.log( err );
-                            }
-                        } );
-
-                        if( req.query.redirect ) {
-                            res.render( 'user-welcome', { redirect: req.query.redirect, message: "Please check your email for our verification to complete the process!" } );
-                        }
-                        else {
-                            res.render( 'user-welcome', { message: "Please check your email for our verification to complete the process!" } );
-                        }
-                    }
-                    else {
-                        console.log( "[WARN] Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" );
-                        if( req.query.redirect ) {
-                            res.render( 'user-welcome', { redirect: req.query.redirect, message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
-                        }
-                        else {
-                            res.render( 'user-welcome', { message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
-                        }
-                    }
-                    
-                    
-                }
-                else if( !insertResult ) {
-                    if( req.query.redirect ) {
-                        //
-                        res.render( 'user-signup', { redirect: req.query.redirect, error_message: "Error creating your account the email or username you choose may already be in use." } );
-                    }
-                    else {
-                        res.render( 'user-signup', {error_message: "Error creating your account the email or username you choose may already be in use."} );
-                    }
-
-                }
-                else {
-                    if( req.query.redirect ) {
-                        res.redirect( 303, "/community/error", { redirect: req.query.redirect } );
-                    }
-                    else {
-                        res.redirect( 303, "/community/error" );
-                    }
-                }
-            } );
         }
         else {
-            if( req.query.redirect ) {
-                res.redirect( 303, "/community/error", { redirect: req.query.redirect } );
-            }
-            else {
-                res.redirect( 303, "/community/error" );
-            }
+            res.render( 'user-signup', {error_message: "Error signing up!"} );
         }
     }
     else {
-        if( req.query.redirect ) {
-            res.redirect( 303, "/community/error", { redirect: req.query.redirect } );
+        res.render( 'user-signup', {error_message: "Error Siging up!"} );
+    }
+};
+
+/**
+ * Creates a user
+ * @param {} req 
+ * @param {*} res 
+ */
+const createUser = async function( email, username, firstName, lastName, password, profileImage, req, res, isGoogle ) {
+    let user = "";
+
+    let subscriptionActive = true;
+
+    // create a stripe account and retrieve the generated id
+    let fullname = firstName + " " + lastName;
+    
+    let stripeId = "null";
+    if( process.env.STRIPE_TOGGLE == "true" ) {
+        stripeId = await stripeService.createStripeCustomer( email, fullname );
+    }
+    
+    let hashedPassword = await userService.passwordHasher( password );
+
+    let emailValidated = false;
+    if( isGoogle ) {
+        emailValidated = true;
+    }
+
+    user = User.createUser( email, username, profileImage, emailValidated, firstName, lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );
+    
+    // save the user to the database!
+    userService.saveUser( user ).then( ( insertResult ) => {
+        if( email && insertResult ) {
+            // send verification email
+            if( process.env.EMAIL_TOGGLE == "true" && !isGoogle ) {
+                let secure = ( process.env.EMAIL_SECURE === 'true' );
+                let transporter = nodemailer.createTransport( {
+                    host: process.env.EMAIL_HOST,
+                    secure: secure,
+                    port: process.env.EMAIL_PORT,
+                    auth: {
+                        user: process.env.EMAIL,
+                        pass: process.env.EMAIL_PASSWORD,
+                    },
+                } );
+
+                let siteUrl = "";
+                if( process.env.SITE_PORT && process.env.SITE_PORT > 0 ) {
+                    siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST + ':' +process.env.SITE_PORT;
+                }
+                else {
+                    siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
+                }
+
+                const mailOptions = {
+                    from: process.env.EMAIL_FROM, // sender address
+                    to: email,
+                    subject: "Verify your email", // Subject line
+                    html: "<p>Hello, we hope this email finds you well!</p>"
+                        + "<p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community."
+                        + "Complete the process by <strong><a href='" + siteUrl + "/verifyEmail/" + email + "/" + insertResult + "'>clicking this link!</a></strong></p>"
+                        + "<p>Carpe Diem!</p>"
+                        + "<p>The Agora Team</p>", // plain text body
+                };
+
+                transporter.sendMail( mailOptions, function( err, info ) {
+
+                    if ( err ) {
+                        // handle error
+                        console.log( err );
+                    }
+                } );
+
+                if( req.query.redirect ) {
+                    res.render( 'user-welcome', { redirect: req.query.redirect, message: "Please check your email for our verification to complete the process!" } );
+                }
+                else {
+                    res.render( 'user-welcome', { message: "Please check your email for our verification to complete the process!" } );
+                }
+            }
+            else {
+                if( !isGoogle ) {
+                    console.log( "[WARN] Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" );
+                    if( req.query.redirect ) {
+                        res.render( 'user-welcome', { redirect: req.query.redirect, message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
+                    }
+                    else {
+                        res.render( 'user-welcome', { message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
+                    }
+                }
+                else {
+                    res.redirect( 307, "/google-auth" );
+                    
+                }
+                    
+            }
+            
+            
+        }
+        else if( !insertResult ) {
+            res.render( 'user-signup', {error_message: "Email account already exists in Agora! (Perhaps you signed up using Google?)"} );
+
         }
         else {
-            res.redirect( 303, "/community/error" );
+            res.render( 'user-signup', {error_message: "Error creating account"} );
         }
-    }
+    } );
+        
+        
     
 };
 
@@ -281,5 +326,17 @@ exports.saveProfileImage = async function( req, res, email, filename ) {
     
     
 };
+
+function createRandomExtension( length ) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while ( counter < length ) {
+        result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
+        counter += 1;
+    }
+    return result;
+}
 
 
