@@ -38,26 +38,34 @@
                             <% } %>
                             
                             <h2>Sign In</h2>
-                            <p>SSO</p>
-                            <div id="g_id_onload"
-                                data-client_id="<%= process.env.GOOGLE_CLIENT_ID %>"
-                                data-context="signin"
-                                data-ux_mode="popup"
-                                data-login_uri="/google-auth"
-                                data-nonce=""
-                                data-auto_prompt="false">
-                            </div>
+                            <% 
+                            if( process.env.GOOGLE_AUTHENTICATION === 'true' ) {
+                                %>
+                                <div id="g_id_onload"
+                                    data-client_id="<%= process.env.GOOGLE_CLIENT_ID %>"
+                                    data-context="signin"
+                                    data-ux_mode="popup"
+                                    data-login_uri="/google-auth"
+                                    data-nonce=""
+                                    data-auto_prompt="false">
+                                </div>
 
-                            <div class="g_id_signin"
-                                data-type="standard"
-                                data-shape="pill"
-                                data-theme="filled_black"
-                                data-text="signin_with"
-                                data-size="large"
-                                data-logo_alignment="left">
-                            </div>
+                                <div class="g_id_signin"
+                                    data-type="standard"
+                                    data-shape="pill"
+                                    data-theme="filled_black"
+                                    data-text="signin_with"
+                                    data-size="large"
+                                    data-logo_alignment="left">
+                                </div>
 
-                            <p>Or Enter your email and password</p>
+                                <p>Or Enter your email and password</p>
+                                <%
+                            }
+                            %>
+                            
+
+                            
                             <section>
                                 <% if(locals.redirect) { %>
                                 <form action="/signIn?redirect=<%- locals.redirect %>" method="POST">
