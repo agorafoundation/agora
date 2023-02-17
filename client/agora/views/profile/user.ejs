@@ -26,9 +26,15 @@
                     <div class="user-page-top">
                         <% 
                         if(user) {
-                        %> 
-                            <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
-                        <%
+                            if( user.profileFilename.toString().substring(0, 7) == "http://" || user.profileFilename.toString().substring(0, 8) == "https://" ) {
+                                %>
+                                <img src="<%- user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                <%
+                            } else {
+                                %>
+                                <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                <%
+                            }
                         }
                         else {
                         %> 

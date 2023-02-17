@@ -42,7 +42,18 @@
             <% if(locals.authUser) { %>
             <a href="/profile/manageProfile"
                 style="width:100%; position: absolute;bottom: 0; left: -15px;border-top:solid;border-radius:2px;">
-                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                
+                <%
+                if( locals.authUser.profileFilename.toString().substring(0, 7) == "http://" || locals.authUser.profileFilename.toString().substring(0, 8) == "https://" ) {
+                    %>
+                    <img src="<%- locals.authUser.profileFilename %>" alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
+                    <%
+                } else {
+                    %>
+                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
+                    <%
+                }
+                %>
                 <span class="icon-text">&nbsp;&nbsp;&nbsp;User Profile</span>
             </a><br>
             <% } %>
