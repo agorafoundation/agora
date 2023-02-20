@@ -52,7 +52,7 @@ router.route( '/' )
         }
         else {
             // save the user
-            userController.createUser( req, res );
+            userController.createUserForm( req, res );
 
         }
     }
