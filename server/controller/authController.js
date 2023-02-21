@@ -79,12 +79,50 @@ exports.basicAuth = async ( email, password, req ) => {
     }
 };
 
-/**
- * Main authenication method for user UI sessions
- * @param {HTTP request} req 
- * @param {HTTP response} res 
- */
-exports.signIn = async function( req, res ) {
+const { OAuth2Client } = require( 'google-auth-library' );
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
+
+
+exports.googleSignIn = async function( req, res ) {
+    res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
+    if( req.body.credential ) {
+        const ticket = await client.verifyIdToken( {
+            idToken: req.body.credential,
+            audience: GOOGLE_CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+            // Or, if multiple clients access the backend:
+            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        } );
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+
+        let user = await userService.getUserByEmail( payload['email'] );
+
+        // decision on email
+        if( user ) {
+            req.session.isAuth = true;
+            req.body.signInEmail = payload['email'];
+            signIn( req, res );
+        }
+        else {
+            req.session.messageType = "info";
+            req.session.messageTitle = "User Account Not Found";
+            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
+            res.redirect( 303, '/dashboard' );
+        }
+        
+    }
+    else {
+        res.render( 'sign-in', {passwordMessage: "Google login failure"} );
+    }
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+};
+
+exports.passwordSignIn = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
     
     if( req && req.body ) {
@@ -101,74 +139,7 @@ exports.signIn = async function( req, res ) {
 
                 // decision on password
                 if( req.session.isAuth ) {
-                    // now that we know they have valid password, get the whole user with role and topic data
-                    user = await userService.setUserSession( req.body.signInEmail );
-                    //console.log("full user output: " + JSON.stringify(user));
-
-                    const uRole = await userService.getActiveRoleByName( "User" );
-                    //console.log("uRole: " + JSON.stringify(uRole));
-
-                    // decision on wether user has an authorized role
-                    if( user.roles && user.roles.filter( role => role.roleId === uRole.roleId ).length > 0 ) {
-                        // assign the user to the session
-                        req.session.authUser = user;
-
-                        // parse and log the User client data if enabled
-                        if( process.env.REQUEST_DATA_LOGGING ) {
-
-                            // parse the UA data
-                            let device = deviceDetector.parse( req.headers['user-agent'] );
-                            //console.log("device check: " + JSON.stringify(device));
-
-                            // null checks on device    
-                            if( !device ) {
-                                device = { client:null, os:null, device:null, bot:null };
-                            }
-                            if ( !device.client ) {
-                                device.client = { type: "User Session / Unknown client", name: "unknown", version: "unknown", engineVersion: "unknown" };
-                            }
-                            if( !device.os ) {
-                                device.os = { name: "unknown", version: "unknown", platform: "unknown" };
-                            }
-                            if( !device.device ) {
-                                device.device = { type: "unknown", brand: "unknown", model: "unknown" };
-                            }
-
-                            var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-                            //console.log("ip check: " + ip);
-
-                            // log the data
-                            if( user && device ) {
-                                userService.logUserSession( user.userId, ip, device );
-
-                            }
-                        }
-
-                        console.log( "redirect: " + req.query.redirect );
-                        
-                        if( req.query.redirect ) {
-                            console.log( "1" );
-                            res.redirect( 303, req.query.redirect );
-                        }
-                        else if( req.session.authUser.emailValidated ) {
-                            console.log( "2" );
-                            res.redirect( 303, '/dashboard' );
-                        }
-                        else {
-                            req.session.messageType = "info";
-                            req.session.messageTitle = "Email not verified!";
-                            req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
-                            console.log( "3" );
-                            res.redirect( 303, '/dashboard' );
-                        }
-                    }
-                    else {
-                        console.log( "4" );
-                        res.render( 'sign-in', {
-                            redirect: req.query.redirect,
-                            passwordMessage: "You are not authorized!"} );
-                    }
-
+                    signIn( req, res );
                 }
                 else {
                     if( req.query.redirect ) {
@@ -193,6 +164,79 @@ exports.signIn = async function( req, res ) {
             }
         }
     }
+};
+
+/**
+ * Main authenication method for user UI sessions
+ * @param {HTTP request} req 
+ * @param {HTTP response} res 
+ */
+const signIn = async function( req, res ) {
+
+    // now that we know they have valid password, get the whole user with role and topic data
+    let user = await userService.setUserSession( req.body.signInEmail );
+    //console.log( "full user output: " + JSON.stringify( user ) );
+
+    const uRole = await userService.getActiveRoleByName( "User" );
+    //console.log("uRole: " + JSON.stringify(uRole));
+
+    // decision on wether user has an authorized role
+    if( user.roles && user.roles.filter( role => role.roleId === uRole.roleId ).length > 0 ) {
+        // assign the user to the session
+        req.session.authUser = user;
+
+        // parse and log the User client data if enabled
+        if( process.env.REQUEST_DATA_LOGGING ) {
+
+            // parse the UA data
+            let device = deviceDetector.parse( req.headers['user-agent'] );
+            //console.log("device check: " + JSON.stringify(device));
+
+            // null checks on device    
+            if( !device ) {
+                device = { client:null, os:null, device:null, bot:null };
+            }
+            if ( !device.client ) {
+                device.client = { type: "User Session / Unknown client", name: "unknown", version: "unknown", engineVersion: "unknown" };
+            }
+            if( !device.os ) {
+                device.os = { name: "unknown", version: "unknown", platform: "unknown" };
+            }
+            if( !device.device ) {
+                device.device = { type: "unknown", brand: "unknown", model: "unknown" };
+            }
+
+            var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+            //console.log("ip check: " + ip);
+
+            // log the data
+            if( user && device ) {
+                userService.logUserSession( user.userId, ip, device );
+
+            }
+        }
+
+        //console.log( "redirect: " + req.query.redirect );
+        
+        if( req.query.redirect ) {
+            res.redirect( 303, req.query.redirect );
+        }
+        else if( req.session.authUser.emailValidated ) {
+            res.redirect( 303, '/dashboard' );
+        }
+        else {
+            req.session.messageType = "info";
+            req.session.messageTitle = "Email not verified!";
+            req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
+            res.redirect( 303, '/dashboard' );
+        }
+    }
+    else {
+        res.render( 'sign-in', {
+            redirect: req.query.redirect,
+            passwordMessage: "You are not authorized!"} );
+    }
+
 };
 
 
