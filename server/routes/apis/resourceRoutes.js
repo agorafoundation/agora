@@ -121,8 +121,8 @@ router.route( '/resource/completed' )
     }
     );
 
-router.route(  '/resource/image' )
-    .post( async ( req, res ) => {
+router.route(  '/image/:imageName' )
+    .get( async ( req, res ) => {
         await resourceController.getResourceImage( req, res);
     }
     );

@@ -560,14 +560,12 @@ function createResource( name, type, imagePath, id, file ) {
         formData.append( 'visibility', 'private' );
         formData.append( 'files', file );
 
-        console.log( formData );
         fetch( "api/v1/auth/resources", {
             method: 'POST',
             body: formData
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
@@ -1403,23 +1401,55 @@ async function renderTopic( topic ) {
             else if( resources[i].resourceType == 3 ) {
                 // todo: add code to deal with resource type 3
             }
+            // if resource is an image
             else if ( resources[i].resourceType == 2 ) {
-                /*
-                console.log( "Other Resource Type: " + resources[i].resourceName );
-                let input = document.createElement( "input" );
-                input.setAttribute( "type", "file" );
-                input.setAttribute( "name", "resourceImageField" );
-                input.setAttribute( "class", "drop-zone__input" );
-                updateThumbnail( input, resources[i] );
-                 */
-                await fetch( "api/v1/auth/resource/image",
-                    { method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify( {
-                            "imageName": resources[i].resourceImage
-                        } )
+
+                console.log( resources[i] );
+
+                await fetch( "api/v1/auth/resources/image/" + resources[i].resourceImage,
+                    { method: "GET",
+                        headers: { "Content-Type": "multipart/form-data" }
                     } )
-                    .then( ( response ) => console.log( response ) );
+                    .then( ( response ) => response.body )
+                    .then( ( body ) => {
+                        const reader = body.getReader();
+
+                        return new ReadableStream( {
+                            start( controller ) {
+                                return pump();
+
+                                function pump() {
+                                    return reader.read().then( ( { done, value } ) => {
+                                        // When no more data needs to be consumed, close the stream
+                                        if( done ) {
+                                            controller.close();
+                                            return;
+                                        }
+
+                                        // Enqueue the next data chunk into our target stream
+                                        controller.enqueue( value );
+                                        return pump();
+                                    } );
+                                }
+                            }
+                        } );
+                    } )
+                    .then( ( stream ) => new Response( stream ) )
+                    .then( ( response ) => response.blob() )
+                    .then( ( blob ) => {
+                        let extension = resources[i].resourceImage.split( "." )[1];
+                        return new File( [ blob ], resources[i].resourceImage, {
+                            type: "image/" + extension,
+                        } );
+                    } )
+                    .then( ( imageFile ) => {
+
+                        let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
+
+                        updateThumbnail( dropZoneElement, imageFile );
+
+                    } )
+                    .catch( ( err ) => console.error( err ) );
             }
 
         }
@@ -1438,7 +1468,7 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
-    getTags();
+    // getTags();
     renderTopics();
 
 } );

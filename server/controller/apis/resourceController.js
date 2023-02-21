@@ -7,6 +7,7 @@
 
 // dependencies
 const fs = require( 'fs' );
+const path = require( 'path' );
 
 // import services
 const topicService = require( '../../service/topicService' );
@@ -389,16 +390,15 @@ exports.deleteResourceById = async ( req, res ) => {
  */
 exports.getResourceImage = async ( req, res ) => {
 
-    let imageName = req.body.imageName;
+    let imageName = req.params.imageName;
 
-    fs.readFile( 'client/agora/public/assets/uploads/resource/resource-default.png', function( err, data ) {
-        if ( err ) {
-            return console.error( err );
+    res.sendFile( imageName,
+        { root: path.join( __dirname, '../../../client/agora/public/assets/uploads/resource/' ) },
+        function ( err ) {
+            if ( err ) {
+                console.log( err );
+            }
         }
-        console.log( "Data read : " + data.toString() );
-    } );
-
-    res.set( "img", require( '/client/agora/public/assets/uploads/resource/' + 'resource-default.png' ) );
-    res.status( 200 ).json( "Success" );
+    );
 
 };
