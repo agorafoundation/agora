@@ -123,7 +123,13 @@ router.route( '/resource/completed' )
 
 router.route(  '/image/:imageName' )
     .get( async ( req, res ) => {
-        await resourceController.getResourceImage( req, res);
+        await resourceController.getResourceImage( req, res );
+    }
+    );
+
+router.route(  '/exists/:fileName' )
+    .get( async ( req, res ) => {
+        await resourceController.checkResourceExists( req, res );
     }
     );
 

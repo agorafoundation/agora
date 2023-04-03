@@ -613,7 +613,7 @@ function getResources() {
 
 // Create the suneditor text area
 
-function createTextArea( name, id ) {
+async function createTextArea( name, id ) {
     // Text area has to be created before suneditor initialization,
     // so we have to return a promise indicating whether text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
@@ -946,12 +946,19 @@ function updateThumbnail( dropZoneElement, file ) {
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
         //console.log( file );
-        getFile( file ).then( url => {
+        console.log( file );
+
+        getFile( file ).then( async url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
 
-            createResource( file.name, 2, file.name, null, file );
+            const doesExist = await checkFileExists( file.imagePath );
+
+            if( !doesExist ) {
+                createResource( file.name, 2, file.name, null, file );
+            }
+
             // console.log( url ) ;
         } );
 
@@ -1007,6 +1014,16 @@ function getFile( file ) {
         };
         fileReader.readAsDataURL( file );
     } );
+}
+
+async function checkFileExists( fileName ) {
+    const response = await fetch( "/api/v1/auth/resources/exists/" + fileName, {
+        method: "GET"
+    } );
+    if ( response.ok ) {
+        const data = await response.json();
+        return data === "true" ? true : false;
+    };
 }
 
 /* END Resource Functions ---------------------------------------------------------------------------------*/
@@ -1384,13 +1401,17 @@ async function renderTopic( topic ) {
             //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
+                console.log( "lll" + i );
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                console.log( "nnn" + i );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
+                    console.log( "hjhjhjhj" + i );
                     totalTopicsRendered++;
                     let editor = "sunEditor" + ( totalTopicsRendered );
                     //console.log( editor );
                     //console.log( sunEditor[editor] );
-                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    await sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    console.log( "kkkkk" + i );
 
                     //docType1Count++;
                     //val++;
@@ -1437,14 +1458,16 @@ async function renderTopic( topic ) {
                     .then( ( stream ) => new Response( stream ) )
                     .then( ( response ) => response.blob() )
                     .then( ( blob ) => {
-                        let extension = resources[i].resourceImage.split( "." )[1];
-                        return new File( [ blob ], resources[i].resourceImage, {
+                        let extension = resources[i].resourceName.split( "." )[1];
+                        return new File( [ blob ], resources[i].resourceName, {
                             type: "image/" + extension,
                         } );
                     } )
                     .then( ( imageFile ) => {
 
-                        let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
+                        imageFile.imagePath = resources[i].resourceImage;
+
+                        let dropZoneElement = document.querySelectorAll( ".drop-zone" )[i];
 
                         updateThumbnail( dropZoneElement, imageFile );
 

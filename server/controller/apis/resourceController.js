@@ -402,3 +402,19 @@ exports.getResourceImage = async ( req, res ) => {
     );
 
 };
+
+/**
+ * Checks if the resource name exists in the backend
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.checkResourceExists = async ( req, res ) => {
+
+    let fileName = req.params.fileName;
+
+    let fileExists = await resourceService.checkResourceExists( fileName );
+
+    res.status( 200 ).json( JSON.stringify( fileExists ) );
+};
+
