@@ -673,8 +673,7 @@
 
   .discussion-modal-pos {
     left: 30%; 
-    top: 35px; 
-    z-index: 1000;
+    top: 35px;
   }
 
   .discussion-modal-edges {
