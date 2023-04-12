@@ -91,7 +91,7 @@
     color: black;
     cursor: pointer;
     padding: 5px 3px;
-    float:right;
+    float: right;
     font-size: 30px;
     margin-top: 30px;
     margin-left: 5px;
@@ -209,8 +209,8 @@
 .file-display-icon {
     position: relative;
     left: 180px;
-    padding: 0; 
-    margin: 0; 
+    padding: 0;
+    margin: 0;
     font-size: 49px;
 }
 .file-display-icon:hover {
@@ -247,7 +247,7 @@
     margin-bottom: 20px;
     height: 50px;
   }
-  
+
 .tab button {
     background-color: inherit;
     float: left;
@@ -257,7 +257,7 @@
     transition: 0.3s;
     border: none;
   }
-  
+
 .tabcontent {
     display: none;
     padding: 6px 12px;
@@ -302,12 +302,12 @@
     display: none;
     z-index: 1;
 }
-  
+
 .tag-list .tag-list-element .new-tag{
     color: black;
     display: block;
 }
-  
+
 .tag-list .tag-list-element .new-tag{
     background-color: #eee;
 }
@@ -400,13 +400,13 @@
     background-color:#2c3e50;
     display: none;
   }
-    
+
   .drop-zone--over {
     padding-bottom: 20px;
     border-radius: 20px;
     border: 2px solid #2c3e50;
   }
-    
+
   .drop-zone__input {
       display: none;
   }
@@ -434,7 +434,7 @@
       background: no-repeat center;
       position: relative;
   }
-    
+
   .drop-zone__thumb::after {
       content: attr(data-label);
       position: absolute;
@@ -461,10 +461,10 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.277); 
+    background-color: rgba(0, 0, 0, 0.277);
   }
-  
- 
+
+
   .resource-modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -520,7 +520,7 @@
  .option {
     color: rgb(100, 98, 98);
  }
-  
+
   .close {
     color: #aaa;
     float: right;
@@ -531,7 +531,7 @@
     top: 8px;
     cursor: pointer;
   }
-  
+
   #close:hover,
   #close:focus {
     color: black;
@@ -568,15 +568,15 @@
   }
 
   .profile-shared-with {
-    display: flex; 
-    flex-direction: row; 
-    margin-left: -30px; 
+    display: flex;
+    flex-direction: row;
+    margin-left: -30px;
     margin-top: -25px;
   }
-  
+
   .profile-name {
-    height: 50%; 
-    margin-left: 15px; 
+    height: 50%;
+    margin-left: 15px;
     margin-top: 36px;
   }
 
@@ -587,15 +587,15 @@
   }
 
   .permissions-row {
-    display: flex; 
-    flex-direction: row; 
-    margin-right: 0px; 
+    display: flex;
+    flex-direction: row;
+    margin-right: 0px;
     font-size: medium
   }
 
   .permissions-col {
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
     margin-right: 34px;
   }
 
@@ -672,13 +672,13 @@
   }
 
   .discussion-modal-pos {
-    left: 30%; 
-    top: 35px; 
+    left: 30%;
+    top: 35px;
     z-index: 1000;
   }
 
   .discussion-modal-edges {
-    box-shadow: 0px 1px 2px 0px rgba(0.5, 0.5, 0.5, 0.5); 
+    box-shadow: 0px 1px 2px 0px rgba(0.5, 0.5, 0.5, 0.5);
     border-radius: 15px
   }
 
@@ -693,12 +693,12 @@
   }
 
 .post-comment-btn {
-  margin-left: 85%; 
-  border-radius: 5px; 
-  background-color: #5f89e0; 
-  color: white; 
+  margin-left: 85%;
+  border-radius: 5px;
+  background-color: #5f89e0;
+  color: white;
   border: none
-} 
+}
 
 .post-comment-btn:hover {
   background-color: #8aa9e7;
@@ -706,12 +706,12 @@
 }
 
 .discussion-user {
-  padding: 0; 
+  padding: 0;
   margin: 6px 0 0 10px;
 }
 
 .comment-body {
-  margin-left: 5px; 
+  margin-left: 5px;
   word-wrap: break-word;
   font-size: 14px;
 }
@@ -721,20 +721,20 @@
 }
 
 .like-button {
-  background-color: lightgray; 
-  border-radius: 10%; 
+  background-color: lightgray;
+  border-radius: 10%;
   outline: 2px solid gray;
   border: none;
 }
 
 .footer-hr {
-  width: 30px; 
-  transform: rotate(.25turn); 
+  width: 30px;
+  transform: rotate(.25turn);
   margin: 15px 0 0 0;
 }
 
 .like-icon {
-  margin: 0; 
+  margin: 0;
   font-size: 22px;
 }
 

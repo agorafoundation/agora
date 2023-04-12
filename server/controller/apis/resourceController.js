@@ -2,12 +2,12 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 // dependencies
 const fs = require( 'fs' );
-let path = require( 'path' );
+const path = require( 'path' );
 
 // import services
 const topicService = require( '../../service/topicService' );
@@ -17,26 +17,27 @@ const resourceService = require( '../../service/resourceService' );
 const CompletedResource = require( '../../model/completedResource' );
 const Resource = require( '../../model/resource' );
 
-// set up file paths for user profile images
-const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
-const FRONT_END = process.env.FRONT_END_NAME;
-const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
+// // set up file paths for user profile images
+// const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
+// const FRONT_END = process.env.FRONT_END_NAME;
+// const RESOURCE_PATH = process.env.RESOURCE_IMAGE_PATH;
 
-// resource file path
-const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
+// // resource file path
+// const resourceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + RESOURCE_PATH;
 
-// set the max image size for avatars and resource, topic and workspace icons
-const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
-const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
+// // set the max image size for avatars and resource, topic and workspace icons
+// const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
+// const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
 const { Console } = require( 'console' );
+const bodyParser = require( "body-parser" );
 
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 exports.getAllVisibleResources = async ( req, res ) => {
     // get all the active resources by user
@@ -52,9 +53,9 @@ exports.getAllVisibleResources = async ( req, res ) => {
     }
 
     //console.log("auth user id; " + authUserId);
-    
+
     if( authUserId ) {
-        
+
         let resources = await resourceService.getAllVisibleResources( authUserId, req.query.limit, req.query.offset );
 
         res.set( "x-agora-message-title", "Success" );
@@ -71,9 +72,9 @@ exports.getAllVisibleResources = async ( req, res ) => {
 
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 exports.getAllSharedResourcesForUser = async ( req, res ) => {
     // get all the shared resources for this user
@@ -85,9 +86,9 @@ exports.getAllSharedResourcesForUser = async ( req, res ) => {
 };
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 exports.getAllActiveResourcesForUser = async ( req, res ) => {
     // get the auth user id from either the basic auth header or the session
@@ -155,7 +156,7 @@ exports.getAllResourcesForauthUser = async ( req, res ) => {
  * Checks to see if there is an existing completedResource with the passed resourceId and
  * updates if so, otherwise creates a new completedResource and saves
  * @param {HTTP Request} req // body contains resourceId, status, submittedText
- * @param {HTTP Response} res 
+ * @param {HTTP Response} res
  */
 exports.saveCompletedResource = async function( req, res ) {
     let resourceId = req.body.resourceId;
@@ -195,36 +196,36 @@ exports.saveCompletedResource = async function( req, res ) {
     res.send();
 };
 
-exports.saveResourceImage = async( req, res, resourceId, filename ) => {
+// exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 
-    // save image in db and delete old file  
-    if( resourceId > 0 ) {
-        resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
-            if ( rValue === filename ) {
-                console.log( 'No image update occurred - exiting image update function.' );
-                return false;
-            }
+//     // save image in db and delete old file
+//     if( resourceId > 0 ) {
+//         resourceService.updateResourceImage( resourceId, filename ).then( ( rValue ) => {
+//             if ( rValue === filename ) {
+//                 console.log( 'No image update occurred - exiting image update function.' );
+//                 return false;
+//             }
 
-            if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
-                || rValue != "notebook-pen.svg" 
-                || rValue != "cell-molecule.svg" 
-                || rValue != "code.svg" ) ) {
-                console.log( "removing: " + resourceUploadPath + rValue );
-                fs.unlink( ( resourceUploadPath ) + rValue, ( err ) => {
-                    if( err ) {
-                        console.log( "[resourceController] file delete error status: " + err );
-                        return false;
-                    }
-                    
-                } );
-            } 
-        } );
-    }
-    
-    return true;
-};
+//             if( rValue && rValue.length > 0 && ( rValue != "resource-default.png"
+//                 || rValue != "notebook-pen.svg"
+//                 || rValue != "cell-molecule.svg"
+//                 || rValue != "code.svg" ) ) {
+//                 console.log( "removing: " + resourceUploadPath + rValue );
+//                 fs.unlink( ( resourceUploadPath ) + rValue, ( err ) => {
+//                     if( err ) {
+//                         console.log( "[resourceController] file delete error status: " + err );
+//                         return false;
+//                     }
 
-exports.saveResource = async ( req, res, redirect ) => {
+//                 } );
+//             }
+//         } );
+//     }
+
+//     return true;
+// };
+
+exports.saveResource = async ( req, res, filename, redirect ) => {
     let resource = Resource.emptyResource();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -236,7 +237,10 @@ exports.saveResource = async ( req, res, redirect ) => {
         authUserId = req.session.authUser.userId;
     }
 
+
     if( authUserId ) {
+
+
 
         if( req.body.resourceId != null && req.body.resourceId != -1 ) {
             resource.resourceId = req.body.resourceId;
@@ -263,12 +267,17 @@ exports.saveResource = async ( req, res, redirect ) => {
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
 
+        // set the file name if it is passed
+        if( filename ) {
+            resource.resourceImage = filename;
+        }
+
         if( resource.resourceType == 3 ) {
-            
+
             resource.resourceContentHtml = req.body.embedded_submission_text_resource;
         }
         else {
-            // check to see if the incomping message format is from the UI or the API
+            // check to see if the incoming message format is from the UI or the API
             if( req.body.resourceContentHtml ) {
                 resource.resourceContentHtml = req.body.resourceContentHtml;
             }
@@ -277,7 +286,7 @@ exports.saveResource = async ( req, res, redirect ) => {
             }
         }
         resource.resourceLink = req.body.resourceLink;
-        
+
         // check to see if the incoming message format is from the UI form or the API
         if( req.body.resourceActive ) {
             resource.active = ( req.body.resourceActive == "on" ) ? true : false;
@@ -285,104 +294,28 @@ exports.saveResource = async ( req, res, redirect ) => {
         else if ( req.body.active ) {
             resource.active = req.body.active;
         }
-        
+
         resource.isRequired = ( req.body.isRequired == "on" || req.body.isRequired == true ) ? true : false;
-    
+
         resource.ownedBy = authUserId;
 
         resource = await resourceService.saveResource( resource );
 
-        /**
-         * once the resource is saved, save the image if it is passed
-         */ 
-        //console.log( "req.files is " + req.files );
-        //console.log( "req.body.resourceImage is " + req.body.resourceImage );
-        // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
-        if ( req.body.resourceModified && !req.files ) {
-            // do nothing we are going to keep the original file
-            console.log( "resource trigger modification clause" );
-        }
-        else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
-            // no files uploaded
-            if ( req.body.resourceImage ) {
-                this.saveResourceImage( req, res, resource.resourceId, req.body.resourceImage );
-            }
-            else if( resource.resourceType == 1 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
-            }
-            else if ( resource.resourceType == 2 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'cell-molecule.svg' );
-            }
-            else if( resource.resourceType == 3 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'code.svg' );
-            }
-            else {
-                this.saveResourceImage( req, res, resource.resourceId, 'resource-default.png' );
-            }
-        }
-        else {
-            // files included
-            const file = req.files.resourceImageField;
-            const timeStamp = Date.now();
+        console.log( "I GET HERE 4" );
 
-            // check the file size
-            if( file.size > maxSize ) {
-                console.log( `File ${file.name} size limit has been exceeded for resource` );
 
-                if( redirect ) {
-                    req.session.messageType = "warn";
-                    req.session.messageTitle = "Image too large!";
-                    req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Image too large", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
-                    res.set( "x-agora-message-title", "Image too large!" );
-                    res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your resource was saved without the image." );
-                    res.status( 422 ).json( message );
-                }
-                
-            }
-            else if( resource ) {
-                await file.mv( resourceUploadPath + timeStamp + file.name, async ( err ) => {
-                    if ( err ) {
-                        console.log( "Error uploading profile picture : " + err );
-                        if( redirect ) {
-                            req.session.messageType = "error";
-                            req.session.messageTitle = "Error saving image!";
-                            req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                            res.redirect( 303, '/dashboard' );
-                            return resource;
-                        }
-                        else {
-                            const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.set( "x-agora-message-title", "Error saving image!" );
-                            res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                            res.status( 422 ).json( message );
-                        }
-                    }
-                    else {
-                        await this.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
-                    }
-                } );
-            }
-            else {
-                if( redirect ) {
-                    req.session.messageType = "error";
-                    req.session.messageTitle = "Error saving image!";
-                    req.session.messageBody = "There was a error uploading your image for this resource. Your resource should be saved without the image.";
-                    res.redirect( 303, '/dashboard' );
-                    return resource;
-                }
-                else {
-                    const message = ApiMessage.createApiMessage( 422, "Error uploading image!", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.set( "x-agora-message-title", "Error saving image!" );
-                    res.set( "x-agora-message-detail", "There was a error uploading your image for this resource. Your resource should be saved without the image." );
-                    res.status( 422 ).json( message );
-                }
-            }
-        }
+
+
+
+        // /**
+        //  * once the resource is saved, save the image if it is passed
+        //  */
+        // //console.log( "req.files is " + req.files );
+        // //console.log( "req.body.resourceImage is " + req.body.resourceImage );
+        // // The UI needs to verify modifiction so that the image is not dropped if the user does not want to change it
+
+
+
 
         // redirect to the call the calling controller or return the resource if origin was an API call
         if( resource ) {
@@ -417,9 +350,9 @@ exports.saveResource = async ( req, res, redirect ) => {
             res.set( "x-agora-message-detail", "Not able to associate authorized user with the record" );
             res.status( 401 ).json( message );
         }
-        
+
     }
-    
+
 };
 
 exports.deleteResourceById = async ( req, res ) => {
@@ -448,3 +381,40 @@ exports.deleteResourceById = async ( req, res ) => {
     }
 
 };
+
+/**
+ * Gets the image File for the specified resource
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.getResourceImage = async ( req, res ) => {
+
+    let imageName = req.params.imageName;
+
+    res.sendFile( imageName,
+        { root: path.join( __dirname, '../../../client/agora/public/assets/uploads/resource/' ) },
+        function ( err ) {
+            if ( err ) {
+                console.log( err );
+            }
+        }
+    );
+
+};
+
+/**
+ * Checks if the resource name exists in the backend
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.checkResourceExists = async ( req, res ) => {
+
+    let fileName = req.params.fileName;
+
+    let fileExists = await resourceService.checkResourceExists( fileName );
+
+    res.status( 200 ).json( JSON.stringify( fileExists ) );
+};
+

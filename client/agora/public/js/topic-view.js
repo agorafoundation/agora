@@ -2,7 +2,7 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 let tabName = "";
@@ -164,7 +164,7 @@ const createTopic = async( id, name ) => {
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        } 
+        }
         else {
             openTab( newTab.id );
         }
@@ -191,7 +191,7 @@ const createTopic = async( id, name ) => {
     if( !id ) {
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': ''},
             body: JSON.stringify( {
                 "topicType": 1,
                 "topicName": "Untitled",
@@ -457,7 +457,7 @@ document.addEventListener( "keyup", function( e ) {
             document.querySelector( "#mySearch" ).value = "";
         }
     }
-    
+
 } );
 
 function addTagToWorkspace( selectedTag, isNewSave ) {
@@ -471,7 +471,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
-        
+
     // Create remove tag button
     let removeTagBtn = document.createElement( "span" );
     removeTagBtn.className = "close-tag";
@@ -518,7 +518,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         } );
-            
+
 
     } );
     removeTagBtn.addEventListener( "mouseenter", () => {
@@ -543,27 +543,29 @@ let resources = {};
 let numResources = 1;
 
 // create a new resource
-function createResource( name, type, imagePath, id ) {
+function createResource( name, type, imagePath, id, file ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
+
+
+        const formData = new FormData();
+        formData.append( 'resourceType', type );
+        formData.append( 'resourceName', name ? name : 'Untitled' );
+        formData.append( 'resourceDescription', '' );
+        formData.append( 'resourceContentHtml', '' );
+        formData.append( 'resourceImage', imagePath ? imagePath : '' );
+        formData.append( 'resourceLink', '' );
+        formData.append( 'isRequired', 'true' );
+        formData.append( 'active', 'true' );
+        formData.append( 'visibility', 'private' );
+        formData.append( 'files', file );
+
         fetch( "api/v1/auth/resources", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
+            method: 'POST',
+            body: formData
         } )
             .then( response => response.json() )
             .then( ( data ) => {
-                //console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
                 //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 numResources++;
@@ -577,9 +579,9 @@ function createResource( name, type, imagePath, id ) {
     else{
         resources[numResources] = [ id, getCurrTopicID() ];
         numResources ++;
-       
+
     }
-   
+
 }
 
 // get the topic id based on the currently visible topic tab
@@ -611,9 +613,9 @@ function getResources() {
 
 // Create the suneditor text area
 
-function createTextArea( name, id ) {
-    // Text area has to be created before suneditor initialization, 
-    // so we have to return a promise indicating whether or not text area has been successfully created
+async function createTextArea( name, id ) {
+    // Text area has to be created before suneditor initialization,
+    // so we have to return a promise indicating whether text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
         // workspace empty state
         if ( activeTab.id == "resources-zone0" ) {
@@ -727,9 +729,9 @@ const createSunEditor = async() => {
         minHeight: "200px",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
-        katex: katex, 
+        katex: katex,
         buttonList: [
-            [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
+            [ "undo", "redo", "font", "fontSize", "formatBlock" ],
             [ "fontColor", "hiliteColor", "textStyle" ],
             [
                 "bold",
@@ -766,7 +768,7 @@ const createSunEditor = async() => {
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
-    
+
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -796,7 +798,7 @@ function getResourceID( val ) {
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    
+
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
             sunEditorList[i][1].save();
@@ -864,6 +866,7 @@ function createDropZoneEventListeners( dropZone, input ) {
         if ( e.dataTransfer.files.length && e.dataTransfer.files[0] ) {
             if ( e.dataTransfer.files[0].size <= 1048576 ) {
                 input.files = e.dataTransfer.files;
+                console.log( e.dataTransfer.files[0] );
                 updateThumbnail( dropZone, e.dataTransfer.files[0] );
             }
             else {
@@ -886,7 +889,7 @@ function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
-    } 
+    }
     // Div that holds the thumbnail
     let mydiv = document.createElement( 'div' );
     mydiv.className = "drop-zone-show";
@@ -933,25 +936,32 @@ function updateThumbnail( dropZoneElement, file ) {
     if ( document.getElementById( "filler-space" ) ) {
         document.getElementById( "filler-space" ).remove();
     }
-  
+
     // Append the thumbnail to parent div
     // Set the title to the file name
     mydiv.appendChild( thumbnailElement );
     thumbnailElement.dataset.label = file.name;
     inputTitle.innerHTML = file.name;
-  
+
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
         //console.log( file );
-        getFile( file ).then( url => {
+        console.log( file );
+
+        getFile( file ).then( async url => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
 
-            createResource( file.name, 2, file.name );
+            const doesExist = await checkFileExists( file.imagePath );
+
+            if( !doesExist ) {
+                createResource( file.name, 2, file.name, null, file );
+            }
+
             // console.log( url ) ;
         } );
-        
+
         mydiv.style.height = "500px";
         activeHeightObj[tabName] += 500;
     }
@@ -998,12 +1008,22 @@ function updateThumbnail( dropZoneElement, file ) {
 function getFile( file ) {
     return new Promise( ( resolve ) => {
         const fileReader = new FileReader();
-        fileReader.onloadend = ( ) => { 
+        fileReader.onloadend = ( ) => {
             const res = `url('${fileReader.result}')`;
             resolve( res );
         };
         fileReader.readAsDataURL( file );
     } );
+}
+
+async function checkFileExists( fileName ) {
+    const response = await fetch( "/api/v1/auth/resources/exists/" + fileName, {
+        method: "GET"
+    } );
+    if ( response.ok ) {
+        const data = await response.json();
+        return data === "true" ? true : false;
+    }
 }
 
 /* END Resource Functions ---------------------------------------------------------------------------------*/
@@ -1053,7 +1073,7 @@ document.addEventListener( "click", function( e ) {
         if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
             // change the tab name to the new topic title
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
-        } 
+        }
         else {
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
         }
@@ -1072,7 +1092,7 @@ document.addEventListener( 'keyup', ( e ) => {
     if ( e.target.tagName == 'INPUT' ) {
         if ( ele.className == 'topic-title' ) {
             updateTopic( ele.value );
-        } 
+        }
     }
 } );
 
@@ -1136,7 +1156,7 @@ document.addEventListener( "mousemove", function( e ) {
 } );
 
 // option events
-if ( createDocBtn ) { 
+if ( createDocBtn ) {
     createDocBtn.onclick = () => {
         modal.style.display = "none";
         createTextArea();
@@ -1193,8 +1213,8 @@ function toggleProfile ( e ) {
     let target = e.target;
     let box;
 
-    target.classList.contains( "permission-li" ) ? 
-        box = target.childNodes[3] : 
+    target.classList.contains( "permission-li" ) ?
+        box = target.childNodes[3] :
         box = target.parentElement.childNodes[3];
 
     box.checked ?
@@ -1328,7 +1348,7 @@ const getTags = async () => {
                     newTag( response[i].tag, false );
                 }
 
-                
+
             } );
     }
     else if ( id ) {
@@ -1355,23 +1375,23 @@ const renderTopics = async ( workspace ) => {
     if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
-   
+
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderTopic( topics[i] );
-            
+
             }
-        }   
+        }
     }
-    
-   
+
+
 };
 
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-  
+
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
@@ -1381,13 +1401,17 @@ async function renderTopic( topic ) {
             //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
+                console.log( "lll" + i );
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                console.log( "nnn" + i );
                 if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    totalTopicsRendered++; 
+                    console.log( "hjhjhjhj" + i );
+                    totalTopicsRendered++;
                     let editor = "sunEditor" + ( totalTopicsRendered );
                     //console.log( editor );
                     //console.log( sunEditor[editor] );
-                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    await sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    console.log( "kkkkk" + i );
 
                     //docType1Count++;
                     //val++;
@@ -1398,10 +1422,59 @@ async function renderTopic( topic ) {
             else if( resources[i].resourceType == 3 ) {
                 // todo: add code to deal with resource type 3
             }
+            // if resource is an image
             else if ( resources[i].resourceType == 2 ) {
-                console.log( "other resource type??? " + resources[i].resourceName );
+
+                console.log( resources[i] );
+
+                await fetch( "api/v1/auth/resources/image/" + resources[i].resourceImage,
+                    { method: "GET",
+                        headers: { "Content-Type": "multipart/form-data" }
+                    } )
+                    .then( ( response ) => response.body )
+                    .then( ( body ) => {
+                        const reader = body.getReader();
+
+                        return new ReadableStream( {
+                            start( controller ) {
+                                return pump();
+
+                                function pump() {
+                                    return reader.read().then( ( { done, value } ) => {
+                                        // When no more data needs to be consumed, close the stream
+                                        if( done ) {
+                                            controller.close();
+                                            return;
+                                        }
+
+                                        // Enqueue the next data chunk into our target stream
+                                        controller.enqueue( value );
+                                        return pump();
+                                    } );
+                                }
+                            }
+                        } );
+                    } )
+                    .then( ( stream ) => new Response( stream ) )
+                    .then( ( response ) => response.blob() )
+                    .then( ( blob ) => {
+                        let extension = resources[i].resourceName.split( "." )[1];
+                        return new File( [ blob ], resources[i].resourceName, {
+                            type: "image/" + extension,
+                        } );
+                    } )
+                    .then( ( imageFile ) => {
+
+                        imageFile.imagePath = resources[i].resourceImage;
+
+                        let dropZoneElement = document.querySelectorAll( ".drop-zone" )[i];
+
+                        updateThumbnail( dropZoneElement, imageFile );
+
+                    } )
+                    .catch( ( err ) => console.error( err ) );
             }
-            
+
         }
         window.scrollTo( 0, 0 );
     }
@@ -1418,9 +1491,9 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
-    getTags();
+    // getTags();
     renderTopics();
-   
+
 } );
 
 
@@ -1443,13 +1516,13 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
 
         if ( !hasComments ) {
             //console.log( "Creating discussion" );
-            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id,
                 { method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify( {  
+                    body: JSON.stringify( {
                         "parent_id": id,
                         "parent_type": type,
-                        "discussion_text": "string"     
+                        "discussion_text": "string"
                     } )
                 } );
             /*.then( ( response ) => response.json() )
@@ -1457,22 +1530,22 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
                 console.log( data );
             } );*/
         }
-        
-        await fetch( "api/v1/auth/discussions/comment", 
+
+        await fetch( "api/v1/auth/discussions/comment",
             { method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify( {
-                    "parent_id": id, 
+                    "parent_id": id,
                     "parent_type": type,
                     "comment_text": text
-                } ) 
+                } )
             } )
             .then( ( response ) => response.json() )
             .then( ( data ) => {
                 //console.log( data );
                 commentId = data.id;
             } );
-            
+
         ///UPDATING THE DOM///
 
         //cloning the comment template so we can modify it then add it to the stream
@@ -1491,7 +1564,7 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
 
         //inserting the modified clone into the comment stream
-        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );
 
         //removing the value from the textarea
         document.getElementById( "discussion-textarea" ).innerText = '';
@@ -1528,10 +1601,10 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
         likeButton.childNodes[1].style.color = "gray";
         likeButton.childNodes[3].style.color = "gray";
         likeButton.style.outline = "none";
-    } 
+    }
 
     //inserting the modified clone under the proper discussion
-    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );
 };
 
 const getDiscussions = async ( isTopic, id ) => {
@@ -1548,7 +1621,7 @@ const getDiscussions = async ( isTopic, id ) => {
         else {
             //console.log( response.status );
         }
-    } 
+    }
     else if( id ) {
 
         const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
@@ -1559,7 +1632,7 @@ const getDiscussions = async ( isTopic, id ) => {
         else {
             //console.log( response.status );
         }
-            
+
     }
 
     if ( pageComments ) {
@@ -1567,14 +1640,14 @@ const getDiscussions = async ( isTopic, id ) => {
             loadComment( comment );
         } );
     }
-    
+
 };
 
 
 window.addEventListener( "load", () => {
 
     const [ isTopic, id ] = getPrefixAndId();
-    
+
     if( document.getElementById( "post-comment-btn" ) ) {
         document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
             addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
@@ -1584,7 +1657,7 @@ window.addEventListener( "load", () => {
         document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
             addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
         } );
-    }   
+    }
 
     getDiscussions( isTopic, id );
 } );
@@ -1597,10 +1670,10 @@ const addOrRemoveLike = ( e ) => {
     let goodElement;
 
     //making sure the element we are clicking is the one we're looking to use
-    e.target.id ? 
-        goodElement = e.target.childNodes[3] : 
-        e.target.style ? 
-            goodElement = e.target.parentElement.childNodes[3] : 
+    e.target.id ?
+        goodElement = e.target.childNodes[3] :
+        e.target.style ?
+            goodElement = e.target.parentElement.childNodes[3] :
             goodElement = e.target;
 
     let parentEl = goodElement.parentElement.parentElement.parentElement;
@@ -1617,7 +1690,7 @@ const addOrRemoveLike = ( e ) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify( { "rating": false } )
         } );
-    } 
+    }
     else {
         parentEl.classList.add( "liked" );
         goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
@@ -1640,7 +1713,7 @@ const saveTitleOrDescription = ( ) => {
     const [ isTopic, id ] = getPrefixAndId();
 
     const input = document.getElementById( "workspace-title" ).value;
-        
+
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -1653,7 +1726,7 @@ const saveTitleOrDescription = ( ) => {
             "visibility": "private"
         } )
     } );
-}; 
+};
 
 
 if( document.getElementById( "workspace-title" ) ) {

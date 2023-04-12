@@ -8,12 +8,20 @@ const stripeService = require( "../service/stripeService" );
 // dependencies
 const nodemailer = require( "nodemailer" );
 const fs = require( 'fs' );
-let path = require( 'path' );
+const path = require( 'path' );
+const fileUpload = require( "express-fileupload" );
 
 // set up file paths for user profile images
 const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
-const IMAGE_PATH = process.env.AVATAR_IMAGE_PATH;
+const IMAGE_PATH = process.env.RESOURCE_IMAGE_PATH;
+
+// image file path
+const imageUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + IMAGE_PATH;
+
+// set the max image size
+const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
+const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const { OAuth2Client } = require( 'google-auth-library' );
 
