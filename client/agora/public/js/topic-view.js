@@ -1023,7 +1023,7 @@ async function checkFileExists( fileName ) {
     if ( response.ok ) {
         const data = await response.json();
         return data === "true" ? true : false;
-    };
+    }
 }
 
 /* END Resource Functions ---------------------------------------------------------------------------------*/
