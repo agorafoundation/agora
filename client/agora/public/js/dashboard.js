@@ -1127,9 +1127,11 @@ window.addEventListener( 'load', () => {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
     if( document.getElementById( "controlbar-buttons-group-2" ) ) {
-        document.getElementById( "grid-initial-selection" ).classList.add( "active" );
+        document.getElementById( "select-grid" ).classList.add( "active" );
     }
 } );
+
+
 
 // manage highlighting of control bar buttons
 if( document.getElementById( "controlbar-buttons-group-1" ) ) {
@@ -1149,22 +1151,15 @@ if( document.getElementById( "controlbar-buttons-group-1" ) ) {
     } );
 }
 
-if( document.getElementById( "controlbar-buttons-group-2" ) ) {
-    document.getElementById( "controlbar-buttons-group-2" ).addEventListener( 'click', ( e ) => {
-        const target = e.target;
-        if( document.getElementById( "grid-initial-selection" ).classList.contains( "active" ) ) {
-            document.getElementById( "grid-initial-selection" ).classList.remove( "active" );
-        }
-        // const buttons = target.querySelectorAll( ".controlbar-buttons-group-2" );
-        // console.log( "length 2 : " + buttons.length );   
-        // for( let i = 0; i < buttons.length; i++ ) {
-        //     buttons[i].classList.remove( "active" );
-        // }
-        // target.classList.add( "active" );
-        
-    } );
-}
+document.getElementById( "select-grid" ).addEventListener("click", function (e) {
+    document.getElementById( "select-list" ).classList.remove( "active" );
+    document.getElementById( "select-grid" ).classList.add( "active" );
+});
 
+document.getElementById( "select-list" ).addEventListener("click", function (e) {
+    document.getElementById( "select-grid" ).classList.remove( "active" );
+    document.getElementById( "select-list" ).classList.add( "active" );
+});
 
 
 
