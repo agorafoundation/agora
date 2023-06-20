@@ -637,6 +637,7 @@ a:hover {
 .sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
+    font-weight: 500;
     font-size: 18px;
     color: #818181;
     display: block;
