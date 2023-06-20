@@ -1105,14 +1105,18 @@ const toggleGrid = () => {
     if( document.getElementById( "grid-container" ) ) {
         document.getElementById( "grid-container" ).style.display = "block";
     }
-    
-  
+
+    document.getElementById( "select-list" ).classList.remove( "active" );
+    document.getElementById( "select-grid" ).classList.add( "active" );
 };
 
 const toggleList = () => {
     document.getElementById( "grid-container" ).style.display = "none";
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
+    
+    document.getElementById( "select-grid" ).classList.remove( "active" );
+    document.getElementById( "select-list" ).classList.add( "active" );
 };
 
 const logout = () => {
@@ -1150,17 +1154,5 @@ if( document.getElementById( "controlbar-buttons-group-1" ) ) {
         // }
     } );
 }
-
-document.getElementById( "select-grid" ).addEventListener("click", function (e) {
-    document.getElementById( "select-list" ).classList.remove( "active" );
-    document.getElementById( "select-grid" ).classList.add( "active" );
-});
-
-document.getElementById( "select-list" ).addEventListener("click", function (e) {
-    document.getElementById( "select-grid" ).classList.remove( "active" );
-    document.getElementById( "select-list" ).classList.add( "active" );
-});
-
-
 
 //window.onload( toggleGrid() );
