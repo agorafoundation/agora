@@ -67,6 +67,7 @@
     background: transparent;
     color:white;
     height: 30px;
+    cursor: text;
     border-bottom: 1px solid lightgrey;
     padding-left: 0px;
     margin-right: 3vw;
