@@ -560,7 +560,6 @@ a:hover {
 }
 .homepageButton{
     color: white;
-    text-decoration: underline;
     font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
     /* background-color: #a4b072; */ 
     border-style: solid;
@@ -575,7 +574,6 @@ a:hover {
 .homepageButton:hover{
     color: #142C76;
     border-color: #142C76;
-    text-decoration: underline;
 }
 
 /* Header background image */
