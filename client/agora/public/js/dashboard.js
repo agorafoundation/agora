@@ -804,7 +804,7 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/topic#" + usedPrefix + id, "_blank" );
+        window.open( "/topic#" + usedPrefix + id, "_blank" );
     }
     else {
         /*if (usedPrefix === "-t") {
