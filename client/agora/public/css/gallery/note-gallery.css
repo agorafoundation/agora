@@ -193,8 +193,8 @@
 }
 
 .list-more-options {
-  transform: rotate(90deg);
-  height: 42%;
+  /* transform: rotate(90deg); */
+  /* height: 42%; */
   width: 2.5%;
   position: absolute;
   right: 1%;
