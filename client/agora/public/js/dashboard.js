@@ -1106,8 +1106,10 @@ const toggleGrid = () => {
         document.getElementById( "grid-container" ).style.display = "block";
     }
 
-    document.getElementById( "select-list" ).classList.remove( "active" );
-    document.getElementById( "select-grid" ).classList.add( "active" );
+    if ( document.getElementById("controlbar-buttons-group-2") ) {
+        document.getElementById( "select-list" ).classList.remove( "active" );
+        document.getElementById( "select-grid" ).classList.add( "active" );
+    }
 };
 
 const toggleList = () => {
@@ -1115,8 +1117,10 @@ const toggleList = () => {
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
     
-    document.getElementById( "select-grid" ).classList.remove( "active" );
-    document.getElementById( "select-list" ).classList.add( "active" );
+    if ( document.getElementById("controlbar-buttons-group-2") ) {
+        document.getElementById( "select-grid" ).classList.remove( "active" );
+        document.getElementById( "select-list" ).classList.add( "active" );
+    }
 };
 
 const logout = () => {
@@ -1130,18 +1134,19 @@ window.addEventListener( 'load', () => {
     if( document.getElementById( "controlbar-buttons-group-1" ) ) {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
+
     if( document.getElementById( "controlbar-buttons-group-2" ) ) {
         document.getElementById( "select-grid" ).classList.add( "active" );
+
+        showTooltip("select-grid", "Grid View");
+        hideTooltip("select-grid");
+
+        showTooltip("select-list", "List View");
+        hideTooltip("select-list");
+
+        showTooltip("btn-logout", "Logout");
+        hideTooltip("btn-logout");
     }
-
-    showTooltip("select-grid", "Grid View");
-    hideTooltip("select-grid");
-
-    showTooltip("select-list", "List View");
-    hideTooltip("select-list");
-
-    showTooltip("btn-logout", "Logout");
-    hideTooltip("btn-logout");
 });
 
 function showTooltip(id, text) {

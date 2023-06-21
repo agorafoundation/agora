@@ -1187,6 +1187,7 @@ div.product-card a {
 .card{
     border-radius:5px;
     text-decoration: none  !important;
+    cursor: pointer;
 }
 
 .card-body {
