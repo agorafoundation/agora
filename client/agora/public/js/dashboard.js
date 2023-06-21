@@ -1133,8 +1133,46 @@ window.addEventListener( 'load', () => {
     if( document.getElementById( "controlbar-buttons-group-2" ) ) {
         document.getElementById( "select-grid" ).classList.add( "active" );
     }
-} );
 
+    showTooltip("select-grid", "Grid View");
+    hideTooltip("select-grid");
+
+    showTooltip("select-list", "List View");
+    hideTooltip("select-list");
+
+    showTooltip("btn-logout", "Logout");
+    hideTooltip("btn-logout");
+});
+
+function showTooltip(id, text) {
+    document.getElementById(id).addEventListener("mouseenter", (e) => {
+        let tooltip = document.getElementById("control-bar-tooltip");
+        let offset = getOffset(document.getElementById(id));
+        
+        tooltip.innerText = text;
+
+        tooltip.style.top = (offset.top + 45) + "px";
+        tooltip.style.left = (offset.left - 13)  + "px";
+
+        tooltip.style.visibility = "visible";
+    });
+}
+
+function hideTooltip(id) {
+    document.getElementById(id).addEventListener("mouseleave", () => {
+        let tooltip =  document.getElementById("control-bar-tooltip");
+        tooltip.style.visibility = "hidden";
+    });
+}
+
+function getOffset(el) {
+    const rect = el.getBoundingClientRect();
+
+    return {
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY
+    };
+}
 
 
 // manage highlighting of control bar buttons
