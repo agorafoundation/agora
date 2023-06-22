@@ -40,12 +40,13 @@ function lockSidebar() {
 
         document.getElementById( "agoraSideBar" ).style.width = "250px";
 
-        document.getElementById("tack-icon").style.rotate = "45deg";
-    } else {
+        document.getElementById( "tack-icon" ).style.rotate = "45deg";
+    }
+    else {
         document.getElementById( "agoraSideBar" ).addEventListener( "mouseenter", toggleSidebar );
         document.getElementById( "agoraSideBar" ).addEventListener( "mouseleave", toggleSidebar );
         
-        document.getElementById("tack-icon").style.rotate = "0deg";
+        document.getElementById( "tack-icon" ).style.rotate = "0deg";
     }
 
     sideBarLocked = !sideBarLocked;
@@ -58,8 +59,8 @@ if( document.getElementById( "agoraSideBar" ) ) {
     document.getElementById( "agoraSideBar" ).addEventListener( "mouseleave", toggleSidebar );
 }
 
-if ( document.getElementById("pin-menu") ) {
-    document.getElementById("pin-menu").addEventListener( "click", lockSidebar );
+if ( document.getElementById( "pin-menu" ) ) {
+    document.getElementById( "pin-menu" ).addEventListener( "click", lockSidebar );
 }
 
 
