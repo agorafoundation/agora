@@ -235,8 +235,8 @@ a.text-secondary:hover, a.text-secondary:focus {
   
 .btn-secondary {
     color: #fff;
-    background-color: #17191a;
-    border-color: #17191a;
+    background-color: #494949;
+    border-color: #494949;
 }
 .btn-secondary:hover {
     color: #fff;
@@ -256,8 +256,8 @@ a.text-secondary:hover, a.text-secondary:focus {
 }
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {
     color: #fff;
-    background-color: #494949;
-    border-color: #494949;
+    background-color: #17191a;
+    border-color: #17191a;
 }
 .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show > .btn-secondary.dropdown-toggle:focus {
     box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
@@ -560,7 +560,6 @@ a:hover {
 }
 .homepageButton{
     color: white;
-    text-decoration: underline;
     font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
     /* background-color: #a4b072; */ 
     border-style: solid;
@@ -575,7 +574,6 @@ a:hover {
 .homepageButton:hover{
     color: #142C76;
     border-color: #142C76;
-    text-decoration: underline;
 }
 
 /* Header background image */
@@ -637,6 +635,7 @@ a:hover {
 .sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
+    font-weight: 500;
     font-size: 18px;
     color: #818181;
     display: block;
@@ -833,8 +832,7 @@ a:hover {
 
 .menuLogo {
     position:absolute;
-    height: 50px;
-    left: 20px;
+    height: 27px;
     margin-right: 20px;
 }
 .logo {
@@ -865,7 +863,32 @@ a:hover {
     display: none;
 }
 
+/* Tooltip for the header of the dashboard */
+#control-bar-tooltip {
+    visibility: hidden;
+    width: 75px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    transition: 0.25s;
+    position: absolute;
+    z-index: 1;
+    font-size: 12px;
+}
 
+/* The arrow pointing upward for the dashboard header tooltip */
+#control-bar-tooltip::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
 
 @media screen and (max-height: 450px) {
     .sidebar {
@@ -1164,6 +1187,7 @@ div.product-card a {
 .card{
     border-radius:5px;
     text-decoration: none  !important;
+    cursor: pointer;
 }
 
 .card-body {

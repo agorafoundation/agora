@@ -804,7 +804,7 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "http://localhost:4200/topic#" + usedPrefix + id, "_blank" );
+        window.open( "/topic#" + usedPrefix + id, "_blank" );
     }
     else {
         /*if (usedPrefix === "-t") {
@@ -1105,14 +1105,22 @@ const toggleGrid = () => {
     if( document.getElementById( "grid-container" ) ) {
         document.getElementById( "grid-container" ).style.display = "block";
     }
-    
-  
+
+    if ( document.getElementById( "controlbar-buttons-group-2" ) ) {
+        document.getElementById( "select-list" ).classList.remove( "active" );
+        document.getElementById( "select-grid" ).classList.add( "active" );
+    }
 };
 
 const toggleList = () => {
     document.getElementById( "grid-container" ).style.display = "none";
     document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
+    
+    if ( document.getElementById( "controlbar-buttons-group-2" ) ) {
+        document.getElementById( "select-grid" ).classList.remove( "active" );
+        document.getElementById( "select-list" ).classList.add( "active" );
+    }
 };
 
 const logout = () => {
@@ -1126,10 +1134,51 @@ window.addEventListener( 'load', () => {
     if( document.getElementById( "controlbar-buttons-group-1" ) ) {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
+
     if( document.getElementById( "controlbar-buttons-group-2" ) ) {
-        document.getElementById( "grid-initial-selection" ).classList.add( "active" );
+        document.getElementById( "select-grid" ).classList.add( "active" );
+
+        showTooltip( "select-grid", "Grid View" );
+        hideTooltip( "select-grid" );
+
+        showTooltip( "select-list", "List View" );
+        hideTooltip( "select-list" );
+
+        showTooltip( "btn-logout", "Logout" );
+        hideTooltip( "btn-logout" );
     }
 } );
+
+function showTooltip( id, text ) {
+    document.getElementById( id ).addEventListener( "mouseenter", ( e ) => {
+        let tooltip = document.getElementById( "control-bar-tooltip" );
+        let offset = getOffset( document.getElementById( id ) );
+        
+        tooltip.innerText = text;
+
+        tooltip.style.top = ( offset.top + 45 ) + "px";
+        tooltip.style.left = ( offset.left - 13 )  + "px";
+
+        tooltip.style.visibility = "visible";
+    } );
+}
+
+function hideTooltip( id ) {
+    document.getElementById( id ).addEventListener( "mouseleave", () => {
+        let tooltip =  document.getElementById( "control-bar-tooltip" );
+        tooltip.style.visibility = "hidden";
+    } );
+}
+
+function getOffset( el ) {
+    const rect = el.getBoundingClientRect();
+
+    return {
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY
+    };
+}
+
 
 // manage highlighting of control bar buttons
 if( document.getElementById( "controlbar-buttons-group-1" ) ) {
@@ -1148,24 +1197,5 @@ if( document.getElementById( "controlbar-buttons-group-1" ) ) {
         // }
     } );
 }
-
-if( document.getElementById( "controlbar-buttons-group-2" ) ) {
-    document.getElementById( "controlbar-buttons-group-2" ).addEventListener( 'click', ( e ) => {
-        const target = e.target;
-        if( document.getElementById( "grid-initial-selection" ).classList.contains( "active" ) ) {
-            document.getElementById( "grid-initial-selection" ).classList.remove( "active" );
-        }
-        // const buttons = target.querySelectorAll( ".controlbar-buttons-group-2" );
-        // console.log( "length 2 : " + buttons.length );   
-        // for( let i = 0; i < buttons.length; i++ ) {
-        //     buttons[i].classList.remove( "active" );
-        // }
-        // target.classList.add( "active" );
-        
-    } );
-}
-
-
-
 
 //window.onload( toggleGrid() );
