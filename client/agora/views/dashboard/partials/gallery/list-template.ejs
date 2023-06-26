@@ -30,11 +30,11 @@
       <% } else if (contentType === "Workspace") { %>
 
         <!--Workspace List Member-->
-        <li class="list-group-item list-view view-check a-workspace" id="g-lv-<%= id %>" onclick="topicReroute(id, false)">
-            <span id="g-lv-card-title-<%= id %>"><%=name%></span>
+        <li class="list-group-item list-view view-check a-workspace" id="w-lv-<%= id %>" onclick="topicReroute(id, false)">
+            <span id="w-lv-card-title-<%= id %>"><%=name%></span>
             <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
             <span class="badge badge-med topic-badge" style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
-            <span class="trigger1 trigger2" id="g-lv-option-<%= id %>">
+            <span class="trigger1 trigger2" id="w-lv-option-<%= id %>">
                 <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
                 <span class="list-view-dropbtn">
                     <%- include('./dropdown.ejs'); %>

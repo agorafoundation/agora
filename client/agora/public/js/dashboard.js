@@ -638,6 +638,7 @@ const getId = ( e ) => {
     else {
         parent = GE.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
     }
+
     return parent.substring( 5 ); //just the numeric id
 };
 
@@ -743,7 +744,14 @@ const showDeleteModal = ( e ) => {
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "w-"; 
    
-    let parentNameId = prefix + "lv-card-title-" + parentId;
+    let parentNameId;
+    
+    if ( isGrid( e ) ) {
+        parentNameId = prefix + "gv-card-title-" + parentId;
+    }
+    else {
+        parentNameId = prefix + "lv-card-title-" + parentId;
+    }
    
     let parentName = document.getElementById( parentNameId ).innerText;
 
