@@ -831,9 +831,8 @@ a:hover {
 }
 
 .menuLogo {
-    position:absolute;
-    height: 27px;
-    margin-right: 20px;
+    height: 40px;
+    margin-left: -5px;
 }
 .logo {
     position: absolute;
