@@ -1997,3 +1997,8 @@ input:checked + .slider:after {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 }
+
+/* Form stuff */
+.form-control-lg {
+    margin-bottom: 10px;
+}

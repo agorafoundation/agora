@@ -30,8 +30,8 @@ router.route( '/signIn' )
         }
         res.render( 'sign-in', {redirect: req.query.redirect} );
     } )
-    .post( ( req, res ) => {
-        authController.passwordSignIn( req, res );
+    .post( async ( req, res ) => {
+        await authController.passwordSignIn( req, res );
     }
     );
 
