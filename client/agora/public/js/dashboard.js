@@ -478,7 +478,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
         } )
             .then( response => response.json() )
             .then( response => {
-                return response.id;
+                return response.workspaceId;
             } );
     //if topic
     } 
@@ -503,7 +503,7 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
         } )
             .then( response => response.json() )
             .then( response => {
-                return response.id;
+                return response.topicId;
             } );
     }
 };
@@ -638,6 +638,7 @@ const getId = ( e ) => {
     else {
         parent = GE.parentElement.parentElement.parentElement.parentElement.id; //the id of the list element
     }
+
     return parent.substring( 5 ); //just the numeric id
 };
 
@@ -743,7 +744,14 @@ const showDeleteModal = ( e ) => {
     let prefix;
     isTopic( e ) ? prefix = "t-" : prefix = "w-"; 
    
-    let parentNameId = prefix + "lv-card-title-" + parentId;
+    let parentNameId;
+
+    if ( isGrid( e ) ) {
+        parentNameId = prefix + "gv-card-title-" + parentId;
+    }
+    else {
+        parentNameId = prefix + "lv-card-title-" + parentId;
+    }
    
     let parentName = document.getElementById( parentNameId ).innerText;
 
@@ -877,7 +885,7 @@ const duplicateWorkspace = async ( e ) => {
    
     //getting the next id to use
 
-    let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText;
+    let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + " (copy)";
     
     //fetch call to update backend
     const newId = await duplicateOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
@@ -885,7 +893,7 @@ const duplicateWorkspace = async ( e ) => {
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
     listClone = replaceIds( listClone, newId, false, prefix );
-
+    
     //calculating new id then setting the elements ids to the new one
 
     //updating the more options of the grid clone

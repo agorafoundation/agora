@@ -831,9 +831,8 @@ a:hover {
 }
 
 .menuLogo {
-    position:absolute;
-    height: 27px;
-    margin-right: 20px;
+    height: 40px;
+    margin-left: -5px;
 }
 .logo {
     position: absolute;
@@ -1997,4 +1996,9 @@ input:checked + .slider:after {
 .list-grid{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+}
+
+/* Form stuff */
+.form-control-lg {
+    margin-bottom: 10px;
 }

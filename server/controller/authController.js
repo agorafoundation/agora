@@ -105,7 +105,7 @@ exports.googleSignIn = async function( req, res ) {
         if( user ) {
             req.session.isAuth = true;
             req.body.signInEmail = payload['email'];
-            signIn( req, res );
+            await signIn( req, res );
         }
         else {
             req.session.messageType = "info";
@@ -139,7 +139,7 @@ exports.passwordSignIn = async function( req, res ) {
 
                 // decision on password
                 if( req.session.isAuth ) {
-                    signIn( req, res );
+                    await signIn( req, res );
                 }
                 else {
                     if( req.query.redirect ) {

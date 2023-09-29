@@ -45,13 +45,13 @@ router.use( function ( req, res, next ) {
     if( !req.session.authUser ) {
         if( req.query.redirect ) {
             res.locals.redirect = req.query.redirect;
-        }
-        res.render( 'user-signup' );
+        } 
+
+        res.redirect( 303, '/community' );
     }
     else {
         next( );
     }
-     
 } );
 
 /**
