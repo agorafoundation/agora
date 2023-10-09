@@ -10,11 +10,12 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
       <div class="modal-content discussion-modal-edges">
         <div class="modal-header">
           <h5 class="modal-title" id="discussion-title">Comments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body flex-column" id="discussions-body">
             <div contenteditable="true" class="discussion-textarea" id="discussion-textarea"></div>
             <button class="post-comment-btn" id="post-comment-btn">Send</button>
-            <!--<% comments.forEach((comment)=> { %>
+            <!-- <% comments.forEach((comment)=> { %>
                 <div class="flex-column comment-countable" id="comment-<%=comment.commentId%>">
                     <div class="flex-row">
                         <span class="material-symbols-outlined" style="margin: 0"><%= comment.pfp %></span>
@@ -31,7 +32,7 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
                     </div>
                     <hr style="width: 100%;">
                 </div>
-            <% }) %>-->
+            <% }) %> -->
         </div>
       </div>
     </div>
