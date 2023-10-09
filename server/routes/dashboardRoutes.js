@@ -43,11 +43,12 @@ const resourceController = require( '../controller/apis/resourceController' );
  */
 router.use( function ( req, res, next ) {
     if( !req.session.authUser ) {
+        console.log( "auth testing!!!" );
         if( req.query.redirect ) {
             res.locals.redirect = req.query.redirect;
         } 
 
-        res.redirect( 303, '/community' );
+        res.redirect( 303, '/dashboard' );
     }
     else {
         next( );
