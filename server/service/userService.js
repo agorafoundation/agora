@@ -36,7 +36,6 @@ const crypto = require( 'crypto' );
 exports.saveUserRole = async function( record ) {
     let text = 'INSERT INTO user_roles (user_id, role_id, active, end_time)'
             + 'VALUES($1, $2, $3, $4);';
-    console.log( "record: " + record );
     let values = [ record.userId, record.roleId, record.active, record.endTime ];
     try {
          
@@ -191,9 +190,7 @@ exports.saveUser = async function( record ) {
             // create the users role
             // get the new user
             let newUser = await exports.getUserByEmail( record.email );
-            console.log( "new user id: " + newUser.userId );
             const uRole = await exports.getActiveRoleByName( "User" );
-            console.log( "user role id: " + uRole.roleId );
             // create the UserRole
             let userRole = UserRole.emptyUserRole();
             userRole.userId = newUser.userId;

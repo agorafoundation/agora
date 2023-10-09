@@ -3,6 +3,9 @@
 
 <head>
     <%- include('./partials/head'); %>
+
+    <!-- special meta tag for the login page-->
+    <meta name="google-signin-client_id" content="328875261192-odgaujp0hr7beav0int9nk72mafqcl7l.apps.googleusercontent.com">
 </head>
 
 <body id="page-top">
@@ -12,8 +15,8 @@
     </nav>
 
     <!-- include the modals for the privacy policy and terms of service -->
-    <%- include('./website/privacy'); %>
-    <%- include('./website/terms'); %>
+    <%- include('./website/privacy-modal'); %>
+    <%- include('./website/terms-modal'); %>
 
 
     <!-- Page Content -->
@@ -45,6 +48,32 @@
                                 <h2>Join Agora!</h2>
                                 <h5>A forever free environment where you can learn, research, and keep all your notes for
                                     life! Your data will never be sold or shared!</h5>
+                                <%
+                                if( process.env.GOOGLE_AUTHENTICATION === 'true' ) {
+                                    %>
+                                    <p>Join with your Google account</p>
+                                    <div id="g_id_onload"
+                                        data-client_id="<%= process.env.GOOGLE_CLIENT_ID %>"
+                                        data-context="signup"
+                                        data-ux_mode="popup"
+                                        data-login_uri="/user/google"
+                                        data-nonce=""
+                                        data-auto_prompt="false">
+                                    </div>
+
+                                    <div class="g_id_signin"
+                                        data-type="standard"
+                                        data-shape="pill"
+                                        data-theme="filled_black"
+                                        data-text="signup_with"
+                                        data-size="large"
+                                        data-logo_alignment="left"
+                                        data-width="300">
+                                    </div>
+                                    <%
+                                }
+                                %>
+                                
                                 <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95"
                                     style="height:70%" />
                                 <p></p>
@@ -74,11 +103,10 @@
                                         <input type="email" class="form-control form-control-lg" name="userEmail" id="userEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
                                         <small id="usernameHelp" class="form-text text-muted">Username must be unique</small>
                                         <input type="input" class="form-control form-control-lg" name="userUsername" id="userUsername" aria-describedby="usernameHelp" placeholder="Enter Username" required>
-                                        <br />
-    
+
                                         <input type="input" class="form-control form-control-lg" name="firstName" id="firstName" placeholder="First Name" required>
                                         <input type="input" class="form-control form-control-lg" name="lastName" id="lastName" placeholder="Last Name" required>
-                                        <br />
+
                                         <input type="password" class="form-control form-control-lg" id="psw" name="psw" placeholder="Password"
                                             pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
                                             title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
@@ -95,7 +123,7 @@
                                             <span id="length" class="invalid">Minimum <b>8 characters</b></span>
                                         </div>
                                         <br />
-                                        <h5>Letting us know which topics your are most intested in helps us find related research and
+                                        <h5>Letting us know which topics your are most interested in helps us find related research and
                                             collaborators that might be of interest to you (optional)</h5>
                                         <p>TODO:Tags Tag selection will go here</p> 
                                         <p>Please read our 
@@ -135,6 +163,10 @@
         <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i
                 class="fa fa-chevron-up"></i></a>
     </div>
+
+    <!-- special include for the sign-in page -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <%- include('./partials/jsincludes'); %>
 
 </body>

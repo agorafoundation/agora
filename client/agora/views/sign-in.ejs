@@ -2,6 +2,10 @@
 <html lang="en">
     <head>
         <%- include('./partials/head'); %>
+
+        <!-- special meta tag for the login page-->
+        <meta name="google-signin-client_id" content="328875261192-odgaujp0hr7beav0int9nk72mafqcl7l.apps.googleusercontent.com">
+
     </head>
     <body id="page-top">
         <!-- Navigation-->
@@ -34,12 +38,39 @@
                             <% } %>
                             
                             <h2>Sign In</h2>
-                            <p>Enter your email and password</p>
+                            <% 
+                            if( process.env.GOOGLE_AUTHENTICATION === 'true' ) {
+                                %>
+                                <div id="g_id_onload"
+                                    data-client_id="<%= process.env.GOOGLE_CLIENT_ID %>"
+                                    data-context="signin"
+                                    data-ux_mode="popup"
+                                    data-login_uri="/google-auth"
+                                    data-nonce=""
+                                    data-auto_prompt="false">
+                                </div>
+
+                                <div class="g_id_signin"
+                                    data-type="standard"
+                                    data-shape="pill"
+                                    data-theme="filled_black"
+                                    data-text="signin_with"
+                                    data-size="large"
+                                    data-logo_alignment="left">
+                                </div>
+
+                                <p>Or Enter your email and password</p>
+                                <%
+                            }
+                            %>
+                            
+
+                            
                             <section>
                                 <% if(locals.redirect) { %>
                                 <form action="/signIn?redirect=<%- locals.redirect %>" method="POST">
                                 <% } else { %>
-                                <form action="/signIn" method="POST">
+                                <form action="/signIn" data-onsuccess="onSignIn" method="POST">
                                 <% } %>
                                     <div class="form-group">
 
@@ -62,7 +93,7 @@
                                 <div class="divider-custom-line divider-bg-color"></div>
                             </div>
                             <h4>New User?</h4>
-                            <h5><a href='/community'>Create Account</a></h5>
+                            <h5><a href='/dashboard'>Create Account</a></h5>
                             <h4>Forgotten Password?</h4>
                             <h5><a href='/forgotPass'>Reset Password</a></h5>
                         </div>
@@ -83,6 +114,10 @@
         <div class="scroll-to-top d-lg-none position-fixed">
             <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
         </div>
+
+        <!-- special include for the sign-in page -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+
         <%- include('./partials/jsincludes'); %>
     </body>
 </html>

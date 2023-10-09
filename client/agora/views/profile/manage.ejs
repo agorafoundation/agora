@@ -78,7 +78,17 @@
                             </div>
                             <div class="col-lg-5">
                                 
-                                <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" /></a>
+                                <%
+                                if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
+                                    %>
+                                    <img src="<%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                    <%
+                                } else {
+                                    %>
+                                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                    <%
+                                }
+                                %>
                                 
                                 <%- include('../partials/message'); %>
     

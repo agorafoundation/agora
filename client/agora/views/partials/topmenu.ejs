@@ -38,9 +38,23 @@
             <% } %>
             <% if(locals.authUser) { %>
                 <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
-                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
-                    </a>
+                    <%
+                    if( locals.authUser.profileFilename.toString().substring(0, 7) == "http://" || locals.authUser.profileFilename.toString().substring(0, 8) == "https://" ) {
+                        %>
+                        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
+                            <img src="<%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                        </a>    
+                        <%
+                    } else {
+                        %>
+                        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
+                            <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                        </a>
+                        <%
+                    }
+                    %>
+
+
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
                     <a href="/signOut" class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger">Sign Out</a>

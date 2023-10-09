@@ -187,14 +187,6 @@ window.addEventListener( 'load', () => {
         };
     }
 
-    // check that an email or username was not pre-entered 
-    if( userEmail ) {
-        validateCheckExistsMain( userEmail.value, userUsername.value );
-    }
-    if( userUsername ) {
-        validateCheckExistsUsername( userUsername.value, userEmail.value );
-    }
-
 } );
 
 function pwValidator() {

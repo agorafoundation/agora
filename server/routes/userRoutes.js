@@ -32,6 +32,11 @@ router.use(
     fileUpload()
 );
 
+router.route( '/google' )
+    .post( async function( req, res ) {
+        userController.googleSignUp( req, res );
+    } );
+
 router.route( '/' )
     .patch( async function( req, res ) {
         userController.updateUser( req, res );
@@ -47,7 +52,7 @@ router.route( '/' )
         }
         else {
             // save the user
-            userController.createUser( req, res );
+            userController.createUserForm( req, res );
 
         }
     }

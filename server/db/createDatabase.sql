@@ -7,6 +7,8 @@ create database agora;
 create user agora with encrypted password 'agora';
 grant all privileges on database agora to agora;
 grant connect on database agora to agora;
+GRANT ALL ON SCHEMA public TO agora;
+
 \c agora agora
 
 -- create and inserts

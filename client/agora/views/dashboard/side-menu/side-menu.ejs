@@ -28,22 +28,40 @@
         <div id="agoraSideBar" class="sidebar">
             <a href="/">
                 <img src="/assets/img/logos/agora-logo-2023-1.png" class="menuLogo" />
-                <span class="icon-text side-menu-home">Home</span>
-            </a><br>
+            </a>
+            <a href="/">
+                <i class="material-icons">home</i>
+                <span class="icon-text side-menu-icon">Home</span>
+            </a>
             <a href="/dashboard">
                 <i class="material-icons">remove_from_queue</i>
                 <span class="icon-text side-menu-icon">Dashboard</span>
-            </a><br>
+            </a>
             <!-- <a href="/community">
                 <i class="material-icons">groups</i>
                 <span class="icon-text"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Community</span></a><br> -->
-            
 
+            <a id="pin-menu" href="#" style="position: absolute; bottom: 80px;">
+                <i id="tack-icon" class="material-icons">push_pin</i>
+                <span class="icon-text side-menu-icon">Dock Sidebar</span>
+            </a>
+            
             <% if(locals.authUser) { %>
             <a href="/profile/manageProfile"
                 style="width:100%; position: absolute;bottom: 0; left: -15px;border-top:solid;border-radius:2px;">
-                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
-                <span class="icon-text">&nbsp;&nbsp;&nbsp;User Profile</span>
+                
+                <%
+                if( locals.authUser.profileFilename.toString().substring(0, 7) == "http://" || locals.authUser.profileFilename.toString().substring(0, 8) == "https://" ) {
+                    %>
+                    <img src="<%- locals.authUser.profileFilename %>" alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
+                    <%
+                } else {
+                    %>
+                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>" alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
+                    <%
+                }
+                %>
+                <span class="icon-text">&nbsp;&nbsp;&nbsp;Account</span>
             </a><br>
             <% } %>
         </div>
