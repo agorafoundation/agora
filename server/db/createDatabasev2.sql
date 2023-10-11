@@ -1,16 +1,23 @@
 -- Agora base database setup
+
+-- Create the "agora" schema if it doesn't exist
+CREATE SCHEMA IF NOT EXISTS agora;
+
+-- Set the search path to use the "agora" schema
+SET search_path = agora;
+
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- setup (as root / postgres)
-drop database agora;
-create database agora;
-create user agora with encrypted password 'agora';
-grant all privileges on database agora to agora;
-grant connect on database agora to agora;
+-- Setup (as root / postgres)
+DROP DATABASE IF EXISTS agora;
+CREATE DATABASE agora;
+CREATE USER agora WITH ENCRYPTED PASSWORD 'agora';
+GRANT ALL PRIVILEGES ON DATABASE agora TO agora;
+GRANT CONNECT ON DATABASE agora TO agora;
 
- \c agora postgres
+\c agora agora
 
--- create and inserts
+-- Create and inserts
 
 CREATE TABLE IF NOT EXISTS cc_sponsors (
     cc_sponsor_id SERIAL PRIMARY KEY,
@@ -602,34 +609,3 @@ CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared_entities (shar
 CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared_entities (shared_with_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
-
-ALTER TABLE activities OWNER TO agora;
-ALTER TABLE assessment_question_options OWNER TO agora;
-ALTER TABLE assessment_questions OWNER TO agora;
-ALTER TABLE assessments OWNER TO agora;
-ALTER TABLE cc_sponsors OWNER TO agora;
-ALTER TABLE completed_activities OWNER TO agora;
-ALTER TABLE completed_assessment_questions OWNER TO agora;
-ALTER TABLE completed_assessments OWNER TO agora;
-ALTER TABLE completed_resources OWNER TO agora;
-ALTER TABLE discussion_comment_ratings OWNER TO agora;
-ALTER TABLE discussion_comments OWNER TO agora;
-ALTER TABLE discussions OWNER TO agora;
-ALTER TABLE orders OWNER TO agora;
-ALTER TABLE product_images OWNER TO agora;
-ALTER TABLE products OWNER TO agora;
-ALTER TABLE resources OWNER TO agora;
-ALTER TABLE roles OWNER TO agora;
-ALTER TABLE session OWNER TO agora;
-ALTER TABLE shared_entities OWNER TO agora;
-ALTER TABLE tag_associations OWNER TO agora;
-ALTER TABLE tags OWNER TO agora;
-ALTER TABLE topic_resources OWNER TO agora;
-ALTER TABLE topics OWNER TO agora;
-ALTER TABLE user_roles OWNER TO agora;
-ALTER TABLE user_sessions OWNER TO agora;
-ALTER TABLE user_topics OWNER TO agora;
-ALTER TABLE user_workspaces OWNER TO agora;
-ALTER TABLE users OWNER TO agora;
-ALTER TABLE workspace_paths OWNER TO agora;
-ALTER TABLE workspaces OWNER TO agora;
