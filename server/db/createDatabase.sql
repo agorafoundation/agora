@@ -1,18 +1,25 @@
 -- Agora base database setup
+
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- setup (as root / postgres)
-drop database agora;
-create database agora;
-create user agora with encrypted password 'agora';
-grant all privileges on database agora to agora;
-grant connect on database agora to agora;
+-- Setup (as root / postgres)
+DROP DATABASE IF EXISTS agora;
+CREATE DATABASE agora;
+CREATE USER agora WITH ENCRYPTED PASSWORD 'agora';
+GRANT ALL PRIVILEGES ON DATABASE agora TO agora;
+GRANT CONNECT ON DATABASE agora TO agora;
 
- \c agora postgres
+\c agora agora
 
--- create and inserts
+-- Create the "agora" schema if it doesn't exist
+CREATE SCHEMA IF NOT EXISTS agora;
 
-CREATE TABLE IF NOT EXISTS cc_sponsors (
+-- Set the search path to use the "agora" schema
+SET search_path = agora;
+
+-- Create and inserts
+
+CREATE TABLE IF NOT EXISTS agora.cc_sponsors (
     cc_sponsor_id SERIAL PRIMARY KEY,
     gh_action VARCHAR,
     gh_sponsorship_id VARCHAR,
@@ -39,7 +46,7 @@ CREATE TABLE IF NOT EXISTS cc_sponsors (
 GRANT ALL PRIVILEGES ON TABLE cc_sponsors TO agora;
 GRANT USAGE, SELECT ON SEQUENCE cc_sponsors_cc_sponsor_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS agora.users (
     user_id uuid PRIMARY KEY,
     email VARCHAR,
     username VARCHAR,
@@ -64,7 +71,7 @@ GRANT ALL PRIVILEGES ON TABLE users TO agora;
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_users_email ON users (LOWER(email));
 
-CREATE TABLE IF NOT EXISTS session (
+CREATE TABLE IF NOT EXISTS agora.session (
   sid varchar NOT NULL COLLATE "default",
   sess json NOT NULL,
   expire timestamp(6) NOT NULL,
@@ -74,7 +81,7 @@ CREATE TABLE IF NOT EXISTS session (
 GRANT ALL PRIVILEGES ON TABLE session TO agora;
 CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session ("expire");
 
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS agora.products (
     product_id SERIAL PRIMARY KEY,
     product_type VARCHAR,
     product_name VARCHAR,
@@ -93,7 +100,7 @@ CREATE TABLE IF NOT EXISTS products (
 GRANT ALL PRIVILEGES ON TABLE products TO agora;
 GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS product_images (
+CREATE TABLE IF NOT EXISTS agora.product_images (
     product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
@@ -179,7 +186,7 @@ VALUES (
     '', '/assets/img/robots-bg/custom-2-wheel.png'
 );
 
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE IF NOT EXISTS agora.orders (
     order_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER,
@@ -207,7 +214,7 @@ GRANT ALL PRIVILEGES ON TABLE orders TO agora;
 CREATE INDEX IF NOT EXISTS idx_orders_product_id ON orders (product_id);
 GRANT USAGE, SELECT ON SEQUENCE orders_order_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS user_sessions (
+CREATE TABLE IF NOT EXISTS agora.user_sessions (
     user_session_id SERIAL PRIMARY KEY,
     user_id uuid,
     create_time TIMESTAMP DEFAULT current_timestamp,
@@ -231,7 +238,7 @@ GRANT ALL PRIVILEGES ON TABLE user_sessions TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions (user_id);
 GRANT USAGE, SELECT ON SEQUENCE user_sessions_user_session_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS roles (
+CREATE TABLE IF NOT EXISTS agora.roles (
     role_id SERIAL PRIMARY KEY,
     role_name VARCHAR,
     role_description VARCHAR,
@@ -247,7 +254,7 @@ insert into roles (role_name, role_description, active) values ('User', 'General
 insert into roles (role_name, role_description, active) values ('Founder', 'Founder membership', true);
 insert into roles (role_name, role_description, active) values ('Creator', 'Content Creator', true);
 
-CREATE TABLE IF NOT EXISTS user_roles (
+CREATE TABLE IF NOT EXISTS agora.user_roles (
     user_role_id SERIAL PRIMARY KEY,
     user_id uuid,
     role_id INTEGER,
@@ -269,7 +276,7 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles (role_id);
 CREATE TYPE visibility AS ENUM ('private', 'public');
 
 -- workspace and related <- workspaceService
-CREATE TABLE IF NOT EXISTS workspaces (
+CREATE TABLE IF NOT EXISTS agora.workspaces (
     workspace_rid SERIAL PRIMARY KEY,
     workspace_id UUID NOT NULL,
     workspace_version INTEGER,-- every time a workspace or its path of topics is changed this is incremented but the id stays the same, the key is a composite key of id and version.
@@ -289,7 +296,7 @@ GRANT ALL PRIVILEGES ON TABLE workspaces TO agora;
 CREATE INDEX IF NOT EXISTS idx_workspace_workspace_id_version ON workspaces (workspace_id, workspace_version);
 CREATE INDEX IF NOT EXISTS idx_workspace_visibility ON workspaces (visibility);
 
-CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
+CREATE TABLE IF NOT EXISTS agora.topics ( -- <- pathService or separate topicService?
     topic_id UUID PRIMARY KEY,
     topic_name VARCHAR,
     topic_description VARCHAR,
@@ -310,7 +317,7 @@ CREATE TABLE IF NOT EXISTS topics ( -- <- pathService or separate topicService?
 GRANT ALL PRIVILEGES ON TABLE topics TO agora;
 CREATE INDEX IF NOT EXISTS idx_topics_visibility ON topics (visibility);
 
-CREATE TABLE IF NOT EXISTS workspace_paths (
+CREATE TABLE IF NOT EXISTS agora.workspace_paths (
     workspace_path_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
     topic_id UUID,
@@ -326,7 +333,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_paths_workspace_rid ON workspace_paths 
 
 -- used to track a users interest in completing a goal (and at a specific goal version so the correct path can be identified)
 -- also tracks actually completion of a goal.
-CREATE TABLE IF NOT EXISTS user_workspaces (
+CREATE TABLE IF NOT EXISTS agora.user_workspaces (
     user_workspace_id SERIAL PRIMARY KEY,
     workspace_rid INTEGER,
     user_id uuid,
@@ -347,7 +354,7 @@ CREATE INDEX IF NOT EXISTS idx_user_workspaces_user_id ON user_workspaces (user_
 -- querying in this matter can progmattically determine completion, but it
 -- would not actually be recorded anywhere in the db. Further if the path 
 -- changed 
-CREATE TABLE IF NOT EXISTS user_topics (
+CREATE TABLE IF NOT EXISTS agora.user_topics (
     user_topic_id SERIAL PRIMARY KEY,
     topic_id uuid,
     user_id uuid,
@@ -367,7 +374,7 @@ GRANT USAGE, SELECT ON SEQUENCE user_topics_user_topic_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_topics_topic_id ON user_topics (topic_id);
 CREATE INDEX IF NOT EXISTS idx_user_topics_user_id ON user_topics (user_id);
 
-CREATE TABLE IF NOT EXISTS resources (
+CREATE TABLE IF NOT EXISTS agora.resources (
     resource_id uuid PRIMARY KEY,
     resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
@@ -387,7 +394,7 @@ GRANT ALL PRIVILEGES ON TABLE resources TO agora;
 CREATE INDEX IF NOT EXISTS idx_resounces_owned_by ON resources (owned_by);
 CREATE INDEX IF NOT EXISTS idx_resources_visibility ON resources (visibility);
 
-CREATE TABLE IF NOT EXISTS tags (
+CREATE TABLE IF NOT EXISTS agora.tags (
     tag_id SERIAL PRIMARY KEY,
     tag VARCHAR UNIQUE,
     last_used TIMESTAMP,
@@ -400,7 +407,7 @@ CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags (tag);
 
 CREATE TYPE tag_entity_types AS ENUM ('unknown', 'workspace', 'topic', 'resource', 'user');
 
-CREATE TABLE IF NOT EXISTS tag_associations (
+CREATE TABLE IF NOT EXISTS agora.tag_associations (
     tag_association_id SERIAL PRIMARY KEY,
     tag_id INTEGER, -- fk to tag
     entity_type tag_entity_types, --  1-goal, 2-topic, 3-resource, 
@@ -413,7 +420,7 @@ CREATE TABLE IF NOT EXISTS tag_associations (
 );
 
 -- make resources many to many with topics instead of many to one
-CREATE TABLE IF NOT EXISTS topic_resources (
+CREATE TABLE IF NOT EXISTS agora.topic_resources (
     topic_resource_id SERIAL PRIMARY KEY,
     topic_id uuid,
     resource_id uuid,
@@ -432,7 +439,7 @@ CREATE INDEX IF NOT EXISTS idx_topic_resources_owned_by ON topic_resources (owne
 
 -- maintains a record of resources reviewed by the user within a topic
 -- when combined with user_topic (pre_completed_assessment_id, post_completed_assessment_id and completed_activity_id) denotes completed topic
-CREATE TABLE IF NOT EXISTS completed_resources (
+CREATE TABLE IF NOT EXISTS agora.completed_resources (
     completed_resource_id SERIAL PRIMARY KEY,
     resource_id uuid,
     user_id uuid,
@@ -447,7 +454,7 @@ GRANT USAGE, SELECT ON SEQUENCE completed_resources_completed_resource_id_seq TO
 CREATE INDEX IF NOT EXISTS idx_completed_resources_resource_id ON completed_resources (resource_id);
 CREATE INDEX IF NOT EXISTS idx_completed_resources_user_id ON completed_resources (user_id);
 
-CREATE TABLE IF NOT EXISTS assessments (
+CREATE TABLE IF NOT EXISTS agora.assessments (
     assessment_id SERIAL PRIMARY KEY,
     assessment_type INTEGER,   -- ?? 1-pre/post eval, 2.. quiz?, etc not sure if this is needed depends on how tests are done outside of pre/post assessments
     assessment_name VARCHAR,  
@@ -461,7 +468,7 @@ CREATE TABLE IF NOT EXISTS assessments (
 
 GRANT ALL PRIVILEGES ON TABLE assessments TO agora;
 
-CREATE TABLE IF NOT EXISTS assessment_questions (
+CREATE TABLE IF NOT EXISTS agora.assessment_questions (
     assessment_question_id SERIAL PRIMARY KEY,
     assessment_id INTEGER,   
     question VARCHAR,  
@@ -474,7 +481,7 @@ CREATE TABLE IF NOT EXISTS assessment_questions (
 GRANT ALL PRIVILEGES ON TABLE assessment_questions TO agora;
 CREATE INDEX IF NOT EXISTS idx_assessment_questions_assessment_id ON assessment_questions (assessment_id);
 
-CREATE TABLE IF NOT EXISTS assessment_question_options (
+CREATE TABLE IF NOT EXISTS agora.assessment_question_options (
     assessment_question_option_id SERIAL PRIMARY KEY,
     assessment_question_id INTEGER,   
     option_number INTEGER,
@@ -486,7 +493,7 @@ CREATE TABLE IF NOT EXISTS assessment_question_options (
 GRANT ALL PRIVILEGES ON TABLE assessment_question_options TO agora;
 CREATE INDEX IF NOT EXISTS idx_assessment_question_options_assessment_question_id ON assessment_question_options (assessment_question_id);
 
-CREATE TABLE IF NOT EXISTS completed_assessments (
+CREATE TABLE IF NOT EXISTS agora.completed_assessments (
     completed_assessment_id SERIAL PRIMARY KEY,
     assessment_id INTEGER,
     user_id uuid,
@@ -502,7 +509,7 @@ GRANT USAGE, SELECT ON SEQUENCE completed_assessments_completed_assessment_id_se
 CREATE INDEX IF NOT EXISTS idx_completed_assessments_assessment_id ON completed_assessments (assessment_id);
 CREATE INDEX IF NOT EXISTS idx_completed_assessments_user_id ON completed_assessments (user_id);
 
-CREATE TABLE IF NOT EXISTS completed_assessment_questions (
+CREATE TABLE IF NOT EXISTS agora.completed_assessment_questions (
     completed_assessment_question_id SERIAL PRIMARY KEY,
     completed_assessment_id INTEGER,
     assessment_question_id INTEGER,
@@ -517,7 +524,7 @@ GRANT ALL PRIVILEGES ON TABLE completed_assessment_questions TO agora;
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_assessment_question_id ON completed_assessment_questions (assessment_question_id);
 CREATE INDEX IF NOT EXISTS idx_completed_assessment_questions_completed_assessment_id ON completed_assessment_questions (completed_assessment_id);
 
-CREATE TABLE IF NOT EXISTS activities (
+CREATE TABLE IF NOT EXISTS agora.activities (
     activity_id SERIAL PRIMARY KEY,
     activity_type INTEGER,   -- ?? TODO: what types will there be, do i need this? activities currently a design STUB
     activity_name VARCHAR,  
@@ -530,7 +537,7 @@ CREATE TABLE IF NOT EXISTS activities (
 
 GRANT ALL PRIVILEGES ON TABLE activities TO agora;
 
-CREATE TABLE IF NOT EXISTS completed_activities (
+CREATE TABLE IF NOT EXISTS agora.completed_activities (
     completed_activity_id SERIAL PRIMARY KEY,
     activity_id INTEGER,
     user_id uuid,
@@ -548,7 +555,7 @@ CREATE INDEX IF NOT EXISTS idx_completed_activities_activity_id ON completed_act
 
 CREATE TYPE discussion_parents AS ENUM ('workspace', 'topic');
 
-CREATE TABLE IF NOT EXISTS discussions (
+CREATE TABLE IF NOT EXISTS agora.discussions (
     parent_id uuid,
     parent_type discussion_parents,
     user_id uuid,
@@ -558,7 +565,7 @@ CREATE TABLE IF NOT EXISTS discussions (
 
 GRANT ALL PRIVILEGES ON TABLE discussions TO agora;
 
-CREATE TABLE IF NOT EXISTS discussion_comments (
+CREATE TABLE IF NOT EXISTS agora.discussion_comments (
     discussion_comment_id SERIAL PRIMARY KEY,
     parent_id INTEGER, 
     parent_type discussion_parents,
@@ -570,7 +577,7 @@ CREATE TABLE IF NOT EXISTS discussion_comments (
 
 GRANT ALL PRIVILEGES ON TABLE discussion_comments TO agora;
 
-CREATE TABLE IF NOT EXISTS discussion_comment_ratings (
+CREATE TABLE IF NOT EXISTS agora.discussion_comment_ratings (
     discussion_comment_id INTEGER,
     user_id uuid,
     rating BOOLEAN,
@@ -583,7 +590,7 @@ GRANT ALL PRIVILEGES ON TABLE discussion_comment_ratings TO agora;
 CREATE TYPE shared_entity_type AS ENUM ('workspace', 'topic', 'resource');
 CREATE TYPE shared_permission_level AS ENUM ('view', 'discussion', 'edit');
 
-CREATE TABLE IF NOT EXISTS shared_entities (
+CREATE TABLE IF NOT EXISTS agora.shared_entities (
     shared_entity_id SERIAL PRIMARY KEY,
     entity_id INTEGER,          -- unique id number of the entity being shared
     entity_type shared_entity_type,      
@@ -602,34 +609,3 @@ CREATE INDEX IF NOT EXISTS idx_shared_shared_by_user_id ON shared_entities (shar
 CREATE INDEX IF NOT EXISTS idx_shared_shared_with_user_id ON shared_entities (shared_with_user_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_id ON shared_entities (entity_id);
 CREATE INDEX IF NOT EXISTS idx_shared_entity_type ON shared_entities (entity_type);
-
-ALTER TABLE activities OWNER TO agora;
-ALTER TABLE assessment_question_options OWNER TO agora;
-ALTER TABLE assessment_questions OWNER TO agora;
-ALTER TABLE assessments OWNER TO agora;
-ALTER TABLE cc_sponsors OWNER TO agora;
-ALTER TABLE completed_activities OWNER TO agora;
-ALTER TABLE completed_assessment_questions OWNER TO agora;
-ALTER TABLE completed_assessments OWNER TO agora;
-ALTER TABLE completed_resources OWNER TO agora;
-ALTER TABLE discussion_comment_ratings OWNER TO agora;
-ALTER TABLE discussion_comments OWNER TO agora;
-ALTER TABLE discussions OWNER TO agora;
-ALTER TABLE orders OWNER TO agora;
-ALTER TABLE product_images OWNER TO agora;
-ALTER TABLE products OWNER TO agora;
-ALTER TABLE resources OWNER TO agora;
-ALTER TABLE roles OWNER TO agora;
-ALTER TABLE session OWNER TO agora;
-ALTER TABLE shared_entities OWNER TO agora;
-ALTER TABLE tag_associations OWNER TO agora;
-ALTER TABLE tags OWNER TO agora;
-ALTER TABLE topic_resources OWNER TO agora;
-ALTER TABLE topics OWNER TO agora;
-ALTER TABLE user_roles OWNER TO agora;
-ALTER TABLE user_sessions OWNER TO agora;
-ALTER TABLE user_topics OWNER TO agora;
-ALTER TABLE user_workspaces OWNER TO agora;
-ALTER TABLE users OWNER TO agora;
-ALTER TABLE workspace_paths OWNER TO agora;
-ALTER TABLE workspaces OWNER TO agora;
