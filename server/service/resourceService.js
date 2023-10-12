@@ -370,3 +370,37 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
         return false;
     }
 };
+
+/**
+ * Get resource content by Id
+ * @param {int} resourceId - Id of resource to retrieve
+ * @param {boolean} active - If true resource must have an active status
+ * @returns {Resource}
+ */
+exports.getResourceContentById = async ( resourceId, active ) => {
+    let text = "SELECT resource_content_html FROM resources WHERE resource_id = $1";
+    if( active ) {
+        text += "AND active = $2";
+    }
+    text += ";";
+
+    let values = [ resourceId ];
+    if( active ) {
+        values.push( true );
+    }
+
+    try {
+        let resource = "";
+         
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            resource = Resource.ormResource( res.rows[0] );
+                  
+        }
+        return resource;
+        
+    }
+    catch( e ) {
+        console.log( e.stack );
+    }
+};
