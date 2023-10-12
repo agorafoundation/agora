@@ -106,6 +106,22 @@ exports.googleSignIn = async function( req, res ) {
             req.session.isAuth = true;
             req.body.signInEmail = payload['email'];
             await signIn( req, res );
+
+            if( req.query.redirect ) {
+                //console.log( "2" );
+                res.redirect( 303, req.query.redirect );
+            }
+            else if( req.session.authUser.emailValidated ) {
+                //console.log( "3" );
+                res.redirect( 303, '/dashboard' );
+            }
+            else {
+                //console.log( "4" );
+                req.session.messageType = "info";
+                req.session.messageTitle = "Email not verified!";
+                req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
+                res.redirect( 303, '/dashboard' );
+            }
         }
         else {
             req.session.messageType = "info";
