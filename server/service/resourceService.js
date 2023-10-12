@@ -6,10 +6,10 @@
  */
 
 // database connection
-const db = require( '../db/connection' );
+const db = require('../db/connection');
 
 // import models
-const Resource = require( '../model/resource' );
+const Resource = require('../model/resource');
 
 // any cross services required
 
@@ -21,31 +21,31 @@ const Resource = require( '../model/resource' );
  * @param {boolean} active - If true resource must have an active status
  * @returns {Resource}
  */
-exports.getResourceById = async ( resourceId, active ) => {
+exports.getResourceById = async (resourceId, active) => {
     let text = "SELECT * FROM resources WHERE resource_id = $1";
-    if( active ) {
+    if (active) {
         text += "AND active = $2";
     }
     text += ";";
 
-    let values = [ resourceId ];
-    if( active ) {
-        values.push( true );
+    let values = [resourceId];
+    if (active) {
+        values.push(true);
     }
 
     try {
         let resource = "";
-         
-        let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
-            resource = Resource.ormResource( res.rows[0] );
-                  
+
+        let res = await db.query(text, values);
+        if (res.rowCount > 0) {
+            resource = Resource.ormResource(res.rows[0]);
+
         }
         return resource;
-        
+
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
     }
 };
 
@@ -59,42 +59,42 @@ exports.getResourceById = async ( resourceId, active ) => {
  * @param {int} offset Optional - If provided, will return tags starting at the offset otherwise will start at the beginning
  * @returns 
  */
-exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
+exports.getAllVisibleResources = async (ownerId, limit, offset) => {
     let text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') ORDER BY resource_id";
-    let values = [ true, ownerId ];
+    let values = [true, ownerId];
 
     // apply a default offset if none is provided
-    if ( !offset ) offset = 0;
+    if (!offset) offset = 0;
 
-    if( limit ) {
+    if (limit) {
         text += " LIMIT $3 OFFSET $4";
 
-        values.push( limit );
-        values.push( offset );
+        values.push(limit);
+        values.push(offset);
     }
     else {
         text += " LIMIT 100 OFFSET $3";
-        values.push( offset );
+        values.push(offset);
     }
 
     text += ";";
 
 
     let resources = [];
-    
+
     try {
-         
-        let res = await db.query( text, values );
-        
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+
+        let res = await db.query(text, values);
+
+        for (let i = 0; i < res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
         }
-        
+
         return resources;
-        
+
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
     }
 
 };
@@ -107,26 +107,26 @@ exports.getAllVisibleResources = async ( ownerId, limit, offset ) => {
  * @param {int} resourceId
  * @returns 
  */
-exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
+exports.getAllSharedResourcesForUser = async (userId, resourceId) => {
     // this query is wrong.. here is the schema
     // agora=> select * from shared_entities;
     // shared_entity_id | entity_id | entity_type | shared_by_user_id | shared_with_user_id | permission_level | can_copy | create_time | update_time
 
     let text = "SELECT * FROM shared table WHERE userId = $1 AND resourceId = $2 active = $3;";
-    let values = [ userId, resourceId, true ];
+    let values = [userId, resourceId, true];
 
     let resources = [];
     try {
-        let res = await db.query( text, values );
+        let res = await db.query(text, values);
 
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+        for (let i = 0; i < res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
         }
         return resources;
 
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
     }
 };
 
@@ -134,26 +134,26 @@ exports.getAllSharedResourcesForUser = async ( userId, resourceId ) => {
  * Retrieves all active resources created by a particular owner
  * @returns All active resources as a list
  */
-exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
+exports.getAllActiveResourcesForOwner = async (ownerId) => {
 
     const text = "SELECT * FROM resources WHERE active = $1 and owned_by = $2 order by resource_id;";
-    const values = [ true, ownerId ];
+    const values = [true, ownerId];
 
     let resources = [];
-    
+
     try {
-         
-        let res = await db.query( text, values );
-        
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+
+        let res = await db.query(text, values);
+
+        for (let i = 0; i < res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
         }
-        
+
         return resources;
-        
+
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
     }
 };
 
@@ -163,21 +163,21 @@ exports.getAllActiveResourcesForOwner = async ( ownerId ) => {
  * @param {*} resourceId 
  * @returns 
  */
-exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
+exports.getAllActiveResourcesForOwnerById = async (ownerId, resourceId) => {
     const text = "SELECT * FROM resources WHERE active = $1 and (owned_by = $2 OR visibility = 'public') and resource_id = $3 order by resource_id;";
-    const values = [ true, ownerId, resourceId ];
+    const values = [true, ownerId, resourceId];
 
     let resources = [];
-    
-    try {
-         
-        let res = await db.query( text, values );
 
-        if( res.rowCount > 0 ) {
-            for( let i=0; i<res.rows.length; i++ ) {
-                resources.push( Resource.ormResource( res.rows[i] ) );
+    try {
+
+        let res = await db.query(text, values);
+
+        if (res.rowCount > 0) {
+            for (let i = 0; i < res.rows.length; i++) {
+                resources.push(Resource.ormResource(res.rows[i]));
             }
-            
+
             return resources;
         }
 
@@ -185,8 +185,8 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
             return false;
         }
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
         return false;
     }
 };
@@ -195,25 +195,25 @@ exports.getAllActiveResourcesForOwnerById = async ( ownerId, resourceId ) => {
  * Retrieves all resources created by a particular owner regardless of active status
  * @returns All resources as a list
  */
-exports.getAllResourcesForOwner = async ( ownerId ) => {
+exports.getAllResourcesForOwner = async (ownerId) => {
     const text = "SELECT * FROM resources WHERE owned_by = $1 order by resource_id;";
-    const values = [ ownerId ];
+    const values = [ownerId];
 
     let resources = [];
-    
+
     try {
-         
-        let res = await db.query( text, values );
-        
-        for( let i=0; i<res.rows.length; i++ ) {
-            resources.push( Resource.ormResource( res.rows[i] ) );
+
+        let res = await db.query(text, values);
+
+        for (let i = 0; i < res.rows.length; i++) {
+            resources.push(Resource.ormResource(res.rows[i]));
         }
 
         return resources;
-        
+
     }
-    catch( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
     }
 };
 
@@ -224,21 +224,21 @@ exports.getAllResourcesForOwner = async ( ownerId ) => {
  * @param {Integer} completedResourceId 
  * @returns true for success / false on failure
  */
-exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) => {
-    if( completedResourceId > 0 ) {
+exports.markUserTopicCompletedResourcesInactive = async (completedResourceId) => {
+    if (completedResourceId > 0) {
         // update
         let text = "UPDATE completed_resources SET active = $1, update_time = NOW() WHERE completed_resource_id = $2;";
-        let values = [ false, completedResourceId ];
+        let values = [false, completedResourceId];
 
         try {
-            let res = await db.query( text, values );
+            let res = await db.query(text, values);
             return true;
         }
-        catch( e ) {
-            console.log( "[ERR]: Error updating completedResources - " + e );
+        catch (e) {
+            console.log("[ERR]: Error updating completedResources - " + e);
             return false;
         }
-        
+
     }
     else {
         return false;
@@ -249,37 +249,37 @@ exports.markUserTopicCompletedResourcesInactive = async ( completedResourceId ) 
  * Update / set the user resource image
  * The previous filename that was overwritten (if any) is returned
  */
-exports.updateResourceImage = async ( resourceId, filename ) => {
+exports.updateResourceImage = async (resourceId, filename) => {
     // get the resource (required to exist)
-    let resource = await exports.getResourceById( resourceId );
+    let resource = await exports.getResourceById(resourceId);
 
     // save the current filename so that we can delete it after.
     let prevFileName = "";
 
-    if( resource ) {
+    if (resource) {
         try {
             // retrieve the current filename so that we can delete it after.
             let text = "SELECT resource_image FROM resources WHERE resource_id = $1";
-            let values = [ resourceId ];
+            let values = [resourceId];
 
             // perform the query
-            let res = await db.query( text, values );
-            
+            let res = await db.query(text, values);
+
             // set the prevFileName with the prev name
-            if( res.rows.length > 0 ) {
+            if (res.rows.length > 0) {
                 prevFileName = res.rows[0].resource_image;
             }
 
             // cerate the update query to set the new name
             text = "UPDATE resources SET resource_image = $2 WHERE resource_id = $1";
-            values = [ resourceId, filename ];
+            values = [resourceId, filename];
 
             // perform query
-            await db.query( text, values );
-            
+            await db.query(text, values);
+
         }
-        catch( e ) {
-            console.log( e.stack );
+        catch (e) {
+            console.log(e.stack);
         }
 
         return prevFileName;
@@ -296,55 +296,55 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
  * @param {Resource} resource 
  * @returns Resource object with id 
  */
-exports.saveResource = async ( resource ) => {
+exports.saveResource = async (resource) => {
     // check to see if an id exists - insert / update check
-    if( resource ) {
+    if (resource) {
         // query to see if the resourceId exists
         let text = "SELECT resource_id FROM resources WHERE resource_id = $1;";
-        let values = [ resource.resourceId ];
+        let values = [resource.resourceId];
         try {
-            let res = await db.query( text, values );
-            if( res.rowCount > 0 ) {
-            
+            let res = await db.query(text, values);
+            if (res.rowCount > 0) {
+
                 // update
                 let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE resource_id = $11;";
-                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
-        
+                let values = [resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId];
+
                 try {
-                    let res = await db.query( text, values );
+                    let res = await db.query(text, values);
                 }
-                catch( e ) {
-                    console.log( "[ERR]: Error updating resources - " + e );
+                catch (e) {
+                    console.log("[ERR]: Error updating resources - " + e);
                     return false;
                 }
-                
+
             }
             else {
-                
+
                 // insert
                 let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility, resource_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING resource_id;";
-                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
-    
+                let values = [resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId];
+
                 try {
-                    let res2 = await db.query( text, values );
-        
-                    if( res2.rowCount > 0 ) {
+                    let res2 = await db.query(text, values);
+
+                    if (res2.rowCount > 0) {
                         resource.resourceId = res2.rows[0].resource_id; // TODO: Once database change goes through, this will need to be changed to .resourceId.-
                     }
-                    
+
                 }
-                catch( e ) {
-                    console.log( "[ERR]: Error inserting resources - " + e );
+                catch (e) {
+                    console.log("[ERR]: Error inserting resources - " + e);
                     return false;
                 }
             }
             return resource;
         }
-        catch( e ) {
-            console.log( "[ERR]: saveResource - error checking to see if resourceId exists - " + e );
+        catch (e) {
+            console.log("[ERR]: saveResource - error checking to see if resourceId exists - " + e);
             return false;
         }
-        
+
     }
     else {
         return false;
@@ -352,21 +352,55 @@ exports.saveResource = async ( resource ) => {
 };
 
 // Removes a resource given an ID
-exports.deleteResourceById = async ( resourceId, ownerId ) => {
+exports.deleteResourceById = async (resourceId, ownerId) => {
     let text = "DELETE FROM resources WHERE resource_id = $1 and owned_by = $2";
-    let values = [ resourceId, ownerId ];
+    let values = [resourceId, ownerId];
 
     try {
-        let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
+        let res = await db.query(text, values);
+        if (res.rowCount > 0) {
             return true;
         }
         else {
             return false;
         }
     }
-    catch ( e ) {
-        console.log( e.stack );
+    catch (e) {
+        console.log(e.stack);
         return false;
+    }
+};
+
+/**
+ * Get resource content by Id
+ * @param {int} resourceId - Id of resource to retrieve
+ * @param {boolean} active - If true resource must have an active status
+ * @returns {Resource}
+ */
+exports.getResourceContentById = async (resourceId, active) => {
+    let text = "SELECT resource_content_html FROM resources WHERE resource_id = $1";
+    if (active) {
+        text += "AND active = $2";
+    }
+    text += ";";
+
+    let values = [resourceId];
+    if (active) {
+        values.push(true);
+    }
+
+    try {
+        let resource = "";
+
+        let res = await db.query(text, values);
+        if (res.rowCount > 0) {
+            resource = Resource.ormResource(res.rows[0]);
+
+        }
+        return resource;
+
+    }
+    catch (e) {
+        console.log(e.stack);
     }
 };
