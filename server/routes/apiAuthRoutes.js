@@ -145,4 +145,11 @@ router.use( '/search', searchRoutes );
 const stripeRoutes = require( './apis/stripeRoutes' );
 router.use( '/stripe', stripeRoutes );
 
+
+/**
+ * AI APIs
+ */
+const aiRoutes = require( './apis/aiRoutes' );
+router.use( '/ai', aiRoutes );
+
 module.exports = router;

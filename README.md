@@ -27,8 +27,8 @@ answers you seek
  * That's it!
 
 ## Database setup
-* You can either run /server/db/CreateTablesScript-base-example.sql or create a copy and modify / comment out default data to your liking
->  psql -U postgres -f server/db/createTablesScript-base-example.sql (from the root directory of the project, default agora password is 'agora')
+* You can either run /server/db/createDatabase.sql or create a copy and modify / comment out default data to your liking
+>  psql -U postgres -f server/db/createDatabase.sql (from the root directory of the project, default agora password is 'agora')
 * Run the script to create the database.  If you run the script with postgres / root user it will create a database and user named 'agora', then connect to the new database and create the schema using the agora user.
 
 ### Quick start setup
