@@ -761,6 +761,10 @@ a:hover {
     transition: margin-left .5s;
 }
 
+.friends-content {
+    transition: margin-left .5s;
+}
+
 .sidenav a,
 .dropdown-btn {
     padding: 6px 8px 6px 16px;
@@ -2082,6 +2086,10 @@ input:checked+.slider:after {
 
 
 .dashboard-content {
+    transition: margin-left .5s;
+}
+
+.friends-content {
     transition: margin-left .5s;
 }
 
