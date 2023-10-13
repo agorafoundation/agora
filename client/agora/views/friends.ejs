@@ -5,9 +5,15 @@
     <%- include('./partials/head'); %>
 </head>
 
-<body>
+<!-- Add friending class -->
+
+<body id="page-top" class="friends-content">
+
     <!-- Gallery View-->
     <%- include('./dashboard/side-menu/side-menu.ejs'); %>
+        <%- include('./friends/partials/control-bar.ejs') %>
+            <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+            <%- include('./partials/jsincludes'); %>
 </body>
 
 </html>
