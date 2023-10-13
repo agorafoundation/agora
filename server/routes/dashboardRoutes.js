@@ -42,13 +42,17 @@ const resourceController = require( '../controller/apis/resourceController' );
  * Check that the user is logged in (required!)
  */
 router.use( function ( req, res, next ) {
+    //console.log( "req.query.redirect: " + req.query.redirect );
+    //console.log( "dashboard user: " + req.session.authUser );
     if( !req.session.authUser ) {
-        console.log( "auth testing!!!" );
+        
+        //console.log( "auth user invalid" );
         if( req.query.redirect ) {
+            //console.log( "redirecting to: " + req.query.redirect );
             res.locals.redirect = req.query.redirect;
         } 
 
-        res.redirect( 303, '/dashboard' );
+        res.render( 'user-signup' );
     }
     else {
         next( );
