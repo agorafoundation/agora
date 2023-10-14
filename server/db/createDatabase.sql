@@ -147,8 +147,6 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 GRANT ALL PRIVILEGES ON TABLE notifications TO agora;
 
-
-
 INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active
 )
