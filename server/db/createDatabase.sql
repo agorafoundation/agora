@@ -122,8 +122,8 @@ CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (prod
 -- Add Friendship table
 CREATE TABLE IF NOT EXISTS friendships (
     friendship_id SERIAL PRIMARY KEY,
-    initiatedby_id INTEGER NOT NULL REFERENCES users(user_id),
-    recipient_id INTEGER NOT NULL REFERENCES users(user_id),
+    initiatedby_id UUID NOT NULL REFERENCES users(user_id),
+    recipient_id UUID NOT NULL REFERENCES users(user_id),
     status VARCHAR NOT NULL, 
     created_time TIMESTAMP DEFAULT current_timestamp,
     UNIQUE (initiatedby_id, recipient_id)
@@ -134,8 +134,8 @@ GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 --Friendship Request table
 CREATE TABLE IF NOT EXISTS friendship_requests (
     request_id SERIAL PRIMARY KEY,
-    requester_id INTEGER NOT NULL REFERENCES users(user_id),
-    recipient_id INTEGER NOT NULL REFERENCES users(user_id),
+    requester_id UUID NOT NULL REFERENCES users(user_id),
+    recipient_id UUID NOT NULL REFERENCES users(user_id),
     request_time TIMESTAMP DEFAULT current_timestamp
 );
 
@@ -144,7 +144,7 @@ GRANT ALL PRIVILEGES ON TABLE friendship_requests TO agora;
 -- Notifications table
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(user_id),
+    user_id UUID NOT NULL REFERENCES users(user_id),
     message TEXT NOT NULL,
     notification_time TIMESTAMP DEFAULT current_timestamp,
     read_status BOOLEAN DEFAULT FALSE
