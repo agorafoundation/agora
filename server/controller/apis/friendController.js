@@ -28,16 +28,6 @@ exports.getAllFriends = async (req, res) => {
     res.status(200).json(friends);
 };
 
-exports.saveFriend = async (req, res) => {
-    let authUserId;
-    if (req.user) {
-        authUserId = req.user.userId;
-    }
-    else if (req.session.authUser) {
-        authUserId = req.session.authUser.userId;
-    }
-};
-
 exports.getFriendByID = async () => {
     let authUserId;
     if (req.user) {
@@ -54,6 +44,7 @@ exports.getFriendByID = async () => {
             res.status(200).json(friend);
         }
         else {
+            const message = ApiMessage.createApiMessage(404, "Not Found", "Friend not found");
             res.set("x-agora-message-title", "Not Found");
             res.set("x-agora-message-detail", "Friend not found");
             res.status(400).json(message);
@@ -61,6 +52,56 @@ exports.getFriendByID = async () => {
     }
 };
 
-exports.deleteFriendByID = async () => {
+exports.sendFriendRequest = async (req, res) => {
+    let authUserId;
+    if (req.user) {
+        authUserId = req.user.userId;
+    }
+    else if (req.session.authUser) {
+        authUserId = req.session.authUser.userId;
+    }
+};
 
+exports.acceptFriendRequest = async (req, res) => {
+    let authUserId;
+    if (req.user) {
+        authUserId = req.user.userId;
+    }
+    else if (req.session.authUser) {
+        authUserId = req.session.authUser.userId;
+    }
+};
+
+exports.rejectFriendRequest = async (req, res) => {
+    let authUserId;
+    if (req.user) {
+        authUserId = req.user.userId;
+    }
+    else if (req.session.authUser) {
+        authUserId = req.session.authUser.userId;
+    }
+};
+
+exports.deleteFriendByID = async () => {
+    let authUserId;
+    if (req.user) {
+        authUserId = req.user.userId;
+    }
+    else if (req.session.authUser) {
+        authUserId = req.session.authUser.userId;
+    }
+    if (authUserID) {
+        let success = await friendService.deleteFriendByID(req.params.userID, authUserID);
+        if (success) {
+            res.set("x-agora-message-title", "Success");
+            res.set("x-agora-message-detail", "Removed friend");
+            res.status(200).json("Success");
+        }
+        else {
+            const message = ApiMessage.createApiMessage(404, "Not Found", "Friend not found");
+            res.set("x-agora-message-title", "Not Found");
+            res.set("x-agora-message-detail", "Friend not found");
+            res.status(400).json(message);
+        }
+    }
 };

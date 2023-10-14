@@ -17,7 +17,7 @@ router.use(bodyParser.json());
 //dependencies 
 
 // controllers
-const workspaceController = require('../../controller/apis/friendController');
+const friendController = require('../../controller/apis/friendController');
 const { get } = require('./tagRoutes');
 
 router.route('/')
