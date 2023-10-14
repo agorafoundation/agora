@@ -101,14 +101,10 @@ CREATE TABLE IF NOT EXISTS agora.products (
 GRANT ALL PRIVILEGES ON TABLE products TO agora;
 GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
-<<<<<<< HEAD
 
 
 
 CREATE TABLE IF NOT EXISTS product_images (
-=======
-CREATE TABLE IF NOT EXISTS agora.product_images (
->>>>>>> origin/friending
     product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
@@ -136,7 +132,7 @@ CREATE TABLE IF NOT EXISTS friendships (
 GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 
 --Friendship Request table
-CREATE TABLE IF NOT EXISITS friendship_requests (
+CREATE TABLE IF NOT EXISTS friendship_requests (
     request_id SERIAL PRIMARY KEY,
     requester_id INTEGER NOT NULL REFERENCES users(user_id),
     recipient_id INTEGER NOT NULL REFERENCES users(user_id),
