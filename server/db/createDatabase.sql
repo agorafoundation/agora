@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS users (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
+
 GRANT ALL PRIVILEGES ON TABLE users TO agora;
 --GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 
@@ -95,6 +96,8 @@ GRANT ALL PRIVILEGES ON TABLE products TO agora;
 GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
 
+
+
 CREATE TABLE IF NOT EXISTS product_images (
     product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
@@ -110,6 +113,40 @@ CREATE TABLE IF NOT EXISTS product_images (
 GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
 GRANT USAGE, SELECT ON SEQUENCE product_images_product_image_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
+
+-- Add Friendship table
+CREATE TABLE IF NOT EXISTS friendships (
+    friendship_id SERIAL PRIMARY KEY,
+    initiatedby_id INTEGER NOT NULL REFERENCES users(user_id),
+    recipient_id INTEGER NOT NULL REFERENCES users(user_id),
+    status VARCHAR NOT NULL, 
+    created_time TIMESTAMP DEFAULT current_timestamp,
+    UNIQUE (initiatedby_id, recipient_id)
+);
+
+GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
+
+--Friendship Request table
+CREATE TABLE IF NOT EXISITS friendship_requests (
+    request_id SERIAL PRIMARY KEY,
+    requester_id INTEGER NOT NULL REFERENCES users(user_id),
+    recipient_id INTEGER NOT NULL REFERENCES users(user_id),
+    request_time TIMESTAMP DEFAULT current_timestamp
+);
+
+GRANT ALL PRIVILEGES ON TABLE friendship_requests TO agora;
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id),
+    message TEXT NOT NULL,
+    notification_time TIMESTAMP DEFAULT current_timestamp,
+    read_status BOOLEAN DEFAULT FALSE
+);
+
+GRANT ALL PRIVILEGES ON TABLE notifications TO agora;
+
 
 
 INSERT INTO products (
