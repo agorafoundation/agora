@@ -40,6 +40,12 @@ router.route('/friends')
     }
     );
 
+router.route('/add-friends')
+    .get((req, res) => {
+        res.render('add-friends')
+    }
+    );
+
 router.route('/codebot')
     .get((req, res) => {
 

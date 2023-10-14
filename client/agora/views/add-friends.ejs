@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('./partials/head'); %>
+</head>
+
+<!-- 
+-------------TODO---------------
+- Edit class to add "friends-content"
+-->
+
+<!-- Using "dashboard-=content" for CSS use-->
+
+<body id="page-top" class="dashboard-content">
+
+    <!-- Gallery View-->
+    <%- include('./dashboard/side-menu/side-menu.ejs'); %>
+        <%- include('./add-friends/partials/control-bar.ejs') %>
+            <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+            <%- include('./partials/jsincludes'); %>
+</body>
+
+</html>
