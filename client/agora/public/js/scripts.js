@@ -46,13 +46,13 @@ function toggleSidebar() {
     if (!sideBarStatus) {
         document.getElementById("agoraSideBar").style.width = "250px";
         document.querySelector(".dashboard-content").style.marginLeft = "250px";
-        document.querySelector(".friends-content").style.marginLeft = "250px";
+        // document.querySelector(".friends-content").style.marginLeft = "250px";
     }
     else {
         document.getElementById("agoraSideBar").style.width = "85px";
         if (window.innerWidth > 992) {
             document.querySelector(".dashboard-content").style.marginLeft = "85px";
-            document.querySelector(".friends-content").style.marginLeft = "85px";
+            // document.querySelector(".friends-content").style.marginLeft = "85px";
         }
     }
     sideBarStatus = !sideBarStatus;
@@ -64,7 +64,7 @@ function toggleSidebar() {
 function lockSidebar() {
     if (!clientSettings.sideBarLocked) {
         document.querySelector(".dashboard-content").style.marginLeft = "250px";
-        document.querySelector(".friends-content").style.marginLeft = "250px";
+        // document.querySelector(".friends-content").style.marginLeft = "250px";
 
         document.getElementById("agoraSideBar").removeEventListener("mouseenter", toggleSidebar);
         document.getElementById("agoraSideBar").removeEventListener("mouseleave", toggleSidebar);
@@ -99,7 +99,7 @@ function loadClientSettings() {
 
         if (clientSettings.sideBarLocked) {
             document.querySelector(".dashboard-content").style.marginLeft = "250px";
-            document.querySelector(".friends-content").style.marginLeft = "250px";
+            // document.querySelector(".friends-content").style.marginLeft = "250px";
 
             document.getElementById("agoraSideBar").removeEventListener("mouseenter", toggleSidebar);
             document.getElementById("agoraSideBar").removeEventListener("mouseleave", toggleSidebar);

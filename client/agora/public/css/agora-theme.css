@@ -761,9 +761,9 @@ a:hover {
     transition: margin-left .5s;
 }
 
-.friends-content {
+/* .friends-content {
     transition: margin-left .5s;
-}
+} */
 
 .sidenav a,
 .dropdown-btn {
@@ -2089,9 +2089,9 @@ input:checked+.slider:after {
     transition: margin-left .5s;
 }
 
-.friends-content {
+/* .friends-content {
     transition: margin-left .5s;
-}
+} */
 
 .sidenav a,
 .dropdown-btn {
