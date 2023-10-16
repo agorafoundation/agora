@@ -41,3 +41,9 @@ router.route('/:userID')
     .delete(async (req, res) => {
         friendController.deleteFriendByID(req, res);
     });
+
+// Route to handle sending friend requests
+router.route('/request')
+    .post(async (req, res) => {
+        friendController.requestFriendship(req, res);
+    });
