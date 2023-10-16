@@ -370,3 +370,15 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
         return false;
     }
 };
+
+/**
+ * Get resource content by Id
+ * @param {int} resourceId - Id of resource to retrieve
+ * @param {boolean} active - If true resource must have an active status
+ * @returns {Resource}
+ */
+exports.getResourceContentById = async ( resourceId, active ) => {
+
+    // using previous function to get just the resource content html
+    return this.getResourceById(resourceId, active).resourceContentHtml;
+};
