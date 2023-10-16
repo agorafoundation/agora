@@ -380,5 +380,5 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
 exports.getResourceContentById = async ( resourceId, active ) => {
 
     // using previous function to get just the resource content html
-    return this.getResourceById(resourceId, active).resourceContentHtml;
+    return this.getResourceById( resourceId, active ).resourceContentHtml;
 };
