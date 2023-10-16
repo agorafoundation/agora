@@ -9,6 +9,9 @@
 
 // services
 
+// min string length for resource content
+const MIN_CONTENT_LENGTH = 650;
+
 exports.callOpenAI = async ( req, res ) => {
 
 };
