@@ -394,7 +394,7 @@ exports.getResourceContentById = async ( resourceId, active ) => {
          
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
-            resource = Resource.ormResourceContent( res.rows[0] ).resourceContentHtml;
+            resource = Resource.ormResourceContent( res.rows[0] );
                   
         }
         return resource;
