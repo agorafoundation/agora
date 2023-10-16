@@ -43,9 +43,3 @@ exports.ormResource = function ( row ) {
     resource.ownedBy = row.owned_by;
     return resource;
 };
-
-exports.ormResourceContent = function ( row ) {
-    let resource = exports.emptyResource();
-    resource.resourceContentHtml = row.resource_content_html;
-    return resource;
-};
