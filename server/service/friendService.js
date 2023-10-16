@@ -18,11 +18,19 @@ exports.getAllFriends = async () => {
 
 };
 
-exports.saveFriend = async () => {
+exports.getFriendByID = async (userID) => {
 
 };
 
-exports.getFriendByID = async (userID) => {
+exports.sendFriendRequest = async () => {
+
+};
+
+exports.acceptFriendRequest = async () => {
+
+};
+
+exports.denyFriendRequest = async () => {
 
 };
 
