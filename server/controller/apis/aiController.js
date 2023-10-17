@@ -9,6 +9,34 @@
 
 // services
 
+// min string length for resource content
+const MIN_CONTENT_LENGTH = 650;
+
 exports.callOpenAI = async ( req, res ) => {
 
 };
+
+// helper logic
+
+/**
+ * Parses resource content for paragraphs longer than min length.
+ * 
+ * @param {string} content resourceContentHtml from resource.
+ * @returns {string[]}
+ */
+function parseResourceContentHtml ( content ) {
+
+    // getting all paragraphs by spliting by <p> tag
+    let paragraphs = content.split( '<p>' );
+
+    // removing all html tags in individual strings
+    for ( var i = 0; i < paragraphs.length; i++ ) {
+        paragraphs[i] = paragraphs[i].replace( /<[^>]*>/g, '' ).trim();
+    }
+
+    // shifting array to ignore first empty string
+    paragraphs.shift();
+
+    // filter out all paragraphs with length less than min
+    return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
+}
