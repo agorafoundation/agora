@@ -20,7 +20,7 @@ exports.callOpenAI = async ( req, res ) => {
 function parseResourceContentHtml ( content ) {
 
     // getting all paragraphs by spliting by <p> tag
-    const paragraphs = content.split( '<p>' );
+    let paragraphs = content.split( '<p>' );
 
     // removing all html tags in individual strings
     for ( var i = 0; i < paragraphs.length; i++ ) {
@@ -30,5 +30,6 @@ function parseResourceContentHtml ( content ) {
     // shifting array to ignore first empty string
     paragraphs.shift();
 
-    // TODO: pick out first paragraph that meets length requirement
+    // filter out all paragraphs with length less than min
+    return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
 }
