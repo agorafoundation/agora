@@ -17,6 +17,13 @@ exports.callOpenAI = async ( req, res ) => {
 };
 
 // helper logic
+
+/**
+ * Parses resource content for paragraphs longer than min length.
+ * 
+ * @param {string} content resourceContentHtml from resource.
+ * @returns {string[]}
+ */
 function parseResourceContentHtml ( content ) {
 
     // getting all paragraphs by spliting by <p> tag
