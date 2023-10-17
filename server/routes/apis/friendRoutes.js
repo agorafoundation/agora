@@ -14,8 +14,6 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-//dependencies 
-
 // controllers
 const friendController = require('../../controller/apis/friendController');
 const { get } = require('./tagRoutes');
@@ -24,12 +22,6 @@ router.route('/')
     //get all friends
     .get(async (req, res) => {
         friendController.getAllFriends(req, res);
-
-    })
-
-    //save a new friend
-    .post(async (req, res) => {
-        friendController.saveFriend(req, res);
     });
 
 router.route('/:userID')
@@ -45,5 +37,16 @@ router.route('/:userID')
 // Route to handle sending friend requests
 router.route('/request')
     .post(async (req, res) => {
-        friendController.requestFriendship(req, res);
+        friendController.sendFriendRequest(req, res);
+    });
+
+//Router to handle friend request response.
+router.route('/responseToRequest')
+    //Accepted
+    .post(async (req, res) => {
+        friendController.acceptFriendRequest(req, res);
+    })
+    //Rejected
+    .delete(async (req,res) => {
+        friendController.rejectFriendRequest(req, res);
     });
