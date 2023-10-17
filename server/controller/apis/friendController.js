@@ -59,6 +59,15 @@ exports.sendFriendRequest = async (req, res) => {
     }
     else if (req.session.authUser) {
         authUserId = req.session.authUser.userId;
+        let friendUsername = userService.verifyUsername(req.params.username);
+        if (friendUsername) {
+            let request = friendService.sendFriendRequest(authUserID, friendUsername);
+            if (request) {
+                res.set("x-agora-message-title", "Success");
+                res.set("x-agora-message-detail", "Friend Request Sent");
+                res.status(201).json("Success");
+            }
+        }
     }
 };
 
@@ -70,6 +79,14 @@ exports.acceptFriendRequest = async (req, res) => {
     else if (req.session.authUser) {
         authUserId = req.session.authUser.userId;
     }
+    if (authUserId) {
+        let success = friendService.acceptFriendRequest(authUserId);
+        if (success) {
+            res.set("x-agora-message-title", "Success");
+            res.set("x-agora-message-detail", "Friend Request Accepted");
+            res.status(201).json("Success");
+        }
+    }
 };
 
 exports.rejectFriendRequest = async (req, res) => {
@@ -79,6 +96,14 @@ exports.rejectFriendRequest = async (req, res) => {
     }
     else if (req.session.authUser) {
         authUserId = req.session.authUser.userId;
+    }
+    if (authUserId) {
+        let success = friendService.denyFriendRequest(authUserID);
+        if (success) {
+            res.set("x-agora-message-title", "Success");
+            res.set("x-agora-message-detail", "Friend Request Rejected");
+            res.status(201).json("Success");
+        }
     }
 };
 
