@@ -25,7 +25,12 @@ router.route( '/username/:username' )
     }
     );
 
-
+// Get user data by userId
+router.route( '/userId/:userId' )
+    .get( ( req, res ) => {
+        userController.getActiveUserById( req, res );
+    }
+    );
 
 
 
