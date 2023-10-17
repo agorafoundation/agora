@@ -21,6 +21,7 @@ const ApiMessage = require('../../model/util/ApiMessage');
 const workspaceService = require('../../service/friendService');
 const userService = require('../../service/userService');
 
+//Returns all friends of a user.
 exports.getAllFriends = async (req, res) => {
     let friends = await friendService.getAllFriends(req.user.userID);
     res.set("x-agora-message-title", "Success");
@@ -28,6 +29,7 @@ exports.getAllFriends = async (req, res) => {
     res.status(200).json(friends);
 };
 
+//Get a specific friend, by their ID.
 exports.getFriendByID = async () => {
     let authUserId;
     if (req.user) {
@@ -52,6 +54,7 @@ exports.getFriendByID = async () => {
     }
 };
 
+//Sends a friend request.
 exports.sendFriendRequest = async (req, res) => {
     let authUserId;
     if (req.user) {
@@ -59,6 +62,7 @@ exports.sendFriendRequest = async (req, res) => {
     }
     else if (req.session.authUser) {
         authUserId = req.session.authUser.userId;
+        //Checks if user exists.
         let friendUsername = userService.verifyUsername(req.params.username);
         if (friendUsername) {
             let request = friendService.sendFriendRequest(authUserID, friendUsername);
@@ -68,9 +72,16 @@ exports.sendFriendRequest = async (req, res) => {
                 res.status(201).json("Success");
             }
         }
+        else {
+            const message = ApiMessage.createApiMessage(404, "Not Found", "User not found");
+            res.set("x-agora-message-title", "Not Found");
+            res.set("x-agora-message-detail", "User not found");
+            res.status(400).json(message);
+        }
     }
 };
 
+//Accepts the a friend request.
 exports.acceptFriendRequest = async (req, res) => {
     let authUserId;
     if (req.user) {
@@ -89,6 +100,7 @@ exports.acceptFriendRequest = async (req, res) => {
     }
 };
 
+//Rejects a friend request.
 exports.rejectFriendRequest = async (req, res) => {
     let authUserId;
     if (req.user) {
@@ -107,6 +119,7 @@ exports.rejectFriendRequest = async (req, res) => {
     }
 };
 
+//Deletes a friend.
 exports.deleteFriendByID = async () => {
     let authUserId;
     if (req.user) {
