@@ -23,6 +23,17 @@ exports.getUserByEmail = async function( req, res ) {
     } );
 };
 
+exports.getUserByUsername = async function( req, res ) {
+    res.setHeader( 'Content-Type', 'text/html' );
+    var username = req.params.username;
+
+    userService.getUserByUsername( username ).then( ( user ) => {
+
+        res.setHeader( 'Content-Type', 'application/json' );
+        res.send( user );
+    } );
+};
+
 exports.verifyUsername = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
     var username = req.params.username;
