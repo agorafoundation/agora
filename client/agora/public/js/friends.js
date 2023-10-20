@@ -4,14 +4,14 @@ const addFriendPage = () => {
 };
 
 
-const userSearch = document.getElementById('user-search');
-const searchButton = document.getElementById('btn-search');
+const userSearch = document.getElementById( 'user-search' );
+const searchButton = document.getElementById( 'btn-search' );
 
-searchButton.addEventListener('click', queryUser = () => {
+searchButton.addEventListener( 'click', queryUser = () => {
     const response = fetch( "api/v1/auth//user/username/" + userSearch.value, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
         .then( ( response ) =>  response.json() )
-        .then(  data  => console.log(data))
-})
+        .then(  data  => console.log( data ) );
+} );

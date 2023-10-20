@@ -75,6 +75,41 @@
                                     <br />
                                 </section>
     
+                                <!-- -----TODO-----
+                                    Change to a updating friendRequestCount
+                                -->
+                                <!-- Friend Notification Box-->
+                                <div class="alert alert-info mt-3">
+                                    <h3>Friend Requests</h3>
+                                    <p>You have <span id="friendRequestCount">0</span> new friend requests.</p>
+                                    <button id="viewFriendRequests" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#friendRequestsModal">View Requests</button>
+                                </div>
+
+                                <!-- Friend Requests Modal -->
+                                <div class="modal fade" id="friendRequestsModal" tabindex="-1" role="dialog" aria-labelledby="friendRequestsModalTitle" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="friendRequestsModalTitle">Friend Requests</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- For each friend request, you can use a loop to generate items -->
+                                                <!-- ----TODO----
+                                                    Call API and change to friend request controller 
+                                                    -->
+                                                
+                                                <!-- Insert Javascript Example Code Here -->
+                                                
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-5">
                                 
