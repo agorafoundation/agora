@@ -12,6 +12,6 @@ searchButton.addEventListener('click', queryUser = () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
-        .then( ( response ) => response.json() )
-    console.log(response);
+        .then( ( response ) =>  response.json() )
+        .then(  data  => console.log(data))
 })
