@@ -11,6 +11,7 @@ const db = require( '../db/connection' );
 // import models
 const User = require( "../model/user" );
 const Event = require( '../model/event' );
+const notificationService = require( '../service/notificationService' );
 
 //SQL queries
 
@@ -50,7 +51,9 @@ exports.sendFriendRequest = async ( requesterID, recipientID ) => {
          RETURNING request_id`, 
         [ requesterID, recipientID ]
     );
+    await notificationService.addNotification(recipientID, "You have received a friend request from " + requesterUsername);
     return result.rows[0];
+    
 };
 
 // Accept a friend request
@@ -63,6 +66,10 @@ exports.acceptFriendRequest = async ( requestID ) => {
     if ( request.rows.length > 0 ) {
         const requesterID = request.rows[0].requester_id;
         const recipientID = request.rows[0].recipient_id;
+
+         // This will fetch the person reciving the friendrequest for notification
+         const recipient = await db.query(`SELECT username FROM users WHERE user_id = $1`, [recipientID]);
+         const recipientUsername = recipient.rows[0].username;
         
         // Insert into friendships table
         await db.query(
@@ -76,7 +83,9 @@ exports.acceptFriendRequest = async ( requestID ) => {
             `DELETE FROM friendship_requests WHERE request_id = $1`, 
             [ requestID ]
         );
-        
+
+         // Send a notification to the requester about the accepted friend request
+         await notificationService.addNotification(requesterID, "Your friend request has been accepted by " + recipientUsername);
         return { success: true };
     }
     else {
