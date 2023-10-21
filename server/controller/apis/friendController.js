@@ -73,6 +73,10 @@ exports.sendFriendRequest = async ( req, res ) => {
                 res.set( "x-agora-message-title", "Success" );
                 res.set( "x-agora-message-detail", "Friend Request Sent" );
                 res.status( 201 ).json( "Success" );
+
+                // Add a Notification after a user 
+                const message = "You have received a new friend request from " + req.user.username;  
+                await notificationService.addNotification(friendUsername, message);
             }
         }
         else {
