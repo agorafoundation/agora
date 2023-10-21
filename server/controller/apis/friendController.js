@@ -146,3 +146,12 @@ exports.deleteFriendByID = async ( req, res ) => {
         }
     }
 };
+
+// Get all friend requests sent to a user
+exports.getAllFriendRequests = async ( req, res ) => {
+    const userID = req.user.userID; // Assuming you have the user's ID
+    const requests = await friendService.getAllFriendRequests( userID );
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all Friend Requests" );
+    res.status( 200 ).json( requests );
+};

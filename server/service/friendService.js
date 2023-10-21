@@ -105,3 +105,14 @@ exports.deleteFriendByID = async ( userID, friendID ) => {
 
     return ( result.rowCount > 0 ) ? { success: true } : { error: "Friend not found." };
 };
+
+// Get friend requests sent to a user
+exports.getFriendRequests = async ( userID ) => {
+    const result = await db.query(
+        `SELECT request_id, requester_id
+         FROM friendship_requests
+         WHERE recipient_id = $1`,
+        [ userID ]
+    );
+    return result.rows;
+};
