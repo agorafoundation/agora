@@ -1,27 +1,16 @@
-//Notification Services: 
-
 const db = require('../db/connection');
-const userService = require('../services/userService');
-
-
-class Notification {
-    constructor(userId, message, status = 'unread') {
-        this.notificationId = uuidv4();  // using UUID for unique notification IDs
-        this.userId = userId;
-        this.message = message;
-        this.status = status;
-        this.timestamp = new Date();
-    }
-}
-
+const { createNotification, MaptoNotification } = require('../model/notification');
+const userService = require('../services/userService'); // Assuming this is needed elsewhere in the service layer
+const { v4: uuidv4 } = require('uuid'); // For generating UUIDs
 
 // Add a new notification
 exports.addNotification = async (userId, message) => {
     try {
-        const newNotification = new Notification(userId, message);
+        const newNotification = createNotification(userId, message);
+        newNotification.notificationId = uuidv4(); // Assigning a UUID
         const result = await db.query(
-            `INSERT INTO notifications (notification_id, user_id, message, status, timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING notification_id`,
-            [newNotification.notificationId, newNotification.userId, newNotification.message, newNotification.status, newNotification.timestamp]
+            `INSERT INTO notifications (notification_id, user_id, message, read_status, notification_time) VALUES ($1, $2, $3, $4, $5) RETURNING notification_id`,
+            [newNotification.notificationId, newNotification.userId, newNotification.message, newNotification.readStatus, newNotification.notificationTime]
         );
         return result.rows[0];
     } catch (err) {
@@ -29,12 +18,3 @@ exports.addNotification = async (userId, message) => {
         throw err;
     }
 };
-
-// Unread notifications
-
-
-
-// Mark a notification as read
-
-
-// notification for a user
