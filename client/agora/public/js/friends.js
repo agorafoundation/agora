@@ -6,9 +6,9 @@ const addFriendPage = () => {
 var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
-const userContainer = document.getElementById( 'page-top' );
+const friendsContainer = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
-const templateContainer = document.getElementById( 'friends-container' );
+const templateContainer = document.getElementById( 'user-container' );
 
 
 searchButton.addEventListener( 'click', queryUsers = () => {
@@ -21,11 +21,11 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if (!(displayedUsers.has(data.username)))
+                if ( !(displayedUsers.has(data.username)) )
                 {
                     var newContainer = templateContainer.cloneNode(true);
-                    newContainer.style.display = "flex";
-                    userContainer.appendChild(newContainer);
+                    newContainer.style.display = "inline-block";
+                    friendsContainer.appendChild(newContainer);
                     displayedUsers.add(data.username);
                 }
             }
