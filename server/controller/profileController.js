@@ -11,6 +11,7 @@
 // services
 const productService = require ( '../service/productService' );
 const userService = require( '../service/userService' );
+const friendService = require( '../service/friendService' );
 
 exports.getProfile = async function( req, res ) {
     // get the user data
@@ -71,8 +72,10 @@ exports.manageProfile = async function ( req, res ) {
         if( req.session.messageBody ) {
             delete req.session.messageBody;
         }
+
+        const unreadFriendRequests = await friendService.getUnreadFriendRequestsForUser(authUser.userId);
         
-        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
+        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, unreadFriendRequests} );
         
         
     }
