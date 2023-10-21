@@ -6,8 +6,10 @@ const addFriendPage = () => {
 var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
-const userContainer = document.getElementById( 'grid-container' );
+const userContainer = document.getElementById( 'page-top' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
+const templateContainer = document.getElementById( 'friends-container' );
+
 
 searchButton.addEventListener( 'click', queryUsers = () => {
     fetch( "api/v1/auth//user/username/" + userSearch.value, {
@@ -19,16 +21,18 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if ( !( displayedUsers.has( data.username ) ) ) {
-                    var div = document.createElement( 'div' );
-                    div.textContent = response[i];
-                    userContainer.appendChild( div );
-                    displayedUsers.add( data.username );
+                if (!(displayedUsers.has(data.username)))
+                {
+                    var newContainer = templateContainer.cloneNode(true);
+                    newContainer.style.display = "flex";
+                    userContainer.appendChild(newContainer);
+                    displayedUsers.add(data.username);
                 }
             }
         } );
 } );
 
+/*
 // Event listener for "Accept" and "Deny" buttons within the modal
 friendRequestsModal.addEventListener( 'click', ( event ) => {
     if ( event.target.classList.contains( 'accept-friend-request' ) ) {
@@ -64,3 +68,4 @@ friendRequestsModal.addEventListener( 'click', ( event ) => {
             } );
     }
 } );
+*/
