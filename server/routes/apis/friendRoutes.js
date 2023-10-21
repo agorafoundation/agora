@@ -36,6 +36,11 @@ router.route( '/:userID' )
 
 // Route to handle sending friend requests
 router.route( '/request' )
+    // Get all pending friend requests for the user
+    .get( async ( req, res ) => {
+        friendController.getAllFriendRequests( req, res );
+    } )
+
     .post( async ( req, res ) => {
         friendController.sendFriendRequest( req, res );
     } );

@@ -106,6 +106,7 @@ exports.deleteFriendByID = async ( userID, friendID ) => {
     return ( result.rowCount > 0 ) ? { success: true } : { error: "Friend not found." };
 };
 
+<<<<<<< HEAD
 //Get the number of unread friend requests for a user 
 exports.getUnreadFriendRequestCountForUser = async (userID) => {
     const result = await db.query(
@@ -125,6 +126,14 @@ exports.getUnreadFriendRequestsForUser = async (userID) => {
          left join users on users.user_id = requester_id
          WHERE recipient_id = $1
          ORDER BY request_time DESC`, 
+=======
+// Get friend requests sent to a user
+exports.getFriendRequests = async ( userID ) => {
+    const result = await db.query(
+        `SELECT request_id, requester_id
+         FROM friendship_requests
+         WHERE recipient_id = $1`,
+>>>>>>> 226a41587fb62ed11d57ad32791c696463306938
         [ userID ]
     );
     return result.rows;
