@@ -145,7 +145,6 @@ router.use( '/search', searchRoutes );
 const stripeRoutes = require( './apis/stripeRoutes' );
 router.use( '/stripe', stripeRoutes );
 
-
 /**
  * AI APIs
  */

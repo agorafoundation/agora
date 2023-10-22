@@ -13,7 +13,7 @@ const aiController = require( '../../controller/apis/aiController' );
 
 // the suggestion route
 router.route( '/suggest' )
-    .get( function( req, res ) {
+    .post( function( req, res ) {
         aiController.callOpenAI( req, res );
     }
     );
