@@ -10,15 +10,3 @@ const friendsContainer = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
 const templateContainer = document.getElementById( 'user-container' );
 
-
-searchButton.addEventListener( 'click', queryUsers = () => {
-    const response = fetch( "api/v1/auth//user/username/" + 
-userSearch.value, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-
-    .then( ( response ) =>  response.json() )
-    .then(  data  => console.log( data ) );
-} ); 
-
