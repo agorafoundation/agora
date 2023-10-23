@@ -1442,6 +1442,42 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /ai/suggest:
+    get:
+      tags:
+        - Ai
+      summary: Retrieves existing suggestion by artical ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: id of the suggestion to retrieve
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Ai"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 
 servers:
   - url: http://localhost:4200/api/v1/auth
