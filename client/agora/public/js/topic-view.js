@@ -2,7 +2,7 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
 
 let tabName = "";
@@ -13,9 +13,11 @@ let activeHeightList = [];
 
 // Creates a height object for each open topic
 function createNewActiveHeight() {
-    let tabElements = document.querySelectorAll( '.tabcontent' );
-    activeHeightObj[tabElements[tabElements.length-1].id] = 0;
-    activeHeightList.push( activeHeightObj[tabElements[tabElements.length-1].id] );
+    let tabElements = document.querySelectorAll( ".tabcontent" );
+    activeHeightObj[tabElements[tabElements.length - 1].id] = 0;
+    activeHeightList.push(
+        activeHeightObj[tabElements[tabElements.length - 1].id]
+    );
 }
 
 // Implemented to ensure resources fill a 1200px space first and then grows as needed
@@ -23,23 +25,19 @@ function checkActiveHeight() {
     if ( activeHeightObj[tabName] < 1200 ) {
         let filler = document.createElement( "div" );
         filler.setAttribute( "id", "filler-space" );
-        filler.style.height = ( 1200-activeHeightObj[tabName] ) + "px";
+        filler.style.height = 1200 - activeHeightObj[tabName] + "px";
         activeTab.appendChild( filler );
     }
 }
-
-
-
-
 
 /* Topic Functions -------------------------------------------------------------------------- */
 let numTopics = 1;
 let topics = {};
 
 // Creates a new topic
-const createTopic = async( id, name ) => {
+const createTopic = async ( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
-    let lastTab = tabContent[tabContent.length-1];
+    let lastTab = tabContent[tabContent.length - 1];
     let newTab = document.createElement( "div" );
 
     // Create the tab content and append to last tab
@@ -49,9 +47,13 @@ const createTopic = async( id, name ) => {
     // If no topics are open...
     if ( lastTab == null ) {
         let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
-        workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
+        workspaceEmptyState.parentNode.insertBefore(
+            newTab,
+            workspaceEmptyState.nextSibling
+        );
         workspaceEmptyState.style.display = "none";
-        document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
+        document.getElementById( "topic-background" ).style.backgroundColor =
+      "#3f3f3f";
     }
     else {
         lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
@@ -105,10 +107,10 @@ const createTopic = async( id, name ) => {
     topicTitle.className = "topic-title";
     topicTitle.style.borderRadius = "5px";
     topicTitle.id = "topic-title" + numTopics;
-    if( name ){
+    if ( name ) {
         topicTitle.value = name;
     }
-    else{
+    else {
         topicTitle.value = "Untitled";
     }
 
@@ -147,10 +149,10 @@ const createTopic = async( id, name ) => {
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + numTopics;
-    if( name ){
+    if ( name ) {
         tabBtn.innerHTML = name;
     }
-    else{
+    else {
         tabBtn.innerHTML = "Untitled";
     }
 
@@ -164,7 +166,7 @@ const createTopic = async( id, name ) => {
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
             closeTab( e.target.id );
-        } 
+        }
         else {
             openTab( newTab.id );
         }
@@ -188,27 +190,27 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
-    if( !id ) {
+    if ( !id ) {
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify( {
-                "topicType": 1,
-                "topicName": "Untitled",
-                "topicDescription": "",
-                "topicHtml": "",
-                "assessmentId": 1,
-                "hasActivity": false,
-                "hasAssessment": false,
-                "activityId": 1,
-                "active": true,
-                "visibility": "private",
-                "resources": [],
-                "createTime": Date.now(),
-            } )
+                topicType: 1,
+                topicName: "Untitled",
+                topicDescription: "",
+                topicHtml: "",
+                assessmentId: 1,
+                hasActivity: false,
+                hasAssessment: false,
+                activityId: 1,
+                active: true,
+                visibility: "private",
+                resources: [],
+                createTime: Date.now(),
+            } ),
         } );
 
-        if( response.ok ) {
+        if ( response.ok ) {
             const data = await response.json();
             // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
@@ -217,43 +219,42 @@ const createTopic = async( id, name ) => {
             saveWorkspace( topics );
         }
     }
-    else{
+    else {
         topics[numTopics] = id;
-        numTopics ++;
+        numTopics++;
     }
 };
 
 // Updates topic name
-const updateTopic = async( name ) => {
+const updateTopic = async ( name ) => {
     let isRequired = [];
     let resources = getResources();
-    for( let i = 0; i < resources.length; i++ ){
+    for ( let i = 0; i < resources.length; i++ ) {
         isRequired.push( "true" );
     }
     let id = getCurrTopicID();
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "topicId": id,
-            "topicName": name ? name : "Untitled",
-            "resources": resources ? resources : [],
-            "resourcesRequired": isRequired,
-            "visibility": "private",
-            "isRequired": true
-        } )
+            topicId: id,
+            topicName: name ? name : "Untitled",
+            resources: resources ? resources : [],
+            resourcesRequired: isRequired,
+            visibility: "private",
+            isRequired: true,
+        } ),
     } );
 
-    if( response.ok ) {
+    if ( response.ok ) {
         const data = await response.json();
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
-const saveWorkspace = async( topics ) => {
+const saveWorkspace = async ( topics ) => {
     const topicsList = Object.values( topics );
-
 
     const [ isTopic, workspaceId ] = getPrefixAndId();
     let name = document.getElementById( "workspace-title" ).value;
@@ -261,29 +262,26 @@ const saveWorkspace = async( topics ) => {
 
     const response = await fetch( "api/v1/auth/workspaces", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "workspaceId": workspaceId,
-            "workspaceName": name,
-            "workspaceDescription": description,
-            "topics": topicsList,
-            "active":true,
-            "visibility": "private"
-        } )
+            workspaceId: workspaceId,
+            workspaceName: name,
+            workspaceDescription: description,
+            topics: topicsList,
+            active: true,
+            visibility: "private",
+        } ),
     } );
 
-    if( response.ok ) {
+    if ( response.ok ) {
         const data = await response.json();
-        //console.log( JSON.stringify( data ) );
+    //console.log( JSON.stringify( data ) );
     }
 };
-
-
 
 /* Tab Functions -------------------------------------------------------------------------------------------- */
 // Workspace empty state
 let activeTab = document.getElementById( "resources-zone0" );
-
 
 // Change tabs
 function openTab( name ) {
@@ -310,7 +308,7 @@ function openTab( name ) {
     document.getElementById( name ).style.display = "block";
 
     // Set tab button to active
-    for ( i=0; i<tablinks.length; i++ ) {
+    for ( i = 0; i < tablinks.length; i++ ) {
         if ( tablinks[i].id.slice( -1 ) == name.slice( -1 ) ) {
             tablinks[i].className += " active";
             tablinks[i].style.backgroundColor = "#3f3f3f";
@@ -325,7 +323,7 @@ function closeTab( id ) {
     let tabLocation = -1;
 
     let i = 0;
-    while ( i<tabContent.length ) {
+    while ( i < tabContent.length ) {
     // Find the tab content to be deleted
         if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
             // Check if the target tab is the active tab
@@ -338,15 +336,19 @@ function closeTab( id ) {
     }
 
     if ( isActiveTab ) {
-        if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
-            openTab( tabContent[tabLocation+1].id );
+        if ( tabLocation + 1 != tabContent.length ) {
+            // Open the tab to the right if there is one
+            openTab( tabContent[tabLocation + 1].id );
         }
-        else if ( tabLocation-1 >= 0 ) {                                                          // Otherwise, open the tab to the left
-            openTab( tabContent[tabLocation-1].id );
+        else if ( tabLocation - 1 >= 0 ) {
+            // Otherwise, open the tab to the left
+            openTab( tabContent[tabLocation - 1].id );
         }
-        else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
+        else if ( tabLocation - 1 < 0 ) {
+            // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
-            document.getElementById( "topic-background" ).style.backgroundColor = "#17191a";
+            document.getElementById( "topic-background" ).style.backgroundColor =
+        "#17191a";
             activeTab = document.getElementById( "resources-zone0" );
         }
     }
@@ -359,7 +361,7 @@ function closeTab( id ) {
 function getTabLocation( id ) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let location = -1;
-    for ( let i=0; i<tabContent.length; i++ ) {
+    for ( let i = 0; i < tabContent.length; i++ ) {
         if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
             location = i;
         }
@@ -368,14 +370,8 @@ function getTabLocation( id ) {
 }
 /* END Tab Functions ------------------------------------------------------------------- */
 
-
-
-
-
-
-
 /* Tag Functions ------------------------------------------------------------------- */
-if( document.getElementById( "mySearch" ) ) {
+if ( document.getElementById( "mySearch" ) ) {
     document.getElementById( "mySearch" ).addEventListener( "keyup", () => {
         let input, filter, ul, li, tag, i;
         input = document.getElementById( "mySearch" );
@@ -418,13 +414,13 @@ function newTag( tagName, isNewSave ) {
     // check that selected tag doesn't already exist
     let isActiveTag = false;
     for ( let i = 0; i < currTagList.length; i++ ) {
-        if ( currTagList[i] ===  tagName ) {
+        if ( currTagList[i] === tagName ) {
             isActiveTag = true;
         }
     }
     if ( !isActiveTag ) {
         let wasSearched = false;
-        for ( let i=0; i<searchList.length; i++ ) {
+        for ( let i = 0; i < searchList.length; i++ ) {
             if ( searchList[i].innerHTML === tagName ) {
                 wasSearched = true;
             }
@@ -447,8 +443,8 @@ function newTag( tagName, isNewSave ) {
 
 // Add new tag by pressing enter key
 let ul = document.querySelector( ".tag-list" );
-document.addEventListener( "keyup", function( e ) {
-    if(  document.getElementById( "mySearch" ) ) {
+document.addEventListener( "keyup", function ( e ) {
+    if ( document.getElementById( "mySearch" ) ) {
         const tagName = document.getElementById( "mySearch" ).value;
         if ( e.key == "Enter" && ul.style.display == "block" ) {
             newTag( tagName, true );
@@ -457,7 +453,6 @@ document.addEventListener( "keyup", function( e ) {
             document.querySelector( "#mySearch" ).value = "";
         }
     }
-    
 } );
 
 function addTagToWorkspace( selectedTag, isNewSave ) {
@@ -467,11 +462,10 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     const [ isTopic, workspaceId ] = getPrefixAndId();
     const tagType = isTopic ? "topic" : "workspace";
 
-
     newTag.innerHTML = selectedTag.innerHTML;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
-        
+
     // Create remove tag button
     let removeTagBtn = document.createElement( "span" );
     removeTagBtn.className = "close-tag";
@@ -480,30 +474,30 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     removeTagBtn.style.color = "#aaa";
 
     // make the fetch call to save the tag
-    if( isNewSave ) {
-        //console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
+    if ( isNewSave ) {
+    //console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
         fetch( "api/v1/auth/tags/tagged", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify( {
-                "tag": {
-                    "tag": newTag.innerHTML
+                tag: {
+                    tag: newTag.innerHTML,
                 },
                 entityType: tagType,
                 entityId: workspaceId,
-                active: true
-            } )
+                active: true,
+            } ),
         } )
-            .then( response => response.json() )
+            .then( ( response ) => response.json() )
             .then( ( data ) => {
                 //console.log( "success saving tagged" );
             } );
     }
 
     removeTagBtn.addEventListener( "click", () => {
-        // Get the id portion with the tag name
+    // Get the id portion with the tag name
         document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        for ( let i=0; i<currTagList.length; i++ ) {
+        for ( let i = 0; i < currTagList.length; i++ ) {
             if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
                 currTagList[i] = "";
             }
@@ -514,12 +508,18 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
         // call the .delete on the tagged
         //console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id );
-        fetch( "api/v1/auth/tags/tagged/" + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        } );
-            
-
+        fetch(
+            "api/v1/auth/tags/tagged/" +
+        removeTagBtn.id.substring( 10 ) +
+        "/" +
+        tagType +
+        "/" +
+        id,
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     } );
     removeTagBtn.addEventListener( "mouseenter", () => {
         removeTagBtn.style.color = "black";
@@ -533,11 +533,6 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 }
 /* END Tag Functions ----------------------------------------------------------------------------------- */
 
-
-
-
-
-
 /* Resource Functions --------------------------------------------------------------------------------- */
 let resources = {};
 let numResources = 1;
@@ -545,23 +540,23 @@ let numResources = 1;
 // create a new resource
 function createResource( name, type, imagePath, id ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
-    if( !id ){
+    if ( !id ) {
         fetch( "api/v1/auth/resources", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify( {
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
+                resourceType: type,
+                resourceName: name ? name : "Untitled",
+                resourceDescription: "",
+                resourceContentHtml: "",
+                resourceImage: imagePath ? imagePath : "",
+                resourceLink: "",
+                isRequired: true,
+                active: true,
+                visibility: "private",
+            } ),
         } )
-            .then( response => response.json() )
+            .then( ( response ) => response.json() )
             .then( ( data ) => {
                 //console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
@@ -569,17 +564,17 @@ function createResource( name, type, imagePath, id ) {
                 numResources++;
 
                 // map the new resource to the associated topic
-                let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+                let topicTitle = document.getElementById(
+                    "topic-title" + tabName.match( /\d+/g )[0]
+                ).value;
                 //console.log( "topic title: " + topicTitle );
                 updateTopic( topicTitle );
             } );
     }
-    else{
+    else {
         resources[numResources] = [ id, getCurrTopicID() ];
-        numResources ++;
-       
+        numResources++;
     }
-   
 }
 
 // get the topic id based on the currently visible topic tab
@@ -592,17 +587,17 @@ function getCurrTopicID() {
 
 // returns an array of resource id's within a given topic, sorted by position
 function getResources() {
-    let topicResources = document.querySelectorAll( '.drop-zone__title' );
+    let topicResources = document.querySelectorAll( ".drop-zone__title" );
     let sorted = [];
-    for ( let i=0; i<topicResources.length; i++ ) {
-        if ( topicResources[i].style.display == 'none' ) {
+    for ( let i = 0; i < topicResources.length; i++ ) {
+        if ( topicResources[i].style.display == "none" ) {
             //console.log( true );
         }
         let val = topicResources[i].id.match( /\d+/g )[0];
         let propertyNames = Object.getOwnPropertyNames( resources );
-        for ( let j=0; j<propertyNames.length; j++ ) {
+        for ( let j = 0; j < propertyNames.length; j++ ) {
             if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
-                sorted.push ( resources[val][0] );
+                sorted.push( resources[val][0] );
             }
         }
     }
@@ -612,10 +607,10 @@ function getResources() {
 // Create the suneditor text area
 
 function createTextArea( name, id ) {
-    // Text area has to be created before suneditor initialization, 
+    // Text area has to be created before suneditor initialization,
     // so we have to return a promise indicating whether or not text area has been successfully created
-    let promise =  new Promise( ( resolve ) => {
-        // workspace empty state
+    let promise = new Promise( ( resolve ) => {
+    // workspace empty state
         if ( activeTab.id == "resources-zone0" ) {
             createTopic();
         }
@@ -642,32 +637,32 @@ function createTextArea( name, id ) {
         createDropZoneEventListeners( newDropZone, newDropZoneInput );
 
         // Title element
-        let title = document.createElement( 'input' );
+        let title = document.createElement( "input" );
         title.type = "text";
         title.className = "drop-zone__title";
         title.id = "input-title" + numResources;
-        if( name ){
+        if ( name ) {
             title.value = name;
         }
-        else{
+        else {
             title.value = "Untitled";
         }
 
         // Edit icon
-        let editIcon = document.createElement( 'span' );
+        let editIcon = document.createElement( "span" );
         editIcon.setAttribute( "class", "material-symbols-outlined" );
         editIcon.setAttribute( "id", "edit-icon" + numResources );
         editIcon.innerHTML = "edit";
         editIcon.style.display = "none";
 
         // Done icon
-        let doneIcon = document.createElement( 'span' );
+        let doneIcon = document.createElement( "span" );
         doneIcon.setAttribute( "class", "material-symbols-outlined" );
         doneIcon.setAttribute( "id", "done-icon" + numResources );
         doneIcon.innerHTML = "done";
 
         // New Tab
-        let newTabIcon = document.createElement( 'span' );
+        let newTabIcon = document.createElement( "span" );
         newTabIcon.setAttribute( "class", "material-symbols-outlined" );
         newTabIcon.setAttribute( "id", "open-tab-icon" + numResources );
         newTabIcon.innerHTML = "open_in_new";
@@ -679,8 +674,11 @@ function createTextArea( name, id ) {
         // Remove empty state if necessary
         if ( activeTab.childElementCount > 0 ) {
             let location = getTabLocation( tabName );
-            document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-            document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+            document.querySelectorAll( ".empty-topic-dropzone" )[
+                location
+            ].style.display = "none";
+            document.querySelectorAll( ".first-dropzone" )[location].style.display =
+        "block";
         }
 
         // Append elemets accordingly
@@ -697,93 +695,86 @@ function createTextArea( name, id ) {
         resolve( "TA created" );
     } );
 
-    promise.then(
-        ( value ) => {
-            createSunEditor();
-            if( name ){
-                createResource( name, 1, null, id  );
-            }
-            else{
-                createResource( null, 1, null );
-            }
+    promise.then( ( value ) => {
+        createSunEditor();
+        if ( name ) {
+            createResource( name, 1, null, id );
         }
-    );
+        else {
+            createResource( null, 1, null );
+        }
+    } );
 }
-
 
 // Create the sun editor and initialize within designated text area
 let sunEditor = {};
 let sunEditorList = [];
-const createSunEditor = async() => {
+const createSunEditor = async () => {
     // eslint-disable-next-line no-undef
-    sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
-        toolbarContainer: "#toolbar_container",
-        showPathLabel: false,
-        defaultTag: "p",
-        charCounter: true,
-        charCounterLabel: "Char Count",
-        width: "100%",
-        height: "auto",
-        minHeight: "200px",
-        defaultStyle: "font-size:15px;",
-        // eslint-disable-next-line no-undef
-        katex: katex, 
-        buttonList: [
-            [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
-            [ "fontColor", "hiliteColor", "textStyle" ],
-            [
-                "bold",
-                "underline",
-                "italic",
-                "strike",
-                "subscript",
-                "superscript",
-                "removeFormat",
+    sunEditor["sunEditor" + numResources] = [
+        numResources,
+        SUNEDITOR.create( "sunEditor" + numResources, {
+            toolbarContainer: "#toolbar_container",
+            showPathLabel: false,
+            defaultTag: "p",
+            charCounter: true,
+            charCounterLabel: "Char Count",
+            width: "100%",
+            height: "auto",
+            minHeight: "200px",
+            defaultStyle: "font-size:15px;",
+            // eslint-disable-next-line no-undef
+            katex: katex,
+            buttonList: [
+                [ "undo", "redo", "font", "fontSize", "formatBlock" ],
+                [ "fontColor", "hiliteColor", "textStyle" ],
+                [
+                    "bold",
+                    "underline",
+                    "italic",
+                    "strike",
+                    "subscript",
+                    "superscript",
+                    "removeFormat",
+                ],
+                [ "link", "image", "video", "math" ],
+                [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
+                [ "showBlocks", "codeView", "preview", "print", "save", "fullScreen" ],
             ],
-            [ 'link', 'image', 'video', 'math' ],
-            [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
-            [
-                "showBlocks",
-                "codeView",
-                "preview",
-                "print",
-                "save",
-                "fullScreen",
-            ],
-        ],
-        mode: "classic",
-        // eslint-disable-next-line no-undef
-        lang: SUNEDITOR_LANG.en,
-        "lang(In nodejs)": "en",
-        callBackSave: function ( contents ) {
-            alert( contents );
-        },
-    } ) ];
+            mode: "classic",
+            // eslint-disable-next-line no-undef
+            lang: SUNEDITOR_LANG.en,
+            "lang(In nodejs)": "en",
+            callBackSave: function ( contents ) {
+                alert( contents );
+            },
+        } ),
+    ];
 
-    sunEditorList.push( sunEditor["sunEditor"+numResources] );
+    sunEditorList.push( sunEditor["sunEditor" + numResources] );
 };
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
-    
+
     fetch( "api/v1/auth/resources", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "resourceId":  id,
-            "resourceType": 1,
-            "resourceName": name ? name : "Untitled",
-            "resourceDescription": "",
-            "resourceContentHtml": contents ? contents : "",
-            "resourceImage": "",
-            "resourceLink": "",
-            "isRequired": false,
-            "active": true,
-            "visibility": "private"
-        } )
+            resourceId: id,
+            resourceType: 1,
+            resourceName: name ? name : "Untitled",
+            resourceDescription: "",
+            resourceContentHtml: contents ? contents : "",
+            resourceImage: "",
+            resourceLink: "",
+            isRequired: false,
+            active: true,
+            visibility: "private",
+        } ),
     } )
-        .then( response => response.json() )
+        .then( ( response ) => response.json() )
         .then( ( data ) => {
             //console.log( JSON.stringify( data ) );
         } );
@@ -795,22 +786,23 @@ function getResourceID( val ) {
 }
 
 /* Suneditor Events ------------------------------------------------------*/
-document.addEventListener( "mousemove", function() {
-    
-    for ( let i=0; i<sunEditorList.length; i++ ) {
+document.addEventListener( "mousemove", function () {
+    for ( let i = 0; i < sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
             sunEditorList[i][1].save();
 
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
             let id = getResourceID( sunEditorList[i][0] );
-            let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            let title = document.getElementById(
+                "input-title" + sunEditorList[i][0]
+            ).value;
             updateSunEditor( id, title, contents );
         };
         sunEditorList[i][1].onKeyUp = ( e ) => {
             if ( e.key == "/" ) {
                 sunEditorList[i].insertHTML(
-                    '<div><button style=background:pink;>Hello</button></div>',
+                    "<div><button style=background:pink;>Hello</button></div>",
                     true
                 );
             }
@@ -819,7 +811,6 @@ document.addEventListener( "mousemove", function() {
 } );
 /* END Suneditor Events ---------------------------------------------------------------------------------*/
 
-
 /* Drag and Drop ------------------------------------------------------------------------- */
 /**
  * Modified version of : https://codepen.io/dcode-software/pen/xxwpLQo
@@ -827,7 +818,7 @@ document.addEventListener( "mousemove", function() {
 // Workspace empty state drop zone
 if ( document.querySelectorAll( ".drop-zone" ) ) {
     let dropZoneElement = document.querySelectorAll( ".drop-zone" )[0];
-    if( dropZoneElement ){
+    if ( dropZoneElement ) {
         let inputElement = dropZoneElement.lastElementChild;
         createDropZoneEventListeners( dropZoneElement, inputElement );
     }
@@ -845,8 +836,10 @@ function createDropZoneEventListeners( dropZone, input ) {
 
         dropZone.firstElementChild.style.display = "block";
 
-        if ( activeTab.childElementCount == 1 ||
-      dropZone.className.includes( "empty-topic-dropzone" ) ) {
+        if (
+            activeTab.childElementCount == 1 ||
+      dropZone.className.includes( "empty-topic-dropzone" )
+        ) {
             dropZone.classList.add( "drop-zone--over" );
             dropZone.firstElementChild.style.display = "none";
         }
@@ -886,9 +879,9 @@ function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
     if ( activeTab.id == "resources-zone0" ) {
         createTopic();
-    } 
+    }
     // Div that holds the thumbnail
-    let mydiv = document.createElement( 'div' );
+    let mydiv = document.createElement( "div" );
     mydiv.className = "drop-zone-show";
 
     // Thumbnail element
@@ -897,18 +890,18 @@ function updateThumbnail( dropZoneElement, file ) {
     thumbnailElement.classList.add( "drop-zone__thumb" );
 
     // File input element
-    let inputfile = document.createElement( 'input' );
+    let inputfile = document.createElement( "input" );
     inputfile.type = "file";
     inputfile.name = "resourceImageField";
     inputfile.className = "drop-zone__input";
 
     // File title element
-    let inputTitle = document.createElement( 'div' );
+    let inputTitle = document.createElement( "div" );
     inputTitle.id = "input-title" + numResources;
     inputTitle.className = "drop-zone__title";
 
     // Preview Icon
-    let previewIcon = document.createElement( 'span' );
+    let previewIcon = document.createElement( "span" );
     previewIcon.setAttribute( "class", "material-symbols-outlined" );
     previewIcon.setAttribute( "id", "preview-icon" + numResources );
     previewIcon.innerHTML = "preview";
@@ -933,17 +926,17 @@ function updateThumbnail( dropZoneElement, file ) {
     if ( document.getElementById( "filler-space" ) ) {
         document.getElementById( "filler-space" ).remove();
     }
-  
+
     // Append the thumbnail to parent div
     // Set the title to the file name
     mydiv.appendChild( thumbnailElement );
     thumbnailElement.dataset.label = file.name;
     inputTitle.innerHTML = file.name;
-  
+
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        //console.log( file );
-        getFile( file ).then( url => {
+    //console.log( file );
+        getFile( file ).then( ( url ) => {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
@@ -951,7 +944,7 @@ function updateThumbnail( dropZoneElement, file ) {
             createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
-        
+
         mydiv.style.height = "500px";
         activeHeightObj[tabName] += 500;
     }
@@ -966,24 +959,37 @@ function updateThumbnail( dropZoneElement, file ) {
     // Remove empty state if necessary
     let location = getTabLocation( tabName );
     if ( mydiv.childElementCount > 0 ) {
-        document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-        document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+        document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display =
+      "none";
+        document.querySelectorAll( ".first-dropzone" )[location].style.display =
+      "block";
     }
 
     // File drop in topic empty state
-    if ( targetDropZone === document.querySelectorAll( ".empty-state" )[location+1] ) {
-        activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
+    if (
+        targetDropZone === document.querySelectorAll( ".empty-state" )[location + 1]
+    ) {
+        activeTab.firstChild.parentNode.insertBefore(
+            inputTitle,
+            activeTab.firstChild.nextSibling
+        );
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
         mydiv.parentNode.insertBefore( newDropZone, mydiv.nextSibling );
     }
     else {
-        // File drop in workspace empty state
+    // File drop in workspace empty state
         if ( dropZoneElement === document.querySelectorAll( ".drop-zone" )[0] ) {
-            activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
+            activeTab.firstChild.parentNode.insertBefore(
+                inputTitle,
+                activeTab.firstChild.nextSibling
+            );
         }
         else {
-            targetDropZone.parentNode.insertBefore( inputTitle, targetDropZone.nextSibling );
+            targetDropZone.parentNode.insertBefore(
+                inputTitle,
+                targetDropZone.nextSibling
+            );
         }
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
@@ -998,7 +1004,7 @@ function updateThumbnail( dropZoneElement, file ) {
 function getFile( file ) {
     return new Promise( ( resolve ) => {
         const fileReader = new FileReader();
-        fileReader.onloadend = ( ) => { 
+        fileReader.onloadend = () => {
             const res = `url('${fileReader.result}')`;
             resolve( res );
         };
@@ -1008,12 +1014,9 @@ function getFile( file ) {
 
 /* END Resource Functions ---------------------------------------------------------------------------------*/
 
-
-
-
-document.addEventListener( "click", function( e ) {
+document.addEventListener( "click", function ( e ) {
     // toggle edit and done icons
-    if ( ( e.target.id ).includes( "done" ) ) {
+    if ( e.target.id.includes( "done" ) ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
@@ -1023,12 +1026,16 @@ document.addEventListener( "click", function( e ) {
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
         let id = getResourceID( sunEditor["sunEditor" + val][0] );
-        let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        let title = document.getElementById(
+            "input-title" + sunEditor["sunEditor" + val][0]
+        ).value;
         updateSunEditor( id, title, contents );
     }
-    if ( ( e.target.id ).includes( "edit" ) ) {
+    if ( e.target.id.includes( "edit" ) ) {
         e.target.style.display = "none";
-        document.getElementById( "done-icon" + e.target.id.match( /\d+/g )[0] ).style.display = "block";
+        document.getElementById(
+            "done-icon" + e.target.id.match( /\d+/g )[0]
+        ).style.display = "block";
         sunEditor["sunEditor" + e.target.id.match( /\d+/g )[0]][1].readOnly( false );
     }
 
@@ -1038,7 +1045,10 @@ document.addEventListener( "click", function( e ) {
     }
 
     // close tag list elements
-    if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
+    if (
+        document.querySelector( ".tag-list" ) &&
+    document.querySelector( ".tag-list" ).style.display == "block"
+    ) {
         document.querySelector( ".tag-list" ).style.display = "none";
         // document.querySelector( "#new-tag-element" ).style.display = "none";
         document.querySelector( "#mySearch" ).value = "";
@@ -1049,13 +1059,20 @@ document.addEventListener( "click", function( e ) {
     //     document.querySelector( "#mySearch" ).value = "";
     // }
 
-    if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
-        if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
+    if (
+        document.getElementById( "tablinks" + tabName.slice( -1 ) ) &&
+    e.target.className != "topic-title"
+    ) {
+        if (
+            document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != ""
+        ) {
             // change the tab name to the new topic title
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
-        } 
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML =
+        document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+        }
         else {
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML =
+        "Untitled";
         }
 
         // replace the close tab button
@@ -1063,20 +1080,20 @@ document.addEventListener( "click", function( e ) {
         closeTabBtn.className = "close-tab";
         closeTabBtn.id = "close-tab" + tabName.slice( -1 );
         closeTabBtn.innerHTML = "&times;";
-        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+        document
+            .getElementById( "tablinks" + tabName.slice( -1 ) )
+            .appendChild( closeTabBtn );
     }
 } );
 
-document.addEventListener( 'keyup', ( e ) => {
+document.addEventListener( "keyup", ( e ) => {
     let ele = document.getElementById( e.target.id );
-    if ( e.target.tagName == 'INPUT' ) {
-        if ( ele.className == 'topic-title' ) {
+    if ( e.target.tagName == "INPUT" ) {
+        if ( ele.className == "topic-title" ) {
             updateTopic( ele.value );
-        } 
+        }
     }
 } );
-
-
 
 /* Workspace Manager Modal ----------------------------------------------- */
 const modal = document.getElementById( "resource-modal-div" );
@@ -1089,14 +1106,14 @@ const openTopicBtn = document.getElementById( "open-topic-div" );
 const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
-if( openBtn ) {
+if ( openBtn ) {
     openBtn.onclick = () => {
         modal.style.display = "block";
     };
 }
 
 //close the modal
-if( closeBtns ) {
+if ( closeBtns ) {
     closeBtns.forEach( ( btn ) => {
         btn.onclick = () => {
             if ( modal.style.display == "block" ) {
@@ -1109,7 +1126,7 @@ if( closeBtns ) {
     } );
 }
 
-window.onclick = function( event ) {
+window.onclick = function ( event ) {
     if ( event.target == modal ) {
         modal.style.display = "none";
     }
@@ -1119,24 +1136,34 @@ window.onclick = function( event ) {
 };
 
 // option hover events
-document.addEventListener( "mousemove", function( e ) {
-    for ( let i=0; i<document.getElementsByClassName( "modal-icon" ).length; i++ ) {
-        if ( e.target === document.getElementsByClassName( "modal-icon" )[i] ||
-        e.target === document.getElementsByClassName( "option" )[i] ) {
+document.addEventListener( "mousemove", function ( e ) {
+    for (
+        let i = 0;
+        i < document.getElementsByClassName( "modal-icon" ).length;
+        i++
+    ) {
+        if (
+            e.target === document.getElementsByClassName( "modal-icon" )[i] ||
+      e.target === document.getElementsByClassName( "option" )[i]
+        ) {
             document.getElementsByClassName( "modal-icon" )[i].style.color = "black";
             document.getElementsByClassName( "option" )[i].style.color = "black";
-            document.getElementsByClassName( "option" )[i].style.textDecoration = "underline";
+            document.getElementsByClassName( "option" )[i].style.textDecoration =
+        "underline";
         }
         else {
-            document.getElementsByClassName( "modal-icon" )[i].style.color = "rgb(100, 98, 98)";
-            document.getElementsByClassName( "option" )[i].style.color = "rgb(100, 98, 98)";
-            document.getElementsByClassName( "option" )[i].style.textDecoration = "none";
+            document.getElementsByClassName( "modal-icon" )[i].style.color =
+        "rgb(100, 98, 98)";
+            document.getElementsByClassName( "option" )[i].style.color =
+        "rgb(100, 98, 98)";
+            document.getElementsByClassName( "option" )[i].style.textDecoration =
+        "none";
         }
     }
 } );
 
 // option events
-if ( createDocBtn ) { 
+if ( createDocBtn ) {
     createDocBtn.onclick = () => {
         modal.style.display = "none";
         createTextArea();
@@ -1152,20 +1179,19 @@ if ( fileUploadBtn ) {
     const pickerOpts = {
         types: [
             {
-                description: 'Images',
+                description: "Images",
                 accept: {
-                    'image/*': [ '.png', '.gif', '.jpeg', '.jpg' ]
-                }
+                    "image/*": [ ".png", ".gif", ".jpeg", ".jpg" ],
+                },
             },
         ],
         excludeAcceptAllOption: true,
-        multiple: false
+        multiple: false,
     };
 
-    fileUploadBtn.addEventListener( "mousedown", async() => {
+    fileUploadBtn.addEventListener( "mousedown", async () => {
         console.log( "file upload button clicked" );
-        //let file = await window.showOpenFilePicker( pickerOpts );
-
+    //let file = await window.showOpenFilePicker( pickerOpts );
     } );
 }
 if ( openTopicBtn ) {
@@ -1181,29 +1207,29 @@ const toggleProfileList = () => {
 
     if ( arrow.classList.contains( "down-arrow" ) ) {
         document.getElementById( "permissions-box" ).style.display = "none";
-        arrow.setAttribute( 'class', 'arrow up-arrow' );
+        arrow.setAttribute( "class", "arrow up-arrow" );
     }
     else {
         document.getElementById( "permissions-box" ).style.display = "flex";
-        arrow.setAttribute( 'class', 'arrow down-arrow' );
+        arrow.setAttribute( "class", "arrow down-arrow" );
     }
 };
 
-function toggleProfile ( e ) {
+function toggleProfile( e ) {
     let target = e.target;
     let box;
 
-    target.classList.contains( "permission-li" ) ? 
-        box = target.childNodes[3] : 
-        box = target.parentElement.childNodes[3];
+    target.classList.contains( "permission-li" )
+        ? ( box = target.childNodes[3] )
+        : ( box = target.parentElement.childNodes[3] );
 
-    box.checked ?
-        box.checked = false :
-        box.checked = true;
+    box.checked ? ( box.checked = false ) : ( box.checked = true );
 }
 
 if ( document.getElementById( "profiles-toggle" ) ) {
-    document.getElementById( "profiles-toggle" ).addEventListener( "click", toggleProfileList );
+    document
+        .getElementById( "profiles-toggle" )
+        .addEventListener( "click", toggleProfileList );
 }
 
 var perms = document.getElementsByClassName( "permission-li" );
@@ -1211,15 +1237,6 @@ var perms = document.getElementsByClassName( "permission-li" );
 for ( let i = 0; i < perms.length; i++ ) {
     perms[i].addEventListener( "click", toggleProfile );
 }
-
-
-
-
-
-
-
-
-
 
 /* File Dropdown ----------------------------------------- */
 
@@ -1264,18 +1281,17 @@ for ( let i = 0; i < perms.length; i++ ) {
 /* END File Dropdown ----------------------------------------- */
 //////////////onload fetch functions //////////////////////
 
-
 const prefixPattern = /#t/;
 
 //const idPattern = /-([0-9]+)/;
-const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
+const uuidPattern =
+  /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
 const getPrefixAndId = () => {
-
     const url = window.location.href;
     let urlId = null;
-    let tempUuid =  ( uuidPattern.exec( url ) );
-    if( tempUuid ) {
+    let tempUuid = uuidPattern.exec( url );
+    if ( tempUuid ) {
         urlId = tempUuid[0];
     }
 
@@ -1324,11 +1340,9 @@ const getTags = async () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                for( let i = 0; i < response.length; i++ ) {
+                for ( let i = 0; i < response.length; i++ ) {
                     newTag( response[i].tag, false );
                 }
-
-                
             } );
     }
     else if ( id ) {
@@ -1338,7 +1352,7 @@ const getTags = async () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                for( let i = 0; i < response.length; i++ ) {
+                for ( let i = 0; i < response.length; i++ ) {
                     newTag( response[i].tag, false );
                 }
             } );
@@ -1352,39 +1366,41 @@ const fillFields = ( title, description, image ) => {
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
-    if( id ) {
-        const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
+    if ( id ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/" + id );
         let topics = await response.json();
-   
+
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderTopic( topics[i] );
-            
             }
-        }   
+        }
     }
-    
-   
 };
 
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-  
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderResources( topic.topicId );
     if ( resources.length > 0 ) {
-        //let docType1Count = 0;
+    //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
             //console.log( "resource: " + i + " of " + resources.length );
             //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
-            if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].resourceId );
-                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    totalTopicsRendered++; 
-                    let editor = "sunEditor" + ( totalTopicsRendered );
+            if ( resources[i].resourceType == 1 ) {
+                await createTextArea(
+                    resources[i].resourceName,
+                    resources[i].resourceId
+                );
+                if (
+                    resources[i].resourceContentHtml &&
+          resources[i].resourceContentHtml.length > 0
+                ) {
+                    totalTopicsRendered++;
+                    let editor = "sunEditor" + totalTopicsRendered;
                     //console.log( editor );
                     //console.log( sunEditor[editor] );
                     sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
@@ -1392,16 +1408,13 @@ async function renderTopic( topic ) {
                     //docType1Count++;
                     //val++;
                 }
-
-
             }
-            else if( resources[i].resourceType == 3 ) {
+            else if ( resources[i].resourceType == 3 ) {
                 // todo: add code to deal with resource type 3
             }
             else if ( resources[i].resourceType == 2 ) {
                 console.log( "other resource type??? " + resources[i].resourceName );
             }
-            
         }
         window.scrollTo( 0, 0 );
     }
@@ -1420,59 +1433,56 @@ window.addEventListener( "load", () => {
     idAndFetch();
     getTags();
     renderTopics();
-   
 } );
-
-
 
 ////////* discussions code *///////
 
 //////New Comment/////
 const addComment = async ( user, pfp, text, isTopic, id ) => {
     if ( text ) {
-
         let commentId, date, type;
 
         date = new Date();
 
-        const hasComments = await document.querySelectorAll( ".comment-countable" ).length;
+        const hasComments = await document.querySelectorAll( ".comment-countable" )
+            .length;
 
-        isTopic ? type = "topic" : type = "workspace";
+        isTopic ? ( type = "topic" ) : ( type = "workspace" );
 
         id = parseInt( id, 10 );
 
         if ( !hasComments ) {
             //console.log( "Creating discussion" );
-            await fetch( "api/v1/auth/discussions/" + type + "/" + id, 
-                { method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify( {  
-                        "parent_id": id,
-                        "parent_type": type,
-                        "discussion_text": "string"     
-                    } )
-                } );
+            await fetch( "api/v1/auth/discussions/" + type + "/" + id, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    parent_id: id,
+                    parent_type: type,
+                    discussion_text: "string",
+                } ),
+            } );
             /*.then( ( response ) => response.json() )
             .then( ( data ) => {
                 console.log( data );
             } );*/
         }
-        
-        await fetch( "api/v1/auth/discussions/comment", 
-            { method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify( {
-                    "parent_id": id, 
-                    "parent_type": type,
-                    "comment_text": text
-                } ) 
-            } )
+
+        await fetch( "api/v1/auth/discussions/comment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                parent_id: id,
+                parent_type: type,
+                comment_text: text,
+            } ),
+        } )
             .then( ( response ) => response.json() )
             .then( ( data ) => {
                 //console.log( data );
                 commentId = data.id;
             } );
-            
+
         ///UPDATING THE DOM///
 
         //cloning the comment template so we can modify it then add it to the stream
@@ -1484,27 +1494,41 @@ const addComment = async ( user, pfp, text, isTopic, id ) => {
         newEl.childNodes[1].childNodes[1].innerText = pfp;
         newEl.childNodes[1].childNodes[3].innerText = user;
         newEl.childNodes[3].innerText = text;
-        newEl.childNodes[5].childNodes[5].innerText = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+        newEl.childNodes[5].childNodes[5].innerText =
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
         newEl.classList.add( "comment-countable" );
 
         //make sure the like button works
-        newEl.querySelector( "#like-button" ).addEventListener( "click", addOrRemoveLike );
+        newEl
+            .querySelector( "#like-button" )
+            .addEventListener( "click", addOrRemoveLike );
 
         //inserting the modified clone into the comment stream
-        document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+        document
+            .getElementById( "discussions-body" )
+            .insertBefore(
+                newEl,
+                document.getElementById( "post-comment-btn" ).nextSibling
+            );
 
         //removing the value from the textarea
-        document.getElementById( "discussion-textarea" ).innerText = '';
+        document.getElementById( "discussion-textarea" ).innerText = "";
     }
     else {
         window.alert( "You cannot leave a blank comment" );
     }
 };
 
-
 //window.onload rendering comment
-const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at, id, likes, user_rating } ) => {
-
+const loadComment = ( {
+    user_id,
+    pfp = "account_circle",
+    comment_text,
+    created_at,
+    id,
+    likes,
+    user_rating,
+} ) => {
     //cloning the comment template so we can modify it then add it to the stream
     let newEl = document.getElementById( "comment-template" ).cloneNode( true );
 
@@ -1528,38 +1552,43 @@ const loadComment = ( {user_id, pfp = "account_circle", comment_text, created_at
         likeButton.childNodes[1].style.color = "gray";
         likeButton.childNodes[3].style.color = "gray";
         likeButton.style.outline = "none";
-    } 
+    }
 
     //inserting the modified clone under the proper discussion
-    document.getElementById( "discussions-body" ).insertBefore( newEl, document.getElementById( "post-comment-btn" ).nextSibling );  
+    document
+        .getElementById( "discussions-body" )
+        .insertBefore(
+            newEl,
+            document.getElementById( "post-comment-btn" ).nextSibling
+        );
 };
 
 const getDiscussions = async ( isTopic, id ) => {
-
     let pageComments;
 
     if ( isTopic && id ) {
-
-        const response = await fetch( "/api/v1/auth/discussions/topic/" + id, { headers: { "Content-Type": "application/json" } } );
+        const response = await fetch( "/api/v1/auth/discussions/topic/" + id, {
+            headers: { "Content-Type": "application/json" },
+        } );
         if ( response.ok ) {
             const data = await response.json();
-            ( data ) ? pageComments = data.comments : pageComments = null;
+            data ? ( pageComments = data.comments ) : ( pageComments = null );
         }
         else {
             //console.log( response.status );
         }
-    } 
-    else if( id ) {
-
-        const response = await  fetch( "/api/v1/auth/discussions/workspace/" + id, { headers: { "Content-Type": "application/json" }} );
+    }
+    else if ( id ) {
+        const response = await fetch( "/api/v1/auth/discussions/workspace/" + id, {
+            headers: { "Content-Type": "application/json" },
+        } );
         if ( response.ok ) {
             const data = await response.json();
-            ( data ) ? pageComments = data.comments : pageComments = null;
+            data ? ( pageComments = data.comments ) : ( pageComments = null );
         }
         else {
             //console.log( response.status );
         }
-            
     }
 
     if ( pageComments ) {
@@ -1567,41 +1596,52 @@ const getDiscussions = async ( isTopic, id ) => {
             loadComment( comment );
         } );
     }
-    
 };
 
-
 window.addEventListener( "load", () => {
-
     const [ isTopic, id ] = getPrefixAndId();
-    
-    if( document.getElementById( "post-comment-btn" ) ) {
-        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
-            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
-        } );
+
+    if ( document.getElementById( "post-comment-btn" ) ) {
+        document
+            .getElementById( "post-comment-btn" )
+            .addEventListener( "click", () => {
+                addComment(
+                    "Max",
+                    "account_circle",
+                    document.getElementById( "discussion-textarea" ).innerText,
+                    isTopic,
+                    id
+                );
+            } );
     }
-    if( document.getElementById( "post-topic-btn" ) ) {
-        document.getElementById( "post-comment-btn" ).addEventListener( "click", () => {
-            addComment( "Max", "account_circle", document.getElementById( "discussion-textarea" ).innerText, isTopic, id );
-        } );
-    }   
+    if ( document.getElementById( "post-topic-btn" ) ) {
+        document
+            .getElementById( "post-comment-btn" )
+            .addEventListener( "click", () => {
+                addComment(
+                    "Max",
+                    "account_circle",
+                    document.getElementById( "discussion-textarea" ).innerText,
+                    isTopic,
+                    id
+                );
+            } );
+    }
 
     getDiscussions( isTopic, id );
 } );
 
-
 ///////Like Button////////
 
 const addOrRemoveLike = ( e ) => {
-
     let goodElement;
 
     //making sure the element we are clicking is the one we're looking to use
-    e.target.id ? 
-        goodElement = e.target.childNodes[3] : 
-        e.target.style ? 
-            goodElement = e.target.parentElement.childNodes[3] : 
-            goodElement = e.target;
+    e.target.id
+        ? ( goodElement = e.target.childNodes[3] )
+        : e.target.style
+            ? ( goodElement = e.target.parentElement.childNodes[3] )
+            : ( goodElement = e.target );
 
     let parentEl = goodElement.parentElement.parentElement.parentElement;
 
@@ -1612,12 +1652,12 @@ const addOrRemoveLike = ( e ) => {
         goodElement.style.color = "black";
         goodElement.parentElement.style.outline = "2px solid gray";
 
-        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+        fetch( "api/v1/auth/discussions/rating/" + parentEl.id, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify( { "rating": false } )
+            body: JSON.stringify( { rating: false } ),
         } );
-    } 
+    }
     else {
         parentEl.classList.add( "liked" );
         goodElement.innerText = parseInt( goodElement.innerText, 10 ) + 1;
@@ -1625,40 +1665,65 @@ const addOrRemoveLike = ( e ) => {
         goodElement.style.color = "gray";
         goodElement.parentElement.style.outline = "none";
 
-        fetch( "api/v1/auth/discussions/rating/" +  parentEl.id, {
+        fetch( "api/v1/auth/discussions/rating/" + parentEl.id, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify( { "rating": true } )
+            body: JSON.stringify( { rating: true } ),
         } );
     }
 };
 
-
 ////*Saving Title and Description/////
 
-const saveTitleOrDescription = ( ) => {
+const saveTitleOrDescription = () => {
     const [ isTopic, id ] = getPrefixAndId();
 
     const input = document.getElementById( "workspace-title" ).value;
-        
+
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "workspaceId": id,
-            "workspaceName":  input ? input : "Untitled",
-            "workspaceDescription": document.getElementById( "workspace-desc" ).value,
-            "topics": topics,
-            "active": true,
-            "visibility": "private"
-        } )
+            workspaceId: id,
+            workspaceName: input ? input : "Untitled",
+            workspaceDescription: document.getElementById( "workspace-desc" ).value,
+            topics: topics,
+            active: true,
+            visibility: "private",
+        } ),
     } );
-}; 
+};
 
+if ( document.getElementById( "workspace-title" ) ) {
+    document
+        .getElementById( "workspace-title" )
+        .addEventListener( "input", saveTitleOrDescription );
+}
+if ( document.getElementById( "workspace-desc" ) ) {
+    document
+        .getElementById( "workspace-desc" )
+        .addEventListener( "input", saveTitleOrDescription );
+}
 
-if( document.getElementById( "workspace-title" ) ) {
-    document.getElementById( "workspace-title" ).addEventListener( "input", saveTitleOrDescription );
-}
-if( document.getElementById( "workspace-desc" ) ) {
-    document.getElementById( "workspace-desc" ).addEventListener( "input", saveTitleOrDescription );
-}
+// The following javascript if for agnes (the AI feature of the applications)
+// JavaScript to handle the AI icon clicks and updating content
+
+document.getElementById( "notesButton" ).addEventListener( "click", function () {
+    document.getElementById( "selectedContent" ).classList.remove( "hidden" );
+} );
+
+document.getElementById( "paperButton" ).addEventListener( "click", function () {
+    document.getElementById( "selectedContent" ).classList.remove( "hidden" );
+} );
+
+document.getElementById( "close-button" ).addEventListener( "click", function () {
+    var modal = new bootstrap.Modal( document.getElementById( "agnesModal" ) );
+    modal.hide();
+} );
+
+document
+    .getElementById( "btn-remove-content" )
+    .addEventListener( "click", function () {
+        var modal = new bootstrap.Modal( document.getElementById( "agnesModal" ) );
+        modal.hide();
+    } );

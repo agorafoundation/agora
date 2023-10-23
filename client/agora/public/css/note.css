@@ -1,6 +1,6 @@
 .note-body {
-    transition: margin-left .5s;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    transition: margin-left 0.5s;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 #page-content {
@@ -27,8 +27,8 @@
 
 #button-div {
     display: flex;
-    flex-direction: column; 
-    justify-content: center; 
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
@@ -49,11 +49,12 @@
 }
 
 #save-button:hover {
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+        0 17px 50px 0 rgba(0, 0, 0, 0.19);
     transition: 200ms all ease-in-out;
 }
 
 #note-div {
     display: block;
     width: 99%;
-} 
+}
