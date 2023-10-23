@@ -63,6 +63,18 @@
                                 <%
                             }
                             %>
+                            <% 
+                            if( 'true'=== 'true' ) {
+                                %>
+                                
+                                <!--ORCID widget-->
+                                <script async src="/js/orcid-widget.js"></script>
+                                <div id="orcidWidget" data-size='lg' 
+                                    data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='/activities/update' 
+                                    data-redirecturi='https://www.freeagora.org/dashboard'></div>
+                                <%
+                            }
+                            %>
                             
 
                             
