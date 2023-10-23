@@ -22,12 +22,12 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if (!(displayedUsers.has(data.username)))
+                if ( !(displayedUsers.has(data.username)) )
                 {
-                    var newContainer = templateContainer.cloneNode(true);
+                    var newContainer = templateContainer.cloneNode( true );
                     newContainer.style.display = "flex";
-                    userContainer.appendChild(newContainer);
-                    displayedUsers.add(data.username);
+                    userContainer.appendChild( newContainer );
+                    displayedUsers.add( data.username );
                 }
             }
         } );

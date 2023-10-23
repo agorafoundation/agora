@@ -53,7 +53,7 @@ exports.manageProfile = async function ( req, res ) {
 
         // get all products ordered
         let products = [];
-        for( let i=0; i<orders.length; i++ ) {
+        for( let i = 0; i<orders.length; i++ ) {
             let product = await productService.getProductById( orders[i].productId );
             product.status = orders[i].orderStatus;
             products.push( product );
@@ -73,9 +73,9 @@ exports.manageProfile = async function ( req, res ) {
             delete req.session.messageBody;
         }
         
-        const unreadFriendRequests = await friendService.getUnreadFriendRequestsForUser(authUser.userId);
+        const unreadFriendRequests = await friendService.getUnreadFriendRequestsForUser( authUser.userId );
 
-        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, unreadFriendRequests} );
+        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, unreadFriendRequests } );
         
         
     }

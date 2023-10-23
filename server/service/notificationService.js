@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 const { createNotification, MaptoNotification } = require('../model/notification');
-const userService = require('../service/userService'); 
+const userService = require( '../service/userService' ); 
 const { v4: uuidv4 } = require('uuid'); 
 
 
