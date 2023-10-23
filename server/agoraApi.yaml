@@ -1446,13 +1446,18 @@ paths:
     get:
       tags:
         - Ai
-      summary: Retrieves existing suggestion by artical ID
+      summary: Retrieves existing suggested artical
       parameters:
-        - in: path
-          name: id
+        - in: resourceId
+          name: resourceId
           schema:
-            type: integer
-          description: id of the suggestion to retrieve
+            type: string
+          description: The Resource Id
+        - in: mode
+          name: mode
+          schema:
+            type: string
+          description: Paper or Notes
       responses:
         "200":
           description: OK
@@ -1944,6 +1949,9 @@ components:
           type: integer
         dislikes:
           type: integer
+    Ai:
+    # to do: add example value
+        
     Search:
       type: object
       properties:
