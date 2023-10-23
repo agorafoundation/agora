@@ -1,60 +1,60 @@
 .note-body {
-  transition: margin-left 0.5s;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+    transition: margin-left 0.5s;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 #page-content {
-  height: inherit;
-  position: inline-block;
+    height: inherit;
+    position: inline-block;
 }
 
 .header {
-  margin-bottom: 5px;
-  padding: 10px 10px;
-  position: relative;
+    margin-bottom: 5px;
+    padding: 10px 10px;
+    position: relative;
 }
 
 #note-title {
-  width: 30%;
-  padding-left: 5px;
-  font-size: x-large;
+    width: 30%;
+    padding-left: 5px;
+    font-size: x-large;
 }
 
 #tag-placeholder {
-  font-size: 20px;
-  margin-left: 5px;
+    font-size: 20px;
+    margin-left: 5px;
 }
 
 #button-div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .note-buttons {
-  width: 10%;
-  border: none;
-  padding: 10px;
+    width: 10%;
+    border: none;
+    padding: 10px;
 }
 
 #save-note {
-  background-color: #2c3e50;
-  color: white;
-  margin-top: 30px;
+    background-color: #2c3e50;
+    color: white;
+    margin-top: 30px;
 }
 
 #cancel {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 #save-button:hover {
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
-    0 17px 50px 0 rgba(0, 0, 0, 0.19);
-  transition: 200ms all ease-in-out;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+        0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    transition: 200ms all ease-in-out;
 }
 
 #note-div {
-  display: block;
-  width: 99%;
+    display: block;
+    width: 99%;
 }
