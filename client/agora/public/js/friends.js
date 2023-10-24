@@ -6,14 +6,12 @@ const addFriendPage = () => {
 var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
-const userContainer = document.getElementById( 'friends-dashboard' );
+const friendsDashboard = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
-const templateContainer = document.getElementById( 'user-container' );
-
 
 
 searchButton.addEventListener( 'click', queryUsers = () => {
-    fetch( "api/v1/auth//user/username/" + userSearch.value, {
+    fetch( "api/v1/auth/user/username/" + userSearch.value, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
@@ -24,14 +22,54 @@ searchButton.addEventListener( 'click', queryUsers = () => {
                 var data = response[i];
                 if ( !(displayedUsers.has(data.username)) )
                 {
-                    var newContainer = templateContainer.cloneNode( true );
-                    newContainer.style.display = "flex";
-                    userContainer.appendChild( newContainer );
+                    createUserCard(data);
                     displayedUsers.add( data.username );
                 }
             }
         } );
 } );
+
+function createUserCard( userData ){
+    var rowDiv = document.createElement("div");
+    rowDiv.className = "row row-cols-1 row-cols-md-3 g-4";
+    var columnDiv = document.createElement("div");
+    columnDiv.className = "col mb-3 gallery-col align-items-stretch gallery-col";
+    var cardDiv = document.createElement("div");
+    cardDiv.className = "card h-100";
+    var cardBodyDiv = document.createElement("div");
+    cardBodyDiv.className = "card-body d-flex flex-column";
+    var username = document.createElement("h5");
+    username.id = userData.userId;
+    username.innerText = userData.username;
+    var userContainer = document.createElement("div");
+    userContainer.id = "user-container" + userData.userId;
+    userContainer.style.display = "flex";
+    userContainer.style.marginRight = "5px";
+
+    cardBodyDiv.appendChild(username);
+    cardDiv.appendChild(cardBodyDiv);
+    columnDiv.appendChild(cardDiv);
+    rowDiv.append(columnDiv);
+    userContainer.appendChild(rowDiv);
+    friendsDashboard.appendChild(userContainer);
+    
+    /*
+    userContainer.addEventListener( 'click' , sendFriendRequest = () => {
+        console.log(userData.userId);
+        fetch( "api/v1/auth/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify ({
+            "request_id": -1,
+            "recipient_id": userData.userId,
+            "request_time": Date.now(),
+        })
+    })
+    })
+    */
+}
+
+
 
 /*
 // Event listener for "Accept" and "Deny" buttons within the modal
