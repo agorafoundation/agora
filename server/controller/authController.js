@@ -138,68 +138,16 @@ exports.googleSignIn = async function( req, res ) {
     // const domain = payload['hd'];
 };
 
-exports.passwordSignIn = async function( req, res ) {
+
+exports.orcidSignIn = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
     
-    if( req && req.body ) {
-        if( req.body.signInEmail || req.body.siPassword ) {
-            
-            let user = await userService.getUserByEmail( req.body.signInEmail );
-            
-            // decision on email
-            if( user ) {
-                // perform password check
-                //let passCheck = await userService.checkPassword(user.email, req.body.siPassword);
-
-                req.session.isAuth = await userService.checkPassword( user.email, req.body.siPassword );
-
-                // decision on password
-                if( req.session.isAuth ) {
-                    //console.log( "0" );
-                    await signIn( req, res );
-                    //console.log( "1" );
-                    console.log( "redirect: " + req.query.redirect );
-        
-                    if( req.query.redirect ) {
-                        //console.log( "2" );
-                        res.redirect( 303, req.query.redirect );
-                    }
-                    else if( req.session.authUser.emailValidated ) {
-                        //console.log( "3" );
-                        res.redirect( 303, '/dashboard' );
-                    }
-                    else {
-                        //console.log( "4" );
-                        req.session.messageType = "info";
-                        req.session.messageTitle = "Email not verified!";
-                        req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
-                        res.redirect( 303, '/dashboard' );
-                    }
-
-                }
-                else {
-                    if( req.query.redirect ) {
-                        res.render( 'sign-in', {
-                            redirect: req.query.redirect,
-                            passwordMessage: "Incorrect Username / Password!"} );
-                    }
-                    else {
-                        res.render( 'sign-in', {passwordMessage: "Incorrect Username / Password!"} );
-                    }
-                }
-            }
-            else {
-                if( req.query.redirect ) {
-                    res.render( 'sign-in', {
-                        redirect: req.query.redirect,
-                        passwordMessage: "Incorrect Username / Password!"} );
-                }
-                else {
-                    res.render( 'sign-in', {passwordMessage: "Incorrect Username / Password!"} );
-                }
-            }
-        }
-    }
+    const currentURL = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    console.log(currentURL);
+    
+    res.render( 'sign-in' );
+    
 };
 
 /**

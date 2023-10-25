@@ -67,12 +67,14 @@
                             if( 'true'=== 'true' ) {
                                 %>
                                 
-                                <!--ORCID widget-->
                                 <script async src="/js/orcid-widget.js"></script>
                                 <div id="orcidWidget" data-size='lg' 
-                                    data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='/activities/update' 
-                                    data-redirecturi='https://www.freeagora.org/dashboard'></div>
+                                    data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='' 
+                                    data-redirecturi='http://148.100.145.194:4200/orcid-auth'></div>
+                            
+                                <!--<a href="/orcid-auth">Orcid Sign In</a>-->
                                 <%
+
                             }
                             %>
                             

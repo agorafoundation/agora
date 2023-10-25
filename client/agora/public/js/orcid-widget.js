@@ -99,7 +99,7 @@
 							if(submitUri){
 								submitIdTokenData($, id_token, signedInIdToken);
 							} else {
-								showSuccess($, id_token, signedInIdToken);	
+								showSuccess($, id_token, signedInIdToken);
 							}
 						} else {
 							signedInIdToken = null;
@@ -223,7 +223,7 @@
 				showSuccess($, id_token, signedInIdToken);
 			}).fail(function(jqXHR, textStatus, errorThrown) {	
 				showError($);
-			});		
+			});	
 	}
 	
 	function submitUserDenied($){

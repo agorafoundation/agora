@@ -112,9 +112,22 @@ app.use( function ( req, res, next ) {
     }
 } );
 
+const passport = require('passport');
+var OrcidStrategy = require( "passport-orcid" ).Strategy;
 
+passport.use(new OrcidStrategy({
+        sandbox: 'sandbox',
+        clientID: process.env.ORCID_CLIENT_ID,
+        clientSecret: process.env.ORCID_CLIENT_SECRET,
+        callbackURL: "http://148.100.145.194:4200/orcid-auth/callback"
+    },
+    function (accessToken, refreshToken, params, profile, done) {
+        console.log(`${params.id}`);
+        return done(err, user);
+    }
+));
 
-
+app.use(passport.initialize());
 
 /**
  * Page routes
