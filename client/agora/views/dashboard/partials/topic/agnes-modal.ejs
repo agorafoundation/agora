@@ -11,8 +11,12 @@
     <div class="modal-content discussion-modal-edges custom-background-color">
       <div class="modal-header">
         <h5 class="modal-title text-center text-white" id="agnesModalLabel">
-          Please, Select One
+          Agnes
         </h5>
+        <!-- <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+          <button class="btn btn-primary" type="button" data-bs-toggle="popover">i</button>
+
+        </span> -->
         <button
           type="button"
           class="btn-close"
@@ -23,8 +27,19 @@
       </div>
       <div class="modal-body text-center">
         <!-- Use text-center to center the content -->
-        <button class="btn btn-light" id="notesButton">Notes</button>
-        <button class="btn btn-secondary" id="paperButton">Paper</button>
+
+        <h6 class="modal-title text-center text-white">
+          Please select Document Type
+        </h6>
+        <!-- dropdown for doc type -->
+        <select class="form-select" id="doc-type">
+          <option value="empty"></option>
+          <option value="notes">Notes</option>
+          <option value="paper">Paper</option>
+        </select>
+        <!-- original buttons -->
+        <!-- <button class="btn btn-light" id="notesButton">Notes</button>
+        <button class="btn btn-secondary" id="paperButton">Paper</button> -->
       </div>
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
@@ -76,3 +91,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById("doc-type").addEventListener("change", function () {
+    var selectedValue = this.value;
+    var selectedContent = document.getElementById("selectedContent");
+    if (selectedValue === "notes" || selectedValue === "paper") {
+      selectedContent.classList.remove("hidden");
+    } else {
+      selectedContent.classList.add("hidden");
+    }
+  });
+</script>
