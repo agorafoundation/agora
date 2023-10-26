@@ -6,13 +6,13 @@
  */
 
 
-const friendServices = require('../services/friendServices');
+const friendService = require('../../service/friendService');
 
 // Get the count of unread friend requests for a user
 exports.getUnreadFriendRequestCount = async (req, res) => {
     try {
         const userID = req.user.id; 
-        const count = await friendServices.getUnreadFriendRequestCountForUser(userID);
+        const count = await friendService.getUnreadFriendRequestCount(userID);
         
         return res.json({ unreadCount: count });
     } catch (error) {
@@ -25,7 +25,7 @@ exports.getUnreadFriendRequestCount = async (req, res) => {
 exports.getUnreadFriendRequests = async (req, res) => {
     try {
         const userID = req.user.id; 
-        const requests = await friendServices.getUnreadFriendRequestsForUser(userID);
+        const requests = await friendService.getUnreadFriendRequests(userID);
         
         return res.json(requests);
     } catch (error) {

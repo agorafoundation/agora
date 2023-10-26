@@ -322,7 +322,7 @@ exports.getActiveUserById = async function( id ) {
 exports.getUserByUsername = async function( username ) {
     let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
     let values = [ username ];
-    let users = []
+    let users = [];
     
     try {
          

@@ -128,6 +128,13 @@ const userRoutes = require( './apis/userRoutes' );
 router.use( '/user', userRoutes );
 
 /**
+ * Friend APIs
+ */
+
+const friendRoutes = require( './apis/friendRoutes' );
+router.use( '/friends', friendRoutes);
+
+/**
  * Discussion APIs
  */
 const discussionRoutes = require( './apis/discussionRoutes' );

@@ -8,16 +8,11 @@
 var express = require( 'express' );
 var router = express.Router();
 
-const bodyParser = require( 'body-parser' );
-router.use( bodyParser.urlencoded( {
-    extended: true
-} ) );
-router.use( bodyParser.json() );
-
 // controllers
 const friendController = require( '../../controller/apis/friendController' );
+const notificationController = require ( '../../controller/apis/notificationController');
 
-router.route( '/' )
+router.route( '/allFriends/:userID' )
     //get all friends
     .get( async ( req, res ) => {
         friendController.getAllFriends( req, res );
@@ -34,12 +29,14 @@ router.route( '/:userID' )
     } );
 
 // Route to handle sending friend requests
-router.route( '/request' )
+router.route( '/request/:userID' )
     // Get all pending friend requests for the user
     .get( async ( req, res ) => {
-        friendController.getAllFriendRequests( req, res );
-    } )
+        notificationController.getUnreadFriendRequests( req, res );
+    } );
 
+
+router.route( '/sendFriendRequest')
     .post( async ( req, res ) => {
         friendController.sendFriendRequest( req, res );
     } );
@@ -54,3 +51,11 @@ router.route( '/responseToRequest' )
     .delete( async ( req, res ) => {
         friendController.rejectFriendRequest( req, res );
     } );
+
+router.route( '/requestCount/:userId' )
+    .get( async ( req, res ) => {
+        notificationController.getUnreadFriendRequestCount( req, res );
+    })
+
+
+module.exports = router;

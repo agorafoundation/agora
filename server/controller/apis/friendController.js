@@ -24,7 +24,7 @@ const userService = require( '../../service/userService' );
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
-    let friends = await friendService.getAllFriends( req.user.userID );
+    let friends = await friendService.getAllFriends( req.user.userId );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all Friends" );
     res.status( 200 ).json( friends );
@@ -151,6 +151,7 @@ exports.deleteFriendByID = async ( req, res ) => {
     }
 };
 
+/*
 // Get all friend requests sent to a user
 exports.getAllFriendRequests = async ( req, res ) => {
     const userID = req.user.userID; // Assuming you have the user's ID
@@ -159,3 +160,4 @@ exports.getAllFriendRequests = async ( req, res ) => {
     res.set( "x-agora-message-detail", "Returned all Friend Requests" );
     res.status( 200 ).json( requests );
 };
+*/
