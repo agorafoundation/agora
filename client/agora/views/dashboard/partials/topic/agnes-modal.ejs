@@ -86,16 +86,20 @@
       </div>
     </div>
   </div>
-
-  <script>
-    document.getElementById("doc-type").addEventListener("change", function() {
-      var selectedValue = this.value;
-      var selectedContent = document.getElementById("selectedContent");
-      if (selectedValue === "notes" || selectedValue === "paper") {
-        selectedContent.classList.remove("hidden");
-      } else {
-        selectedContent.classList.add("hidden");
-      }
-    });
-  </script>
 </div>
+
+
+
+
+
+<script>
+  document.getElementById("doc-type").addEventListener("change", function() {
+    var selectedValue = this.value;
+    var selectedContent = document.getElementById("selectedContent");
+    if (selectedValue === "notes" || selectedValue === "paper") {
+      selectedContent.classList.remove("hidden");
+    } else {
+      selectedContent.classList.add("hidden");
+    }
+  });
+</script>
