@@ -53,20 +53,18 @@ function createUserCard( userData ){
     userContainer.appendChild(rowDiv);
     friendsDashboard.appendChild(userContainer);
     
-    /*
+    
     userContainer.addEventListener( 'click' , sendFriendRequest = () => {
-        console.log(userData.userId);
-        fetch( "api/v1/auth/request", {
+        fetch( "api/v1/auth/friends/sendFriendRequest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify ({
-            "request_id": -1,
+            "requester_id": "d70934e2-4d1d-44c9-aa5e-a8af489797fb",
             "recipient_id": userData.userId,
-            "request_time": Date.now(),
         })
     })
     })
-    */
+    
 }
 
 

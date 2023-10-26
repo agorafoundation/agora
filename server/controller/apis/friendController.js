@@ -68,7 +68,8 @@ exports.sendFriendRequest = async ( req, res ) => {
         //Checks if user exists.
         let friendUsername = userService.verifyUsername( req.params.username );
         if ( friendUsername ) {
-            let request = friendService.sendFriendRequest( authUserID, friendUsername );
+            let friendUserId = userService.getUserByUsername( req.params.username );
+            let request = friendService.sendFriendRequest( authUserID, friendUserId[0].userId );
             if ( request ) {
                 res.set( "x-agora-message-title", "Success" );
                 res.set( "x-agora-message-detail", "Friend Request Sent" );

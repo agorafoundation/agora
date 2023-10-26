@@ -51,15 +51,25 @@ exports.getAllFriends = async ( userID ) => {
 
 // Get a specific friend by ID
 exports.getFriendByID = async ( userID, friendID ) => {
-    const result = await db.query(
-        `SELECT * 
-         FROM friendships 
-         WHERE (initiatedby_id = $1 AND recipient_id = $2) 
-         OR (initiatedby_id = $2 AND recipient_id = $1)
-         AND status = 'accepted'`, 
-        [ userID, friendID ]
-    );
-    return result.rows[0];
+    let text = `SELECT * 
+    FROM friendships 
+    WHERE (initiatedby_id = $1 AND recipient_id = $2) 
+    OR (initiatedby_id = $2 AND recipient_id = $1)
+    AND status = 'accepted'`;
+    let values = [ userID, friendID ];
+    try{
+        let res = await db.query( text, values );
+        if ( res.rows.length > 0){
+            return res.rows[0];
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ){
+        console.log( e.stack );
+    }
+    
 };
 
 // Send a friend request

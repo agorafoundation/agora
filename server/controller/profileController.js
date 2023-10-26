@@ -73,7 +73,7 @@ exports.manageProfile = async function ( req, res ) {
             delete req.session.messageBody;
         }
         
-        const unreadFriendRequests = await friendService.getUnreadFriendRequestsForUser( authUser.userId );
+        const unreadFriendRequests = await friendService.getUnreadFriendRequests( authUser.userId );
 
         res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, unreadFriendRequests } );
         
