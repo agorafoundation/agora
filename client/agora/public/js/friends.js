@@ -59,7 +59,7 @@ function createUserCard( userData ){
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify ({
-            "requester_id": "d70934e2-4d1d-44c9-aa5e-a8af489797fb",
+            "requester_id": "",
             "recipient_id": userData.userId,
         })
     })
