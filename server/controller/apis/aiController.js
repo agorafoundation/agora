@@ -104,7 +104,7 @@ const parseResourceContentHtml = ( content ) => {
 /** 
  * Validate all the sources in the specified JSON.
  * 
- * @param {JSON} json resourceContentHtml from resource.
+ * @param {JSON} json The JSON from OpenAI.
  * @returns {JSON[]}
  */
 const validateSources = ( json ) => {
@@ -127,8 +127,8 @@ const validateSources = ( json ) => {
 /**
  * Verifies an exact title with Semantic Scholar.
  * 
- * @param {string} title 
- * @param {number} limit 
+ * @param {string} title The title of the article from OpenAI.
+ * @param {number} limit The number of results to pull from SemanticScholar.
  */
 const verifyTitleWithSemanticScholar = ( title, limit = 1 ) => {
     try {
