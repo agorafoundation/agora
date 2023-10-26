@@ -43,13 +43,19 @@ exports.callOpenAI = async ( req, res ) => {
       
         let returnValue = completion.data.choices[0];
   
-        let json = JSON.parse( returnValue.message.content );
-  
-        // TODO: call something to validate the results here
+        let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+
+        let validatedCitations = validateSources( rawJson );
+        let keywords = rawJson["keywords"];
+
+        let newJsonObject = {
+            citations: validatedCitations, 
+            keywords: keywords
+        };
         
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-        res.status( 200 ).json( json );
+        res.status( 200 ).json( newJsonObject );
     } 
     catch {
         res.set( "x-agora-message-title", "Error" );
@@ -93,4 +99,45 @@ const parseResourceContentHtml = ( content ) => {
 
     // filter out all paragraphs with length less than min
     return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
+};
+
+/** 
+ * Validate all the sources in the specified JSON.
+ * 
+ * @param {JSON} json resourceContentHtml from resource.
+ * @returns {JSON[]}
+ */
+const validateSources = ( json ) => {
+    let citations = json["citations"];
+
+    for ( let i = 0; i < citations.length; i++ ) {
+        let citation = citations[i];
+
+        let verified = verifyTitleWithSemanticScholar( citation.title );
+        
+        // If the title doesn't exist in Semantic Scholar, then delete it from the object.
+        if ( verified == false ) {
+            delete citations[i];
+        }
+    }
+
+    return citations;
+};
+
+/**
+ * Verifies an exact title with Semantic Scholar.
+ * 
+ * @param {string} title 
+ * @param {number} limit 
+ */
+const verifyTitleWithSemanticScholar = ( title, limit = 1 ) => {
+    try {
+        // The quotes in the string make it so that we can match for a literal title
+        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}` ).then( response => response.json() ).then( data => {
+            return data.data[0].title.toLowerCase() === title.toLowerCase();
+        } );
+    }
+    catch {
+        console.log( "There was an error in validating the title with Semantic Scholar" );
+    }
 };
