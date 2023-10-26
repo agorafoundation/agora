@@ -5,11 +5,14 @@
   role="dialog"
   aria-labelledby="agnesModalLabel"
   aria-hidden="true"
+  data-bs-backdrop="false"
 >
   <div class="modal-dialog custom-modal" role="document">
     <div class="modal-content discussion-modal-edges custom-background-color">
       <div class="modal-header">
-        <h5 class="modal-title text-center text-white" id="agnesModalLabel">Agnes</h5>
+        <h5 class="modal-title text-center text-white" id="agnesModalLabel">
+          Agnes
+        </h5>
         <!-- <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
           <button class="btn btn-primary" type="button" data-bs-toggle="popover">i</button>
 
@@ -21,15 +24,16 @@
           aria-label="Close"
           id="btn-remove-content"
         ></button>
-        
       </div>
       <div class="modal-body text-center">
         <!-- Use text-center to center the content -->
 
-        <h6 class="modal-title text-center text-white">Please select Document Type</h6>
+        <h6 class="modal-title text-center text-white">
+          Please select Document Type
+        </h6>
         <!-- dropdown for doc type -->
         <select class="form-select" id="doc-type">
-          <option value="empty">  </option>
+          <option value="empty"></option>
           <option value="notes">Notes</option>
           <option value="paper">Paper</option>
         </select>
@@ -88,12 +92,8 @@
   </div>
 </div>
 
-
-
-
-
 <script>
-  document.getElementById("doc-type").addEventListener("change", function() {
+  document.getElementById("doc-type").addEventListener("change", function () {
     var selectedValue = this.value;
     var selectedContent = document.getElementById("selectedContent");
     if (selectedValue === "notes" || selectedValue === "paper") {
