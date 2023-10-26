@@ -25,6 +25,8 @@
           class="btn-close"
           aria-label="Close"
           id="btn-remove-content"
+          data-bs-toggle="modal"
+          data-bs-target="#agnesModal"
         ></button>
       </div>
       <div class="modal-body text-center">
@@ -78,7 +80,13 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="close-button">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="close-button"
+          data-bs-toggle="modal"
+          data-bs-target="#agnesModal"
+        >
           Regenerate
           <span class="material-symbols-outlined ag-generate-icon">cached</span>
         </button>
