@@ -773,8 +773,8 @@
 }
 
 .agnes-modal-pos {
-    right: 2%;
-    top: 8.5%;
+    right: 2vw;
+    top: 8vh;
     display: none;
     position: absolute;
     z-index: 200; /* placing modal above all content on screen */
