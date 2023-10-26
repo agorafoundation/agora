@@ -1,0 +1,32 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2023 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
+
+var express = require('express');
+var router = express.Router();
+
+// dependencies
+const fs = require('fs');
+let path = require('path');
+
+// setup json body parser
+const bodyParser = require('body-parser');
+router.use(bodyParser.urlencoded({
+    extended: true
+}));
+router.use(bodyParser.json());
+
+// controllers
+const dashboardController = require('../controller/dashboardController');
+
+/**
+ * Show main dashboard route
+ */
+router.route('/')
+    .get((req, res) => {
+        dashboardController.getDashboard(req, res);
+    }
+    );

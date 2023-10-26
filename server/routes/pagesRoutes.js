@@ -24,6 +24,7 @@ router.route('/about')
 
 router.route('/dashboard-shared')
     .get((req, res) => {
+        //dashboardController.getSharedWorkspaces( req, res );
         res.render('dashboard-shared/dashboard-shared');
     }
     );
