@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS friendships (
     friendship_id SERIAL PRIMARY KEY,
     initiatedby_id UUID NOT NULL REFERENCES users(user_id),
     recipient_id UUID NOT NULL REFERENCES users(user_id),
-    status VARCHAR NOT NULL, 
+    status friendship_status NOT NULL, -- Changed from Varchar to an Enum type. 
     created_time TIMESTAMP DEFAULT current_timestamp,
     UNIQUE (initiatedby_id, recipient_id)
 );
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS friendship_requests (
     request_id SERIAL PRIMARY KEY,
     requester_id UUID NOT NULL REFERENCES users(user_id),
     recipient_id UUID NOT NULL REFERENCES users(user_id),
-    request_time TIMESTAMP DEFAULT current_timestamp
+    request_time TIMESTAMP DEFAULT current_timestamp,
 );
 
 GRANT ALL PRIVILEGES ON TABLE friendship_requests TO agora;
