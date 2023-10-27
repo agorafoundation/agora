@@ -134,7 +134,7 @@ exports.acceptFriendRequest = async ( requestID ) => {
 };
 
 // Deny a friend request
-exports.denyFriendRequest = async ( requestID ) => {
+exports.rejectFriendRequest = async ( requestID ) => {
     const result = await db.query(
         `DELETE FROM friendship_requests WHERE request_id = $1`, 
         [ requestID ]

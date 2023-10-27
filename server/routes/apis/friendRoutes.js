@@ -12,7 +12,7 @@ var router = express.Router();
 const friendController = require( '../../controller/apis/friendController' );
 const notificationController = require ( '../../controller/apis/notificationController');
 
-router.route( '/allFriends/:userID' )
+router.route( '/allFriends' )
     //get all friends
     .get( async ( req, res ) => {
         friendController.getAllFriends( req, res );
@@ -29,14 +29,14 @@ router.route( '/:userID' )
     } );
 
 // Route to handle sending friend requests
-router.route( '/request/:userID' )
+router.route( '/request' )
     // Get all pending friend requests for the user
     .get( async ( req, res ) => {
         notificationController.getUnreadFriendRequests( req, res );
     } );
 
 
-router.route( '/sendFriendRequest')
+router.route( '/sendFriendRequest' )
     .post( async ( req, res ) => {
         friendController.sendFriendRequest( req, res );
     } );
@@ -52,7 +52,7 @@ router.route( '/responseToRequest' )
         friendController.rejectFriendRequest( req, res );
     } );
 
-router.route( '/requestCount/:userId' )
+router.route( '/requestCount' )
     .get( async ( req, res ) => {
         notificationController.getUnreadFriendRequestCount( req, res );
     })

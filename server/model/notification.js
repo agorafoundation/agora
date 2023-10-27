@@ -5,12 +5,14 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+const { v4: uuidv4 } = require( "uuid" );
+
 class Notification {
     constructor(user_id, message) {
-        this.notificationId = null; // Null for now will be set when retrieving from DB or inserting
+        this.notificationId = uuidv4(); 
         this.userId = user_id;
         this.message = message;
-        this.notificationTime = new Date();
+        this.notificationTime;
         this.readStatus = false;
     }
 }
@@ -22,8 +24,8 @@ class Notification {
  * @returns {Notification} - A new Notification instance.
  */
 
-exports.createNotification = function(user_id, message) {
-    let newNotification = new Notification(user_id, message);
+exports.createNotification = function( user_id, message ) {
+    let newNotification = new Notification( user_id, message );
     return newNotification;
 };
 
@@ -39,7 +41,7 @@ exports.emptyNotification = () => {
  * @returns {Notification} - The structured Notification instance.
  */
 
-exports.MaptoNotification = function(notificationRow) {
+exports.ormNotification = function( notificationRow ) {
     let notification = exports.emptyNotification();
     notification.notificationId = notificationRow.notification_id;
     notification.userId = notificationRow.user_id;

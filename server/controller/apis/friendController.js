@@ -24,16 +24,29 @@ const userService = require( '../../service/userService' );
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
-    let friends = await friendService.getAllFriends( req.user.userId );
-    res.set( "x-agora-message-title", "Success" );
-    res.set( "x-agora-message-detail", "Returned all Friends" );
-    res.status( 200 ).json( friends );
+    let authUserID;
+    if ( req.user ){
+        authUserID = req.user.userId;
+    }
+    else if( req.session.authUser ){
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ){
+        let friends = await friendService.getAllFriends( req.user.userId );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all Friends" );
+        res.status( 200 ).json( friends );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Friends not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Friends not found" );
+        res.status( 400 ).json( message );
+    }
 };
 
 //Get a specific friend, by their ID.
 exports.getFriendByID = async ( req, res ) => {
-
-
     let authUserID;
     if( req.user ) {
         authUserID = req.user.userId;
@@ -77,7 +90,7 @@ exports.sendFriendRequest = async ( req, res ) => {
 
                 // Add a Notification after a user 
                 const message = "You have received a new friend request from " + req.user.username;  
-                await notificationService.addNotification(friendUsername, message);
+                await notificationService.addNotification( friendUsername, message );
             }
         }
         else {
@@ -91,20 +104,17 @@ exports.sendFriendRequest = async ( req, res ) => {
 
 //Accepts the a friend request.
 exports.acceptFriendRequest = async ( req, res ) => {
-    let authUserID;
-    if ( req.user ) {
-        authUserID = req.user.userId;
+    let success = friendService.acceptFriendRequest( req.requestId );
+    if ( success ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Friend Request Accepted" );
+        res.status( 201 ).json( "Success" );
     }
-    else if ( req.session.authUser ) {
-        authUserID = req.session.authUser.userId;
-    }
-    if ( authUserID ) {
-        let success = friendService.acceptFriendRequest( authUserID );
-        if ( success ) {
-            res.set( "x-agora-message-title", "Success" );
-            res.set( "x-agora-message-detail", "Friend Request Accepted" );
-            res.status( 201 ).json( "Success" );
-        }
+    else{
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Request not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Request not found" );
+        res.status( 400 ).json( message );
     }
 };
 
@@ -118,7 +128,7 @@ exports.rejectFriendRequest = async ( req, res ) => {
         authUserID = req.session.authUser.userId;
     }
     if ( authUserID ) {
-        let success = friendService.denyFriendRequest( authUserID );
+        let success = friendService.rejectFriendRequest( authUserID );
         if ( success ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Friend Request Rejected" );

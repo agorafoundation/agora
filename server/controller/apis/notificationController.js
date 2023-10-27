@@ -10,27 +10,51 @@ const friendService = require('../../service/friendService');
 
 // Get the count of unread friend requests for a user
 exports.getUnreadFriendRequestCount = async (req, res) => {
-    try {
-        const userID = req.user.id; 
-        const count = await friendService.getUnreadFriendRequestCount(userID);
-        
-        return res.json({ unreadCount: count });
-    } catch (error) {
-        console.error("Error fetching unread friend request count:", error);
-        return res.status(500).json({ error: "Server Error" });
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ) {
+        let success = await friendService.getUnreadFriendRequestCount( authUserID );
+        if ( success ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Count received" );
+            res.status( 200 ).json( "Success" );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "No count found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "No count found" );
+            res.status( 400 ).json( message );
+        }
     }
 };
 
 // Get the details of unread friend requests for a user
 exports.getUnreadFriendRequests = async (req, res) => {
-    try {
-        const userID = req.user.id; 
-        const requests = await friendService.getUnreadFriendRequests(userID);
-        
-        return res.json(requests);
-    } catch (error) {
-        console.error("Error fetching unread friend requests:", error);
-        return res.status(500).json({ error: "Server Error" });
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ) {
+        let success = await friendService.getUnreadFriendRequests( authUserID );
+        if ( success ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Requests received" );
+            res.status( 200 ).json( "Success" );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "No requests found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "No requests found" );
+            res.status( 400 ).json( message );
+        }
     }
 };
 
