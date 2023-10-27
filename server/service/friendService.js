@@ -75,7 +75,7 @@ exports.getFriendByID = async ( userID, friendID ) => {
 // Send a friend request
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
-    let text = `INSERT INTO friendship_requests (requester_id, recipient_id) 
+    let text = `INSERT INTO friendship_requests ( requester_id, recipient_id ) 
     VALUES ($1, $2)
     RETURNING request_id`;
     let values = [ requesterID, recipientID ];

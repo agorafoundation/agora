@@ -133,7 +133,7 @@ GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 
 --Friendship Request table
 CREATE TABLE IF NOT EXISTS friendship_requests (
-    request_id SERIAL PRIMARY KEY,
+    request_id UUID SERIAL PRIMARY KEY,
     requester_id UUID NOT NULL REFERENCES users(user_id),
     recipient_id UUID NOT NULL REFERENCES users(user_id),
     request_time TIMESTAMP DEFAULT current_timestamp,

@@ -87,16 +87,16 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click' , sendFriendRequest = () => {
-        fetch( "api/v1/auth/friends/sendFriendRequest", {
+        fetch( "api/v1/auth/friends/sendFriendRequest",  {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify ({
-            "recipient_id": userData.userId,
+        body: JSON.stringify({
+            
         })
     })
-    })
+});
     
-}
+};
 
 
 

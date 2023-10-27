@@ -21,6 +21,8 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import services
 const friendService = require( '../../service/friendService' );
 const userService = require( '../../service/userService' );
+const { emptyFriendshipRequest } = require( '../../model/friendshipRequest' );
+const notificationService = require( '../../service/notificationService');
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
@@ -78,27 +80,27 @@ exports.sendFriendRequest = async ( req, res ) => {
     }
     else if ( req.session.authUser ) {
         authUserID = req.session.authUser.userId;
-        //Checks if user exists.
-        let friendUsername = userService.verifyUsername( req.params.username );
-        if ( friendUsername ) {
-            let friendUserId = userService.getUserByUsername( req.params.username );
-            let request = friendService.sendFriendRequest( authUserID, friendUserId[0].userId );
-            if ( request ) {
-                res.set( "x-agora-message-title", "Success" );
-                res.set( "x-agora-message-detail", "Friend Request Sent" );
-                res.status( 201 ).json( "Success" );
+    }
+    //Checks if user exists.
+    let friendUsername = userService.verifyUsername( req.body.username );
+    if ( friendUsername ) {
+        let friend = userService.getUserByUsername( req.body.username );
+        let request = friendService.sendFriendRequest( authUserID, friend.userId, );
+        if ( request ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Friend Request Sent" );
+            res.status( 201 ).json( "Success" );
 
-                // Add a Notification after a user 
-                const message = "You have received a new friend request from " + req.user.username;  
-                await notificationService.addNotification( friendUsername, message );
-            }
+            // Add a Notification after a user 
+            const message = "You have received a new friend request from " + req.user.username;  
+            await notificationService.addNotification( friend[0].username, message );
         }
-        else {
-            const message = ApiMessage.createApiMessage( 404, "Not Found", "User not found" );
-            res.set( "x-agora-message-title", "Not Found" );
-            res.set( "x-agora-message-detail", "User not found" );
-            res.status( 400 ).json( message );
-        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "User not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "User not found" );
+        res.status( 400 ).json( message );
     }
 };
 

@@ -5,10 +5,9 @@ const userService = require( '../service/userService' );
 
 // Add a new notification
 exports.addNotification = async ( userId, message ) => {
-    let notification = createNotification( userId, message );
-    let text = `INSERT INTO notifications (notification_id, user_id, message) 
-                VALUES ($1, $2, $3) RETURNING notification_id`;
-    let values = [ notification.notificationId, userId, message ];
+    let text = `INSERT INTO notifications (user_id, message) 
+                VALUES ($1, $2) RETURNING notification_id`;
+    let values = [ userId, message ];
     try {
         let res = await db.query( text, values );
         if ( res.rows.length > 0){

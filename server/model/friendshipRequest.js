@@ -8,7 +8,7 @@ function friendshipRequest ( requester_id, recipient_id ){
 }
 
 exports.emptyFriendshipRequest = () => {
-    return new friendshipRequest();
+    return new friendshipRequest( );
 };
 
 exports.ormFriendshipRequest = function (row) {

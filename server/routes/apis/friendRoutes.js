@@ -18,15 +18,12 @@ router.route( '/allFriends' )
         friendController.getAllFriends( req, res );
     } );
 
-router.route( '/:userID' )
-    //get a friend by their user ID.
-    .get( async ( req, res ) => {
-        friendController.getFriendByID( req, res );
-    } )
 
-    .delete( async ( req, res ) => {
-        friendController.deleteFriendByID( req, res );
-    } );
+router.route( '/requestCount' )
+    .get( async ( req, res ) => {
+        notificationController.getUnreadFriendRequestCount( req, res );
+    });
+
 
 // Route to handle sending friend requests
 router.route( '/request' )
@@ -52,10 +49,15 @@ router.route( '/responseToRequest' )
         friendController.rejectFriendRequest( req, res );
     } );
 
-router.route( '/requestCount' )
+router.route( '/:userID' )
+    //get a friend by their user ID.
     .get( async ( req, res ) => {
-        notificationController.getUnreadFriendRequestCount( req, res );
-    })
+        friendController.getFriendByID( req, res );
+    } )
+
+    .delete( async ( req, res ) => {
+        friendController.deleteFriendByID( req, res );
+    } );
 
 
 module.exports = router;
