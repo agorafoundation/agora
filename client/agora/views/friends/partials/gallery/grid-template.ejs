@@ -1,33 +1,22 @@
 <!-- Your HTML structure -->
-<% //name:string, description:string, tags:array, content:array %>
-<% const renderCard = (friendId, name, desc, tags) => {
-  //stops text overflow
-  name = name.slice(0, 18);
-  if (desc) {
-    desc = desc.slice(0, 180);
-  }
-%>
-
-  <!--Friend Card -->
-  <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-friend">
-    <div class="card h-100" id="f-gv-<%= friendId %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="friendReroute(id)">
-      <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="f-gv-option-<%= friendId %>" style="visibility: hidden">
-        <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
-        <%- include('./dropdown.ejs'); %>
-      </div>
-      <div class="card-body d-flex flex-column" id="friend">
-        <h5 class="card-title" id="f-gv-card-title-<%= friendId %>">
-          <%= name %>
-        </h5>
-        <p class="card-text mb-4" id="f-gv-card-desc-<%= friendId %>">
-          <%= desc %>
-        </p>
-      </div>
-      <div class="card-footer">
-        <span class="badge badge-dark note-badge">
-          Friend
-        </span>
-      </div>
+<!-- Friend Card -->
+<div class="col mb-3 align-items-stretch gallery-col query-countable a-friend">
+  <div class="card h-100" id="f-gv-" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="friendReroute(id)">
+    <div class="card-body d-flex flex-column" id="friend">
+      
+      <h5 class="card-title" id="f-gv-card-title-">
+        <!-- Display user's name here -->
+         
+        <span id="userName"><%- user.email %></span>
+      </h5>
+      <p class="card-text mb-4" id="f-gv-card-desc-">
+        desc
+      </p>
+    </div>
+    <div class="card-footer">
+      <span class="badge badge-dark note-badge">
+        Friend
+      </span>
     </div>
   </div>
-<% } %>
+</div>

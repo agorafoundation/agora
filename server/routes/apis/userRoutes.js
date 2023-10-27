@@ -35,7 +35,7 @@ router.route( '/userId/:userId' )
 router.route( '/getAuthUser' )
     .get( ( req, res ) => {
         userController.getAuthUser( req, res );
-    })
+    } );
 
 module.exports = router;
 

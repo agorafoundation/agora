@@ -28,14 +28,14 @@ addFriendsPage.addEventListener( 'load', getFriends = () => {
 */
 
 window.onload = getAuthUser = () => {
-    fetch("api/v1/auth/user/getAuthUser", {
+    fetch( "api/v1/auth/user/getAuthUser", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-    })
+    } )
         .then( ( response ) => response.json() )
         .then( ( response ) => {
             authUser.push( response );
-        });
+        } );
 };
 
 searchButton.addEventListener( 'click', queryUsers = () => {
@@ -48,9 +48,8 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if ( !( displayedUsers.has( data.username ) ) && !( data.username == authUser[0].username ) )
-                {
-                    createUserCard(data);
+                if ( !( displayedUsers.has( data.username ) ) && !( data.username == authUser[0].username ) ) {
+                    createUserCard( data );
                     displayedUsers.add( data.username );
                 }
             }
@@ -58,43 +57,43 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 } );
 
 function createUserCard( userData ){
-    var rowDiv = document.createElement("div");
+    var rowDiv = document.createElement( "div" );
     rowDiv.className = "row row-cols-1 row-cols-md-3 g-4";
-    var columnDiv = document.createElement("div");
+    var columnDiv = document.createElement( "div" );
     columnDiv.className = "col mb-3 gallery-col align-items-stretch gallery-col";
-    var cardDiv = document.createElement("div");
+    var cardDiv = document.createElement( "div" );
     cardDiv.className = "card h-100";
-    var cardBodyDiv = document.createElement("div");
+    var cardBodyDiv = document.createElement( "div" );
     cardBodyDiv.className = "card-body d-flex flex-column";
-    var username = document.createElement("h5");
+    var username = document.createElement( "h5" );
     username.id = userData.userId;
     username.innerText = userData.username;
-    var userProfile = document.createElement("img");
+    var userProfile = document.createElement( "img" );
     userProfile.src = userData.profile_filename;
     userProfile.alt = "user's profile";
-    var userContainer = document.createElement("div");
+    var userContainer = document.createElement( "div" );
     userContainer.id = "user-container-" + userData.userId;
     userContainer.style.display = "flex";
     userContainer.style.marginRight = "5px";
 
-    cardBodyDiv.appendChild(username);
-    cardBodyDiv.appendChild(userProfile);
-    cardDiv.appendChild(cardBodyDiv);
-    columnDiv.appendChild(cardDiv);
-    rowDiv.append(columnDiv);
-    userContainer.appendChild(rowDiv);
-    friendsDashboard.appendChild(userContainer);
+    cardBodyDiv.appendChild( username );
+    cardBodyDiv.appendChild( userProfile );
+    cardDiv.appendChild( cardBodyDiv );
+    columnDiv.appendChild( cardDiv );
+    rowDiv.append( columnDiv );
+    userContainer.appendChild( rowDiv );
+    friendsDashboard.appendChild( userContainer );
     
     
-    userContainer.addEventListener( 'click' , sendFriendRequest = () => {
+    userContainer.addEventListener( 'click', sendFriendRequest = () => {
         fetch( "api/v1/auth/friends/sendFriendRequest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify ({
-            "recipient_id": userData.userId,
-        })
-    })
-    })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify ( {
+                "recipient_id": userData.userId,
+            } )
+        } ); 
+    } );
     
 }
 

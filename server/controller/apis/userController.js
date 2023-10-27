@@ -58,9 +58,9 @@ exports.getAuthUser = async function( req, res ) {
         userService.getAuthUser( authUserID ).then( ( user ) => {
             res.setHeader( 'Content-Type', 'application/json' );
             res.send( user );
-        })
+        } );
     }
-}
+};
 
 exports.verifyUsername = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
