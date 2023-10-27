@@ -1,22 +1,32 @@
 const { v4: uuidv4 } = require( "uuid" );
 
-function friendship( initiatedby_id, recipient_id ){
+// Constants for the friendship status
+const PENDING = 'pending';
+const ACCEPTED = 'accepted';
+const REJECTED = 'rejected';
+
+function friendship( initiatedby_id, recipient_id, status = PENDING ){
     this.friendship_id = uuidv4();
     this.initiatedby_id = initiatedby_id;
     this.recipient_id = recipient_id;
-    this.status;
+    this.status = status; 
     this.created_time;
 }
 
 exports.emptyFriendship = () => {
-    return new friendship();
+    return new friendship(null, null, PENDING); //Makes sure that the empty friendships have a default status of pending. 
 };
 
 exports.ormFriendship = function (row) {
-    let friendship = exports.emptyFriendship();
-    friendship.friendship_id = row.friendship_id;
-    friendship.initiatedby_id = row.initiatedby_id;
-    friendship.recipient_id = row.recipient_id;
-    friendship.status = row.status;
-    friendship.created_time = row.created_time;
+    let friendshipInstance = exports.emptyFriendship();
+    friendshipInstance.friendship_id = row.friendship_id;
+    friendshipInstance.initiatedby_id = row.initiatedby_id;
+    friendshipInstance.recipient_id = row.recipient_id;
+    friendshipInstance.status = row.status;
+    friendshipInstance.created_time = row.created_time;
 }
+
+// Exported the status so they can be used elsewhere in the application
+exports.PENDING = PENDING;
+exports.ACCEPTED = ACCEPTED;
+exports.REJECTED = REJECTED;
