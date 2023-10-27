@@ -1,4 +1,3 @@
-
 // Takes you to the adding friends page
 const addFriendPage = () => {
     window.location.href = "/add-friends";
@@ -10,6 +9,7 @@ const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
 var friends = new Set();
+var authUser = [ ];
 
 
 /*
@@ -27,6 +27,17 @@ addFriendsPage.addEventListener( 'load', getFriends = () => {
 } );
 */
 
+window.onload = getAuthUser = () => {
+    fetch("api/v1/auth/user/getAuthUser", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    })
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            authUser.push( response );
+        });
+};
+
 searchButton.addEventListener( 'click', queryUsers = () => {
     fetch( "api/v1/auth/user/username/" + userSearch.value, {
         method: "GET",
@@ -37,7 +48,7 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if ( !(displayedUsers.has(data.username)) )
+                if ( !( displayedUsers.has( data.username ) ) && !( data.username == authUser[0].username ) )
                 {
                     createUserCard(data);
                     displayedUsers.add( data.username );
