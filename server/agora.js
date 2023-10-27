@@ -14,6 +14,8 @@ require( "dotenv" ).config();
 
 // manage parsing json from body of the request
 const bodyParser = require( "body-parser" );
+// library that allows us to hook responses in the middleware
+const responseHooks = require( "express-response-hooks" );
 var path = require( "path" );
 
 app.use(
@@ -22,6 +24,8 @@ app.use(
     } )
 );
 app.use( bodyParser.json() );
+//app.use( responseHooks() );
+
 
 // cross origin
 const cors = require( "cors" );
@@ -50,26 +54,12 @@ app.use( express.static( publicPath ) );
 // import uuid generator
 const { v4: uuidv4 } = require( "uuid" );
 
-// set up session
-let session = require( "express-session" );
-const pgSession = require( "connect-pg-simple" )( session );
-
 // database connection
 const db = require( "./db/connection" );
 
-/**
- * OpenAPI / Swagger
- */
-const swaggerUi = require( "swagger-ui-express" );
-const swaggerJsDoc = require( "swagger-jsdoc" );
-
-// global swagger info (TODO: maybe this should be moved into another file if it is staying?)
-const YAML = require( "yamljs" );
-const swaggerApiDoc = YAML.load( "./server/agoraApi.yaml" );
-
-// initialize swagger
-//const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
-app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerApiDoc ) );
+// set up session
+let session = require( "express-session" );
+const pgSession = require( "connect-pg-simple" )( session );
 
 let sess = {
     store: new pgSession( {
@@ -97,36 +87,33 @@ if ( app.get( "env" ) === "production" ) {
 
 app.use( session( sess ) );
 
-// check that the user is logged in, if so include user data in req for view
+
+
+//check that the user is logged in, if so include user session data in req for view (ejs needs locals)
 app.use( function ( req, res, next ) {
     // set the currentUrl so it is available in the esj
     res.locals.currentUrl = encodeURIComponent( req.url );
 
-    // if authenticated set the session as a local of the esj
-    if ( !req.session.isAuth ) {
-        next();
-    }
-    else {
-        res.locals.authUser = req.session.authUser;
-        next();
-    }
+    // make the auth information available to the locals for ejs
+    res.locals.isAuth = req.session.isAuth;
+    res.locals.authUser = req.session.authUser;
+    next();
+
 } );
 
 
-
-
-
-/**
- * Page routes
- */
-const pageRoutes = require( "./routes/pagesRoutes" );
-app.use( "/", pageRoutes );
 
 /**
  * Auth routes
  */
 const authRoutes = require( "./routes/authRoutes" );
 app.use( "/", authRoutes );
+
+/**
+ * Page routes
+ */
+const pageRoutes = require( "./routes/pagesRoutes" );
+app.use( "/", pageRoutes );
 
 /**
  * User routes
@@ -173,6 +160,23 @@ const apiUnauthRoutes = require( "./routes/apiUnauthRoutes" );
 const { errorController } = require( "./controller/apis/apiErrorController" );
 const ApiMessage = require( "./model/util/ApiMessage" );
 app.use( "/api/v1/open", apiUnauthRoutes );
+
+
+/**
+ * OpenAPI / Swagger
+ */
+const swaggerUi = require( "swagger-ui-express" );
+const swaggerJsDoc = require( "swagger-jsdoc" );
+
+// global swagger info (TODO: maybe this should be moved into another file if it is staying?)
+const YAML = require( "yamljs" );
+const swaggerApiDoc = YAML.load( "./server/agoraApi.yaml" );
+
+// initialize swagger
+//const swaggerDocInit = swaggerJsDoc( swaggerGlobal );
+app.use( "/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerApiDoc ) );
+
+
 
 // // workspace
 // let workspaceRoutes = require('./routes/community/workspaceRoutes');
