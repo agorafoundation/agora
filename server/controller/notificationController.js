@@ -47,17 +47,9 @@ exports.getNotifications = async ( req, res ) => {
         authUserID = req.session.authUser.userId;
     }
     if ( authUserID ){
-      let success =  notificationService.getNotifications( authUserID );
-      if ( success ){
-          res.set( "x-agora-message-title", "Success" );
-          res.set( "x-agora-message-detail", "Notifications received" );
-          res.status( 200 ).json( "Success" );
-      }
-      else {
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Notifications not received" );
-        res.set( "x-agora-message-title", "Not Found" );
-        res.set( "x-agora-message-detail", "Notifications not found" );
-        res.status( 400 ).json( message );
-      }
+      notificationService.getNotifications( authUserID ).then( ( notifications ) => {
+        res.setHeader( 'Content-Type', 'application/json' );
+        res.send( notifications );
+    })
     }
 }

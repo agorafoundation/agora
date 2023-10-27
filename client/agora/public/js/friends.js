@@ -1,3 +1,4 @@
+
 // Takes you to the adding friends page
 const addFriendPage = () => {
     window.location.href = "/add-friends";
@@ -8,7 +9,23 @@ const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
+var friends = new Set();
 
+
+/*
+addFriendsPage.addEventListener( 'load', getFriends = () => {
+    fetch( "api/v1/auth/friends/allFriends", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            for( i = 0; i < response.length; i++ ) {
+                if ()
+            }
+        })
+} );
+*/
 
 searchButton.addEventListener( 'click', queryUsers = () => {
     fetch( "api/v1/auth/user/username/" + userSearch.value, {
@@ -41,12 +58,16 @@ function createUserCard( userData ){
     var username = document.createElement("h5");
     username.id = userData.userId;
     username.innerText = userData.username;
+    var userProfile = document.createElement("img");
+    userProfile.src = userData.profile_filename;
+    userProfile.alt = "user's profile";
     var userContainer = document.createElement("div");
-    userContainer.id = "user-container" + userData.userId;
+    userContainer.id = "user-container-" + userData.userId;
     userContainer.style.display = "flex";
     userContainer.style.marginRight = "5px";
 
     cardBodyDiv.appendChild(username);
+    cardBodyDiv.appendChild(userProfile);
     cardDiv.appendChild(cardBodyDiv);
     columnDiv.appendChild(cardDiv);
     rowDiv.append(columnDiv);
@@ -59,7 +80,6 @@ function createUserCard( userData ){
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify ({
-            "requester_id": "",
             "recipient_id": userData.userId,
         })
     })

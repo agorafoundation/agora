@@ -45,6 +45,23 @@ exports.getActiveUserById = async function( req, res ) {
     } );
 };
 
+exports.getAuthUser = async function( req, res ) {
+    let authUserID;
+    res.setHeader( 'Content-Type', 'text/html' );
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ){
+        userService.getAuthUser( authUserID ).then( ( user ) => {
+            res.setHeader( 'Content-Type', 'application/json' );
+            res.send( user );
+        })
+    }
+}
+
 exports.verifyUsername = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
     var username = req.params.username;

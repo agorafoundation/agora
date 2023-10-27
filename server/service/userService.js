@@ -317,7 +317,25 @@ exports.getActiveUserById = async function( id ) {
 };
 
 
-
+exports.getAuthUser = async function ( userId ) {
+    let text = "SELECT * FROM users WHERE user_id = $1;";
+    values = [ userId ];
+    let user = [ ];
+    try {
+         
+        let res = await db.query( text, values );
+        
+        if( res.rows.length > 0 ) {
+            return User.ormUser(res.rows[0]);
+        }
+        else {
+            return false;
+        }
+    }
+    catch( e ) {
+        console.log( e.stack );
+    }
+}
 
 exports.getUserByUsername = async function( username ) {
     let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
