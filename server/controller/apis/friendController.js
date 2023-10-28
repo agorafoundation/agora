@@ -21,6 +21,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import services
 const friendService = require( '../../service/friendService' );
 const userService = require( '../../service/userService' );
+const productService = require ( '../../service/productService' );
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
@@ -159,6 +160,25 @@ exports.deleteFriendByID = async ( req, res ) => {
             res.set( "x-agora-message-detail", "Friend not found" );
             res.status( 400 ).json( message );
         }
+    }
+};
+
+exports.getFriends = async function ( req, res ) {
+
+    if( req.session.authUser ) {
+
+        const authUser = await userService.setUserSession( req.session.authUser.email );
+        req.session.authUser = null;
+        req.session.authUser = authUser;
+        res.locals.authUser = req.session.authUser;
+
+        const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
+
+        res.render( './friends/friends', { user: authUser, friends: userFriends} );
+        
+    }
+    else {
+        res.redirect( 303, '/signIn' );
     }
 };
 

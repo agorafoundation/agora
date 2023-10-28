@@ -140,6 +140,12 @@ const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
 
 /**
+ * User Friends routes
+ */
+const friendsRoutes = require( "./routes/friendsRoutes" );
+app.use( "/friends", friendsRoutes );
+
+/**
  * Topic / Main editor routes
  */
 const topicRoutes = require( "./routes/topicRoutes" );

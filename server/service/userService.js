@@ -326,7 +326,7 @@ exports.getAuthUser = async function ( userId ) {
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            return User.ormUser(res.rows[0]);
+            return User.ormUser( res.rows[0] );
         }
         else {
             return false;
@@ -335,7 +335,7 @@ exports.getAuthUser = async function ( userId ) {
     catch( e ) {
         console.log( e.stack );
     }
-}
+};
 
 exports.getUserByUsername = async function( username ) {
     let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
@@ -347,8 +347,8 @@ exports.getUserByUsername = async function( username ) {
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            for (i = 0; i < res.rows.length; i++){
-                users.push(User.ormUser(res.rows[i]));
+            for ( i = 0; i < res.rows.length; i++ ){
+                users.push( User.ormUser( res.rows[i] ) );
             }
             return users;
         }

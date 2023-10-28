@@ -34,12 +34,6 @@ router.route( '/tos' )
     }
     );
 
-router.route( '/friends' )
-    .get( ( req, res ) => {
-        res.render( 'friends/friends' );
-    }
-    );
-
 router.route( '/add-friends' )
     .get( ( req, res ) => {
         res.render( 'add-friends/add-friends' );

@@ -12,8 +12,8 @@ const db = require( '../db/connection' );
 const User = require( "../model/user" );
 const Event = require( '../model/event' );
 const notificationService = require( '../service/notificationService' );
-const { ormFriendship } = require('../model/friendship');
-const { ormFriendshipRequest } = require('../model/friendshipRequest');
+const { ormFriendship } = require( '../model/friendship' );
+const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
 //SQL queries
 
@@ -34,8 +34,8 @@ exports.getAllFriends = async ( userID ) => {
 
         let res = await db.query( text, values );
         if ( res.rows.length > 0 ){
-            for (i = 0; i < res.rows.length; i++){
-                friends.push(ormFriendship(res.rows[i]));
+            for ( let i = 0; i < res.rows.length; i++ ){
+                friends.push( ormFriendship( res.rows[i] ) );
             }
             return friends;
         }
@@ -59,7 +59,7 @@ exports.getFriendByID = async ( userID, friendID ) => {
     let values = [ userID, friendID ];
     try{
         let res = await db.query( text, values );
-        if ( res.rows.length > 0){
+        if ( res.rows.length > 0 ){
             return res.rows[0];
         }
         else{
@@ -83,8 +83,8 @@ exports.sendFriendRequest = async ( requesterID, recipientID ) => {
     try {
         let res = await db.query( text, values );
 
-        if ( res.rows.length > 0){
-            await notificationService.addNotification(recipientID, "You have received a friend request from " + requesterUsername);
+        if ( res.rows.length > 0 ){
+            await notificationService.addNotification( recipientID, "You have received a friend request from " + requesterUsername );
             return res.rows[0];
         }
         else{
@@ -107,9 +107,9 @@ exports.acceptFriendRequest = async ( requestID ) => {
         const requesterID = request.rows[0].requester_id;
         const recipientID = request.rows[0].recipient_id;
 
-         // This will fetch the person reciving the friendrequest for notification
-         const recipient = await db.query(`SELECT username FROM users WHERE user_id = $1`, [recipientID]);
-         const recipientUsername = recipient.rows[0].username;
+        // This will fetch the person reciving the friendrequest for notification
+        const recipient = await db.query( `SELECT username FROM users WHERE user_id = $1`, [ recipientID ] );
+        const recipientUsername = recipient.rows[0].username;
         
         // Insert into friendships table
         await db.query(
@@ -124,8 +124,8 @@ exports.acceptFriendRequest = async ( requestID ) => {
             [ requestID ]
         );
 
-         // Send a notification to the requester about the accepted friend request
-         await notificationService.addNotification(requesterID, "Your friend request has been accepted by " + recipientUsername);
+        // Send a notification to the requester about the accepted friend request
+        await notificationService.addNotification( requesterID, "Your friend request has been accepted by " + recipientUsername );
         return { success: true };
     }
     else {
@@ -147,13 +147,12 @@ exports.rejectFriendRequest = async ( requestID ) => {
 exports.deleteFriendByID = async ( userID, friendID ) => {
     let text = `DELETE FROM friendships 
     WHERE (initiatedby_id = $1 AND recipient_id = $2) 
-    OR (initiatedby_id = $2 AND recipient_id = $1)`
-    let values = [ userID, friendID ]
+    OR (initiatedby_id = $2 AND recipient_id = $1)`;
+    let values = [ userID, friendID ];
 
     try{
         let res = await db.query( text, values );
-        if (res.rows.length > 0)
-        {
+        if ( res.rows.length > 0 ) {
             return "Friend removed";
         }
         else{
@@ -171,7 +170,7 @@ exports.getUnreadFriendRequestCount = async ( userID ) => {
     let values = [ userID ];
     try{
         let res = await db.query( text, values );
-        if (res.rows.length > 0){
+        if ( res.rows.length > 0 ){
             return res.rows[0];
         }
         else{
@@ -184,17 +183,15 @@ exports.getUnreadFriendRequestCount = async ( userID ) => {
 };
 
 // Get details of unread friend requests for a user
-exports.getUnreadFriendRequests = async (userID) => {
+exports.getUnreadFriendRequests = async ( userID ) => {
     let text = 'SELECT request_id, requester_id, request_time FROM friendship_requests WHERE recipient_id = $1 ORDER BY request_time DESC';
     let values = [ userID ];
     let requests = [];
     try{
         let res = await db.query( text, values );
-        if (res.rows.length > 0)
-        {
-            for (i = 0; i < res.rows.length; i++)
-            {
-                requests.push(ormFriendshipRequest(res.rows[i]));
+        if ( res.rows.length > 0 ) {
+            for ( i = 0; i < res.rows.length; i++ ) {
+                requests.push( ormFriendshipRequest( res.rows[i] ) );
             }
             return requests;
         }
