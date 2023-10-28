@@ -34,12 +34,6 @@ router.route( '/tos' )
     }
     );
 
-router.route( '/add-friends' )
-    .get( ( req, res ) => {
-        res.render( 'add-friends/add-friends' );
-    }
-    );
-
 router.route( '/codebot' )
     .get( ( req, res ) => {
 

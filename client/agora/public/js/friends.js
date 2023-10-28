@@ -1,6 +1,6 @@
 // Takes you to the adding friends page
 const addFriendPage = () => {
-    window.location.href = "/add-friends";
+    window.location.href = "/friends/add-friends";
 };
 
 var displayedUsers = new Set();

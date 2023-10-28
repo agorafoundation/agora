@@ -12,12 +12,22 @@ var router = express.Router( );
 const friendsController = require( '../controller/apis/friendController' );
 
 /**
- * Show user profile
+ * Show friends page
  */
 router.route( '/' )
     .get( ( req, res ) => {
         friendsController.getFriends( req, res );
     }
     );
+
+/**
+ * Show add-friends page
+ */
+router.route( '/add-friends' )
+    .get( ( req, res ) => {
+        friendsController.getAddFriends( req, res );
+    }
+    );
+
 
 module.exports = router;

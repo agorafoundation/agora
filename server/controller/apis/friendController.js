@@ -163,6 +163,25 @@ exports.deleteFriendByID = async ( req, res ) => {
     }
 };
 
+exports.getAddFriends = async function ( req, res ) {
+
+    if( req.session.authUser ) {
+
+        const authUser = await userService.setUserSession( req.session.authUser.email );
+        req.session.authUser = null;
+        req.session.authUser = authUser;
+        res.locals.authUser = req.session.authUser;
+
+        const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
+        
+        res.render( './add-friends/add-friends', { user: authUser, friends: userFriends} );
+        
+    }
+    else {
+        res.redirect( 303, '/signIn' );
+    }
+};
+
 exports.getFriends = async function ( req, res ) {
 
     if( req.session.authUser ) {
