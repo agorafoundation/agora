@@ -12,6 +12,7 @@ const db = require( '../db/connection' );
 const User = require( "../model/user" );
 const Event = require( '../model/event' );
 const notificationService = require( '../service/notificationService' );
+const userService = require( '../../server/service/userService');
 const { ormFriendship } = require( '../model/friendship' );
 const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
@@ -52,6 +53,32 @@ exports.getAllFriends = async ( userID ) => {
     }
 };
 
+// Send a friend request
+exports.sendFriendRequest = async ( requesterID, recipientID ) => {
+
+    let text = `INSERT INTO friendship_requests (requester_id, recipient_id) 
+    VALUES ($1, $2)
+    RETURNING request_id`;
+    let values = [ requesterID, recipientID ];
+
+    try {
+        let res = await db.query( text, values );
+
+        if ( res.rows.length > 0 ){
+            let requesterUsername = await userService.getActiveUserById( requesterID );
+            await notificationService.addNotification( recipientID, "You have received a friend request from " + requesterUsername.username );
+            return res.rows[0];
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+/*
 // Get a specific friend by ID
 exports.getFriendByID = async ( userID, friendID ) => {
     let text = `SELECT * 
@@ -74,31 +101,7 @@ exports.getFriendByID = async ( userID, friendID ) => {
     }
     
 };
-
-// Send a friend request
-exports.sendFriendRequest = async ( requesterID, recipientID ) => {
-
-    let text = `INSERT INTO friendship_requests (requester_id, recipient_id) 
-    VALUES ($1, $2)
-    RETURNING request_id`;
-    let values = [ requesterID, recipientID ];
-
-    try {
-        let res = await db.query( text, values );
-
-        if ( res.rows.length > 0 ){
-            await notificationService.addNotification( recipientID, "You have received a friend request from " + requesterUsername );
-            return res.rows[0];
-        }
-        else{
-            return false;
-        }
-    }
-    catch ( e ) {
-        console.log( e.stack );
-    }
-};
-
+*/
 // Accept a friend request
 exports.acceptFriendRequest = async ( requestID ) => {
     const request = await db.query(
@@ -211,8 +214,9 @@ exports.getUnreadFriendRequests = async ( userID ) => {
         let res = await db.query( text, values );
         if ( res.rows.length > 0 ) {
             for ( let i = 0; i < res.rows.length; i++ ) {
-                requests.push( ormFriendshipRequest( res.rows[i] ) );
+                requests.push( res.rows[i] );
             }
+            console.log(requests);
             return requests;
         }
         else{
