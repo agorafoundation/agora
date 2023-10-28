@@ -28,7 +28,7 @@ addFriendsPage.addEventListener( 'load', getFriends = () => {
 */
 
 window.onload = getAuthUser = () => {
-    fetch( "api/v1/auth/user/getAuthUser", {
+    fetch( "/api/v1/auth/user/getAuthUser", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
@@ -39,7 +39,7 @@ window.onload = getAuthUser = () => {
 };
 
 searchButton.addEventListener( 'click', queryUsers = () => {
-    fetch( "api/v1/auth/user/username/" + userSearch.value, {
+    fetch( "/api/v1/auth/user/username/" + userSearch.value, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
@@ -86,7 +86,7 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click', sendFriendRequest = () => {
-        fetch( "api/v1/auth/friends/sendFriendRequest", {
+        fetch( "/api/v1/auth/friends/sendFriendRequest", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify ( {
