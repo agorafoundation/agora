@@ -81,7 +81,7 @@
                                 <!-- Friend Notification Box-->
                                 <div class="alert alert-info mt-3">
                                     <h3>Friend Requests</h3>
-                                    <p>You have <span id="friendRequestCount"><%= unreadFriendRequests.length %></span> new friend requests.</p>
+                                    <p>You have <span id="friendRequestCount"><%= nonFriends.length > 0 ? nonFriends.length : 0 %></span> new friend requests.</p>
                                     <button id="viewFriendRequests" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#friendRequestsModal">View Requests</button>
                                 </div>
 
@@ -95,14 +95,19 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <div class="modal-body">
-                                                <!-- For each friend request, you can use a loop to generate items -->
-                                                <!-- ----TODO----
-                                                    Call API and change to friend request controller 
-                                                    -->
-                                                   
-                                                <!-- Insert Javascript Example Code Here -->
-                                                
+                                            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                                                <!-- Loop through friend requests and generate items -->
+                                                <% nonFriends.forEach((friend) => { %>
+                                                    <div class="friend-request-item">
+                                                        <div class="requester-info">
+                                                            <span><strong><%= friend.friend_username %></strong> sent you a friend request.</span>
+                                                        </div>
+                                                        <div class="action-buttons">
+                                                            <button class="btn btn-success accept-friend-request" data-id="<%= friend.friend_id %>">Accept</button>
+                                                            <button class="btn btn-danger deny-friend-request" data-id="<%= friend.friend_id %>">Deny</button>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -266,14 +271,8 @@
         </div>
         <%- include('../partials/jsincludes'); %>
         <script>
-            /** @type {[]} */
-            //const unreadFriendRequests =( <%- JSON.stringify(unreadFriendRequests) %>);
             
-            //make html templates lis
-            const liTemplates = unreadFriendRequests.map(unreadReq=> `
-                <li>${unreadReq.username} ${unreadReq.email} <button>Approve</button> <button>Reject</button</li>
-            `
-            ).join('')
+
             // inject into modal body
             document.querySelector('.modal-body').innerHTML = liTemplates
         </script>

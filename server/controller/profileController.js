@@ -38,8 +38,6 @@ exports.getProfile = async function( req, res ) {
     
 };
 
-
-
 exports.manageProfile = async function ( req, res ) {
 
     if( req.session.authUser ) {
@@ -73,9 +71,9 @@ exports.manageProfile = async function ( req, res ) {
             delete req.session.messageBody;
         }
         
-        const unreadFriendRequests = await friendService.getUnreadFriendRequests( authUser.userId );
+        const unacceptedFriendRequests = await friendService.getUnacceptedFriendRequests( req.session.authUser.userId );
 
-        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, unreadFriendRequests } );
+        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, nonFriends: unacceptedFriendRequests } );
         
         
     }

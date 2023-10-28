@@ -163,6 +163,28 @@ exports.deleteFriendByID = async ( req, res ) => {
     }
 };
 
+exports.getUnacceptedFriendRequests = async ( req, res ) => {
+    let authUserID;
+    if ( req.user ){
+        authUserID = req.user.userId;
+    }
+    else if( req.session.authUser ){
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ){
+        let friends = await friendService.getUnacceptedFriendRequests( req.user.userId );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all non friends" );
+        res.status( 200 ).json( friends );
+    }
+    else {
+        const message = ApiMessage.getUnacceptedFriendRequests( 404, "Not Found", "Non friends not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Non friends not found" );
+        res.status( 400 ).json( message );
+    }
+};
+
 exports.getAddFriends = async function ( req, res ) {
 
     if( req.session.authUser ) {

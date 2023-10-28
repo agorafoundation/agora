@@ -26,8 +26,13 @@ router.route( '/' )
 router.route( '/add-friends' )
     .get( ( req, res ) => {
         friendsController.getAddFriends( req, res );
-    }
+    } 
     );
 
-
+router.route( '/add-friends/:userId' )
+    .post( async ( req, res ) => { 
+        friendsController.sendFriendRequest( req, res );
+    }
+    ); 
+    
 module.exports = router;

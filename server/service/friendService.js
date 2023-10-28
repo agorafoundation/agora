@@ -19,34 +19,37 @@ const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
 // Get all friends of a user
 exports.getAllFriends = async ( userID ) => {
-
-    let text = `SELECT CASE 
-                        WHEN initiatedby_id = $1 THEN recipient_id
-                        ELSE initiatedby_id
-                END AS friend_id
-                FROM friendships 
-                WHERE (initiatedby_id = $1 OR recipient_id = $1) 
-                AND status = 'accepted'`;
+    let text = `
+        SELECT 
+            u.first_name AS friend_first_name,
+            u.last_name AS friend_last_name,
+            u.username AS friend_username,
+            u.email AS friend_email
+        FROM agora.friendships AS f
+        JOIN agora.users AS u ON u.user_id = CASE
+            WHEN f.initiatedby_id = $1 THEN f.recipient_id
+            ELSE f.initiatedby_id
+        END
+        WHERE (f.initiatedby_id = $1 OR f.recipient_id = $1)
+            AND f.status = 'accepted'`;
     let values = [ userID ];
     let friends = [];
 
     try {
-
         let res = await db.query( text, values );
-        if ( res.rows.length > 0 ){
-            for ( let i = 0; i < res.rows.length; i++ ){
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 friends.push( ormFriendship( res.rows[i] ) );
             }
             return friends;
         }
-        else{
+        else {
             return false;
         }
     }
-    catch ( e ){
+    catch ( e ) {
         console.log( e.stack );
     }
-
 };
 
 // Get a specific friend by ID
@@ -164,23 +167,40 @@ exports.deleteFriendByID = async ( userID, friendID ) => {
     }
 };
 
-//Get the number of unread friend requests for a user 
-exports.getUnreadFriendRequestCount = async ( userID ) => {
-    let text = 'SELECT COUNT(*) FROM friendship_requests WHERE recipient_id = $1';
+// Get details of unaccepted friend requests for a user
+exports.getUnacceptedFriendRequests = async ( userID ) => {
+    let text = `SELECT 
+            u.first_name AS friend_first_name,
+            u.last_name AS friend_last_name,
+            u.username AS friend_username,
+            u.email AS friend_email
+        FROM agora.friendships AS f
+        JOIN agora.users AS u ON u.user_id = CASE
+            WHEN f.initiatedby_id = $1 THEN f.recipient_id
+            ELSE f.initiatedby_id
+        END
+        WHERE f.recipient_id = $1
+            AND f.status = 'pending'`; // Filter by pending status and recipient ID
     let values = [ userID ];
-    try{
+    let requests = [];
+        
+    try {
         let res = await db.query( text, values );
-        if ( res.rows.length > 0 ){
-            return res.rows[0];
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
+                requests.push( ormFriendship( res.rows[i] ) );
+            }
+            return requests;
         }
-        else{
+        else {
             return false;
         }
     }
-    catch ( e ){
+    catch ( e ) {
         console.log( e.stack );
     }
 };
+
 
 // Get details of unread friend requests for a user
 exports.getUnreadFriendRequests = async ( userID ) => {
@@ -190,7 +210,7 @@ exports.getUnreadFriendRequests = async ( userID ) => {
     try{
         let res = await db.query( text, values );
         if ( res.rows.length > 0 ) {
-            for ( i = 0; i < res.rows.length; i++ ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 requests.push( ormFriendshipRequest( res.rows[i] ) );
             }
             return requests;
@@ -204,3 +224,4 @@ exports.getUnreadFriendRequests = async ( userID ) => {
     }
     
 };
+
