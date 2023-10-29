@@ -177,13 +177,13 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
             u.last_name AS friend_last_name,
             u.username AS friend_username,
             u.email AS friend_email
-        FROM agora.friendships AS f
-        JOIN agora.users AS u ON u.user_id = CASE
+        FROM friendships AS f
+        JOIN users AS u ON u.user_id = CASE
             WHEN f.initiatedby_id = $1 THEN f.recipient_id
             ELSE f.initiatedby_id
         END
         WHERE f.recipient_id = $1
-            AND f.status = 'pending'`; // Filter by pending status and recipient ID
+            AND f.friendship_status = 'pending'`; // Filter by pending status and recipient ID
     let values = [ userID ];
     let requests = [];
         

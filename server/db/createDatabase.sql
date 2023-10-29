@@ -119,12 +119,14 @@ GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
 GRANT USAGE, SELECT ON SEQUENCE product_images_product_image_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
 
+CREATE TYPE status AS ENUM ('pending', 'accepted', 'rejected');
+
 -- Add Friendship table
-CREATE TABLE IF NOT EXISTS friendships (
+CREATE TABLE IF NOT EXISTS agora.friendships (
     friendship_id SERIAL PRIMARY KEY,
     initiatedby_id UUID NOT NULL REFERENCES users(user_id),
     recipient_id UUID NOT NULL REFERENCES users(user_id),
-    status friendship_status NOT NULL, -- Changed from Varchar to an Enum type. 
+    friendship_status status NOT NULL, -- Changed from Varchar to an Enum type. 
     created_time TIMESTAMP DEFAULT current_timestamp,
     UNIQUE (initiatedby_id, recipient_id)
 );
@@ -132,7 +134,7 @@ CREATE TABLE IF NOT EXISTS friendships (
 GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 
 --Friendship Request table
-CREATE TABLE IF NOT EXISTS friendship_requests (
+CREATE TABLE IF NOT EXISTS agora.friendship_requests (
     request_id SERIAL PRIMARY KEY,
     requester_id UUID NOT NULL REFERENCES users(user_id),
     recipient_id UUID NOT NULL REFERENCES users(user_id),
@@ -142,7 +144,7 @@ CREATE TABLE IF NOT EXISTS friendship_requests (
 GRANT ALL PRIVILEGES ON TABLE friendship_requests TO agora;
 
 -- Notifications table
-CREATE TABLE IF NOT EXISTS notifications (
+CREATE TABLE IF NOT EXISTS agora.notifications (
     notification_id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(user_id),
     message TEXT NOT NULL,
