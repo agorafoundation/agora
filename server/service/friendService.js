@@ -32,7 +32,7 @@ exports.getAllFriends = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE (f.initiatedby_id = $1 OR f.recipient_id = $1)
-            AND f.status = 'accepted'`;
+            AND f.friendship_status = 'accepted'`;
     let values = [ userID ];
     let friends = [];
 
@@ -119,7 +119,7 @@ exports.acceptFriendRequest = async ( requestID ) => {
         
         // Insert into friendships table
         await db.query(
-            `INSERT INTO friendships (initiatedby_id, recipient_id, status) 
+            `INSERT INTO friendships (initiatedby_id, recipient_id, friendship_status) 
              VALUES ($1, $2, 'accepted')`, 
             [ requesterID, recipientID ]
         );

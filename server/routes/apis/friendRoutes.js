@@ -32,6 +32,11 @@ router.route( '/request' )
         notificationController.getUnreadFriendRequests( req, res );
     } );
 
+router.route( '/unreadRequests' )
+    .get( async ( req, res ) => {
+        friendController.getUnacceptedFriendRequests( req, res );
+    });
+
 
 router.route( '/sendFriendRequest' )
     .post( async ( req, res ) => {

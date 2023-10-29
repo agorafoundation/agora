@@ -107,7 +107,7 @@ exports.sendFriendRequest = async ( req, res ) => {
 
 //Accepts the a friend request.
 exports.acceptFriendRequest = async ( req, res ) => {
-    let success = friendService.acceptFriendRequest( req.requestId );
+    let success = friendService.acceptFriendRequest( req.body.requestId );
     if ( success ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Friend Request Accepted" );
