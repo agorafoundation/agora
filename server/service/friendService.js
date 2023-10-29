@@ -207,7 +207,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
 
 // Get details of unread friend requests for a user
 exports.getUnreadFriendRequests = async ( userID ) => {
-    let text = 'SELECT request_id, requester_id, request_time FROM friendship_requests WHERE recipient_id = $1 ORDER BY request_time DESC';
+    let text = 'SELECT request_id, requester_id, recipient_id, request_time FROM friendship_requests WHERE recipient_id = $1 OR requester_id = $1 ORDER BY request_time DESC';
     let values = [ userID ];
     let requests = [];
     try{
@@ -216,7 +216,6 @@ exports.getUnreadFriendRequests = async ( userID ) => {
             for ( let i = 0; i < res.rows.length; i++ ) {
                 requests.push( res.rows[i] );
             }
-            console.log(requests);
             return requests;
         }
         else{

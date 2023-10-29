@@ -10,24 +10,25 @@ const friendsDashboard = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
 var friends = new Set();
 var authUser = [ ];
+var friends = [ ];
+var requests = [ ];
 
 
-/*
-addFriendsPage.addEventListener( 'load', getFriends = () => {
-    fetch( "api/v1/auth/friends/allFriends", {
+// gets the authenticated user, their friends and sent friend requests
+window.onload = getResources = () => {
+    
+    fetch( "/api/v1/auth/friends/allFriends", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-    } )
+    })
         .then( ( response ) => response.json() )
         .then( ( response ) => {
-            for( i = 0; i < response.length; i++ ) {
-                if ()
+            for( i = 0; i < response.length; i++)
+            {
+                friends.push( response[i] );
             }
-        })
-} );
-*/
-
-window.onload = getAuthUser = () => {
+        });
+    
     fetch( "/api/v1/auth/user/getAuthUser", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -36,8 +37,21 @@ window.onload = getAuthUser = () => {
         .then( ( response ) => {
             authUser.push( response );
         } );
+    
+    fetch( "/api/v1/auth/friends/request", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    })
+    .then( ( response ) => response.json() )
+    .then( ( response ) => {
+        for( j = 0; j < response.length; j++)
+        {
+            requests.push( response[j] );
+        }
+    })
 };
 
+// queries the users by username
 searchButton.addEventListener( 'click', queryUsers = () => {
     fetch( "/api/v1/auth/user/username/" + userSearch.value, {
         method: "GET",
@@ -48,7 +62,21 @@ searchButton.addEventListener( 'click', queryUsers = () => {
 
             for ( i = 0; i < response.length; i++ ) {
                 var data = response[i];
-                if ( !( displayedUsers.has( data.username ) ) && !( data.username == authUser[0].username ) ) {
+                var isFriend = false;
+                var isSentRequest = false;
+                for( j = 0; j < friends.length; j++ ){
+                    if ( data.username == friends[j].friend_username ){
+                        isFriend = true;
+                    }
+                }
+                for( k = 0; k < requests.length; k++ ){
+                    if( (data.userId == requests[k].recipient_id) ||
+                        ( data.userId == requests[k].requester_id ) ){
+                        isSentRequest =  true;
+                    }
+                }
+                if ( !( displayedUsers.has( data.username ) ) && 
+                !( data.username == authUser[0].username ) && !( isFriend ) && !( isSentRequest )) {
                     createUserCard( data );
                     displayedUsers.add( data.username );
                 }
@@ -56,6 +84,7 @@ searchButton.addEventListener( 'click', queryUsers = () => {
         } );
 } );
 
+// creates a user card for each user
 function createUserCard( userData ){
     var rowDiv = document.createElement( "div" );
     rowDiv.className = "row row-cols-1 row-cols-md-3 g-4";
@@ -86,6 +115,7 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click', sendFriendRequest = () => {
+        userContainer.style.display = "none";
         fetch( "/api/v1/auth/friends/sendFriendRequest", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
