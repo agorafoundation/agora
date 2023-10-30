@@ -1,14 +1,17 @@
 <div
-  class="modal fade agnes-modal-pos"
+  class="fade agnes-modal-pos"
   id="agnesModal"
   tabindex="-1"
   role="dialog"
   aria-labelledby="agnesModalLabel"
   aria-hidden="true"
   data-bs-backdrop="false"
+  data-bs-focus="false"
 >
   <div class="modal-dialog custom-modal" role="document">
-    <div class="modal-content discussion-modal-edges custom-background-color">
+    <div
+      class="modal-content discussion-modal-edges custom-background-color agnes-modal-shape"
+    >
       <div class="modal-header">
         <h5 class="modal-title text-center text-white" id="agnesModalLabel">
           Agnes
@@ -20,9 +23,10 @@
         <button
           type="button"
           class="btn-close"
-          data-bs-dismiss="modal"
           aria-label="Close"
           id="btn-remove-content"
+          data-bs-toggle="modal"
+          data-bs-target="#agnesModal"
         ></button>
       </div>
       <div class="modal-body text-center">
@@ -43,15 +47,13 @@
       </div>
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
-        <div class="container d-flex flex-column">
+        <div class="d-flex flex-column">
           <!-- Agnes Header Data -->
           <div
             id="citations-cont"
             class="p-3 bg-primary text-white citations-btns-container"
           >
-            <p class="citations-title">
-              Agness suggests the following articles
-            </p>
+            <p class="citations-title">Agnes suggests the following articles</p>
             <div class="btn-group btn-group-sm citations-btns">
               <button class="btn btn-secondary custom-radius">APA</button>
               <button class="btn btn-secondary custom-radius">MLA</button>
@@ -81,8 +83,9 @@
         <button
           type="button"
           class="btn btn-secondary"
-          data-bs-dismiss="modal"
           id="close-button"
+          data-bs-toggle="modal"
+          data-bs-target="#agnesModal"
         >
           Regenerate
           <span class="material-symbols-outlined ag-generate-icon">cached</span>

@@ -1706,24 +1706,3 @@ if ( document.getElementById( "workspace-desc" ) ) {
 }
 
 // The following javascript if for agnes (the AI feature of the applications)
-// JavaScript to handle the AI icon clicks and updating content
-
-document.getElementById( "notesButton" ).addEventListener( "click", function () {
-    document.getElementById( "selectedContent" ).classList.remove( "hidden" );
-} );
-
-document.getElementById( "paperButton" ).addEventListener( "click", function () {
-    document.getElementById( "selectedContent" ).classList.remove( "hidden" );
-} );
-
-document.getElementById( "close-button" ).addEventListener( "click", function () {
-    var modal = new bootstrap.Modal( document.getElementById( "agnesModal" ) );
-    modal.hide();
-} );
-
-document
-    .getElementById( "btn-remove-content" )
-    .addEventListener( "click", function () {
-        var modal = new bootstrap.Modal( document.getElementById( "agnesModal" ) );
-        modal.hide();
-    } );

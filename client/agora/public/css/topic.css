@@ -738,6 +738,17 @@
     top: -20px;
 }
 
+.agnes-modal-shape {
+    padding: 20px;
+    gap: 20px;
+}
+
+#agnesModal {
+    width: 300px;
+    overflow-y: auto;
+}
+
+
 #close-button {
     display: flex;
     align-items: center;
@@ -756,9 +767,17 @@
     margin-top: 0;
 }
 
+.modal-open {
+    overflow-y: auto !important;
+    padding-right: 0px !important;
+}
+
 .agnes-modal-pos {
-    left: 37%;
-    top: 37px;
+    right: 2vw;
+    top: 8vh;
+    display: none;
+    position: absolute;
+    z-index: 200; /* placing modal above all content on screen */
 }
 .text-center-mod {
     text-align: center;
@@ -770,19 +789,17 @@
 /* Custom modal size */
 .custom-modal {
     max-width: 350px;
-    width: 80%;
 }
 .custom-background-color {
     background-color: #818181;
 }
 .citations-btns-container {
     border-radius: 10px;
-    margin: 5px;
     background-color: #ffffff !important;
 }
 /* Custom CSS for citations buttons */
 .citations-btns {
-    gap: 8px;
+    gap: 2px;
     display: flex;
     justify-content: center;
     align-items: center;
