@@ -97,18 +97,22 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
-                                                <!-- Loop through friend requests and generate items -->
-                                                <% nonFriends.forEach((friend) => { %>
-                                                    <div class="friend-request-item">
-                                                        <div class="requester-info">
-                                                            <span><strong><%= friend.friend_username %></strong> sent you a friend request.</span>
+                                                <!-- Loop through friend requests and generate items if nonFriends is not empty -->
+                                                <% if (nonFriends && nonFriends.length > 0) { %>
+                                                    <% nonFriends.forEach((friend) => { %>
+                                                        <div class="friend-request-item">
+                                                            <div class="requester-info">
+                                                                <span><strong><%= friend.friend_username %></strong> sent you a friend request.</span>
+                                                            </div>
+                                                            <div class="action-buttons">
+                                                                <button class="btn btn-success accept-friend-request" data-id="<%= friend.friend_id %>">Accept</button>
+                                                                <button class="btn btn-danger deny-friend-request" data-id="<%= friend.friend_id %>">Deny</button>
+                                                            </div>
                                                         </div>
-                                                        <div class="action-buttons">
-                                                            <button class="btn btn-success accept-friend-request" data-id="<%= friend.friend_id %>">Accept</button>
-                                                            <button class="btn btn-danger deny-friend-request" data-id="<%= friend.friend_id %>">Deny</button>
-                                                        </div>
-                                                    </div>
-                                                <% }); %>
+                                                    <% }); %>
+                                                <% } else { %>
+                                                    <p>No friend requests at this time.</p>
+                                                <% } %>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
