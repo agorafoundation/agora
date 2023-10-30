@@ -225,6 +225,53 @@ exports.getFriends = async function ( req, res ) {
     }
 };
 
+
+// Get the count of unread friend requests for a user
+exports.getUnreadFriendRequestCount = async (req, res) => {
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ) {
+        let count = await friendService.getUnreadFriendRequestCount( authUserID );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Count received" );
+        res.status( 200 ).json( count );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No count found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No count found" );
+        res.status( 400 ).json( message );
+    }
+};
+
+// Get the details of unread friend requests for a user
+exports.getUnreadFriendRequests = async (req, res) => {
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    if ( authUserID ) {
+        let requests = await friendService.getUnreadFriendRequests( authUserID );
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Requests received" );
+        res.status( 200 ).json( requests );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "No requests found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "No requests found" );
+        res.status( 400 ).json( message );
+    }
+};
+
 /*
 // Get all friend requests sent to a user
 exports.getAllFriendRequests = async ( req, res ) => {

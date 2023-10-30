@@ -19,7 +19,18 @@ router.route( '/allFriends' )
     } );
 
 
+router.route( '/requestCount' )
+    .get( async ( req, res ) => {
+        friendController.getUnreadFriendRequestCount( req, res );
+    });
 
+
+// Route to handle sending friend requests
+router.route( '/request' )
+    // Get all pending friend requests for the user
+    .get( async ( req, res ) => {
+        friendController.getUnreadFriendRequests( req, res );
+    } );
 
 
 
