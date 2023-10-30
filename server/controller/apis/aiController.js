@@ -24,51 +24,59 @@ exports.callOpenAI = async ( req, res ) => {
     let resourceId = req.body.resourceId;
 
     let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
-    let parsedResourceContent = parseResourceContentHtml( resourceContent );
 
-    let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
-
-    // Wrap in a try catch so that the server doesn't crash when an error occurs
-    try {
-        let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+    if ( resourceContent ) {
+        let parsedResourceContent = parseResourceContentHtml( resourceContent );
     
-        const completion = await openai.createChatCompletion( {
-            model: "gpt-3.5-turbo",
-            temperature: 0, // variance in the response - play with this for different results
-            messages: [ 
-                { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
-                { role: "user", content: prompt }
-            ]
-        } );
-      
-        let returnValue = completion.data.choices[0];
-  
-        let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
-
-        let validatedCitations = validateSources( rawJson );
-        let keywords = rawJson["keywords"];
-
-        let newJsonObject = {
-            citations: validatedCitations, 
-            keywords: keywords
-        };
+        let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
+    
+        // Wrap in a try catch so that the server doesn't crash when an error occurs
+        try {
+            let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
         
-        res.set( "x-agora-message-title", "Success" );
-        res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-        res.status( 200 ).json( newJsonObject );
+            const completion = await openai.createChatCompletion( {
+                model: "gpt-3.5-turbo",
+                temperature: 0, // variance in the response - play with this for different results
+                messages: [ 
+                    { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
+                    { role: "user", content: prompt }
+                ]
+            } );
+          
+            let returnValue = completion.data.choices[0];
+      
+            let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+    
+            let validatedCitations = validateSources( rawJson );
+            let keywords = rawJson["keywords"];
+    
+            let newJsonObject = {
+                citations: validatedCitations, 
+                keywords: keywords
+            };
+            
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned response from OpenAI" );
+            res.status( 200 ).json( newJsonObject );
+        } 
+        catch {
+            res.set( "x-agora-message-title", "Error" );
+            res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
+            res.status( 500 ).json( "" );
+    
+        }
     } 
-    catch {
+    else {
         res.set( "x-agora-message-title", "Error" );
-        res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
+        res.set( "x-agora-message-detail", "Failed to get resource" );
         res.status( 500 ).json( "" );
-
     }
 };
 
 // helper logic
 
 function createPaperPrompt( abstract ) {
-    return `I am writing a paper on assessing the use of generative large language models to provide assistance identifying supporting literature for research. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in JSON format with the following fields: sourceTitle, sourceAuthors, sourcePublication, sourcePublicationDate, sourceLink, sourceSummary.
+    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in JSON format with the following fields: sourceTitle, sourceAuthors, sourcePublication, sourcePublicationDate, sourceLink, sourceSummary.
 
             Abstract of the paper I'm writing:
             '''
@@ -134,10 +142,18 @@ const verifyTitleWithSemanticScholar = ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
         fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}` ).then( response => response.json() ).then( data => {
-            return data.data[0].title.toLowerCase() === title.toLowerCase();
+            console.log( data );
+
+            try {
+                return data.data[0].title.toLowerCase() === title.toLowerCase();
+            } 
+            catch ( e ) {
+                // Do nothing because there is nothing left if data[0] is null or undefined
+                console.log( e );
+            }
         } );
     }
-    catch {
-        console.log( "There was an error in validating the title with Semantic Scholar" );
+    catch ( e ) {
+        console.log( "There was an error in validating the title with Semantic Scholar: " + e );
     }
 };
