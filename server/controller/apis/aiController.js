@@ -55,8 +55,6 @@ exports.callOpenAI = async ( req, res ) => {
                 keywords: keywords
             }; */
 
-            console.log( returnValue.message.content );
-            
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned response from OpenAI" );
             res.status( 200 ).json( JSON.parse( returnValue.message.content ) );
