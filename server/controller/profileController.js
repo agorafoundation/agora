@@ -71,7 +71,7 @@ exports.manageProfile = async function ( req, res ) {
             delete req.session.messageBody;
         }
         
-        const unacceptedFriendRequests = await friendService.getUnacceptedFriendRequests( req.session.authUser.userId );
+        const unacceptedFriendRequests = await friendService.getUnacceptedFriendRequests( authUser.userId );
 
         res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, nonFriends: unacceptedFriendRequests } );
         

@@ -12,7 +12,7 @@ const db = require( '../db/connection' );
 const User = require( "../model/user" );
 const Event = require( '../model/event' );
 const notificationService = require( '../service/notificationService' );
-const userService = require( '../../server/service/userService');
+const userService = require( '../../server/service/userService' );
 const { ormFriendship } = require( '../model/friendship' );
 const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
@@ -32,7 +32,7 @@ exports.getAllFriends = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE (f.initiatedby_id = $1 OR f.recipient_id = $1)
-            AND f.friendship_status = 'accepted'`;
+            AND f.status = 'accepted'`;
     let values = [ userID ];
     let friends = [];
 
@@ -183,7 +183,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE f.recipient_id = $1
-            AND f.friendship_status = 'pending'`; // Filter by pending status and recipient ID
+            AND f.status = 'pending'`; // Filter by pending status and recipient ID
     let values = [ userID ];
     let requests = [];
         
