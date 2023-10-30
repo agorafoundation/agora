@@ -140,6 +140,12 @@ const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
 
 /**
+ * User Shared Dashboard
+ */
+const dashboardSharedRoutes = require( "./routes/dashboardSharedRoutes" );
+app.use( "/dashboardShared", dashboardSharedRoutes );
+
+/**
  * Topic / Main editor routes
  */
 const topicRoutes = require( "./routes/topicRoutes" );

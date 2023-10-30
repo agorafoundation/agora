@@ -26,7 +26,7 @@ exports.getDashboard = async function (req, res) {
     // get all the workspaces for the user.
     let ownerWorkspaces = await workspaceService.getSharedWorkspaces(req.session.authUser.userId, false);
     // get all the topics for this owner
-    let ownerTopics = await topicService.getAllTopicsForOwner(req.session.authUser.userId, true);
+    let ownerTopics = await topicService.getAllTopicsForOwner(ownerWorkspaces.ownedBy, true);
     // start the available topics out with the full owner topic set
     let availableTopics = ownerTopics;
 
