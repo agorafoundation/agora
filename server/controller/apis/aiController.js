@@ -141,19 +141,23 @@ const validateSources = ( json ) => {
 const verifyTitleWithSemanticScholar = ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
-        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}` ).then( response => response.json() ).then( data => {
-            console.log( data );
-
-            try {
-                return data.data[0].title.toLowerCase() === title.toLowerCase();
-            } 
-            catch ( e ) {
-                // Do nothing because there is nothing left if data[0] is null or undefined
-                console.log( e );
+        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}`, {
+            headers: {
+                'x-api-key': process.env.SEMANTIC_SCHOLAR_API_KEY
+            }
+        } ).then( response => response.json() ).then( json => {
+            if ( json.data ) {
+                console.log( json.data );
+                return json.data[0].title.toLowerCase().indexOf( title.toLowerCase() ) >= 0;
+            }
+            else {
+                return false;
             }
         } );
     }
     catch ( e ) {
         console.log( "There was an error in validating the title with Semantic Scholar: " + e );
     }
+
+    return false;
 };
