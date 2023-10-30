@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <%- include('../partials/head'); %>
+        <link rel="stylesheet" href="/css/notification.css">
     </head>
     <body id="page-top">
         <!-- Navigation-->
@@ -118,6 +119,8 @@
                             </div>
                             <div class="col-lg-5">
                                 
+                                <div class="profile-image-wrapper" style="position: relative;"></div>
+                                
                                 <%
                                 if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
                                     %>
@@ -129,6 +132,8 @@
                                     <%
                                 }
                                 %>
+                                <span class="notification-count" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px;">0</span>
+                            </div>
                                 
                                 <%- include('../partials/message'); %>
     
