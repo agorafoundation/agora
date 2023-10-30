@@ -97,7 +97,6 @@
                                             </div>
                                             <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
                                                 <!-- Loop through friend requests and generate items if nonFriends is not empty -->
-                                                <%- console.log('nonFriends:', nonFriends) %>
                                                 <% if (nonFriends && nonFriends.length > 0) { %>
                                                     <% nonFriends.forEach((friend) => { %>
                                                         <div class="friend-request-item">
@@ -111,7 +110,7 @@
                                                         </div>
                                                     <% }); %>
                                                 <% } else { %>
-                                                    <p>No friend requests available.</p>
+                                                    <p>No friend requests at this time.</p>
                                                 <% } %>
                                             </div>
                                             <div class="modal-footer">
