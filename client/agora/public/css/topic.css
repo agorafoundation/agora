@@ -777,7 +777,7 @@
     top: 8vh;
     display: none;
     position: absolute;
-    z-index: 200; /* placing modal above all content on screen */
+    z-index: 200; 
 }
 .text-center-mod {
     text-align: center;
@@ -814,3 +814,42 @@
     color: #3f3f3f !important;
     text-align: center;
 }
+
+/* Card CSS */
+
+.card {
+    background-color: grey;
+    margin-top: 20px;
+    padding: 10px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.card-row-header {
+  background-color: grey ;
+  margin-bottom: 0px !important;
+}
+
+.card-close-btn {
+  background-color: inherit; 
+  border: none; 
+}
+
+.card-row-body {
+    margin-bottom: 5px;
+}
+
+.card-cite-btn{
+    background-color: black;
+    border-radius: 10px;
+    border: none;
+    color: white;
+}
+
+.card-cite-btn:hover{
+    background-color: red;
+}
+
+.card-citation-text {
+    font-size: 14px;
+} 
