@@ -45,7 +45,7 @@ exports.callOpenAI = async ( req, res ) => {
           
             let returnValue = completion.data.choices[0];
       
-            let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+            /* let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
     
             let validatedCitations = validateSources( rawJson );
             let keywords = rawJson["keywords"];
@@ -53,13 +53,15 @@ exports.callOpenAI = async ( req, res ) => {
             let newJsonObject = {
                 citations: validatedCitations, 
                 keywords: keywords
-            };
+            }; */
+
+            console.log( returnValue.message.content );
             
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-            res.status( 200 ).json( newJsonObject );
+            res.status( 200 ).json( JSON.parse( returnValue.message.content ) );
         } 
-        catch {
+        catch ( e ) {
             res.set( "x-agora-message-title", "Error" );
             res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
             res.status( 500 ).json( "" );
@@ -121,11 +123,20 @@ const validateSources = ( json ) => {
     for ( let i = 0; i < citations.length; i++ ) {
         let citation = citations[i];
 
-        let verified = verifyTitleWithSemanticScholar( citation.title );
+        let paper = querySemanticScholar( citation.title );
         
+        console.log( paper );
         // If the title doesn't exist in Semantic Scholar, then delete it from the object.
-        if ( verified == false ) {
+        if ( paper.title !== citation.title ) {
             delete citations[i];
+            /*
+            citation.title = paper.title;
+            citation.authors = paper.authors;
+            citation.year = ( paper.year != null ) ? paper.year : citation.year;
+            citation.link = paper.url;
+
+            citations[i] = citation;
+            */
         }
     }
 
@@ -133,31 +144,26 @@ const validateSources = ( json ) => {
 };
 
 /**
- * Verifies an exact title with Semantic Scholar.
+ * Queries a paper with an exact title from Semantic Scholar.
  * 
  * @param {string} title The title of the article from OpenAI.
  * @param {number} limit The number of results to pull from SemanticScholar.
  */
-const verifyTitleWithSemanticScholar = ( title, limit = 1 ) => {
+const querySemanticScholar = ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
-        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}`, {
+        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}&fields=title,authors,year,url`, {
             headers: {
                 'x-api-key': process.env.SEMANTIC_SCHOLAR_API_KEY
             }
         } ).then( response => response.json() ).then( json => {
             if ( json.data ) {
                 console.log( json.data );
-                return json.data[0].title.toLowerCase().indexOf( title.toLowerCase() ) >= 0;
-            }
-            else {
-                return false;
+                return json.data[0];
             }
         } );
     }
     catch ( e ) {
         console.log( "There was an error in validating the title with Semantic Scholar: " + e );
     }
-
-    return false;
 };
