@@ -9,24 +9,34 @@ function SharedEntity() {
     this.sharedEntityId = -1;
     this.entityId = -1;
     this.entityType = -1;
-    this.shareUserId = -1;
-    this.ownerUserId = -1;
+    this.sharedByUserId = null;  // changed from shareUserId
+    this.sharedWithUserId = null;  // changed from ownerUserId
     this.permissionLevel = -1;
     this.canCopy = false;
+    
+    //Todo Add these to the DB table 
+    this.createTime = null;   
+    this.updateTime = null;  
 }
+
+//Added createTime and UpdateTime to show when a workspace was shared with someone. 
 
 exports.emptySharedEntity = () => {
     return new SharedEntity();
 };
 
+
+//Orm is middleman between the program and database. 
 exports.ormSharedEntity = function ( row ) {
     let sharedEntity = exports.emptySharedEntity();
     sharedEntity.sharedEntityId = row.shared_entity_id;
     sharedEntity.entityId = row.entity_id;
     sharedEntity.entityType = row.entity_type;
-    sharedEntity.shareUserId = row.share_user_id;
-    sharedEntity.ownerUserId = row.owner_user_id;
+    sharedEntity.sharedByUserId = row.shared_by_user_id;  
+    sharedEntity.sharedWithUserId = row.shared_with_user_id;  
     sharedEntity.permissionLevel = row.permission_level;
     sharedEntity.canCopy = row.can_copy;
+    sharedEntity.createTime = row.create_time;  // added
+    sharedEntity.updateTime = row.update_time;  // added
     return sharedEntity;
 };
