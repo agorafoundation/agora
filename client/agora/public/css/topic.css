@@ -794,8 +794,12 @@
     background-color: #818181;
 }
 .citations-btns-container {
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #ffffff !important;
+}
+
+#whole-container {
+    margin-top: 5px;
 }
 /* Custom CSS for citations buttons */
 .citations-btns {
@@ -813,21 +817,22 @@
 .citations-title {
     color: #3f3f3f !important;
     text-align: center;
+    font-size: smaller;
 }
 
 /* Card CSS */
 
 .citation-card {
     background-color: grey;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 5px;
+    padding: 5px;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .all-cards {
     overflow-y: scroll;
-    height: 150px;
+    height: 200px;
 }
 
 .card-row-header {
@@ -841,7 +846,7 @@
 }
 
 .card-row-body {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .card-cite-btn{
@@ -852,9 +857,10 @@
 }
 
 .card-cite-btn:hover{
-    background-color: red;
+    background-color: #b8b8b8;
 }
 
 .card-citation-text {
-    font-size: 14px;
+    font-size: 12px;
+
 } 
