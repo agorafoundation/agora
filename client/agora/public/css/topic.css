@@ -825,6 +825,11 @@
     border-radius: 10px;
 }
 
+.all-cards {
+    overflow-y: scroll;
+    height: 150px;
+}
+
 .card-row-header {
   background-color: grey ;
   margin-bottom: 0px !important;
