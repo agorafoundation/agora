@@ -56,9 +56,8 @@ exports.getAllFriends = async ( userID ) => {
 // Send a friend request
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
-    let text = `INSERT INTO friendship_requests (requester_id, recipient_id) 
-    VALUES ($1, $2)
-    RETURNING request_id`;
+    let text = `INSERT INTO friendships (requester_id, recipient_id) 
+    VALUES ($1, $2)`;
     let values = [ requesterID, recipientID ];
 
     try {
@@ -102,6 +101,44 @@ exports.getFriendByID = async ( userID, friendID ) => {
     
 };
 */
+
+// Accept a friend request
+exports.acceptFriendRequest_v1 = async ( requestID ) => {
+    const request = await db.query(
+        `SELECT * FROM friendships WHERE request_id = $1`, 
+        [ requestID ]
+    );
+
+    if ( request.rows.length > 0 ) {
+        const requesterID = request.rows[0].requester_id;
+        const recipientID = request.rows[0].recipient_id;
+
+        // This will fetch the person reciving the friendrequest for notification
+        const recipient = await db.query( `SELECT username FROM users WHERE user_id = $1`, [ recipientID ] );
+        const recipientUsername = recipient.rows[0].username;
+        
+        // Insert into friendships table
+        await db.query(
+            `INSERT INTO friendships (initiatedby_id, recipient_id, friendship_status) 
+             VALUES ($1, $2, 'accepted')`, 
+            [ requesterID, recipientID ]
+        );
+        
+        // Delete the request from friendship_requests table
+        await db.query(
+            `DELETE FROM friendship_requests WHERE request_id = $1`, 
+            [ requestID ]
+        );
+
+        // Send a notification to the requester about the accepted friend request
+        await notificationService.addNotification( requesterID, "Your friend request has been accepted by " + recipientUsername );
+        return { success: true };
+    }
+    else {
+        return { error: "Friend request not found." };
+    }
+};
+
 // Accept a friend request
 exports.acceptFriendRequest = async ( requestID ) => {
     const request = await db.query(

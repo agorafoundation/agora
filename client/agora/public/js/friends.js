@@ -8,6 +8,8 @@ const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
 const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
+const acceptRequestButton = document.getElementById( 'btn-accept-request' );
+const denyRequestButton = document.getElementById( 'btn-deny-request' );
 var friends = new Set();
 var authUser = [ ];
 var friends = [ ];
@@ -20,14 +22,13 @@ window.onload = getResources = () => {
     fetch( "/api/v1/auth/friends/allFriends", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-    })
+    } )
         .then( ( response ) => response.json() )
         .then( ( response ) => {
-            for( i = 0; i < response.length; i++)
-            {
+            for( i = 0; i < response.length; i++ ) {
                 friends.push( response[i] );
             }
-        });
+        } );
     
     fetch( "/api/v1/auth/user/getAuthUser", {
         method: "GET",
@@ -41,14 +42,13 @@ window.onload = getResources = () => {
     fetch( "/api/v1/auth/friends/request", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-    })
-    .then( ( response ) => response.json() )
-    .then( ( response ) => {
-        for( j = 0; j < response.length; j++)
-        {
-            requests.push( response[j] );
-        }
-    })
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            for( j = 0; j < response.length; j++ ) {
+                requests.push( response[j] );
+            }
+        } );
 };
 
 // queries the users by username
@@ -70,19 +70,75 @@ searchButton.addEventListener( 'click', queryUsers = () => {
                     }
                 }
                 for( k = 0; k < requests.length; k++ ){
-                    if( (data.userId == requests[k].recipient_id) ||
+                    if( ( data.userId == requests[k].recipient_id ) ||
                         ( data.userId == requests[k].requester_id ) ){
                         isSentRequest =  true;
                     }
                 }
                 if ( !( displayedUsers.has( data.username ) ) && 
-                !( data.username == authUser[0].username ) && !( isFriend ) && !( isSentRequest )) {
+                !( data.username == authUser[0].username ) && !( isFriend ) && !( isSentRequest ) ) {
                     createUserCard( data );
                     displayedUsers.add( data.username );
                 }
             }
         } );
 } );
+
+
+acceptRequestButton.addEventListener( 'click', acceptFriendRequest = () => {
+    fetch( "/api/v1/auth/user/getAuthUser", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( authUser ) => {
+            authUser.push( response );
+        } );
+
+    fetch( "/api/v1/auth/profile/acceptFriendRequest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify ( {
+            "username": response.username
+        } )
+    } ); 
+} );
+
+acceptRequestButton.addEventListener( 'click', () => {
+    // First, fetch the authenticated user
+    fetch( '/api/v1/auth/user/getAuthUser', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( authUser ) => {
+            // Once you have the authenticated user, make the accept friend request POST request
+            fetch( '/api/v1/auth/profile/acceptRequest/' + authUser.userId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify( {
+                    username: 'friend_username_here', // Replace with the actual friend's username
+                } ),
+            } )
+                .then( ( response ) => response.json() )
+                .then( ( data ) => {
+                    // Handle the response here, e.g., display a success message
+                    console.log( 'Friend request accepted:', data );
+                } );
+        } );
+} );
+
+denyRequestButton.addEventListener( 'click', denyFriendRequest = () => {
+    fetch( "/api/v1/auth/profile/denyFriendRequest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify ( {
+            "username": userData.username
+        } )
+    } ); 
+} );
+
+
 
 // creates a user card for each user
 function createUserCard( userData ){
@@ -131,38 +187,38 @@ function createUserCard( userData ){
 
 /*
 // Event listener for "Accept" and "Deny" buttons within the modal
-friendRequestsModal.addEventListener( 'click', ( event ) => {
-    if ( event.target.classList.contains( 'accept-friend-request' ) ) {
-        const requestId = event.target.getAttribute( 'data-id' );
-        fetch( `/api/acceptFriendRequest/${requestId}`, {
-            method: 'POST',
-        } )
-            .then( ( response ) => {
-                if ( response.ok ) {
-                // Update the UI as needed (e.g., remove the request item)
-                    event.target.closest( '.friend-request-item' ).remove();
-                }
-            } )
-            .catch( ( error ) => {
-                console.error( 'Error accepting friend request:', error );
-            } );
-    }
-    else if ( event.target.classList.contains( 'deny-friend-request' ) ) {
-        const requestId = event.target.getAttribute( 'data-id' );
-        // Handle the "Deny" action here (e.g., send a request to deny the friend request).
-        // You can use AJAX to communicate with the server.
-        fetch( `/api/rejectFriendRequest/${requestId}`, {
-            method: 'POST',
-        } )
-            .then( ( response ) => {
-                if ( response.ok ) {
-                // Update the UI as needed (e.g., remove the request item)
-                    event.target.closest( '.friend-request-item' ).remove();
-                }
-            } )
-            .catch( ( error ) => {
-                console.error( 'Error denying friend request:', error );
-            } );
-    }
-} );
+// friendRequestsModal.addEventListener( 'click', ( event ) => {
+//     if ( event.target.classList.contains( 'accept-friend-request' ) ) {
+//         const requestId = event.target.getAttribute( 'data-id' );
+//         fetch( `/api/acceptFriendRequest/${requestId}`, {
+//             method: 'POST',
+//         } )
+//             .then( ( response ) => {
+//                 if ( response.ok ) {
+//                 // Update the UI as needed (e.g., remove the request item)
+//                     event.target.closest( '.friend-request-item' ).remove();
+//                 }
+//             } )
+//             .catch( ( error ) => {
+//                 console.error( 'Error accepting friend request:', error );
+//             } );
+//     }
+//     else if ( event.target.classList.contains( 'deny-friend-request' ) ) {
+//         const requestId = event.target.getAttribute( 'data-id' );
+//         // Handle the "Deny" action here (e.g., send a request to deny the friend request).
+//         // You can use AJAX to communicate with the server.
+//         fetch( `/api/rejectFriendRequest/${requestId}`, {
+//             method: 'POST',
+//         } )
+//             .then( ( response ) => {
+//                 if ( response.ok ) {
+//                 // Update the UI as needed (e.g., remove the request item)
+//                     event.target.closest( '.friend-request-item' ).remove();
+//                 }
+//             } )
+//             .catch( ( error ) => {
+//                 console.error( 'Error denying friend request:', error );
+//             } );
+//     }
+// } );
 */

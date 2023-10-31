@@ -10,6 +10,7 @@ var router = express.Router( );
  
 // controllers
 const profileController = require( '../controller/profileController' );
+const friendsController = require( '../controller/api/friendController' );
 
 /**
  * Show user profile
@@ -28,5 +29,17 @@ router.route( '/manageProfile' )
         profileController.manageProfile( req, res );
     }
     );
+
+router.route( '/manageProfile/acceptRequest/:userId' )
+    .post( async ( req, res ) => { 
+        friendsController.acceptFriendRequest_v1( req, res );
+    }
+    ); 
+
+router.route( '/manageProfile/denyRequest/:userId' )
+    .post( async ( req, res ) => { 
+        friendsController.denyFriendRequest_v1( req, res );
+    }
+    ); 
 
 module.exports = router;

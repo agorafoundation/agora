@@ -22,7 +22,7 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 const friendService = require( '../../service/friendService' );
 const userService = require( '../../service/userService' );
 const productService = require ( '../../service/productService' );
-const notificationService = require( '../../service/notificationService');
+const notificationService = require( '../../service/notificationService' );
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
@@ -73,6 +73,7 @@ exports.getFriendByID = async ( req, res ) => {
     }
 };
 */
+
 //Sends a friend request.
 exports.sendFriendRequest = async ( req, res ) => {
     let authUserID;
@@ -94,6 +95,70 @@ exports.sendFriendRequest = async ( req, res ) => {
 
             // Add a Notification after a user 
             const message = "You have received a new friend request from " + req.user.username;  
+            await notificationService.addNotification( friendUsername, message );
+        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "User not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "User not found" );
+        res.status( 400 ).json( message );
+    }
+};
+
+//Sends a friend request.
+exports.acceptFriendRequest_v1 = async ( req, res ) => {
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    //Checks if user exists.
+    let friendUsername = userService.verifyUsername( req.body.username );
+    if ( friendUsername ) {
+        let friend = await userService.getUserByUsername( req.body.username );
+        let request = friendService.acceptFriendRequest_v1( authUserID, friend[0].userId );
+        if ( request ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Friend Request Accepted" );
+            res.status( 201 ).json( "Success" );
+
+            // Add a Notification after a user 
+            const message = "Youre " + req.user.username;  
+            await notificationService.addNotification( friendUsername, message );
+        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "User not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "User not found" );
+        res.status( 400 ).json( message );
+    }
+};
+
+//Sends a friend request.
+exports.denyFriendRequest_v1 = async ( req, res ) => {
+    let authUserID;
+    if ( req.user ) {
+        authUserID = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserID = req.session.authUser.userId;
+    }
+    //Checks if user exists.
+    let friendUsername = userService.verifyUsername( req.body.username );
+    if ( friendUsername ) {
+        let friend = await userService.getUserByUsername( req.body.username );
+        let request = friendService.denyFriendRequest_v1( authUserID, friend[0].userId );
+        if ( request ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Friend Request Denied" );
+            res.status( 201 ).json( "Success" );
+
+            // Add a Notification after a user 
+            const message = "You have denied the friend request from " + req.user.username;  
             await notificationService.addNotification( friendUsername, message );
         }
     }
@@ -227,7 +292,7 @@ exports.getFriends = async function ( req, res ) {
 
 
 // Get the count of unread friend requests for a user
-exports.getUnreadFriendRequestCount = async (req, res) => {
+exports.getUnreadFriendRequestCount = async ( req, res ) => {
     let authUserID;
     if ( req.user ) {
         authUserID = req.user.userId;
@@ -250,7 +315,7 @@ exports.getUnreadFriendRequestCount = async (req, res) => {
 };
 
 // Get the details of unread friend requests for a user
-exports.getUnreadFriendRequests = async (req, res) => {
+exports.getUnreadFriendRequests = async ( req, res ) => {
     let authUserID;
     if ( req.user ) {
         authUserID = req.user.userId;
