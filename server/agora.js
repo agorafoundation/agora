@@ -14,8 +14,7 @@ require( "dotenv" ).config();
 
 // manage parsing json from body of the request
 const bodyParser = require( "body-parser" );
-// library that allows us to hook responses in the middleware
-//const responseHooks = require( "express-response-hooks" );
+
 var path = require( "path" );
 
 app.use(
@@ -24,7 +23,12 @@ app.use(
     } )
 );
 app.use( bodyParser.json() );
-//app.use( responseHooks() );
+
+
+// library that allows us to hook responses in the middleware
+const responseHooks = require( "express-response-hooks" );
+
+app.use( responseHooks() );
 
 
 // cross origin
