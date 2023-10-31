@@ -13,14 +13,14 @@ const fs = require( 'fs' );
 let path = require( 'path' );
 
 // setup json body parser
-const bodyParser = require( 'body-parser');
+const bodyParser = require( 'body-parser' );
 router.use( bodyParser.urlencoded( {
     extended: true
 } ) );
 router.use( bodyParser.json() );
 
 // controllers
-const dashboardController = require('../controller/dashboardController');
+const dashboardController = require( '../controller/dashboardController' );
 
 /**
  * Pre Route
@@ -47,9 +47,9 @@ router.use( function ( req, res, next ) {
 /**
  * Show main dashboard route
  */
-router.route('/')
-    .get((req, res) => {
-        dashboardController.getDashboard(req, res);
+router.route( '/' )
+    .get( ( req, res ) => {
+        dashboardController.getDashboard( req, res );
     }
     );
 
