@@ -815,6 +815,10 @@
     text-align: center;
 }
 
+#citations-dropdown {
+  margin-bottom: 10px;
+}
+
 /* Card CSS */
 
 .citation-card {

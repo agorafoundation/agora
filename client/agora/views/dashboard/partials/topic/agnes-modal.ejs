@@ -47,6 +47,19 @@
       </div>
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
+        <!-- Citation Dropdown -->
+
+        <select
+          name="citation-types"
+          class="form-select form-select-sm"
+          id="citations-dropdown"
+          autocomplete="off"
+        >
+          <option value="apa" selected>APA</option>
+          <option value="mla">MLA</option>
+          <option value="harvard">Harvard</option>
+          <option value="chicago">Chicago</option>
+        </select>
         <div class="d-flex flex-column">
           <!-- Agnes Header Data -->
           <div
@@ -54,14 +67,6 @@
             class="p-3 bg-primary text-white citations-btns-container"
           >
             <p class="citations-title">Agnes suggests the following articles</p>
-
-            <!-- Citation Dropdown -->
-            <select id="citations-dropdown" autocomplete="off">
-              <option value="apa" selected>APA</option>
-              <option value="mla">MLA</option>
-              <option value="harvard">Harvard</option>
-              <option value="chicago">Chicago</option>
-            </select>
 
             <div class="all-cards">
               <div class="container citation-card">
