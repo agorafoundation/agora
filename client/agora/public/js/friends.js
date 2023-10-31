@@ -120,7 +120,8 @@ function createUserCard( userData ){
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify ( {
-                "username": userData.username
+                "username": userData.username,
+                "userId": userData.userId
             } )
         } ); 
     } );
