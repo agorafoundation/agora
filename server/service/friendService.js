@@ -56,9 +56,8 @@ exports.getAllFriends = async ( userID ) => {
 // Send a friend request
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
-    let text = `INSERT INTO friendships (requester_id, recipient_id) 
-    VALUES ($1, $2)`;
-    let values = [ requesterID, recipientID ];
+    let text = 'INSERT INTO friendships (initiatedby_id, recipient_id, status) VALUES ($1, $2, $3);';
+    let values = [ requesterID, recipientID, 'pending' ];
 
     try {
         let res = await db.query( text, values );
@@ -219,7 +218,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
             WHEN f.initiatedby_id = $1 THEN f.recipient_id
             ELSE f.initiatedby_id
         END
-        WHERE f.recipient_id = $1
+        WHERE f.recipient_id = $1 
             AND f.status = 'pending'`; // Filter by pending status and recipient ID
     let values = [ userID ];
     let requests = [];
@@ -244,7 +243,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
 
 // Get details of unread friend requests for a user
 exports.getUnreadFriendRequests = async ( userID ) => {
-    let text = 'SELECT request_id, requester_id, recipient_id, request_time FROM friendship_requests WHERE recipient_id = $1 OR requester_id = $1 ORDER BY request_time DESC';
+    let text = `SELECT initiatedby_id, recipient_id FROM friendships WHERE recipient_id = $1 OR initiatedby_id = $1 AND status = 'pending'`;
     let values = [ userID ];
     let requests = [];
     try{
