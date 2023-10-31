@@ -52,6 +52,23 @@ router.use( function ( req, res, next ) {
                 // user is authorized!
                 req.user = user;
 
+                // Hook the send function so that we can append the user to the body
+                res.hooks.on( 'send', ( args ) => {
+                    let responseJson = JSON.parse( args );
+
+                    // authenticated user object - add anything you need here
+                    let authUser = { 
+                        userId: user['userId'], 
+                        firstName: user['firstName'], 
+                        lastName: user['lastName'], 
+                        email: user['email'] 
+                    };
+
+                    responseJson['authUser'] = authUser;
+
+                    args[0] = JSON.stringify( responseJson ); // need to stringify it because args wants a string. Otherwise it sends [object Object]
+                } );
+
                 // TODO future role specific verification can go here.
 
                 // Middleware complete back to called route.

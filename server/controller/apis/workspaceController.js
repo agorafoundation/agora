@@ -37,12 +37,12 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
-    console.log( '1' );
     let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
-    console.log( '2' );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    } );
 };
 
 //get shared workspaces
@@ -70,7 +70,9 @@ exports.getWorkspaceById = async ( req, res ) => {
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
-            res.status( 200 ).json( workspace );
+            res.status( 200 ).json( {
+                results: workspace
+            } );
         }
         else {
             const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
