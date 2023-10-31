@@ -147,7 +147,7 @@ app.use( "/dashboard", dashboardRoutes );
  * User Shared Dashboard
  */
 const dashboardSharedRoutes = require( "./routes/dashboardSharedRoutes" );
-app.use( "/dashboardShared", dashboardSharedRoutes );
+app.use( "/dashboard-shared", dashboardSharedRoutes );
 
 /**
  * Topic / Main editor routes
