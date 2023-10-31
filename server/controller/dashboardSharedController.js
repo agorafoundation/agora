@@ -23,7 +23,7 @@ exports.getDashboard = async function ( req, res ) {
 
     let workspaceId = req.params.workspaceId;
 
-    // get all the workspaces for the user.
+    // get all the shared workspaces for the user.
     let sharedWorkspaces = await workspaceService.getSharedWorkspaces( req.session.authUser.userId, false );
     // get all the topics for this owner
     let ownerTopics = await topicService.getAllTopicsForOwner( sharedWorkspaces.ownedBy, true );
