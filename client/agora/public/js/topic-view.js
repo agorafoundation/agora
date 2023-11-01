@@ -724,7 +724,7 @@ const createSunEditor = async() => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "200px",
+        minHeight: "40vh",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
         katex: katex, 
@@ -1091,7 +1091,9 @@ const openTopicModal = document.getElementById( "open-topic-modal-div" );
 // open the modal
 if( openBtn ) {
     openBtn.onclick = () => {
-        modal.style.display = "block";
+        //modal.style.display = "block";
+        createTopic();
+        createTextArea();
     };
 }
 

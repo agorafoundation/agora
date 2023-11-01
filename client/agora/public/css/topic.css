@@ -114,6 +114,10 @@
     font-size: 40px;
 }
 
+#new-element:hover {
+   background-color: #AE7A0B; 
+}
+
 .descriptionTA {
     resize: none;
     height: 30px;
