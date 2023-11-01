@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head'); %>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg text-uppercase fixed-top" id="mainNav">
+            <%- include('./partials/nomenu'); %>
+        </nav>
+
+
+        <!-- About Section-->
+        <content>
+            <section class="page-section main-content mt-3 masthead-jr" id="signin">
+                <div class="text-left mt-4">
+                    <div id="story1" class="row justify-content-left">
+                        <div class="col-lg-7">
+                            <script async src="/js/orcid-widget-signup.js"></script>
+                            <div id="orcidWidget" data-size='lg' 
+                                data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='' 
+                                data-redirecturi='http://148.100.138.190:4200/user/orcid'></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </content>
+        
+        
+
+        <!-- Footer-->
+        <%- include('./partials/footer'); %>
+        <!-- Copyright Section-->
+        <%- include('./partials/copyright'); %>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+
+        <%- include('./partials/jsincludes'); %>
+    </body>
+</html>

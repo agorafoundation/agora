@@ -164,7 +164,7 @@
 	}
 
 	function showAuthButton($){
-		$('<a id="orcidAuthButton" href=' + buildReturnUrl() + '><img src="https://orcid.org/sites/default/files/images/orcid_24x24.png" />Sign In with ORCID iD</a>').appendTo(elementId);
+		$('<a id="orcidAuthButton" href=' + buildReturnUrl() + '><img src="https://orcid.org/sites/default/files/images/orcid_24x24.png" />Join with your ORCID iD</a>').appendTo(elementId);
 	}
 
 	function showError($){
@@ -214,7 +214,7 @@
 		}
 
 		$.ajax({
-			url: "/orcid-auth",
+			url: "/user/orcid",
 			type: "POST",
 			data: JSON.stringify(
 				{

@@ -37,6 +37,14 @@ router.route( '/google' )
         userController.googleSignUp( req, res );
     } );
 
+router.route( '/orcid' )
+    .get( async ( req, res ) => {
+        await userController.orcidSignUpPassthrough( req, res );
+    })
+    .post(async (req, res) => {
+        await userController.orcidSignUp(req, res);
+    });
+
 router.route( '/' )
     .patch( async function( req, res ) {
         userController.updateUser( req, res );

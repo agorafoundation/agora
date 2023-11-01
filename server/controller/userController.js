@@ -15,6 +15,102 @@ const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
 const IMAGE_PATH = process.env.AVATAR_IMAGE_PATH;
 
+exports.orcidSignUpPassthrough = async function(req, res) {
+    if (!res.headersSent) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+    res.render( 'orcid-signuploading' );
+} 
+
+exports.orcidSignUp = async function( req, res ) {
+    if (!res.headersSent) {
+        res.setHeader("Content-Type", "application/json; charset=utf-8")
+    }
+    
+
+    // TODO: Get email from ORCID user record
+    const orcidID =  "0000-0003-4863-649X"; // req.body.orcidId.replace('https://sandbox.orcid.org/', '');
+
+    const apiUrl = `/v3.0/${orcidID}/email`;
+
+    let xmlString = '';
+
+    const http = require("https");
+
+    const options = {
+    "method": "GET",
+    "hostname": "pub.sandbox.orcid.org",
+    "port": null,
+    "path": apiUrl,
+    "headers": {
+        "Accept": "*/*",
+    }
+    };
+
+    const HTTPreq = http.request(options, function (HTTPres) {
+        const chunks = [];
+
+        HTTPres.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        HTTPres.on("end", function () {
+            const body = Buffer.concat(chunks);
+            //console.log(body.toString());
+            xmlString = body.toString();
+
+            const { DOMParser } = require('xmldom');
+
+            // Parse the XML string
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+            // Get all email elements
+            var emailElements = xmlDoc.getElementsByTagName("email:email");
+
+            for (var i = 0; i < emailElements.length; i++) {
+                var emailElement = emailElements[i];
+                var email = getEmailAddress(emailElement);
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                if (emailPattern.test(email)){
+                    createOrcidAccount(email);
+                    break;
+                }
+            }
+
+            
+            function getEmailAddress(emailElement) {
+                var emailNodes = emailElement.childNodes;
+                for (var i = 0; i < emailNodes.length; i++) {
+                    var node = emailNodes[i];
+                    if (node.nodeType === 3) { // Text node
+                        return node.textContent.trim();
+                    }
+                }
+                return null;
+            }
+        });
+    });
+
+    async function createOrcidAccount(primaryEmail) {
+        const userid = req.body.orcidGivenName;
+
+        let profileImage = 'profile-default.png';
+        
+        // randomly generate a 7 character extesion
+        const extension = createRandomExtension( 7 );
+        const usename = req.body.orcidGivenName + "-" + extension;
+
+        createUser(primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, true);                
+    }
+
+    HTTPreq.end();
+    
+    //res.end(JSON.stringify({"redirect": "/about"}))
+
+
+};
+
 const { OAuth2Client } = require( 'google-auth-library' );
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -173,7 +269,9 @@ const createUser = async function( email, username, firstName, lastName, passwor
                     }
                 }
                 else {
-                    res.redirect( 307, "/google-auth" );
+                    //res.render("user-signup", {message: "Login with orcid"} );
+                    res.end(JSON.stringify({"redirect": "/signin"}))
+                    //res.redirect( 307, "/google-auth" );
                     
                 }
                     

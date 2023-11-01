@@ -16,6 +16,9 @@ const deviceDetector = new DeviceDetector();
 // services
 const userService = require( '../service/userService' );
 
+//const userController = require( '../controller/userController' );
+const userController = require('./userController');
+
 /**
  * Main authenication method for all Basic Auth API requests
  * @param {User Email} email 
@@ -63,7 +66,7 @@ exports.basicAuth = async ( email, password, req ) => {
                     }
 
                     return user;
-                } 
+                }
                 else {
                     return false;
                 }
@@ -139,15 +142,128 @@ exports.googleSignIn = async function( req, res ) {
 };
 
 
-exports.orcidSignIn = async function( req, res ) {
-    res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+exports.orcidPassthrough = async function(req, res) {
+    if (!res.headersSent) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      }
+    res.render( 'orcid-loading' );
+}
 
+exports.orcidSignIn = async function(req, res) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8")
+    //console.log("orcidSignIn: " + JSON.stringify(req.body));
+
+    // TODO: Get email from ORCID user record
+    const orcidID =  "0000-0003-4863-649X"; // req.body.orcidId.replace('https://sandbox.orcid.org/', '');
+
+    const apiUrl = `/v3.0/${orcidID}/email`;
+
+    let xmlString = '';
+
+    const http = require("https");
+
+    const options = {
+    "method": "GET",
+    "hostname": "pub.sandbox.orcid.org",
+    "port": null,
+    "path": apiUrl,
+    "headers": {
+        "Accept": "*/*",
+    }
+    };
+
+    const HTTPreq = http.request(options, function (HTTPres) {
+        const chunks = [];
+
+        HTTPres.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        HTTPres.on("end", function () {
+            const body = Buffer.concat(chunks);
+            //console.log(body.toString());
+            xmlString = body.toString();
+
+            const { DOMParser } = require('xmldom');
+
+            // Parse the XML string
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+            // Get all email elements
+            var emailElements = xmlDoc.getElementsByTagName("email:email");
+
+            for (var i = 0; i < emailElements.length; i++) {
+                var emailElement = emailElements[i];
+                var email = getEmailAddress(emailElement);
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                if (emailPattern.test(email)){
+                    loginOrcidAccount(email);
+                    break;
+                }
+            }
+
+            
+            function getEmailAddress(emailElement) {
+                var emailNodes = emailElement.childNodes;
+                for (var i = 0; i < emailNodes.length; i++) {
+                    var node = emailNodes[i];
+                    if (node.nodeType === 3) { // Text node
+                        return node.textContent.trim();
+                    }
+                }
+                return null;
+            }
+        });
+    });
+
+    HTTPreq.end();
+
+    //console.log("----------------------------------------------------------------------------------------------------------------")
+
+    async function loginOrcidAccount(primaryEamil) {
+        //console.log("loginOrcidAccount: " + primaryEamil);
+        const userid = req.body.orcidGivenName;
+
+        let user = await userService.getUserByEmail( primaryEamil );
+        //console.log("user: " + JSON.stringify(user));
+        
+
+        if (user)  {
+            req.session.isAuth = true;
+            req.body.signInEmail = primaryEamil;
+            await signIn( req, res );
+
+            if( req.session.authUser.emailValidated ) {
+                console.log( "3" );
+                //res.redirect( 303, '/dashboard' );
+                res.end(JSON.stringify({"redirect": "/dashboard"}))
+            }
+            else {
+                console.log( "4" );
+                req.session.messageType = "info";
+                req.session.messageTitle = "Email not verified!";
+                req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
+                res.redirect( 303, '/dashboard' );
+            }
+        }
+        else {
+            console.log( "5" );
+            req.session.messageType = "info";
+            req.session.messageTitle = "User Account Not Found";
+            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
+            res.end(JSON.stringify({"redirect": "/dashboard"}))
+        }
+        
+        
+
+    }
+
+   
     
-    const currentURL = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-    console.log(currentURL);
-    
-    res.render( 'sign-in' );
-    
+    //res.end(JSON.stringify({"redirect": "/about"}))
+    //res.redirect( 303, '/about' );
+    //await signIn(req, res);
 };
 
 /**
@@ -203,6 +319,7 @@ const signIn = async function( req, res ) {
         
     }
     else {
+        console.log( "User does not have an authorized role!" );
         res.render( 'sign-in', {
             redirect: req.query.redirect,
             passwordMessage: "You are not authorized!"} );
@@ -309,6 +426,70 @@ exports.verifyEmailWithToken = async function( req, res ) {
     }
     else {
         res.redirect( 303, '/userError' );
+    }
+};
+
+exports.passwordSignIn = async function( req, res ) {
+    res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+    
+    if( req && req.body ) {
+        if( req.body.signInEmail || req.body.siPassword ) {
+            
+            let user = await userService.getUserByEmail( req.body.signInEmail );
+            
+            // decision on email
+            if( user ) {
+                // perform password check
+                //let passCheck = await userService.checkPassword(user.email, req.body.siPassword);
+
+                req.session.isAuth = await userService.checkPassword( user.email, req.body.siPassword );
+
+                // decision on password
+                if( req.session.isAuth ) {
+                    //console.log( "0" );
+                    await signIn( req, res );
+                    //console.log( "1" );
+                    console.log( "redirect: " + req.query.redirect );
+        
+                    if( req.query.redirect ) {
+                        //console.log( "2" );
+                        res.redirect( 303, req.query.redirect );
+                    }
+                    else if( req.session.authUser.emailValidated ) {
+                        //console.log( "3" );
+                        res.redirect( 303, '/dashboard' );
+                    }
+                    else {
+                        //console.log( "4" );
+                        req.session.messageType = "info";
+                        req.session.messageTitle = "Email not verified!";
+                        req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
+                        res.redirect( 303, '/dashboard' );
+                    }
+
+                }
+                else {
+                    if( req.query.redirect ) {
+                        res.render( 'sign-in', {
+                            redirect: req.query.redirect,
+                            passwordMessage: "Incorrect Username / Password!"} );
+                    }
+                    else {
+                        res.render( 'sign-in', {passwordMessage: "Incorrect Username / Password!"} );
+                    }
+                }
+            }
+            else {
+                if( req.query.redirect ) {
+                    res.render( 'sign-in', {
+                        redirect: req.query.redirect,
+                        passwordMessage: "Incorrect Username / Password!"} );
+                }
+                else {
+                    res.render( 'sign-in', {passwordMessage: "Incorrect Username / Password!"} );
+                }
+            }
+        }
     }
 };
 

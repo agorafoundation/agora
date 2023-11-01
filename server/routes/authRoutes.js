@@ -10,9 +10,6 @@ var router = express.Router( );
 
 // controllers
 const authController = require( '../controller/authController' );
-const passport = require('passport');
-
-
 
 router.route( '/google-auth' )
     .post( async ( req, res ) => {
@@ -20,23 +17,14 @@ router.route( '/google-auth' )
         await authController.googleSignIn( req, res );
         // Use the googleUser information to authenticate the user
 
-    } );
+    });
 
 router.route( '/orcid-auth' )
     .get( async ( req, res ) => {
-        await authController.orcidSignIn( req, res );
-        //passport.authenticate('orcid');
-    }
-    );
-    
-router.route( '/orcid-auth/callback' )
-    .get( async ( req, res ) => {
-        passport.authenticate('orcid', {
-            successRedirect: '/dashboard',
-            failureRedirect: '/signIn'
-          });
-
-        // await authController.orcidSignIn( req, res );
+        await authController.orcidPassthrough( req, res );
+    })
+    .post(async (req, res) => {
+        await authController.orcidSignIn(req, res);
     }
     );
 

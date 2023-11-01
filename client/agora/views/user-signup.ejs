@@ -73,6 +73,19 @@
                                     <%
                                 }
                                 %>
+                                <%
+                                if( process.env.ORCID_AUTHENTICATION === 'true' ) {
+                                    %>
+                                    
+                                    <script async src="/js/orcid-widget-signup.js"></script>
+                                    <div id="orcidWidget" data-size='lg' 
+                                        data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='' 
+                                        data-redirecturi='http://148.100.138.190:4200/user/orcid'></div>
+                                
+                                    <%
+
+                                }
+                                %>
                                 
                                 <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95"
                                     style="height:70%" />
