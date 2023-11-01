@@ -716,7 +716,7 @@ exports.logUserSession = async function( userId, ipAddress, device ) {
 
     try {
          
-        let response = await db.query( text, values );
+        await db.query( text, values );
         return true;
     }
     catch( e ) {

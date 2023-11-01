@@ -92,7 +92,7 @@ exports.getSearchResults = async ( term, userId, type = "all" ) => {
 exports.getUsersByTerm = async ( term, userId ) => {
     //db query
     const text = `
-        SELECT id,username,first_name,last_name 
+        SELECT user_id,username,first_name,last_name 
         FROM users
         WHERE username ILIKE '%' || $1 || '%'
         OR first_name ILIKE '%' || $1 || '%'
@@ -186,7 +186,7 @@ exports.getTopicsByTerm = async ( term, userId ) => {
 exports.getWorkspaceByTerm = async ( term, userId ) => {
     const text = `
         SELECT *
-        FROM resources 
+        FROM workspaces 
         WHERE workspace_name ILIKE '%' || $1 || '%' 
         OR workspace_description ILIKE '%' || $1 || '%'
         AND owned_by = $2

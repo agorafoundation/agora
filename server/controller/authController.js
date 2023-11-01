@@ -311,7 +311,7 @@ const signIn = async function( req, res ) {
 
             // log the data
             if( user && device ) {
-                userService.logUserSession( user.userId, ip, device );
+                await userService.logUserSession( user.userId, ip, device );
 
             }
         }
