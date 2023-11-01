@@ -155,3 +155,38 @@ exports.saveCopiedEntity = async ( req, res ) => {
         res.status( 404 ).json( message );
     }
 };
+
+
+exports.shareWorkspace = async ( req, res ) => {
+    if ( req.body.entityId && req.body.ownerUserId && req.body.shareUserId ) {
+        const workspace = await workspaceService.getWorkspaceById( req.body.entityId );
+        
+        // Sending success message with the original workspace data
+        res.set( "x-agora-message-title", "Success" );
+        if( workspace ) {
+            res.set( "x-agora-message-title", "Sucess" );
+            res.set( "x-agora-message-detail", "Returned workspace by id" );
+            res.status( 200 ).json( workspace );
+
+            workspace.workspaceId = -1;
+            workspace.ownedBy = req.body.shareUserId;
+            await workspaceService.saveWorkspace( workspace );
+        } 
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Workspace not found :("
+            );
+            res.set( "x-agora-message-title", "Not found" );
+            res.set( "x-agora-message-detail", "workspace not found" );
+            res.status( 404 ).json( message );
+        }
+    } 
+    else { 
+        //For debugging
+        console.log( "Please provide req.body.entityId && req.body.ownerUserId && req.body.shareUserId" );
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found. Please provide req.body.entityId && req.body.ownerUserId && req.body.shareUserId" );
+        //Setting response headers 
+        res.set( "x-agora-message-title", "Not Found");
+        res.set( "x-agora-message-detail", "Workspace not found" );
+        res.status( 404 ).json( message );
+    }
+};
