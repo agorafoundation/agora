@@ -820,6 +820,15 @@
     font-size: smaller;
 }
 
+.citation-types-label {
+  color: #ffffff;
+  font-size: 0.8rem;
+}
+
+#citations-dropdown {
+  margin-bottom: 10px;
+}
+
 /* Card CSS */
 
 .citation-card {
