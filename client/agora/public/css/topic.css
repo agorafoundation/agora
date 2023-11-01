@@ -784,7 +784,10 @@
     justify-content: space-around;
 }
 .content-margin-bottom {
-    margin-top: 20px;
+    margin-top: 1px;
+}
+.content-margin-top {
+    margin-top: 1px;
 }
 /* Custom modal size */
 .custom-modal {
@@ -797,9 +800,8 @@
     border-radius: 5px;
     background-color: #ffffff !important;
 }
-
-#whole-container {
-    margin-top: 5px;
+.modal-footer {
+    padding-top: 5px;
 }
 /* Custom CSS for citations buttons */
 .citations-btns {
@@ -823,6 +825,7 @@
 .citation-types-label {
   color: #ffffff;
   font-size: 0.8rem;
+  margin-top: 0px;
 }
 
 #citations-dropdown {
