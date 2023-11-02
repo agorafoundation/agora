@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body id="page-top" class="dashboard-content">
+
+    <!-- Gallery View-->
+    <%- include('./side-menu/side-menu.ejs'); %> 
+    <%- include('./partials/gallery/note-gallery.ejs') %>
+    <!-- Legacy About Section-->
+    <section class="page-section-top-padded mb-0" id="about">
+      <div class="container navbar-interior font-weight-bold text-primary right-of-bar">
+        
+        <%- include('../partials/message'); %> 
+        
+      </div>
+
+      <div class="container right-of-bar">
+        <div class="divider-custom"></div>
+          
+        <div class="text-left mt-4">
+          <div id="story1" class="row justify-content-left"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+    <%- include('../partials/jsincludes'); %>
+  </body>
+</html>

@@ -125,7 +125,6 @@ exports.acceptFriendRequest = async ( req, res ) => {
 
 //Sends a friend request.
 exports.denyFriendRequest = async ( req, res ) => {
-
     let request = friendService.denyFriendRequest( req.body.friendship_id );
     if ( request ) {
         res.set( "x-agora-message-title", "Success" );

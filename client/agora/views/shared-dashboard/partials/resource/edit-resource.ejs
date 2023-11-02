@@ -1,0 +1,175 @@
+<div class="modal fade" id="create-resource-modal" tabindex="-1" role="dialog" aria-labelledby="create-resource-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="create-resource-modal-label">Create a new resource:</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+            <section>
+                <% if(!!locals.message){ %>
+                    <div class="alert-message alert-message-warning" role="alert">
+                        <h3 ><%= message %></h3>
+                        <p><%= message2 %></p>
+                    </div>
+                <% } 
+                
+                if(resource) {
+                    %>
+                    <form action="/dashboard/resource" id='dashboardResourceForm' enctype="multipart/form-data" method="POST">
+                        <div class="form-group">
+                            <input type="hidden" name="resourceId" id="resourceId" value="<%- resource.resourceId %>" />
+                            <input type="hidden" name="resourceModified" id="resourceModified" value="false" />
+                            <div class="form-row">
+                                <div class="col-sm-2 my-1">
+                                    <!-- Image -->
+
+                                    <div class="drop-zone">
+                                        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                                        <input type="file" name="resourceImageField" class="drop-zone__input" />
+                                    </div>
+
+                                </div>
+                                <div class="col my-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <!-- Type -->
+                                            <select name="resourceType" id="resourceType" class="form-control form-control-lg">
+                                                <%
+                                                if(resource.resourceType === 1) {
+                                                    %>
+                                                    <option value="1" selected>Editor</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="1">Editor</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.resourceType === 2) {
+                                                    %>
+                                                    <option value="2" selected>Link Only</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="2">Link Only</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.resourceType === 3) {
+                                                    %>
+                                                    <option value="3" selected>Embed HTML (Including iFrames)</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="3">Embed HTML (Including iFrames)</option>
+                                                    <%
+                                                }
+                                                %>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <!-- Visibility -->
+                                            <select name="visibility" id="resourceVisibility" class="form-control form-control-lg">
+                                                <%
+                                                if(resource.visibility === 'private') {
+                                                    %>
+                                                    <option value="0" selected>Private</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="0">Private</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(resource.visibility === 'public') {
+                                                    %>
+                                                    <option value="2" selected>Public</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="2">Public</option>
+                                                    <%
+                                                }
+                                                %>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                           &nbsp; <input type="input" class="form-control form-control-lg" name="resourceName" value="<%- resource.resourceName %>" id="resourceName" placeholder="Title" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="additionalMetadataHeader">
+                                <svg class="centered" id="expansionArrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="IconChangeColor" height="24" width="24"><path d="M19,20H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Zm-7.71-2.29a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l4-4a1,1,0,0,0-1.42-1.42L13,14.59V3a1,1,0,0,0-2,0V14.59l-2.29-2.3a1,1,0,1,0-1.42,1.42Z" id="mainIconPathAttribute" stroke-width="1.1" stroke="#000000" fill="#000000" filter="url(#shadow)"></path><filter id="shadow"><feDropShadow id="shadowValue" stdDeviation=".5" dx="0" dy="0" flood-color="black"></feDropShadow></filter></svg>
+                                <svg class="centered" id="expansionArrowUp" style="display:none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24" transform="rotate(180)"><path d="M19,20H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Zm-7.71-2.29a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l4-4a1,1,0,0,0-1.42-1.42L13,14.59V3a1,1,0,0,0-2,0V14.59l-2.29-2.3a1,1,0,1,0-1.42,1.42Z" stroke-width="1.1" stroke="#000000" fill="#000000" filter="url(#shadow2)"></path><filter id="shadow2"><feDropShadow stdDeviation=".5" dx="0" dy="0" flood-color="black"></feDropShadow></filter></svg>
+
+                            </div>
+                            
+                            <!-- Additional Resource metadata - Description / Requried / Active - Hidden by default -->
+                            <div id="additionalMetadata" style="display:none">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="row">
+                                            <div class="col">
+                                                Required? <input type="checkbox" class="" id="isRequired" name="isRequired" <%- (resource.isRequired)?'checked':'' %> />
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                Active: <input type="checkbox" class="" id="resourceActive" name="resourceActive" <%- (resource.active)?'checked':'' %> />
+                                            </div>
+                                        </div>
+                                        
+                                    
+                                    </div>
+                                    <div class="col">
+                                        <textarea class="form-control form-control-lg" name="resourceDescription" value="<%- resource.resourceDescription %>" id="resourceDescription" placeholder="Description"></textarea>
+                                    </div>
+                                </div>
+                                    
+                                    
+                                
+                            </div>
+                            <hr />
+                            <textarea id="resourceEditor" name="resourceEditor"><%- resource.resourceContentHtml %></textarea>
+
+                            <textarea name="embedded_submission_text_resource" id="embedded_submission_text_resource" rows="6" cols="75" ><%- resource.resourceContentHtml %></textarea><br />
+                            <input type="input" class="form-control form-control-lg" name="resourceLink" value="<%- resource.resourceLink %>" id="resourceLink" placeholder="Link">
+
+
+                            
+                            <br />
+                            <br />
+                            
+                            
+
+                        </div>
+                        <button type="submit" id="resourceButton" class="btn btn-primary btn-lg btn-block">Save Resource</button>
+                    </form>
+                    <%
+                }
+                
+                %>
+
+            </section>
+
+        </div>
+      </div>
+    </div>
+</div>

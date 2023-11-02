@@ -1,0 +1,26 @@
+<div class="modal fade" id="rename-modal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" id="rename-header">
+        <h5 class="rename-label">Name:</h5>
+        <input type="text" class="rename-input form-control card-desc" id="note-modal-name" onclick="this.select()"/>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group" id="rename-header">
+            <label for="message-text" class="desc-label">Desc:</label>
+            <textarea class="form-control card-desc" id="note-modal-description" onclick="this.select()" style="margin-left: 17px; width: 100%; overflow: hidden;"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeRenameModal()">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="save-name">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>

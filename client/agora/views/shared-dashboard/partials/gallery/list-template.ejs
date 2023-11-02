@@ -1,0 +1,71 @@
+<% const showTags=(tags) => {
+    for(let i=0; i < tags.length; i++) { %>
+        <span class="badge badge-primary topic-badge">
+          <%= tags[i]%>
+        </span>
+    <% }
+} %>
+
+<% //name:string, description:string, tags:array, content:array %>
+    <% const renderListCard=(id,name,desc,tags,contentType, content)=> { 
+        name = name.slice(0,18)
+      if(desc){
+        desc = desc.slice(0,180)
+      }
+      if (contentType === "Topic") { %>
+
+        <!--Topic List Member -->
+        <li class="list-group-item list-view view-check a-topic" id="t-lv-<%= id %>" onclick="topicReroute(id, false)">
+            <span id="t-lv-card-title-<%= id %>"><%=name%></span>
+            <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
+            <span class="badge badge-med topic-badge" style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
+            <span class="trigger1 trigger2" id="t-lv-option-<%= id %>">
+                <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+                <span class="list-view-dropbtn">
+                    <%- include('./dropdown.ejs'); %>
+                </span>
+            </span>
+        </li>
+            
+      <% } else if (contentType === "Workspace") { %>
+
+        <!--Workspace List Member-->
+        <li class="list-group-item list-view view-check a-workspace" id="w-lv-<%= id %>" onclick="topicReroute(id, false)">
+            <span id="w-lv-card-title-<%= id %>"><%=name%></span>
+            <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;"><%=contentType%></span>
+            <span class="badge badge-med topic-badge" style="position: absolute; left: 45.7%"><% showTags(tags) %></span>
+            <span class="trigger1 trigger2" id="w-lv-option-<%= id %>">
+                <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+                <span class="list-view-dropbtn">
+                    <%- include('./dropdown.ejs'); %>
+                </span>
+            </span>
+        </li>
+    <% }
+}%>
+</div>
+
+<!--List Display-->
+<div id="list-container" style="display: none">
+    <ul class="list-group list-group-flush" style="margin-top: 5%" id="list-column">
+        <li class="list-group-item" style="font-weight: bold;">
+            <span>Name</span>
+            <span style="margin-left: 29%">Type</span>
+            <span style="margin-left: 10%">Tags</span>
+        </li>
+        <% 
+        for (let i = 0; i < ownerWorkspaces.length ; i++) { 
+            let tags = [];
+            tags = ownerWorkspaces[i].tags.map(a => a.tag);
+            renderListCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,tags,"Workspace", ["Doc1","doc2"]) 
+        } 
+        for (let i = 0; i <  availableTopics.length ; i++) { 
+            renderListCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Bio","Chem"],"Topic", null); 
+         
+         }
+         
+        %>
+    </ul>
+
+
+

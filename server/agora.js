@@ -139,6 +139,12 @@ const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
 
 /**
+ * User Shared Dashboard routes
+ */
+const sharedDashboardRoutes = require( "./routes/sharedDashboardRoutes" );
+app.use( "/shared-dashboard", sharedDashboardRoutes );
+
+/**
  * User Friends routes
  */
 const friendsRoutes = require( "./routes/friendsRoutes" );

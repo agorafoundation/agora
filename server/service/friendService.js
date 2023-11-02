@@ -103,7 +103,7 @@ exports.getFriendByID = async ( userID, friendID ) => {
 
 // Accept a friend request
 exports.acceptFriendRequest = async ( friendship_id ) => {
-    console.log( "made it here: " + friendship_id );
+
     const request = await db.query(
         `SELECT * FROM friendships WHERE friendship_id = $1`, 
         [ friendship_id ]
@@ -129,7 +129,7 @@ exports.acceptFriendRequest = async ( friendship_id ) => {
 
 // Deny a friend request
 exports.denyFriendRequest = async ( friendship_id ) => {
-    console.log( "made it here: " + friendship_id );
+
     const request = await db.query(
         `SELECT * FROM friendships WHERE friendship_id = $1`, 
         [ friendship_id ]

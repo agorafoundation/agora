@@ -64,7 +64,7 @@ router.use( function ( req, res, next ) {
  */
 router.route( '/' )
     .get( ( req, res ) => {
-        dashboardController.getDashboard( req, res );
+        dashboardController.getSharedDashboard( req, res );
     }
     );
 
@@ -78,7 +78,7 @@ router.route( '/workspace' )
         // save the workspace
         await workspaceController.saveWorkspace( req, res, true );
         
-        res.redirect( 303, '/dashboard' );
+        res.redirect( 303, '/shared-dashboard' );
     }
     );
 
@@ -93,7 +93,7 @@ router.route( '/resource' )
         // save the resource
         await resourceController.saveResource( req, res, true );
 
-        res.redirect( 303, '/dashboard' );
+        res.redirect( 303, '/shared-dashboard' );
     }
     );
 

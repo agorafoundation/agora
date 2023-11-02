@@ -1,0 +1,21 @@
+
+<!--Declaring ejs function to display cards-->
+<%- include('./delete-modal.ejs'); %>
+<%- include('./rename-modal.ejs'); %>
+<%- include('./alert-toast.ejs'); %>
+<%- include('./new-topic-workspace.ejs'); %>
+<% //name:string, description:string, tags:array, content:array %>
+    
+
+
+<!-- dashboard control bar-->
+<%- include('./control-bar.ejs'); %>  
+
+<hr class="mt-0">
+<div class="container" id="main-container">
+  <%- include('./grid-template.ejs'); %>
+  <%- include('./list-template.ejs'); %>
+
+</div>      
+
+
