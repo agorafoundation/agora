@@ -30,16 +30,4 @@ router.route( '/manageProfile' )
     }
     );
 
-router.route( '/manageProfile/acceptRequest/:userId' )
-    .post( async ( req, res ) => { 
-        friendsController.acceptFriendRequest_v1( req, res );
-    }
-    ); 
-
-router.route( '/manageProfile/denyRequest/:userId' )
-    .post( async ( req, res ) => { 
-        friendsController.denyFriendRequest_v1( req, res );
-    }
-    ); 
-
 module.exports = router;

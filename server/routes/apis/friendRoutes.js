@@ -11,19 +11,16 @@ var router = express.Router();
 // controllers
 const friendController = require( '../../controller/apis/friendController' );
 
-
 router.route( '/allFriends' )
     //get all friends
     .get( async ( req, res ) => {
         friendController.getAllFriends( req, res );
     } );
 
-
 router.route( '/requestCount' )
     .get( async ( req, res ) => {
         friendController.getUnreadFriendRequestCount( req, res );
-    });
-
+    } );
 
 // Route to handle sending friend requests
 router.route( '/request' )
@@ -32,28 +29,22 @@ router.route( '/request' )
         friendController.getUnreadFriendRequests( req, res );
     } );
 
-
-
 router.route( '/unreadRequests' )
     .get( async ( req, res ) => {
         friendController.getUnacceptedFriendRequests( req, res );
-    });
-
+    } );
 
 router.route( '/sendFriendRequest' )
     .post( async ( req, res ) => {
         friendController.sendFriendRequest( req, res );
     } );
 
-//Router to handle friend request response.
-router.route( '/responseToRequest' )
-    //Accepted
-    .post( async ( req, res ) => {
+router.route( '/requestResponse' )
+    .post( async ( req, res ) => { 
         friendController.acceptFriendRequest( req, res );
     } )
-    //Rejected
     .delete( async ( req, res ) => {
-        friendController.rejectFriendRequest( req, res );
+        friendController.denyFriendRequest( req, res );
     } );
 
 router.route( '/:userID' )

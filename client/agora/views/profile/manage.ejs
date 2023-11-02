@@ -105,8 +105,8 @@
                                                                 <span><strong><%= friend.friend_username %></strong> sent you a friend request.</span>
                                                             </div>
                                                             <div class="action-buttons">
-                                                                <button class="btn btn-success accept-friend-request" data-id="<%= friend.friend_id %>">Accept</button>
-                                                                <button class="btn btn-danger deny-friend-request" data-id="<%= friend.friend_id %>">Deny</button>
+                                                                <button id="btn-accept-request" class="btn btn-success accept-friend-request" data-id="<%= friend.friendship_id %>">Accept</button>
+                                                                <button id="btn-deny-request" class="btn btn-danger deny-friend-request" data-id="<%= friend.friendship_id %>">Deny</button>
                                                             </div>
                                                         </div>
                                                     <% }); %>

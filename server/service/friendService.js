@@ -102,72 +102,24 @@ exports.getFriendByID = async ( userID, friendID ) => {
 */
 
 // Accept a friend request
-exports.acceptFriendRequest_v1 = async ( requestID ) => {
+exports.acceptFriendRequest = async ( friendship_id ) => {
+    console.log( "made it here: " + friendship_id );
     const request = await db.query(
-        `SELECT * FROM friendships WHERE request_id = $1`, 
-        [ requestID ]
+        `SELECT * FROM friendships WHERE friendship_id = $1`, 
+        [ friendship_id ]
     );
 
     if ( request.rows.length > 0 ) {
-        const requesterID = request.rows[0].requester_id;
-        const recipientID = request.rows[0].recipient_id;
-
-        // This will fetch the person reciving the friendrequest for notification
-        const recipient = await db.query( `SELECT username FROM users WHERE user_id = $1`, [ recipientID ] );
-        const recipientUsername = recipient.rows[0].username;
-        
         // Insert into friendships table
-        await db.query(
-            `INSERT INTO friendships (initiatedby_id, recipient_id, friendship_status) 
-             VALUES ($1, $2, 'accepted')`, 
-            [ requesterID, recipientID ]
-        );
         
-        // Delete the request from friendship_requests table
         await db.query(
-            `DELETE FROM friendship_requests WHERE request_id = $1`, 
-            [ requestID ]
+            `UPDATE friendships
+            SET
+                status = 'accepted'
+            WHERE friendship_id = $1`, 
+            [ friendship_id ]
         );
 
-        // Send a notification to the requester about the accepted friend request
-        await notificationService.addNotification( requesterID, "Your friend request has been accepted by " + recipientUsername );
-        return { success: true };
-    }
-    else {
-        return { error: "Friend request not found." };
-    }
-};
-
-// Accept a friend request
-exports.acceptFriendRequest = async ( requestID ) => {
-    const request = await db.query(
-        `SELECT * FROM friendship_requests WHERE request_id = $1`, 
-        [ requestID ]
-    );
-
-    if ( request.rows.length > 0 ) {
-        const requesterID = request.rows[0].requester_id;
-        const recipientID = request.rows[0].recipient_id;
-
-        // This will fetch the person reciving the friendrequest for notification
-        const recipient = await db.query( `SELECT username FROM users WHERE user_id = $1`, [ recipientID ] );
-        const recipientUsername = recipient.rows[0].username;
-        
-        // Insert into friendships table
-        await db.query(
-            `INSERT INTO friendships (initiatedby_id, recipient_id, friendship_status) 
-             VALUES ($1, $2, 'accepted')`, 
-            [ requesterID, recipientID ]
-        );
-        
-        // Delete the request from friendship_requests table
-        await db.query(
-            `DELETE FROM friendship_requests WHERE request_id = $1`, 
-            [ requestID ]
-        );
-
-        // Send a notification to the requester about the accepted friend request
-        await notificationService.addNotification( requesterID, "Your friend request has been accepted by " + recipientUsername );
         return { success: true };
     }
     else {
@@ -176,13 +128,23 @@ exports.acceptFriendRequest = async ( requestID ) => {
 };
 
 // Deny a friend request
-exports.rejectFriendRequest = async ( requestID ) => {
-    const result = await db.query(
-        `DELETE FROM friendship_requests WHERE request_id = $1`, 
-        [ requestID ]
+exports.denyFriendRequest = async ( friendship_id ) => {
+    console.log( "made it here: " + friendship_id );
+    const request = await db.query(
+        `SELECT * FROM friendships WHERE friendship_id = $1`, 
+        [ friendship_id ]
     );
 
-    return ( result.rowCount > 0 ) ? { success: true } : { error: "Friend request not found." };
+    if ( request.rows.length > 0 ) {
+        await db.query( `DELETE FROM friendships WHERE friendship_id = $1`, 
+            [ friendship_id ]
+        );
+    
+        return { success: true };
+    }
+    else {
+        return { error: "Friend request not found." };
+    }
 };
 
 // Delete a friend by ID
@@ -209,6 +171,7 @@ exports.deleteFriendByID = async ( userID, friendID ) => {
 // Get details of unaccepted friend requests for a user
 exports.getUnacceptedFriendRequests = async ( userID ) => {
     let text = `SELECT 
+            f.friendship_id,
             u.first_name AS friend_first_name,
             u.last_name AS friend_last_name,
             u.username AS friend_username,

@@ -7,14 +7,10 @@ var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
-const friendRequestsModal = document.getElementById( 'friendRequestsModal' );
-const acceptRequestButton = document.getElementById( 'btn-accept-request' );
-const denyRequestButton = document.getElementById( 'btn-deny-request' );
 var friends = new Set();
 var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
-
 
 // gets the authenticated user, their friends and sent friend requests
 window.onload = getResources = () => {
@@ -84,62 +80,6 @@ searchButton.addEventListener( 'click', queryUsers = () => {
         } );
 } );
 
-
-acceptRequestButton.addEventListener( 'click', acceptFriendRequest = () => {
-    fetch( "/api/v1/auth/user/getAuthUser", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( authUser ) => {
-            authUser.push( response );
-        } );
-
-    fetch( "/api/v1/auth/profile/acceptFriendRequest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify ( {
-            "username": response.username
-        } )
-    } ); 
-} );
-
-acceptRequestButton.addEventListener( 'click', () => {
-    // First, fetch the authenticated user
-    fetch( '/api/v1/auth/user/getAuthUser', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( authUser ) => {
-            // Once you have the authenticated user, make the accept friend request POST request
-            fetch( '/api/v1/auth/profile/acceptRequest/' + authUser.userId, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify( {
-                    username: 'friend_username_here', // Replace with the actual friend's username
-                } ),
-            } )
-                .then( ( response ) => response.json() )
-                .then( ( data ) => {
-                    // Handle the response here, e.g., display a success message
-                    console.log( 'Friend request accepted:', data );
-                } );
-        } );
-} );
-
-denyRequestButton.addEventListener( 'click', denyFriendRequest = () => {
-    fetch( "/api/v1/auth/profile/denyFriendRequest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify ( {
-            "username": userData.username
-        } )
-    } ); 
-} );
-
-
-
 // creates a user card for each user
 function createUserCard( userData ){
     var rowDiv = document.createElement( "div" );
@@ -184,42 +124,3 @@ function createUserCard( userData ){
     
 }
 
-
-
-/*
-// Event listener for "Accept" and "Deny" buttons within the modal
-// friendRequestsModal.addEventListener( 'click', ( event ) => {
-//     if ( event.target.classList.contains( 'accept-friend-request' ) ) {
-//         const requestId = event.target.getAttribute( 'data-id' );
-//         fetch( `/api/acceptFriendRequest/${requestId}`, {
-//             method: 'POST',
-//         } )
-//             .then( ( response ) => {
-//                 if ( response.ok ) {
-//                 // Update the UI as needed (e.g., remove the request item)
-//                     event.target.closest( '.friend-request-item' ).remove();
-//                 }
-//             } )
-//             .catch( ( error ) => {
-//                 console.error( 'Error accepting friend request:', error );
-//             } );
-//     }
-//     else if ( event.target.classList.contains( 'deny-friend-request' ) ) {
-//         const requestId = event.target.getAttribute( 'data-id' );
-//         // Handle the "Deny" action here (e.g., send a request to deny the friend request).
-//         // You can use AJAX to communicate with the server.
-//         fetch( `/api/rejectFriendRequest/${requestId}`, {
-//             method: 'POST',
-//         } )
-//             .then( ( response ) => {
-//                 if ( response.ok ) {
-//                 // Update the UI as needed (e.g., remove the request item)
-//                     event.target.closest( '.friend-request-item' ).remove();
-//                 }
-//             } )
-//             .catch( ( error ) => {
-//                 console.error( 'Error denying friend request:', error );
-//             } );
-//     }
-// } );
-*/
