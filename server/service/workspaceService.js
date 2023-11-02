@@ -59,9 +59,11 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
 
 exports.getSharedWorkspaces = async ( sharedUserID ) => {
     if ( sharedUserID ) {
-        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.visibility = 'public' " +
-            " INNER JOIN sharedEntity shared ON gl.user_id = shared_by_user_id WHERE shared.shared_with_user_id = $1 gl.order by gl.workspace_id;";
-        const values = [ sharedUserID, true ];
+        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
+            + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version INNER JOIN shared_entities shared ON gl.owned_by = shared_by_user_id WHERE shared.shared_with_user_id = $1" 
+            + "order by gl.workspace_id;";
+        
+        const values = [ sharedUserID ];
         let workspaces = [];
 
         try {
@@ -77,7 +79,7 @@ exports.getSharedWorkspaces = async ( sharedUserID ) => {
 
         }
         catch ( e ) {
-            console.log( "[ERR]: Error getting visible workspaces - " + e );
+            console.log( "[ERR]: Error getting shared workspaces - " + e );
             return false;
         }
     }
