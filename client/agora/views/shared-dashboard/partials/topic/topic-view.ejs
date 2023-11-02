@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <%- include('../../../partials/head'); %>
+    </head>
+
+    <body class="dashboard-content">
+        <!--File Upload Drop Zone-->
+        <!-- <div class="drop-zone"> -->
+            <!-- <span class="drop-zone__prompt"></span> -->
+            <!-- <input type="file" name="resourceImageField" class="drop-zone__input" /> -->
+            
+        <div class="topic-body">
+            
+
+            <!--Side Nav-->
+            <%- include('../../side-menu/side-menu.ejs');%> 
+            
+            <!--Workspace Manager Modal-->
+            <%- include('./workspace-manager-modal.ejs');%>
+            <%- include('./open-topic.ejs');%>  
+
+            <!--Workspace Title-->
+            <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
+                <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+            </div>
+            <div class="header-div" style="height: 8vh; background-color: #17191a; border-bottom: solid;border-color: #818181;">
+
+                <!--Workspace Description-->
+                <div class="header" id="tag-div">
+                    <label class="label">Description:</label>
+                    <!--<textarea class="descriptionTA" id="workspace-desc" ></textarea>-->
+                    <input type="text" id="workspace-desc" class="placeholder" placeholder=" Add description...">
+                
+
+
+                    <label class="label">Tags:</label>
+                    <input type="text" id="mySearch" class="placeholder" placeholder="Start typing...">
+                    <div id="curr-tags"></div>
+                    <div id="new-tag-element" class="tag-list-element">+</div>
+        
+                    <ul class="tag-list"></ul>
+                    <!-- <ul class="new-tag">
+                        <li id="new-tag-element" class="tag-list-element">+ New Tag</li>
+                    </ul> -->
+                </div>
+                <!--More Options-->
+                <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
+
+                <!--Discussions-->
+                <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
+                    forum
+                </span>
+                <%-include('./discussion-modal.ejs'); %>
+                <%-include('./comment-template.ejs'); %>
+
+                <!--Sharing-->
+                <!-- URBG TODO: removed until sharing is implemented-->
+                <!-- <span class="material-symbols-outlined share-button" title="Share" data-toggle="modal" data-target="#share-modal" style="color:white">
+                    ios_share
+                </span>
+                 <%- include('./share-modal.ejs'); %> -->
+            </div>
+
+            <!-- <div class="hidden" id="file-display"> -->
+            <!--<%- include('./file-display'); %>-->
+            <!-- </div> -->
+
+            <div id="topic-background" style="background-color:#17191a">
+                <!-- Tabs -->
+                <div class="tab" style="background-color: #17191a">
+                    <span id="new-element" class="material-symbols-outlined" style="color: white">add</span>
+                </div>
+
+                <!--Workspace Empty State -->
+                <div id="workspace-empty-state">
+                    <div class="topic-content">
+                    <div class="drop-zone" id="drop-zone0">
+
+                        <div class="dropzone-filler"></div>
+                        
+                            <div id="resources-zone0" class="resources-zone">
+                                <div class="empty-state" id="empty-state0">
+                                    <label class="empty-state-text"><h3>Your Workspace is Empty</h3></label>
+                                    <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                                </div>
+                            </div>
+                            <input type="file" name="resourceImageField" class="drop-zone__input" />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+             
+
+        </div>
+    <!-- </div> -->
+
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+    <div class="scroll-to-top d-lg-none position-fixed">
+        <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+    </div>
+
+    <%- include('../../../partials/jsincludes'); %>
+    <%- include ('../gallery/dropdown'); %>
+
+    </body>
+    
+</html>
+

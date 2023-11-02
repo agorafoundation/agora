@@ -1,0 +1,47 @@
+<h3>Choose the topics that will make up the topic pathway</h3>
+<p>Drag and drop from available topics and re-arrange the order of chosen topics</p>
+<input type="hidden" name="pathway" id="pathway" value="" />
+<div id="pathway-draggable">
+    <div class="available-container">
+        
+        <h4>Available Topics:</h4>
+        <hr />
+        <div id="available-items" class="available-items">
+            
+            <%
+            // get all of the workspaces available that are not already assigned to the workspace
+            if(availableTopics) {
+
+                for(let i=0; i < availableTopics.length; i++) {
+                    %>
+                        <div id="<%- availableTopics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- availableTopics[i].id %>" ><%- availableTopics[i].topicName %></div>
+                    <%
+                }
+            }
+
+            %>
+        </div>
+    </div>
+    <div class="chosen-container">
+        
+        <h4>Selected topics:</h4>
+        <hr />
+        <div id="chosen-items" class="chosen-items">
+            
+            <%
+
+            // if the workspace has been saved allow the user to link Topics
+            if(workspace && workspace.workspaceId > 0) {
+                if(workspace.topics && workspace.topics.length > 0) {
+
+                    for(let i=0; i < workspace.topics.length; i++) {
+                    %>
+                        <div id="<%- workspace.topics[i].id %>" class="text-primary draggable" draggable="true" href="/a/topic/<%- workspace.topics[i].id %>" ><%- workspace.topics[i].topicName %></div>
+                    <%
+                    }
+                }
+            }
+            %>
+        </div>
+    </div>
+</div>
