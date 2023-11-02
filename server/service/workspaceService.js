@@ -59,10 +59,15 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
 
 exports.getSharedWorkspaces = async ( sharedUserID ) => {
     if ( sharedUserID ) {
+        /*
         let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
             + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version INNER JOIN shared_entities shared ON gl.owned_by = shared_by_user_id WHERE shared.shared_with_user_id = $1" 
             + "order by gl.workspace_id;";
-        
+        */
+        let text = `SELECT w.* FROM agora.shared_entities AS se 
+            JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
+            WHERE se.shared_with_user_id = $1 AND se.entity_type = 'workspace'`;
+
         const values = [ sharedUserID ];
         let workspaces = [];
 
