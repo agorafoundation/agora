@@ -388,6 +388,28 @@
     border-radius: 20px;
 }
 
+.drop-zone-new {
+    margin: 0 auto;
+    height: inherit;
+    line-height: inherit;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: inset 0 0 0 0 #54b3d6;
+    color: white;
+    font-size: 36px;
+    margin: 0 -.25rem;
+    padding: 0 .25rem;
+    transition: color .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.drop-zone-new:hover {
+    box-shadow: inset 200vh 0 0 0 #64cc5b;
+    color: white;
+  }
+
   .drop-zone-show {
     margin: 5px;
     width: 100%;
