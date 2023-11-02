@@ -39,6 +39,11 @@ router.route( '/sendFriendRequest' )
         friendController.sendFriendRequest( req, res );
     } );
 
+router.route( '/getResources' )
+    .get( async ( req, res ) => {
+        friendController.getResources( req, res );
+    })
+
 router.route( '/requestResponse' )
     .post( async ( req, res ) => { 
         friendController.acceptFriendRequest( req, res );

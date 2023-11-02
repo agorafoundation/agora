@@ -47,6 +47,31 @@ exports.getAllFriends = async ( req, res ) => {
     }
 };
 
+exports.getResources = async ( req, res ) => {
+    let authUserID;
+    if ( req.user ){
+        authUserID = req.user.userId;
+    }
+    else if( req.session.authUser ){
+        authUserID = req.session.authUser.userId;
+    }
+    if( authUserID ){
+        let resources = [ ];
+        let friends = await friendService.getAllFriends( req.user.userID );
+        let requests = await friendService.getUnreadFriendRequests( req.user.userId );
+        resources.push(req.user, friends, requests);
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned all user details" );
+        res.status( 200 ).json( resources );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "User details not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "User details not found" );
+        res.status( 400 ).json( message );
+    }
+}
+
 /*
 //Get a specific friend, by their ID.
 exports.getFriendByID = async ( req, res ) => {

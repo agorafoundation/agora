@@ -32,7 +32,7 @@ exports.getAllFriends = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE (f.initiatedby_id = $1 OR f.recipient_id = $1)
-            AND f.status = 'accepted'`;
+            AND f.friendship_status = 'accepted'`;
     let values = [ userID ];
     let friends = [];
 
@@ -56,7 +56,7 @@ exports.getAllFriends = async ( userID ) => {
 // Send a friend request
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
-    let text = 'INSERT INTO friendships (initiatedby_id, recipient_id, status) VALUES ($1, $2, $3);';
+    let text = 'INSERT INTO friendships (initiatedby_id, recipient_id,friendship_status) VALUES ($1, $2, $3);';
     let values = [ requesterID, recipientID, 'pending' ];
 
     try {
@@ -114,8 +114,8 @@ exports.acceptFriendRequest = async ( friendship_id ) => {
         
         await db.query(
             `UPDATE friendships
-            SET
-                status = 'accepted'
+            SET 
+                friendship_status = 'accepted'
             WHERE friendship_id = $1`, 
             [ friendship_id ]
         );
@@ -182,7 +182,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE f.recipient_id = $1 
-            AND f.status = 'pending'`; // Filter by pending status and recipient ID
+            AND f.friendship_status = 'pending'`; // Filter by pending status and recipient ID
     let values = [ userID ];
     let requests = [];
         
@@ -206,7 +206,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
 
 // Get details of unread friend requests for a user
 exports.getUnreadFriendRequests = async ( userID ) => {
-    let text = `SELECT initiatedby_id, recipient_id FROM friendships WHERE recipient_id = $1 OR initiatedby_id = $1 AND status = 'pending'`;
+    let text = `SELECT initiatedby_id, recipient_id FROM friendships WHERE recipient_id = $1 OR initiatedby_id = $1 AND friendship_status = 'pending'`;
     let values = [ userID ];
     let requests = [];
     try{

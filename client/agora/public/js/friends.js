@@ -7,7 +7,6 @@ var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
-var friends = new Set();
 var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
@@ -15,35 +14,15 @@ var requests = [ ];
 // gets the authenticated user, their friends and sent friend requests
 window.onload = getResources = () => {
     
-    fetch( "/api/v1/auth/friends/allFriends", {
+    fetch( "/api/v1/auth/friends/getResources", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )
         .then( ( response ) => response.json() )
         .then( ( response ) => {
-            for( i = 0; i < response.length; i++ ) {
-                friends.push( response[i] );
-            }
-        } );
-    
-    fetch( "/api/v1/auth/user/getAuthUser", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( response ) => {
-            authUser.push( response );
-        } );
-    
-    fetch( "/api/v1/auth/friends/request", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( response ) => {
-            for( j = 0; j < response.length; j++ ) {
-                requests.push( response[j] );
-            }
+            authUser.push( response[0]);
+            friends.push( response[1] );
+            requests.push( response[2] );
         } );
 };
 
