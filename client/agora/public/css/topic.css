@@ -739,12 +739,12 @@
 }
 
 .agnes-modal-shape {
-    padding: 20px;
-    gap: 20px;
+    padding: 15px;
+    gap: 5px;
 }
 
 #agnesModal {
-    width: 300px;
+    width: 360px;
     overflow-y: auto;
 }
 
@@ -783,19 +783,19 @@
     text-align: center;
     justify-content: space-around;
 }
-.content-margin-bottom {
-    margin-top: 20px;
-}
 /* Custom modal size */
 .custom-modal {
-    max-width: 350px;
+    max-width: 360px;
 }
 .custom-background-color {
     background-color: #818181;
 }
 .citations-btns-container {
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #ffffff !important;
+}
+.modal-footer {
+    padding-top: 10px;
 }
 /* Custom CSS for citations buttons */
 .citations-btns {
@@ -813,6 +813,7 @@
 .citations-title {
     color: #3f3f3f !important;
     text-align: center;
+    font-size: smaller;
 }
 
 .citation-types-label {
@@ -828,15 +829,15 @@
 
 .citation-card {
     background-color: grey;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 5px;
+    padding: 5px;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .all-cards {
     overflow-y: scroll;
-    height: 150px;
+    height: 240px;
 }
 
 .card-row-header {
@@ -850,7 +851,7 @@
 }
 
 .card-row-body {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .card-cite-btn{
@@ -861,9 +862,10 @@
 }
 
 .card-cite-btn:hover{
-    background-color: red;
+    background-color: #b8b8b8;
 }
 
 .card-citation-text {
-    font-size: 14px;
+    font-size: 12px;
+
 } 
