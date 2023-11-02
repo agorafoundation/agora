@@ -27,7 +27,6 @@ router.route( '/copy/' )
 router.route( '/shareworkspace' )
     .post( ( req, res ) => {
         sharedController.shareWorkspace ( req, res );
-        sharedController.shareWorkspace( req, res );
     } 
     );
 
