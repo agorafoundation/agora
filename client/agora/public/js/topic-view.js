@@ -241,6 +241,7 @@ const updateTopic = async( name ) => {
     console.log( "topic name: " + name );
     let isRequired = [];
     let resources = getResources();
+    console.log( "resources found: " + JSON.stringify( resources ) );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
@@ -597,12 +598,12 @@ function createResource( name, type, imagePath, id ) {
                 //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
                 let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
                 console.log( "topicTitle: " + topicTitle.innerHTML );
-                updateTopic( topicTitle.innerHTML );
+                
                 createTextArea();
 
                 //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
                 
-                
+                updateTopic( topicTitle.innerHTML );
             } );
     }
     else{
