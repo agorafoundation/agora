@@ -39,7 +39,7 @@ let topics = {};
 
 // Creates a new topic
 const createTopic = async( id, name ) => {
-    console.log( "createTopic() id: " + id + " name: " + name );
+    //console.log( "createTopic() id: " + id + " name: " + name );
     let topicName = null;
     if( name ){
         topicName = name;
@@ -224,7 +224,7 @@ const createTopic = async( id, name ) => {
 
         if( response.ok ) {
             const data = await response.json();
-            console.log( "createTopic() topic saved " );
+            //console.log( "createTopic() topic saved " );
             // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
             numTopics++;
@@ -236,27 +236,27 @@ const createTopic = async( id, name ) => {
         topics[numTopics] = id;
         numTopics ++;
     }
-    console.log( "createTopic() Complete " );
+    //console.log( "createTopic() Complete " );
 };
 
 // Updates topic name
 const updateTopic = async( name ) => {
-    console.log( "updateTopic() " + name );
+    //console.log( "updateTopic() " + name );
     let isRequired = [];
     let resources = getResources();
-    console.log( "resources found: " + JSON.stringify( resources ) );
+    // console.log( "resources found: " + JSON.stringify( resources ) );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
     let id = getCurrTopicID();
-    console.log( "topic object: " + JSON.stringify( {
-        "topicId": id,
-        "topicName": name ? name : "Untitled",
-        "resources": resources ? resources : [],
-        "resourcesRequired": isRequired,
-        "visibility": "private",
-        "isRequired": true
-    } ) );
+    // console.log( "topic object: " + JSON.stringify( {
+    //     "topicId": id,
+    //     "topicName": name ? name : "Untitled",
+    //     "resources": resources ? resources : [],
+    //     "resourcesRequired": isRequired,
+    //     "visibility": "private",
+    //     "isRequired": true
+    // } ) );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -272,14 +272,14 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "updateTopic() saved and Complete" );
+        //console.log( "updateTopic() saved and Complete" );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
 const saveWorkspace = async( topics ) => {
-    console.log( 'saveWorkspace()' );
+    //console.log( 'saveWorkspace()' );
     const topicsList = Object.values( topics );
 
 
@@ -303,7 +303,7 @@ const saveWorkspace = async( topics ) => {
     if( response.ok ) {
         const data = await response.json();
         //console.log( JSON.stringify( data ) );
-        console.log( 'saveWorkspace() saved and complete' );
+        //console.log( 'saveWorkspace() saved and complete' );
     }
 };
 
@@ -511,7 +511,6 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
     // make the fetch call to save the tag
     if( isNewSave ) {
-        console.log( '2' );
         //console.log( "sending tag with workspaceId: " + workspaceId + " and tagType: " + tagType + " and tag: " + newTag.innerHTML + "" );
         fetch( "api/v1/auth/tags/tagged", {
             method: "POST",
@@ -629,6 +628,7 @@ function getCurrTopicID() {
 
 // returns an array of resource id's within a given topic, sorted by position
 function getResources() {
+    console.log( "getResources() : Start" );
     let topicResources = document.querySelectorAll( '.drop-zone__title' );
     //console.log( "topicResources: " + JSON.stringify( topicResources ) );
     let sorted = [];
@@ -647,6 +647,7 @@ function getResources() {
             }
         }
     }
+    console.log( "getResources() : Complete" );
     return sorted;
 }
 
@@ -660,7 +661,7 @@ function createTextArea( name, id ) {
         // if ( activeTab.id == "resources-zone0" ) {
         //     createTopic();
         // }
-        console.log( "createTextArea() for number: " + numResources );
+        //console.log( "createTextArea() for number: " + numResources );
 
         // Check for filler space
         if ( document.getElementById( "filler-space" ) ) {
@@ -741,7 +742,7 @@ function createTextArea( name, id ) {
         activeHeightObj[tabName] += 800;
         checkActiveHeight();
         //alert( "hold" );
-        console.log( "createTextArea() complete promise cerated" );
+        //console.log( "createTextArea() complete promise cerated" );
         resolve( "TA created" );
     } );
 
@@ -756,7 +757,7 @@ function createTextArea( name, id ) {
             // }
 
             numResources++;
-            console.log( "createTextArea() complete promise then (suneditor) completed" );
+            //console.log( "createTextArea() complete promise then (suneditor) completed" );
         }
     );
 }
@@ -817,7 +818,6 @@ const createSunEditor = async() => {
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
-    console.log( '4' );
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -841,6 +841,9 @@ function updateSunEditor( id, name, contents ) {
 }
 
 function getResourceID( val ) {
+    console.log( "getResourceID: start" );
+    console.log( "val: " +val );
+    console.log( "resources: " + JSON.stringify( resources ) );
     let resourceID = resources[val][0];
     return resourceID;
 }
@@ -936,7 +939,6 @@ function createDropZoneEventListeners( dropZone, input ) {
 function updateThumbnail( dropZoneElement, file ) {
     // Create a topic if file dropped in workspace empty state
     if ( activeTab.id == "resources-zone0" ) {
-        console.log( 'b0' );
         createTopic();
     } 
     // Div that holds the thumbnail
@@ -1148,7 +1150,7 @@ if( openBtn ) {
     openBtn.onclick = () => {
         //modal.style.display = "block";
         let tname = prompt( "Enter a name for your new Topic" );
-        console.log( 'Took input from prompt' );
+        //console.log( 'Took input from prompt' );
         createTopic( null, tname );
         createResource();
     };
@@ -1204,7 +1206,6 @@ if ( createDocBtn ) {
 if ( createTopicBtn ) {
     createTopicBtn.onclick = () => {
         modal.style.display = "none";
-        console.log( 'b2' );
         createTopic();
     };
 }
@@ -1345,9 +1346,9 @@ const getPrefixAndId = () => {
 const idAndFetch = async () => {
     console.log( "idAndFetch() : Start" );
     const [ isTopic, id ] = getPrefixAndId();
-    console.log( isTopic, id );
+    //console.log( isTopic, id );
     if ( isTopic && id ) {
-        console.log( "idAndFetch() : fetch topic" );
+        //console.log( "idAndFetch() : fetch topic" );
         await fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1355,15 +1356,15 @@ const idAndFetch = async () => {
             .then( ( response ) => response.json() )
             .then( ( response ) => {
                 fillFields(
-                    response.topicName,
-                    response.topicDescription,
-                    response.topicImage
+                    response.results.topicName,
+                    response.results.topicDescription,
+                    response.results.topicImage
                 );
-                console.log( "idAndFetch() : End - topicPath" );
+                //console.log( "idAndFetch() : End - topicPath" );
             } );
     }
     else if ( id ) {
-        console.log( "idAndFetch() : fetch workspace" );
+        //console.log( "idAndFetch() : fetch workspace" );
         await fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1375,11 +1376,11 @@ const idAndFetch = async () => {
                     response.results.workspaceDescription,
                     response.results.workspaceImage
                 );
-                console.log( "idAndFetch() : End - workspacePath" );
+                //console.log( "idAndFetch() : End - workspacePath" );
             } );
         
     }
-    console.log( "idAndFetch() : End FINAL" );
+    //console.log( "idAndFetch() : End FINAL" );
 };
 
 const getTags = async () => {
@@ -1417,27 +1418,28 @@ const getTags = async () => {
 };
 
 const fillFields = ( title, description, image ) => {
-    console.log( "fillFields() : Start for: " + title );
+    //console.log( "fillFields() : Start for: " + title );
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
-    console.log( "fillFields() : Complete" );
+    //console.log( "fillFields() : Complete" );
 };
 
 const renderTopics = async ( workspace ) => {
-    console.log( "renderTopics: Start" );
+    //console.log( "renderTopics: Start" );
     const [ isTopic, id ] = getPrefixAndId();
     if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
+        //console.log( "topics: " + JSON.stringify( topics ) );
    
-        if ( topics.length > 0 ) {
-            for ( let i = 0; i < topics.length; i++ ) {
-                await renderTopic( topics[i] );
+        if ( topics.results.length > 0 ) {
+            for ( let i = 0; i < topics.results.length; i++ ) {
+                await renderTopic( topics.results[i] );
             
             }
         }   
     }
-    console.log( "renderTopics: Complete" );
+    //console.log( "renderTopics: Complete" );
    
 };
 
@@ -1445,16 +1447,17 @@ const renderTopics = async ( workspace ) => {
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-    console.log( 'renderTopic() start for topic:' );
-    console.log( JSON.stringify( topic ) );
+    //console.log( 'renderTopic() start for topic:' );
+    //console.log( JSON.stringify( topic ) );
     await createTopic( topic.topicId, topic.topicName );
     //console.log( "creating topic, passed name: " + topic.topicName );
     const resources = await renderResources( topic.topicId );
+    //console.log( "resources: " + JSON.stringify( resources ) );
     if ( resources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
-            //console.log( "resource: " + i + " of " + resources.length );
-            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            console.log( "resource: " + i + " of " + resources.length );
+            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
@@ -1491,17 +1494,17 @@ async function renderResources( topicId ) {
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     console.log( "renderResources() : complete - response: " + JSON.stringify( data ) );
-    return data;
+    return data.results;
 }
 
 window.addEventListener( "load", async () => {
-    console.log( "window load event: start" );
+    //console.log( "window load event: start" );
     await idAndFetch();
-    console.log( "about to run getTags" );
+    //console.log( "about to run getTags" );
     getTags();
-    console.log( "about to run render topics" );
+    //console.log( "about to run render topics" );
     renderTopics();
-    console.log( "window load event: complete" );
+    //console.log( "window load event: complete" );
 } );
 
 
