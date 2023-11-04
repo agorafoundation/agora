@@ -168,6 +168,8 @@ exports.shareWorkspace = async ( req, res ) => {
             res.set( "x-agora-message-detail", "Returned workspace by id" );
             res.status( 200 ).json( workspace );
 
+            
+
             workspace.workspaceId = -1;
             workspace.ownedBy = req.body.shareUserId;
             await workspaceService.saveWorkspace( workspace );
