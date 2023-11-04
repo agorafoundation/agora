@@ -52,15 +52,15 @@ router.route( '/requestResponse' )
         friendController.denyFriendRequest( req, res );
     } );
 
-router.route( '/:userID' )
-    /*
+router.route( '/getFriend/:userID' )
     //get a friend by their user ID.
     .get( async ( req, res ) => {
         friendController.getFriendByID( req, res );
     } )
-    */
+   
+router.route( '/deleteFriend/:friendshipId' )
     .delete( async ( req, res ) => {
-        friendController.deleteFriendByID( req, res );
-    } );
+            friendController.deleteFriendByID( req, res );
+        } );
 
 module.exports = router;

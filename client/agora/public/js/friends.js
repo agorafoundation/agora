@@ -7,6 +7,7 @@ var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
+const deleteCard = document.getElementById( "friend" );
 var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
@@ -73,7 +74,7 @@ function createUserCard( userData ){
     username.id = userData.userId;
     username.innerText = userData.username;
     var userProfile = document.createElement( "img" );
-    userProfile.src = userData.profile_filename;
+    userProfile.src = userData.profileFilename;
     userProfile.alt = "user's profile";
     var userContainer = document.createElement( "div" );
     userContainer.id = "user-container-" + userData.userId;
@@ -103,3 +104,16 @@ function createUserCard( userData ){
     
 }
 
+var deleteFriendCards = document
+    .querySelectorAll("#delete-friend-card")
+    .forEach( ( deleteFriendCard ) => {
+        friendshipId = deleteFriendCard.getAttribute('data-id');
+        deleteFriendCard.addEventListener( "click", deleteFriend( friendshipId ) );
+    })
+
+const deleteFriend = async ( friendshipId ) => {
+    const response = await fetch( "api/v1/auth/friends/deleteFriend/" + friendshipId, { method: "DELETE" });
+    if( response.ok ){
+        await response.json();
+    }
+}

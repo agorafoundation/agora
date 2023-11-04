@@ -25,7 +25,8 @@ exports.getAllFriends = async ( userID ) => {
             u.first_name AS friend_first_name,
             u.last_name AS friend_last_name,
             u.username AS friend_username,
-            u.email AS friend_email
+            u.email AS friend_email,
+            f.friendship_id as friendship_id
         FROM agora.friendships AS f
         JOIN agora.users AS u ON u.user_id = CASE
             WHEN f.initiatedby_id = $1 THEN f.recipient_id
@@ -148,11 +149,10 @@ exports.denyFriendRequest = async ( friendship_id ) => {
 };
 
 // Delete a friend by ID
-exports.deleteFriendByID = async ( userID, friendID ) => {
+exports.deleteFriendByID = async ( friendshipId ) => {
     let text = `DELETE FROM friendships 
-    WHERE (initiatedby_id = $1 AND recipient_id = $2) 
-    OR (initiatedby_id = $2 AND recipient_id = $1)`;
-    let values = [ userID, friendID ];
+    WHERE friendship_id = $1`;
+    let values = [ friendshipId ];
 
     try{
         let res = await db.query( text, values );
