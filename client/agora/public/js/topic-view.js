@@ -39,7 +39,7 @@ let topics = {};
 
 // Creates a new topic
 const createTopic = async( id, name ) => {
-    //console.log( "createTopic() id: " + id + " name: " + name );
+    console.log( "createTopic() id: " + id + " name: " + name );
     let topicName = null;
     if( name ){
         topicName = name;
@@ -236,12 +236,12 @@ const createTopic = async( id, name ) => {
         topics[numTopics] = id;
         numTopics ++;
     }
-    //console.log( "createTopic() Complete " );
+    console.log( "createTopic() Complete " );
 };
 
 // Updates topic name
 const updateTopic = async( name ) => {
-    //console.log( "updateTopic() " + name );
+    console.log( "updateTopic() " + name );
     let isRequired = [];
     let resources = getResources();
     // console.log( "resources found: " + JSON.stringify( resources ) );
@@ -272,14 +272,14 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        //console.log( "updateTopic() saved and Complete" );
+        console.log( "updateTopic() saved and Complete" );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
 const saveWorkspace = async( topics ) => {
-    //console.log( 'saveWorkspace()' );
+    console.log( 'saveWorkspace()' );
     const topicsList = Object.values( topics );
 
 
@@ -303,7 +303,7 @@ const saveWorkspace = async( topics ) => {
     if( response.ok ) {
         const data = await response.json();
         //console.log( JSON.stringify( data ) );
-        //console.log( 'saveWorkspace() saved and complete' );
+        console.log( 'saveWorkspace() saved and complete' );
     }
 };
 
@@ -317,7 +317,7 @@ let activeTab = document.getElementById( "resources-zone0" );
 // Change tabs
 function openTab( name ) {
     tabName = name;
-    //console.log( tabName );
+    console.log( "openTab : " + tabName );
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -346,9 +346,11 @@ function openTab( name ) {
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }
     }
+    console.log( "openTab : Complete" );
 }
 
 function closeTab( id ) {
+    console.log( "closeTab : " + id );
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let tablinks = document.getElementsByClassName( "tablinks" );
     let isActiveTab = false;
@@ -384,9 +386,11 @@ function closeTab( id ) {
     // Closing non-active tabs doesn't change the active tab
     tablinks[tabLocation].remove();
     tabContent[tabLocation].remove();
+    console.log( "closeTab : Complete" );
 }
 
 function getTabLocation( id ) {
+    console.log( "getTabLocation : " + id );
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let location = -1;
     for ( let i=0; i<tabContent.length; i++ ) {
@@ -394,6 +398,7 @@ function getTabLocation( id ) {
             location = i;
         }
     }
+    console.log( "getTabLocation : Complete" );
     return location;
 }
 /* END Tab Functions ------------------------------------------------------------------- */
@@ -613,7 +618,7 @@ function createResource( name, type, imagePath, id ) {
     else{
         resources[numResources] = [ id, getCurrTopicID() ];
 
-       
+        console.log( "createResource() : complete - No id" );
     }
    
 }
@@ -661,7 +666,7 @@ function createTextArea( name, id ) {
         // if ( activeTab.id == "resources-zone0" ) {
         //     createTopic();
         // }
-        //console.log( "createTextArea() for number: " + numResources );
+        console.log( "createTextArea() for number: " + numResources );
 
         // Check for filler space
         if ( document.getElementById( "filler-space" ) ) {
@@ -673,7 +678,7 @@ function createTextArea( name, id ) {
         newDropZone.className = "drop-zone-new";
         newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
         newDropZone.addEventListener( "click", () => {
-            createTextArea( );
+            createResource();
         } );
 
         // Create drop zone filler space
@@ -742,7 +747,7 @@ function createTextArea( name, id ) {
         activeHeightObj[tabName] += 800;
         checkActiveHeight();
         //alert( "hold" );
-        //console.log( "createTextArea() complete promise cerated" );
+        console.log( "createTextArea() complete promise cerated" );
         resolve( "TA created" );
     } );
 
@@ -757,7 +762,7 @@ function createTextArea( name, id ) {
             // }
 
             numResources++;
-            //console.log( "createTextArea() complete promise then (suneditor) completed" );
+            console.log( "createTextArea() complete promise then (suneditor) completed" );
         }
     );
 }
@@ -1360,7 +1365,7 @@ const idAndFetch = async () => {
                     response.results.topicDescription,
                     response.results.topicImage
                 );
-                //console.log( "idAndFetch() : End - topicPath" );
+                console.log( "idAndFetch() : End - topicPath" );
             } );
     }
     else if ( id ) {
@@ -1376,11 +1381,11 @@ const idAndFetch = async () => {
                     response.results.workspaceDescription,
                     response.results.workspaceImage
                 );
-                //console.log( "idAndFetch() : End - workspacePath" );
+                console.log( "idAndFetch() : End - workspacePath" );
             } );
         
     }
-    //console.log( "idAndFetch() : End FINAL" );
+    console.log( "idAndFetch() : End FINAL" );
 };
 
 const getTags = async () => {
@@ -1425,7 +1430,7 @@ const fillFields = ( title, description, image ) => {
 };
 
 const renderTopics = async ( workspace ) => {
-    //console.log( "renderTopics: Start" );
+    console.log( "renderTopics: Start" );
     const [ isTopic, id ] = getPrefixAndId();
     if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
@@ -1439,7 +1444,7 @@ const renderTopics = async ( workspace ) => {
             }
         }   
     }
-    //console.log( "renderTopics: Complete" );
+    console.log( "renderTopics: Complete" );
    
 };
 
@@ -1447,7 +1452,7 @@ const renderTopics = async ( workspace ) => {
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-    //console.log( 'renderTopic() start for topic:' );
+    console.log( 'renderTopic() start for topic:' );
     //console.log( JSON.stringify( topic ) );
     await createTopic( topic.topicId, topic.topicName );
     //console.log( "creating topic, passed name: " + topic.topicName );
@@ -1721,6 +1726,7 @@ const addOrRemoveLike = ( e ) => {
 ////*Saving Title and Description/////
 
 const saveTitleOrDescription = ( ) => {
+    console.log( "saveTitleOrDescription: Start" );
     const [ isTopic, id ] = getPrefixAndId();
 
     const input = document.getElementById( "workspace-title" ).value;
