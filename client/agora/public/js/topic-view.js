@@ -31,6 +31,62 @@ function checkActiveHeight() {
 
 
 
+/* Resource Functions --------------------------------------------------------------------------------- */
+let resources = {};
+let numResources = 1;
+
+// create a new resource
+async function createResource( name, type, imagePath, id ) {
+    console.log( "createResource() name: " + name + " type " + type + " imagePath " + imagePath + " id " + id );
+    if( !id ){
+        const response = await fetch( "api/v1/auth/resources", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "resourceType": type,
+                "resourceName": name ? name : "Untitled",
+                "resourceDescription": "",
+                "resourceContentHtml": "",
+                "resourceImage": imagePath ? imagePath : "",
+                "resourceLink": "",
+                "isRequired": true,
+                "active": true,
+                "visibility": "private"
+            } )
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+
+            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            numResources++;
+            console.log( "createResource() : Resource created + Resource: " + JSON.stringify( data ) );
+
+            // map the new resource to the associated topic
+            //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+            
+            //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
+            let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
+            
+            createTextArea();
+
+            //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
+            //console.log( "createResource() : updateTopic() call" );
+            // URBG: removed this to test fix for update being called in the middle of save.
+            // this might be needed for a different thread but not called here.
+            //updateTopic( topicTitle.innerHTML );
+            console.log( "createResource() : complete" );
+            return data;
+        }
+    }
+    else{
+        resources[numResources] = [ id, getCurrTopicID() ];
+
+        console.log( "createResource() : complete - No id" );
+    }
+   
+}
+/* END Resource Functions -------------------------------------------------------------------------------------- */
 
 
 /* Topic Functions -------------------------------------------------------------------------- */
@@ -201,6 +257,8 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
+    let resources = getResources();
+
     if( !id ) {
         
         const response = await fetch( "api/v1/auth/topics", {
@@ -217,7 +275,7 @@ const createTopic = async( id, name ) => {
                 "activityId": 1,
                 "active": true,
                 "visibility": "private",
-                "resources": [],
+                "resources": resources ? resources : [],
                 "createTime": Date.now(),
             } )
         } );
@@ -229,7 +287,7 @@ const createTopic = async( id, name ) => {
             topics[numTopics] = data.topicId;
             numTopics++;
             //console.log( topics );
-            saveWorkspace( topics );
+            await saveWorkspace( topics );
         }
     }
     else{
@@ -273,6 +331,7 @@ const updateTopic = async( name ) => {
     if( response.ok ) {
         const data = await response.json();
         console.log( "updateTopic() saved and Complete" );
+        return data;
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
@@ -573,55 +632,6 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
 
 
-/* Resource Functions --------------------------------------------------------------------------------- */
-let resources = {};
-let numResources = 1;
-
-// create a new resource
-function createResource( name, type, imagePath, id ) {
-    console.log( "createResource() name: " + name + " type " + type + " imagePath " + imagePath + " id " + id );
-    if( !id ){
-        fetch( "api/v1/auth/resources", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
-        } )
-            .then( response => response.json() )
-            .then( async ( data ) => {
-                resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-                console.log( "createResource() : Resource created" );
-
-                // map the new resource to the associated topic
-                //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-                
-                //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
-                let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
-                
-                await createTextArea();
-
-                //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
-                
-                updateTopic( topicTitle.innerHTML );
-                console.log( "createResource() : complete" );
-            } );
-    }
-    else{
-        resources[numResources] = [ id, getCurrTopicID() ];
-
-        console.log( "createResource() : complete - No id" );
-    }
-   
-}
 
 // get the topic id based on the currently visible topic tab
 function getCurrTopicID() {
@@ -678,6 +688,7 @@ function createTextArea( name, id ) {
         newDropZone.className = "drop-zone-new";
         newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
         newDropZone.addEventListener( "click", () => {
+            console.log( "createTextArea - Promise - createResource() call" );
             createResource();
         } );
 
@@ -761,7 +772,6 @@ function createTextArea( name, id ) {
             //     //createResource( null, 1, null );
             // }
 
-            numResources++;
             console.log( "createTextArea() complete promise then (suneditor) completed" );
         }
     );
@@ -1006,7 +1016,7 @@ function updateThumbnail( dropZoneElement, file ) {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
-            console.log( "c3" );
+            console.log( "updateThumbnail - getFile - createResource() call" );
             createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
@@ -1018,7 +1028,7 @@ function updateThumbnail( dropZoneElement, file ) {
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
-        console.log( "c4" );
+        console.log( "updateThumbnail - getFile - else - createResource() call" );
         createResource( file.name, 3, null );
     }
     mydiv.appendChild( inputfile );
@@ -1152,12 +1162,24 @@ const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
 if( openBtn ) {
-    openBtn.onclick = () => {
+    openBtn.onclick = async () => {
         //modal.style.display = "block";
         let tname = prompt( "Enter a name for your new Topic" );
         //console.log( 'Took input from prompt' );
-        createTopic( null, tname );
-        createResource();
+
+        console.log( "main click event - createResource() call" );
+        const newResource = await createResource();
+        console.log( "newResource: " + JSON.stringify( newResource ) );
+
+        console.log( "main click event - createTopic() call" );
+        const newTopic = await createTopic( null, tname );
+        console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+        
+
+        // this is where i should call updateTopic sending the topic id retrieved from createTopic??
+        
+        
     };
 }
 
