@@ -57,8 +57,14 @@ async function createResource( name, type, imagePath, id ) {
 
         if( response.ok ) {
             const data = await response.json();
-
-            resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            console.log( "createResource() : getCurrTopicID : " + tabName.match( /\d+/g ) );
+            if( tabName.match( /\d+/g ) ) {
+                resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            }
+            else {
+                resources[numResources] = [];
+            }
+            
             numResources++;
             console.log( "createResource() : Resource created + Resource: " + JSON.stringify( data ) );
 
@@ -66,9 +72,9 @@ async function createResource( name, type, imagePath, id ) {
             //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
             
             //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
-            let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
+            //let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
             
-            createTextArea();
+            
 
             //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
             //console.log( "createResource() : updateTopic() call" );
@@ -257,8 +263,6 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
-    let resources = getResources();
-
     if( !id ) {
         
         const response = await fetch( "api/v1/auth/topics", {
@@ -288,6 +292,8 @@ const createTopic = async( id, name ) => {
             numTopics++;
             //console.log( topics );
             await saveWorkspace( topics );
+
+            return data;
         }
     }
     else{
@@ -301,7 +307,7 @@ const createTopic = async( id, name ) => {
 const updateTopic = async( name ) => {
     console.log( "updateTopic() " + name );
     let isRequired = [];
-    let resources = getResources();
+
     // console.log( "resources found: " + JSON.stringify( resources ) );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
@@ -641,30 +647,38 @@ function getCurrTopicID() {
     return topicID;
 }
 
+
 // returns an array of resource id's within a given topic, sorted by position
-function getResources() {
-    console.log( "getResources() : Start" );
-    let topicResources = document.querySelectorAll( '.drop-zone__title' );
-    //console.log( "topicResources: " + JSON.stringify( topicResources ) );
-    let sorted = [];
-    for ( let i=0; i<topicResources.length; i++ ) {
-        //console.log( "in the loop" );
-        if ( topicResources[i].style.display == 'none' ) {
-            //console.log( true );
-        }
-        let val = topicResources[i].id.match( /\d+/g )[0];
-        //console.log( "val: " + val );
-        let propertyNames = Object.getOwnPropertyNames( resources );
-        //console.log( "propertyNames: " + propertyNames );
-        for ( let j=0; j<propertyNames.length; j++ ) {
-            if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
-                sorted.push ( resources[val][0] );
-            }
-        }
-    }
-    console.log( "getResources() : Complete" );
-    return sorted;
-}
+// this is the old function that completes it task using the queryselectorall 
+// lookingonly at the display property.  This is not a good way to do this.
+// function getResourcesQs() {
+//     console.log( "getResources() : Start" );
+//     console.log( "contents of the resources array: " + JSON.stringify( resources ) );
+//     let topicResources = document.querySelectorAll( '.drop-zone__title' );
+//     //console.log( "topicResources: " + JSON.stringify( topicResources ) );
+//     let sorted = [];
+//     for ( let i=0; i<topicResources.length; i++ ) {
+//         //console.log( "in the loop" );
+//         if ( topicResources[i].style.display == 'none' ) {
+//             //console.log( true );
+//         }
+//         let val = topicResources[i].id.match( /\d+/g )[0];
+//         //console.log( "val: " + val );
+//         let propertyNames = Object.getOwnPropertyNames( resources );
+//         //console.log( "propertyNames: " + propertyNames );
+//         console.log( "tetsingeee : " +  tabName.match( /\d+/g ) );
+//         if( tabName.match( /\d+/g ).length > 1 ) {
+//             for ( let j=0; j<propertyNames.length; j++ ) {
+//                 if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
+//                     sorted.push ( resources[val][0] );
+//                 }
+//             }
+//         }
+        
+//     }
+//     console.log( "getResources() : Complete : list - " + sorted );
+//     return sorted;
+// }
 
 // Create the suneditor text area
 
@@ -1175,6 +1189,8 @@ if( openBtn ) {
         const newTopic = await createTopic( null, tname );
         console.log( "newTopic: " + JSON.stringify( newTopic ) );
 
+        // render the resource text area
+        createTextArea();
         
 
         // this is where i should call updateTopic sending the topic id retrieved from createTopic??
