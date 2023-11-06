@@ -49,7 +49,9 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         let topics = await topicService.getAllVisibleTopics( authUserId, req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all visible topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -74,7 +76,9 @@ exports.getAllPublicTopics = async ( req, res ) => {
         let topics = await topicService.getAllPublicTopics( req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all public topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -121,7 +125,9 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
             // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( resourcesList );
+            res.status( 200 ).json( {
+                results: resourcesList
+            } );
         }
 
         else {
@@ -148,7 +154,9 @@ exports.getTopicById = async ( req, res ) => {
         if( topic ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned topic by id" );
-            res.status( 200 ).json( topic );
+            res.status( 200 ).json( {
+                results: topic
+            } );
         }
         else {
             const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -189,7 +197,9 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
     if( topics ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all active topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topics not found" );
