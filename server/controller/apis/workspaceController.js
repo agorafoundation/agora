@@ -118,7 +118,9 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
             // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( topicsList );
+            res.status( 200 ).json( {
+                results: topicsList
+            } );
         }
 
         else {
@@ -163,7 +165,9 @@ exports.getAllVisibleWorkspacesWithTopics = async ( req, res ) => {
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    } );
 };
 
 
@@ -179,7 +183,9 @@ exports.getAllWorkspacesForauthUser = async ( req, res ) => {
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces for user" );
-    res.status( 200 ).json( ownerWorkspaces );
+    res.status( 200 ).json( {
+        results: ownerWorkspaces
+    } );
 };
 
 /**

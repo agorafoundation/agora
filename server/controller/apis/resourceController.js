@@ -59,7 +59,9 @@ exports.getAllVisibleResources = async ( req, res ) => {
 
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all resources" );
-        res.status( 200 ).json( resources );
+        res.status( 200 ).json( {
+            results: resources
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
@@ -81,7 +83,9 @@ exports.getAllSharedResourcesForUser = async ( req, res ) => {
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all shared resources for user" );
-    res.status( 200 ).json( sharedResources );
+    res.status( 200 ).json( {
+        results: sharedResources
+    } );
 };
 
 /**
@@ -105,7 +109,9 @@ exports.getAllActiveResourcesForUser = async ( req, res ) => {
     if( resources ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all active resources" );
-        res.status( 200 ).json( resources );
+        res.status( 200 ).json( {
+            results: resources
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Resources not found" );
@@ -131,7 +137,9 @@ exports.getResourceById = async ( req, res ) => {
     if( resource ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned resource by id" );
-        res.status( 200 ).json( resource );
+        res.status( 200 ).json( {
+            results: resource
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
@@ -147,7 +155,9 @@ exports.getAllResourcesForauthUser = async ( req, res ) => {
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all resources for user" );
-    res.status( 200 ).json( ownerResources );
+    res.status( 200 ).json( {
+        results: ownerResources
+    } );
 };
 
 /**
