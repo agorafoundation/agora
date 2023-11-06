@@ -1,4 +1,4 @@
-<style>
+`<style>
  
   .btn.btn-danger:hover {
     background-color: transparent;
@@ -51,14 +51,12 @@
           data-bs-target="#agnesModal"
         ></button>
       </div>
-      <div class="modal-body text-center">
+      <div class="modal-body modal-title-body">
         <!-- Use text-center to center the content -->
-        
-        <h6 class="modal-title text-center text-white">
-          Please select Document Type
-        </h6>
+
+        <h6 class="citation-types-label">Select Document Type</h6>
         <!-- dropdown for doc type -->
-        <select class="form-select" id="doc-type">
+        <select class="form-select form-select-sm" id="doc-type">
           <option value="empty"></option>
           <option value="notes">Notes</option>
           <option value="paper">Paper</option>
@@ -68,6 +66,22 @@
     
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
+        <!-- Citation Dropdown -->
+        <label class="citation-types-label" for="citation-types"
+          >Citation Type</label
+        >
+        <select
+          name="citation-types"
+          class="form-select form-select-sm"
+          id="citations-dropdown"
+          autocomplete="off"
+        >
+          <option value="apa" selected>APA</option>
+          <option value="mla">MLA</option>
+          <option value="harvard">Harvard</option>
+          <option value="chicago">Chicago</option>
+        </select>
+
         <div class="d-flex flex-column">
           <!-- Agnes Header Data -->
           <div
@@ -75,42 +89,73 @@
             class="p-3 bg-primary text-white citations-btns-container"
           >
             <p class="citations-title">Agnes suggests the following articles</p>
-            <div class="btn-group btn-group-sm citations-btns">
-              <button class="btn btn-secondary custom-radius">APA</button>
-              <button class="btn btn-secondary custom-radius">MLA</button>
-              <button class="btn btn-secondary custom-radius">Harvard</button>
-              <button class="btn btn-secondary custom-radius">Chicago</button>
+
+            <div class="all-cards">
+              <div class="container citation-card">
+                <div class="row card-row-header">
+                  <div class="col text-end">
+                    <button class="btn btn-danger btn-sm card-close-btn">
+                      X
+                    </button>
+                  </div>
+                </div>
+
+                <div class="row card-row-body">
+                  <div class="col text-center">
+                    <span class="card-citation-text"
+                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre:
+                      Explorations in Nonfiction, 15(2), 133-142.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col text-end">
+                    <button class="btn btn-sm card-cite-btn">Cite</button>
+                  </div>
+                </div>
+              </div>
+              <div class="container citation-card">
+                <div class="row card-row-header">
+                  <div class="col text-end">
+                    <button class="btn btn-danger btn-sm card-close-btn">
+                      X
+                    </button>
+                  </div>
+                </div>
+
+                <div class="row card-row-body">
+                  <div class="col text-center">
+                    <span class="card-citation-text"
+                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre:
+                      Explorations in Nonfiction, 15(2), 133-142.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col text-end">
+                    <button class="btn btn-sm card-cite-btn">Cite</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <!-- Agness body Data -->
-          <!-- <div class="p-3 flex-grow-1 overflow-auto"> -->
-          <!-- List of Citations -->
-          <!-- <div class="card mb-3">
-              <div class="card-header d-flex justify-content-between">
-                <span
-                  >Wiklund, J. (2013). Ankylosaurus. Fourth Genre: Explorations
-                  in Nonfiction, 15(2), 133-142.</span
-                >
-                <button class="btn btn-danger btn-sm">X</button>
-              </div>
-              <div class="card-footer">
-                <button class="btn btn-primary btn-sm">Cite</button>
-              </div>
-            </div>
-          </div> -->
         </div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="close-button"
-          data-bs-toggle="modal"
-          data-bs-target="#agnesModal"
-        >
-          Regenerate
-          <span class="material-symbols-outlined ag-generate-icon">cached</span>
-        </button>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="close-button"
+            data-bs-toggle="modal"
+            data-bs-target="#agnesModal"
+          >
+            Regenerate
+            <span class="material-symbols-outlined ag-generate-icon"
+              >cached</span
+            >
+          </button>
+        </div>
       </div>
     </div>
   </div>
