@@ -27,49 +27,56 @@ exports.callOpenAI = async ( req, res ) => {
 
     if ( resourceContent ) {
         let parsedResourceContent = parseResourceContentHtml( resourceContent );
-    
-        let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
-    
-        // Wrap in a try catch so that the server doesn't crash when an error occurs
-        try {
-            let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
-        
-            const completion = await openai.createChatCompletion( {
-                model: "gpt-3.5-turbo",
-                temperature: 0, // variance in the response - play with this for different results
-                messages: [ 
-                    { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
-                    { role: "user", content: prompt }
-                ]
-            } );
-          
-            let returnValue = completion.data.choices[0];
-      
-            /* let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
-    
-            let validatedCitations = validateSources( rawJson );
-            let keywords = rawJson["keywords"];
-    
-            let newJsonObject = {
-                citations: validatedCitations, 
-                keywords: keywords
-            }; */
 
-            res.set( "x-agora-message-title", "Success" );
-            res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-            res.status( 200 ).json( JSON.parse( returnValue.message.content ) );
+        if ( parsedResourceContent.length > 0 ) {
+            let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
+        
+            // Wrap in a try catch so that the server doesn't crash when an error occurs
+            try {
+                let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+            
+                const completion = await openai.createChatCompletion( {
+                    model: "gpt-3.5-turbo",
+                    temperature: 0, // variance in the response - play with this for different results
+                    messages: [ 
+                        { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
+                        { role: "user", content: prompt }
+                    ]
+                } );
+            
+                let returnValue = completion.data.choices[0];
+        
+                let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+        
+                let validatedCitations = await validateSources( rawJson );
+                let keywords = rawJson["keywords"];
+        
+                let newJsonObject = {
+                    citations: validatedCitations, 
+                    keywords: keywords
+                };
+
+                res.set( "x-agora-message-title", "Success" );
+                res.set( "x-agora-message-detail", "Returned response from OpenAI" );
+                res.status( 200 ).json( newJsonObject );
+            } 
+            catch ( e ) {
+                console.log( e );
+                res.set( "x-agora-message-title", "Error" );
+                res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
+                res.status( 500 ).json( {"error": "Failed to return response from OpenAI"} );
+            }
         } 
-        catch ( e ) {
+        else {
             res.set( "x-agora-message-title", "Error" );
-            res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
-            res.status( 500 ).json( "" );
-    
+            res.set( "x-agora-message-detail", "Content not long enough" );
+            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 words."} );
         }
     } 
     else {
         res.set( "x-agora-message-title", "Error" );
         res.set( "x-agora-message-detail", "Failed to get resource" );
-        res.status( 500 ).json( "" );
+        res.status( 500 ).json( {"error": "Failed to get response"}  );
     }
 };
 
@@ -115,30 +122,34 @@ const parseResourceContentHtml = ( content ) => {
  * @param {JSON} json The JSON from OpenAI.
  * @returns {JSON[]}
  */
-const validateSources = ( json ) => {
+const validateSources = async ( json ) => {
     let citations = json["citations"];
+    let newCitations = [];
 
     for ( let i = 0; i < citations.length; i++ ) {
         let citation = citations[i];
 
-        let paper = querySemanticScholar( citation.title );
-        
-        console.log( paper );
-        // If the title doesn't exist in Semantic Scholar, then delete it from the object.
-        if ( paper.title !== citation.title ) {
-            delete citations[i];
-            /*
-            citation.title = paper.title;
-            citation.authors = paper.authors;
-            citation.year = ( paper.year != null ) ? paper.year : citation.year;
-            citation.link = paper.url;
+        let paper = await querySemanticScholar( citation.title );
 
-            citations[i] = citation;
-            */
+        if ( paper ) {
+            paper = paper[0];
+
+            if ( citation.title.indexOf( paper.title ) >= 0 ) {
+                let newCitation = {
+                    title: paper.title,
+                    authors: ( paper.authors.length > 0 ) ? paper.authors[0].name + " et al." : paper.authors[0].name,
+                    publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
+                    publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
+                    link: paper.url,
+                    summary: citation.summary,
+                };
+    
+                newCitations.push( newCitation );
+            }
         }
     }
 
-    return citations;
+    return newCitations;
 };
 
 /**
@@ -147,19 +158,18 @@ const validateSources = ( json ) => {
  * @param {string} title The title of the article from OpenAI.
  * @param {number} limit The number of results to pull from SemanticScholar.
  */
-const querySemanticScholar = ( title, limit = 1 ) => {
+const querySemanticScholar = async ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
-        fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}&fields=title,authors,year,url`, {
+        let response = await fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}&fields=title,authors,year,url,publicationVenue`, {
             headers: {
                 'x-api-key': process.env.SEMANTIC_SCHOLAR_API_KEY
             }
-        } ).then( response => response.json() ).then( json => {
-            if ( json.data ) {
-                console.log( json.data );
-                return json.data[0];
-            }
         } );
+
+        let json = await response.json();
+
+        return json.data;
     }
     catch ( e ) {
         console.log( "There was an error in validating the title with Semantic Scholar: " + e );
