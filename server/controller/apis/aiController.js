@@ -135,9 +135,13 @@ const validateSources = async ( json ) => {
             paper = paper[0];
 
             if ( citation.title.indexOf( paper.title ) >= 0 ) {
+                let authors = paper.authors.map ( function ( a ) {
+                    return a.name; 
+                } );
+
                 let newCitation = {
                     title: paper.title,
-                    authors: ( paper.authors.length > 0 ) ? paper.authors[0].name + " et al." : paper.authors[0].name,
+                    authors: ( paper.authors.length > 1 ) ? authors : paper.authors[0].name,
                     publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
                     publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
                     link: paper.url,
