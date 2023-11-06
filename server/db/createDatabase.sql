@@ -592,10 +592,10 @@ CREATE TYPE shared_permission_level AS ENUM ('view', 'discussion', 'edit');
 
 CREATE TABLE IF NOT EXISTS agora.shared_entities (
     shared_entity_id SERIAL PRIMARY KEY,
-    entity_id INTEGER,          -- unique id number of the entity being shared
+    entity_id UUID NOT NULL,          -- unique id number of the entity being shared
     entity_type shared_entity_type,      
-    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
-    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
+    shared_by_user_id UUID NOT NULL REFERENCES users(user_id),  -- user id of the user who shared the entity
+    shared_with_user_id UUID NOT NULL REFERENCES users(user_id),-- user id of the user who the entity was shared with
     -- share_type INTEGER,      -- removed as each entity has visibility settings for public / private. Entries in this table are exceptions to private
     permission_level shared_permission_level,  
     can_copy BOOLEAN,           -- can the shared entity be copied by another user?
