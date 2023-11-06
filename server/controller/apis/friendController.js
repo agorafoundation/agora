@@ -186,7 +186,7 @@ exports.rejectFriendRequest = async ( req, res ) => {
 
 //Deletes a friend.
 exports.deleteFriendByID = async ( req, res ) => {
-    let success = await friendService.deleteFriendByID( req.params.friendshipId);
+    let success = await friendService.deleteFriendByID( req.body.friendshipId);
     if ( success ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Removed friend" );

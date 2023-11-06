@@ -58,7 +58,7 @@ router.route( '/getFriend/:userID' )
         friendController.getFriendByID( req, res );
     } )
    
-router.route( '/deleteFriend/:friendshipId' )
+router.route( '/deleteFriend' )
     .delete( async ( req, res ) => {
             friendController.deleteFriendByID( req, res );
         } );
