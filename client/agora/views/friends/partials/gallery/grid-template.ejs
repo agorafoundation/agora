@@ -4,7 +4,7 @@
     <% if (friends.length > 0) { %>
       <% friends.forEach((friend) => { %>
         <!-- Friend Card -->
-        <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend">
+        <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend" id="friend-card-<%= friend.friendship_id %>">
           <div class="card h-100" id="f-gv-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="f-gv-option-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
