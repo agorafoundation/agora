@@ -1,3 +1,19 @@
+<style>
+ 
+  .btn.btn-danger:hover {
+    background-color: transparent;
+    border: none;
+  }
+  .btn-info { 
+        cursor: pointer; 
+        border: none; 
+        background-color: transparent; 
+        height: 35px; 
+        width: 50px; 
+        color: #ffffff; 
+        
+    } 
+</style>
 <div
   class="fade agnes-modal-pos"
   id="agnesModal"
@@ -16,10 +32,16 @@
         <h5 class="modal-title text-center text-white" id="agnesModalLabel">
           Agnes
         </h5>
-        <!-- <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-          <button class="btn btn-primary" type="button" data-bs-toggle="popover">i</button>
 
-        </span> -->
+        <!-- <div class="agnes-info" style="height: 100px; position: relative; width: 100%; height: 300px; display: flex; justify-content: center; align-items: center;">
+          <button id="myPopover" style="margin: 0 auto;" type="button" class="btn-info" data-bs-toggle="popover" title="Agora" data-bs-content="Agora is an open, free, cloud-based platform you can use to take notes, research, and learn." data-bs-placement="bottom">
+            <i class="material-icons">info</i> 
+          </button>
+        </div> -->
+
+
+    
+
         <button
           type="button"
           class="btn-close"
@@ -31,7 +53,7 @@
       </div>
       <div class="modal-body text-center">
         <!-- Use text-center to center the content -->
-
+        
         <h6 class="modal-title text-center text-white">
           Please select Document Type
         </h6>
@@ -41,10 +63,9 @@
           <option value="notes">Notes</option>
           <option value="paper">Paper</option>
         </select>
-        <!-- original buttons -->
-        <!-- <button class="btn btn-light" id="notesButton">Notes</button>
-        <button class="btn btn-secondary" id="paperButton">Paper</button> -->
+       
       </div>
+    
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
         <div class="d-flex flex-column">
@@ -95,7 +116,10 @@
   </div>
 </div>
 
+
+
 <script>
+
   document.getElementById("doc-type").addEventListener("change", function () {
     var selectedValue = this.value;
     var selectedContent = document.getElementById("selectedContent");
@@ -105,4 +129,24 @@
       selectedContent.classList.add("hidden");
     }
   });
+
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+<script>
+  var myPopover = new bootstrap.Popover(document.getElementById('myPopover'));
+</script>
+
+<!-- <script>
+  document.getElementById( id ).addEventListener( "mouseenter", ( e ) => {
+        let tooltip = document.getElementById( "control-bar-tooltip" );
+        let offset = getOffset( document.getElementById( id ) );
+
+        tooltip.innerText = text;
+
+        tooltip.style.top = offset.top + 45 + "px";
+        tooltip.style.left = offset.left - 13 + "px";
+
+        tooltip.style.visibility = "visible";
+    } );
+</script> -->
