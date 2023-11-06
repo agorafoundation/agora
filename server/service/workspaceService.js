@@ -70,6 +70,7 @@ exports.getSharedWorkspaces = async ( sharedUserID ) => {
 
         const values = [ sharedUserID ];
         let workspaces = [];
+        //console.log( sharedUserID );
 
         try {
 
