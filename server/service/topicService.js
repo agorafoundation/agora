@@ -592,7 +592,7 @@ exports.saveTopic = async function( topic ) {
  * @param {*} resourceIds Array of resource id's to be associated with the topic
  * @returns true for success / false for failure
  */                                               
-exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesRequired ) {
+exports.saveResourcesForTopic = async function( topicId, resourceIds ) {
     // get the most recent version of the topic
     let text = "SELECT * from topics where topic_id = $1";
     let values = [ topicId ];
@@ -616,9 +616,7 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
             if( resourceIds && resourceIds.length > 0 ) {
                 for( let i=0; i < resourceIds.length; i++ ) {
                     let isRequired = true;
-                    if( resourcesRequired.length > i ) {
-                        isRequired = resourcesRequired[i];
-                    }
+
                     text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
                     values = [ topicId, resourceIds[i], ( i + 1 ), isRequired, true, res.rows[0].ownedBy ];
 

@@ -5,8 +5,9 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// keeps track of the current topic tab identifier. When a user selects a tab, the div with name
+// matching this tabName is displayed. The divs have a class 'tabcontent'.
 let tabName = "";
-let currentTagId = null;
 
 // Workspace resizing
 let activeHeightObj = {};
@@ -32,8 +33,8 @@ function checkActiveHeight() {
 
 
 /* Resource Functions --------------------------------------------------------------------------------- */
-let resources = {};
-let numResources = 1;
+let resources = [];
+let numResources = 0;
 
 // create a new resource
 async function createResource( name, type, imagePath, id ) {
@@ -57,16 +58,18 @@ async function createResource( name, type, imagePath, id ) {
 
         if( response.ok ) {
             const data = await response.json();
-            console.log( "createResource() : getCurrTopicID : " + tabName.match( /\d+/g ) );
-            if( tabName.match( /\d+/g ) ) {
-                resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-            }
-            else {
-                resources[numResources] = [];
-            }
-            
-            numResources++;
             console.log( "createResource() : Resource created + Resource: " + JSON.stringify( data ) );
+            console.log( "createResource() : getCurrTopicID : " + tabName.match( /\d+/g ) );
+            // if( tabName.match( /\d+/g ) ) {
+            //     resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            // }
+            // else {
+            //     resources[numResources] = [];
+            // }
+            
+            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at position " + numResources );
+            resources[numResources] = data.resourceId;
+            //numResources++;
 
             // map the new resource to the associated topic
             //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
@@ -81,12 +84,13 @@ async function createResource( name, type, imagePath, id ) {
             // URBG: removed this to test fix for update being called in the middle of save.
             // this might be needed for a different thread but not called here.
             //updateTopic( topicTitle.innerHTML );
-            console.log( "createResource() : complete" );
+            console.log( "createResource() : complete : Resources array: " + JSON.stringify( resources ) );
             return data;
         }
     }
     else{
-        resources[numResources] = [ id, getCurrTopicID() ];
+        console.log( "saving resource id: " + id + " to resources array" );
+        resources[numResources] = id ;
 
         console.log( "createResource() : complete - No id" );
     }
@@ -383,6 +387,7 @@ let activeTab = document.getElementById( "resources-zone0" );
 function openTab( name ) {
     tabName = name;
     console.log( "openTab : " + tabName );
+    //console.log( "tab id name: " + currentTagId ) ;
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -399,7 +404,7 @@ function openTab( name ) {
     }
 
     activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
-    currentTagId = name.slice( -1 );
+    //currentTagId = name.slice( -1 );
 
     // Show the current tab
     document.getElementById( name ).style.display = "block";
@@ -701,9 +706,22 @@ function createTextArea( name, id ) {
         let newDropZone = document.createElement( "div" );
         newDropZone.className = "drop-zone-new";
         newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
-        newDropZone.addEventListener( "click", () => {
+        newDropZone.addEventListener( "click", async () => {
             console.log( "createTextArea - Promise - createResource() call" );
-            createResource();
+
+            console.log( "create new resource click event - createResource() call" );
+            const newResource = await createResource( null, 1, null, null );
+            console.log( "newResource: " + JSON.stringify( newResource ) );
+
+            console.log( "create new resource click event - updateTopic() call" );
+            let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
+            console.log( "topicTitle: " + topicTitle );
+            const newTopic = await updateTopic( topicTitle.innerHTML );
+            console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+            // render the resource text area
+            createTextArea();
+
         } );
 
         // Create drop zone filler space
@@ -785,6 +803,7 @@ function createTextArea( name, id ) {
             // else{
             //     //createResource( null, 1, null );
             // }
+            numResources++;
 
             console.log( "createTextArea() complete promise then (suneditor) completed" );
         }
@@ -796,6 +815,7 @@ function createTextArea( name, id ) {
 let sunEditor = {};
 let sunEditorList = [];
 const createSunEditor = async() => {
+    console.log( "createSunEditor() : " + numResources );
     // eslint-disable-next-line no-undef
     sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
         toolbarContainer: "#toolbar_container",
@@ -846,7 +866,7 @@ const createSunEditor = async() => {
 
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
-    //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -873,21 +893,24 @@ function getResourceID( val ) {
     console.log( "getResourceID: start" );
     console.log( "val: " +val );
     console.log( "resources: " + JSON.stringify( resources ) );
-    let resourceID = resources[val][0];
+    let resourceID = resources[val];
     return resourceID;
 }
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    
+    console.log( "mouse move event" );
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
             sunEditorList[i][1].save();
 
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
-            let id = getResourceID( sunEditorList[i][0] );
+            let id = getResourceID( ( i ) );
+            //let id = resources[i - 1];
+            console.log( "resources: " + resources + " at index " + ( i ) + "is : " + id );
             let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            console.log( "calling from move" );
             updateSunEditor( id, title, contents );
         };
         sunEditorList[i][1].onKeyUp = ( e ) => {
@@ -1096,6 +1119,7 @@ function getFile( file ) {
 
 
 document.addEventListener( "click", function( e ) {
+    console.log( "suneditor click event" ); 
     // toggle edit and done icons
     if ( ( e.target.id ).includes( "done" ) ) {
         let val = e.target.id.match( /\d+/g )[0];
@@ -1106,8 +1130,10 @@ document.addEventListener( "click", function( e ) {
 
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
-        let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        //let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        let id = resources[val];
         let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        console.log( "calling from click" );
         updateSunEditor( id, title, contents );
     }
     if ( ( e.target.id ).includes( "edit" ) ) {
@@ -1117,9 +1143,9 @@ document.addEventListener( "click", function( e ) {
     }
 
     // open suneditor in new tab
-    if ( e.target.id.includes( "open-tab" ) ) {
-        window.open( "http://localhost:4200/note", "_blank" );
-    }
+    // if ( e.target.id.includes( "open-tab" ) ) {
+    //     window.open( "http://localhost:4200/note", "_blank" );
+    // }
 
     // close tag list elements
     if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
@@ -1165,14 +1191,15 @@ document.addEventListener( "click", function( e ) {
 
 
 /* Workspace Manager Modal ----------------------------------------------- */
-const modal = document.getElementById( "resource-modal-div" );
+// URBG: I removed the modal - commenting these out
+// const modal = document.getElementById( "resource-modal-div" );
 const openBtn = document.getElementById( "new-element" );
-const closeBtns = document.querySelectorAll( ".close" );
-const createDocBtn = document.getElementById( "create-doc-div" );
-const createTopicBtn = document.getElementById( "create-topic-div" );
+//const closeBtns = document.querySelectorAll( ".close" );
+// const createDocBtn = document.getElementById( "create-doc-div" );
+// const createTopicBtn = document.getElementById( "create-topic-div" );
 const fileUploadBtn = document.getElementById( "file-upload-div" );
-const openTopicBtn = document.getElementById( "open-topic-div" );
-const openTopicModal = document.getElementById( "open-topic-modal-div" );
+// const openTopicBtn = document.getElementById( "open-topic-div" );
+// const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
 if( openBtn ) {
@@ -1182,7 +1209,7 @@ if( openBtn ) {
         //console.log( 'Took input from prompt' );
 
         console.log( "main click event - createResource() call" );
-        const newResource = await createResource();
+        const newResource = await createResource( null, 1, null, null );
         console.log( "newResource: " + JSON.stringify( newResource ) );
 
         console.log( "main click event - createTopic() call" );
@@ -1199,28 +1226,28 @@ if( openBtn ) {
     };
 }
 
-//close the modal
-if( closeBtns ) {
-    closeBtns.forEach( ( btn ) => {
-        btn.onclick = () => {
-            if ( modal.style.display == "block" ) {
-                modal.style.display = "none";
-            }
-            else if ( openTopicModal.style.display == "block" ) {
-                openTopicModal.style.display = "none";
-            }
-        };
-    } );
-}
+// //close the modal
+// if( closeBtns ) {
+//     closeBtns.forEach( ( btn ) => {
+//         btn.onclick = () => {
+//             if ( modal.style.display == "block" ) {
+//                 modal.style.display = "none";
+//             }
+//             else if ( openTopicModal.style.display == "block" ) {
+//                 openTopicModal.style.display = "none";
+//             }
+//         };
+//     } );
+// }
 
-window.onclick = function( event ) {
-    if ( event.target == modal ) {
-        modal.style.display = "none";
-    }
-    else if ( event.target == openTopicModal ) {
-        openTopicModal.style.display = "none";
-    }
-};
+// window.onclick = function( event ) {
+//     if ( event.target == modal ) {
+//         modal.style.display = "none";
+//     }
+//     else if ( event.target == openTopicModal ) {
+//         openTopicModal.style.display = "none";
+//     }
+// };
 
 // option hover events
 document.addEventListener( "mousemove", function( e ) {
@@ -1239,19 +1266,19 @@ document.addEventListener( "mousemove", function( e ) {
     }
 } );
 
-// option events
-if ( createDocBtn ) { 
-    createDocBtn.onclick = () => {
-        modal.style.display = "none";
-        createTextArea();
-    };
-}
-if ( createTopicBtn ) {
-    createTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        createTopic();
-    };
-}
+// // option events
+// if ( createDocBtn ) { 
+//     createDocBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTextArea();
+//     };
+// }
+// if ( createTopicBtn ) {
+//     createTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTopic();
+//     };
+// }
 if ( fileUploadBtn ) {
     const pickerOpts = {
         types: [
@@ -1272,12 +1299,12 @@ if ( fileUploadBtn ) {
 
     } );
 }
-if ( openTopicBtn ) {
-    openTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        openTopicModal.style.display = "block";
-    };
-}
+// if ( openTopicBtn ) {
+//     openTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         openTopicModal.style.display = "block";
+//     };
+// }
 /* END Workspace Manager Modal ----------------------------------------------- */
 
 const toggleProfileList = () => {
@@ -1494,22 +1521,25 @@ async function renderTopic( topic ) {
     //console.log( JSON.stringify( topic ) );
     await createTopic( topic.topicId, topic.topicName );
     //console.log( "creating topic, passed name: " + topic.topicName );
-    const resources = await renderResources( topic.topicId );
+    const localResources = await getResourcesForTopicId( topic.topicId );
     //console.log( "resources: " + JSON.stringify( resources ) );
-    if ( resources.length > 0 ) {
+    if ( localResources.length > 0 ) {
         //let docType1Count = 0;
-        for ( let i = 0; i < resources.length; i++ ) {
-            console.log( "resource: " + i + " of " + resources.length );
-            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+        for ( let i = 0; i < localResources.length; i++ ) {
+            console.log( "resource: " + i + " of " + localResources.length );
+            console.log( localResources[i].resourceName + " id: " + localResources[i].resourceId );
             //if resource is a document
-            if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].resourceId );
-                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    totalTopicsRendered++; 
+            if( localResources[i].resourceType == 1 ){
+                await createTextArea( localResources[i].resourceName, localResources[i].resourceId );
+                if( localResources[i].resourceContentHtml && localResources[i].resourceContentHtml.length > 0 ){
+                     
                     let editor = "sunEditor" + ( totalTopicsRendered );
+
+                    totalTopicsRendered++;
+
                     //console.log( editor );
                     //console.log( sunEditor[editor] );
-                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    sunEditor[editor][1].insertHTML( localResources[i].resourceContentHtml );
 
                     //docType1Count++;
                     //val++;
@@ -1517,11 +1547,11 @@ async function renderTopic( topic ) {
 
 
             }
-            else if( resources[i].resourceType == 3 ) {
+            else if( localResources[i].resourceType == 3 ) {
                 // todo: add code to deal with resource type 3
             }
-            else if ( resources[i].resourceType == 2 ) {
-                console.log( "other resource type??? " + resources[i].resourceName );
+            else if ( localResources[i].resourceType == 2 ) {
+                console.log( "other resource type??? " + localResources[i].resourceName );
             }
             
         }
@@ -1532,11 +1562,11 @@ async function renderTopic( topic ) {
     return topics;
 }
 
-async function renderResources( topicId ) {
-    console.log( "renderResources() : Start for topicId: " + topicId );
+async function getResourcesForTopicId( topicId ) {
+    console.log( "getResourcesForTopicId() : Start for topicId: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    console.log( "renderResources() : complete - response: " + JSON.stringify( data ) );
+    console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) );
     return data.results;
 }
 
