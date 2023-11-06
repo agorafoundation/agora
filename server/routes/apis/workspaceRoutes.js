@@ -6,7 +6,7 @@
  */
 
 var express = require( 'express' );
-var router = express.Router( );
+var router = express.Router();
 
 const bodyParser = require( 'body-parser' );
 router.use( bodyParser.urlencoded( {
@@ -26,19 +26,25 @@ router.route( '/' )
     // get all visible workspaces
     .get( async ( req, res ) => {
         workspaceController.getAllVisibleWorkspaces( req, res );
-    } )    
+    } )
     // save a new workspace
-    .post( async ( req, res ) => { 
+    .post( async ( req, res ) => {
         workspaceController.saveWorkspace( req, res );
     }
     );
+//retrieve all shared workspaces with the user.
+router.route( '/shared' )
+    //get all shared workspaces
+    .get( async ( req, res ) => {
+        workspaceController.getAllSharedWorkspaces( req, res );
+    } );
 
 // workspaces /api/v1/auth/workspaces
 router.route( '/:workspaceId' )
     // get a visible workspace by id
     .get( async ( req, res ) => {
         workspaceController.getWorkspaceById( req, res );
-    
+
     } )
     // delete a visible workspace by id
     .delete( async ( req, res ) => {
