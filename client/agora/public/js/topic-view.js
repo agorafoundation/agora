@@ -59,16 +59,21 @@ async function createResource( name, type, imagePath, id ) {
         if( response.ok ) {
             const data = await response.json();
             console.log( "createResource() : Resource created + Resource: " + JSON.stringify( data ) );
-            console.log( "createResource() : getCurrTopicID : " + tabName.match( /\d+/g ) );
             // if( tabName.match( /\d+/g ) ) {
-            //     resources[numResources] = [ data.resourceId, getCurrTopicID() ];
+            //     resources-numResources] = [ data.resourceId, getCurrTopicID() ];
             // }
             // else {
-            //     resources[numResources] = [];
+            //     resources-numResources] = [];
             // }
             
-            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at position " + numResources );
-            resources[numResources] = data.resourceId;
+            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + getCurrTopicIndex() );
+            
+            console.log( "----------------- saving resource to list 1 --------------- " );
+            if( resources[getCurrTopicIndex()] == null ) {
+                resources[getCurrTopicIndex()] = [];
+            }
+            resources[getCurrTopicIndex()][getCurrTopicIndex] = data.resourceId;
+            console.log( "resources array: " + JSON.stringify( resources ) );    
             //numResources++;
 
             // map the new resource to the associated topic
@@ -79,7 +84,7 @@ async function createResource( name, type, imagePath, id ) {
             
             
 
-            //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
+            //console.log( "added resource: " + JSON.stringify( resources-numResources] ) );
             //console.log( "createResource() : updateTopic() call" );
             // URBG: removed this to test fix for update being called in the middle of save.
             // this might be needed for a different thread but not called here.
@@ -89,8 +94,10 @@ async function createResource( name, type, imagePath, id ) {
         }
     }
     else{
+        console.log( "----------------- saving resource to list 2 --------------- " );
         console.log( "saving resource id: " + id + " to resources array" );
-        resources[numResources] = id ;
+        console.log( "current topic id: " + getCurrTopicID() + " current topic index: " + getCurrTopicIndex() );
+        resources[getCurrTopicIndex()][numResources] = id ;
 
         console.log( "createResource() : complete - No id" );
     }
@@ -101,7 +108,7 @@ async function createResource( name, type, imagePath, id ) {
 
 /* Topic Functions -------------------------------------------------------------------------- */
 let numTopics = 1;
-let topics = {};
+let topics = [];
 
 // Creates a new topic
 const createTopic = async( id, name ) => {
@@ -646,10 +653,24 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
 // get the topic id based on the currently visible topic tab
 function getCurrTopicID() {
-    let topicVal = tabName.match( /\d+/g )[0];
-    let topicID = topics[topicVal];
+    let topicID = null;
+    if( tabName ) {
+        let topicVal = tabName.match( /\d+/g )[0];
+        topicID = topics[topicVal];
     //console.log( "returning topic id: " + topicID );
+    }
     return topicID;
+}
+
+function getCurrTopicIndex() {
+    let topicIndex = 0;
+    if( tabName ) {
+        topicIndex = tabName.match( /\d+/g )[0];
+        //topicIndex = topics.indexOf( topicVal );
+
+    //console.log( "returning topic id: " + topicID );
+    }
+    return topicIndex;
 }
 
 
@@ -664,18 +685,18 @@ function getCurrTopicID() {
 //     let sorted = [];
 //     for ( let i=0; i<topicResources.length; i++ ) {
 //         //console.log( "in the loop" );
-//         if ( topicResources[i].style.display == 'none' ) {
+//         if ( topicResources-i].style.display == 'none' ) {
 //             //console.log( true );
 //         }
-//         let val = topicResources[i].id.match( /\d+/g )[0];
+//         let val = topicResources-i].id.match( /\d+/g )[0];
 //         //console.log( "val: " + val );
 //         let propertyNames = Object.getOwnPropertyNames( resources );
 //         //console.log( "propertyNames: " + propertyNames );
 //         console.log( "tetsingeee : " +  tabName.match( /\d+/g ) );
 //         if( tabName.match( /\d+/g ).length > 1 ) {
 //             for ( let j=0; j<propertyNames.length; j++ ) {
-//                 if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
-//                     sorted.push ( resources[val][0] );
+//                 if ( val == propertyNames[j] && resources-val][1] == getCurrTopicID() ) {
+//                     sorted.push ( resources-val][0] );
 //                 }
 //             }
 //         }
@@ -893,7 +914,7 @@ function getResourceID( val ) {
     console.log( "getResourceID: start" );
     console.log( "val: " +val );
     console.log( "resources: " + JSON.stringify( resources ) );
-    let resourceID = resources[val];
+    let resourceID = resources[getCurrTopicIndex()][val];
     return resourceID;
 }
 
@@ -907,7 +928,7 @@ document.addEventListener( "mousemove", function() {
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
             let id = getResourceID( ( i ) );
-            //let id = resources[i - 1];
+            //let id = resources-i - 1];
             console.log( "resources: " + resources + " at index " + ( i ) + "is : " + id );
             let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
             console.log( "calling from move" );
@@ -1131,7 +1152,7 @@ document.addEventListener( "click", function( e ) {
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
         //let id = getResourceID( sunEditor["sunEditor" + val][0] );
-        let id = resources[val];
+        let id = resources[getCurrTopicIndex()][val];
         let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
         console.log( "calling from click" );
         updateSunEditor( id, title, contents );
@@ -1504,7 +1525,7 @@ const renderTopics = async ( workspace ) => {
    
         if ( topics.results.length > 0 ) {
             for ( let i = 0; i < topics.results.length; i++ ) {
-                await renderTopic( topics.results[i] );
+                await renderTopic( topics.results[i], i );
             
             }
         }   
@@ -1516,7 +1537,7 @@ const renderTopics = async ( workspace ) => {
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
-async function renderTopic( topic ) {
+async function renderTopic( topic, topicNum ) {
     console.log( 'renderTopic() start for topic:' );
     //console.log( JSON.stringify( topic ) );
     await createTopic( topic.topicId, topic.topicName );
@@ -1553,6 +1574,11 @@ async function renderTopic( topic ) {
             else if ( localResources[i].resourceType == 2 ) {
                 console.log( "other resource type??? " + localResources[i].resourceName );
             }
+
+            // add the resource to the resources array
+            console.log( "----------------- saving resource to list 3 --------------- " );
+            resources[topicNum] = [];
+            resources[topicNum][topicNum] =localResources[i].resourceId;
             
         }
         window.scrollTo( 0, 0 );
@@ -1571,13 +1597,13 @@ async function getResourcesForTopicId( topicId ) {
 }
 
 window.addEventListener( "load", async () => {
-    //console.log( "window load event: start" );
+    console.log( "window load event: start" );
     await idAndFetch();
-    //console.log( "about to run getTags" );
+    console.log( "about to run getTags" );
     getTags();
-    //console.log( "about to run render topics" );
+    console.log( "about to run render topics" );
     renderTopics();
-    //console.log( "window load event: complete" );
+    console.log( "window load event: complete" );
 } );
 
 

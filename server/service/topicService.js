@@ -594,6 +594,7 @@ exports.saveTopic = async function( topic ) {
  */                                               
 exports.saveResourcesForTopic = async function( topicId, resourceIds ) {
     // get the most recent version of the topic
+    console.log( "[INFO]: Saving resources for topic: " + topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds + " length: " + resourceIds.length );
     let text = "SELECT * from topics where topic_id = $1";
     let values = [ topicId ];
     try {

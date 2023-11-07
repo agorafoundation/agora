@@ -393,10 +393,12 @@ exports.saveTopic = async ( req, res, redirect ) => {
         */
 
         // Resources are held as a list of resource id's.
-        
+        console.log( "req.body.resources: " + JSON.stringify( req.body.resources ) );
+       
         topic.resources = req.body.resources;
-        console.log( "saved resources: " + topic.resources );
-
+        console.log( "all resources: " + JSON.stringify( topic.resources ) );
+        console.log( "first resource: " + topic.resources[0] );
+        
         // Associated resource id's (by position) are required. E.g. below.
         topic.resourcesRequired = req.body.resourcesRequired;
 
@@ -412,6 +414,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
+
             let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, topic.resources );
             //console.log( "@ -- @" +resourcesSaved );
         }
