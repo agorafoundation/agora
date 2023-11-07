@@ -869,3 +869,34 @@
     font-size: 12px;
 
 } 
+.document-types-label {
+    color: #ffffff;
+    font-size: 0.8rem;
+}
+
+.btn.btn-danger:hover {
+    background-color: transparent;
+    border: none;
+}
+
+.btn-info { 
+    cursor: pointer; 
+    border: none; 
+    background-color: transparent; 
+    height: 35px; 
+    width: 50px; 
+    color: #ffffff; 
+    display: show;
+} 
+
+.agnes-info {
+    position: relative;
+    top: -5px; /* You can adjust this value to move it up or down */
+    width: 100%;
+    display: inline;
+    justify-content: end;
+    align-items: baseline;
+    height: 20px;
+    margin: 0 auto;
+}
+    
