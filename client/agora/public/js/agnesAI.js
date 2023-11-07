@@ -21,6 +21,13 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 
 } );
 
+/**
+ * Formats an article object based on citation format.
+ * 
+ * @param {{title: string, authors: string[], publication: string, publicationDate: string}} articleObj 
+ * @param {'apa' | 'mla' | 'harvard' | 'chicago'} citationFormat 
+ * @returns {string} a formatted citation string for the article
+ */
 function formatCitationByType( articleObj, citationFormat ) {
     const {title, authors, publication, publicationDate } = articleObj;
 
@@ -42,7 +49,13 @@ function formatCitationByType( articleObj, citationFormat ) {
 
 }
 
-
+/**
+ * Formats author names based on citation format
+ * 
+ * @param {string[]} authors 
+ * @param {'apa' | 'mla' | 'harvard' | 'chicago'} citationFormat 
+ * @returns {string} a formatted string of authors name based on citation format
+ */
 function formatAuthorsByCitationType( authors, citationFormat ) {
     let needsEtAl = false; // flag to include et al at the end of the authors names 
     let reducedAuthors = [];
@@ -105,7 +118,12 @@ function formatAuthorsByCitationType( authors, citationFormat ) {
     }
 }
 
-
+/**
+ * Splits an array of author name strings to tuples of [lastName, firstName]
+ * 
+ * @param {string[]} authors 
+ * @returns {string[][]} list of author name tuples
+ */
 function getFirstNameLastNames( authors ) {
     let names = [];
 
