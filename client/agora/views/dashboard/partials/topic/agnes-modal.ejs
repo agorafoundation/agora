@@ -90,7 +90,7 @@
 
                 <div class="row">
                   <div class="col text-end">
-                    <button class="btn btn-sm card-cite-btn" onclick="copyContent()">Copy</button>
+                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" onclick="copyContent()">Copy</button>
                   </div>
                 </div>
               </div>
@@ -114,7 +114,7 @@
 
                 <div class="row">
                   <div class="col text-end">
-                    <button class="btn btn-sm card-cite-btn" onclick="copyContent()">Copy</button>
+                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" onclick="copyContent()">Copy</button>
                   </div>
                 </div>
               </div>
@@ -154,10 +154,12 @@
 
 <script>
   let text = document.getElementById('copy-this-text').innerHTML;
+  let buttonText = document.getElementById('card-cite-button-text');
   const copyContent = async () => {
     try {
       await navigator.clipboard.writeText(text);
       console.log('Content copied to clipboard');
+      buttonText.innerHTML = 'Copied';
     } catch (err) {
       console.error('Failed to copy: ', err);
     }
