@@ -86,7 +86,7 @@ function formatAuthorsByCitationType( authors, citationFormat ) {
             const [ lastName, firstName ] = name;
 
             // MLA is lastName, firstName
-            finalAuthorStrings.push( `${lastName}, ${firstName}` );
+            finalAuthorStrings.push( `${lastName}, ${firstName}.` );
         } );
         break;
 
