@@ -27,17 +27,98 @@ function formatCitationByType( articleObj, citationFormat ) {
     switch ( citationFormat ) { // formatting here is weird!
 
     case 'apa': 
-        return `${authors}. ${publicationDate}. ${title}. ${publication}`;
+        return `${formatAuthorsByCitationType( authors, 'apa' )}. ${publicationDate}. ${title}. ${publication}`;
 
     case 'mla': 
-        return `${authors}. ${title}. ${publication}, ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'mla' )}. ${title}. ${publication}, ${publicationDate}`;
 
     case 'harvard': 
-        return `${authors}, ${publicationDate}. ${title}. ${publication}`;
+        return `${formatAuthorsByCitationType( authors, 'harvard' )}, ${publicationDate}. ${title}. ${publication}`;
 
     case 'chicago': 
-        return `${authors}. ${title}. ${publication}. ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'chicago' )}. ${title}. ${publication}. ${publicationDate}`;
 
     }
 
+}
+
+
+function formatAuthorsByCitationType( authors, citationFormat ) {
+    let needsEtAl = false; // flag to include et al at the end of the authors names 
+    let reducedAuthors = [];
+
+    if ( authors.length > 2 ) { // have to reduce for 3 or more
+        needsEtAl = true;
+
+        reducedAuthors = getFirstNameLastNames( [ authors[0], authors[1], authors[2] ] );
+    }
+    else {
+        reducedAuthors = getFirstNameLastNames( authors );
+    }
+    
+    const finalAuthorStrings = [];
+
+    switch ( citationFormat ) {
+
+    case 'apa':
+        reducedAuthors.forEach( ( name ) => {
+            const [ lastName, firstName ] = name;
+
+            // APA is lastName, firstInitial 
+            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+        } );
+        break;
+    case 'mla':
+        reducedAuthors.forEach( ( name ) => {
+            const [ lastName, firstName ] = name;
+
+            // MLA is lastName, firstName
+            finalAuthorStrings.push( `${lastName}, ${firstName}` );
+        } );
+        break;
+
+    case 'harvard': 
+        reducedAuthors.forEach( ( name ) => {
+            const [ lastName, firstName ] = name;
+
+            // Harvard is lastName, firstInitial 
+            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+        } );
+        break;
+
+    case 'chicago': 
+        reducedAuthors.forEach( ( name ) => {
+            const [ lastName, firstName ] = name;
+
+            // Chicago is lastName, firstName
+            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+        } );
+        break;
+    }
+
+    // add et al if necessary
+    if ( needsEtAl ) {
+        return finalAuthorStrings.join( '; ' ) + ' et al';
+    }
+    else {
+        return finalAuthorStrings.join( '; ' );
+    }
+}
+
+
+function getFirstNameLastNames( authors ) {
+    let names = [];
+
+    authors.forEach( ( authorName ) => {
+        let authorNames = authorName.split( ' ' );
+
+        // last name is at index 1 if there is no middle inital, 2 otherwise
+        let lastName = authorNames.length > 2 ? authorNames[2] : authorNames[1];
+        let firstName = authorNames[0];
+
+        names.push( [ lastName, firstName ] );
+    } );
+
+
+    return names;
 }
