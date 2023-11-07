@@ -31,19 +31,19 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 function formatCitationByType( articleObj, citationFormat ) {
     const {title, authors, publication, publicationDate } = articleObj;
 
-    switch ( citationFormat ) { // formatting here is weird!
+    switch ( citationFormat ) {
 
     case 'apa': 
-        return `${formatAuthorsByCitationType( authors, 'apa' )}. ${publicationDate}. ${title}. ${publication}`;
+        return `${formatAuthorsByCitationType( authors, 'apa' )} ${publicationDate}. ${title}. ${publication}`;
 
     case 'mla': 
-        return `${formatAuthorsByCitationType( authors, 'mla' )}. ${title}. ${publication}, ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'mla' )} ${title}. ${publication}, ${publicationDate}`;
 
     case 'harvard': 
         return `${formatAuthorsByCitationType( authors, 'harvard' )}, ${publicationDate}. ${title}. ${publication}`;
 
     case 'chicago': 
-        return `${formatAuthorsByCitationType( authors, 'chicago' )}. ${title}. ${publication}. ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'chicago' )} ${title}. ${publication}. ${publicationDate}`;
 
     }
 
@@ -111,7 +111,7 @@ function formatAuthorsByCitationType( authors, citationFormat ) {
 
     // add et al if necessary
     if ( needsEtAl ) {
-        return finalAuthorStrings.join( '; ' ) + ' et al';
+        return finalAuthorStrings.join( '; ' ) + ' et al.';
     }
     else {
         return finalAuthorStrings.join( '; ' );
