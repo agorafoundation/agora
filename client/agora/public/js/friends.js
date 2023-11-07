@@ -73,7 +73,8 @@ function createUserCard( userData ){
     username.id = userData.userId;
     username.innerText = userData.username;
     var userProfile = document.createElement( "img" );
-    userProfile.src = userData.profileFilename;
+    userProfile.width = 225;
+    userProfile.src = "/assets/uploads/profile/" + userData.profileFilename;
     userProfile.alt = "user's profile";
     var userContainer = document.createElement( "div" );
     userContainer.id = "user-container-" + userData.userId;
