@@ -44,9 +44,9 @@ searchButton.addEventListener( 'click', queryUsers = () => {
                         isFriend = true;
                     }
                 }
-                for( k = 0; k < requests.length; k++ ){
-                    if( ( data.userId == requests[k].recipient_id ) ||
-                        ( data.userId == requests[k].requester_id ) ){
+                for( k = 0; k < requests[0].length; k++ ){
+                    if( ( data.userId == requests[0][k].initiatedby_id ) ||
+                        ( data.userId == requests[0][k].recipient_id ) ){
                         isSentRequest =  true;
                     }
                 }

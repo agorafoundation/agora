@@ -213,7 +213,7 @@ exports.getUnreadFriendRequests = async ( userID ) => {
         let res = await db.query( text, values );
         if ( res.rows.length > 0 ) {
             for ( let i = 0; i < res.rows.length; i++ ) {
-                requests.push( res.rows[i] );
+                requests.push( ormFriendship( res.rows[i] ) );
             }
             return requests;
         }
