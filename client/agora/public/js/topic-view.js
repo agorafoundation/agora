@@ -72,7 +72,7 @@ async function createResource( name, type, imagePath, id ) {
             if( resources[getCurrTopicIndex()] == null ) {
                 resources[getCurrTopicIndex()] = [];
             }
-            resources[getCurrTopicIndex()][getCurrTopicIndex] = data.resourceId;
+            resources[getCurrTopicIndex()].push( data.resourceId );
             console.log( "resources array: " + JSON.stringify( resources ) );    
             //numResources++;
 
@@ -94,10 +94,10 @@ async function createResource( name, type, imagePath, id ) {
         }
     }
     else{
-        console.log( "----------------- saving resource to list 2 --------------- " );
+        console.log( "!!----------------- saving resource to list 2 ---------------!! " );
         console.log( "saving resource id: " + id + " to resources array" );
         console.log( "current topic id: " + getCurrTopicID() + " current topic index: " + getCurrTopicIndex() );
-        resources[getCurrTopicIndex()][numResources] = id ;
+        resources[getCurrTopicIndex()].push( id );
 
         console.log( "createResource() : complete - No id" );
     }
@@ -1544,6 +1544,7 @@ async function renderTopic( topic, topicNum ) {
     //console.log( "creating topic, passed name: " + topic.topicName );
     const localResources = await getResourcesForTopicId( topic.topicId );
     //console.log( "resources: " + JSON.stringify( resources ) );
+
     if ( localResources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < localResources.length; i++ ) {
@@ -1578,7 +1579,7 @@ async function renderTopic( topic, topicNum ) {
             // add the resource to the resources array
             console.log( "----------------- saving resource to list 3 --------------- " );
             resources[topicNum] = [];
-            resources[topicNum][topicNum] =localResources[i].resourceId;
+            resources[topicNum].push( localResources[i].resourceId );
             
         }
         window.scrollTo( 0, 0 );
