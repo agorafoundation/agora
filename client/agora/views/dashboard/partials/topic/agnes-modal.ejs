@@ -1,3 +1,5 @@
+include('./alert-toast.ejs');
+
 <div
   class="fade agnes-modal-pos"
   id="agnesModal"
@@ -140,6 +142,14 @@
   </div>
 </div>
 
+<div class="toast-container" id="show-toast">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body show-toast-text" id="toast-text">
+      Copied Link!
+      </div>
+  </div>
+</div>
+
 <script>
   document.getElementById("doc-type").addEventListener("change", function () {
     var selectedValue = this.value;
@@ -153,6 +163,16 @@
 </script>
 
 <script>
+  const createToast = ( text ) => {
+    document.getElementById( 'toast-text' ).innerText = text;
+    const thisToast = document.getElementById( 'liveToast' );
+    // eslint-disable-next-line no-undef
+    const toast = new bootstrap.Toast( thisToast );
+    toast.show();
+  };
+</script>
+
+<script>
   let text = document.getElementById('copy-this-text').innerHTML;
   let buttonText = document.getElementById('card-cite-button-text');
   const copyContent = async () => {
@@ -160,6 +180,7 @@
       await navigator.clipboard.writeText(text);
       console.log('Content copied to clipboard');
       buttonText.innerHTML = 'Copied';
+      createToast( "Copied Link!" );
     } catch (err) {
       console.error('Failed to copy: ', err);
     }
