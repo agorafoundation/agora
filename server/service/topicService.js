@@ -607,21 +607,26 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds ) {
             text = "DELETE FROM topic_resources WHERE topic_id = $1";
             values = [ topicId ];
 
-            let res2 = await db.query( text, values );
+            await db.query( text, values );
 
             // now loop through the array and add the new resources
             /**
              * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
              * This probably means having the pathway be an array of objects containing id and isRequired
              */
+            console.log( "[DEBUG]: resourceIds: " + resourceIds );
             if( resourceIds && resourceIds.length > 0 ) {
                 for( let i=0; i < resourceIds.length; i++ ) {
+                    console.log( "[DEBUG]: resourceIds[i]: " + resourceIds[i] );
                     let isRequired = true;
 
                     text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
+                    console.log( "[DEBUG]: text: " + text );
                     values = [ topicId, resourceIds[i], ( i + 1 ), isRequired, true, res.rows[0].ownedBy ];
-
+                    console.log( "values: " + values );
+                    console.log( "1" );
                     let res3 = await db.query( text, values );
+                    console.log( "2" );
                 }
             }
         }

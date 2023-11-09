@@ -1192,11 +1192,11 @@ document.addEventListener( "click", function( e ) {
 
 
         // replace the close tab button
-        let closeTabBtn = document.createElement( "span" );
-        closeTabBtn.className = "close-tab";
-        closeTabBtn.id = "close-tab" + tabName.slice( -1 );
-        closeTabBtn.innerHTML = "&times;";
-        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+        // let closeTabBtn = document.createElement( "span" );
+        // closeTabBtn.className = "close-tab";
+        // closeTabBtn.id = "close-tab" + tabName.slice( -1 );
+        // closeTabBtn.innerHTML = "&times;";
+        // document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
     }
 } );
 
