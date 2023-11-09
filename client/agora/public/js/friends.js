@@ -7,6 +7,7 @@ var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
+const redCircle = document.getElementById( 'requestCount' );
 var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
@@ -24,7 +25,23 @@ window.onload = getResources = () => {
             friends.push( response[1] );
             requests.push( response[2] );
         } );
+        fetch( "api/v1/auth/friends/requestCount", {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+        })
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                let requestCount = response[0].count;
+                console.log(requestCount);
+                if ( requestCount > 0){
+                    let span = document.createElement("span");
+                    span.textContent = requestCount;
+                    redCircle.appendChild(span);
+                    redCircle.style.display = "flex";
+                }
+            })
 };
+
 
 // queries the users by username
 searchButton.addEventListener( 'click', queryUsers = () => {

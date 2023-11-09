@@ -54,6 +54,24 @@ exports.getAllFriends = async ( userID ) => {
     }
 };
 
+exports.getUnreadFriendRequestCount = async ( userID ) => {
+    let text = `SELECT COUNT(*) FROM friendships WHERE recipient_id = $1 AND friendship_status = $2`;
+    let values = [ userID, 'pending'];
+
+    try{
+        let res = await db.query( text, values );
+        if ( res.rows.length > 0){
+            return res.rows;
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ){
+        console.log( e.stack );
+    }
+};
+
 // Send a friend request
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
