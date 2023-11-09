@@ -3,6 +3,7 @@
 
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
+const allCardsContainer = document.querySelector( '.all-cards' );
 
 citationsDropdown.addEventListener( 'change', ( event ) => {
     const citationType = event.target.value;
@@ -10,7 +11,7 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
   
     // return here if there is no article info in localstorage
     if ( !articleInfoObj ) return;
-  
+      
     // get all card text elements
     const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
     
@@ -18,6 +19,7 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
     allCitationCards.forEach( ( cardTextElement, index ) => {
         cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
     } );
+
 
 } );
 
@@ -138,31 +140,97 @@ function getFirstNameLastNames( authors ) {
     } );
 
     // TODO: format article information based on selected typ
-
-} );
-
     return names;
+
 }
 
-// Dropdown logic
-document.getElementById( 'doc-type' ).addEventListener( 'change', function () {
-    var selectedValue = this.value;
-    var selectedContent = document.getElementById( 'selectedContent' );
-    if ( selectedValue === 'notes' || selectedValue === 'paper' ) {
-        selectedContent.classList.remove( 'hidden' );
-    }
-    else {
-        selectedContent.classList.add( 'hidden' );
-    }
-} );
+// const apiEndpoint = '/server/controller/apis/aiController.js'; // Relative path
 
-// Popover logic
-var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
-    trigger: 'manual'
+
+// Dropdown logic + Fetching data
+document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+    var selectedValue = this.value; // This is either set to "notes" or "paper"
+    var selectedContent = document.getElementById( 'selectedContent' );
+
+    // Define the data you want to send in the request body
+    var requestData = {
+        mode: selectedValue, // Use the selected mode
+    };
+
+    try {
+        // Make the fetch call to the "aiController.js" API
+        const response = await fetch( '/api/v1/auth/ai/suggest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify( requestData ), // Send the mode in the request body
+        } );
+
+        if ( response.ok ) {
+            selectedContent.classList.remove( 'hidden' );
+
+            // If the response is successful, parse the JSON data
+            console.log( 'SUCCESS' );
+            const articles = await response.json();
+            processJsonData( articles );
+        }
+        else {
+            console.log( 'FAILED' );
+            // Handle error cases here
+            console.error( 'Fetch request failed' );
+        }
+    }
+    catch ( error ) {
+        // Handle network or other errors here
+        console.error( 'Fetch request failed: - Network or other errors', error );
+    }
 } );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
-    myPopover.show();
-} );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
-    myPopover.hide();
-} );
+// Preparing Articles for formatting
+function processJsonData( articlesObj ) {
+    articlesObj.forEach( ( article ) => {
+        const formattedString = formatCitationByType( article, 'apa' ); // by default it is apa format
+        
+        
+        // Create a new card element
+        const card = document.createElement( 'div' );
+        card.classList.add( 'container', 'citation-card' );
+        
+        // Create the card template
+        card.innerHTML = `
+               <div class="row card-row-header">
+                   <div class="col text-end">
+                       <button class="btn btn-danger btn-sm card-close-btn">X</button>
+                   </div>
+               </div>
+               <div class="row card-row-body">
+                   <div class="col text-center">
+                       <span class="card-citation-text"></span>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col text-end">
+                       <button class="btn btn-sm card-cite-btn">Cite</button>
+                   </div>
+               </div>
+           `;
+        
+        // Set the citation text in the card
+        const cardCitationText = card.querySelector( '.card-citation-text' );
+        cardCitationText.textContent = formattedString;
+        // Append the card to the container
+        allCardsContainer.appendChild( card );
+
+    } );
+}
+
+// // Popover logic
+// var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
+//     trigger: 'manual'
+// } );
+// document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
+//     myPopover.show();
+// } );
+// document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
+//     myPopover.hide();
+// } );
