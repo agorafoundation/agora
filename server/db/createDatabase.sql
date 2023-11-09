@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS agora.users (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
+
 GRANT ALL PRIVILEGES ON TABLE users TO agora;
 --GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 
@@ -100,7 +101,10 @@ CREATE TABLE IF NOT EXISTS agora.products (
 GRANT ALL PRIVILEGES ON TABLE products TO agora;
 GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS agora.product_images (
+
+
+
+CREATE TABLE IF NOT EXISTS product_images (
     product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
@@ -114,6 +118,31 @@ CREATE TABLE IF NOT EXISTS agora.product_images (
 GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
 GRANT USAGE, SELECT ON SEQUENCE product_images_product_image_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
+
+CREATE TYPE status AS ENUM ('pending', 'accepted', 'rejected');
+
+-- Add Friendship table
+CREATE TABLE IF NOT EXISTS agora.friendships (
+    friendship_id SERIAL PRIMARY KEY,
+    initiatedby_id UUID NOT NULL REFERENCES users(user_id),
+    recipient_id UUID NOT NULL REFERENCES users(user_id),
+    friendship_status status NOT NULL, -- Changed from Varchar to an Enum type. 
+    created_time TIMESTAMP DEFAULT current_timestamp,
+    UNIQUE (initiatedby_id, recipient_id)
+);
+
+GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS agora.notifications (
+    notification_id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(user_id),
+    message TEXT NOT NULL,
+    notification_time TIMESTAMP DEFAULT current_timestamp,
+    read_status BOOLEAN DEFAULT FALSE
+);
+
+GRANT ALL PRIVILEGES ON TABLE notifications TO agora;
 
 INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active

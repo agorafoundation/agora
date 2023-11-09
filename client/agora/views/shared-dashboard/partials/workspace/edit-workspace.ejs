@@ -1,0 +1,128 @@
+<div class="modal fade" id="create-workspace-modal" tabindex="-1" role="dialog" aria-labelledby="create-workspace-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="create-workspace-modal-label">Workspace</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          
+        </div>
+        <div class="modal-body">
+            
+            <section>
+                <hr />
+                <%
+                
+                if(workspace) {
+                    %>
+                    <form action="/dashboard/workspace" id="workspaceForm" enctype="multipart/form-data" method="POST"> <!-- enctype="application/json" enctype="multipart/form-data"-->
+                        <div class="form-group">
+                            <input type="hidden" name="workspaceId" id="workspaceId" value="<%- workspace.workspaceId %>" />
+                            <input type="hidden" name="workspaceModified" id="workspaceModified" value="false" />
+
+                            <div class="form-row">
+                                <div class="col-sm-2 my-1">
+                                    <!-- Image -->
+
+                                    <div class="drop-zone">
+                                        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                                        <input type="file" name="workspaceImageField" class="drop-zone__input" />
+                                    </div>
+
+                                </div>
+                                <div class="col my-1">
+                                    <div class="row">
+                                        <div class="col">
+                                            <!-- Visibility -->
+                                            <select name="workspaceVisibility" id="workspaceVisibility" class="form-control form-control-lg">
+                                                <%
+                                                if(workspace.visibility === 'private') {
+                                                    %>
+                                                    <option value="0" selected>Private</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="0">Private</option>
+                                                    <%
+                                                }
+                                                %>
+                                                <%
+                                                if(workspace.visibility === 'public') {
+                                                    %>
+                                                    <option value="2" selected>Public</option>
+                                                    <%
+                                                }
+                                                else {
+                                                    %>
+                                                    <option value="2">Public</option>
+                                                    <%
+                                                }
+                                                %>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            Completable: <input type="checkbox" class="" id="workspaceCompletable" name="workspaceCompletable" <%- (workspace.completable)?'checked':'' %> />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                           &nbsp; <input type="input" class="form-control form-control-lg" name="workspaceName" value="<%- workspace.workspaceName %>" id="workspaceName" placeholder="Title" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="additionalMetadataHeader">
+                                <svg class="centered" id="expansionArrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="IconChangeColor" height="24" width="24"><path d="M19,20H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Zm-7.71-2.29a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l4-4a1,1,0,0,0-1.42-1.42L13,14.59V3a1,1,0,0,0-2,0V14.59l-2.29-2.3a1,1,0,1,0-1.42,1.42Z" id="mainIconPathAttribute" stroke-width="1.1" stroke="#000000" fill="#000000" filter="url(#shadow)"></path><filter id="shadow"><feDropShadow id="shadowValue" stdDeviation=".5" dx="0" dy="0" flood-color="black"></feDropShadow></filter></svg>
+                                <svg class="centered" id="expansionArrowUp" style="display:none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24" transform="rotate(180)"><path d="M19,20H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Zm-7.71-2.29a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l4-4a1,1,0,0,0-1.42-1.42L13,14.59V3a1,1,0,0,0-2,0V14.59l-2.29-2.3a1,1,0,1,0-1.42,1.42Z" stroke-width="1.1" stroke="#000000" fill="#000000" filter="url(#shadow2)"></path><filter id="shadow2"><feDropShadow stdDeviation=".5" dx="0" dy="0" flood-color="black"></feDropShadow></filter></svg>
+
+                            </div>
+                            
+                            <!-- Additional Workspace metadata - Description / Requried / Active - Hidden by default -->
+                            <div id="additionalMetadata" style="display:none">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="row">
+                                            <div class="col">
+                                                Active: <input type="checkbox" class="" id="workspaceActive" name="workspaceActive" <%- (workspace.active)?'checked':'' %> />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                Version: <input type="input" class="form-control form-control-lg" name="workspaceVersion" value="<%- workspace.workspaceVersion %>" id="workspaceVersion" placeholder="Version" disabled>
+                                            </div>
+                                        </div>
+                                        
+                                    
+                                    </div>
+                                    <div class="col">
+                                        <textarea class="form-control form-control-lg" name="workspaceDescription" value="<%- workspace.workspaceDescription %>" id="workspaceDescription" placeholder="Description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <br />
+                            <br />
+                            
+                            <%- include('./edit-workspace-pathway') %>
+
+                        </div>
+                        <a class="fas fa-trash redColor" onclick='deleteWorkspace();'></a> &nbsp;&nbsp; <a class="text-primary" onclick='addFilter();'></a>
+                        <button type="submit" id="workspaceButton" class="btn btn-primary btn-lg float-left">Save Workspace</button>
+                    </form>
+                    <%
+                }
+                
+                %>
+
+            </section>
+
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+</div>

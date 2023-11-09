@@ -1445,7 +1445,7 @@ paths:
 
 servers:
   - url: http://localhost:4200/api/v1/auth
-  - url: https://freeagora.org/api/v1/auth
+  - url: http://freeagora.org/api/v1/auth
 components:
   securitySchemes:
     basicAuth: # <-- arbitrary name for the security scheme

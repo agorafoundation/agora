@@ -10,6 +10,7 @@ var router = express.Router( );
  
 // controllers
 const profileController = require( '../controller/profileController' );
+const friendsController = require( '../controller/apis/friendController' );
 
 /**
  * Show user profile

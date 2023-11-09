@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <%- include('../partials/head'); %>
+        <link rel="stylesheet" href="/css/notification.css">
     </head>
     <body id="page-top">
         <!-- Navigation-->
@@ -75,8 +76,54 @@
                                     <br />
                                 </section>
     
+                                <!-- -----TODO-----
+                                    Change to a updating friendRequestCount
+                                -->
+                                <!-- Friend Notification Box-->
+                                <div class="alert alert-info mt-3">
+                                    <h3>Friend Requests</h3>
+                                    <p>You have <span id="friendRequestCount"><%= nonFriends.length > 0 ? nonFriends.length : 0 %></span> new friend requests.</p>
+                                    <button id="viewFriendRequests" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#friendRequestsModal">View Requests</button>
+                                </div>
+
+                                <!-- Friend Requests Modal -->
+                                <div class="modal fade" id="friendRequestsModal" tabindex="-1" role="dialog" aria-labelledby="friendRequestsModalTitle" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="friendRequestsModalTitle">Friend Requests</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                                                <!-- Loop through friend requests and generate items if nonFriends is not empty -->
+                                                <% if (nonFriends && nonFriends.length > 0) { %>
+                                                    <% nonFriends.forEach((friend) => { %>
+                                                        <div class="friend-request-item">
+                                                            <div class="requester-info">
+                                                                <span><strong><%= friend.friend_username %></strong> sent you a friend request.</span>
+                                                            </div>
+                                                            <div class="action-buttons">
+                                                                <button id="btn-accept-request" class="btn btn-success accept-friend-request" data-id="<%= friend.friendship_id %>">Accept</button>
+                                                                <button id="btn-deny-request" class="btn btn-danger deny-friend-request" data-id="<%= friend.friendship_id %>">Deny</button>
+                                                            </div>
+                                                        </div>
+                                                    <% }); %>
+                                                <% } else { %>
+                                                    <p>No friend requests at this time.</p>
+                                                <% } %>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-5">
+                                
+                                <div class="profile-image-wrapper" style="position: relative;"></div>
                                 
                                 <%
                                 if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
@@ -89,6 +136,8 @@
                                     <%
                                 }
                                 %>
+                                <span class="notification-count" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px;">0</span>
+                            </div>
                                 
                                 <%- include('../partials/message'); %>
     
@@ -230,5 +279,11 @@
             <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
         </div>
         <%- include('../partials/jsincludes'); %>
+        <script>
+            
+
+            // inject into modal body
+            document.querySelector('.modal-body').innerHTML = liTemplates
+        </script>
     </body>
 </html>

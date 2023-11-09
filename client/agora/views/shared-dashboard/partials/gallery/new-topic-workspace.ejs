@@ -1,0 +1,57 @@
+<div
+  class="modal fade bd-example-modal-lg"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myLargeModalLabel"
+  aria-hidden="true"
+  id="new-topic-workspace-modal"
+>
+  <div
+    class="modal-dialog modal-dialog-centered modal-lg tabindex='-1'"
+    style="visibility: hidden"
+  >
+    <div class="modal-content test" style="border-radius: 10px">
+      <h1 class="modal-title text-center" id="exampleModalLabel">Create a</h1>
+      <div class="modal-body pt-0">
+        <hr class="col-xs-12" />
+
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col mb-5 gallery-col align-items-stretch">
+              <div
+                class="card h-100 add-topic-modal-card"
+                style="visibility: visible; background-color: white"
+                onclick="createNewTopic()"
+              >
+                <div class="card-body d-flex flex-column">
+                  <h3 class="add-header">Create Topic</h3>
+                  <img
+                    src="/assets/img/buttons/document.png"
+                    class="mx-auto d-block btn-add-content"
+                    alt="Add content"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col mb-5 gallery-col align-items-stretch">
+              <div
+                class="card h-100 add-topic-modal-card"
+                style="visibility: visible; background-color: white"
+                onclick = "createNewWorkspace()"
+              >
+                <div class="card-body d-flex flex-column">
+                  <h3 class="add-header pb-0">Create Workspace</h3>
+                  <img
+                    src="/assets/img/buttons/folder.png"
+                    class="mx-auto d-block btn-add-content"
+                    alt="Add content"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

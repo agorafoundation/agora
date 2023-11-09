@@ -1187,6 +1187,17 @@ function getOffset( el ) {
     };
 }
 
+function deleteFriend( friendshipId ) {
+    const deleteCard = document.getElementById("friend-card-" + friendshipId);
+    fetch( "/api/v1/auth/friends/deleteFriend", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( {
+            "friendshipId": friendshipId,
+        })
+    });
+    deleteCard.style.display = "none";
+};
 
 // manage highlighting of control bar buttons
 if( document.getElementById( "controlbar-buttons-group-1" ) ) {

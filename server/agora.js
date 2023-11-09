@@ -23,12 +23,7 @@ app.use(
     } )
 );
 app.use( bodyParser.json() );
-
-
-// library that allows us to hook responses in the middleware
-const responseHooks = require( "express-response-hooks" );
-
-app.use( responseHooks() );
+//app.use( responseHooks() );
 
 
 // cross origin
@@ -144,10 +139,16 @@ const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
 
 /**
- * User Shared Dashboard
+ * User Shared Dashboard routes
  */
-const dashboardSharedRoutes = require( "./routes/dashboardSharedRoutes" );
-app.use( "/dashboard-shared", dashboardSharedRoutes );
+const sharedDashboardRoutes = require( "./routes/sharedDashboardRoutes" );
+app.use( "/shared-dashboard", sharedDashboardRoutes );
+
+/**
+ * User Friends routes
+ */
+const friendsRoutes = require( "./routes/friendsRoutes" );
+app.use( "/friends", friendsRoutes );
 
 /**
  * Topic / Main editor routes
