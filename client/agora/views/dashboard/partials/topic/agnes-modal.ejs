@@ -86,8 +86,7 @@
                 <div class="row card-row-body">
                   <div class="col text-center">
                     <span class="card-citation-text" id="copy-this-text"
-                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre:
-                      Explorations in Nonfiction, 15(2), 133-142.</span
+                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre: Explorations in Nonfiction, 15(2), 133-142.</span
                     >
                   </div>
                 </div>
@@ -110,8 +109,7 @@
                 <div class="row card-row-body">
                   <div class="col text-center">
                     <span class="card-citation-text" id="copy-this-text"
-                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre:
-                      Explorations in Nonfiction, 15(2), 133-142.</span
+                      >Wiklund, J. (2013). Ankylosaurus. Fourth Genre: Explorations in Nonfiction, 15(2), 133-142.</span
                     >
                   </div>
                 </div>
@@ -147,7 +145,7 @@
 <div class="toast-container" id="show-toast">
   <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-body show-toast-text" id="toast-text">
-      Copied Link!
+      Copied Link! Paste citation into document where needed.
       </div>
   </div>
 </div>
@@ -182,7 +180,7 @@
       await navigator.clipboard.writeText(text);
       console.log('Content copied to clipboard');
       buttonText.innerHTML = 'Copied';
-      createToast( "Copied Link!" );
+      createToast( "Copied Link! Paste citation into document where needed." );
     } catch (err) {
       console.error('Failed to copy: ', err);
     }
