@@ -9,12 +9,9 @@
 const db = require( '../db/connection' );
 
 // import models
-const User = require( "../model/user" );
-const Event = require( '../model/event' );
 const notificationService = require( '../service/notificationService' );
 const userService = require( '../../server/service/userService' );
 const { ormFriendship } = require( '../model/friendship' );
-const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
 //SQL queries
 

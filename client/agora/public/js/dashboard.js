@@ -1188,15 +1188,30 @@ function getOffset( el ) {
 }
 
 function deleteFriend( friendshipId ) {
-    const deleteCard = document.getElementById("friend-card-" + friendshipId);
     fetch( "/api/v1/auth/friends/deleteFriend", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
             "friendshipId": friendshipId,
         })
+    })
+    .then( (response) => {
+        if ( response.status == 200 ) {
+            const message = 'Friend deleted successfully';
+            console.log( message );
+            alert( message );
+            location.reload();
+        }
+        else{
+            const errorMessage = 'Failed to delete friend.';
+            console.error( errorMessage );
+            alert( errorMessage );
+        }
+    })
+    .catch( ( error ) => {
+        console.error( 'Error deleting friend:', error);
+        alert( 'Error deleting friend: ' + error );
     });
-    deleteCard.style.display = "none";
 };
 
 // manage highlighting of control bar buttons

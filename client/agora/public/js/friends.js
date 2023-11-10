@@ -24,22 +24,14 @@ window.onload = getResources = () => {
             authUser.push( response[0]);
             friends.push( response[1] );
             requests.push( response[2] );
+            let requestCount = response[3][0].count;
+            if ( requestCount > 0){
+                let span = document.createElement("span");
+                span.textContent = requestCount;
+                redCircle.appendChild(span);
+                redCircle.style.display = "flex";
+            }
         } );
-        fetch( "api/v1/auth/friends/requestCount", {
-            method: "GET",
-            headers: { 'Content-Type': 'application/json' },
-        })
-            .then( ( response ) => response.json() )
-            .then( ( response ) => {
-                let requestCount = response[0].count;
-                console.log(requestCount);
-                if ( requestCount > 0){
-                    let span = document.createElement("span");
-                    span.textContent = requestCount;
-                    redCircle.appendChild(span);
-                    redCircle.style.display = "flex";
-                }
-            })
 };
 
 
