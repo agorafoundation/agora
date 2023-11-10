@@ -15,7 +15,6 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 // import services
 const friendService = require( '../../service/friendService' );
 const userService = require( '../../service/userService' );
-const notificationService = require( '../../service/notificationService' );
 
 //Returns all friends of a user.
 exports.getAllFriends = async ( req, res ) => {
@@ -110,11 +109,7 @@ exports.sendFriendRequest = async ( req, res ) => {
         if ( request ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Friend Request Sent" );
-            res.status( 201 ).json( "Success" );
-
-            // Add a Notification after a user 
-            const message = "You have received a new friend request from " + req.user.username;  
-            await notificationService.addNotification( friendUsername, message );
+            res.status( 201 ).json( "Success" ); 
         }
     }
     else {
