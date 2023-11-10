@@ -172,12 +172,12 @@ document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
         // the x-button is nested in two divs, so parent div is three levels up
         const cardID = this.parentElement.parentElement.parentElement.getAttribute( 'data-card-index' );
 
-        deleteCard( cardID );
+        deleteCardFromLocalStorage( cardID );
     } );
 } );
 
 // deletes card from local storage and places it in seperate "removed" field (name can change!)
-function deleteCard( cardID ) {
+function deleteCardFromLocalStorage( cardID ) {
     const localStorageArticleJSON = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
 
     // exit here if there is no local storage json
@@ -192,7 +192,7 @@ function deleteCard( cardID ) {
             const deletedArticleObj = articleObjs.splice( index, 1 )[0];
 
             // put deleted article in separate local storage field
-            writeDeleted( deletedArticleObj );
+            writeDeletedToLocalStorage( deletedArticleObj );
         }
     } );
 
@@ -201,7 +201,7 @@ function deleteCard( cardID ) {
 }
 
 // add deleted article to local storage
-function writeDeleted( articleObj ) {
+function writeDeletedToLocalStorage( articleObj ) {
     // get local array if it exists, else create new empty array
     const localRemovedArticlesArray = JSON.parse( localStorage.getItem( 'removed' ) ?? '[]' );
 
