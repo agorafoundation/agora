@@ -24,13 +24,30 @@ const Event = require( '../model/event' );
  * all user workspaces and other public ones.
  * @returns List<Workspace>
  */
-exports.getAllVisibleWorkspaces = async ( ownerId ) => {
+exports.getAllVisibleWorkspaces = async ( ownerId, limit, offset ) => {
 
     if( ownerId ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' ) order by gl.workspace_id;";
-        const values = [ ownerId, true ];
+        let text = "select * from workspaces gl " + 
+            "INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) " +
+            "goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' )";
+        
+        let values = [ ownerId, true ];
+
+        // apply a default offset if none is provided
+        if ( !offset ) offset = 0;
+
+        if( limit ) {
+            text += " ORDER BY gl.create_time DESC LIMIT $3 OFFSET $4";
+
+            values.push( limit );
+            values.push( offset );
+        }
+        else {
+            text += " ORDER BY gl.create_time DESC LIMIT 100 OFFSET $3";
+            values.push( offset );
+        }
 
         let workspaces = [];
         

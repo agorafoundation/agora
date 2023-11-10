@@ -415,7 +415,7 @@ exports.saveTopic = async ( req, res, redirect ) => {
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
 
-            let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, topic.resources );
+            let resourcesSaved = await topicService.saveResourcesForTopic( topic, topic.resources );
             //console.log( "@ -- @" +resourcesSaved );
         }
 

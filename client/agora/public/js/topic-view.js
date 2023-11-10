@@ -107,7 +107,7 @@ async function createResource( name, type, imagePath, id ) {
 
 
 /* Topic Functions -------------------------------------------------------------------------- */
-let numTopics = 1;
+let numTopics = 0;
 let topics = [];
 
 // Creates a new topic
@@ -205,7 +205,7 @@ const createTopic = async( id, name ) => {
     // };
 
     let topicDivider = document.createElement( "div" );
-    topicDivider.id = "topic-divider";
+    topicDivider.id = "topic-divider" + numTopics   ;
 
     let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + numTopics;
@@ -300,7 +300,7 @@ const createTopic = async( id, name ) => {
             //console.log( "createTopic() topic saved " );
             // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
-            numTopics++;
+
             //console.log( topics );
             await saveWorkspace( topics );
 
@@ -309,7 +309,7 @@ const createTopic = async( id, name ) => {
     }
     else{
         topics[numTopics] = id;
-        numTopics ++;
+
     }
     console.log( "createTopic() Complete " );
 };
@@ -387,7 +387,7 @@ const saveWorkspace = async( topics ) => {
 
 /* Tab Functions -------------------------------------------------------------------------------------------- */
 // Workspace empty state
-let activeTab = document.getElementById( "resources-zone0" );
+let activeTab = null;
 
 
 // Change tabs
@@ -659,6 +659,9 @@ function getCurrTopicID() {
         topicID = topics[topicVal];
     //console.log( "returning topic id: " + topicID );
     }
+    else {
+        topicID = 0;
+    }
     return topicID;
 }
 
@@ -668,7 +671,7 @@ function getCurrTopicIndex() {
         topicIndex = tabName.match( /\d+/g )[0];
         //topicIndex = topics.indexOf( topicVal );
 
-    //console.log( "returning topic id: " + topicID );
+        console.log( "returning topic id: " + topicIndex + " from tabname: " + tabName );
     }
     return topicIndex;
 }
@@ -742,6 +745,8 @@ function createTextArea( name, id ) {
 
             // render the resource text area
             createTextArea();
+
+            numTopics++;
 
         } );
 
@@ -1146,7 +1151,7 @@ document.addEventListener( "click", function( e ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
-        //console.log( sunEditor["sunEditor" + val] );
+        console.log( sunEditor["sunEditor" + val] );
         sunEditor["sunEditor" + val][1].readOnly( true );
 
         // actively get sun editor contents and make updates
@@ -1240,6 +1245,7 @@ if( openBtn ) {
         // render the resource text area
         createTextArea();
         
+        numTopics++;
 
         // this is where i should call updateTopic sending the topic id retrieved from createTopic??
         

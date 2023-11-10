@@ -37,7 +37,7 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
-    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
+    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId, req.query.limit, req.query.offset );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
     res.status( 200 ).json( {
