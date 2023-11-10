@@ -172,6 +172,24 @@ document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
         // the x-button is nested in two divs, so parent div is three levels up
         const cardID = this.parentElement.parentElement.parentElement.getAttribute( 'data-card-index' );
 
-        alert( `CARD_ID: ${cardID}` );
+        deleteCard( cardID );
     } );
 } );
+
+// deletes card from local storage and places it in seperate _ field 
+function deleteCard( cardID ) {
+    const localStorageArticleJSON = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
+
+    // exit here if there is no local storage json
+    if ( !localStorageArticleJSON ) return;
+
+    const articleObjs = localStorageArticleJSON.citations;
+
+    // find article with matching index and remove
+    articleObjs.forEach( ( articleObj, index ) => {
+        if ( articleObj.id == cardID ) {
+
+            console.log( articleObj );
+        }
+    } );
+}
