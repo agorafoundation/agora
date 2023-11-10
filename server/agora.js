@@ -7,7 +7,7 @@
 
 // import and initizialize express
 const express = require( "express" );
-const app = express();
+const app = express(); 
 
 // config env library setup
 require( "dotenv" ).config();
@@ -141,8 +141,8 @@ app.use( "/dashboard", dashboardRoutes );
 /**
  * User Shared Dashboard routes
  */
-const sharedDashboardRoutes = require( "./routes/sharedDashboardRoutes" );
-app.use( "/shared-dashboard", sharedDashboardRoutes );
+const dashboardSharedRoutes = require( "./routes/dashboardSharedRoutes" );
+app.use( "/dashboard-shared", dashboardSharedRoutes );
 
 /**
  * User Friends routes

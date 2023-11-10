@@ -21,7 +21,7 @@ const tagService = require( '../service/tagService' );
 
 exports.getDashboard = async function ( req, res ) {
 
-    let workspaceId = req.params.workspaceId;
+    //let workspaceId = req.params.workspaceId;
 
     // get all the shared workspaces for the user.
     let sharedWorkspaces = await workspaceService.getSharedWorkspaces( req.session.authUser.userId, false );
