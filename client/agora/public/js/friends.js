@@ -48,8 +48,8 @@ searchButton.addEventListener( 'click', queryUsers = () => {
                 var data = response[i];
                 var isFriend = false;
                 var isSentRequest = false;
-                for( j = 0; j < friends.length; j++ ){
-                    if ( data.username == friends[j].friend_username ){
+                for( j = 0; j < friends[0].length; j++ ){
+                    if ( ( data.username == friends[0][j].friend_username ) ){
                         isFriend = true;
                     }
                 }
