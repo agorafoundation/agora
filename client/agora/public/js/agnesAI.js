@@ -170,9 +170,11 @@ document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function 
 document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
     xButton.addEventListener( 'click', function () {
         // the x-button is nested in two divs, so parent div is three levels up
-        const cardID = this.parentElement.parentElement.parentElement.getAttribute( 'data-card-index' );
-
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        const cardID = cardDiv.getAttribute( 'data-card-index' );
+        
         deleteCardFromLocalStorage( cardID );
+        cardDiv.remove();
     } );
 } );
 
