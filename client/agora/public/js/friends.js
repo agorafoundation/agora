@@ -100,15 +100,17 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click', sendFriendRequest = () => {
-        userContainer.style.display = "none";
-        fetch( "/api/v1/auth/friends/sendFriendRequest", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify ( {
-                "username": userData.username,
-                "userId": userData.userId
-            } )
-        } ); 
+        if( confirm("Are you sure you want to send a friend request to " + userData.username + "?") == true){
+            userContainer.style.display = "none";
+            fetch( "/api/v1/auth/friends/sendFriendRequest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify ( {
+                    "username": userData.username,
+                    "userId": userData.userId
+                } )
+            } ); 
+        }
     } );
     
 }
