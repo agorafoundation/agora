@@ -1,4 +1,3 @@
-include('./alert-toast.ejs');
 
 <div
   class="fade agnes-modal-pos"
@@ -18,10 +17,13 @@ include('./alert-toast.ejs');
         <h5 class="modal-title text-center text-white" id="agnesModalLabel">
           Agnes
         </h5>
-        <!-- <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-          <button class="btn btn-primary" type="button" data-bs-toggle="popover">i</button>
 
-        </span> -->
+        <div class="agnes-info">
+          <button id="myPopover" type="button" class="btn-info" data-bs-toggle="popover" title="Agnes" data-bs-content="Agnes is an AI integration feature, that aids user's in finding validated, scholarly content." data-bs-placement="bottom">
+            <i class="material-icons">info</i> 
+          </button>
+        </div>
+
         <button
           type="button"
           class="btn-close"
@@ -34,17 +36,17 @@ include('./alert-toast.ejs');
       <div class="modal-body modal-title-body">
         <!-- Use text-center to center the content -->
 
-        <h6 class="citation-types-label">Select Document Type</h6>
-        <!-- dropdown for doc type -->
+        <label class="document-types-label" for="document-types"
+        >Document Type</label
+      >        <!-- dropdown for doc type -->
         <select class="form-select form-select-sm" id="doc-type">
           <option value="empty"></option>
           <option value="notes">Notes</option>
           <option value="paper">Paper</option>
         </select>
-        <!-- original buttons -->
-        <!-- <button class="btn btn-light" id="notesButton">Notes</button>
-        <button class="btn btn-secondary" id="paperButton">Paper</button> -->
+       
       </div>
+    
       <!-- Container for the content -->
       <div id="selectedContent" class="content-margin-top hidden">
         <!-- Citation Dropdown -->
