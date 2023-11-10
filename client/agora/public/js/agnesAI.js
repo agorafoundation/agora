@@ -176,7 +176,7 @@ document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
     } );
 } );
 
-// deletes card from local storage and places it in seperate _ field 
+// deletes card from local storage and places it in seperate "removed" field (name can change!)
 function deleteCard( cardID ) {
     const localStorageArticleJSON = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
 
@@ -188,8 +188,21 @@ function deleteCard( cardID ) {
     // find article with matching index and remove
     articleObjs.forEach( ( articleObj, index ) => {
         if ( articleObj.id == cardID ) {
+            // remove article from citations array
+            const deletedArticleObj = articleObjs.splice( index, 1 )[0];
 
-            console.log( articleObj );
+            // put deleted article in separate local storage field
+            writeDeleted( deletedArticleObj );
         }
     } );
+}
+
+// add deleted article to local storage
+function writeDeleted( articleObj ) {
+    // get local array if it exists, else create new empty array
+    const localRemovedArticlesArray = JSON.parse( localStorage.getItem( 'removed' ) ?? '[]' );
+
+    localRemovedArticlesArray.push( articleObj );
+
+    localStorage.setItem( 'removed', JSON.stringify( localRemovedArticlesArray ) );
 }
