@@ -146,6 +146,7 @@ function getFirstNameLastNames( authors ) {
 
 // const apiEndpoint = '/server/controller/apis/aiController.js'; // Relative path
 
+var lastEditedResource; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
@@ -153,17 +154,16 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
     var selectedContent = document.getElementById( 'selectedContent' );
 
     // Define the data you want to send in the request body
-    var requestData = {
+    let requestData = {
         mode: selectedValue, // Use the selected mode
+        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0] // get the first one if none are selected
     };
 
     try {
         // Make the fetch call to the "aiController.js" API
-        const response = await fetch( '/api/v1/auth/ai/suggest', {
+        const response = await fetch( 'api/v1/auth/ai/suggest', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json', },
             body: JSON.stringify( requestData ), // Send the mode in the request body
         } );
 
@@ -171,14 +171,17 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
             selectedContent.classList.remove( 'hidden' );
 
             // If the response is successful, parse the JSON data
-            console.log( 'SUCCESS' );
-            const articles = await response.json();
-            processJsonData( articles );
+            let articles = await response.json();
+
+            if ( articles['citations'].length > 0 ) {
+                processJsonData( articles['citations'] );
+            }
+            else {
+                // ...
+            }
         }
         else {
-            console.log( 'FAILED' );
             // Handle error cases here
-            console.error( 'Fetch request failed' );
         }
     }
     catch ( error ) {
@@ -186,6 +189,7 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
 } );
+
 // Preparing Articles for formatting
 function processJsonData( articlesObj ) {
     articlesObj.forEach( ( article ) => {
@@ -224,13 +228,13 @@ function processJsonData( articlesObj ) {
     } );
 }
 
-// // Popover logic
-// var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
-//     trigger: 'manual'
-// } );
-// document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
-//     myPopover.show();
-// } );
-// document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
-//     myPopover.hide();
-// } );
+// Popover logic
+var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
+    trigger: 'manual'
+} );
+document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
+    myPopover.show();
+} );
+document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
+    myPopover.hide();
+} );

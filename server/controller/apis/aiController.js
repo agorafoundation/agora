@@ -47,7 +47,7 @@ exports.callOpenAI = async ( req, res ) => {
                 let returnValue = completion.data.choices[0];
         
                 let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
-        
+                
                 let validatedCitations = await validateSources( rawJson );
                 let keywords = rawJson["keywords"];
         
@@ -83,7 +83,7 @@ exports.callOpenAI = async ( req, res ) => {
 // helper logic
 
 function createPaperPrompt( abstract ) {
-    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in JSON format with the following fields: sourceTitle, sourceAuthors, sourcePublication, sourcePublicationDate, sourceLink, sourceSummary.
+    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
 
             Abstract of the paper I'm writing:
             '''
@@ -152,6 +152,8 @@ const validateSources = async ( json ) => {
             }
         }
     }
+
+    console.log( newCitations );
 
     return newCitations;
 };
