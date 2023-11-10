@@ -195,6 +195,9 @@ function deleteCard( cardID ) {
             writeDeleted( deletedArticleObj );
         }
     } );
+
+    // update localStorageArticleJSON after removal
+    localStorage.setItem( 'last-retrieved', JSON.stringify( localStorageArticleJSON ) );
 }
 
 // add deleted article to local storage
