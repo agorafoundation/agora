@@ -162,3 +162,16 @@ document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function 
 document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
     myPopover.hide();
 } );
+
+
+// X button logic
+
+// get all the x buttons and add the click event listener
+document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
+    xButton.addEventListener( 'click', function () {
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardID = this.parentElement.parentElement.parentElement.getAttribute( 'data-card-index' );
+
+        alert( `CARD_ID: ${cardID}` );
+    } );
+} );
