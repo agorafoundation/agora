@@ -36,8 +36,13 @@ document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
 } );
 
 // get all the copy button text and add the click event listener
-document.querySelectorAll( 'button.card-citation-text' ).forEach( ( copyButton ) => {
+document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
     copyButton.addEventListener( 'click', function () {
+
+        document.querySelectorAll( 'button.card-citation-text' ).forEach( ( copyText ) => {
+            const cardTextDiv = this.parentElement.parentElement.parentElement;
+            const cardTextID = cardDiv.getAttribute( 'data-card-index-text' );
+        } );
         // the x-button is nested in two divs, so parent div is three levels up
         const cardDiv = this.parentElement.parentElement.parentElement;
         const cardID = cardDiv.getAttribute( 'data-card-index' );
@@ -55,8 +60,8 @@ const createToast = ( text ) => {
     toast.show();
 };
 
-function copyContentText ( cardID ) {
-    let text = document.getElementById( cardID ).innerHTML;
+function copyContentText ( cardID, cardTextID ) {
+    let text = document.getElementById( cardTextID ).innerHTML;
     let buttonText = document.getElementById( cardID );
     const copyContent = async () => {
         try {
