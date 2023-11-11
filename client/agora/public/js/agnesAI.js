@@ -21,6 +21,56 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 
 } );
 
+// Copy Button Logic
+
+// get all the copy buttons and add the click event listener
+document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
+    copyButton.addEventListener( 'click', function () {
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        const cardID = cardDiv.getAttribute( 'data-card-index' );
+
+        copyContentText( cardID );
+        
+    } );
+} );
+
+// get all the copy button text and add the click event listener
+document.querySelectorAll( 'button.card-citation-text' ).forEach( ( copyButton ) => {
+    copyButton.addEventListener( 'click', function () {
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        const cardID = cardDiv.getAttribute( 'data-card-index' );
+
+        copyContentText( cardID );
+        
+    } );
+} );
+
+const createToast = ( text ) => {
+    document.getElementById( 'toast-text' ).innerText = text;
+    const thisToast = document.getElementById( 'liveToast' );
+    // eslint-disable-next-line no-undef
+    const toast = new bootstrap.Toast( thisToast );
+    toast.show();
+};
+
+function copyContentText ( cardID ) {
+    let text = document.getElementById( cardID ).innerHTML;
+    let buttonText = document.getElementById( cardID );
+    const copyContent = async () => {
+        try {
+            await navigator.clipboard.writeText( text );
+            console.log( 'Content copied to clipboard' );
+            buttonText.innerHTML = 'Copied';
+            createToast( "Copied Link! Paste citation into document where needed." );
+        } 
+        catch ( err ) {
+            console.error ( 'Failed to copy: ', err );
+        }
+    };
+}
+
 /**
  * Formats an article object based on citation format.
  * 

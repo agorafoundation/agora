@@ -93,7 +93,7 @@
 
                 <div class="row">
                   <div class="col text-end">
-                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" onclick="copyContent()">Copy</button>
+                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" >Copy</button>
                   </div>
                 </div>
               </div>
@@ -116,7 +116,7 @@
 
                 <div class="row">
                   <div class="col text-end">
-                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" onclick="copyContent()">Copy</button>
+                    <button class="btn btn-sm card-cite-btn" id="card-cite-button-text" >Copy</button>
                   </div>
                 </div>
               </div>
@@ -160,29 +160,4 @@
       selectedContent.classList.add("hidden");
     }
   });
-</script>
-
-<script>
-  const createToast = ( text ) => {
-    document.getElementById( 'toast-text' ).innerText = text;
-    const thisToast = document.getElementById( 'liveToast' );
-    // eslint-disable-next-line no-undef
-    const toast = new bootstrap.Toast( thisToast );
-    toast.show();
-  };
-</script>
-
-<script>
-  let text = document.getElementById('copy-this-text').innerHTML;
-  let buttonText = document.getElementById('card-cite-button-text');
-  const copyContent = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      console.log('Content copied to clipboard');
-      buttonText.innerHTML = 'Copied';
-      createToast( "Copied Link! Paste citation into document where needed." );
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  }
 </script>
