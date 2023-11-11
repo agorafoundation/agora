@@ -1188,15 +1188,32 @@ function getOffset( el ) {
 }
 
 function deleteFriend( friendshipId ) {
-    const deleteCard = document.getElementById("friend-card-" + friendshipId);
-    fetch( "/api/v1/auth/friends/deleteFriend", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify( {
-            "friendshipId": friendshipId,
+    if (confirm( "Are you sure you want to remove this friend?") == true){
+        fetch( "/api/v1/auth/friends/deleteFriend", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                "friendshipId": friendshipId,
+            })
         })
-    });
-    deleteCard.style.display = "none";
+        .then( (response) => {
+            if ( response.status == 200 ) {
+                const message = 'Friend deleted successfully';
+                console.log( message );
+                alert( message );
+                location.reload();
+            }
+            else{
+                const errorMessage = 'Failed to delete friend.';
+                console.error( errorMessage );
+                alert( errorMessage );
+            }
+        })
+        .catch( ( error ) => {
+            console.error( 'Error deleting friend:', error);
+            alert( 'Error deleting friend: ' + error );
+        });
+    }
 };
 
 // manage highlighting of control bar buttons

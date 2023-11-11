@@ -9,12 +9,9 @@
 const db = require( '../db/connection' );
 
 // import models
-const User = require( "../model/user" );
-const Event = require( '../model/event' );
 const notificationService = require( '../service/notificationService' );
 const userService = require( '../../server/service/userService' );
 const { ormFriendship } = require( '../model/friendship' );
-const { ormFriendshipRequest } = require( '../model/friendshipRequest' );
 
 //SQL queries
 
@@ -50,6 +47,24 @@ exports.getAllFriends = async ( userID ) => {
         }
     }
     catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+exports.getUnreadFriendRequestCount = async ( userID ) => {
+    let text = `SELECT COUNT(*) FROM friendships WHERE recipient_id = $1 AND friendship_status = $2`;
+    let values = [ userID, 'pending'];
+
+    try{
+        let res = await db.query( text, values );
+        if ( res.rows.length > 0){
+            return res.rows;
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ){
         console.log( e.stack );
     }
 };

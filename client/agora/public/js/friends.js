@@ -7,6 +7,7 @@ var displayedUsers = new Set();
 const userSearch = document.getElementById( 'user-search' );
 const searchButton = document.getElementById( 'btn-search' );
 const friendsDashboard = document.getElementById( 'friends-dashboard' );
+const redCircle = document.getElementById( 'requestCount' );
 var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
@@ -23,8 +24,16 @@ window.onload = getResources = () => {
             authUser.push( response[0]);
             friends.push( response[1] );
             requests.push( response[2] );
+            let requestCount = response[3][0].count;
+            if ( requestCount > 0){
+                let span = document.createElement("span");
+                span.textContent = requestCount;
+                redCircle.appendChild(span);
+                redCircle.style.display = "flex";
+            }
         } );
 };
+
 
 // queries the users by username
 searchButton.addEventListener( 'click', queryUsers = () => {
@@ -39,8 +48,8 @@ searchButton.addEventListener( 'click', queryUsers = () => {
                 var data = response[i];
                 var isFriend = false;
                 var isSentRequest = false;
-                for( j = 0; j < friends.length; j++ ){
-                    if ( data.username == friends[j].friend_username ){
+                for( j = 0; j < friends[0].length; j++ ){
+                    if ( ( data.username == friends[0][j].friend_username ) ){
                         isFriend = true;
                     }
                 }
@@ -91,15 +100,17 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click', sendFriendRequest = () => {
-        userContainer.style.display = "none";
-        fetch( "/api/v1/auth/friends/sendFriendRequest", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify ( {
-                "username": userData.username,
-                "userId": userData.userId
-            } )
-        } ); 
+        if( confirm("Are you sure you want to send a friend request to " + userData.username + "?") == true){
+            userContainer.style.display = "none";
+            fetch( "/api/v1/auth/friends/sendFriendRequest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify ( {
+                    "username": userData.username,
+                    "userId": userData.userId
+                } )
+            } ); 
+        }
     } );
     
 }

@@ -59,7 +59,8 @@
             <% if(locals.authUser) { %>
                 <a href="/profile/manageProfile"
                     style="width:100%; position: absolute;bottom: 0; left: -15px;border-top:solid;border-radius:2px;">
-
+                    <div id="requestCount" style="position: absolute; top:0; left: 65px; padding: 5px; border-radius: 50%; background-color: red;
+                    color: white; font-weight: bold; font-size: 14px; display: none;"></div>
                     <% if( locals.authUser.profileFilename.toString().substring(0, 7)=="http://" ||
                         locals.authUser.profileFilename.toString().substring(0, 8)=="https://" ) { %>
                         <img src="<%- locals.authUser.profileFilename %>" alt="User Dashboard avatar"

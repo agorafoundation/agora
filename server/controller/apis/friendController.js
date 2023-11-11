@@ -9,19 +9,12 @@
 const fs = require( 'fs' );
 let path = require( 'path' );
 
-// import models
-const User = require( '../../model/user' );
-
-// import controllers
-const { errorController } = require( "./apiErrorController" );
-
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import services
 const friendService = require( '../../service/friendService' );
 const userService = require( '../../service/userService' );
-const productService = require ( '../../service/productService' );
 const notificationService = require( '../../service/notificationService' );
 
 //Returns all friends of a user.
@@ -57,9 +50,10 @@ exports.getResources = async ( req, res ) => {
     }
     if( authUserID ){
         let resources = [ ];
-        let friends = await friendService.getAllFriends( req.user.userID );
+        let friends = await friendService.getAllFriends( req.user.userId );
         let requests = await friendService.getUnreadFriendRequests( req.user.userId );
-        resources.push(req.user, friends, requests);
+        let count = await friendService.getUnreadFriendRequestCount( req.user.userId );
+        resources.push(req.user, friends, requests, count);
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all user details" );
         res.status( 200 ).json( resources );
