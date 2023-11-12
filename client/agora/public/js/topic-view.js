@@ -9,6 +9,12 @@
 // matching this tabName is displayed. The divs have a class 'tabcontent'.
 let tabName = "";
 
+// Keeps track of the index of the current tab this may be referenced before the tab is created or rendered
+// previously this was done by using the tabName and the match function to get the number at the end of the name
+// which is probimattic if you want to work with the index number to organize the topics and resources before the 
+// tab has been cerated.
+let currentTabIndex = -1;
+
 // Workspace resizing
 let activeHeightObj = {};
 let activeHeightList = [];
@@ -66,13 +72,19 @@ async function createResource( name, type, imagePath, id ) {
             //     resources-numResources] = [];
             // }
             
-            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + getCurrTopicIndex() );
+            //console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + getCurrTopicIndex() );
+            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + currentTabIndex );
             
             console.log( "----------------- saving resource to list 1 --------------- " );
-            if( resources[getCurrTopicIndex()] == null ) {
-                resources[getCurrTopicIndex()] = [];
+            // if( resources[getCurrTopicIndex()] == null ) {
+            //     resources[getCurrTopicIndex()] = [];
+            // }
+            //resources[getCurrTopicIndex()].push( data.resourceId );
+
+            if( resources[currentTabIndex] == null ){
+                resources[currentTabIndex] = [];
             }
-            resources[getCurrTopicIndex()].push( data.resourceId );
+            resources[currentTabIndex].push( data.resourceId );
             console.log( "resources array: " + JSON.stringify( resources ) );    
             //numResources++;
 
@@ -96,8 +108,13 @@ async function createResource( name, type, imagePath, id ) {
     else{
         console.log( "!!----------------- saving resource to list 2 ---------------!! " );
         console.log( "saving resource id: " + id + " to resources array" );
-        console.log( "current topic id: " + getCurrTopicID() + " current topic index: " + getCurrTopicIndex() );
-        resources[getCurrTopicIndex()].push( id );
+        //console.log( "current topic id: " + getCurrTopicID() + " current topic index: " + getCurrTopicIndex() );
+        //resources[getCurrTopicIndex()].push( id );
+
+        if( resources[currentTabIndex] == null ){
+            resources[currentTabIndex] = [];
+        }
+        resources[currentTabIndex].push( id );
 
         console.log( "createResource() : complete - No id" );
     }
@@ -252,7 +269,7 @@ const createTopic = async( id, name ) => {
             closeTab( e.target.id );
         } 
         else {
-            openTab( newTab.id );
+            openTab( newTab.id );            
         }
     };
 
@@ -274,83 +291,82 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
-    if( !id ) {
-        
-        const response = await fetch( "api/v1/auth/topics", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "topicType": 1,
-                "topicName": topicName,
-                "topicDescription": "",
-                "topicHtml": "",
-                "assessmentId": 1,
-                "hasActivity": false,
-                "hasAssessment": false,
-                "activityId": 1,
-                "active": true,
-                "visibility": "private",
-                "resources": resources ? resources : [],
-                "createTime": Date.now(),
-            } )
-        } );
-
-        if( response.ok ) {
-            const data = await response.json();
-            //console.log( "createTopic() topic saved " );
-            // map the resulting topic id to the value used in topic elements
-            topics[numTopics] = data.topicId;
-
-            //console.log( topics );
-            await saveWorkspace( topics );
-
-            return data;
-        }
-    }
-    else{
-        topics[numTopics] = id;
-
-    }
+    saveTopic( topicName, resources );
     console.log( "createTopic() Complete " );
 };
 
-// Updates topic name
-const updateTopic = async( name ) => {
-    console.log( "updateTopic() " + name );
-    let isRequired = [];
-
-    // console.log( "resources found: " + JSON.stringify( resources ) );
-    for( let i = 0; i < resources.length; i++ ){
-        isRequired.push( "true" );
-    }
-    let id = getCurrTopicID();
-    // console.log( "topic object: " + JSON.stringify( {
-    //     "topicId": id,
-    //     "topicName": name ? name : "Untitled",
-    //     "resources": resources ? resources : [],
-    //     "resourcesRequired": isRequired,
-    //     "visibility": "private",
-    //     "isRequired": true
-    // } ) );
+const saveTopic = async( topicName, resources ) => {
+    console.log( "saveTopic() : Start" );
+    console.log( "contents of the resources array: " + JSON.stringify( resources ) );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify( {
-            "topicId": id,
-            "topicName": name ? name : "Untitled",
-            "resources": resources ? resources : [],
-            "resourcesRequired": isRequired,
+            "topicType": 0,
+            "topicName": topicName,
+            "topicDescription": "",
+            "topicHtml": "",
+            "assessmentId": 1,
+            "hasActivity": false,
+            "hasAssessment": false,
+            "activityId": -1,
+            "active": true,
             "visibility": "private",
-            "isRequired": true
+            "resources": resources ? resources : []
         } )
     } );
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "updateTopic() saved and Complete" );
+        //console.log( "createTopic() topic saved " );
+        // map the resulting topic id to the value used in topic elements
+        topics[numTopics] = data.topicId;
+
+        //console.log( topics );
+        await saveWorkspace( topics );
+        console.log( "saveTopic() : Complete" );
         return data;
     }
 };
+
+// Updates topic name
+// defunct reaplacing with saveTopic
+// const updateTopic = async( name ) => {
+//     console.log( "updateTopic() " + name );
+//     let isRequired = [];
+
+//     // console.log( "resources found: " + JSON.stringify( resources ) );
+//     for( let i = 0; i < resources.length; i++ ){
+//         isRequired.push( "true" );
+//     }
+//     let id = getCurrTopicID();
+//     // console.log( "topic object: " + JSON.stringify( {
+//     //     "topicId": id,
+//     //     "topicName": name ? name : "Untitled",
+//     //     "resources": resources ? resources : [],
+//     //     "resourcesRequired": isRequired,
+//     //     "visibility": "private",
+//     //     "isRequired": true
+//     // } ) );
+//     const response = await fetch( "api/v1/auth/topics", {
+//         method: "POST",
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify( {
+//             "topicId": id,
+//             "topicName": name ? name : "Untitled",
+//             "resources": resources ? resources : [],
+//             "resourcesRequired": isRequired,
+//             "visibility": "private",
+//             "isRequired": true
+//         } )
+//     } );
+
+//     if( response.ok ) {
+//         const data = await response.json();
+//         console.log( "updateTopic() saved and Complete" );
+//         return data;
+//     }
+// };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
@@ -649,32 +665,35 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
 
 
+// comment out to identify all of the areas using the previous approach
 
+// get the topic uuid id based on the currently visible topic tab
+// function getCurrTopicID() {
+//     let topicID = null;
+//     if( tabName ) {
+//         let topicVal = tabName.match( /\d+/g )[0];
+//         topicID = topics[topicVal];
+//     //console.log( "returning topic id: " + topicID );
+//     }
+//     else {
+//         topicID = 0;
+//     }
+//     return topicID;
+// }
 
-// get the topic id based on the currently visible topic tab
-function getCurrTopicID() {
-    let topicID = null;
-    if( tabName ) {
-        let topicVal = tabName.match( /\d+/g )[0];
-        topicID = topics[topicVal];
-    //console.log( "returning topic id: " + topicID );
-    }
-    else {
-        topicID = 0;
-    }
-    return topicID;
-}
+// // get the tab index based on the currently visible topic tab
+// function getCurrTopicIndex() {
+//     let topicIndex = 0;
+//     if( tabName ) {
+//         topicIndex = tabName.match( /\d+/g )[0];
+//         //topicIndex = topics.indexOf( topicVal );
 
-function getCurrTopicIndex() {
-    let topicIndex = 0;
-    if( tabName ) {
-        topicIndex = tabName.match( /\d+/g )[0];
-        //topicIndex = topics.indexOf( topicVal );
+//         console.log( "returning topic id: " + topicIndex + " from tabname: " + tabName );
+//     }
+//     return topicIndex;
+// }
 
-        console.log( "returning topic id: " + topicIndex + " from tabname: " + tabName );
-    }
-    return topicIndex;
-}
+// --------------------------------------------------------------------------------
 
 
 // returns an array of resource id's within a given topic, sorted by position
@@ -733,6 +752,13 @@ function createTextArea( name, id ) {
         newDropZone.addEventListener( "click", async () => {
             console.log( "createTextArea - Promise - createResource() call" );
 
+            // testing the getCurrTopicID and getCurrTopicIndex functions
+            // console.log( "getCurrTopicID: " + getCurrTopicID() );
+            // console.log( "getCurrTopicIndex: " + getCurrTopicIndex() );
+
+            //console.log( "getCurrTopicID: " + getCurrTopicID() );
+            console.log( "getCurrTopicIndex: " + currentTabIndex );
+
             console.log( "create new resource click event - createResource() call" );
             const newResource = await createResource( null, 1, null, null );
             console.log( "newResource: " + JSON.stringify( newResource ) );
@@ -740,7 +766,12 @@ function createTextArea( name, id ) {
             console.log( "create new resource click event - updateTopic() call" );
             let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
             console.log( "topicTitle: " + topicTitle );
-            const newTopic = await updateTopic( topicTitle.innerHTML );
+
+
+
+            //const newTopic = await updateTopic( topicTitle.innerHTML );
+            const newTopic = await saveTopic( topicTitle.innerHTML, resources );
+            
             console.log( "newTopic: " + JSON.stringify( newTopic ) );
 
             // render the resource text area
@@ -919,7 +950,8 @@ function getResourceID( val ) {
     console.log( "getResourceID: start" );
     console.log( "val: " +val );
     console.log( "resources: " + JSON.stringify( resources ) );
-    let resourceID = resources[getCurrTopicIndex()][val];
+    let resourceID = resources[currentTabIndex][val];
+    console.log( "getResourceID: complete returning: " + resourceID );
     return resourceID;
 }
 
@@ -1157,7 +1189,7 @@ document.addEventListener( "click", function( e ) {
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
         //let id = getResourceID( sunEditor["sunEditor" + val][0] );
-        let id = resources[getCurrTopicIndex()][val];
+        let id = resources[currentTabIndex][val];
         let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
         console.log( "calling from click" );
         updateSunEditor( id, title, contents );
@@ -1233,6 +1265,9 @@ if( openBtn ) {
         //modal.style.display = "block";
         let tname = prompt( "Enter a name for your new Topic" );
         //console.log( 'Took input from prompt' );
+
+        // increase the currentTabIndex
+        currentTabIndex++;
 
         console.log( "main click event - createResource() call" );
         const newResource = await createResource( null, 1, null, null );

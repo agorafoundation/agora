@@ -595,7 +595,11 @@ exports.saveTopic = async function( topic ) {
 exports.saveResourcesForTopic = async function( topic, resourceIds ) {
     // get the most recent version of the topic
     console.log( "[INFO]: Saving resources for topic: " + topic.topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds + " length: " + resourceIds.length );
-   
+    // let rIds = resourceIds;
+    // if( typeof resourceIds == "object" ) {
+    //     rIds = resourceIds.map( r => ( String.toString( r ) ) );
+    // }
+    //console.log( "[DEBUG]: rIds: " + rIds + " typeOf rIds: " + typeof rIds + " length: " + rIds.length );
 
     // first remove current resources associated with the topic
     let text = "DELETE FROM topic_resources WHERE topic_id = $1";
