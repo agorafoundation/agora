@@ -783,6 +783,20 @@
     text-align: center;
     justify-content: space-around;
 }
+
+#show-toast {
+    position: fixed;
+    top: 0;
+    left: 45%;
+    z-index: 1000;
+    box-shadow: 3px rgba(0.5, 0.5, 0.5, 0.5);
+}
+  
+.show-toast-text {
+    font-size: 100%;
+    padding: 15px 20px;
+}
+
 /* Custom modal size */
 .custom-modal {
     max-width: 360px;

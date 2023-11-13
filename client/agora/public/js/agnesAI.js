@@ -23,6 +23,70 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 
 } );
 
+// Copy Button Logic
+
+// get all the copy buttons and add the click event listener
+document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
+    copyButton.addEventListener( 'click', function () {
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        const cardID = cardDiv.getAttribute( 'data-card-index' );
+
+        copyContentText( cardID );
+        
+    } );
+} );
+
+// get all the copy button text and add the click event listener
+document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
+
+    console.log( "here" );
+    copyButton.addEventListener( 'click', function () {
+
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        //const cardID = cardDiv.getAttribute( 'data-card-index' );
+
+        const cardText = cardDiv.querySelector( 'span.card-citation-text' );
+        //const cardTextID = cardTextDiv.getAttribute( 'data-card-index' );
+        //console.log( cardText );
+        //console.log( cardTextID );
+
+        copyContentText( cardText.textContent, cardDiv );
+        //copyContent();
+        
+    } );
+} );
+
+const createToastNotification = ( text ) => {
+    document.getElementById( 'toast-text' ).innerText = text;
+    const thisToast = document.getElementById( 'liveToast' );
+    // eslint-disable-next-line no-undef
+    const toast = new bootstrap.Toast( thisToast );
+    toast.show();
+};
+
+function copyContentText ( cardText, cardDiv ) {
+    //let text = document.getElementById( cardTextID ).innerHTML;
+    //let buttonText = document.getElementById( cardTextID );
+
+    let buttonText = cardDiv.querySelector( 'button.card-cite-btn' );
+
+    const copyContent = async () => {
+        try {
+            await navigator.clipboard.writeText( cardText );
+            console.log( 'Content copied to clipboard' );
+            buttonText.innerHTML = 'Copied';
+            createToastNotification( "Copied Link! Paste citation into document where needed." );
+        } 
+        catch ( err ) {
+            console.error ( 'Failed to copy: ', err );
+        }
+    };
+    copyContent();
+}
+
+
 /**
  * Formats an article object based on citation format.
  * 

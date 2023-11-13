@@ -74,7 +74,7 @@
             <p class="citations-title">Agnes suggests the following articles</p>
 
             <div class="all-cards">
-    
+            
             </div>
           </div>
         </div>
@@ -96,3 +96,23 @@
     </div>
   </div>
 </div>
+
+<div class="toast-container" id="show-toast">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body show-toast-text" id="toast-text">
+      Copied Link! Paste citation into document where needed.
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("doc-type").addEventListener("change", function () {
+    var selectedValue = this.value;
+    var selectedContent = document.getElementById("selectedContent");
+    if (selectedValue === "notes" || selectedValue === "paper") {
+      selectedContent.classList.remove("hidden");
+    } else {
+      selectedContent.classList.add("hidden");
+    }
+  });
+</script>
