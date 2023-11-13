@@ -167,6 +167,8 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
         } );
 
         if ( response.ok ) {
+            allCardsContainer.innerHTML = ""; // Clear the current cards.
+
             selectedContent.classList.remove( 'hidden' );
 
             // If the response is successful, parse the JSON data

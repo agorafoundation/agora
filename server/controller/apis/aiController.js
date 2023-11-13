@@ -124,7 +124,9 @@ const parseResourceContentHtml = ( content ) => {
  */
 const validateSources = async ( json ) => {
     let citations = json["citations"];
+    
     let newCitations = [];
+    let newIndex = 0;
 
     for ( let i = 0; i < citations.length; i++ ) {
         let citation = citations[i];
@@ -140,6 +142,7 @@ const validateSources = async ( json ) => {
                 } );
 
                 let newCitation = {
+                    id: newIndex,
                     title: paper.title,
                     authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
                     publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
@@ -149,6 +152,8 @@ const validateSources = async ( json ) => {
                 };
     
                 newCitations.push( newCitation );
+
+                newIndex++;
             }
         }
     }
