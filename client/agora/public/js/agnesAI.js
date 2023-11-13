@@ -209,7 +209,9 @@ function processJsonData( articlesObj ) {
                </div>
                <div class="row card-row-body">
                    <div class="col text-center">
-                       <span class="card-citation-text"></span>
+                       <a href="${article.link}" target="_blank">
+                           <span class="card-citation-text"></span>
+                       </a>
                    </div>
                </div>
                <div class="row">

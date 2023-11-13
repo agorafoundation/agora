@@ -866,9 +866,12 @@
 }
 
 .card-citation-text {
+    color: white;
+    text-decoration: underline;
+    font-weight: normal;
     font-size: 12px;
+}
 
-} 
 .document-types-label {
     color: #ffffff;
     font-size: 0.8rem;
