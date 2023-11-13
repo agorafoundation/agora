@@ -156,8 +156,6 @@ const validateSources = async ( json ) => {
         }
     }
 
-    console.log( newCitations );
-
     return newCitations;
 };
 
