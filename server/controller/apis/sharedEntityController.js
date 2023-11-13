@@ -12,6 +12,7 @@ let path = require( 'path' );
 // import services
 const sharedEntityService = require( '../../service/sharedEntityService' );
 const workspaceService = require( '../../service/workspaceService' );
+const userService = require( '../../service/userService' );
 const topicService = require( '../../service/topicService' );
 const resourceService = require( '../../service/resourceService' );
 
@@ -20,6 +21,8 @@ const SharedEntity = require( '../../model/sharedEntity' );
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
 const { Console } = require( 'console' );
+
+const User = require( '../../model/user' ); // Import the User model
 
 /**
  * 
@@ -156,39 +159,52 @@ exports.saveCopiedEntity = async ( req, res ) => {
     }
 };
 
-
-exports.shareWorkspace = async ( req, res ) => {
-    if ( req.body.entityId && req.body.ownerUserId && req.body.shareUserId ) {
-        const workspace = await workspaceService.getWorkspaceById( req.body.entityId );
-        
-        // Sending success message with the original workspace data
-        res.set( "x-agora-message-title", "Success" );
-        if( workspace ) {
-            res.set( "x-agora-message-title", "Sucess" );
-            res.set( "x-agora-message-detail", "Returned workspace by id" );
-            res.status( 200 ).json( workspace );
-
-            
-
-            workspace.workspaceId = -1;
-            workspace.ownedBy = req.body.shareUserId;
-            await workspaceService.saveWorkspace( workspace );
-        } 
-        else {
-            const message = ApiMessage.createApiMessage( 404, "Workspace not found :("
-            );
-            res.set( "x-agora-message-title", "Not found" );
-            res.set( "x-agora-message-detail", "workspace not found" );
-            res.status( 404 ).json( message );
+//Share workspace 
+exports.sharedWorkspace = async ( req, res ) => {
+    try {
+        // authenticate the user sharing 
+        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
+        if ( !authUserId ) {
+            return res.status( 403 ).json( { message: 'User not authenticated' } );
         }
+
+        // Fetch user details from the User model
+        const sharingUser = await userService.getActiveUserById( authUserId );
+        if ( !sharingUser ) {
+            return res.status( 404 ).json( { message: 'User not found' } );
+        }
+
+        const workspaceId = req.body.entityId;
+        const sharedWithUserId = req.body.sharedWithUserId;
+        const permissionLevel = req.body.permissionLevel;
+        const canCopy = req.body.canCopy;
+
+        // Verify's the owner of the workspace
+        const workspace = await workspaceService.getWorkspaceById( workspaceId );
+        if ( !workspace ) {
+            return res.status( 404 ).json( { message: 'Workspace not found' } );
+        }
+        if ( workspace.ownedBy !== sharingUser.userId ) {
+            return res.status( 403 ).json( { message: 'Unauthorized: You do not own this workspace' } );
+        }
+
+        // Share the workspace
+        const sharedEntity = {
+            entityId: workspaceId,
+            entityType: 'workspace',
+            shareUserId: sharedWithUserId,
+            ownerUserId: sharingUser.userId,
+            permissionLevel: permissionLevel,
+            canCopy: canCopy
+        };
+
+        const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
+
+        // Send success response
+        res.status( 200 ).json( { message: 'Workspace shared successfully', sharedEntityId } );
     } 
-    else { 
-        //For debugging
-        console.log( "Please provide req.body.entityId && req.body.ownerUserId && req.body.shareUserId" );
-        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found. Please provide req.body.entityId && req.body.ownerUserId && req.body.shareUserId" );
-        //Setting response headers 
-        res.set( "x-agora-message-title", "Not Found");
-        res.set( "x-agora-message-detail", "Workspace not found" );
-        res.status( 404 ).json( message );
+    catch ( error ) {
+        // Handle any other errors 
+        res.status( 500 ).json( { message: error.message } );
     }
 };

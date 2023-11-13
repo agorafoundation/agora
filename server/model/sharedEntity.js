@@ -19,8 +19,8 @@ function SharedEntity() {
     this.sharedEntityId = -1;
     this.entityId = -1;
     this.entityType = -1;
-    this.sharedByUserId = null;  // changed from shareUserId
-    this.sharedWithUserId = null;  // changed from ownerUserId
+    this.sharedByUserId = null;  
+    this.sharedWithUserId = null; 
     this.permissionLevel = PermissionLevels.VIEW; //Added default permisson for sharing. 
     this.canCopy = false;
     
