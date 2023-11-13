@@ -73,8 +73,8 @@ exports.callOpenAI = async ( req, res ) => {
     } 
     else {
         res.set( "x-agora-message-title", "Error" );
-        res.set( "x-agora-message-detail", "Failed to get resource" );
-        res.status( 500 ).json( {"error": "Failed to get response"}  );
+        res.set( "x-agora-message-detail", "Failed to find document/resource." );
+        res.status( 500 ).json( {"error": "Failed to find document/resource. Please create or select a document."}  );
     }
 };
 
