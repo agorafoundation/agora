@@ -274,3 +274,52 @@ document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function 
 document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
     myPopover.hide();
 } );
+
+
+// X button logic
+
+// get all the x buttons and add the click event listener
+document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
+    xButton.addEventListener( 'click', function () {
+        // the x-button is nested in two divs, so parent div is three levels up
+        const cardDiv = this.parentElement.parentElement.parentElement;
+        const cardID = cardDiv.getAttribute( 'data-card-index' );
+        
+        deleteCardFromLocalStorage( cardID );
+        cardDiv.remove();
+    } );
+} );
+
+// deletes card from local storage and places it in seperate "removed" field (name can change!)
+function deleteCardFromLocalStorage( cardID ) {
+    const localStorageArticleJSON = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
+
+    // exit here if there is no local storage json
+    if ( !localStorageArticleJSON ) return;
+
+    const articleObjs = localStorageArticleJSON.citations;
+
+    // find article with matching index and remove
+    articleObjs.forEach( ( articleObj, index ) => {
+        if ( articleObj.id == cardID ) {
+            // remove article from citations array
+            const deletedArticleObj = articleObjs.splice( index, 1 )[0];
+
+            // put deleted article in separate local storage field
+            writeDeletedToLocalStorage( deletedArticleObj );
+        }
+    } );
+
+    // update localStorageArticleJSON after removal
+    localStorage.setItem( 'last-retrieved', JSON.stringify( localStorageArticleJSON ) );
+}
+
+// add deleted article to local storage
+function writeDeletedToLocalStorage( articleObj ) {
+    // get local array if it exists, else create new empty array
+    const localRemovedArticlesArray = JSON.parse( localStorage.getItem( 'removed' ) ?? '[]' );
+
+    localRemovedArticlesArray.push( articleObj );
+
+    localStorage.setItem( 'removed', JSON.stringify( localRemovedArticlesArray ) );
+}
