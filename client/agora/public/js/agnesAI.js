@@ -213,6 +213,7 @@ function processJsonData( articlesObj ) {
         // Create a new card element
         const card = document.createElement( 'div' );
         card.classList.add( 'container', 'citation-card' );
+        card.setAttribute( 'data-card-index', article.id );
         
         // Create the card template
         card.innerHTML = `
