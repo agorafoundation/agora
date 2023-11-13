@@ -1405,6 +1405,11 @@ async function renderTopic( topic ) {
                     //console.log( sunEditor[editor] );
                     sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
 
+                    // This allows us to get which resource the user's cursor was in for the Agnes assistant
+                    document.getElementById( "suneditor_" + editor ).addEventListener( 'click', ( e ) => {
+                        lastEditedResource = resources[i].resourceId;
+                    } );
+
                     //docType1Count++;
                     //val++;
                 }

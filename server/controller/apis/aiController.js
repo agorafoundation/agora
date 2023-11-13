@@ -27,7 +27,7 @@ exports.callOpenAI = async ( req, res ) => {
 
     if ( resourceContent ) {
         let parsedResourceContent = parseResourceContentHtml( resourceContent );
-
+        
         if ( parsedResourceContent.length > 0 ) {
             let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
         
@@ -47,13 +47,11 @@ exports.callOpenAI = async ( req, res ) => {
                 let returnValue = completion.data.choices[0];
         
                 let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
-        
+                
                 let validatedCitations = await validateSources( rawJson );
-                let keywords = rawJson["keywords"];
         
                 let newJsonObject = {
-                    citations: validatedCitations, 
-                    keywords: keywords
+                    citations: validatedCitations
                 };
 
                 res.set( "x-agora-message-title", "Success" );
@@ -70,7 +68,7 @@ exports.callOpenAI = async ( req, res ) => {
         else {
             res.set( "x-agora-message-title", "Error" );
             res.set( "x-agora-message-detail", "Content not long enough" );
-            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 words."} );
+            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 characters."} );
         }
     } 
     else {
@@ -83,7 +81,7 @@ exports.callOpenAI = async ( req, res ) => {
 // helper logic
 
 function createPaperPrompt( abstract ) {
-    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in JSON format with the following fields: sourceTitle, sourceAuthors, sourcePublication, sourcePublicationDate, sourceLink, sourceSummary.
+    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
 
             Abstract of the paper I'm writing:
             '''
@@ -124,7 +122,9 @@ const parseResourceContentHtml = ( content ) => {
  */
 const validateSources = async ( json ) => {
     let citations = json["citations"];
+
     let newCitations = [];
+    let newIndex = 0;
 
     for ( let i = 0; i < citations.length; i++ ) {
         let citation = citations[i];
@@ -140,6 +140,7 @@ const validateSources = async ( json ) => {
                 } );
 
                 let newCitation = {
+                    id: newIndex,
                     title: paper.title,
                     authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
                     publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
@@ -149,9 +150,13 @@ const validateSources = async ( json ) => {
                 };
     
                 newCitations.push( newCitation );
+
+                newIndex++;
             }
         }
     }
+
+    console.log( newCitations );
 
     return newCitations;
 };
