@@ -139,7 +139,6 @@ function getFirstNameLastNames( authors ) {
         names.push( [ lastName, firstName ] );
     } );
 
-    // TODO: format article information based on selected typ
     return names;
 
 }

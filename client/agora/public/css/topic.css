@@ -837,7 +837,7 @@
 
 .all-cards {
     overflow-y: scroll;
-    height: 240px;
+    max-height: 240px;
 }
 
 .card-row-header {
