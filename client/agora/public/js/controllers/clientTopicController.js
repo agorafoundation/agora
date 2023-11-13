@@ -26,7 +26,6 @@ const topicModel = {
     visibility: "private",
     createTime: null,
     ownedBy: -1,
-
     assessment: null,
     activity: null,
     resources: [],
@@ -46,6 +45,15 @@ const getTopic = async( id ) => {
     }
 
         
+};
+
+// retrieve the resources associated with a topic given the topic id
+const getResourcesForTopic = async function ( topicId ) {
+    console.log( "getResourcesForTopicId() : Start for topicId: " + topicId );
+    const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
+    const data = await response.json();
+    console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) );
+    return data;
 };
 
 const saveTopic = async( topic, resourceIds ) => {
@@ -100,4 +108,4 @@ const saveTopic = async( topic, resourceIds ) => {
     // }
 };
 
-export { topicModel, getTopic, saveTopic };
+export { topicModel, getTopic, getResourcesForTopic, saveTopic };

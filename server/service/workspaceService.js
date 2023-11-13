@@ -147,13 +147,13 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
     let values = [];
     if( !isActive ) {
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.workspace_id;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.create_time DESC;";
         values = [ ownerId ];
     }
     else {
         // default to only retreiving active topics
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.workspace_id;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.create_time DESC;";
         values = [ true, ownerId ];
     }
 

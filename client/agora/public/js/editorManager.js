@@ -12,7 +12,13 @@
 /**
  * global variables
  */
+// topic uuid for the active tab
+let activeTabUuid = null;
+// topic tab name (eg topic0, topic1) for the active tab
 let activeTab = null;
+
+// resourcesZone of the active topics tab
+let resourcesZone = null;              
 let totalNumberResources = 0;
 
 // current workspace
@@ -43,14 +49,13 @@ const updateWorkspaceDom = function ( ws ) {
 const updateTopicsDom = function ( ) {
     console.log( "updateTopicDom() : start" );
 
-    
-
     // verify we have a workspace and it has topics
     if( workspace && workspace.topics ) {
         for( let i=0; i < workspace.topics.length; i++ ) {
 
             // get dom elements
             let tabContent = document.getElementsByClassName( "tabcontent" );
+            console.log( "tabContent: " + JSON.stringify( tabContent ) );
             let lastTab = tabContent[tabContent.length-1];
             let newTab = document.createElement( "div" );
     
@@ -59,6 +64,7 @@ const updateTopicsDom = function ( ) {
 
             // Create the tab content and append to last tab
             newTab.id = "topic" + i;
+            newTab.setAttribute( "name", topic.topicId );
             newTab.className = "tabcontent";
 
             // create a tab for each topic
@@ -66,7 +72,6 @@ const updateTopicsDom = function ( ) {
                 console.log( "empty tab" );
                 // if there are no tabs, create the first one
                 let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
-                console.log( "about to insert new tab " + newTab.id );
                 workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
                 workspaceEmptyState.style.display = "none";
                 document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
@@ -82,8 +87,6 @@ const updateTopicsDom = function ( ) {
             let newDropZone = document.createElement( "div" );
             newDropZone.classList.add( "drop-zone" );
             newDropZone.classList.add( "first-dropzone" );
-
-            console.log( "topic 0 test: " + document.getElementById( "topic0" ) );
 
             // Create drop zone filler div
             let newDropZoneFiller = document.createElement( "div" );
@@ -173,7 +176,7 @@ const updateTopicsDom = function ( ) {
                     closeTab( e.target.id );
                 } 
                 else {
-                    openTab( newTab.id );            
+                    openTab( newTab );            
                 }
             };
 
@@ -193,32 +196,170 @@ const updateTopicsDom = function ( ) {
             emptyState.appendChild( label2 );
 
             createNewActiveHeight();
-            openTab( newTab.id );
-
-
-
-
-            // document.getElementById( "topic-title" ).value = topic.topicName;
-            // document.getElementById( "topic-desc" ).value = topic.topicDescription;
+            openTab( newTab );
 
 
         }
     }
 
-    
-
-    
-
-    
-
-    
-
     console.log( "updateTopicDom() : complete" );
+};
+
+function createTextArea( name, i ) {
+    // Text area has to be created before suneditor initialization, 
+    // so we have to return a promise indicating whether or not text area has been successfully created
+    let promise =  new Promise( ( resolve ) => {
+        // workspace empty state
+        // if ( activeTab.id == "resources-zone0" ) {
+        //     createTopic();
+        // }
+        //console.log( "createTextArea() for number: " + numResources );
+
+        // Check for filler space
+        if ( document.getElementById( "filler-space" ) ) {
+            document.getElementById( "filler-space" ).remove();
+        }
+
+        // Create drop zone
+        let newDropZone = document.createElement( "div" );
+        newDropZone.className = "drop-zone-new";
+        newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
+        newDropZone.addEventListener( "click", async () => {
+            console.log( "createTextArea - Promise - createResource() call" );
+
+            //console.log( "getCurrTopicID: " + getCurrTopicID() );
+            //console.log( "getCurrTopicIndex: " + currentTabIndex );
+
+            /**
+             * TOOD: evaluate
+             */
+            // console.log( "create new resource click event - createResource() call" );
+            // const newResource = await createResource( null, 1, null, null );
+            // console.log( "newResource: " + JSON.stringify( newResource ) );
+
+            // console.log( "create new resource click event - updateTopic() call" );
+            // let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
+            // console.log( "topicTitle: " + topicTitle );
+
+            // const newTopic = await updateTopic( topicTitle.innerHTML )
+            // // send the resources from the current;
+            // const newTopic = await saveTopic( topicTitle.innerHTML, resources[currentTabIndex] );
+            
+            // console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+            // // render the resource text area
+            // createTextArea();
+
+            //numTopics++;
+
+        } );
+
+        // Create drop zone filler space
+        let newDropZoneFiller = document.createElement( "div" );
+        newDropZoneFiller.className = "dropzone-filler";
+        newDropZone.appendChild( newDropZoneFiller );
+
+        // Create drop zone input
+        let newDropZoneInput = document.createElement( "input" );
+        newDropZoneInput.className = "drop-zone__input";
+        newDropZoneInput.type = "file";
+        newDropZone.appendChild( newDropZoneInput );
+        createDropZoneEventListeners( newDropZone, newDropZoneInput );
+
+        // Title element
+        let title = document.createElement( 'input' );
+        title.type = "text";
+        title.className = "drop-zone__title";
+        title.id = "input-title" + i;
+        if( name ){
+            title.value = name;
+        }
+        else{
+            title.value = "Untitled";
+        }
+
+        // Edit icon
+        let editIcon = document.createElement( 'span' );
+        editIcon.setAttribute( "class", "material-symbols-outlined" );
+        editIcon.setAttribute( "id", "edit-icon" + i );
+        editIcon.innerHTML = "edit";
+        editIcon.style.display = "none";
+
+        // Done icon
+        let doneIcon = document.createElement( 'span' );
+        doneIcon.setAttribute( "class", "material-symbols-outlined" );
+        doneIcon.setAttribute( "id", "done-icon" + i );
+        doneIcon.innerHTML = "done";
+
+        // New Tab
+        let newTabIcon = document.createElement( 'span' );
+        newTabIcon.setAttribute( "class", "material-symbols-outlined" );
+        newTabIcon.setAttribute( "id", "open-tab-icon" + i );
+        newTabIcon.innerHTML = "open_in_new";
+
+        // Suneditor textarea
+        let sunEditor = document.createElement( "textarea" );
+        sunEditor.setAttribute( "id", "sunEditor" + i );
+
+
+        /**
+         * TODO: Evaluate
+         */
+        // Remove empty state if necessary
+        // if ( activeTab.childElementCount > 0 ) {
+        //     let location = getTabLocation( tabName );
+        //     document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+        //     document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+        // }
+
+        // Append elemets accordingly
+        resourcesZone.appendChild( title );
+        // resourcesZone.appendChild( newTabIcon );
+        resourcesZone.appendChild( editIcon );
+        resourcesZone.appendChild( doneIcon );
+        console.log( '1' );
+        resourcesZone.appendChild( sunEditor );
+        console.log( '2' );
+        resourcesZone.appendChild( newDropZone );
+
+        // Maintain a baseline height until 1200px is exceeded
+        activeHeightObj[activeTab] += 800;
+        checkActiveHeight();
+        //alert( "hold" );
+        console.log( "createTextArea() complete promise cerated" );
+        resolve( "TA created" );
+    } );
+
+    promise.then(
+        ( ) => {
+            createSunEditor( i );
+            
+
+            console.log( "createTextArea() complete promise then (suneditor) completed" );
+        }
+    );
+}
+
+const renderTextArea = function ( resourceContentHtml, i ) {
+    console.log( "renderTextArea() : Start html: " + resourceContentHtml );
+    if( resourceContentHtml && resourceContentHtml.length > 0 ){
+                     
+        let editor = "sunEditor" + ( i );
+
+
+        //console.log( editor );
+        console.log( sunEditor[editor] );
+        sunEditor[editor][1].insertHTML( resourceContentHtml );
+
+        //docType1Count++;
+        //val++;
+    }
+    console.log( "renderTextArea() : End" );
 };
 
 
 
-export { updateWorkspaceDom, updateTopicsDom };
+export { activeTabUuid, updateWorkspaceDom, updateTopicsDom, createTextArea, renderTextArea };
 
 
 /**
@@ -235,9 +376,12 @@ function createNewActiveHeight() {
 
 /* BEGIN Tab Functions ------------------------------------------------------------- */
 // Change tabs
-function openTab( tabId ) {
-    console.log( "openTab : " + tabId + " slice : " + tabId.slice( -1 ) );
+function openTab( tab ) {
+    console.log( "openTab : " + tab + " id: " + tab.id + " name: " + tab.getAttribute( "name" ) );
     let i, tabcontent, tablinks;
+
+    activeTabUuid = tab.getAttribute( "name" );
+    activeTab = activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
     for ( i = 0; i < tabcontent.length; i++ ) {
@@ -252,15 +396,15 @@ function openTab( tabId ) {
         tablinks[i].style.color = "white";
     }
 
-    activeTab = document.getElementById( "resources-zone" + tabId.slice( -1 ) );
+    resourcesZone = document.getElementById( "resources-zone" + tab.id.slice( -1 ) );
     //currentTagId = name.slice( -1 );
 
     // Show the current tab
-    document.getElementById( tabId ).style.display = "block";
+    document.getElementById( tab.id ).style.display = "block";
 
     // Set tab button to active
     for ( i=0; i<tablinks.length; i++ ) {
-        if ( tablinks[i].id.slice( -1 ) == tabId.slice( -1 ) ) {
+        if ( tablinks[i].id.slice( -1 ) == tab.id.slice( -1 ) ) {
             tablinks[i].className += " active";
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }
@@ -280,7 +424,7 @@ function closeTab( tabId ) {
     // Find the tab content to be deleted
         if ( tabContent[i].id.slice( -1 ) == tabId.slice( -1 ) ) {
             // Check if the target tab is the active tab
-            if ( tabId.slice( -1 ) == activeTab.id.slice( -1 ) ) {
+            if ( tabId.slice( -1 ) == resourcesZone.id.slice( -1 ) ) {
                 isActiveTab = true;
             }
             tabLocation = i;
@@ -290,15 +434,15 @@ function closeTab( tabId ) {
 
     if ( isActiveTab ) {
         if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
-            openTab( tabContent[tabLocation+1].id );
+            openTab( tabContent[tabLocation+1] );
         }
         else if ( tabLocation-1 >= 0 ) {                                                          // Otherwise, open the tab to the left
-            openTab( tabContent[tabLocation-1].id );
+            openTab( tabContent[tabLocation-1] );
         }
         else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
             document.getElementById( "topic-background" ).style.backgroundColor = "#17191a";
-            activeTab = document.getElementById( "resources-zone0" );
+            resourcesZone = document.getElementById( "resources-zone0" );
         }
     }
     // Remove tab button and tab content
@@ -324,7 +468,13 @@ function closeTab( tabId ) {
 
 
 
+/* BEGIN drag and drop Functions ------------------------------------------------------------- */
 
+// Get the target drop zone
+let targetDropZone = null;
+document.addEventListener( "dragenter", ( e ) => {
+    targetDropZone = e.target;
+} );
 
 /**
  * 
@@ -337,7 +487,7 @@ function createDropZoneEventListeners( dropZone, input ) {
 
         dropZone.firstElementChild.style.display = "block";
 
-        if ( activeTab.childElementCount == 1 ||
+        if ( resourcesZone.childElementCount == 1 ||
       dropZone.className.includes( "empty-topic-dropzone" ) ) {
             dropZone.classList.add( "drop-zone--over" );
             dropZone.firstElementChild.style.display = "none";
@@ -441,27 +591,29 @@ function updateThumbnail( dropZoneElement, file ) {
         // } );
         
         mydiv.style.height = "500px";
-        activeHeightObj[tabName] += 500;
+        activeHeightObj[activeTab] += 500;
     }
     else {
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
-        activeHeightObj[tabName] += 200;
+        activeHeightObj[activeTab] += 200;
         console.log( "updateThumbnail - getFile - else - createResource() call" );
-        createResource( file.name, 3, null );
+        // TODO: evaluate 
+        //createResource( file.name, 3, null );
     }
     mydiv.appendChild( inputfile );
 
-    // Remove empty state if necessary
-    let location = getTabLocation( tabName );
-    if ( mydiv.childElementCount > 0 ) {
-        document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-        document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
-    }
+    // // TODO: evaluate
+    // // Remove empty state if necessary
+    // let location = getTabLocation( activeTab );
+    // if ( mydiv.childElementCount > 0 ) {
+    //     document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+    //     document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+    // }
 
     // File drop in topic empty state
     if ( targetDropZone === document.querySelectorAll( ".empty-state" )[location+1] ) {
-        activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
+        resourcesZone.firstChild.parentNode.insertBefore( inputTitle, resourcesZone.firstChild.nextSibling );
         inputTitle.parentNode.insertBefore( previewIcon, inputTitle.nextSibling );
         previewIcon.parentNode.insertBefore( mydiv, previewIcon.nextSibling );
         mydiv.parentNode.insertBefore( newDropZone, mydiv.nextSibling );
@@ -469,7 +621,7 @@ function updateThumbnail( dropZoneElement, file ) {
     else {
         // File drop in workspace empty state
         if ( dropZoneElement === document.querySelectorAll( ".drop-zone" )[0] ) {
-            activeTab.firstChild.parentNode.insertBefore( inputTitle, activeTab.firstChild.nextSibling );
+            resourcesZone.firstChild.parentNode.insertBefore( inputTitle, resourcesZone.firstChild.nextSibling );
         }
         else {
             targetDropZone.parentNode.insertBefore( inputTitle, targetDropZone.nextSibling );
@@ -482,3 +634,70 @@ function updateThumbnail( dropZoneElement, file ) {
     // Maintain a baseline height until 1200px is exceeded
     checkActiveHeight();
 }
+
+
+// Implemented to ensure resources fill a 1200px space first and then grows as needed
+function checkActiveHeight() {
+    if ( activeHeightObj[activeTab] < 1200 ) {
+        let filler = document.createElement( "div" );
+        filler.setAttribute( "id", "filler-space" );
+        filler.style.height = ( 1200-activeHeightObj[activeTab] ) + "px";
+        activeTab.appendChild( filler );
+    }
+}
+
+// Create the sun editor and initialize within designated text area
+let sunEditor = {};
+let sunEditorList = [];
+
+const createSunEditor = async( num ) => {
+    console.log( "createSunEditor() num: " + num );
+    // eslint-disable-next-line no-undef
+    sunEditor["sunEditor"+ num] = [ num, SUNEDITOR.create( "sunEditor" + num, {
+        toolbarContainer: "#toolbar_container",
+        showPathLabel: false,
+        defaultTag: "p",
+        charCounter: true,
+        charCounterLabel: "Char Count",
+        width: "100%",
+        height: "auto",
+        minHeight: "40vh",
+        defaultStyle: "font-size:15px;",
+        // eslint-disable-next-line no-undef
+        katex: katex, 
+        buttonList: [
+            [ "undo", "redo", "font", "fontSize", "formatBlock" ], 
+            [ "fontColor", "hiliteColor", "textStyle" ],
+            [
+                "bold",
+                "underline",
+                "italic",
+                "strike",
+                "subscript",
+                "superscript",
+                "removeFormat",
+            ],
+            [ 'link', 'image', 'video', 'math' ],
+            [ "outdent", "indent", "align", "horizontalRule", "list", "table" ],
+            [
+                "showBlocks",
+                "codeView",
+                "preview",
+                "print",
+                "save",
+                "fullScreen",
+            ],
+        ],
+        mode: "classic",
+        // eslint-disable-next-line no-undef
+        lang: SUNEDITOR_LANG.en,
+        "lang(In nodejs)": "en",
+        callBackSave: function ( contents ) {
+            alert( contents );
+        },
+    } ) ];
+
+    sunEditorList.push( sunEditor["sunEditor" + num] );
+    console.log( "createSunEditor() complete" );
+    window.scrollTo( 0, 0 );
+};
