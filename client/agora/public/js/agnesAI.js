@@ -219,9 +219,9 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
 
         allCardsContainer.innerHTML = ""; // Clear the current cards.
         
-        if ( response.ok ) {
-            selectedContent.classList.remove( 'hidden' );
+        selectedContent.classList.remove( 'hidden' );
 
+        if ( response.ok ) {
             // If the response is successful, parse the JSON data
             let articles = await response.json();
 
