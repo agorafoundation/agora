@@ -24,39 +24,26 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 } );
 
 // Copy Button Logic
+function enableCiteButtons() {
+    // get all the copy button text and add the click event listener
+    document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
+        copyButton.addEventListener( 'click', function () {
 
-// get all the copy buttons and add the click event listener
-document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
-    copyButton.addEventListener( 'click', function () {
-        // the x-button is nested in two divs, so parent div is three levels up
-        const cardDiv = this.parentElement.parentElement.parentElement;
-        const cardID = cardDiv.getAttribute( 'data-card-index' );
+            // the x-button is nested in two divs, so parent div is three levels up
+            const cardDiv = this.parentElement.parentElement.parentElement;
+            //const cardID = cardDiv.getAttribute( 'data-card-index' );
 
-        copyContentText( cardID );
-        
+            const cardText = cardDiv.querySelector( 'span.card-citation-text' );
+            //const cardTextID = cardTextDiv.getAttribute( 'data-card-index' );
+            //console.log( cardText );
+            //console.log( cardTextID );
+
+            copyContentText( cardText.textContent, cardDiv );
+            //copyContent();
+            
+        } );
     } );
-} );
-
-// get all the copy button text and add the click event listener
-document.querySelectorAll( 'button.card-cite-btn' ).forEach( ( copyButton ) => {
-
-    console.log( "here" );
-    copyButton.addEventListener( 'click', function () {
-
-        // the x-button is nested in two divs, so parent div is three levels up
-        const cardDiv = this.parentElement.parentElement.parentElement;
-        //const cardID = cardDiv.getAttribute( 'data-card-index' );
-
-        const cardText = cardDiv.querySelector( 'span.card-citation-text' );
-        //const cardTextID = cardTextDiv.getAttribute( 'data-card-index' );
-        //console.log( cardText );
-        //console.log( cardTextID );
-
-        copyContentText( cardText.textContent, cardDiv );
-        //copyContent();
-        
-    } );
-} );
+}
 
 const createToastNotification = ( text ) => {
     document.getElementById( 'toast-text' ).innerText = text;
@@ -242,6 +229,9 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
                 localStorage.setItem( 'last-retrieved', JSON.stringify( articles ) );
             
                 processJsonData( articles['citations'] );
+
+                enableXButtons();
+                enableCiteButtons();
             }
             else {
                 // Create a card to display the error of not finding any articles
@@ -341,18 +331,19 @@ document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function 
 
 
 // X button logic
-
-// get all the x buttons and add the click event listener
-document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
-    xButton.addEventListener( 'click', function () {
-        // the x-button is nested in two divs, so parent div is three levels up
-        const cardDiv = this.parentElement.parentElement.parentElement;
-        const cardID = cardDiv.getAttribute( 'data-card-index' );
-        
-        deleteCardFromLocalStorage( cardID );
-        cardDiv.remove();
+function enableXButtons() {
+    // get all the x buttons and add the click event listener
+    document.querySelectorAll( 'button.card-close-btn' ).forEach( ( xButton ) => {
+        xButton.addEventListener( 'click', function () {
+            // the x-button is nested in two divs, so parent div is three levels up
+            const cardDiv = this.parentElement.parentElement.parentElement;
+            const cardID = cardDiv.getAttribute( 'data-card-index' );
+            
+            deleteCardFromLocalStorage( cardID );
+            cardDiv.remove();
+        } );
     } );
-} );
+}
 
 // deletes card from local storage and places it in seperate "removed" field (name can change!)
 function deleteCardFromLocalStorage( cardID ) {
