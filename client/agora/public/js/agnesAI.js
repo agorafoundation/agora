@@ -177,7 +177,20 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
                 processJsonData( articles['citations'] );
             }
             else {
-                // ...
+                // Create a card to display the error of not finding any articles
+                const card = document.createElement( 'div' );
+                card.classList.add( 'container', 'citation-card' );
+                
+                card.innerHTML = `
+                    <div class="row card-row-body">
+                        <div class="col text-center">
+                            <span class="card-citation-text">No articles found. Please keep writing and try again.</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Append the card to the container
+                allCardsContainer.appendChild( card );
             }
         }
         else {
