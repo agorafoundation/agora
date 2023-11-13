@@ -160,20 +160,14 @@ exports.saveCopiedEntity = async ( req, res ) => {
 };
 
 //Share workspace 
-exports.sharedEntity = async ( req, res ) => {
+exports.sharedWorkspace = async ( req, res ) => {
     try {
         // authenticate the user sharing 
-        let authUserId;
-        if ( req.user ) {
-            authUserId = req.user.userId;
-        }
-        else if ( req.session.authUser ) {
-            authUserId = req.session.authUser.userId;
+        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
+        if ( !authUserId ) {
+            return res.status( 403 ).json( { message: 'User not authenticated' } );
         }
 
-        if ( !authUserId ) {
-            return res.status( 403 ).json( { message: 'User not authenticated' });
-        }
         // Fetch user details from the User model
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
