@@ -1245,13 +1245,13 @@ if ( openTopicBtn ) {
 const toggleProfileList = () => {
     let arrow = document.getElementById( "profiles-toggle" );
 
-    if ( arrow.classList.contains( "down-arrow" ) ) {
+    if ( arrow.classList.contains( "up-arrow" ) ) {
         document.getElementById( "permissions-box" ).style.display = "none";
-        arrow.setAttribute( 'class', 'arrow up-arrow' );
+        arrow.setAttribute( 'class', 'arrow down-arrow' );
     }
     else {
         document.getElementById( "permissions-box" ).style.display = "flex";
-        arrow.setAttribute( 'class', 'arrow down-arrow' );
+        arrow.setAttribute( 'class', 'arrow up-arrow' );
     }
 };
 

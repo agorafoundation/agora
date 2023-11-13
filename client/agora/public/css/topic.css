@@ -612,7 +612,7 @@
 
   .profile-status {
     margin-top: 36px;
-    margin-left: 230px;
+    margin-left: 225px;
     font-weight: 500px;
   }
 
@@ -645,16 +645,22 @@
     width: 100%;
   }
 
+  .profile-status-container {
+    display: flex;
+    align-items: center;
+}
+
   .arrow {
     cursor: pointer;
     border: solid black;
     border-width: 0 3px 3px 0;
     display: inline-block;
-    padding: 3px;
-    height: 15px;
-    width: 15px;
+    padding: 1px;
+    height: 10px;
+    width: 10px;
     background-color: transparent;
-    margin-right: 20px;
+    margin-top: 36px;
+    margin-left: 20px;
   }
 
   .arrow:focus {
