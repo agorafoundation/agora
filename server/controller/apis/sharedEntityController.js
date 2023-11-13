@@ -174,7 +174,11 @@ exports.sharedWorkspace = async ( req, res ) => {
             return res.status( 404 ).json( { message: 'User not found' } );
         }
 
-        const { workspaceId, sharedWithUserId, permissionLevel, canCopy } = req.body;
+        const workspaceId = req.body.entityId;
+        const sharedWithUserId = req.body.sharedWithUserId;
+        const permissionLevel = req.body.permissionLevel;
+        const canCopy = req.body.canCopy;
+
         // Verify's the owner of the workspace
         const workspace = await workspaceService.getWorkspaceById( workspaceId );
         if ( !workspace ) {
