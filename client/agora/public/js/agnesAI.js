@@ -175,6 +175,8 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
             let articles = await response.json();
 
             if ( articles['citations'].length > 0 ) {
+                localStorage.setItem( 'last-retrieved', JSON.stringify( articles ) );
+            
                 processJsonData( articles['citations'] );
             }
             else {
