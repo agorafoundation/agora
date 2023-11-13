@@ -5,6 +5,20 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// get models and controller functions from modules
+import { resourceModel, saveResource } from "./controllers/clientResourceController.js";
+import { topicModel, saveTopic, getTopic } from "./controllers/clientTopicController.js";
+import { workspaceModel, saveWorkspace, getWorkspace } from "./controllers/clientWorkspaceController.js";
+
+/** Globals */
+let resources = [];
+let numResources = 0;
+
+let numTopics = 0;
+let topics = [];
+
+
+
 // keeps track of the current topic tab identifier. When a user selects a tab, the div with name
 // matching this tabName is displayed. The divs have a class 'tabcontent'.
 let tabName = "";
@@ -38,96 +52,10 @@ function checkActiveHeight() {
 
 
 
-/* Resource Functions --------------------------------------------------------------------------------- */
-let resources = [];
-let numResources = 0;
-
-// create a new resource
-async function createResource( name, type, imagePath, id ) {
-    console.log( "createResource() name: " + name + " type " + type + " imagePath " + imagePath + " id " + id );
-    if( !id ){
-        const response = await fetch( "api/v1/auth/resources", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify( {
-                "resourceType": type,
-                "resourceName": name ? name : "Untitled",
-                "resourceDescription": "",
-                "resourceContentHtml": "",
-                "resourceImage": imagePath ? imagePath : "",
-                "resourceLink": "",
-                "isRequired": true,
-                "active": true,
-                "visibility": "private"
-            } )
-        } );
-
-        if( response.ok ) {
-            const data = await response.json();
-            console.log( "createResource() : Resource created + Resource: " + JSON.stringify( data ) );
-            // if( tabName.match( /\d+/g ) ) {
-            //     resources-numResources] = [ data.resourceId, getCurrTopicID() ];
-            // }
-            // else {
-            //     resources-numResources] = [];
-            // }
-            
-            //console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + getCurrTopicIndex() );
-            console.log( "saving resource id: " + data.resourceId + " to resources array " + " at getCurrTopicIndex " + currentTabIndex );
-            
-            console.log( "----------------- saving resource to list 1 --------------- " );
-            // if( resources[getCurrTopicIndex()] == null ) {
-            //     resources[getCurrTopicIndex()] = [];
-            // }
-            //resources[getCurrTopicIndex()].push( data.resourceId );
-
-            if( resources[currentTabIndex] == null ){
-                resources[currentTabIndex] = [];
-            }
-            resources[currentTabIndex].push( data.resourceId );
-            console.log( "resources array: " + JSON.stringify( resources ) );    
-            //numResources++;
-
-            // map the new resource to the associated topic
-            //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-            
-            //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
-            //let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
-            
-            
-
-            //console.log( "added resource: " + JSON.stringify( resources-numResources] ) );
-            //console.log( "createResource() : updateTopic() call" );
-            // URBG: removed this to test fix for update being called in the middle of save.
-            // this might be needed for a different thread but not called here.
-            //updateTopic( topicTitle.innerHTML );
-            console.log( "createResource() : complete : Resources array: " + JSON.stringify( resources ) );
-            return data;
-        }
-    }
-    else{
-        console.log( "!!----------------- saving resource to list 2 ---------------!! " );
-        console.log( "saving resource id: " + id + " to resources array" );
-        //console.log( "current topic id: " + getCurrTopicID() + " current topic index: " + getCurrTopicIndex() );
-        //resources[getCurrTopicIndex()].push( id );
-
-        if( resources[currentTabIndex] == null ){
-            resources[currentTabIndex] = [];
-        }
-        resources[currentTabIndex].push( id );
-
-        console.log( "createResource() : complete - No id" );
-    }
-   
-}
-/* END Resource Functions -------------------------------------------------------------------------------------- */
 
 
-/* Topic Functions -------------------------------------------------------------------------- */
-let numTopics = 0;
-let topics = [];
 
-// Creates a new topic
+// Renders a new topic
 const createTopic = async( id, name ) => {
     console.log( "createTopic() id: " + id + " name: " + name );
     let topicName = null;
@@ -291,43 +219,12 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
-    saveTopic( topicName, resources );
+    console.log( "currentTabIndex 1: " + currentTabIndex );
+    saveTopic( topicName, resources[currentTabIndex] );
     console.log( "createTopic() Complete " );
 };
 
-const saveTopic = async( topicName, resources ) => {
-    console.log( "saveTopic() : Start" );
-    console.log( "contents of the resources array: " + JSON.stringify( resources ) );
-    const response = await fetch( "api/v1/auth/topics", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "topicType": 0,
-            "topicName": topicName,
-            "topicDescription": "",
-            "topicHtml": "",
-            "assessmentId": 1,
-            "hasActivity": false,
-            "hasAssessment": false,
-            "activityId": -1,
-            "active": true,
-            "visibility": "private",
-            "resources": resources ? resources : []
-        } )
-    } );
 
-    if( response.ok ) {
-        const data = await response.json();
-        //console.log( "createTopic() topic saved " );
-        // map the resulting topic id to the value used in topic elements
-        topics[numTopics] = data.topicId;
-
-        //console.log( topics );
-        await saveWorkspace( topics );
-        console.log( "saveTopic() : Complete" );
-        return data;
-    }
-};
 
 // Updates topic name
 // defunct reaplacing with saveTopic
@@ -367,42 +264,9 @@ const saveTopic = async( topicName, resources ) => {
 //         return data;
 //     }
 // };
-/* END Topic Functions -------------------------------------------------------------------------------------- */
-
-/*WORKSPACE function */
-const saveWorkspace = async( topics ) => {
-    console.log( 'saveWorkspace()' );
-    const topicsList = Object.values( topics );
-
-
-    const [ isTopic, workspaceId ] = getPrefixAndId();
-    let name = document.getElementById( "workspace-title" ).value;
-    let description = document.getElementById( "workspace-desc" ).value;
-
-    const response = await fetch( "api/v1/auth/workspaces", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "workspaceId": workspaceId,
-            "workspaceName": name,
-            "workspaceDescription": description,
-            "topics": topicsList,
-            "active":true,
-            "visibility": "private"
-        } )
-    } );
-
-    if( response.ok ) {
-        const data = await response.json();
-        //console.log( JSON.stringify( data ) );
-        console.log( 'saveWorkspace() saved and complete' );
-    }
-};
 
 
 
-/* Tab Functions -------------------------------------------------------------------------------------------- */
-// Workspace empty state
 let activeTab = null;
 
 
@@ -752,25 +616,20 @@ function createTextArea( name, id ) {
         newDropZone.addEventListener( "click", async () => {
             console.log( "createTextArea - Promise - createResource() call" );
 
-            // testing the getCurrTopicID and getCurrTopicIndex functions
-            // console.log( "getCurrTopicID: " + getCurrTopicID() );
-            // console.log( "getCurrTopicIndex: " + getCurrTopicIndex() );
-
             //console.log( "getCurrTopicID: " + getCurrTopicID() );
             console.log( "getCurrTopicIndex: " + currentTabIndex );
 
             console.log( "create new resource click event - createResource() call" );
-            const newResource = await createResource( null, 1, null, null );
+            const newResource = await clientController.createResource( null, 1, null, null );
             console.log( "newResource: " + JSON.stringify( newResource ) );
 
             console.log( "create new resource click event - updateTopic() call" );
             let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
             console.log( "topicTitle: " + topicTitle );
 
-
-
-            //const newTopic = await updateTopic( topicTitle.innerHTML );
-            const newTopic = await saveTopic( topicTitle.innerHTML, resources );
+            //const newTopic = await updateTopic( topicTitle.innerHTML )
+            // send the resources from the current;
+            const newTopic = await saveTopic( topicTitle.innerHTML, resources[currentTabIndex] );
             
             console.log( "newTopic: " + JSON.stringify( newTopic ) );
 
@@ -854,12 +713,6 @@ function createTextArea( name, id ) {
     promise.then(
         ( ) => {
             createSunEditor();
-            // if( name ){
-            //     //createResource( name, 1, null, id  );
-            // }
-            // else{
-            //     //createResource( null, 1, null );
-            // }
             numResources++;
 
             console.log( "createTextArea() complete promise then (suneditor) completed" );
@@ -921,32 +774,10 @@ const createSunEditor = async() => {
     sunEditorList.push( sunEditor["sunEditor"+numResources] );
 };
 
-// update the sun editor contents
-function updateSunEditor( id, name, contents ) {
-    console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
-    fetch( "api/v1/auth/resources", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "resourceId":  id,
-            "resourceType": 1,
-            "resourceName": name ? name : "Untitled",
-            "resourceDescription": "",
-            "resourceContentHtml": contents ? contents : "",
-            "resourceImage": "",
-            "resourceLink": "",
-            "isRequired": false,
-            "active": true,
-            "visibility": "private"
-        } )
-    } )
-        .then( response => response.json() )
-        .then( ( data ) => {
-            //console.log( JSON.stringify( data ) );
-        } );
-}
 
-function getResourceID( val ) {
+
+// 
+function getResourceUuidByEditorNumber( val ) {
     console.log( "getResourceID: start" );
     console.log( "val: " +val );
     console.log( "resources: " + JSON.stringify( resources ) );
@@ -957,16 +788,17 @@ function getResourceID( val ) {
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    console.log( "mouse move event" );
+    //console.log( "mouse move event" );
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
+            console.log( "onChange event for sunEditor: " + getResourceID( i ) );
             sunEditorList[i][1].save();
 
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
             let id = getResourceID( ( i ) );
             //let id = resources-i - 1];
-            console.log( "resources: " + resources + " at index " + ( i ) + "is : " + id );
+            console.log( "resources: " + resources + " at index " + ( ( i ) + "is : " + id ) );
             let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
             console.log( "calling from move" );
             updateSunEditor( id, title, contents );
@@ -1475,41 +1307,33 @@ const getPrefixAndId = () => {
     return [ prefixPattern.test( url ), urlId ];
 };
 
+const fetchWorkspace = async () => {
+    console.log( "fetchWorkspace() : Start" );
+    const [ , id ] = getPrefixAndId();
+    if ( id ) {
+        await getWorkspace( id );
+        console.log( "fetchWorkspace() : End" );
+        
+    }
+};
+
 const idAndFetch = async () => {
     console.log( "idAndFetch() : Start" );
     const [ isTopic, id ] = getPrefixAndId();
-    //console.log( isTopic, id );
+    console.log( isTopic, id );
+
     if ( isTopic && id ) {
         //console.log( "idAndFetch() : fetch topic" );
-        await fetch( "api/v1/auth/topics/" + id, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( response ) => {
-                fillFields(
-                    response.results.topicName,
-                    response.results.topicDescription,
-                    response.results.topicImage
-                );
-                console.log( "idAndFetch() : End - topicPath" );
-            } );
+        let topic = await clientController.getTopic( id );
+
+        // update topic html??
+       
     }
     else if ( id ) {
-        //console.log( "idAndFetch() : fetch workspace" );
-        await fetch( "api/v1/auth/workspaces/" + id, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( response ) => {
-                fillFields(
-                    response.results.workspaceName,
-                    response.results.workspaceDescription,
-                    response.results.workspaceImage
-                );
-                console.log( "idAndFetch() : End - workspacePath" );
-            } );
+        let workspace = await clientController.getWorkspace( id );
+        document.getElementById( "workspace-title" ).value = workspace.title.trim();
+        document.getElementById( "workspace-desc" ).value = workspace.description.trim();
+
         
     }
     console.log( "idAndFetch() : End FINAL" );
@@ -1549,12 +1373,6 @@ const getTags = async () => {
     }
 };
 
-const fillFields = ( title, description, image ) => {
-    //console.log( "fillFields() : Start for: " + title );
-    document.getElementById( "workspace-title" ).value = title.trim();
-    document.getElementById( "workspace-desc" ).value = description.trim();
-    //console.log( "fillFields() : Complete" );
-};
 
 const renderTopics = async ( workspace ) => {
     console.log( "renderTopics: Start" );
@@ -1638,9 +1456,15 @@ async function getResourcesForTopicId( topicId ) {
     return data.results;
 }
 
+/**
+ * Entry point for page
+ * Start here either for requesting a new workspace or opeing an existing one.
+ * 
+ */
 window.addEventListener( "load", async () => {
     console.log( "window load event: start" );
-    await idAndFetch();
+    // fetch the workspace
+    await fetchWorkspace();
     console.log( "about to run getTags" );
     getTags();
     console.log( "about to run render topics" );

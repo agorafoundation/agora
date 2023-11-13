@@ -594,7 +594,7 @@ exports.saveTopic = async function( topic ) {
  */                                               
 exports.saveResourcesForTopic = async function( topic, resourceIds ) {
     // get the most recent version of the topic
-    console.log( "[INFO]: Saving resources for topic: " + topic.topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds + " length: " + resourceIds.length );
+    console.log( "[INFO]: Saving resources for topic: " + topic.topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds );
     // let rIds = resourceIds;
     // if( typeof resourceIds == "object" ) {
     //     rIds = resourceIds.map( r => ( String.toString( r ) ) );
