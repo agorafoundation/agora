@@ -3,6 +3,7 @@
 
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
+const allCardsContainer = document.querySelector( '.all-cards' );
 
 citationsDropdown.addEventListener( 'change', ( event ) => {
     const citationType = event.target.value;
@@ -10,7 +11,7 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
   
     // return here if there is no article info in localstorage
     if ( !articleInfoObj ) return;
-  
+      
     // get all card text elements
     const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
     
@@ -18,6 +19,7 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
     allCitationCards.forEach( ( cardTextElement, index ) => {
         cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
     } );
+
 
 } );
 
@@ -138,19 +140,127 @@ function getFirstNameLastNames( authors ) {
     } );
 
     return names;
+
 }
 
-// Dropdown logic
-document.getElementById( 'doc-type' ).addEventListener( 'change', function () {
-    var selectedValue = this.value;
+// const apiEndpoint = '/server/controller/apis/aiController.js'; // Relative path
+
+var lastEditedResource; // This is set in the topic-view.js
+
+// Dropdown logic + Fetching data
+document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+    var selectedValue = this.value; // This is either set to "notes" or "paper"
     var selectedContent = document.getElementById( 'selectedContent' );
-    if ( selectedValue === 'notes' || selectedValue === 'paper' ) {
-        selectedContent.classList.remove( 'hidden' );
+
+    // Define the data you want to send in the request body
+    let requestData = {
+        mode: selectedValue, // Use the selected mode
+        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0] // get the first one if none are selected
+    };
+
+    try {
+        // Make the fetch call to the "aiController.js" API
+        const response = await fetch( 'api/v1/auth/ai/suggest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify( requestData ), // Send the mode in the request body
+        } );
+
+        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        
+        if ( response.ok ) {
+            selectedContent.classList.remove( 'hidden' );
+
+            // If the response is successful, parse the JSON data
+            let articles = await response.json();
+
+            if ( articles['citations'].length > 0 ) {
+                processJsonData( articles['citations'] );
+            }
+            else {
+                // Create a card to display the error of not finding any articles
+                const card = document.createElement( 'div' );
+                card.classList.add( 'container', 'citation-card' );
+                
+                card.innerHTML = `
+                    <div class="row card-row-body">
+                        <div class="col text-center">
+                            <span class="card-citation-text">No articles found. Please keep writing and try again.</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Append the card to the container
+                allCardsContainer.appendChild( card );
+            }
+        }
+        else {
+            selectedContent.classList.remove( 'hidden' );
+
+            let responseJson = await response.json();
+
+            // Create a card to display the error of not finding any articles
+            const card = document.createElement( 'div' );
+            card.classList.add( 'container', 'citation-card' );
+            
+            card.innerHTML = `
+                <div class="row card-row-body">
+                    <div class="col text-center">
+                        <span class="card-citation-text">${responseJson['error']}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Append the card to the container
+            allCardsContainer.appendChild( card );
+        }
     }
-    else {
-        selectedContent.classList.add( 'hidden' );
+    catch ( error ) {
+        // Handle network or other errors here
+        console.error( 'Fetch request failed: - Network or other errors', error );
     }
 } );
+
+// Preparing Articles for formatting
+function processJsonData( articlesObj ) {
+    articlesObj.forEach( ( article ) => {
+        const formattedString = formatCitationByType( article, 'apa' ); // by default it is apa format
+        
+        
+        // Create a new card element
+        const card = document.createElement( 'div' );
+        card.classList.add( 'container', 'citation-card' );
+        card.setAttribute( 'data-card-index', article.id );
+        
+        // Create the card template
+        card.innerHTML = `
+               <div class="row card-row-header">
+                   <div class="col text-end">
+                       <button class="btn btn-danger btn-sm card-close-btn">X</button>
+                   </div>
+               </div>
+               <div class="row card-row-body">
+                   <div class="col text-center">
+                       <a href="${article.link}" target="_blank" style="text-decoration: underline;">
+                           <span class="card-citation-text"></span>
+                       </a>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col text-end">
+                       <button class="btn btn-sm card-cite-btn">Cite</button>
+                   </div>
+               </div>
+           `;
+        
+        // Set the citation text in the card
+        const cardCitationText = card.querySelector( '.card-citation-text' );
+        cardCitationText.textContent = formattedString;
+        // Append the card to the container
+        allCardsContainer.appendChild( card );
+
+    } );
+}
 
 // Popover logic
 var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
