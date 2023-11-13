@@ -27,7 +27,7 @@ exports.callOpenAI = async ( req, res ) => {
 
     if ( resourceContent ) {
         let parsedResourceContent = parseResourceContentHtml( resourceContent );
-
+        
         if ( parsedResourceContent.length > 0 ) {
             let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
         
@@ -49,11 +49,9 @@ exports.callOpenAI = async ( req, res ) => {
                 let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
                 
                 let validatedCitations = await validateSources( rawJson );
-                let keywords = rawJson["keywords"];
         
                 let newJsonObject = {
-                    citations: validatedCitations, 
-                    keywords: keywords
+                    citations: validatedCitations
                 };
 
                 res.set( "x-agora-message-title", "Success" );
@@ -70,7 +68,7 @@ exports.callOpenAI = async ( req, res ) => {
         else {
             res.set( "x-agora-message-title", "Error" );
             res.set( "x-agora-message-detail", "Content not long enough" );
-            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 words."} );
+            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 characters."} );
         }
     } 
     else {
@@ -124,7 +122,7 @@ const parseResourceContentHtml = ( content ) => {
  */
 const validateSources = async ( json ) => {
     let citations = json["citations"];
-    
+
     let newCitations = [];
     let newIndex = 0;
 

@@ -166,9 +166,9 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
             body: JSON.stringify( requestData ), // Send the mode in the request body
         } );
 
+        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        
         if ( response.ok ) {
-            allCardsContainer.innerHTML = ""; // Clear the current cards.
-
             selectedContent.classList.remove( 'hidden' );
 
             // If the response is successful, parse the JSON data
@@ -195,7 +195,24 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
             }
         }
         else {
-            // Handle error cases here
+            selectedContent.classList.remove( 'hidden' );
+
+            let responseJson = await response.json();
+
+            // Create a card to display the error of not finding any articles
+            const card = document.createElement( 'div' );
+            card.classList.add( 'container', 'citation-card' );
+            
+            card.innerHTML = `
+                <div class="row card-row-body">
+                    <div class="col text-center">
+                        <span class="card-citation-text">${responseJson['error']}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Append the card to the container
+            allCardsContainer.appendChild( card );
         }
     }
     catch ( error ) {
@@ -224,7 +241,7 @@ function processJsonData( articlesObj ) {
                </div>
                <div class="row card-row-body">
                    <div class="col text-center">
-                       <a href="${article.link}" target="_blank">
+                       <a href="${article.link}" target="_blank" style="text-decoration: underline;">
                            <span class="card-citation-text"></span>
                        </a>
                    </div>
