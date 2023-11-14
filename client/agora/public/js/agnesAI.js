@@ -87,16 +87,16 @@ function formatCitationByType( articleObj, citationFormat ) {
     switch ( citationFormat ) {
 
     case 'apa': 
-        return `${formatAuthorsByCitationType( authors, 'apa' )} ${publicationDate}. ${title}. ${publication}`;
+        return `${formatAuthorsByCitationType( authors, 'apa' )} (${publicationDate}). ${title}. ${publication}.`;
 
     case 'mla': 
-        return `${formatAuthorsByCitationType( authors, 'mla' )} ${title}. ${publication}, ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'mla' )} "${title}". ${publication}, ${publicationDate}.`;
 
     case 'harvard': 
-        return `${formatAuthorsByCitationType( authors, 'harvard' )}, ${publicationDate}. ${title}. ${publication}`;
+        return `${formatAuthorsByCitationType( authors, 'harvard' )} (${publicationDate}) '${title}', ${publication}.`;
 
     case 'chicago': 
-        return `${formatAuthorsByCitationType( authors, 'chicago' )} ${title}. ${publication}. ${publicationDate}`;
+        return `${formatAuthorsByCitationType( authors, 'chicago' )} "${title}." ${publication}, (${publicationDate}).`;
 
     }
 
