@@ -1351,7 +1351,7 @@ const getPrefixAndId = () => {
 const idAndFetch = async () => {
     console.log( "idAndFetch() : Start" );
     const [ isTopic, id ] = getPrefixAndId();
-    //console.log( isTopic, id );
+    //console.log( id );
     if ( isTopic && id ) {
         //console.log( "idAndFetch() : fetch topic" );
         await fetch( "api/v1/auth/topics/" + id, {
@@ -1377,9 +1377,9 @@ const idAndFetch = async () => {
             .then( ( response ) => response.json() )
             .then( ( response ) => {
                 fillFields(
-                    response.results.workspaceName,
-                    response.results.workspaceDescription,
-                    response.results.workspaceImage
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
                 );
                 console.log( "idAndFetch() : End - workspacePath" );
             } );
@@ -1427,6 +1427,24 @@ const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
     //console.log( "fillFields() : Complete" );
+};
+
+const renderWorkspace = async ( workspace ) => {
+    console.log( "renderWorkspace: Start" );
+    const [ isTopic, id ] = getPrefixAndId();
+    if( id ) {
+        const response = await fetch( "api/v1/auth/workspaces/"+ id   );
+        let workspace = await response.json();
+        console.log( "workspace test: " + JSON.stringify( workspace ) );
+   
+        if ( workspace.results.length > 0 ) {
+            for ( let i = 0; i < workspace.results.length; i++ ) {
+                await renderTopic( workspace.results[i] );
+            
+            }
+        }   
+    }
+    console.log( "renderWorkspace: Complete" );
 };
 
 const renderTopics = async ( workspace ) => {

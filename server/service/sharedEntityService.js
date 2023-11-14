@@ -37,6 +37,27 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
 
 };
 
+exports.getAllSharedEntitiesByEntityId = async ( entityId ) => {
+    let text = "SELECT * FROM shared_entities WHERE entity_id = $1";
+    const values = [ entityId ];
+
+    try {
+        let sharedEntities = [];
+
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            // Convert the retrieved rows into SharedEntity objects and add them to the sharedEntities array
+            res.rows.forEach( ( row ) => {
+                sharedEntities.push( SharedEntity.ormSharedEntity( row ) );
+            } );
+        }
+        return sharedEntities;
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 
     if ( sharedEntity ) {

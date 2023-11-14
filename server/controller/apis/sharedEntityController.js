@@ -208,3 +208,31 @@ exports.sharedWorkspace = async ( req, res ) => {
         res.status( 500 ).json( { message: error.message } );
     }
 };
+
+exports.getAllSharedEntityUsers = async ( req, res ) => {
+    try {
+        // You need to get the entity ID from the request, assuming it's provided in req.params or req.query
+        const entityId = req.params.entityId; // Update this to match your actual request parameter name
+
+        // Fetch all shared entities related to the given entity ID
+        const sharedEntities = await sharedEntityService.getAllSharedEntitiesByEntityId( entityId );
+
+        // Initialize an array to store user IDs who have shared the entity
+        const sharedUserIds = [];
+
+        // Iterate through the shared entities to collect shared user IDs
+        sharedEntities.forEach( ( sharedEntity ) => {
+            sharedUserIds.push( sharedEntity.shareUserId );
+        } );
+
+        // Fetch user details for the collected user IDs
+        const sharedUsers = await userService.getUsersByIds( sharedUserIds );
+
+        // Send the list of shared users in the response
+        res.status( 200 ).json( sharedUsers );
+    }
+    catch ( error ) {
+        // Handle any errors that occur during the process
+        res.status( 500 ).json( { message: error.message } );
+    }
+};

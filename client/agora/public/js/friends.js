@@ -21,14 +21,14 @@ window.onload = getResources = () => {
     } )
         .then( ( response ) => response.json() )
         .then( ( response ) => {
-            authUser.push( response[0]);
+            authUser.push( response[0] );
             friends.push( response[1] );
             requests.push( response[2] );
             let requestCount = response[3][0].count;
-            if ( requestCount > 0){
-                let span = document.createElement("span");
+            if ( requestCount > 0 ){
+                let span = document.createElement( "span" );
                 span.textContent = requestCount;
-                redCircle.appendChild(span);
+                redCircle.appendChild( span );
                 redCircle.style.display = "flex";
             }
         } );
@@ -100,7 +100,7 @@ function createUserCard( userData ){
     
     
     userContainer.addEventListener( 'click', sendFriendRequest = () => {
-        if( confirm("Are you sure you want to send a friend request to " + userData.username + "?") == true){
+        if( confirm( "Are you sure you want to send a friend request to " + userData.username + "?" ) == true ){
             userContainer.style.display = "none";
             fetch( "/api/v1/auth/friends/sendFriendRequest", {
                 method: "POST",
