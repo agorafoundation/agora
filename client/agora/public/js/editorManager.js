@@ -191,7 +191,7 @@ const updateTopicsDom = function ( ) {
             topicContent.appendChild( resourcesZone );
             resourcesZone.appendChild( newDropZone );
             resourcesZone.appendChild( emptyDropZone );
-            emptyDropZone.appendChild( emptyState );
+            //emptyDropZone.appendChild( emptyState );
             emptyState.appendChild( label1 );
             emptyState.appendChild( label2 );
 
