@@ -6,7 +6,6 @@
  */
 
 let tabName = "";
-let currentTagId = null;
 
 // Workspace resizing
 let activeHeightObj = {};
@@ -39,14 +38,6 @@ let topics = {};
 
 // Creates a new topic
 const createTopic = async( id, name ) => {
-    console.log( "createTopic() id: " + id + " name: " + name );
-    let topicName = null;
-    if( name ){
-        topicName = name;
-    }
-    else{
-        topicName = "Untitled";
-    }
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
     let newTab = document.createElement( "div" );
@@ -109,17 +100,17 @@ const createTopic = async( id, name ) => {
     let topicContent = document.createElement( "div" );
     topicContent.className = "topic-content";
 
-    // let topicTitle = document.createElement( "input" );
-    // topicTitle.type = "text";
-    // topicTitle.className = "topic-title";
-    // topicTitle.style.borderRadius = "5px";
-    // topicTitle.id = "topic-title" + numTopics;
-    // if( name ){
-    //     topicTitle.value = name;
-    // }
-    // else{
-    //     topicTitle.value = "Untitled";
-    // }
+    let topicTitle = document.createElement( "input" );
+    topicTitle.type = "text";
+    topicTitle.className = "topic-title";
+    topicTitle.style.borderRadius = "5px";
+    topicTitle.id = "topic-title" + numTopics;
+    if( name ){
+        topicTitle.value = name;
+    }
+    else{
+        topicTitle.value = "Untitled";
+    }
 
     // let saveIcon = document.createElement( "span" );
     // saveIcon.classList.add( "material-symbols-outlined" );
@@ -156,16 +147,12 @@ const createTopic = async( id, name ) => {
     let tabBtn = document.createElement( "button" );
     tabBtn.className = "tablinks";
     tabBtn.id = "tablinks" + numTopics;
-
-    let tabBtnName = document.createElement( "span" );
-    tabBtnName.id = "tabTopicName" + numTopics;
     if( name ){
-        tabBtnName.innerHTML = name;
+        tabBtn.innerHTML = name;
     }
     else{
-        tabBtnName.innerHTML = "Untitled";
+        tabBtn.innerHTML = "Untitled";
     }
-    tabBtn.appendChild( tabBtnName );
 
     // Create close tab button
     let closeTabBtn = document.createElement( "span" );
@@ -188,7 +175,7 @@ const createTopic = async( id, name ) => {
 
     // Append all elements accordingly
     newTab.appendChild( topicContent );
-    //topicContent.appendChild( topicTitle );
+    topicContent.appendChild( topicTitle );
     // topicContent.appendChild( saveIcon );
     topicContent.appendChild( topicDivider );
     topicContent.appendChild( resourcesZone );
@@ -202,13 +189,12 @@ const createTopic = async( id, name ) => {
     openTab( newTab.id );
 
     if( !id ) {
-        
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
                 "topicType": 1,
-                "topicName": topicName,
+                "topicName": "Untitled",
                 "topicDescription": "",
                 "topicHtml": "",
                 "assessmentId": 1,
@@ -224,7 +210,6 @@ const createTopic = async( id, name ) => {
 
         if( response.ok ) {
             const data = await response.json();
-            //console.log( "createTopic() topic saved " );
             // map the resulting topic id to the value used in topic elements
             topics[numTopics] = data.topicId;
             numTopics++;
@@ -236,27 +221,16 @@ const createTopic = async( id, name ) => {
         topics[numTopics] = id;
         numTopics ++;
     }
-    console.log( "createTopic() Complete " );
 };
 
 // Updates topic name
 const updateTopic = async( name ) => {
-    console.log( "updateTopic() " + name );
     let isRequired = [];
     let resources = getResources();
-    // console.log( "resources found: " + JSON.stringify( resources ) );
     for( let i = 0; i < resources.length; i++ ){
         isRequired.push( "true" );
     }
     let id = getCurrTopicID();
-    // console.log( "topic object: " + JSON.stringify( {
-    //     "topicId": id,
-    //     "topicName": name ? name : "Untitled",
-    //     "resources": resources ? resources : [],
-    //     "resourcesRequired": isRequired,
-    //     "visibility": "private",
-    //     "isRequired": true
-    // } ) );
     const response = await fetch( "api/v1/auth/topics", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -272,14 +246,12 @@ const updateTopic = async( name ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "updateTopic() saved and Complete" );
     }
 };
 /* END Topic Functions -------------------------------------------------------------------------------------- */
 
 /*WORKSPACE function */
 const saveWorkspace = async( topics ) => {
-    console.log( 'saveWorkspace()' );
     const topicsList = Object.values( topics );
 
 
@@ -303,7 +275,6 @@ const saveWorkspace = async( topics ) => {
     if( response.ok ) {
         const data = await response.json();
         //console.log( JSON.stringify( data ) );
-        console.log( 'saveWorkspace() saved and complete' );
     }
 };
 
@@ -317,7 +288,7 @@ let activeTab = document.getElementById( "resources-zone0" );
 // Change tabs
 function openTab( name ) {
     tabName = name;
-    console.log( "openTab : " + tabName );
+    //console.log( tabName );
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -334,7 +305,6 @@ function openTab( name ) {
     }
 
     activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
-    currentTagId = name.slice( -1 );
 
     // Show the current tab
     document.getElementById( name ).style.display = "block";
@@ -346,11 +316,9 @@ function openTab( name ) {
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }
     }
-    console.log( "openTab : Complete" );
 }
 
 function closeTab( id ) {
-    console.log( "closeTab : " + id );
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let tablinks = document.getElementsByClassName( "tablinks" );
     let isActiveTab = false;
@@ -386,11 +354,9 @@ function closeTab( id ) {
     // Closing non-active tabs doesn't change the active tab
     tablinks[tabLocation].remove();
     tabContent[tabLocation].remove();
-    console.log( "closeTab : Complete" );
 }
 
 function getTabLocation( id ) {
-    console.log( "getTabLocation : " + id );
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let location = -1;
     for ( let i=0; i<tabContent.length; i++ ) {
@@ -398,7 +364,6 @@ function getTabLocation( id ) {
             location = i;
         }
     }
-    console.log( "getTabLocation : Complete" );
     return location;
 }
 /* END Tab Functions ------------------------------------------------------------------- */
@@ -579,7 +544,7 @@ let numResources = 1;
 
 // create a new resource
 function createResource( name, type, imagePath, id ) {
-    console.log( "createResource() name: " + name + " type " + type + " imagePath " + imagePath + " id " + id );
+    //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
     if( !id ){
         fetch( "api/v1/auth/resources", {
             method: "POST",
@@ -597,28 +562,22 @@ function createResource( name, type, imagePath, id ) {
             } )
         } )
             .then( response => response.json() )
-            .then( async ( data ) => {
+            .then( ( data ) => {
+                //console.log( "new resource data: " + JSON.stringify( data ) );
                 resources[numResources] = [ data.resourceId, getCurrTopicID() ];
-                console.log( "createResource() : Resource created" );
+                //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
+                numResources++;
 
                 // map the new resource to the associated topic
-                //let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
-                
-                //let topicTitle = document.getElementById( 'tablinks' + currentTagId );
-                let topicTitle = document.getElementById( 'tabTopicName' + currentTagId );
-                
-                await createTextArea();
-
-                //console.log( "added resource: " + JSON.stringify( resources[numResources] ) );
-                
-                updateTopic( topicTitle.innerHTML );
-                console.log( "createResource() : complete" );
+                let topicTitle = document.getElementById( 'topic-title' + tabName.match( /\d+/g )[0] ).value;
+                //console.log( "topic title: " + topicTitle );
+                updateTopic( topicTitle );
             } );
     }
     else{
         resources[numResources] = [ id, getCurrTopicID() ];
-
-        console.log( "createResource() : complete - No id" );
+        numResources ++;
+       
     }
    
 }
@@ -633,26 +592,20 @@ function getCurrTopicID() {
 
 // returns an array of resource id's within a given topic, sorted by position
 function getResources() {
-    console.log( "getResources() : Start" );
     let topicResources = document.querySelectorAll( '.drop-zone__title' );
-    //console.log( "topicResources: " + JSON.stringify( topicResources ) );
     let sorted = [];
     for ( let i=0; i<topicResources.length; i++ ) {
-        //console.log( "in the loop" );
         if ( topicResources[i].style.display == 'none' ) {
             //console.log( true );
         }
         let val = topicResources[i].id.match( /\d+/g )[0];
-        //console.log( "val: " + val );
         let propertyNames = Object.getOwnPropertyNames( resources );
-        //console.log( "propertyNames: " + propertyNames );
         for ( let j=0; j<propertyNames.length; j++ ) {
             if ( val == propertyNames[j] && resources[val][1] == getCurrTopicID() ) {
                 sorted.push ( resources[val][0] );
             }
         }
     }
-    console.log( "getResources() : Complete" );
     return sorted;
 }
 
@@ -663,10 +616,9 @@ function createTextArea( name, id ) {
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
         // workspace empty state
-        // if ( activeTab.id == "resources-zone0" ) {
-        //     createTopic();
-        // }
-        console.log( "createTextArea() for number: " + numResources );
+        if ( activeTab.id == "resources-zone0" ) {
+            createTopic();
+        }
 
         // Check for filler space
         if ( document.getElementById( "filler-space" ) ) {
@@ -675,11 +627,7 @@ function createTextArea( name, id ) {
 
         // Create drop zone
         let newDropZone = document.createElement( "div" );
-        newDropZone.className = "drop-zone-new";
-        newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
-        newDropZone.addEventListener( "click", () => {
-            createResource();
-        } );
+        newDropZone.className = "drop-zone";
 
         // Create drop zone filler space
         let newDropZoneFiller = document.createElement( "div" );
@@ -746,23 +694,18 @@ function createTextArea( name, id ) {
         // Maintain a baseline height until 1200px is exceeded
         activeHeightObj[tabName] += 800;
         checkActiveHeight();
-        //alert( "hold" );
-        console.log( "createTextArea() complete promise cerated" );
         resolve( "TA created" );
     } );
 
     promise.then(
-        ( ) => {
+        ( value ) => {
             createSunEditor();
-            // if( name ){
-            //     //createResource( name, 1, null, id  );
-            // }
-            // else{
-            //     //createResource( null, 1, null );
-            // }
-
-            numResources++;
-            console.log( "createTextArea() complete promise then (suneditor) completed" );
+            if( name ){
+                createResource( name, 1, null, id  );
+            }
+            else{
+                createResource( null, 1, null );
+            }
         }
     );
 }
@@ -781,7 +724,7 @@ const createSunEditor = async() => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "40vh",
+        minHeight: "200px",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
         katex: katex, 
@@ -823,6 +766,7 @@ const createSunEditor = async() => {
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
+    
     fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -846,9 +790,6 @@ function updateSunEditor( id, name, contents ) {
 }
 
 function getResourceID( val ) {
-    console.log( "getResourceID: start" );
-    console.log( "val: " +val );
-    console.log( "resources: " + JSON.stringify( resources ) );
     let resourceID = resources[val][0];
     return resourceID;
 }
@@ -1006,7 +947,7 @@ function updateThumbnail( dropZoneElement, file ) {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
-            console.log( "c3" );
+
             createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
@@ -1018,7 +959,6 @@ function updateThumbnail( dropZoneElement, file ) {
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
-        console.log( "c4" );
         createResource( file.name, 3, null );
     }
     mydiv.appendChild( inputfile );
@@ -1110,15 +1050,13 @@ document.addEventListener( "click", function( e ) {
     // }
 
     if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
-        // if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
-        //     // change the tab name to the new topic title
-        //     document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
-        // } 
-        // else {
-        //     document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
-        // }
-
-
+        if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
+            // change the tab name to the new topic title
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+        } 
+        else {
+            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
+        }
 
         // replace the close tab button
         let closeTabBtn = document.createElement( "span" );
@@ -1129,14 +1067,14 @@ document.addEventListener( "click", function( e ) {
     }
 } );
 
-// document.addEventListener( 'keyup', ( e ) => {
-//     let ele = document.getElementById( e.target.id );
-//     if ( e.target.tagName == 'INPUT' ) {
-//         if ( ele.className == 'topic-title' ) {
-//             updateTopic( ele.value );
-//         } 
-//     }
-// } );
+document.addEventListener( 'keyup', ( e ) => {
+    let ele = document.getElementById( e.target.id );
+    if ( e.target.tagName == 'INPUT' ) {
+        if ( ele.className == 'topic-title' ) {
+            updateTopic( ele.value );
+        } 
+    }
+} );
 
 
 
@@ -1153,11 +1091,7 @@ const openTopicModal = document.getElementById( "open-topic-modal-div" );
 // open the modal
 if( openBtn ) {
     openBtn.onclick = () => {
-        //modal.style.display = "block";
-        let tname = prompt( "Enter a name for your new Topic" );
-        //console.log( 'Took input from prompt' );
-        createTopic( null, tname );
-        createResource();
+        modal.style.display = "block";
     };
 }
 
@@ -1348,13 +1282,45 @@ const getPrefixAndId = () => {
     return [ prefixPattern.test( url ), urlId ];
 };
 
-const idAndFetch = async () => {
-    console.log( "idAndFetch() : Start" );
+const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
     //console.log( id );
     if ( isTopic && id ) {
-        //console.log( "idAndFetch() : fetch topic" );
-        await fetch( "api/v1/auth/topics/" + id, {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.topicName,
+                    response.topicDescription,
+                    response.topicImage
+                );
+            } );
+    }
+    else if ( id ) {
+        fetch( "api/v1/auth/workspaces/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
+                );
+            } );
+    }
+};
+
+const FetchShared = async () => {
+    console.log( "FetchShared() : Start" );
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( isTopic, id );
+    if ( isTopic && id ) {
+        fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } )
@@ -1365,7 +1331,6 @@ const idAndFetch = async () => {
                     response.results.topicDescription,
                     response.results.topicImage
                 );
-                console.log( "idAndFetch() : End - topicPath" );
             } );
     }
     else if ( id ) {
@@ -1381,11 +1346,10 @@ const idAndFetch = async () => {
                     response.workspaceDescription,
                     response.workspaceImage
                 );
-                console.log( "idAndFetch() : End - workspacePath" );
+                console.log( "FetchShared() : End - workspacePath" );
             } );
-        
     }
-    console.log( "idAndFetch() : End FINAL" );
+    console.log( "FetchShared() : End FINAL" );
 };
 
 const getTags = async () => {
@@ -1402,31 +1366,25 @@ const getTags = async () => {
                 }
 
                 
-            } )
-            .catch( ( error ) => {
-                console.log( error );
             } );
     }
     else if ( id ) {
-        fetch( "api/v1/auth/tags/tagged/workspace/" + id )
+        fetch( "api/v1/auth/tags/tagged/workspace/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                
                 for( let i = 0; i < response.length; i++ ) {
                     newTag( response[i].tag, false );
                 }
-            } )
-            .catch( ( error ) => {
-                console.log( error );
             } );
     }
 };
 
 const fillFields = ( title, description, image ) => {
-    //console.log( "fillFields() : Start for: " + title );
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
-    //console.log( "fillFields() : Complete" );
 };
 
 const renderWorkspace = async ( workspace ) => {
@@ -1448,21 +1406,19 @@ const renderWorkspace = async ( workspace ) => {
 };
 
 const renderTopics = async ( workspace ) => {
-    console.log( "renderTopics: Start" );
     const [ isTopic, id ] = getPrefixAndId();
     if( id ) {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
-        //console.log( "topics: " + JSON.stringify( topics ) );
    
-        if ( topics.results.length > 0 ) {
-            for ( let i = 0; i < topics.results.length; i++ ) {
-                await renderTopic( topics.results[i] );
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderTopic( topics[i] );
             
             }
         }   
     }
-    console.log( "renderTopics: Complete" );
+    
    
 };
 
@@ -1470,17 +1426,14 @@ const renderTopics = async ( workspace ) => {
 //let val = 1;
 let totalTopicsRendered = 0;
 async function renderTopic( topic ) {
-    console.log( 'renderTopic() start for topic:' );
-    //console.log( JSON.stringify( topic ) );
+  
     await createTopic( topic.topicId, topic.topicName );
-    //console.log( "creating topic, passed name: " + topic.topicName );
     const resources = await renderResources( topic.topicId );
-    //console.log( "resources: " + JSON.stringify( resources ) );
     if ( resources.length > 0 ) {
         //let docType1Count = 0;
         for ( let i = 0; i < resources.length; i++ ) {
-            console.log( "resource: " + i + " of " + resources.length );
-            console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
             //if resource is a document
             if( resources[i].resourceType == 1 ){
                 await createTextArea( resources[i].resourceName, resources[i].resourceId );
@@ -1507,27 +1460,22 @@ async function renderTopic( topic ) {
         }
         window.scrollTo( 0, 0 );
     }
-    console.log( "renderTopic() : complete - returning topics <- why is this returing topics??? should it be resources?: " );
-    console.log( JSON.stringify( topics ) );    
     return topics;
 }
 
 async function renderResources( topicId ) {
-    console.log( "renderResources() : Start for topicId: " + topicId );
+    //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    console.log( "renderResources() : complete - response: " + JSON.stringify( data ) );
-    return data.results;
+    //console.log( "render resources response: " + JSON.stringify( data ) );
+    return data;
 }
 
-window.addEventListener( "load", async () => {
-    //console.log( "window load event: start" );
-    await idAndFetch();
-    //console.log( "about to run getTags" );
+window.addEventListener( "load", () => {
+    idAndFetch();
     getTags();
-    //console.log( "about to run render topics" );
     renderTopics();
-    //console.log( "window load event: complete" );
+   
 } );
 
 
@@ -1744,7 +1692,6 @@ const addOrRemoveLike = ( e ) => {
 ////*Saving Title and Description/////
 
 const saveTitleOrDescription = ( ) => {
-    console.log( "saveTitleOrDescription: Start" );
     const [ isTopic, id ] = getPrefixAndId();
 
     const input = document.getElementById( "workspace-title" ).value;
