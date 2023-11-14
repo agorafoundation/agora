@@ -39,6 +39,12 @@ router.route( '/shared' )
         workspaceController.getAllSharedWorkspaces( req, res );
     } );
 
+router.route( '/shared/:workspaceId' )
+    //get all shared workspaces
+    .get( async ( req, res ) => {
+        workspaceController.getSharedWorkspaceByID( req, res );
+    } );
+
 // workspaces /api/v1/auth/workspaces
 router.route( '/:workspaceId' )
     // get a visible workspace by id

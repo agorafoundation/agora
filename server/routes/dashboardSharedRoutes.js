@@ -9,8 +9,8 @@ var express = require( 'express' );
 var router = express.Router( );
 
 // dependencies
-const fs = require( 'fs' );
-let path = require( 'path' );
+//const fs = require( 'fs' );
+//let path = require( 'path' );
 
 // setup json body parser
 const bodyParser = require( 'body-parser' );
