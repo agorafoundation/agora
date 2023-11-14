@@ -48,6 +48,7 @@
                                 <h2>Join Agora!</h2>
                                 <h5>A forever free environment where you can learn, research, and keep all your notes for
                                     life! Your data will never be sold or shared!</h5>
+                                
                                 <%
                                 if( process.env.GOOGLE_AUTHENTICATION === 'true' ) {
                                     %>
@@ -80,7 +81,7 @@
                                     <script async src="/js/orcid-widget-signup.js"></script>
                                     <div id="orcidWidget" data-size='lg' 
                                         data-clientid="<%= process.env.ORCID_CLIENT_ID %>" data-env='sandbox' data-scopes='' 
-                                        data-redirecturi='http://148.100.138.190:4200/user/orcid'></div>
+                                        data-redirecturi='http://148.100.129.135:4200/user/orcid'></div>
                                 
                                     <%
 

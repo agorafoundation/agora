@@ -28,6 +28,12 @@ router.route( '/orcid-auth' )
     }
     );
 
+router.route( '/orcid-auth-issue' )
+    .get( async ( req, res ) => {
+        res.render( 'user-signup', 
+        {error_message: "Ensure you register for an Agora account using your ORCiD initially. If you already have an account, verify that your email remains publicly accessible in ORCiD."} );
+    })
+
 
 router.route( '/signIn' )
     .get( ( req, res ) => {

@@ -154,7 +154,7 @@ exports.orcidSignIn = async function(req, res) {
     //console.log("orcidSignIn: " + JSON.stringify(req.body));
 
     // TODO: Get email from ORCID user record
-    const orcidID =  "0000-0003-4863-649X"; // req.body.orcidId.replace('https://sandbox.orcid.org/', '');
+    const orcidID = req.body.orcidId.replace('https://sandbox.orcid.org/', ''); //"0000-0003-4863-649X";
 
     const apiUrl = `/v3.0/${orcidID}/email`;
 
@@ -203,7 +203,11 @@ exports.orcidSignIn = async function(req, res) {
                 }
             }
 
-            
+            if (emailElements.length === 0){
+                //console.log('No email found in ORCID record');
+                res.end(JSON.stringify({"redirect": "/orcid-auth-issue"}));
+            }
+
             function getEmailAddress(emailElement) {
                 var emailNodes = emailElement.childNodes;
                 for (var i = 0; i < emailNodes.length; i++) {
@@ -219,8 +223,7 @@ exports.orcidSignIn = async function(req, res) {
 
     HTTPreq.end();
 
-    //console.log("----------------------------------------------------------------------------------------------------------------")
-
+    
     async function loginOrcidAccount(primaryEamil) {
         //console.log("loginOrcidAccount: " + primaryEamil);
         const userid = req.body.orcidGivenName;
@@ -234,25 +237,12 @@ exports.orcidSignIn = async function(req, res) {
             req.body.signInEmail = primaryEamil;
             await signIn( req, res );
 
-            if( req.session.authUser.emailValidated ) {
-                console.log( "3" );
-                //res.redirect( 303, '/dashboard' );
+            if( req.session.authUser.emailValidated ) {              
                 res.end(JSON.stringify({"redirect": "/dashboard"}))
-            }
-            else {
-                console.log( "4" );
-                req.session.messageType = "info";
-                req.session.messageTitle = "Email not verified!";
-                req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
-                res.redirect( 303, '/dashboard' );
             }
         }
         else {
-            console.log( "5" );
-            req.session.messageType = "info";
-            req.session.messageTitle = "User Account Not Found";
-            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
-            res.end(JSON.stringify({"redirect": "/dashboard"}))
+            res.end(JSON.stringify({"redirect": "/orcid-auth-issue"}))
         }
         
         

@@ -19,7 +19,7 @@ exports.orcidSignUpPassthrough = async function(req, res) {
     if (!res.headersSent) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
     }
-    res.render( 'orcid-signuploading' );
+    res.render( 'orcid-sign-up-loading' );
 } 
 
 exports.orcidSignUp = async function( req, res ) {
@@ -29,7 +29,7 @@ exports.orcidSignUp = async function( req, res ) {
     
 
     // TODO: Get email from ORCID user record
-    const orcidID =  "0000-0003-4863-649X"; // req.body.orcidId.replace('https://sandbox.orcid.org/', '');
+    const orcidID = req.body.orcidId.replace('https://sandbox.orcid.org/', ''); // "0000-0003-4863-649X";
 
     const apiUrl = `/v3.0/${orcidID}/email`;
 
@@ -67,7 +67,7 @@ exports.orcidSignUp = async function( req, res ) {
 
             // Get all email elements
             var emailElements = xmlDoc.getElementsByTagName("email:email");
-
+            
             for (var i = 0; i < emailElements.length; i++) {
                 var emailElement = emailElements[i];
                 var email = getEmailAddress(emailElement);
@@ -77,7 +77,11 @@ exports.orcidSignUp = async function( req, res ) {
                     break;
                 }
             }
-
+            
+            if (emailElements.length === 0){
+                //console.log('No email found in ORCID record');
+                res.end(JSON.stringify({"redirect": "/user/orcid-user-issue"}));
+            }
             
             function getEmailAddress(emailElement) {
                 var emailNodes = emailElement.childNodes;
@@ -100,8 +104,7 @@ exports.orcidSignUp = async function( req, res ) {
         // randomly generate a 7 character extesion
         const extension = createRandomExtension( 7 );
         const usename = req.body.orcidGivenName + "-" + extension;
-
-        createUser(primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, true);                
+        createUser(primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, false, true);                
     }
 
     HTTPreq.end();
@@ -186,7 +189,7 @@ exports.createUserForm = async function( req, res ) {
  * @param {} req 
  * @param {*} res 
  */
-const createUser = async function( email, username, firstName, lastName, password, profileImage, req, res, isGoogle ) {
+const createUser = async function( email, username, firstName, lastName, password, profileImage, req, res, isGoogle, isOrcid ) {
     let user = "";
 
     let subscriptionActive = true;
@@ -202,7 +205,8 @@ const createUser = async function( email, username, firstName, lastName, passwor
     let hashedPassword = await userService.passwordHasher( password );
 
     let emailValidated = false;
-    if( isGoogle ) {
+
+    if( isGoogle || isOrcid ) {
         emailValidated = true;
     }
 
@@ -259,7 +263,7 @@ const createUser = async function( email, username, firstName, lastName, passwor
                 }
             }
             else {
-                if( !isGoogle ) {
+                if( !isGoogle && !isOrcid) {
                     console.log( "[WARN] Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" );
                     if( req.query.redirect ) {
                         res.render( 'user-welcome', { redirect: req.query.redirect, message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
@@ -268,11 +272,11 @@ const createUser = async function( email, username, firstName, lastName, passwor
                         res.render( 'user-welcome', { message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
                     }
                 }
+                else if(isOrcid){
+                    res.end(JSON.stringify({"redirect": "/signin"})) //res.render("user-signup", {message: "Login with orcid"} );
+                }
                 else {
-                    //res.render("user-signup", {message: "Login with orcid"} );
-                    res.end(JSON.stringify({"redirect": "/signin"}))
-                    //res.redirect( 307, "/google-auth" );
-                    
+                    res.redirect( 307, "/google-auth" );
                 }
                     
             }

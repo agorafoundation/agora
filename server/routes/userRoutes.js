@@ -45,6 +45,12 @@ router.route( '/orcid' )
         await userController.orcidSignUp(req, res);
     });
 
+router.route( '/orcid-user-issue' )
+    .get( async ( req, res ) => {
+        res.render( 'user-signup', 
+        {error_message: "Account not created! Verify that your email remains publicly accessible in ORCiD."});
+    })
+
 router.route( '/' )
     .patch( async function( req, res ) {
         userController.updateUser( req, res );
