@@ -54,6 +54,23 @@ exports.getSharedWorkspaces = async ( req, res ) => {
     res.status( 200 ).json( sharedWorkspaces );
 };
 
+exports.getSharedWorkspaceByID = async ( req, res ) => {
+    //get shared workspace by ID.
+    console.log( "Getting Shared Workspace" );
+    let sharedWorkspace = await workspaceService.getSharedWorkspaceByID( req.params.workspaceId );
+    if ( sharedWorkspace ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned workspace by id" );
+        res.status( 200 ).json( sharedWorkspace );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Workspace not found" );
+        res.status( 404 ).json( message );
+    }
+};
+
 exports.getWorkspaceById = async ( req, res ) => {
 
     // Get the auth user id from either the basic auth header or the session.

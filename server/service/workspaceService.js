@@ -99,19 +99,42 @@ exports.getSharedWorkspaces = async ( sharedUserID ) => {
 
 // Get shared workspace details by its ID
 exports.getSharedWorkspaceByID = async ( workspaceID ) => {
-    const text = `SELECT w.* FROM agora.shared_entities AS se 
+    console.log( "Getting Shared Workspace query.." );
+    let text = `SELECT w.* FROM agora.shared_entities AS se 
                   JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
                   WHERE se.entity_id = $1 AND se.entity_type = 'workspace'`;
-    const values = [ workspaceID ];
+    let values = [ workspaceID ];
+    console.log( workspaceID );
     
     try {
-        const res = await db.query( text, values );
-        if ( res.rows.length > 0 ) {
-            return res.rows[0];
+        
+        let workspace = null;
+        //console.log( " text: " + text + " values: " + values );
+        let res = await db.query( text, values );
+        //console.log( " res.rowCount: " + res.rowCount + "" );
+        if ( res.rowCount > 0 ) {
+            text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
+            values = [ true, res.rows[0].workspace_rid ];
+            let topics = [];
+            let res2 = await db.query( text, values );
+
+            for ( let j = 0; j < res2.rowCount; j++ ) {
+                text = "select * from topics where active = $1 and topic_id = $2;";
+                values = [ true, res2.rows[j].topic_id ];
+
+                let res3 = await db.query( text, values );
+                if ( res3.rowCount > 0 ) {
+                    topics.push( Topic.ormTopic( res3.rows[0] ) );
+                }
+
+            }
+            workspace = Workspace.ormWorkspace( res.rows[0] );
+            workspace.topics = topics;
+
         }
-        else {
-            return false;
-        }
+        console.log( workspace );
+        return workspace;
+
     }
     catch ( e ) {
         console.log( e.stack );
@@ -262,7 +285,7 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
  * @returns workspace with topics
  */
 exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActive ) => {
-
+    console.log( "Getting Workspaces...." );
     let text = "";
     let values = [];
     if ( !isActive ) {

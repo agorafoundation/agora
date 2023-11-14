@@ -1369,7 +1369,7 @@ const idAndFetch = async () => {
             } );
     }
     else if ( id ) {
-        //console.log( "idAndFetch() : fetch workspace" );
+        console.log( "idAndFetch() : fetch workspace" );
         await fetch( "api/v1/auth/workspaces/" + id, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -1386,6 +1386,46 @@ const idAndFetch = async () => {
         
     }
     console.log( "idAndFetch() : End FINAL" );
+};
+
+const FetchShared = async () => {
+    console.log( "FetchShared() : Start" );
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( isTopic, id );
+    if ( isTopic && id ) {
+        //console.log( "idAndFetch() : fetch topic" );
+        await fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.results.topicName,
+                    response.results.topicDescription,
+                    response.results.topicImage
+                );
+                console.log( "idAndFetch() : End - topicPath" );
+            } );
+    }
+    else if ( id ) {
+        console.log( "FetchShared() : fetch workspace" );
+        await fetch( "api/v1/auth/workspaces/shared/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.results.workspaceName,
+                    response.results.workspaceDescription,
+                    response.results.workspaceImage
+                );
+                console.log( "FetchShared() : End - workspacePath" );
+            } );
+        
+    }
+    console.log( "FetchShared() : End FINAL" );
 };
 
 const getTags = async () => {
@@ -1503,7 +1543,8 @@ async function renderResources( topicId ) {
 }
 
 window.addEventListener( "load", async () => {
-    //console.log( "window load event: start" );
+    console.log( "window load event: start" );
+    //await FetchShared();
     await idAndFetch();
     //console.log( "about to run getTags" );
     getTags();
