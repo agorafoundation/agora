@@ -6,23 +6,34 @@
  */
 
 /**
+ * imports
+ */
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug } from "./state/stateManager.js";
+
+/**
  * DOM manipulation functions for the editor
  */
 
 /**
  * global variables
  */
-// topic uuid for the active tab
-let activeTabUuid = null;
-// topic tab name (eg topic0, topic1) for the active tab
-let activeTab = null;
+
+/**
+ * Tab Management
+ */
+// 
+// // topic uuid coresponding to the active tab
+// let activeTabUuid = null;
+// // topic tab HTML element (eg .id = topic0, topic1, etc) for the active tab
+// let activeTab = null;
+
 
 // resourcesZone of the active topics tab
 let resourcesZone = null;              
 let totalNumberResources = 0;
 
-// current workspace
-let workspace = null;
+// // current workspace
+// let workspace = null;
 
 // Workspace resizing
 let activeHeightObj = {};
@@ -38,29 +49,29 @@ let activeHeightList = [];
  * Update the editor workspace DOM
  * @param {workspace} ws 
  */
-const updateWorkspaceDom = function ( ws ) {
-    console.log( "updateWorkspaceDom() : start" );
-    workspace = ws;
-    document.getElementById( "workspace-title" ).value = workspace.workspaceName;
-    document.getElementById( "workspace-desc" ).value = workspace.workspaceDescription;
-    console.log( "updateWorkspaceDom() : complete" );
+const updateWorkspaceDom = function ( ) {
+    ( debug ) ? console.log( "updateWorkspaceDom() : start" ) : null;
+    ( debug && dataDebug ) ? console.log( "using workspace: " + JSON.stringify( getCurrentWorkspace() ) ) : null;
+    document.getElementById( "workspace-title" ).value = getCurrentWorkspace().workspaceName;
+    document.getElementById( "workspace-desc" ).value = getCurrentWorkspace().workspaceDescription;
+    ( debug ) ? console.log( "updateWorkspaceDom() : complete" ) : null;
 };
 
-const updateTopicsDom = function ( ) {
-    console.log( "updateTopicDom() : start" );
+const createTopicsGui = function ( ) {
+    ( debug ) ? console.log( "updateTopicDom() : start" ) : null;
 
     // verify we have a workspace and it has topics
-    if( workspace && workspace.topics ) {
-        for( let i=0; i < workspace.topics.length; i++ ) {
+    if( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+        for( let i=0; i < getCurrentWorkspace().topics.length; i++ ) {
 
             // get dom elements
             let tabContent = document.getElementsByClassName( "tabcontent" );
-            console.log( "tabContent: " + JSON.stringify( tabContent ) );
+            ( debug ) ? console.log( "tabContent: " + JSON.stringify( tabContent ) ) : null;
             let lastTab = tabContent[tabContent.length-1];
             let newTab = document.createElement( "div" );
     
             // get the topic
-            let topic = workspace.topics[i];
+            let topic = getCurrentWorkspace().topics[i];
 
             // Create the tab content and append to last tab
             newTab.id = "topic" + i;
@@ -69,7 +80,7 @@ const updateTopicsDom = function ( ) {
 
             // create a tab for each topic
             if ( lastTab == null ) {
-                console.log( "empty tab" );
+                ( debug ) ? console.log( "empty tab" ) : null;
                 // if there are no tabs, create the first one
                 let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
                 workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
@@ -77,7 +88,7 @@ const updateTopicsDom = function ( ) {
                 document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
             }
             else {
-                console.log( "non-empty tab" );
+                ( debug ) ? console.log( "non-empty tab" ) : null;
                 // add additional tab
                 lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
             }
@@ -131,7 +142,7 @@ const updateTopicsDom = function ( ) {
             let topicDivider = document.createElement( "div" );
             topicDivider.id = "topic-divider" + i   ;
 
-            let resourcesZone = document.createElement( "div" );
+            resourcesZone = document.createElement( "div" );
             resourcesZone.id = "resources-zone" + i;
             resourcesZone.className = "resources-zone";
 
@@ -191,19 +202,50 @@ const updateTopicsDom = function ( ) {
             topicContent.appendChild( resourcesZone );
             resourcesZone.appendChild( newDropZone );
             resourcesZone.appendChild( emptyDropZone );
-            //emptyDropZone.appendChild( emptyState );
+            emptyDropZone.appendChild( emptyState );
             emptyState.appendChild( label1 );
             emptyState.appendChild( label2 );
 
+            // push the tab into the the tabs array
+            addTab( newTab );
+            // note the active tab as the current
+            setActiveTab( newTab );
+
             createNewActiveHeight();
+            
+            // urbg evaluate
             openTab( newTab );
 
-
+            ( debug ) ? console.log( "updateTopicDom() : complete" ) : null;
         }
     }
+    else {
+        ( debug ) ? console.log( "updateTopicDom() : no topics to update" ) : null;
+    }
 
-    console.log( "updateTopicDom() : complete" );
+    
 };
+
+const renderResourcesForActiveTopic = async function () {
+    ( debug ) ? console.log( "renderResourcesForActiveTopic() : Start" ) : null;
+    if( getCurrentActiveTopic() && getCurrentWorkspace().topics ) {
+
+        if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
+            for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
+               
+                // TODO: evaluate what are these two??? why are there 2?
+                await createTextArea( getCurrentActiveTopic().resources[i].resourceName, i );
+
+                renderTextArea( getCurrentActiveTopic().resources[i].resourceContentHtml, i );
+
+            }
+        }
+    }
+    ( debug ) ? console.log( "renderResourcesForActiveTopic() : End" ) : null;
+};
+
+
+
 
 function createTextArea( name, i ) {
     // Text area has to be created before suneditor initialization, 
@@ -213,7 +255,6 @@ function createTextArea( name, i ) {
         // if ( activeTab.id == "resources-zone0" ) {
         //     createTopic();
         // }
-        //console.log( "createTextArea() for number: " + numResources );
 
         // Check for filler space
         if ( document.getElementById( "filler-space" ) ) {
@@ -225,27 +266,27 @@ function createTextArea( name, i ) {
         newDropZone.className = "drop-zone-new";
         newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
         newDropZone.addEventListener( "click", async () => {
-            console.log( "createTextArea - Promise - createResource() call" );
+            ( debug ) ? console.log( "createTextArea - Promise - createResource() call" ) : null;
 
-            //console.log( "getCurrTopicID: " + getCurrTopicID() );
-            //console.log( "getCurrTopicIndex: " + currentTabIndex );
+            //( debug ) ? console.log( "getCurrTopicID: " + getCurrTopicID() );
+            //( debug ) ? console.log( "getCurrTopicIndex: " + currentTabIndex );
 
             /**
              * TOOD: evaluate
              */
-            // console.log( "create new resource click event - createResource() call" );
+            // ( debug ) ? console.log( "create new resource click event - createResource() call" );
             // const newResource = await createResource( null, 1, null, null );
-            // console.log( "newResource: " + JSON.stringify( newResource ) );
+            // ( debug ) ? console.log( "newResource: " + JSON.stringify( newResource ) );
 
-            // console.log( "create new resource click event - updateTopic() call" );
+            // ( debug ) ? console.log( "create new resource click event - updateTopic() call" );
             // let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
-            // console.log( "topicTitle: " + topicTitle );
+            // ( debug ) ? console.log( "topicTitle: " + topicTitle );
 
             // const newTopic = await updateTopic( topicTitle.innerHTML )
             // // send the resources from the current;
             // const newTopic = await saveTopic( topicTitle.innerHTML, resources[currentTabIndex] );
             
-            // console.log( "newTopic: " + JSON.stringify( newTopic ) );
+            // ( debug ) ? console.log( "newTopic: " + JSON.stringify( newTopic ) );
 
             // // render the resource text area
             // createTextArea();
@@ -301,15 +342,22 @@ function createTextArea( name, i ) {
         let sunEditor = document.createElement( "textarea" );
         sunEditor.setAttribute( "id", "sunEditor" + i );
 
+        
 
         /**
          * TODO: Evaluate
          */
-        // Remove empty state if necessary
-        // if ( activeTab.childElementCount > 0 ) {
-        //     let location = getTabLocation( tabName );
-        //     document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-        //     document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+        //Remove empty state if necessary
+        // if ( resourcesZone.childElementCount > 0 ) {
+            
+        //     //let location = getTabLocation( tabName );
+        //     ( debug ) ? console.log( "resourcesZone: " + resourcesZone.id );
+        //     ( debug ) ? console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
+        //     ( debug ) ? console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
+        //     ( debug ) ? console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
+        //     ( debug ) ? console.log( "here! --- : " + location );
+        //     // document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+        //     // document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
         // }
 
         // Append elemets accordingly
@@ -317,16 +365,14 @@ function createTextArea( name, i ) {
         // resourcesZone.appendChild( newTabIcon );
         resourcesZone.appendChild( editIcon );
         resourcesZone.appendChild( doneIcon );
-        console.log( '1' );
         resourcesZone.appendChild( sunEditor );
-        console.log( '2' );
         resourcesZone.appendChild( newDropZone );
 
         // Maintain a baseline height until 1200px is exceeded
         activeHeightObj[activeTab] += 800;
         checkActiveHeight();
         //alert( "hold" );
-        console.log( "createTextArea() complete promise cerated" );
+        ( debug ) ? console.log( "createTextArea() complete promise cerated" ) : null;
         resolve( "TA created" );
     } );
 
@@ -335,36 +381,55 @@ function createTextArea( name, i ) {
             createSunEditor( i );
             
 
-            console.log( "createTextArea() complete promise then (suneditor) completed" );
+            ( debug ) ? console.log( "createTextArea() complete promise then (suneditor) completed" ) : null;
         }
     );
 }
 
+
+
 const renderTextArea = function ( resourceContentHtml, i ) {
-    console.log( "renderTextArea() : Start html: " + resourceContentHtml );
+    ( debug ) ? console.log( "renderTextArea() : Start html: " + resourceContentHtml ) : null;
     if( resourceContentHtml && resourceContentHtml.length > 0 ){
                      
         let editor = "sunEditor" + ( i );
 
 
-        //console.log( editor );
-        console.log( sunEditor[editor] );
+        //( debug ) ? console.log( editor );
+        ( debug ) ? console.log( sunEditor[editor] ) : null;
         sunEditor[editor][1].insertHTML( resourceContentHtml );
 
         //docType1Count++;
         //val++;
     }
-    console.log( "renderTextArea() : End" );
+    ( debug ) ? console.log( "renderTextArea() : End" ) : null;
 };
 
 
 
-export { activeTabUuid, updateWorkspaceDom, updateTopicsDom, createTextArea, renderTextArea };
+export { updateWorkspaceDom, createTopicsGui, createTextArea, renderTextArea, renderResourcesForActiveTopic };
 
 
 /**
  * Private functions
  */
+
+
+
+
+
+function getTabLocation( id ) {
+    let tabContent = document.getElementsByClassName( "tabcontent" );
+    let location = -1;
+    for ( let i=0; i<tabContent.length; i++ ) {
+        if ( tabContent[i].id.slice( -1 ) == id.slice( -1 ) ) {
+            location = i;
+        }
+    }
+    return location;
+}
+
+
 
 // Creates a height object for each open topic
 function createNewActiveHeight() {
@@ -377,11 +442,11 @@ function createNewActiveHeight() {
 /* BEGIN Tab Functions ------------------------------------------------------------- */
 // Change tabs
 function openTab( tab ) {
-    console.log( "openTab : " + tab + " id: " + tab.id + " name: " + tab.getAttribute( "name" ) );
+    ( debug ) ? console.log( "openTab : " + tab + " id: " + tab.id + " name: " + tab.getAttribute( "name" ) ) : null;
     let i, tabcontent, tablinks;
 
-    activeTabUuid = tab.getAttribute( "name" );
-    activeTab = activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
+    // activeTabUuid = tab.getAttribute( "name" );
+    // activeTab = activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
     for ( i = 0; i < tabcontent.length; i++ ) {
@@ -409,11 +474,11 @@ function openTab( tab ) {
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }
     }
-    console.log( "openTab : Complete" );
+    ( debug ) ? console.log( "openTab : Complete" ) : null;
 }
 
 function closeTab( tabId ) {
-    console.log( "closeTab : " + tabId );
+    ( debug ) ? console.log( "closeTab : " + tabId ) : null;
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let tablinks = document.getElementsByClassName( "tablinks" );
     let isActiveTab = false;
@@ -449,11 +514,11 @@ function closeTab( tabId ) {
     // Closing non-active tabs doesn't change the active tab
     tablinks[tabLocation].remove();
     tabContent[tabLocation].remove();
-    console.log( "closeTab : Complete" );
+    ( debug ) ? console.log( "closeTab : Complete" ) : null;
 }
 
 // function getTabLocation( id ) {
-//     console.log( "getTabLocation : " + id );
+//     ( debug ) ? console.log( "getTabLocation : " + id );
 //     let tabContent = document.getElementsByClassName( "tabcontent" );
 //     let location = -1;
 //     for ( let i=0; i<tabContent.length; i++ ) {
@@ -461,7 +526,7 @@ function closeTab( tabId ) {
 //             location = i;
 //         }
 //     }
-//     console.log( "getTabLocation : Complete" );
+//     ( debug ) ? console.log( "getTabLocation : Complete" );
 //     return location;
 // }
 /* END Tab Functions ------------------------------------------------------------------- */
@@ -579,15 +644,15 @@ function updateThumbnail( dropZoneElement, file ) {
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
-        //console.log( file );
+        //( debug ) ? console.log( file );
         // TODO: evaluate
         // getFile( file ).then( url => {
         //     thumbnailElement.style.backgroundImage = url;
         //     // PayloadTooLargeError: request entity too large
         //     // createResource( file.name, 2, url );
-        //     console.log( "updateThumbnail - getFile - createResource() call" );
+        //     ( debug ) ? console.log( "updateThumbnail - getFile - createResource() call" );
         //     createResource( file.name, 2, file.name );
-        //     // console.log( url ) ;
+        //     // ( debug ) ? console.log( url ) ;
         // } );
         
         mydiv.style.height = "500px";
@@ -597,7 +662,7 @@ function updateThumbnail( dropZoneElement, file ) {
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[activeTab] += 200;
-        console.log( "updateThumbnail - getFile - else - createResource() call" );
+        ( debug ) ? console.log( "updateThumbnail - getFile - else - createResource() call" ) : null;
         // TODO: evaluate 
         //createResource( file.name, 3, null );
     }
@@ -651,7 +716,7 @@ let sunEditor = {};
 let sunEditorList = [];
 
 const createSunEditor = async( num ) => {
-    console.log( "createSunEditor() num: " + num );
+    ( debug ) ? console.log( "createSunEditor() num: " + num ) : null;
     // eslint-disable-next-line no-undef
     sunEditor["sunEditor"+ num] = [ num, SUNEDITOR.create( "sunEditor" + num, {
         toolbarContainer: "#toolbar_container",
@@ -698,6 +763,6 @@ const createSunEditor = async( num ) => {
     } ) ];
 
     sunEditorList.push( sunEditor["sunEditor" + num] );
-    console.log( "createSunEditor() complete" );
+    ( debug ) ? console.log( "createSunEditor() complete" ) : null;
     window.scrollTo( 0, 0 );
 };

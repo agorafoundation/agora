@@ -10,6 +10,9 @@
  * Contains the client side data model and API calls to maintain it.
  */
 
+// import debug
+import { debug, dataDebug } from "../state/stateManager.js";
+
 
 const topicModel = {
     topicId: null,
@@ -33,14 +36,15 @@ const topicModel = {
 };
 
 const getTopic = async( id ) => {
-    console.log( "getTopic() id: " + id );
+    ( debug ) ? console.log( "getTopic() : Start - id: " + id ) : null;
     const response = fetch( "api/v1/auth/topics/" + id, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } );
     if( response.ok ) {
         const topic = await response.json();
-        console.log( "getTopic() topic retrieved: " + JSON.stringify( topic ) );
+        ( debug && dataDebug ) ? console.log( "getTopic() topic retrieved: " + JSON.stringify( topic ) ) : null;
+        ( debug ) ? console.log( "getTopic() : Complete" ) : null;
         return topic;
     }
 
@@ -49,11 +53,12 @@ const getTopic = async( id ) => {
 
 // retrieve the resources associated with a topic given the topic id
 const getResourcesForTopic = async function ( topicId ) {
-    console.log( "getResourcesForTopicId() : Start for topicId: " + topicId );
+    ( debug ) ? console.log( "getResourcesForTopicId() : Start for topicId: " + topicId ) : null;
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
-    console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) );
-    return data;
+    ( debug && dataDebug ) ? console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) ) : null;
+    ( debug ) ? console.log( "getResourcesForTopicId() : Complete" ) : null;
+    return data.results;
 };
 
 const saveTopic = async( topic, resourceIds ) => {
@@ -72,7 +77,8 @@ const saveTopic = async( topic, resourceIds ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "saveTopic() : Topic created + repsonse: " + JSON.stringify( data ) );
+        ( debug && dataDebug ) ? console.log( "saveTopic() : Topic created + repsonse: " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "saveTopic() : Complete" ) : null;
         return data;
     }
 

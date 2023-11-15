@@ -10,6 +10,9 @@
  * Contains the client side data model and API calls to maintain it.
  */
 
+// import debug
+import { debug, dataDebug } from "../state/stateManager.js";
+
 const workspaceModel = {
     workspaceRid: -1,
     workspaceId: null,
@@ -48,7 +51,7 @@ const saveWorkspace = async( workspace, topicIds ) => {
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "saveWorkspace() : Workspace created + Response: " + JSON.stringify( data ) );
+        ( debug ) ? console.log( "saveWorkspace() : Workspace created + Response: " + JSON.stringify( data ) ) : null;
         return data;
     }
 
@@ -73,7 +76,7 @@ const saveWorkspace = async( workspace, topicIds ) => {
 };
 
 const getWorkspace = async( id ) => {
-    console.log( "getWorkspace() id: " + id );
+    ( debug ) ? console.log( "getWorkspace() - Start - id: " + id ) : null;
     const response = await fetch( "api/v1/auth/workspaces/" + id, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -81,8 +84,9 @@ const getWorkspace = async( id ) => {
 
     if( response.ok ) {
         const workspace = await response.json();
-        console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) );
-        return workspace;
+        ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
+        ( debug ) ? console.log( "getWorkspace() : Complete" ) : null;
+        return workspace.results;
     }
 };
 
