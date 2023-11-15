@@ -23,6 +23,11 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 
 } );
 
+document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
+    allCardsContainer.innerHTML = ""; // Clear the current cards.
+    await makeAPICall();
+} );
+
 // Copy Button Logic
 function enableCiteButtons() {
     // get all the copy button text and add the click event listener
@@ -200,13 +205,18 @@ var lastEditedResource; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+    await makeAPICall();
+} );
+
+async function makeAPICall() {
     var selectedValue = this.value; // This is either set to "notes" or "paper"
     var selectedContent = document.getElementById( 'selectedContent' );
 
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
-        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0] // get the first one if none are selected
+        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0], // get the first one if none are selected
+        removedArticles: JSON.parse( localStorage.getItem( 'removed' ) )
     };
 
     try {
@@ -275,7 +285,7 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
         // Handle network or other errors here
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
-} );
+}
 
 // Preparing Articles for formatting
 function processJsonData( articlesObj ) {
@@ -378,3 +388,4 @@ function writeDeletedToLocalStorage( articleObj ) {
 
     localStorage.setItem( 'removed', JSON.stringify( localRemovedArticlesArray ) );
 }
+
