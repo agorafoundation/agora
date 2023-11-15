@@ -31,11 +31,16 @@ const removeTab = ( tab ) => {
     tabs.splice( tabs.indexOf( tab ), 1 );
 };
 
+const resetTabs = () => {
+    tabs = [];
+    activeTab = null;
+};
+
 /**
  * Editor Debugging flag
  */
 const debug = true;
-const dataDebug = false;
+const dataDebug = true;
 
 
 /**
@@ -62,18 +67,22 @@ const getCurrentActiveTopic = ( ) => {
  * @param {uuid} topicId 
  */
 const setActiveTopicAndResources = async function ( topicId ) {
-    ( debug ) ? console.log( "setActiveTopicAndResources() : Start" ) : null;
-    
-    
-    // if no topicId passed, use the first topic in the workspace
+    ( debug ) ? console.log( "setActiveTopicAndResources() : Start - topicId : " + topicId ) : null;
+
+    // if no topicId is passed, use the first topic in the workspace
     if( !topicId && workspace.topics ) {
         topicId = workspace.topics[0].topicId;
-
+    }
+    
+    // if there are topics in the workspace, set the active topic using the id passed or the first topic in the workspace
+    if( topicId && workspace.topics ) {
         activeTopic = workspace.topics.find( topic => topic.topicId === topicId );
+        console.log( "activeTopic: " + JSON.stringify( activeTopic ) ); 
 
         // get the resources for the active topic
         if( activeTopic ) {
             const resources = await getResourcesForTopic( activeTopic.topicId );
+            console.log( "resources: " + JSON.stringify( resources ) );
             
             if( resources ) {
                 activeTopic.resources = await resources;
@@ -101,4 +110,4 @@ export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setAct
 // Export GUI state
 export { tabs, activeTab };
 // Export methods to manage GUI state
-export { setActiveTab, addTab, removeTab };
+export { setActiveTab, addTab, removeTab, resetTabs };

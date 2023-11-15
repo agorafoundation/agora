@@ -8,15 +8,12 @@
 /**
  * imports
  */
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug } from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, resetTabs, activeTab, setActiveTab, debug, dataDebug, setActiveTopicAndResources } from "./state/stateManager.js";
 
 /**
  * DOM manipulation functions for the editor
  */
 
-/**
- * global variables
- */
 
 /**
  * Tab Management
@@ -57,11 +54,20 @@ const updateWorkspaceDom = function ( ) {
     ( debug ) ? console.log( "updateWorkspaceDom() : complete" ) : null;
 };
 
-const createTopicsGui = function ( ) {
-    ( debug ) ? console.log( "updateTopicDom() : start" ) : null;
+const createTopicsGui = async function ( ) {
+    ( debug ) ? console.log( "createTopicsGui() : start" ) : null;
 
     // verify we have a workspace and it has topics
     if( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+
+        
+        // remove all existing tabs
+        let tabContent = document.getElementsByClassName( "tabcontent" );
+        while ( tabContent.length > 0 ) {
+            tabContent[0].parentNode.removeChild( tabContent[0] );
+        }
+
+
         for( let i=0; i < getCurrentWorkspace().topics.length; i++ ) {
 
             // get dom elements
@@ -72,6 +78,7 @@ const createTopicsGui = function ( ) {
     
             // get the topic
             let topic = getCurrentWorkspace().topics[i];
+            console.log( "just got the topic: " + JSON.stringify( topic ) );
 
             // Create the tab content and append to last tab
             newTab.id = "topic" + i;
@@ -136,9 +143,6 @@ const createTopicsGui = function ( ) {
             let topicContent = document.createElement( "div" );
             topicContent.className = "topic-content";
 
-
-
-
             let topicDivider = document.createElement( "div" );
             topicDivider.id = "topic-divider" + i   ;
 
@@ -166,7 +170,7 @@ const createTopicsGui = function ( ) {
             tabBtn.id = "tablinks" + i;
 
             let tabBtnName = document.createElement( "span" );
-            tabBtnName.id = "tabTopicName" + i;
+            tabBtnName.id = "tabTopicName-" + i;
             if( topic.topicName ){
                 tabBtnName.innerHTML = topic.topicName;
             }
@@ -182,12 +186,22 @@ const createTopicsGui = function ( ) {
             closeTabBtn.innerHTML = "&times;";
             tabBtn.appendChild( closeTabBtn );
 
-            tabBtn.onclick = ( e ) => {
+            tabBtn.onclick = async ( e ) => {
                 if ( e.target.className.includes( "close-tab" ) ) {
                     closeTab( e.target.id );
                 } 
                 else {
-                    openTab( newTab );            
+                    if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+                        // clear current tabs
+                        await resetTabs();
+
+                        await setActiveTopicAndResources( getCurrentWorkspace().topics[e.target.id.split( "-" )[1]].topicId );
+
+                        await createTopicsGui();
+                    }
+
+                    // Update the GUI tabs
+                    //refreshTabs();            
                 }
             };
 
@@ -208,46 +222,75 @@ const createTopicsGui = function ( ) {
 
             // push the tab into the the tabs array
             addTab( newTab );
-            // note the active tab as the current
-            setActiveTab( newTab );
+
+            
 
             createNewActiveHeight();
-            
-            // urbg evaluate
-            openTab( newTab );
+             
+            console.log( "current active topic : " + JSON.stringify( getCurrentActiveTopic() ) );
 
-            ( debug ) ? console.log( "updateTopicDom() : complete" ) : null;
+            // iterate through the topic resources and create the editors for them if this is the active topic
+            console.log( "topic.topicId: " + topic.topicId + " current active topic: " + getCurrentActiveTopic().topicId );
+            if( topic.topicId == getCurrentActiveTopic().topicId ) {
+                console.log( "2222" );
+                // note the active tab as the current
+                setActiveTab( newTab );
+                console.log( "activeTab set: " + JSON.stringify( activeTab ) );
+            
+                // render the resources fo this topic
+                // console.log( "rendering resources for topic: " + JSON.stringify( topic ) );
+                // console.log( " active topic: " + JSON.stringify( getCurrentActiveTopic() ) );
+                if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
+                    for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
+
+                        let currentResource = getCurrentActiveTopic().resources[i];
+                       
+                        // TODO: evaluate what are these two??? why are there 2?
+                        await createTextArea( i );
+        
+                        ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
+                        if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
+                                        
+                            let editor = "sunEditor" + ( i );
+
+                            ( debug ) ? console.log( sunEditor[editor] ) : null;
+                            sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
+                        }        
+                    }
+
+                    // remove the empty state
+                    emptyState.style.display = "none";
+                }
+            }
+
+
+
+            // Update the GUI tabs
+            refreshTabs();
+
+
+            ( debug ) ? console.log( "createTopicsGui() : complete" ) : null;
         }
     }
     else {
-        ( debug ) ? console.log( "updateTopicDom() : no topics to update" ) : null;
+        ( debug ) ? console.log( "createTopicsGui() : no topics to update" ) : null;
     }
 
     
 };
 
-const renderResourcesForActiveTopic = async function () {
-    ( debug ) ? console.log( "renderResourcesForActiveTopic() : Start" ) : null;
-    if( getCurrentActiveTopic() && getCurrentWorkspace().topics ) {
-
-        if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
-            for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
-               
-                // TODO: evaluate what are these two??? why are there 2?
-                await createTextArea( getCurrentActiveTopic().resources[i].resourceName, i );
-
-                renderTextArea( getCurrentActiveTopic().resources[i].resourceContentHtml, i );
-
-            }
-        }
-    }
-    ( debug ) ? console.log( "renderResourcesForActiveTopic() : End" ) : null;
-};
 
 
 
 
-function createTextArea( name, i ) {
+
+
+
+
+
+
+
+function createTextArea( i ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
@@ -348,17 +391,17 @@ function createTextArea( name, i ) {
          * TODO: Evaluate
          */
         //Remove empty state if necessary
-        // if ( resourcesZone.childElementCount > 0 ) {
+        if ( resourcesZone.childElementCount > 0 ) {
             
-        //     //let location = getTabLocation( tabName );
-        //     ( debug ) ? console.log( "resourcesZone: " + resourcesZone.id );
-        //     ( debug ) ? console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
-        //     ( debug ) ? console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
-        //     ( debug ) ? console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
-        //     ( debug ) ? console.log( "here! --- : " + location );
-        //     // document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-        //     // document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
-        // }
+            //let location = getTabLocation( tabName );
+            console.log( "resourcesZone: " + resourcesZone.id );
+            console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
+            console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
+            console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
+            console.log( "here! --- : " + location );
+            // document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
+            // document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+        }
 
         // Append elemets accordingly
         resourcesZone.appendChild( title );
@@ -388,26 +431,9 @@ function createTextArea( name, i ) {
 
 
 
-const renderTextArea = function ( resourceContentHtml, i ) {
-    ( debug ) ? console.log( "renderTextArea() : Start html: " + resourceContentHtml ) : null;
-    if( resourceContentHtml && resourceContentHtml.length > 0 ){
-                     
-        let editor = "sunEditor" + ( i );
 
 
-        //( debug ) ? console.log( editor );
-        ( debug ) ? console.log( sunEditor[editor] ) : null;
-        sunEditor[editor][1].insertHTML( resourceContentHtml );
-
-        //docType1Count++;
-        //val++;
-    }
-    ( debug ) ? console.log( "renderTextArea() : End" ) : null;
-};
-
-
-
-export { updateWorkspaceDom, createTopicsGui, createTextArea, renderTextArea, renderResourcesForActiveTopic };
+export { updateWorkspaceDom, createTopicsGui, createTextArea };
 
 
 /**
@@ -441,8 +467,10 @@ function createNewActiveHeight() {
 
 /* BEGIN Tab Functions ------------------------------------------------------------- */
 // Change tabs
-function openTab( tab ) {
-    ( debug ) ? console.log( "openTab : " + tab + " id: " + tab.id + " name: " + tab.getAttribute( "name" ) ) : null;
+function refreshTabs( ) {
+
+
+    ( debug ) ? console.log( "refreshTabs() : Start" ) : null;
     let i, tabcontent, tablinks;
 
     // activeTabUuid = tab.getAttribute( "name" );
@@ -461,20 +489,20 @@ function openTab( tab ) {
         tablinks[i].style.color = "white";
     }
 
-    resourcesZone = document.getElementById( "resources-zone" + tab.id.slice( -1 ) );
+    resourcesZone = document.getElementById( "resources-zone" + activeTab.id.slice( -1 ) );
     //currentTagId = name.slice( -1 );
 
     // Show the current tab
-    document.getElementById( tab.id ).style.display = "block";
+    document.getElementById( activeTab.id ).style.display = "block";
 
     // Set tab button to active
     for ( i=0; i<tablinks.length; i++ ) {
-        if ( tablinks[i].id.slice( -1 ) == tab.id.slice( -1 ) ) {
+        if ( tablinks[i].id.slice( -1 ) == activeTab.id.slice( -1 ) ) {
             tablinks[i].className += " active";
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }
     }
-    ( debug ) ? console.log( "openTab : Complete" ) : null;
+    ( debug ) ? console.log( "refreshTabs : Complete" ) : null;
 }
 
 function closeTab( tabId ) {

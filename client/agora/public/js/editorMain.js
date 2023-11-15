@@ -18,7 +18,7 @@ import { getWorkspaceUuid } from "./util/editorUtil.js";
 import { initializeWorkspace, setActiveTopicAndResources, debug, dataDebug } from "./state/stateManager.js";
 
 // get DOM manipulation functions from modules
-import { updateWorkspaceDom, createTopicsGui, renderResourcesForActiveTopic } from "./editorManager.js";
+import { updateWorkspaceDom, createTopicsGui } from "./editorManager.js";
 
 
 
@@ -42,8 +42,7 @@ window.addEventListener( "load", async () => {
     // render the topics for the workspace
     createTopicsGui();
 
-    // render resources for the active topic
-    renderResourcesForActiveTopic();
+   
 
     
 
