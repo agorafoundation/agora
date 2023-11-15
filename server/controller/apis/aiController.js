@@ -23,6 +23,7 @@ const OPENAI_CONFIG = new openAi.Configuration( {
 exports.callOpenAI = async ( req, res ) => {
     let mode = req.body.mode; // TODO: use this for notes vs paper
     let resourceId = req.body.resourceId;
+    let removedArticles = req.body.removedArticles;
 
     let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
 
@@ -30,7 +31,7 @@ exports.callOpenAI = async ( req, res ) => {
         let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
-            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0] ) : createNotesPrompt( parsedResourceContent ); 
+            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0] ) : createNotesPrompt( parsedResourceContent );
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
@@ -81,24 +82,49 @@ exports.callOpenAI = async ( req, res ) => {
 
 // helper logic
 
-function createPaperPrompt( abstract ) {
-    return `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+function createPaperPrompt( abstract, ignoredArticles ) {
+    let basePrompt = `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
 
             Abstract of the paper I'm writing:
             '''
             ${abstract}
             '''
            `;
+
+    if ( ignoredArticles ) {
+        let removedArticles = "Please don't return the articles that match the following:\n";
+
+        ignoredArticles.forEach( article => {
+            removedArticles +=  article.title + " by " + article.authors[0];
+        } );
+
+        basePrompt += removedArticles;
+    }
+
+    return basePrompt;
 }
 
-function createNotesPrompt( notes ) {
-    return `I am writing notes. Please return literature that is related to my notes, but also any literature you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+function createNotesPrompt( notes, ignoredArticles ) {
+    let basePrompt = `I am writing notes. Please return literature that is related to my notes, but also any literature you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
 
             Here are my notes:
             '''
             ${notes}
             '''
             `;
+    
+
+    if ( ignoredArticles ) {
+        let removedArticles = "Please don't return the articles that match the following:\n";
+
+        ignoredArticles.forEach( article => {
+            removedArticles +=  article.title + " by " + article.authors[0];
+        } );
+
+        basePrompt += removedArticles;
+    }
+
+    return basePrompt;
 }
 
 
