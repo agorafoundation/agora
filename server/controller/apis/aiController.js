@@ -31,7 +31,7 @@ exports.callOpenAI = async ( req, res ) => {
         let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
-            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0] ) : createNotesPrompt( parsedResourceContent );
+            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0], removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
