@@ -29,9 +29,6 @@ function checkActiveHeight() {
 }
 
 
-
-
-
 /* Topic Functions -------------------------------------------------------------------------- */
 let numTopics = 1;
 let topics = {};
@@ -1306,6 +1303,7 @@ const idAndFetch = () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
+                shareButton( response );
                 fillFields(
                     response.workspaceName,
                     response.workspaceDescription,
@@ -1313,43 +1311,6 @@ const idAndFetch = () => {
                 );
             } );
     }
-};
-
-const FetchShared = async () => {
-    console.log( "FetchShared() : Start" );
-    const [ isTopic, id ] = getPrefixAndId();
-    //console.log( isTopic, id );
-    if ( isTopic && id ) {
-        fetch( "api/v1/auth/topics/" + id, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( response ) => {
-                fillFields(
-                    response.results.topicName,
-                    response.results.topicDescription,
-                    response.results.topicImage
-                );
-            } );
-    }
-    else if ( id ) {
-        //console.log( "idAndFetch() : fetch workspace" );
-        await fetch( "api/v1/auth/workspaces/" + id, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        } )
-            .then( ( response ) => response.json() )
-            .then( ( response ) => {
-                fillFields(
-                    response.workspaceName,
-                    response.workspaceDescription,
-                    response.workspaceImage
-                );
-                console.log( "FetchShared() : End - workspacePath" );
-            } );
-    }
-    console.log( "FetchShared() : End FINAL" );
 };
 
 const getTags = async () => {
@@ -1382,27 +1343,14 @@ const getTags = async () => {
     }
 };
 
+const shareButton = async ( workspace ) => {
+    let name = document.getElementById( "share-modal-title" );
+    name.textContent = `Share "${workspace.workspaceName}"`;
+};
+
 const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
-};
-
-const renderWorkspace = async ( workspace ) => {
-    console.log( "renderWorkspace: Start" );
-    const [ isTopic, id ] = getPrefixAndId();
-    if( id ) {
-        const response = await fetch( "api/v1/auth/workspaces/"+ id   );
-        let workspace = await response.json();
-        console.log( "workspace test: " + JSON.stringify( workspace ) );
-   
-        if ( workspace.results.length > 0 ) {
-            for ( let i = 0; i < workspace.results.length; i++ ) {
-                await renderTopic( workspace.results[i] );
-            
-            }
-        }   
-    }
-    console.log( "renderWorkspace: Complete" );
 };
 
 const renderTopics = async ( workspace ) => {
