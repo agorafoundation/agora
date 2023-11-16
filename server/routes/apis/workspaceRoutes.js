@@ -40,7 +40,7 @@ router.route( '/shared' )
     } );
 
 router.route( '/shared/:workspaceId' )
-    //get all shared workspaces
+    //get a shared workspace by ID
     .get( async ( req, res ) => {
         workspaceController.getSharedWorkspaceByID( req, res );
     } );

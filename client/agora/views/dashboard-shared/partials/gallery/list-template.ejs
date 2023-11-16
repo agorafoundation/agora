@@ -66,5 +66,13 @@
                                         <span style="margin-left: 29%">Type</span>
                                         <span style="margin-left: 10%">Tags</span>
                                     </li>
+                                    <% 
+                                    for (let i = 0; i <  sharedWorkspaces.length ; i++) { 
+                                        let tags = [];
+                                        tags = sharedWorkspaces[i].tags.map(a => a.tag);
+                                        renderListCard(sharedWorkspaces[i].workspaceId,sharedWorkspaces[i].workspaceName,sharedWorkspaces[i].workspaceDescription,tags,"Workspace",["Doc1","doc2"]); 
+                                    }
+                                    
+                                    %>
 
                                 </ul>
