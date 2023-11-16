@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
     <div class="modal-content" style="border-radius: 10px; box-shadow: 3px rgba(0.5,0.5,0.5,0.5);">
         <div class="modal-header" style="display: flex; flex-direction: column;">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute; top: 0; right: 0">
+            <button type="button" class="closes" data-dismiss="modal" aria-label="closes" style="position: absolute; top: 0; right: 0">
                 <span class="material-symbols-outlined" style="margin: 0">close</span>
             </button>
             <h5 class="share-modal-title" id="share-modal-title"></h5>
@@ -49,3 +49,12 @@
     </div>
     </div>
 </div>
+<script>
+    //Close button for Share Workspace 
+    var closeButton = document.querySelector('.closes');
+    closeButton.addEventListener('click', function() {
+        var modal = document.getElementById('share-modal');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    });
+    </script>

@@ -1106,6 +1106,7 @@ if( closeBtns ) {
     } );
 }
 
+
 window.onclick = function( event ) {
     if ( event.target == modal ) {
         modal.style.display = "none";
@@ -1114,6 +1115,7 @@ window.onclick = function( event ) {
         openTopicModal.style.display = "none";
     }
 };
+
 
 // option hover events
 document.addEventListener( "mousemove", function( e ) {
@@ -1381,6 +1383,9 @@ const shareButton = async ( workspace ) => {
     let name = document.getElementById( "share-modal-title" );
     name.textContent = `Share "${workspace.workspaceName}"`;
 };
+
+
+
 
 const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
