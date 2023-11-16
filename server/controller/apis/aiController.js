@@ -91,8 +91,8 @@ function createPaperPrompt( abstract, ignoredArticles ) {
             '''
            `;
 
-    if ( ignoredArticles ) {
-        let removedArticles = "Please don't return the articles that match the following:\n";
+    if ( ignoredArticles.length > 0 ) {
+        let removedArticles = `Please don't return any articles that match the following, and find ${ignoredArticles.length} articles to replace them:\n`;
 
         ignoredArticles.forEach( article => {
             removedArticles +=  article.title + " by " + article.authors[0];

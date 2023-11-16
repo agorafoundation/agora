@@ -67,7 +67,6 @@ function copyContentText ( cardText, cardDiv ) {
     const copyContent = async () => {
         try {
             await navigator.clipboard.writeText( cardText );
-            console.log( 'Content copied to clipboard' );
             buttonText.innerHTML = 'Copied';
             createToastNotification( "Copied Link! Paste citation into document where needed." );
         } 
@@ -199,9 +198,7 @@ function getFirstNameLastNames( authors ) {
 
 }
 
-// const apiEndpoint = '/server/controller/apis/aiController.js'; // Relative path
-
-var lastEditedResource; // This is set in the topic-view.js
+var lastEditedResourceId; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
@@ -215,7 +212,7 @@ async function makeAPICall() {
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
-        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0], // get the first one if none are selected
+        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getResources()[0], // get the first one if none are selected
         removedArticles: JSON.parse( localStorage.getItem( 'removed' ) )
     };
 
