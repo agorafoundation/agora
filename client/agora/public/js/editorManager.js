@@ -69,9 +69,18 @@ const createTopicEditorGui = async function ( ) {
     ( debug ) ? console.log( "createTopicEditorGui() : start" ) : null;
 
     // Dom parent for tabs
-    let currTabs = document.querySelector( ".tab" );
+    let currTabs = document.querySelector( ".tabBar" );
     // clear tabs parent
     currTabs.textContent = "";
+
+    // create the tab to add a new topic
+    let newTab = document.createElement( "span" );
+    newTab.className = "material-symbols-outlined";
+    newTab.id = "new-element";
+    newTab.style.color = "white";
+    newTab.innerHTML = "add";
+
+    currTabs.appendChild( newTab );
     
 
     // verify we have a workspace and it has topics
@@ -155,19 +164,128 @@ const createTopicEditorGui = async function ( ) {
          */
 
         // Create the topicEditor (the main workspace that contains the topics resources)
-        if ( getCurrentActiveTopic() ) {
+        if ( getCurrentActiveTopic() && activeTab ) {
             console.log( "----- 1 -----" );
             // get dom elements
-            let tabContent = document.getElementsByClassName( "tabcontent" );
-            ( debug ) ? console.log( "tabContent: " + JSON.stringify( tabContent ) ) : null;
-            let lastTab = tabContent[tabContent.length-1];
-            let topicEditor = document.createElement( "div" );
+            // let tabContent = document.getElementsByClassName( "tabcontent" );
+            // ( debug ) ? console.log( "tabContent: " + JSON.stringify( tabContent ) ) : null;
+            // let lastTab = tabContent[tabContent.length-1];
 
-            // create the workarea for the topic resources
-            topicEditor.id = "topic-editor";
+            // create the topic editor (the main workspace that contains the topics resources)
+            let topicEditor = document.getElementById( 'topic-editor' );
             topicEditor.setAttribute( "name", getCurrentActiveTopic().topicId );
             topicEditor.className = "tabcontent";
 
+            // // ------------------------------------------------
+            // // Create drop zone at the top of the topic
+            // let newDropZone = document.createElement( "div" );
+            // newDropZone.classList.add( "drop-zone" );
+            // newDropZone.classList.add( "first-dropzone" );
+
+            // // Create drop zone filler div
+            // let newDropZoneFiller = document.createElement( "div" );
+            // newDropZoneFiller.className = "dropzone-filler";
+            // newDropZone.appendChild( newDropZoneFiller );
+
+            // // Create drop zone input
+            // let newDropZoneInput = document.createElement( "input" );
+            // newDropZoneInput.className = "drop-zone__input";
+            // newDropZoneInput.type = "file";
+            // newDropZone.appendChild( newDropZoneInput );
+            // createDropZoneEventListeners( newDropZone, newDropZoneInput );
+            // newDropZone.style.display = "none";
+            // // ------------------------------------------------------
+
+            // // -----------------------------------------------------
+            // // Create drop zone that fills the entire topic empty state
+            // let emptyDropZone = document.createElement( "div" );
+            // emptyDropZone.classList.add( "drop-zone" );
+            // emptyDropZone.classList.add( "empty-topic-dropzone" );
+
+            // // Create drop zone filler div
+            // let emptyDropZoneFiller = document.createElement( "div" );
+            // emptyDropZoneFiller.className = "dropzone-filler";
+            // emptyDropZone.appendChild( emptyDropZoneFiller );
+
+            // // Create drop zone input
+            // let emptyDropZoneInput = document.createElement( "input" );
+            // emptyDropZoneInput.className = "drop-zone__input";
+            // emptyDropZoneInput.type = "file";
+            // emptyDropZone.appendChild( emptyDropZoneInput );
+            // createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
+            // // -------------------------------------------------------------
+
+            let topicDivider = document.createElement( "div" );
+            topicDivider.id = "topic-divider"   ;
+
+            resourcesZone = document.createElement( "div" );
+            resourcesZone.id = "resources-zone";
+            resourcesZone.className = "resources-zone";
+
+            let emptyState = document.createElement( "div" );
+            emptyState.className = "empty-state";
+
+            let label1 = document.createElement( "label" );
+            label1.className = "empty-state-text";
+            let header = document.createElement( "h3" );
+            header.innerHTML = "Your Topic is Empty";
+            label1.appendChild( header );
+
+            let label2 = document.createElement( "label" );
+            label2.className = "empty-state-text";
+            label2.innerHTML = "Drop a file or tap the + above to get started!";
+            // --------------------------------------------------------------
+
+            
+
+            // let currTabs = document.querySelector( ".tab" );
+            // currTabs.appendChild( tabBtn );
+
+            // Append all elements accordingly
+
+            // remove the default empty topic
+            topicEditor.innerText = "";
+
+            let topicBackground = document.getElementById( "topic-background" );
+            topicBackground.appendChild( topicEditor );
+
+            //topicContent.appendChild( topicTitle );
+            // topicContent.appendChild( saveIcon );
+            topicEditor.appendChild( topicDivider );
+            topicEditor.appendChild( resourcesZone );
+            // resourcesZone.appendChild( newDropZone );
+            // resourcesZone.appendChild( emptyDropZone );
+            // emptyDropZone.appendChild( emptyState );
+            emptyState.appendChild( label1 );
+            emptyState.appendChild( label2 );
+
+            
+
+            //createNewActiveHeight();
+
+            if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
+                console.log( "1" );
+                for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
+                    console.log( "2" );
+                    let currentResource = getCurrentActiveTopic().resources[i];
+                       
+                    // TODO: evaluate what are these two??? why are there 2?
+                    await createTextArea( i );
+        
+                    ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
+                    if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
+                                        
+                        let editor = "sunEditor" + ( i );
+
+                        ( debug ) ? console.log( sunEditor[editor] ) : null;
+                        sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
+                    }        
+                }
+
+                // remove the empty state
+                emptyState.style.display = "none";
+            }
+            
 
         }
 
@@ -518,11 +636,11 @@ function getTabLocation( id ) {
 
 
 // Creates a height object for each open topic
-function createNewActiveHeight() {
-    let tabElements = document.querySelectorAll( '.tabcontent' );
-    activeHeightObj[tabElements[tabElements.length-1].id] = 0;
-    activeHeightList.push( activeHeightObj[tabElements[tabElements.length-1].id] );
-}
+// function createNewActiveHeight() {
+//     let tabElements = document.querySelectorAll( '.tabcontent' );
+//     activeHeightObj[tabElements[tabElements.length-1].id] = 0;
+//     activeHeightList.push( activeHeightObj[tabElements[tabElements.length-1].id] );
+// }
 
 
 /* BEGIN Tab Functions ------------------------------------------------------------- */
@@ -536,10 +654,10 @@ function refreshTabs( ) {
     // activeTabUuid = tab.getAttribute( "name" );
     // activeTab = activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
 
-    tabcontent = document.getElementsByClassName( "tabcontent" );
-    for ( i = 0; i < tabcontent.length; i++ ) {
-        tabcontent[i].style.display = "none";
-    }
+    // tabcontent = document.getElementsByClassName( "tabcontent" );
+    // for ( i = 0; i < tabcontent.length; i++ ) {
+    //     tabcontent[i].style.display = "none";
+    // }
 
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName( "tablinks" );

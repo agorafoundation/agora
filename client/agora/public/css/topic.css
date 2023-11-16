@@ -245,7 +245,7 @@
 
 
 /* Tabs ---------------------------------- */
-.tab {
+.tabBar {
     overflow: hidden;
     /* border: 1px solid #ccc; */
     background-color: #f1f1f1;
@@ -253,7 +253,7 @@
     height: 50px;
   }
   
-.tab button {
+.tabBar button {
     background-color: inherit;
     float: left;
     outline: none;
@@ -264,7 +264,6 @@
   }
   
 .tabcontent {
-    display: none;
     padding: 6px 12px;
     border-top: none;
 }
