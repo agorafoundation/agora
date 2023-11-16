@@ -35,3 +35,5 @@ Thank you for helping us keep this repository safe and secure.
 - Site: [Link to Site](https://www.freeagora.org/)
 
 ---
+Resources:
+[azureml-ops-accelerator SECURITY.html](https://microsoft.github.io/azureml-ops-accelerator/SECURITY.html)
