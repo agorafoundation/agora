@@ -63,7 +63,12 @@ function copyContentText ( cardText, cardDiv ) {
         try {
             await navigator.clipboard.writeText( cardText );
             console.log( 'Content copied to clipboard' );
-            buttonText.innerHTML = 'Copied';
+
+            buttonText.innerHTML = 'Copied!';
+
+            setTimeout( () => {
+                buttonText.innerHTML = 'Copy';
+            }, 2000 );
             createToastNotification( "Copied Link! Paste citation into document where needed." );
         } 
         catch ( err ) {
