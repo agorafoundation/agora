@@ -1313,6 +1313,40 @@ const idAndFetch = () => {
     }
 };
 
+const fetchSharedWorkspace = () => {
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( id );
+    if ( isTopic && id ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.topicName,
+                    response.topicDescription,
+                    response.topicImage
+                );
+            } );
+    }
+    else if ( id ) {
+        fetch( "api/v1/auth/workspaces/shared/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                shareButton( response );
+                fillFields(
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
+                );
+            } );
+    }
+};
+
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
     if ( isTopic && id ) {
@@ -1421,6 +1455,7 @@ async function renderResources( topicId ) {
 
 window.addEventListener( "load", () => {
     idAndFetch();
+    fetchSharedWorkspace();
     getTags();
     renderTopics();
    
