@@ -744,9 +744,9 @@
 }
 
 /* agne btn shadow */
-/* .agnes-button:hover{
-    box-shadow:  0 0 11px rgba(33,33,33,.2); 
-} */
+.agnes-button:hover{
+    box-shadow:  0 0 21px rgba(33,33,33,.2); 
+}
 .agnes-modal-shape {
     padding: 15px;
     gap: 5px;
