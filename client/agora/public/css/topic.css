@@ -736,7 +736,7 @@
     position: fixed;
     right: 20px;
     bottom: 20px;
-    background-color: #000000;
+    background-color: #3f3f3f;
     border-radius: 50%;
     padding: 10px 10px;
     z-index: 200; 
@@ -783,10 +783,13 @@
 
 .agnes-modal-pos {
     right: 2vw;
-    /* top: 60vh; */
+    top: 85vh;
+    bottom: -20;
     display: none;
     position: fixed;
     z-index: 200; 
+    transform: translate(0%, -95%);
+
 }
 
 .text-center-mod {
