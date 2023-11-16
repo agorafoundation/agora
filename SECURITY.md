@@ -18,7 +18,7 @@ We will provide regular updates on the progress of resolving the issue and an es
 
 ## Code of Conduct
 
-We encourage all contributors, maintainers, and reporters to adhere to our [Code of Conduct]() in all interactions related to this repository.
+We encourage all contributors, maintainers, and reporters to adhere to our [Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/) in all interactions related to this repository.
 
 ## Acknowledgments
 
