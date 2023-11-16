@@ -15,10 +15,10 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, dataDebug } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, dataDebug, getCurrentActiveTopic } from "./state/stateManager.js";
 
 // get DOM manipulation functions from modules
-import { updateWorkspaceDom, createTopicsGui } from "./editorManager.js";
+import { updateWorkspaceDom, createTopicEditorGui } from "./editorManager.js";
 
 
 
@@ -40,7 +40,7 @@ window.addEventListener( "load", async () => {
     updateWorkspaceDom();
     
     // render the topics for the workspace
-    createTopicsGui();
+    createTopicEditorGui();
 
    
 

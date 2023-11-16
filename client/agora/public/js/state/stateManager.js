@@ -4,44 +4,25 @@ import { topicModel, saveTopic, getTopic, getResourcesForTopic } from "../contro
 import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
- * Client state 
+ * Client side debugging flags
+ */
+const debug = true;
+const dataDebug = false;
+
+
+/**
+ * Client model state 
  */
 // Workspace for the loaded editor
 let workspace = workspaceModel;
 
 // Active topic for the chosen tab
 let activeTopic = topicModel;
-
-
-/*
- * GUI components state
- */ 
-let tabs = [];
-let activeTab =  null;
-
-const setActiveTab = ( tab ) => {
-    activeTab = tab;
-};
-
-const addTab = ( tab ) => { 
-    tabs.push( tab );
-};
-
-const removeTab = ( tab ) => {  
-    tabs.splice( tabs.indexOf( tab ), 1 );
-};
-
-const resetTabs = () => {
-    tabs = [];
-    activeTab = null;
-};
+/*--------------------------------------------------------------------------------*/
 
 /**
- * Editor Debugging flag
+ * Client model state management methods
  */
-const debug = true;
-const dataDebug = true;
-
 
 /**
  * Create workspace state for the editor
@@ -54,10 +35,18 @@ const initializeWorkspace = async ( workspaceUuid ) => {
 
 };
 
+/**
+ * Getter for the current workspace
+ * @returns the current workspace
+ */
 const getCurrentWorkspace = ( ) => {
     return workspace;
 };
 
+/**
+ * Gettr for the current active topic
+ * @returns the current active topic
+ */
 const getCurrentActiveTopic = ( ) => {
     return activeTopic;
 };
@@ -77,12 +66,11 @@ const setActiveTopicAndResources = async function ( topicId ) {
     // if there are topics in the workspace, set the active topic using the id passed or the first topic in the workspace
     if( topicId && workspace.topics ) {
         activeTopic = workspace.topics.find( topic => topic.topicId === topicId );
-        console.log( "activeTopic: " + JSON.stringify( activeTopic ) ); 
+        ( debug && dataDebug ) ? console.log( "activeTopic: " + JSON.stringify( activeTopic ) ) : null;
 
         // get the resources for the active topic
         if( activeTopic ) {
             const resources = await getResourcesForTopic( activeTopic.topicId );
-            console.log( "resources: " + JSON.stringify( resources ) );
             
             if( resources ) {
                 activeTopic.resources = await resources;
@@ -101,6 +89,47 @@ const setActiveTopicAndResources = async function ( topicId ) {
 
     ( debug ) ? console.log( "setActiveTopicAndResources() : Complete" ) : null;
 };
+
+/*--------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------*/
+
+
+
+/*
+ * GUI components state
+ */ 
+let tabs = [];
+let activeTab =  null;
+/*--------------------------------------------------------------------------------*/
+
+
+/**
+ * GUI state management methods
+ */
+
+const setActiveTab = ( tab ) => {
+    activeTab = tab;
+};
+
+const addTab = ( tab ) => { 
+    tabs.push( tab );
+};
+
+const removeTab = ( tab ) => {  
+    tabs.splice( tabs.indexOf( tab ), 1 );
+};
+
+const resetTabs = () => {
+    tabs = [];
+    activeTab = null;
+};
+
+/*--------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------*/
+
+
+
+
 
 // Export members (Client state)
 export { debug, dataDebug };

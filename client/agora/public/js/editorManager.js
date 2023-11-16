@@ -54,226 +54,286 @@ const updateWorkspaceDom = function ( ) {
     ( debug ) ? console.log( "updateWorkspaceDom() : complete" ) : null;
 };
 
-const createTopicsGui = async function ( ) {
-    ( debug ) ? console.log( "createTopicsGui() : start" ) : null;
+/**
+ * Renders everything on the editor page under the workspace title and info
+ * Does the following:
+ *  Clears the current GUI state (tabs and active tab)
+ *  Renders the tabs based on the current workspaces topics
+ *  Renders a topic editor area for the active topic
+ *  Renders each of the resources (based on the resources attached to the active topic)
+ * 
+ * It might make sense to break this up into smaller functions, but for now I want to keep it all together
+ * while I disect the old methods into the new to understand the flow. TODO: comeback to when done.
+ */
+const createTopicEditorGui = async function ( ) {
+    ( debug ) ? console.log( "createTopicEditorGui() : start" ) : null;
+
+    // Dom parent for tabs
+    let currTabs = document.querySelector( ".tab" );
+    // clear tabs parent
+    currTabs.textContent = "";
+    
 
     // verify we have a workspace and it has topics
-    if( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-
+    if( getCurrentWorkspace() && getCurrentWorkspace().topics && getCurrentActiveTopic() ) {
         
-        // remove all existing tabs
-        let tabContent = document.getElementsByClassName( "tabcontent" );
-        while ( tabContent.length > 0 ) {
-            tabContent[0].parentNode.removeChild( tabContent[0] );
+        /**
+         * create the tabs for each topic above the topic editor
+         * This builds the tabs based upon the topics in the getCurrentWorkspace() model
+         */
+        if( getCurrentWorkspace().topics.length > 0 ) {
+            for( let i=0; i < getCurrentWorkspace().topics.length; i++ ) {
+                // Create a new tab button
+                let tabBtn = document.createElement( "button" );
+                tabBtn.className = "tablinks";
+                tabBtn.id = "tablinks-" + i;
+
+                let tabBtnName = document.createElement( "span" );
+                tabBtnName.id = "tabTopicName-" + i;
+                if( getCurrentWorkspace().topics[i].topicName ){
+                    tabBtnName.innerHTML = getCurrentWorkspace().topics[i].topicName;
+                }
+                else{
+                    tabBtnName.innerHTML = "Untitled";
+                }
+                tabBtn.appendChild( tabBtnName );
+
+                // Create close tab button
+                let closeTabBtn = document.createElement( "span" );
+                closeTabBtn.className = "close-tab";
+                closeTabBtn.id = "close-tab-" + i;
+                closeTabBtn.innerHTML = "&times;";
+                tabBtn.appendChild( closeTabBtn );
+
+                tabBtn.onclick = async ( e ) => {
+                    if ( e.target.className.includes( "close-tab" ) ) {
+                        closeTab( e.target.id );
+                    } 
+                    else {
+                        if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+                            /**
+                             * TODO: Next step.. this is the entry point for changing tabs
+                             */
+                            // clear current tabs
+                            // reset (clear out) any tabs and reset the active tab
+                            // resetTabs();
+                            // setActiveTab( null );
+
+                            await setActiveTopicAndResources( getCurrentWorkspace().topics[e.target.id.split( "-" )[1]].topicId );
+
+                            await createTopicEditorGui();
+                        }
+
+                    // Update the GUI tabs
+                    //refreshTabs();            
+                    }
+                };
+                
+                currTabs.appendChild( tabBtn );
+
+                // push the tab into the the tabs array
+                addTab( tabBtn );
+
+                // see if this is the active tab and if so, set it.
+                if( getCurrentActiveTopic().topicId == getCurrentWorkspace().topics[i].topicId ) {
+                    setActiveTab( tabBtn );
+                }
+                
+            }
+
+
+            
+            refreshTabs();
+
+
         }
 
+        /**  END: Render tabs ---------------------------------------------------------------- */
 
-        for( let i=0; i < getCurrentWorkspace().topics.length; i++ ) {
+        /**
+         * Create the topicEditor (the main workspace that contains the topics resources)
+         */
 
+        // Create the topicEditor (the main workspace that contains the topics resources)
+        if ( getCurrentActiveTopic() ) {
+            console.log( "----- 1 -----" );
             // get dom elements
             let tabContent = document.getElementsByClassName( "tabcontent" );
             ( debug ) ? console.log( "tabContent: " + JSON.stringify( tabContent ) ) : null;
             let lastTab = tabContent[tabContent.length-1];
-            let newTab = document.createElement( "div" );
-    
-            // get the topic
-            let topic = getCurrentWorkspace().topics[i];
-            console.log( "just got the topic: " + JSON.stringify( topic ) );
+            let topicEditor = document.createElement( "div" );
 
-            // Create the tab content and append to last tab
-            newTab.id = "topic" + i;
-            newTab.setAttribute( "name", topic.topicId );
-            newTab.className = "tabcontent";
-
-            // create a tab for each topic
-            if ( lastTab == null ) {
-                ( debug ) ? console.log( "empty tab" ) : null;
-                // if there are no tabs, create the first one
-                let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
-                workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
-                workspaceEmptyState.style.display = "none";
-                document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
-            }
-            else {
-                ( debug ) ? console.log( "non-empty tab" ) : null;
-                // add additional tab
-                lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
-            }
-
-            // ------------------------------------------------
-            // Create drop zone at the top of the topic
-            let newDropZone = document.createElement( "div" );
-            newDropZone.classList.add( "drop-zone" );
-            newDropZone.classList.add( "first-dropzone" );
-
-            // Create drop zone filler div
-            let newDropZoneFiller = document.createElement( "div" );
-            newDropZoneFiller.className = "dropzone-filler";
-            newDropZone.appendChild( newDropZoneFiller );
-
-            // Create drop zone input
-            let newDropZoneInput = document.createElement( "input" );
-            newDropZoneInput.className = "drop-zone__input";
-            newDropZoneInput.type = "file";
-            newDropZone.appendChild( newDropZoneInput );
-            createDropZoneEventListeners( newDropZone, newDropZoneInput );
-            newDropZone.style.display = "none";
-            // ------------------------------------------------------
-
-            // -----------------------------------------------------
-            // Create drop zone that fills the entire topic empty state
-            let emptyDropZone = document.createElement( "div" );
-            emptyDropZone.classList.add( "drop-zone" );
-            emptyDropZone.classList.add( "empty-topic-dropzone" );
-
-            // Create drop zone filler div
-            let emptyDropZoneFiller = document.createElement( "div" );
-            emptyDropZoneFiller.className = "dropzone-filler";
-            emptyDropZone.appendChild( emptyDropZoneFiller );
-
-            // Create drop zone input
-            let emptyDropZoneInput = document.createElement( "input" );
-            emptyDropZoneInput.className = "drop-zone__input";
-            emptyDropZoneInput.type = "file";
-            emptyDropZone.appendChild( emptyDropZoneInput );
-            createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
-            // -------------------------------------------------------------
-
-            // Create all elements within a topic -----------------------------
-            let topicContent = document.createElement( "div" );
-            topicContent.className = "topic-content";
-
-            let topicDivider = document.createElement( "div" );
-            topicDivider.id = "topic-divider" + i   ;
-
-            resourcesZone = document.createElement( "div" );
-            resourcesZone.id = "resources-zone" + i;
-            resourcesZone.className = "resources-zone";
-
-            let emptyState = document.createElement( "div" );
-            emptyState.className = "empty-state";
-
-            let label1 = document.createElement( "label" );
-            label1.className = "empty-state-text";
-            let header = document.createElement( "h3" );
-            header.innerHTML = "Your Topic is Empty";
-            label1.appendChild( header );
-
-            let label2 = document.createElement( "label" );
-            label2.className = "empty-state-text";
-            label2.innerHTML = "Drop a file or tap the + above to get started!";
-            // --------------------------------------------------------------
-
-            // Create a new tab button
-            let tabBtn = document.createElement( "button" );
-            tabBtn.className = "tablinks";
-            tabBtn.id = "tablinks" + i;
-
-            let tabBtnName = document.createElement( "span" );
-            tabBtnName.id = "tabTopicName-" + i;
-            if( topic.topicName ){
-                tabBtnName.innerHTML = topic.topicName;
-            }
-            else{
-                tabBtnName.innerHTML = "Untitled";
-            }
-            tabBtn.appendChild( tabBtnName );
-
-            // Create close tab button
-            let closeTabBtn = document.createElement( "span" );
-            closeTabBtn.className = "close-tab";
-            closeTabBtn.id = "close-tab" + i;
-            closeTabBtn.innerHTML = "&times;";
-            tabBtn.appendChild( closeTabBtn );
-
-            tabBtn.onclick = async ( e ) => {
-                if ( e.target.className.includes( "close-tab" ) ) {
-                    closeTab( e.target.id );
-                } 
-                else {
-                    if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-                        // clear current tabs
-                        await resetTabs();
-
-                        await setActiveTopicAndResources( getCurrentWorkspace().topics[e.target.id.split( "-" )[1]].topicId );
-
-                        await createTopicsGui();
-                    }
-
-                    // Update the GUI tabs
-                    //refreshTabs();            
-                }
-            };
-
-            let currTabs = document.querySelector( ".tab" );
-            currTabs.appendChild( tabBtn );
-
-            // Append all elements accordingly
-            newTab.appendChild( topicContent );
-            //topicContent.appendChild( topicTitle );
-            // topicContent.appendChild( saveIcon );
-            topicContent.appendChild( topicDivider );
-            topicContent.appendChild( resourcesZone );
-            resourcesZone.appendChild( newDropZone );
-            resourcesZone.appendChild( emptyDropZone );
-            emptyDropZone.appendChild( emptyState );
-            emptyState.appendChild( label1 );
-            emptyState.appendChild( label2 );
-
-            // push the tab into the the tabs array
-            addTab( newTab );
-
-            
-
-            createNewActiveHeight();
-             
-            console.log( "current active topic : " + JSON.stringify( getCurrentActiveTopic() ) );
-
-            // iterate through the topic resources and create the editors for them if this is the active topic
-            console.log( "topic.topicId: " + topic.topicId + " current active topic: " + getCurrentActiveTopic().topicId );
-            if( topic.topicId == getCurrentActiveTopic().topicId ) {
-                console.log( "2222" );
-                // note the active tab as the current
-                setActiveTab( newTab );
-                console.log( "activeTab set: " + JSON.stringify( activeTab ) );
-            
-                // render the resources fo this topic
-                // console.log( "rendering resources for topic: " + JSON.stringify( topic ) );
-                // console.log( " active topic: " + JSON.stringify( getCurrentActiveTopic() ) );
-                if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
-                    for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
-
-                        let currentResource = getCurrentActiveTopic().resources[i];
-                       
-                        // TODO: evaluate what are these two??? why are there 2?
-                        await createTextArea( i );
-        
-                        ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
-                        if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
-                                        
-                            let editor = "sunEditor" + ( i );
-
-                            ( debug ) ? console.log( sunEditor[editor] ) : null;
-                            sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
-                        }        
-                    }
-
-                    // remove the empty state
-                    emptyState.style.display = "none";
-                }
-            }
+            // create the workarea for the topic resources
+            topicEditor.id = "topic-editor";
+            topicEditor.setAttribute( "name", getCurrentActiveTopic().topicId );
+            topicEditor.className = "tabcontent";
 
 
-
-            // Update the GUI tabs
-            refreshTabs();
-
-
-            ( debug ) ? console.log( "createTopicsGui() : complete" ) : null;
         }
+
+
+        // for( let i=0; i < getCurrentWorkspace().topics.length; i++ ) {
+
+            
+    
+        //     // get the topic
+        //     let topic = getCurrentWorkspace().topics[i];
+        //     console.log( "just got the topic: " + JSON.stringify( topic ) );
+
+            
+
+
+
+        //     // create a tab for each topic
+        //     if ( lastTab == null ) {
+        //         ( debug ) ? console.log( "empty tab" ) : null;
+        //         // if there are no tabs, create the first one
+        //         let workspaceEmptyState = document.getElementById( "workspace-empty-state" );
+        //         workspaceEmptyState.parentNode.insertBefore( newTab, workspaceEmptyState.nextSibling );
+        //         workspaceEmptyState.style.display = "none";
+        //         document.getElementById( "topic-background" ).style.backgroundColor = "#3f3f3f";
+        //     }
+        //     else {
+        //         ( debug ) ? console.log( "non-empty tab" ) : null;
+        //         // add additional tab
+        //         lastTab.parentNode.insertBefore( newTab, lastTab.nextSibling );
+        //     }
+
+        //     // ------------------------------------------------
+        //     // Create drop zone at the top of the topic
+        //     let newDropZone = document.createElement( "div" );
+        //     newDropZone.classList.add( "drop-zone" );
+        //     newDropZone.classList.add( "first-dropzone" );
+
+        //     // Create drop zone filler div
+        //     let newDropZoneFiller = document.createElement( "div" );
+        //     newDropZoneFiller.className = "dropzone-filler";
+        //     newDropZone.appendChild( newDropZoneFiller );
+
+        //     // Create drop zone input
+        //     let newDropZoneInput = document.createElement( "input" );
+        //     newDropZoneInput.className = "drop-zone__input";
+        //     newDropZoneInput.type = "file";
+        //     newDropZone.appendChild( newDropZoneInput );
+        //     createDropZoneEventListeners( newDropZone, newDropZoneInput );
+        //     newDropZone.style.display = "none";
+        //     // ------------------------------------------------------
+
+        //     // -----------------------------------------------------
+        //     // Create drop zone that fills the entire topic empty state
+        //     let emptyDropZone = document.createElement( "div" );
+        //     emptyDropZone.classList.add( "drop-zone" );
+        //     emptyDropZone.classList.add( "empty-topic-dropzone" );
+
+        //     // Create drop zone filler div
+        //     let emptyDropZoneFiller = document.createElement( "div" );
+        //     emptyDropZoneFiller.className = "dropzone-filler";
+        //     emptyDropZone.appendChild( emptyDropZoneFiller );
+
+        //     // Create drop zone input
+        //     let emptyDropZoneInput = document.createElement( "input" );
+        //     emptyDropZoneInput.className = "drop-zone__input";
+        //     emptyDropZoneInput.type = "file";
+        //     emptyDropZone.appendChild( emptyDropZoneInput );
+        //     createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
+        //     // -------------------------------------------------------------
+
+        //     // Create all elements within a topic -----------------------------
+        //     let topicContent = document.createElement( "div" );
+        //     topicContent.className = "topic-content";
+
+        //     let topicDivider = document.createElement( "div" );
+        //     topicDivider.id = "topic-divider" + i   ;
+
+        //     resourcesZone = document.createElement( "div" );
+        //     resourcesZone.id = "resources-zone" + i;
+        //     resourcesZone.className = "resources-zone";
+
+        //     let emptyState = document.createElement( "div" );
+        //     emptyState.className = "empty-state";
+
+        //     let label1 = document.createElement( "label" );
+        //     label1.className = "empty-state-text";
+        //     let header = document.createElement( "h3" );
+        //     header.innerHTML = "Your Topic is Empty";
+        //     label1.appendChild( header );
+
+        //     let label2 = document.createElement( "label" );
+        //     label2.className = "empty-state-text";
+        //     label2.innerHTML = "Drop a file or tap the + above to get started!";
+        //     // --------------------------------------------------------------
+
+            
+
+        //     let currTabs = document.querySelector( ".tab" );
+        //     currTabs.appendChild( tabBtn );
+
+        //     // Append all elements accordingly
+        //     newTab.appendChild( topicContent );
+        //     //topicContent.appendChild( topicTitle );
+        //     // topicContent.appendChild( saveIcon );
+        //     topicContent.appendChild( topicDivider );
+        //     topicContent.appendChild( resourcesZone );
+        //     resourcesZone.appendChild( newDropZone );
+        //     resourcesZone.appendChild( emptyDropZone );
+        //     emptyDropZone.appendChild( emptyState );
+        //     emptyState.appendChild( label1 );
+        //     emptyState.appendChild( label2 );
+
+        //     // push the tab into the the tabs array
+        //     addTab( newTab );
+
+            
+
+        //     createNewActiveHeight();
+             
+        //     console.log( "current active topic : " + JSON.stringify( getCurrentActiveTopic() ) );
+
+        //     // iterate through the topic resources and create the editors for them if this is the active topic
+        //     console.log( "topic.topicId: " + topic.topicId + " current active topic: " + getCurrentActiveTopic().topicId );
+        //     if( topic.topicId == getCurrentActiveTopic().topicId ) {
+        //         console.log( "2222" );
+        //         // note the active tab as the current
+        //         setActiveTab( newTab );
+        //         console.log( "activeTab set: " + JSON.stringify( activeTab ) );
+            
+        //         // render the resources fo this topic
+        //         // console.log( "rendering resources for topic: " + JSON.stringify( topic ) );
+        //         // console.log( " active topic: " + JSON.stringify( getCurrentActiveTopic() ) );
+        //         if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
+        //             for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
+
+        //                 let currentResource = getCurrentActiveTopic().resources[i];
+                       
+        //                 // TODO: evaluate what are these two??? why are there 2?
+        //                 await createTextArea( i );
+        
+        //                 ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
+        //                 if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
+                                        
+        //                     let editor = "sunEditor" + ( i );
+
+        //                     ( debug ) ? console.log( sunEditor[editor] ) : null;
+        //                     sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
+        //                 }        
+        //             }
+
+        //             // remove the empty state
+        //             emptyState.style.display = "none";
+        //         }
+        //     }
+
+
+
+        //     // Update the GUI tabs
+        //     refreshTabs();
+
+
+        //     ( debug ) ? console.log( "createTopicEditorGui() : complete" ) : null;
+        // }
     }
     else {
-        ( debug ) ? console.log( "createTopicsGui() : no topics to update" ) : null;
+        ( debug ) ? console.log( "createTopicEditorGui() : no topics to update" ) : null;
     }
 
     
@@ -433,7 +493,7 @@ function createTextArea( i ) {
 
 
 
-export { updateWorkspaceDom, createTopicsGui, createTextArea };
+export { updateWorkspaceDom, createTopicEditorGui, createTextArea };
 
 
 /**
@@ -489,7 +549,7 @@ function refreshTabs( ) {
         tablinks[i].style.color = "white";
     }
 
-    resourcesZone = document.getElementById( "resources-zone" + activeTab.id.slice( -1 ) );
+    resourcesZone = document.getElementById( "resources-zone" + activeTab.id.split( "-" )[1] );
     //currentTagId = name.slice( -1 );
 
     // Show the current tab
