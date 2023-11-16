@@ -2,25 +2,19 @@
 
 ## Reporting Security Issues
 
-If you discover a security issue in this repository, please follow these steps to responsibly disclose it:
+If you discover any security issue in this repository, please adhear to the steps below:
 
-1. **Do not create a public GitHub issue.** Security vulnerabilities should not be publicly disclosed until they have been adequately addressed.
+1. **Do not create a public GitHub issue.** To help prevent a potential attack on Agora, we prefer notification of security vulnerabilities be sent directly to maintainors and not on publicly visible forms.
+  
+3. **Email**: Send an email to [brian@freeagora.org](mailto:brian@freeagora.org) with a description of the security issue and other information that can be used to help maintainors replicate the event. Use the subject line: `[Security Issue] <Description of the issue>`.
 
-2. **Email**: Send an email to [brian@freeagora.org](mailto:brian@freeagora.org) with a detailed description of the security issue. Use the subject line: `[Security Issue] <Brief description of the issue>`.
+4. **Response**: You can expect a response within 48 hours acknowledging receipt of your email.
 
-3. **Response**: You can expect a response to your report within 48 hours acknowledging receipt of your email.
-
-4. **Coordination**: We will work with you to assess the severity of the issue and, if applicable, to develop and test a patch.
+5. **Coordination**: We will work on, develop, and test a patch to ensure the security issue is not exploited.
 
 ## Security Updates
 
-We are committed to addressing security vulnerabilities promptly. When a security issue is reported and confirmed, we will:
-
-- Investigate and assess the issue's impact.
-- Develop and test a fix or patch.
-- Coordinate the release of the fix.
-
-We will do our best to provide regular updates on the progress of resolving the issue and an estimated timeline for the release of the fix.
+We will provide regular updates on the progress of resolving the issue and an estimated timeline for the release of the fix.
 
 ## Code of Conduct
 
@@ -28,7 +22,7 @@ We encourage all contributors, maintainers, and reporters to adhere to our [Code
 
 ## Acknowledgments
 
-We would like to thank the following individuals and organizations for their contributions to the security of this project:
+We would like to thank the students and staff that have worked on this project and all furter mainainers: 
 
 - [GitHub List](https://github.com/agorafoundation/agora/graphs/contributors)
 
