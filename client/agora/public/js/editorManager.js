@@ -174,7 +174,7 @@ const createTopicEditorGui = async function ( ) {
             // create the topic editor (the main workspace that contains the topics resources)
             let topicEditor = document.getElementById( 'topic-editor' );
             topicEditor.setAttribute( "name", getCurrentActiveTopic().topicId );
-            topicEditor.className = "tabcontent";
+            topicEditor.className = "tabcontent, topic-content";
 
             // // ------------------------------------------------
             // // Create drop zone at the top of the topic
@@ -222,21 +222,7 @@ const createTopicEditorGui = async function ( ) {
             resourcesZone.id = "resources-zone";
             resourcesZone.className = "resources-zone";
 
-            let emptyState = document.createElement( "div" );
-            emptyState.className = "empty-state";
 
-            let label1 = document.createElement( "label" );
-            label1.className = "empty-state-text";
-            let header = document.createElement( "h3" );
-            header.innerHTML = "Your Topic is Empty";
-            label1.appendChild( header );
-
-            let label2 = document.createElement( "label" );
-            label2.className = "empty-state-text";
-            label2.innerHTML = "Drop a file or tap the + above to get started!";
-            // --------------------------------------------------------------
-
-            
 
             // let currTabs = document.querySelector( ".tab" );
             // currTabs.appendChild( tabBtn );
@@ -256,17 +242,13 @@ const createTopicEditorGui = async function ( ) {
             // resourcesZone.appendChild( newDropZone );
             // resourcesZone.appendChild( emptyDropZone );
             // emptyDropZone.appendChild( emptyState );
-            emptyState.appendChild( label1 );
-            emptyState.appendChild( label2 );
 
             
 
             //createNewActiveHeight();
 
             if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
-                console.log( "1" );
                 for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
-                    console.log( "2" );
                     let currentResource = getCurrentActiveTopic().resources[i];
                        
                     // TODO: evaluate what are these two??? why are there 2?
@@ -282,10 +264,12 @@ const createTopicEditorGui = async function ( ) {
                     }        
                 }
 
-                // remove the empty state
-                emptyState.style.display = "none";
+                
             }
             
+            // since we have a topic, remove the empty state
+            let emptyState = document.getElementById( "workspace-empty-state" );
+            emptyState.style.display = "none";
 
         }
 
