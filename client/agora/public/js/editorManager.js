@@ -252,12 +252,12 @@ const createTopicEditorGui = async function ( ) {
                     let currentResource = getCurrentActiveTopic().resources[i];
                        
                     // TODO: evaluate what are these two??? why are there 2?
-                    await createTextArea( i );
+                    await createTextArea( getCurrentActiveTopic().resources[i] );
         
                     ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
                     if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
                                         
-                        let editor = "sunEditor" + ( i );
+                        let editor = "sunEditor-" + ( currentResource.resourceId );
 
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
@@ -452,7 +452,7 @@ const createTopicEditorGui = async function ( ) {
 
 
 
-function createTextArea( i ) {
+function createTextArea( resource ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
@@ -516,9 +516,9 @@ function createTextArea( i ) {
         let title = document.createElement( 'input' );
         title.type = "text";
         title.className = "drop-zone__title";
-        title.id = "input-title" + i;
-        if( name ){
-            title.value = name;
+        title.id = "input-title-" + resource.resourceId;
+        if( resource.resourceName ){
+            title.value = resource.resourceName;
         }
         else{
             title.value = "Untitled";
@@ -527,25 +527,25 @@ function createTextArea( i ) {
         // Edit icon
         let editIcon = document.createElement( 'span' );
         editIcon.setAttribute( "class", "material-symbols-outlined" );
-        editIcon.setAttribute( "id", "edit-icon" + i );
+        editIcon.setAttribute( "id", "edit-icon-" + resource.resourceId );
         editIcon.innerHTML = "edit";
         editIcon.style.display = "none";
 
         // Done icon
         let doneIcon = document.createElement( 'span' );
         doneIcon.setAttribute( "class", "material-symbols-outlined" );
-        doneIcon.setAttribute( "id", "done-icon" + i );
+        doneIcon.setAttribute( "id", "done-icon-" + resource.resourceId );
         doneIcon.innerHTML = "done";
 
         // New Tab
         let newTabIcon = document.createElement( 'span' );
         newTabIcon.setAttribute( "class", "material-symbols-outlined" );
-        newTabIcon.setAttribute( "id", "open-tab-icon" + i );
+        newTabIcon.setAttribute( "id", "open-tab-icon-" + resource.resourceId );
         newTabIcon.innerHTML = "open_in_new";
 
         // Suneditor textarea
         let sunEditor = document.createElement( "textarea" );
-        sunEditor.setAttribute( "id", "sunEditor" + i );
+        sunEditor.setAttribute( "id", "sunEditor-" + resource.resourceId );
 
         
 
@@ -583,7 +583,7 @@ function createTextArea( i ) {
 
     promise.then(
         ( ) => {
-            createSunEditor( i );
+            createSunEditor( resource.resourceId );
             
 
             ( debug ) ? console.log( "createTextArea() complete promise then (suneditor) completed" ) : null;
@@ -905,10 +905,10 @@ function checkActiveHeight() {
 let sunEditor = {};
 let sunEditorList = [];
 
-const createSunEditor = async( num ) => {
-    ( debug ) ? console.log( "createSunEditor() num: " + num ) : null;
+const createSunEditor = async( resourceId ) => {
+    ( debug ) ? console.log( "createSunEditor() num: " + resourceId ) : null;
     // eslint-disable-next-line no-undef
-    sunEditor["sunEditor"+ num] = [ num, SUNEDITOR.create( "sunEditor" + num, {
+    sunEditor["sunEditor-"+ resourceId] = [ resourceId, SUNEDITOR.create( "sunEditor-" + resourceId, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
         defaultTag: "p",
@@ -952,7 +952,7 @@ const createSunEditor = async( num ) => {
         },
     } ) ];
 
-    sunEditorList.push( sunEditor["sunEditor" + num] );
+    sunEditorList.push( sunEditor["sunEditor" + resourceId] );
     ( debug ) ? console.log( "createSunEditor() complete" ) : null;
     window.scrollTo( 0, 0 );
 };

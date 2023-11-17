@@ -42,22 +42,38 @@ window.addEventListener( "load", async () => {
     // render the topics for the workspace
     createTopicEditorGui();
 
-   
-
-    
-
-    // render the current tabs resources
-    //updateResourcesDom();
-
-
-    // // fetch the workspace
-    // await fetchWorkspace();
-    // console.log( "about to run getTags" );
-    // getTags();
-    // console.log( "about to run render topics" );
-    // renderTopics();
     ( debug ) ? console.log( "window load event: complete" ) : null;
 } );
+
+
+
+const openBtn = document.getElementById( "new-element" );
+if( openBtn ) {
+    ( debug ) ? console.log( "New Topic: start" ) : null;
+
+    openBtn.onclick = async () => {
+        //modal.style.display = "block";
+        let tname = prompt( "Enter a name for your new Topic" );
+        //console.log( 'Took input from prompt' );
+
+        console.log( "main click event - createResource() call" );
+        const newResource = await createResource( null, 1, null, null );
+        console.log( "newResource: " + JSON.stringify( newResource ) );
+
+        console.log( "main click event - createTopic() call" );
+        const newTopic = await createTopic( null, tname );
+        console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+        // render the resource text area
+        createTextArea();
+        
+        numTopics++;
+
+        // this is where i should call updateTopic sending the topic id retrieved from createTopic??
+        
+    };
+    ( debug ) ? console.log( "New topic: complete" ) : null;
+}
 
 
 
