@@ -30,4 +30,9 @@ router.route( '/shareworkspace' )
     } 
     );
 
+router.route( '/updatePermission' )
+    .post( ( req, res ) => {
+        sharedController.updatePermission ( req, res );
+    })
+
 module.exports = router;
