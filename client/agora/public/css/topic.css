@@ -6,7 +6,6 @@
 .topic-content {
     width: 100%;
     justify-content: center;
-    border-radius: 20px;
     border:1px solid lightgray;
     background-color: white;
   }

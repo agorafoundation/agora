@@ -469,7 +469,7 @@ function createTextArea( resource ) {
         // Create drop zone
         let newDropZone = document.createElement( "div" );
         newDropZone.className = "drop-zone-new";
-        newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
+        newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
         newDropZone.addEventListener( "click", async () => {
             ( debug ) ? console.log( "createTextArea - Promise - createResource() call" ) : null;
 
