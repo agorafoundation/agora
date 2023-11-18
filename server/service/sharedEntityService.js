@@ -37,24 +37,42 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
 
 };
 
-exports.getAllSharedEntitiesByEntityId = async ( entityId ) => {
-    let text = "SELECT * FROM shared_entities WHERE entity_id = $1";
-    const values = [ entityId ];
+exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
+    let text = `
+        SELECT
+            se.entity_id,
+            se.entity_type,
+            se.shared_by_user_id,
+            se.shared_with_user_id,
+            se.permission_level,
+            u.email,
+            u.username,
+            u.profile_filename,
+            u.first_name,
+            u.last_name
+        FROM shared_entities se
+        INNER JOIN users u ON se.shared_with_user_id = u.user_id
+        WHERE se.entity_id = $1
+          AND se.entity_type = 'workspace'
+    `;
+    const values = [ workspaceId ];
 
     try {
-        let sharedEntities = [];
+        let sharedUsers = [];
 
         let res = await db.query( text, values );
         if ( res.rowCount > 0 ) {
             // Convert the retrieved rows into SharedEntity objects and add them to the sharedEntities array
             res.rows.forEach( ( row ) => {
-                sharedEntities.push( SharedEntity.ormSharedEntity( row ) );
+                sharedUsers.push( SharedEntity.ormSharedEntity( row ) );
             } );
         }
-        return sharedEntities;
+        return sharedUsers;
     }
     catch ( e ) {
         console.log( e.stack );
+        // Handle the error and return an empty array or null
+        return null;
     }
 };
 

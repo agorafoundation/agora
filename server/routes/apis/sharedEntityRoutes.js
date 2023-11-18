@@ -30,4 +30,10 @@ router.route( '/shareworkspace' )
     } 
     );
 
+router.route( '/shared-entity/:entityId' )
+    .get( ( req, res ) => {
+        sharedController.getAllSharedUsersByWorkspaceId( req, res );    
+    }   
+    );
+
 module.exports = router;

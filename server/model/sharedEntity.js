@@ -63,5 +63,10 @@ exports.ormSharedEntity = function ( row ) {
     sharedEntity.canCopy = row.can_copy;
     sharedEntity.createTime = row.create_time;  
     sharedEntity.updateTime = row.update_time;  
+    sharedEntity.email = row.email;
+    sharedEntity.username = row.username;
+    sharedEntity.profile_filename = row.profile_filename;
+    sharedEntity.first_name = row.first_name;
+    sharedEntity.last_name = row.last_name;
     return sharedEntity;
 };

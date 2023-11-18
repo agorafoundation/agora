@@ -285,7 +285,7 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
  * @returns workspace with topics
  */
 exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActive ) => {
-    console.log( "Getting Workspaces...." );
+    //console.log( "Getting Workspaces...." );
     let text = "";
     let values = [];
     if ( !isActive ) {

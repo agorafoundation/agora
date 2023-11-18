@@ -209,6 +209,31 @@ exports.sharedWorkspace = async ( req, res ) => {
     }
 };
 
+exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
+    const workspaceId = req.params.entityId;
+
+    try {
+        // Fetch all shared entities related to the given workspace ID
+        const sharedEntities = await sharedEntityService.getAllSharedUsersByWorkspaceId( workspaceId );
+
+        if ( sharedEntities ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned shared entities by workspace id" );
+            res.status( 200 ).json( sharedEntities );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Shared entities not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Shared entities not found" );
+            res.status( 404 ).json( message );
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+        // Handle the error and send an appropriate response
+    }
+};
+
 exports.getAllSharedEntityUsers = async ( req, res ) => {
     try {
         // You need to get the entity ID from the request, assuming it's provided in req.params or req.query

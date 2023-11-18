@@ -1303,7 +1303,7 @@ const idAndFetch = () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                shareButton( response );
+                sharedUsers( response );
                 fillFields(
                     response.workspaceName,
                     response.workspaceDescription,
@@ -1312,6 +1312,7 @@ const idAndFetch = () => {
             } );
     }
 };
+
 
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
@@ -1343,7 +1344,83 @@ const getTags = async () => {
     }
 };
 
-const shareButton = async ( workspace ) => {
+
+const sharedUsers = async ( workspace ) => {
+    const workspaceId = workspace.workspaceId;
+      
+    try {
+        // Fetch shared entities for the workspace
+        const sharedUsersResponse = await fetch( "/api/v1/auth/shared/shared-entity/" + workspaceId, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } );
+      
+        // Fetch workspace owner information
+        const workspaceOwnerResponse = await fetch( "/api/v1/auth/user/userId/" + workspace.ownedBy, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } );
+      
+        if ( workspaceOwnerResponse.ok ) {
+            const workspaceOwner = await workspaceOwnerResponse.json();
+            console.log( workspaceOwner );
+      
+            if ( sharedUsersResponse.ok ) {
+                const sharedEntities = await sharedUsersResponse.json();
+      
+                // Create an array to hold the shared users and owner
+                const sharedUsers = sharedEntities.map( ( entity ) => ( {
+                    name: entity.first_name + " " + entity.last_name,
+                    pfp: entity.profile_filename,
+                    status: entity.permissionLevel.charAt( 0 ).toUpperCase() + entity.permissionLevel.slice( 1 ), // Capitalize the first letter
+                    email: entity.email,
+                } ) );
+      
+                // Create an object for the owner
+                const owner = {
+                    name: workspaceOwner.first_name + " " + workspaceOwner.last_name,
+                    pfp: workspaceOwner.profileFilename,
+                    status: "Owner",
+                    email: workspaceOwner.email,
+                };
+      
+                // Combine owner and shared users into a single array
+                const allUsers = [ owner, ...sharedUsers ];
+      
+                // Update the UI to display sharedUsers data in the profiles-list
+                const profilesList = document.getElementById( "profiles-list" );
+                profilesList.innerHTML = ""; // Clear existing content
+      
+                allUsers.forEach( ( profile ) => {
+                    const li = document.createElement( "li" );
+                    li.className = "profile-shared-with";
+      
+                    li.innerHTML = `
+                  <div class="profile-status-container">
+                    <img class="shared-profile-picture" src="/assets/uploads/profile/${profile.pfp}">
+                    <div class="profile-info">
+                      <span class="profile-name">${profile.name}</span>
+                      <span class="profile-email">${profile.email}</span>
+                    </div>
+                    <span class="profile-status">${profile.status}</span>
+                  </div>
+                `;
+      
+                    profilesList.appendChild( li );
+                } );
+            }
+            else {
+                console.error( "Unable to retrieve shared users." );
+            }
+        }
+        else {
+            console.error( "Unable to retrieve workspace owner." );
+        }
+    }
+    catch ( error ) {
+        console.error( error );
+    }
+      
     let name = document.getElementById( "share-modal-title" );
     name.textContent = `Share "${workspace.workspaceName}"`;
 };
