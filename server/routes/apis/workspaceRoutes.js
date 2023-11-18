@@ -67,6 +67,11 @@ router.route( '/topics/:workspaceId' )
     }
     );
 
+router.route( '/topics/shared/:workspaceId' ) // In Progress.
+    .get( async ( req, res ) => {
+        workspaceController.getAllTopicsForSharedWorkspaceId( req, res );
+    } );
+
 // enrollment management
 router.route( '/enroll/:userId/:workspaceId' )
     // enroll an eligible user in a visibile workspace

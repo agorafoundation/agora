@@ -114,6 +114,54 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
                     resourcesList.push( resource );
                 }
                 else {
+                    console.log( "Error retrieving resource:  " + resourceIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( resourcesList );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+        }
+    }
+    
+};
+
+exports.getAllResourcesForSharedTopicId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+
+    if( authUserId ){
+
+        // Check if valid topicId given.
+        let topic = await topicService.getSharedTopicById( req.params.topicId );
+        if( topic ) {
+
+            let resourcesList = [];
+
+            // Get all resource Ids associated with our topicId.
+            let resourceIds = await topicService.getAllResourceIdsFromTopic( topic.topicId );
+
+            // Grab each resource by id and append it to our list of resources.
+            for ( let index in resourceIds ) {
+                let resource = await resourceService.getResourceById( resourceIds[index], authUserId );
+
+                if ( resource ){ // Ensure retrieval of resource.
+                    console.log( resource );
+                    resourcesList.push( resource );
+                }
+                else {
                     console.log( "Error retrieving resource " + resourceIds[index] + "\n" );
                 }
             }
@@ -145,6 +193,45 @@ exports.getTopicById = async ( req, res ) => {
 
     if( authUserId ){
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
+        if( topic ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned topic by id" );
+            res.status( 200 ).json( topic );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Topic not found" );
+            res.status( 404 ).json( message );
+        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 401, "Unauthorized", "Unauthorized user" );
+        res.set( "x-agora-message-title", "Unauthorized" );
+        res.set( "x-agora-message-detail", "Unauthorized user" );
+        res.status( 401 ).json( message );
+    }
+
+    // topic file path
+    // const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
+
+};
+
+
+exports.getSharedTopicById = async ( req, res ) => {
+    // get the auth user id from either the basic auth header or the session
+    console.log( "t-2" );
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+    console.log( "auth user id: " + authUserId );
+
+    if( authUserId ){
+        let topic = await topicService.getSharedTopicById( req.params.topicId, authUserId );
         if( topic ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned topic by id" );

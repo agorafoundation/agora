@@ -62,6 +62,12 @@ router.route( '/resources/:topicId' )
     }
     );
 
+router.route( '/resources/shared/:topicId' )
+    .get( async ( req, res ) => {
+        topicController.getAllResourcesForSharedTopicId( req, res );
+    }
+    );
+
 router.route( '/visible' ) // In Progress.
     .get ( async ( req, res ) => {
         topicController.getAllPublicTopics( req, res );

@@ -44,7 +44,7 @@ exports.getDashboard = async function ( req, res ) {
                 sharedWorkspaces[i].topics.push( topics );
             }
             else {
-                console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                console.log( "Error retrieving resource:  " + topicsIds[index] + "\n" );
             }
         }
 

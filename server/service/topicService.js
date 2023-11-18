@@ -219,6 +219,26 @@ exports.getTopicById = async function( topicId, ownerId ) {
     }
 };
 
+exports.getSharedTopicById = async function( topicId ) {
+    let text = "SELECT * FROM topics WHERE topic_id = $1";
+    let values = [ topicId ];
+    try {
+        let topic = "";
+         
+        let res = await db.query( text, values );
+        if( res.rowCount > 0 ) {
+            topic = Topic.ormTopic( res.rows[0] );
+                  
+        }
+        return topic;
+        
+    }
+    catch( e ) {
+        console.log( "[ERR]: Error [Topic] - get all topic by id - " + e );
+        return false;
+    }
+};
+
 /**
  * Retrieves all topics created by a particular owner
  * @param {Integer} ownerId - Id of the topic owner
@@ -348,6 +368,7 @@ exports.getTopicWithEverythingById = async function( topicId, isActive ) {
             for( let i=0; i < res6.rowCount; i++ ) {
 
                 resources.push( Resource.ormResource( res6.rows[i] ) );
+                console.log( Resource.ormResource( res6.rows[i] ) );
 
             }
             topic.resources = resources;
