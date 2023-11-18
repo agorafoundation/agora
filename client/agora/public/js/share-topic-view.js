@@ -1267,6 +1267,9 @@ const prefixPattern = /#t/;
 //const idPattern = /-([0-9]+)/;
 const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
+const shareButton = document.getElementById( "share-button" );
+const shareInput = document.getElementById( "share-input" );
+
 const getPrefixAndId = () => {
 
     const url = window.location.href;
@@ -1364,6 +1367,48 @@ const sharedUsers = async ( workspace ) => {
         if ( workspaceOwnerResponse.ok ) {
             const workspaceOwner = await workspaceOwnerResponse.json();
             console.log( workspaceOwner );
+
+            shareButton.addEventListener('click', () => {
+                const selectedPermission = document.getElementById( "permissions" ).value;
+                fetch("/api/v1/auth/user/email/" + shareInput.value, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                })
+
+                .then( ( response ) => response.json() )
+                    .then( ( response ) =>  {
+                        if( response.status != 404 ){
+                            fetch("/api/v1/auth/shared/shareworkspace", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify( {
+                                    "entityId": workspaceId,
+                                    "sharedWithUserId": response.userId,
+                                    "permissionLevel": selectedPermission,
+                                    "canCopy": false
+                                })
+                            })
+                            .then( ( response ) => {
+                                if (response.status == 200){
+                                    const message = 'Workspace shared successfully.';
+                                    console.log( message );
+                                    alert( message );
+                                    location.reload();
+                                }
+                                else{
+                                    const errorMessage = 'Failed to share workspace.';
+                                    console.error( errorMessage );
+                                    alert( errorMessage );
+                                }
+                            })
+                        }
+                        else{
+                            const errorMessage = 'User not found.';
+                            console.error( errorMessage );
+                            alert( errorMessage );
+                        }
+                    } );
+            });
       
             if ( sharedUsersResponse.ok ) {
                 const sharedEntities = await sharedUsersResponse.json();
