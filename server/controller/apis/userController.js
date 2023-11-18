@@ -11,16 +11,24 @@ const userService = require( '../../service/userService' );
 // import models
 const User = require( '../../model/user' );
 
+// import util Models
+const ApiMessage = require( '../../model/util/ApiMessage' );
+
 
 exports.getUserByEmail = async function( req, res ) {
-    res.setHeader( 'Content-Type', 'text/html' );
-    var email = req.params.email;
-
-    userService.getUserByEmail( email ).then( ( user ) => {
-
-        res.setHeader( 'Content-Type', 'application/json' );
-        res.send( user );
-    } );
+    let user = await userService.getUserByEmail( req.params.email )
+    if ( user ) {
+        console.log(user);
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned user by email" );
+        res.status( 200 ).json( user );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "User not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "User not found" );
+        res.status( 404 ).json( message );
+    }
 };
 
 exports.getUserByUsername = async function( req, res ) {

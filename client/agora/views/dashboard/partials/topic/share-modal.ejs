@@ -3,8 +3,14 @@
         <div class="modal-content" style="border-radius: 10px; box-shadow: 3px rgba(0.5,0.5,0.5,0.5);">
             <div class="modal-header" style="display: flex; flex-direction: column;">
                 <h5 class="share-modal-title" id="share-modal-title"></h5>
-                <input class="share-modal-input" placeholder="Enter email address"></input>
-                <button class="btn btn-share share-with-user"> Share Workspace </button>
+                <input class="share-modal-input" id="share-input" placeholder="Enter email address"></input>
+                <label for="permissions">Choose a permission:</label>
+                <select id="permissions" name="permissions">
+                    <option value="edit">Edit</option>
+                    <option value="view">View</option>
+                </select>
+                <button class="btn btn-share share-with-user" id="share-button"> Share Workspace </button>
+                
                 <hr class="permissions-hr">
             </div>
             <div class="modal-body">
