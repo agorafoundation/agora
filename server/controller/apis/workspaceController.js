@@ -126,6 +126,51 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
                     topicsList.push( topics );
                 }
                 else {
+                    console.log( "Error retrieving resource:  " + topicsIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( topicsList );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError( "Topic", res ) );
+        }
+    }
+
+};
+
+exports.getAllTopicsForSharedWorkspaceId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if ( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+
+    if ( authUserId ) {
+        // Check if valid workspaceId given.
+        let workspace = await workspaceService.getSharedWorkspaceByID( req.params.workspaceId );
+        if ( workspace ) {
+
+            let topicsList = [];
+            // Get all topics Ids associated with our workspaceId.
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
+
+            // Grab each topic by id and append it to our list of topics
+            for ( let index in topicsIds ) {
+                let topics = await topicService.getSharedTopicById( topicsIds[index] );
+
+                if ( topics ) { // Ensure retrieval of topics
+                    topicsList.push( topics );
+                }
+                else {
                     console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
                 }
             }

@@ -261,3 +261,42 @@ exports.getAllSharedEntityUsers = async ( req, res ) => {
         res.status( 500 ).json( { message: error.message } );
     }
 };
+
+exports.updatePermission = async ( req, res ) => {
+    try{
+        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
+        if ( !authUserId ) {
+            return res.status( 403 ).json( { message: 'User not authenticated' } );
+        }
+        // Fetch user details from the User model
+        const sharingUser = await userService.getActiveUserById( authUserId );
+        if ( !sharingUser ) {
+            return res.status( 404 ).json( { message: 'User not found' } );
+        }
+
+        const workspaceId = req.body.entityId;
+
+        // Verify's the owner of the workspace
+        const workspace = await workspaceService.getWorkspaceById( workspaceId );
+        if ( !workspace ) {
+            return res.status( 404 ).json( { message: 'Workspace not found' } );
+        }
+        if ( workspace.ownedBy !== sharingUser.userId ) {
+            return res.status( 403 ).json( { message: 'Unauthorized: You do not own this workspace' } );
+        }
+
+        const sharedEntity = await sharedEntityService.getSharedEntityByUserId( workspaceId, req.body.sharedUserId );
+
+        sharedEntity.permission_level = req.body.permissionLevel;
+
+        const sharedEntityId = await sharedEntityService.updatePermission( sharedEntity );
+
+        // Send success response
+        res.status( 200 ).json( { message: 'Permission updated successfully for ', sharedEntityId } );
+
+    }
+    catch ( error ) {
+        // Handle any other errors 
+        res.status( 500 ).json( { message: error.message } );
+    }
+}

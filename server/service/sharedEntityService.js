@@ -27,8 +27,11 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
             sharedEntity = SharedEntity.ormSharedEntity( res.rows[0] );
+            return sharedEntity;
         }
-        return sharedEntity;
+        else{
+            return false;
+        }
     
     }
     catch( e ) {
@@ -66,6 +69,29 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
             res.rows.forEach( ( row ) => {
                 sharedUsers.push( SharedEntity.ormSharedEntity( row ) );
             } );
+            return sharedEntities;
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
+    let text = "SELECT * FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
+    const values = [ entityId, sharedUserId ];
+
+    try {
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            return res.rows[0];
+        }
+        else{
+            return false;
+        }
         }
         return sharedUsers;
     }
@@ -75,6 +101,26 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
         return null;
     }
 };
+
+exports.updatePermission = async ( sharedEntity ) => {
+    if ( sharedEntity ) {
+        let text = "UPDATE shared_entities SET permission_level = $1 WHERE entity_id = $2 AND shared_with_user_id = $3 RETURNING shared_entity_id";
+        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id];
+
+        try{
+            let res = await db.query( text, values );
+            if ( res.rowCount > 0){
+                return res.rows[0].shared_entity_id;
+            }
+            else{
+                return false;
+            }
+        }
+        catch ( e ){
+            console.log( e.stack );
+        }
+    }
+}
 
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 

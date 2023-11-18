@@ -40,7 +40,7 @@ router.route( '/shared' )
     } );
 
 router.route( '/shared/:workspaceId' )
-    //get all shared workspaces
+    //get a shared workspace by ID
     .get( async ( req, res ) => {
         workspaceController.getSharedWorkspaceByID( req, res );
     } );
@@ -66,6 +66,11 @@ router.route( '/topics/:workspaceId' )
         workspaceController.getAllTopicsForWorkspaceId( req, res );
     }
     );
+
+router.route( '/topics/shared/:workspaceId' ) // In Progress.
+    .get( async ( req, res ) => {
+        workspaceController.getAllTopicsForSharedWorkspaceId( req, res );
+    } );
 
 // enrollment management
 router.route( '/enroll/:userId/:workspaceId' )
