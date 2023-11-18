@@ -93,8 +93,6 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
             return false;
         }
         }
-        return sharedUsers;
-    }
     catch ( e ) {
         console.log( e.stack );
         // Handle the error and return an empty array or null
