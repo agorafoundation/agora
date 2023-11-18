@@ -27,7 +27,7 @@ exports.callOpenAI = async ( req, res ) => {
     let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
 
     if ( resourceContent ) {
-        let parsedResourceContent = parseResourceContentHtml( resourceContent );
+        let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
             let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
