@@ -7,7 +7,7 @@ import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clie
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = false;
+const dataDebug = true;
 
 
 /**
@@ -90,6 +90,40 @@ const setActiveTopicAndResources = async function ( topicId ) {
     ( debug ) ? console.log( "setActiveTopicAndResources() : Complete" ) : null;
 };
 
+const addNewTopic = async function ( topicName ) {
+    ( debug ) ? console.log( "addNewTopic() : Start - topicName: " + topicName ) : null;
+    // create an empty resource
+    // let resource = resourceModel;
+    // resource.resourceName = "Untitled";
+    // resource = await saveResource( resource );
+    // console.log( "saved resource: " + JSON.stringify( resource ) );
+
+    if( getCurrentWorkspace() ) {
+    // create a new topic
+        let newTopic = topicModel;
+        newTopic.topicName = topicName;
+
+        // save the topic
+        newTopic = await saveTopic( newTopic, null );
+
+        // add the topic to the current workspace
+        await getCurrentWorkspace().topics.push( newTopic );
+
+        // save the current workspace
+        await saveWorkspace( getCurrentWorkspace() );
+
+        
+        ( debug ) ? console.log( "addNewTopic() : Complete" ) : null;
+        return newTopic;
+    }
+    else {
+        ( debug ) ? console.log( "addNewTopic() : Error - No current workspace" ) : null;
+        return null;
+    }
+    
+
+};
+
 /*--------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------*/
 
@@ -134,7 +168,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic};
 
 // Export GUI state
 export { tabs, activeTab };

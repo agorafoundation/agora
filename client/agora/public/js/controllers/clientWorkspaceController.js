@@ -30,29 +30,42 @@ const workspaceModel = {
     tags: []
 };
 
-const saveWorkspace = async( workspace, topicIds ) => {
-    console.log( 'saveWorkspace()' );
-    const topicsList = Object.values( topicIds );
+const saveWorkspace = async( workspace ) => {
+    ( debug ) ? console.log( "saveWorkspace() : Start" ) : null;
 
-    // if passed, add the topicIds to the workspace object
-    if( topicIds ) {
-        workspace.topics = topicsList;
+    // prepare the topics as an array of uuids
+    let topicUuids = [];
+    if( workspace.topics ) {
+        workspace.topics.forEach( topic => {
+            topicUuids.push( topic.topicId );
+        } );
     }
 
-    //const [ isTopic, workspaceId ] = getPrefixAndId();
-    // let name = document.getElementById( "workspace-title" ).value;
-    // let description = document.getElementById( "workspace-desc" ).value;
+    if( workspace ) {
+        const response = await fetch( "api/v1/auth/workspaces", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "workspaceId": workspace.workspaceId,
+                "workspaceName":  workspace.workspaceName,
+                "workspaceDescription": workspace.workspaceDescription,
+                "topics": topicUuids,
+                "active": true,
+                "visibility": "private"
+            } )
+        } );
 
-    const response = await fetch( "api/v1/auth/workspaces", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( workspace )
-    } );
-
-    if( response.ok ) {
-        const data = await response.json();
-        ( debug ) ? console.log( "saveWorkspace() : Workspace created + Response: " + JSON.stringify( data ) ) : null;
-        return data;
+        if( response.ok ) {
+            const data = await response.json();
+            
+            ( debug ) ? console.log( "saveWorkspace() workspace saved : " + JSON.stringify( data ) ) : null;
+            ( debug && dataDebug ) ? console.log( "saveWorkspace() : Workspace created" ) : null;
+            return data;
+        }
+    }
+    else {
+        ( debug ) ? console.log( "saveWorkspace() : Error - no workspace passed" ) : null;
+        return null;
     }
 
     // const response = await fetch( "api/v1/auth/workspaces", {
