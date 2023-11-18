@@ -105,7 +105,7 @@ const parseResourceContentHtml = ( content ) => {
 
     // removing all html tags in individual strings
     for ( var i = 0; i < paragraphs.length; i++ ) {
-        paragraphs[i] = paragraphs[i].replace( /<[^>]*>/g, '' ).trim();
+        paragraphs[i] = parseOutHtmlTags( paragraphs[i] );
     }
 
     // shifting array to ignore first empty string
@@ -113,6 +113,10 @@ const parseResourceContentHtml = ( content ) => {
 
     // filter out all paragraphs with length less than min
     return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
+};
+
+const parseOutHtmlTags = ( text ) => {
+    return text.replace( /<[^>]*>/g, '' ).trim();
 };
 
 /** 
