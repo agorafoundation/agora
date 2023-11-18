@@ -162,7 +162,7 @@ exports.saveCopiedEntity = async ( req, res ) => {
 //Share workspace 
 exports.sharedWorkspace = async ( req, res ) => {
     try {
-        // authenticate the user sharing 
+        // Authenticate the user sharing 
         let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
         if ( !authUserId ) {
             return res.status( 403 ).json( { message: 'User not authenticated' } );
@@ -175,11 +175,16 @@ exports.sharedWorkspace = async ( req, res ) => {
         }
 
         const workspaceId = req.body.entityId;
-        const sharedWithUserId = req.body.sharedWithUserId;
-        const permissionLevel = req.body.permissionLevel;
-        const canCopy = req.body.canCopy;
+        const sharedWithEmail = req.body.sharedWithEmail;  // Email is passed in the body
 
-        // Verify's the owner of the workspace
+        // Fetch the user ID from the email
+        const sharedWithUser = await userService.getUserByEmail( sharedWithEmail );
+        if ( !sharedWithUser ) {
+            return res.status( 404 ).json( { message: 'User to share with not found' } );
+        }
+        const sharedWithUserId = sharedWithUser.userId;
+
+        // Verify the owner of the workspace
         const workspace = await workspaceService.getWorkspaceById( workspaceId );
         if ( !workspace ) {
             return res.status( 404 ).json( { message: 'Workspace not found' } );
@@ -188,26 +193,27 @@ exports.sharedWorkspace = async ( req, res ) => {
             return res.status( 403 ).json( { message: 'Unauthorized: You do not own this workspace' } );
         }
 
-        // Share the workspace
+        // Share the workspace with view permission and cannot copy
         const sharedEntity = {
             entityId: workspaceId,
             entityType: 'workspace',
             shareUserId: sharedWithUserId,
             ownerUserId: sharingUser.userId,
-            permissionLevel: permissionLevel,
-            canCopy: canCopy
+            permissionLevel: 'view',  // Hardcoded view permission
+            canCopy: false            // Hardcoded cannot copy
         };
 
         const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
 
         // Send success response
-        res.status( 200 ).json( { message: 'Workspace shared successfully', sharedEntityId } );
+        res.status( 200 ).json({ message: 'Workspace shared successfully', sharedEntityId } );
     } 
     catch ( error ) {
         // Handle any other errors 
         res.status( 500 ).json( { message: error.message } );
     }
 };
+
 
 exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
     const workspaceId = req.params.entityId;
