@@ -53,8 +53,8 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
             u.profile_filename,
             u.first_name,
             u.last_name
-        FROM shared_entities se
-        INNER JOIN users u ON se.shared_with_user_id = u.user_id
+        FROM shared_entities AS se
+        INNER JOIN users AS u ON se.shared_with_user_id = u.user_id
         WHERE se.entity_id = $1
           AND se.entity_type = 'workspace'
     `;
@@ -69,7 +69,7 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
             res.rows.forEach( ( row ) => {
                 sharedUsers.push( SharedEntity.ormSharedEntity( row ) );
             } );
-            return sharedEntities;
+            return sharedUsers;
         }
         else{
             return false;

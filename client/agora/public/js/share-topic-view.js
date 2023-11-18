@@ -1378,7 +1378,7 @@ const sharedUsers = async ( workspace ) => {
       
                 // Create an object for the owner
                 const owner = {
-                    name: workspaceOwner.first_name + " " + workspaceOwner.last_name,
+                    name: workspaceOwner.firstName + " " + workspaceOwner.lastName,
                     pfp: workspaceOwner.profileFilename,
                     status: "Owner",
                     email: workspaceOwner.email,
