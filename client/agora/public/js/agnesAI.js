@@ -208,6 +208,8 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
     var selectedValue = this.value; // This is either set to "notes" or "paper"
     var selectedContent = document.getElementById( 'selectedContent' );
 
+    if ( selectedValue != 'notes' && selectedValue != 'paper' ) return;
+
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
