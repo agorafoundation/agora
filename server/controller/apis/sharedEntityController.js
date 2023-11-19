@@ -225,6 +225,54 @@ exports.sharedWorkspace = async ( req, res ) => {
     }
 };
 
+exports.removeUserFromWorkspaceByEmail = async ( req, res ) => {
+    try {
+        // Authenticate the user making the request
+        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
+        if ( !authUserId ) {
+            return res.status( 403 ).json( { message: 'User not authenticated' } );
+        }
+
+        // Fetch user details of the requester
+        const requestingUser = await userService.getActiveUserById( authUserId );
+        if ( !requestingUser ) {
+            return res.status( 404 ).json( { message: 'User not found' } );
+        }
+
+        // Get workspace ID and email of the user to be removed from the request body
+        const workspaceId = req.body.entityId;
+        const emailToRemove = req.body.emailToRemove;
+
+        // Verify the owner of the workspace
+        const workspace = await workspaceService.getWorkspaceById( workspaceId );
+        if ( !workspace ) {
+            return res.status( 404 ).json( { message: 'Workspace not found' } );
+        }
+        if ( workspace.ownedBy !== requestingUser.userId ) {
+            return res.status( 403 ).json( { message: 'Unauthorized: You are not the owner of this workspace' } );
+        }
+
+        // Prevent owner from removing themselves
+        if ( requestingUser.email === emailToRemove ) {
+            return res.status( 403 ).json( { message: 'You cannot remove yourself from the workspace' } );
+        }
+
+        // Call the service function to remove the user
+        const removalSuccess = await sharedEntityService.removeUserByEmailFromWorkspace( workspaceId, emailToRemove );
+        if ( !removalSuccess ) {
+            return res.status( 404 ).json( { message: 'Error removing user from workspace or user not found' } );
+        }
+
+        // Send success response
+        res.status( 200 ).json( { message: 'User removed from workspace successfully' } );
+    } 
+    catch ( error ) {
+        // Handle any other errors 
+        res.status( 500 ).json( { message: error.message } );
+    }
+};
+
+
 
 exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
     const workspaceId = req.params.entityId;
@@ -339,3 +387,4 @@ exports.updatePermission = async ( req, res ) => {
         res.status( 500 ).json( { message: error.message } );
     }
 };
+

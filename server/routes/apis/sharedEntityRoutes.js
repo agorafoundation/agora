@@ -45,6 +45,12 @@ router.route( '/shared-entity/:entityId' )
 router.route( '/updatePermission' )
     .post( ( req, res ) => {
         sharedController.updatePermission ( req, res );
-    } );
-
+    } 
+    );
+    
+router.route( '/removeUserFromWorkspaceByEmail' )
+    .post( ( req, res ) => {
+        sharedController.removeUserFromWorkspaceByEmail( req, res );
+    } 
+    );
 module.exports = router;
