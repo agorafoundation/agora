@@ -166,14 +166,20 @@ const addNewTextResource = async function ( ) {
 
 function saveTextResource( resource, content ) {
     ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
+    if ( resource ) {
+        // update the resource title
+        resource.resourceName = document.getElementById( "input-title-" + resource.resourceId ).value;
 
-    // update the resource content
-    resource.resourceContent = content;
+        // update the resource content
+        resource.resourceContentHtml = content;
 
-    // save the resource
-    saveResource( resource );
+        // save the resource
+        saveResource( resource );
 
+        
+    }
     ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
+    
 }
 
 /*--------------------------------------------------------------------------------*/
