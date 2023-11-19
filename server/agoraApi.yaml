@@ -1442,6 +1442,245 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /friends/get-friends/{userId}:
+    get:
+      summary: Get all friends
+      description: Retrieve all friends for a specific user.
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user to retrieve friends for.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Returned all Friends"
+                friends:
+                  - userId: "123"
+                    username: "friend1"
+                  - userId: "456"
+                    username: "friend2"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/request:
+    post:
+      tags:
+        - Friending
+      summary: Send a friend request
+      requestBody:
+        description: Send a friend request to another user.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Sent"
+                result: "Success"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/accept/{friendship_id}:
+    post:
+      summary: Accept a friend request
+      description: Accept a friend request from another user.
+      parameters:
+        - name: friendship_id
+          in: path
+          description: The ID of the friend request to accept.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Accepted"
+                result: "Success"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/deny/{friendship_id}:
+    post:
+      summary: Deny a friend request
+      description: Deny a friend request from another user.
+      parameters:
+        - name: friendship_id
+          in: path
+          description: The ID of the friend request to deny.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Denied"
+                result: "Success"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/delete:
+    delete:
+      tags:
+        - Friending
+      summary: Delete a friend by ID
+      description: Remove a friend by their friendship ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friendshipId:
+                  type: string
+              required:
+                - friendshipId
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Removed friend"
+                result: "Success"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError" 
+  /friends/unaccepted:
+    get:
+      summary: Get unaccepted friend requests
+      description: Retrieve a list of unaccepted friend requests for the authenticated user.
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Returned all non friends"
+                data:
+                  - friendRequest1
+                  - friendRequest2
+                  - friendRequest3
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/unread-count:
+    get:
+      tags:
+        - Friending
+      summary: Get unread friend request count
+      description: Retrieve the count of unread friend requests for the authenticated user.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Count received"
+                data: 5  # replace with the actual count
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/unread-details:
+    get:
+      summary: Get unread friend requests
+      description: Retrieve unread friend requests for the authenticated user.
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Requests received"
+                data:
+                  -   # Example request object
+                      requestId: 1
+                      senderId: 123
+                      senderUsername: "john_doe"
+                      timestamp: "2023-01-01T12:00:00Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 
 servers:
   - url: http://localhost:4200/api/v1/auth
