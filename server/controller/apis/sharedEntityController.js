@@ -217,7 +217,7 @@ exports.sharedWorkspace = async ( req, res ) => {
         const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );
 
         // Send success response
-        res.status( 200 ).json({ message: 'Workspace shared successfully', sharedEntityId } );
+        res.status( 200 ).json( { message: 'Workspace shared successfully', sharedEntityId } );
     } 
     catch ( error ) {
         // Handle any other errors 
@@ -316,4 +316,4 @@ exports.updatePermission = async ( req, res ) => {
         // Handle any other errors 
         res.status( 500 ).json( { message: error.message } );
     }
-}
+};

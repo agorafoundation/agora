@@ -92,7 +92,7 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
         else{
             return false;
         }
-        }
+    }
     catch ( e ) {
         console.log( e.stack );
         // Handle the error and return an empty array or null
@@ -103,11 +103,11 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
 exports.updatePermission = async ( sharedEntity ) => {
     if ( sharedEntity ) {
         let text = "UPDATE shared_entities SET permission_level = $1 WHERE entity_id = $2 AND shared_with_user_id = $3 RETURNING shared_entity_id";
-        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id];
+        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id ];
 
         try{
             let res = await db.query( text, values );
-            if ( res.rowCount > 0){
+            if ( res.rowCount > 0 ){
                 return res.rows[0].shared_entity_id;
             }
             else{
@@ -118,7 +118,7 @@ exports.updatePermission = async ( sharedEntity ) => {
             console.log( e.stack );
         }
     }
-}
+};
 
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 
