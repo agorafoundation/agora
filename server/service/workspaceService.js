@@ -132,7 +132,7 @@ exports.getSharedWorkspaceByID = async ( workspaceID ) => {
             workspace.topics = topics;
 
         }
-        console.log( workspace );
+        //console.log( workspace );
         return workspace;
 
     }

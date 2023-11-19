@@ -17,6 +17,12 @@ router.route( '/' )
     }
     );
 
+router.route( '/sharedUser/:workspaceId' ) 
+    .get( ( req, res ) => { 
+        sharedController.getSharedEntityUser( req, res );
+    }
+    );
+
 router.route( '/copy/' ) 
     .post( ( req, res ) => { 
         sharedController.saveCopiedEntity( req, res );

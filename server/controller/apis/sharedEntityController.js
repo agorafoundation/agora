@@ -279,6 +279,28 @@ exports.getAllSharedEntityUsers = async ( req, res ) => {
     }
 };
 
+exports.getSharedEntityUser = async ( req, res ) => {
+    try{
+        console.log( "Getting User ID...." );
+        const authUser = req.user.userId;
+        const entityId = req.params.entityId;
+        const sharedEntities = sharedEntityService.getSharedEntity( entityId );
+        var sharedUserId = null;
+
+        sharedEntities.forEach( ( sharedEntity ) => {
+            if ( sharedEntity.shareUserId == authUser ) {
+                sharedUserId = sharedEntity.sharedUserId;
+            }
+        } );
+        
+        res.status( 200 ).json( sharedUserId );
+
+    }
+    catch ( error ) {
+        res.status( 500 ).json( { message: error.message } );
+    }
+};
+
 exports.updatePermission = async ( req, res ) => {
     try{
         let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
