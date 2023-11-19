@@ -177,12 +177,20 @@ exports.sharedWorkspace = async ( req, res ) => {
         const workspaceId = req.body.entityId;
         const sharedWithEmail = req.body.sharedWithEmail;  // Email is passed in the body
 
+
         // Fetch the user ID from the email
         const sharedWithUser = await userService.getUserByEmail( sharedWithEmail );
         if ( !sharedWithUser ) {
             return res.status( 404 ).json( { message: 'User to share with not found' } );
         }
         const sharedWithUserId = sharedWithUser.userId;
+
+        const isSharedWith = await sharedEntityService.getSharedEntityByUserId( workspaceId, sharedWithUserId );
+
+        // Checks if workspace is already shared with user
+        if( isSharedWith ) {
+            return res.status( 404 ).json( { message: 'Workspace already shared with user '} );
+        }
 
         // Verify the owner of the workspace
         const workspace = await workspaceService.getWorkspaceById( workspaceId );
@@ -193,14 +201,17 @@ exports.sharedWorkspace = async ( req, res ) => {
             return res.status( 403 ).json( { message: 'Unauthorized: You do not own this workspace' } );
         }
 
-        // Share the workspace with view permission and cannot copy
+        if ( workspace.ownedBy == sharedWithUserId ){
+            return res.status( 404 ).json( { message: 'Cannot share workspace with owner.' } );
+        }
+
         const sharedEntity = {
             entityId: workspaceId,
             entityType: 'workspace',
             shareUserId: sharedWithUserId,
             ownerUserId: sharingUser.userId,
-            permissionLevel: 'view',  // Hardcoded view permission
-            canCopy: false            // Hardcoded cannot copy
+            permissionLevel: req.body.permissionLevel,  
+            canCopy: false            
         };
 
         const sharedEntityId = await sharedEntityService.insertOrUpdateSharedEntity( sharedEntity );

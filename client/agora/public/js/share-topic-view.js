@@ -1370,44 +1370,29 @@ const sharedUsers = async ( workspace ) => {
 
             shareButton.addEventListener('click', () => {
                 const selectedPermission = document.getElementById( "permissions" ).value;
-                fetch("/api/v1/auth/user/email/" + shareInput.value, {
-                    method: "GET",
+                fetch("/api/v1/auth/shared/shareworkspace", {
+                    method: "POST",
                     headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify( {
+                        "entityId": workspaceId,
+                        "sharedWithEmail": shareInput.value,
+                        "permissionLevel": selectedPermission,
+                    })
                 })
-
-                .then( ( response ) => response.json() )
-                    .then( ( response ) =>  {
-                        if( response.status != 404 ){
-                            fetch("/api/v1/auth/shared/shareworkspace", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify( {
-                                    "entityId": workspaceId,
-                                    "sharedWithUserId": response.userId,
-                                    "permissionLevel": selectedPermission,
-                                    "canCopy": false
-                                })
-                            })
-                            .then( ( response ) => {
-                                if (response.status == 200){
-                                    const message = 'Workspace shared successfully.';
-                                    console.log( message );
-                                    alert( message );
-                                    location.reload();
-                                }
-                                else{
-                                    const errorMessage = 'Failed to share workspace.';
-                                    console.error( errorMessage );
-                                    alert( errorMessage );
-                                }
-                            })
-                        }
-                        else{
-                            const errorMessage = 'User not found.';
-                            console.error( errorMessage );
-                            alert( errorMessage );
-                        }
-                    } );
+                .then( ( response ) => {
+                    if (response.status == 200){
+                        const message = 'Workspace shared successfully.';
+                        console.log( message );
+                        alert( message );
+                        location.reload();
+                    }
+                    else{
+                        const errorMessage = 'Failed to share workspace.';
+                        console.log(response);
+                        console.error( errorMessage );
+                        alert( errorMessage );
+                    }
+                })
             });
       
             if ( sharedUsersResponse.ok ) {
