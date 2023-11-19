@@ -99,7 +99,7 @@ exports.getSharedWorkspaces = async ( sharedUserID ) => {
 
 // Get shared workspace details by its ID
 exports.getSharedWorkspaceByID = async ( workspaceID ) => {
-    console.log( "Getting Shared Workspace query.." );
+    //console.log( "Getting Shared Workspace query.." );
     let text = `SELECT w.* FROM agora.shared_entities AS se 
                   JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
                   WHERE se.entity_id = $1 AND se.entity_type = 'workspace'`;

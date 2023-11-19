@@ -17,7 +17,7 @@ router.route( '/' )
     }
     );
 
-router.route( '/sharedUser/:workspaceId' ) 
+router.route( '/sharedUser/:entityId' ) 
     .get( ( req, res ) => { 
         sharedController.getSharedEntityUser( req, res );
     }

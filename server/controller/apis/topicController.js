@@ -114,7 +114,7 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
                     resourcesList.push( resource );
                 }
                 else {
-                    console.log( "Error retrieving resource:  " + resourceIds[index] + "\n" );
+                    console.log( "Error retrieving resource  " + resourceIds[index] + "\n" );
                 }
             }
 

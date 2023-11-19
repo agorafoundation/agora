@@ -331,12 +331,15 @@ exports.getSharedEntityUser = async ( req, res ) => {
     try{
         console.log( "Getting User ID...." );
         const authUser = req.user.userId;
-        const entityId = req.params.entityId;
-        const sharedEntities = sharedEntityService.getSharedEntity( entityId );
+        console.log( req.user.userId );
+        const workspaceId = req.params.entityId;
+        const sharedEntities = await sharedEntityService.getAllSharedUsersByWorkspaceId( workspaceId );
         var sharedUserId = null;
 
         sharedEntities.forEach( ( sharedEntity ) => {
-            if ( sharedEntity.shareUserId == authUser ) {
+            //console.log( sharedEntity );
+            //console.log( sharedEntity.sharedWithUserId );
+            if ( sharedEntity.sharedWithUserId == authUser ) {
                 sharedUserId = sharedEntity.sharedUserId;
             }
         } );
