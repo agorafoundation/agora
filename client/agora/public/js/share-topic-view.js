@@ -1318,6 +1318,7 @@ const idAndFetch = () => {
 
 const isOwner = () => {
     var ownerId;
+    var userId;
     const [ isTopic, id ] = getPrefixAndId();
     fetch( "api/v1/auth/workspaces/shared/" + id, {
         method: "GET",
@@ -1327,9 +1328,59 @@ const isOwner = () => {
         .then( ( response ) => {
             ownerId = response.ownedBy;
         } );
+
+    fetch( "api/v1/auth/share/sharedUser/" + id, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            userId = response;
+        } );
+
+    if( ownerId == userId ){
+        return true;
+    }
+    else{
+        return false;
+    }
     //Need to get UserID through API, then compare ownerID to userID.
     //If the user is the owner call the regular functions.
     //Else if the user isnt the owner, call the "shared" functions.
+};
+
+const fetchSharedWorkspace = () => {
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( id );
+    if ( isTopic && id ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.topicName,
+                    response.topicDescription,
+                    response.topicImage
+                );
+            } );
+    }
+    else if ( id ) {
+        fetch( "api/v1/auth/workspaces/shared/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                sharedUsers( response );
+                fillFields(
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
+                );
+            } );
+    }
 };
 
 const getTags = async () => {
@@ -1607,10 +1658,26 @@ async function renderSharedResources( topicId ) {
 }
 
 window.addEventListener( "load", () => {
+
+    console.log( isOwner() );
+
     idAndFetch();
+    fetchSharedWorkspace();
     getTags();
     renderTopics();
-   
+    renderSharedTopics();
+/*
+    if( isOwner() ){
+        idAndFetch();
+        getTags();
+        renderTopics();
+    }
+    else{
+        fetchSharedWorkspace();
+        getTags();
+        renderSharedTopics();
+    }
+   */
 } );
 
 
