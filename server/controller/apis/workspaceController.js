@@ -102,7 +102,7 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
                     topicsList.push( topics );
                 }
                 else {
-                    console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                    console.log( "Error retrieving topic2 " + topicsIds[index] + "\n" );
                 }
             }
 

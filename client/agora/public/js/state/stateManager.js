@@ -59,11 +59,12 @@ const setActiveTopicAndResources = async function ( topicId ) {
     ( debug ) ? console.log( "setActiveTopicAndResources() : Start - topicId : " + topicId ) : null;
 
     // if no topicId is passed, use the first topic in the workspace
-    if( !topicId && workspace.topics ) {
-        topicId = workspace.topics[0].topicId;
-    }
+    // if( !topicId && workspace.topics ) {
+    //     topicId = workspace.topics[0].topicId;
+    // }
     
     // if there are topics in the workspace, set the active topic using the id passed or the first topic in the workspace
+    
     if( topicId && workspace.topics ) {
         activeTopic = workspace.topics.find( topic => topic.topicId === topicId );
         ( debug && dataDebug ) ? console.log( "activeTopic: " + JSON.stringify( activeTopic ) ) : null;
@@ -82,9 +83,15 @@ const setActiveTopicAndResources = async function ( topicId ) {
     else {
         // there are currently no topics in the workspace, create a new one
         activeTopic = topicModel;
-        activeTopic.topicName = "Untitled";
+        activeTopic.topicName = "Untitled-test";
         activeTopic.topicDescription = "";
+
+        // save the new topic
+        activeTopic = await saveTopic( activeTopic );
+        
         workspace.topics.push( activeTopic );
+        // save the workspace to associate the topic with the workspace
+        await saveWorkspace( workspace );
     }
 
     ( debug ) ? console.log( "setActiveTopicAndResources() : Complete" ) : null;
@@ -92,16 +99,15 @@ const setActiveTopicAndResources = async function ( topicId ) {
 
 const addNewTopic = async function ( topicName ) {
     ( debug ) ? console.log( "addNewTopic() : Start - topicName: " + topicName ) : null;
-    // create an empty resource
-    // let resource = resourceModel;
-    // resource.resourceName = "Untitled";
-    // resource = await saveResource( resource );
-    // console.log( "saved resource: " + JSON.stringify( resource ) );
 
     if( getCurrentWorkspace() ) {
-    // create a new topic
+        // create a new topic
         let newTopic = topicModel;
         newTopic.topicName = topicName;
+
+        // make sure the worspace fields are up to date
+        getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
+        getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
 
         // save the topic
         newTopic = await saveTopic( newTopic, null );
@@ -124,6 +130,40 @@ const addNewTopic = async function ( topicName ) {
 
 };
 
+const saveActiveTopic = async function ( ) {
+    ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+
+    // get the topics name
+    //activeTopic.topicName = document.getElementById( "tabTopicName-" ).value;
+
+    // save the topic
+    await saveTopic( activeTopic );
+
+    ( debug ) ? console.log( "saveActiveTopic() : Complete" ) : null;
+
+};
+
+const addNewTextResource = async function ( ) {
+
+
+    ( debug ) ? console.log( "addNewTextResource() : Start" ) : null;
+
+    // create a new resource
+    let resource = resourceModel;
+
+    // save the resource
+    await saveResource( resource );
+
+    // add the resource to the current topic
+    getCurrentActiveTopic().resources.push( resource );
+
+    // save the topic
+    await saveActiveTopic( );
+
+
+    ( debug ) ? console.log( "addNewTextResource() : Complete" ) : null;
+};
+
 /*--------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------*/
 
@@ -142,6 +182,7 @@ let activeTab =  null;
  */
 
 const setActiveTab = ( tab ) => {
+    ( debug ) ? console.log( "setActiveTab() : Start - tab: " + tab ) : null;
     activeTab = tab;
 };
 
@@ -168,7 +209,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveResource};
 
 // Export GUI state
 export { tabs, activeTab };

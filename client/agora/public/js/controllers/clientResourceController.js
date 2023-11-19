@@ -10,8 +10,12 @@
  * Contains the client side data model and API calls to maintain it.
  */
 
+import { debug, dataDebug } from "../state/stateManager.js";
+import { uuidv4 } from "../util/editorUtil.js";
+
+
 const resourceModel = {
-    resourceId: null,
+    resourceId: uuidv4(),
     resourceType: 1,
     resourceName: "",
     resourceDescription: "",
@@ -26,17 +30,28 @@ const resourceModel = {
 };
 
 async function saveResource( resource ) {
-    console.log( "saveResource() : Start" );
-    console.log( "saveResource() : resource: " + JSON.stringify( resource ) );
+    ( debug ) ? console.log( "saveResource() : start" ) : null;
     const response = await fetch( "api/v1/auth/resources", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( resource )
+        body: JSON.stringify( {
+            "resourceId":  resource.resourceId,
+            "resourceType": resource.resourceType ? resource.resourceType : 1,
+            "resourceName": resource.resourceName ? resource.resourceName : "Untitled",
+            "resourceDescription": resource.resourceDescription,
+            "resourceContentHtml": resource.resourceContentHtml,
+            "resourceImage": resource.resourceImage,
+            "resourceLink": resource.resourceLink,
+            "isRequired": resource.isRequired ? resource.isRequired : false,
+            "active": resource.active ? resource.active : true,
+            "visibility": resource.visibility ? resource.visibility : "private"
+        } )
     } );
 
     if( response.ok ) {
         const data = await response.json();
-        console.log( "saveResource() : Resource created + Resource: " + JSON.stringify( data ) );
+        ( debug ) ? console.log( "saveResource() resource saved : " + JSON.stringify( data ) ) : null;
+        ( debug && dataDebug ) ? console.log( "saveResource() : resource created" ) : null;
         return data;
     }
 

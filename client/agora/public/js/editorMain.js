@@ -15,7 +15,10 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentWorkspace } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, saveActiveTopic, getCurrentActiveTopic, saveResource, getCurrentWorkspace } from "./state/stateManager.js";
+
+// get the data models
+import { resourceModel } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
 import { updateWorkspaceDom, createTopicEditorGui } from "./editorManager.js";
@@ -34,13 +37,22 @@ window.addEventListener( "load", async () => {
     await initializeWorkspace( await getWorkspaceUuid() );
 
     // retrieve the resources for the active topic, add them to the current state
-    await setActiveTopicAndResources();
+    if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
+        await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );
+    }
+    else {
+        await setActiveTopicAndResources();
+    }
+    
 
     //update the workspace information in the GUI
     updateWorkspaceDom();
     
     // render the topics for the workspace
-    createTopicEditorGui();
+    if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
+        console.log( "---- testing -----" );
+        createTopicEditorGui();
+    }
 
 
     /**
@@ -50,10 +62,6 @@ window.addEventListener( "load", async () => {
     if( openBtn ) {
         openBtn.addEventListener( "click", async () => {
             ( debug ) ? console.log( "New Topic: start" ) : null;
-
-            // make sure the worspace fields are up to date
-            getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
-            getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
             
             let tname = prompt( "Enter a name for your new Topic" );
             //console.log( 'Took input from prompt' );
@@ -63,14 +71,11 @@ window.addEventListener( "load", async () => {
             // render the topics for the workspace
             await createTopicEditorGui();
 
-        
             
             ( debug ) ? console.log( "New topic: complete" ) : null;
         } );
-
-
-    
     }
+
 
     ( debug ) ? console.log( "window load event: complete" ) : null;
 } );

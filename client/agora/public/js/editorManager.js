@@ -8,7 +8,7 @@
 /**
  * imports
  */
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, resetTabs, activeTab, setActiveTab, debug, dataDebug, setActiveTopicAndResources } from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, resetTabs, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, setActiveTopicAndResources } from "./state/stateManager.js";
 
 /**
  * DOM manipulation functions for the editor
@@ -144,8 +144,9 @@ const createTopicEditorGui = async function ( ) {
                 addTab( tabBtn );
 
                 // see if this is the active tab and if so, set it.
+                console.log( " --- about to set the current tab: ---- " + getCurrentActiveTopic().topicId + " : " + getCurrentWorkspace().topics[i].topicId );
                 if( getCurrentActiveTopic().topicId == getCurrentWorkspace().topics[i].topicId ) {
-                    setActiveTab( tabBtn );
+                    await setActiveTab( tabBtn );
                 }
                 
             }
@@ -246,9 +247,11 @@ const createTopicEditorGui = async function ( ) {
             
 
             //createNewActiveHeight();
-
+            console.log( 0 );
             if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
+                console.log( 1 );
                 for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
+                    console.log( 2 );
                     let currentResource = getCurrentActiveTopic().resources[i];
                        
                     // TODO: evaluate what are these two??? why are there 2?
@@ -262,6 +265,10 @@ const createTopicEditorGui = async function ( ) {
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
                     }        
+                }
+                if ( getCurrentActiveTopic().resources.length === 0 ) {
+                    // there are now resources, so show the empty state
+                    await createTextArea( null );
                 }
 
                 
@@ -456,10 +463,9 @@ function createTextArea( resource ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
-        // workspace empty state
-        // if ( activeTab.id == "resources-zone0" ) {
-        //     createTopic();
-        // }
+        // the resource id is appended to the end of the id to make it unique, if it does not exist, because 
+        // no resource is associted yet the id is appended with "-new"
+        let resourceId = ( resource ) ? resource.resourceId : "-new";
 
         // Check for filler space
         if ( document.getElementById( "filler-space" ) ) {
@@ -468,37 +474,22 @@ function createTextArea( resource ) {
 
         // Create drop zone
         let newDropZone = document.createElement( "div" );
+        newDropZone.id = "drop-zone-" + resourceId;
         newDropZone.className = "drop-zone-new";
         newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
         newDropZone.addEventListener( "click", async () => {
-            ( debug ) ? console.log( "createTextArea - Promise - createResource() call" ) : null;
-
-            //( debug ) ? console.log( "getCurrTopicID: " + getCurrTopicID() );
-            //( debug ) ? console.log( "getCurrTopicIndex: " + currentTabIndex );
-
             /**
-             * TOOD: evaluate
+             * Event listener for adding a text resource via clicking the drop-zone-new
              */
-            // ( debug ) ? console.log( "create new resource click event - createResource() call" );
-            // const newResource = await createResource( null, 1, null, null );
-            // ( debug ) ? console.log( "newResource: " + JSON.stringify( newResource ) );
+            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
 
-            // ( debug ) ? console.log( "create new resource click event - updateTopic() call" );
-            // let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
-            // ( debug ) ? console.log( "topicTitle: " + topicTitle );
+            await addNewTextResource();
 
-            // const newTopic = await updateTopic( topicTitle.innerHTML )
-            // // send the resources from the current;
-            // const newTopic = await saveTopic( topicTitle.innerHTML, resources[currentTabIndex] );
-            
-            // ( debug ) ? console.log( "newTopic: " + JSON.stringify( newTopic ) );
 
-            // // render the resource text area
-            // createTextArea();
-
-            //numTopics++;
-
+            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
         } );
+
+
 
         // Create drop zone filler space
         let newDropZoneFiller = document.createElement( "div" );
@@ -509,76 +500,86 @@ function createTextArea( resource ) {
         let newDropZoneInput = document.createElement( "input" );
         newDropZoneInput.className = "drop-zone__input";
         newDropZoneInput.type = "file";
+
+        
         newDropZone.appendChild( newDropZoneInput );
         createDropZoneEventListeners( newDropZone, newDropZoneInput );
 
-        // Title element
-        let title = document.createElement( 'input' );
-        title.type = "text";
-        title.className = "drop-zone__title";
-        title.id = "input-title-" + resource.resourceId;
-        if( resource.resourceName ){
-            title.value = resource.resourceName;
-        }
-        else{
-            title.value = "Untitled";
-        }
+        resourcesZone.appendChild( newDropZone );
 
-        // Edit icon
-        let editIcon = document.createElement( 'span' );
-        editIcon.setAttribute( "class", "material-symbols-outlined" );
-        editIcon.setAttribute( "id", "edit-icon-" + resource.resourceId );
-        editIcon.innerHTML = "edit";
-        editIcon.style.display = "none";
+        if( resource ) {
 
-        // Done icon
-        let doneIcon = document.createElement( 'span' );
-        doneIcon.setAttribute( "class", "material-symbols-outlined" );
-        doneIcon.setAttribute( "id", "done-icon-" + resource.resourceId );
-        doneIcon.innerHTML = "done";
+            // Title element
+            let title = document.createElement( 'input' );
+            title.type = "text";
+            title.className = "drop-zone__title";
+            title.id = "input-title-" + resourceId;
+            if( resource.resourceName ){
+                title.value = resource.resourceName;
+            }
+            else{
+                title.value = "Untitled";
+            }
 
-        // New Tab
-        let newTabIcon = document.createElement( 'span' );
-        newTabIcon.setAttribute( "class", "material-symbols-outlined" );
-        newTabIcon.setAttribute( "id", "open-tab-icon-" + resource.resourceId );
-        newTabIcon.innerHTML = "open_in_new";
+            // Edit icon
+            let editIcon = document.createElement( 'span' );
+            editIcon.setAttribute( "class", "material-symbols-outlined" );
+            editIcon.setAttribute( "id", "edit-icon-" + resourceId );
+            editIcon.innerHTML = "edit";
+            editIcon.style.display = "none";
 
-        // Suneditor textarea
-        let sunEditor = document.createElement( "textarea" );
-        sunEditor.setAttribute( "id", "sunEditor-" + resource.resourceId );
+            // Done icon
+            let doneIcon = document.createElement( 'span' );
+            doneIcon.setAttribute( "class", "material-symbols-outlined" );
+            doneIcon.setAttribute( "id", "done-icon-" + resourceId );
+            doneIcon.innerHTML = "done";
+
+            // New Tab
+            let newTabIcon = document.createElement( 'span' );
+            newTabIcon.setAttribute( "class", "material-symbols-outlined" );
+            newTabIcon.setAttribute( "id", "open-tab-icon-" + resourceId );
+            newTabIcon.innerHTML = "open_in_new";
+
+            // Suneditor textarea
+            let sunEditor = document.createElement( "textarea" );
+            sunEditor.setAttribute( "id", "sunEditor-" + resourceId );
 
         
 
-        /**
+            /**
          * TODO: Evaluate
          */
-        //Remove empty state if necessary
-        if ( resourcesZone.childElementCount > 0 ) {
+            //Remove empty state if necessary
+            if ( resourcesZone.childElementCount > 0 ) {
             
-            //let location = getTabLocation( tabName );
-            console.log( "resourcesZone: " + resourcesZone.id );
-            console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
-            console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
-            console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
-            console.log( "here! --- : " + location );
+                //let location = getTabLocation( tabName );
+                console.log( "resourcesZone: " + resourcesZone.id );
+                console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
+                console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
+                console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
+                console.log( "here! --- : " + location );
             // document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
             // document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
+            }
+
+            // Append elemets accordingly
+            resourcesZone.appendChild( title );
+            // resourcesZone.appendChild( newTabIcon );
+            resourcesZone.appendChild( editIcon );
+            resourcesZone.appendChild( doneIcon );
+            resourcesZone.appendChild( sunEditor );
+            
+
+            // Maintain a baseline height until 1200px is exceeded
+            activeHeightObj[activeTab] += 800;
+            checkActiveHeight();
+
+            resolve( "TA created" );
+
         }
-
-        // Append elemets accordingly
-        resourcesZone.appendChild( title );
-        // resourcesZone.appendChild( newTabIcon );
-        resourcesZone.appendChild( editIcon );
-        resourcesZone.appendChild( doneIcon );
-        resourcesZone.appendChild( sunEditor );
-        resourcesZone.appendChild( newDropZone );
-
-        // Maintain a baseline height until 1200px is exceeded
-        activeHeightObj[activeTab] += 800;
-        checkActiveHeight();
         //alert( "hold" );
         ( debug ) ? console.log( "createTextArea() complete promise cerated" ) : null;
-        resolve( "TA created" );
+        
     } );
 
     promise.then(

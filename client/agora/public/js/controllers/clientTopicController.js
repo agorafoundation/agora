@@ -12,10 +12,11 @@
 
 // import debug
 import { debug, dataDebug } from "../state/stateManager.js";
+import { uuidv4 } from "../util/editorUtil.js";
 
 
 const topicModel = {
-    topicId: null,
+    topicId: uuidv4(),
     topicType: 0,
     topicName: "",
     topicDescription: "",
@@ -61,26 +62,48 @@ const getResourcesForTopic = async function ( topicId ) {
     return data.results;
 };
 
-const saveTopic = async( topic, resourceIds ) => {
-    console.log( "saveTopic() : Start" );
+const saveTopic = async( topic ) => {
+    console.log( "saveTopic() : Start : + topic: " + JSON.stringify( topic ) );
+    if( topic ) {
+        // prepare the topics as an array of uuids
+        let resourceUuids = [];
+        if( topic.resources ) {
+            topic.resources.forEach( resource => {
+                console.log( "resource: " + JSON.stringify( resource ) + " going into array" );
+                resourceUuids.push( resource.resourceId );
+            } );
+        }
 
-    // if passed, add the topicIds to the workspace object
-    if( resourceIds ) {
-        topic.resources = resourceIds;
+        console.log( "resource uuid array: " + resourceUuids );
+
+        const response = await fetch( "api/v1/auth/topics", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "topicId": topic.topicId ? topic.topicId : null,
+                "topicType": topic.topicType,
+                "topicName": topic.topicName,
+                "topicDescription": topic.topicDescription,
+                "topicHtml": topic.topicHtml,
+                "assessmentId": 1,
+                "hasActivity": ( topic.hasActivity ? topic.hasActivity : false ),
+                "hasAssessment": ( topic.hasAssessment ? topic.hasAssessment : false ),
+                "activityId": ( topic.activityId ? topic.activityId : -1 ),
+                "active": ( topic.active ? topic.active : true ),
+                "visibility": topic.visibility ? topic.visibility : "private",
+                "resources": resourceUuids ? resourceUuids : []
+            } )
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "saveTopic() : Topic created + repsonse: " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "saveTopic() : Complete" ) : null;
+            return data;
+        }
     }
 
-    const response = await fetch( "api/v1/auth/topics", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( topic )
-    } );
-
-    if( response.ok ) {
-        const data = await response.json();
-        ( debug && dataDebug ) ? console.log( "saveTopic() : Topic created + repsonse: " + JSON.stringify( data ) ) : null;
-        ( debug ) ? console.log( "saveTopic() : Complete" ) : null;
-        return data;
-    }
+    
 
     // console.log( "contents of the resources array: " + JSON.stringify( resources ) );
     // const response = await fetch( "api/v1/auth/topics", {
