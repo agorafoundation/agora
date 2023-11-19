@@ -1316,6 +1316,21 @@ const idAndFetch = () => {
     }
 };
 
+const isOwner = () => {
+    var ownerId;
+    const [ isTopic, id ] = getPrefixAndId();
+    fetch( "api/v1/auth/workspaces/shared/" + id, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            ownerId = response.ownedBy;
+        } );
+    //Need to get UserID through API, then compare ownerID to userID.
+    //If the user is the owner call the regular functions.
+    //Else if the user isnt the owner, call the "shared" functions.
+};
 
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
@@ -1368,32 +1383,32 @@ const sharedUsers = async ( workspace ) => {
             const workspaceOwner = await workspaceOwnerResponse.json();
             console.log( workspaceOwner );
 
-            shareButton.addEventListener('click', () => {
+            shareButton.addEventListener( 'click', () => {
                 const selectedPermission = document.getElementById( "permissions" ).value;
-                fetch("/api/v1/auth/shared/shareworkspace", {
+                fetch( "/api/v1/auth/shared/shareworkspace", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify( {
                         "entityId": workspaceId,
                         "sharedWithEmail": shareInput.value,
                         "permissionLevel": selectedPermission,
-                    })
-                })
-                .then( ( response ) => {
-                    if (response.status == 200){
-                        const message = 'Workspace shared successfully.';
-                        console.log( message );
-                        alert( message );
-                        location.reload();
-                    }
-                    else{
-                        const errorMessage = 'Failed to share workspace.';
-                        console.log(response);
-                        console.error( errorMessage );
-                        alert( errorMessage );
-                    }
-                })
-            });
+                    } )
+                } )
+                    .then( ( response ) => {
+                        if ( response.status == 200 ){
+                            const message = 'Workspace shared successfully.';
+                            console.log( message );
+                            alert( message );
+                            location.reload();
+                        }
+                        else{
+                            const errorMessage = 'Failed to share workspace.';
+                            console.log( response );
+                            console.error( errorMessage );
+                            alert( errorMessage );
+                        }
+                    } );
+            } );
       
             if ( sharedUsersResponse.ok ) {
                 const sharedEntities = await sharedUsersResponse.json();
@@ -1477,6 +1492,23 @@ const renderTopics = async ( workspace ) => {
    
 };
 
+const renderSharedTopics = async ( workspace ) => {
+    const [ isTopic, id ] = getPrefixAndId();
+    if( id ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/shared/"+ id   );
+        let topics = await response.json();
+   
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderSharedTopic( topics[i] );
+            
+            }
+        }   
+    }
+    
+   
+};
+
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
@@ -1518,9 +1550,57 @@ async function renderTopic( topic ) {
     return topics;
 }
 
+totalTopicsRendered = 0;
+async function renderSharedTopic( topic ) {
+  
+    await createTopic( topic.topicId, topic.topicName );
+    const resources = await renderSharedResources( topic.topicId );
+    console.log( resources );
+    if ( resources.length > 0 ) {
+        //let docType1Count = 0;
+        for ( let i = 0; i < resources.length; i++ ) {
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //if resource is a document
+            if( resources[i].resourceType == 1 ){
+                await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
+                    totalTopicsRendered++; 
+                    let editor = "sunEditor" + ( totalTopicsRendered );
+                    //console.log( editor );
+                    //console.log( sunEditor[editor] );
+                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+
+                    //docType1Count++;
+                    //val++;
+                }
+
+
+            }
+            else if( resources[i].resourceType == 3 ) {
+                // todo: add code to deal with resource type 3
+            }
+            else if ( resources[i].resourceType == 2 ) {
+                console.log( "other resource type??? " + resources[i].resourceName );
+            }
+            
+        }
+        window.scrollTo( 0, 0 );
+    }
+    return topics;
+}
+
 async function renderResources( topicId ) {
     //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
+    const data = await response.json();
+    //console.log( "render resources response: " + JSON.stringify( data ) );
+    return data;
+}
+
+async function renderSharedResources( topicId ) {
+    //console.log( "render resources call: " + topicId );
+    const response = await fetch( "api/v1/auth/topics/resources/shared/" + topicId );
     const data = await response.json();
     //console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
