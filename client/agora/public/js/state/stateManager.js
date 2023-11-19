@@ -7,7 +7,7 @@ import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clie
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = true;
+const dataDebug = false;
 
 
 /**
@@ -164,6 +164,18 @@ const addNewTextResource = async function ( ) {
     ( debug ) ? console.log( "addNewTextResource() : Complete" ) : null;
 };
 
+function saveTextResource( resource, content ) {
+    ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
+
+    // update the resource content
+    resource.resourceContent = content;
+
+    // save the resource
+    saveResource( resource );
+
+    ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
+}
+
 /*--------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------*/
 
@@ -209,7 +221,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveResource};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource};
 
 // Export GUI state
 export { tabs, activeTab };

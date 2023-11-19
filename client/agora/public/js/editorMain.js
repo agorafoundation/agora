@@ -15,13 +15,14 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, saveActiveTopic, getCurrentActiveTopic, saveResource, getCurrentWorkspace } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, saveActiveTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource } from "./state/stateManager.js";
 
 // get the data models
 import { resourceModel } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
 import { updateWorkspaceDom, createTopicEditorGui } from "./editorManager.js";
+import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
 
@@ -50,13 +51,12 @@ window.addEventListener( "load", async () => {
     
     // render the topics for the workspace
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
-        console.log( "---- testing -----" );
         createTopicEditorGui();
     }
 
 
     /**
-     * Event listener for adding a new topic
+     * EVENT:: Event listener for adding a new topic
      */
     const openBtn = document.getElementById( "new-element" );
     if( openBtn ) {
@@ -76,16 +76,44 @@ window.addEventListener( "load", async () => {
         } );
     }
 
+    /**
+     * EVENT:: Event listener for saving workspace data
+     */
+    const workspaceTitle = document.getElementById( "workspace-title" );
+    workspaceTitle.addEventListener( "change", async () => {
+        ( debug ) ? console.log( "Workspace Title Change: start" ) : null;
+        getCurrentWorkspace().workspaceName = workspaceTitle.value;
+        await saveWorkspace( getCurrentWorkspace() );
+        ( debug ) ? console.log( "Workspace Title Change: complete" ) : null;
+    } );
+
+    const workspaceDescription = document.getElementById( "workspace-desc" );
+    workspaceDescription.addEventListener( "change", async () => {
+        ( debug ) ? console.log( "Workspace Description Change: start" ) : null;
+        getCurrentWorkspace().workspaceDescription = workspaceDescription.value;
+        await saveWorkspace( getCurrentWorkspace() );
+        ( debug ) ? console.log( "Workspace Description Change: complete" ) : null;
+    } );
+
 
     ( debug ) ? console.log( "window load event: complete" ) : null;
 } );
 
 
 
+function textEditorUpdateEvent( resourceId, content ) {
+    ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
+
+    // get the resource from the current state
+    let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
+
+    saveTextResource( resource, content );
+
+    ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
+}
 
 
-
-
+export { textEditorUpdateEvent };
 
 
 

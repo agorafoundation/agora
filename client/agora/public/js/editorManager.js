@@ -8,7 +8,11 @@
 /**
  * imports
  */
+// state manager
 import { getCurrentWorkspace, getCurrentActiveTopic, addTab, resetTabs, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, setActiveTopicAndResources } from "./state/stateManager.js";
+// DOM event functions (eg. 
+import {textEditorUpdateEvent} from "./editorMain.js";
+
 
 /**
  * DOM manipulation functions for the editor
@@ -121,20 +125,14 @@ const createTopicEditorGui = async function ( ) {
                     else {
                         if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
                             /**
-                             * TODO: Next step.. this is the entry point for changing tabs
+                             * EVENT:: Entry point for changing tab event
                              */
-                            // clear current tabs
-                            // reset (clear out) any tabs and reset the active tab
-                            // resetTabs();
-                            // setActiveTab( null );
 
                             await setActiveTopicAndResources( getCurrentWorkspace().topics[e.target.id.split( "-" )[1]].topicId );
 
                             await createTopicEditorGui();
                         }
-
-                    // Update the GUI tabs
-                    //refreshTabs();            
+          
                     }
                 };
                 
@@ -144,17 +142,13 @@ const createTopicEditorGui = async function ( ) {
                 addTab( tabBtn );
 
                 // see if this is the active tab and if so, set it.
-                console.log( " --- about to set the current tab: ---- " + getCurrentActiveTopic().topicId + " : " + getCurrentWorkspace().topics[i].topicId );
                 if( getCurrentActiveTopic().topicId == getCurrentWorkspace().topics[i].topicId ) {
                     await setActiveTab( tabBtn );
                 }
                 
             }
-
-
             
             refreshTabs();
-
 
         }
 
@@ -166,7 +160,6 @@ const createTopicEditorGui = async function ( ) {
 
         // Create the topicEditor (the main workspace that contains the topics resources)
         if ( getCurrentActiveTopic() && activeTab ) {
-            console.log( "----- 1 -----" );
             // get dom elements
             // let tabContent = document.getElementsByClassName( "tabcontent" );
             // ( debug ) ? console.log( "tabContent: " + JSON.stringify( tabContent ) ) : null;
@@ -247,11 +240,8 @@ const createTopicEditorGui = async function ( ) {
             
 
             //createNewActiveHeight();
-            console.log( 0 );
             if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
-                console.log( 1 );
                 for( let i=0; i < getCurrentActiveTopic().resources.length; i++ ) {
-                    console.log( 2 );
                     let currentResource = getCurrentActiveTopic().resources[i];
                        
                     // TODO: evaluate what are these two??? why are there 2?
@@ -479,11 +469,14 @@ function createTextArea( resource ) {
         newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
         newDropZone.addEventListener( "click", async () => {
             /**
-             * Event listener for adding a text resource via clicking the drop-zone-new
+             * EVENT:: listener for adding a text resource via clicking the drop-zone-new
              */
             ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
 
             await addNewTextResource();
+
+            // update the gui
+            createTopicEditorGui();
 
 
             ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
@@ -545,22 +538,6 @@ function createTextArea( resource ) {
             sunEditor.setAttribute( "id", "sunEditor-" + resourceId );
 
         
-
-            /**
-         * TODO: Evaluate
-         */
-            //Remove empty state if necessary
-            if ( resourcesZone.childElementCount > 0 ) {
-            
-                //let location = getTabLocation( tabName );
-                console.log( "resourcesZone: " + resourcesZone.id );
-                console.log( "resourcesZone with slice: " + JSON.stringify( activeTab ) );
-                console.log( "number of empty-topic-dropzone: " + document.querySelectorAll( ".empty-topic-dropzone" ).length );
-                console.log( "first-dropzone: " + document.querySelectorAll( ".first-dropzone" ).length );
-                console.log( "here! --- : " + location );
-            // document.querySelectorAll( ".empty-topic-dropzone" )[location].style.display = "none";
-            // document.querySelectorAll( ".first-dropzone" )[location].style.display = "block";
-            }
 
             // Append elemets accordingly
             resourcesZone.appendChild( title );
@@ -909,7 +886,7 @@ let sunEditorList = [];
 const createSunEditor = async( resourceId ) => {
     ( debug ) ? console.log( "createSunEditor() num: " + resourceId ) : null;
     // eslint-disable-next-line no-undef
-    sunEditor["sunEditor-"+ resourceId] = [ resourceId, SUNEDITOR.create( "sunEditor-" + resourceId, {
+    const newEditor = sunEditor["sunEditor-"+ resourceId] = [ resourceId, SUNEDITOR.create( "sunEditor-" + resourceId, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
         defaultTag: "p",
@@ -952,8 +929,16 @@ const createSunEditor = async( resourceId ) => {
             alert( contents );
         },
     } ) ];
+    
+    console.log( "1: " + sunEditor["sunEditor" + resourceId] );
+    console.log( "2: " + newEditor );
 
-    sunEditorList.push( sunEditor["sunEditor" + resourceId] );
-    ( debug ) ? console.log( "createSunEditor() complete" ) : null;
+    newEditor[1].onChange = function( content ) {
+        // ENTRY point for text editor update event, for ease of understanding function is called in editorMain.js
+        textEditorUpdateEvent( resourceId, content );
+    };
+
+    sunEditorList.push( newEditor );  
+    ( debug ) ? console.log( "createSunEditor() complete current editors: " ) : null;
     window.scrollTo( 0, 0 );
 };
