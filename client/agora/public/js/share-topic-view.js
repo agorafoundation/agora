@@ -579,7 +579,7 @@ function createResource( name, type, imagePath, id ) {
    
 }
 
-// get the topic id based on the currently visible topic tab
+// get the topic id based on the visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
@@ -1461,12 +1461,18 @@ const sharedUsers = async ( workspace ) => {
                 const allUsers = [ owner, ...sharedUsers ];
       
                 // Update the UI to display sharedUsers data in the profiles-list
+                
                 const profilesList = document.getElementById( "profiles-list" );
                 profilesList.innerHTML = ""; // Clear existing content
       
                 allUsers.forEach( ( profile ) => {
                     const li = document.createElement( "li" );
                     li.className = "profile-shared-with";
+
+                    let removeButtonHtml = '';
+                    if ( profile.status !== "Owner" ) {
+                        removeButtonHtml = `<button class="remove-user-btn" data-email="${profile.email}">Remove</button>`;
+                    }
       
                     li.innerHTML = `
                   <div class="profile-status-container">
@@ -1635,6 +1641,36 @@ async function renderSharedResources( topicId ) {
     const data = await response.json();
     //console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
+}
+
+async function removeUser( email, workspaceId ) {
+    try {
+        const response = await fetch( "api/v1/auth/shared/removeUserFromWorkspaceByEmail", { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify( {
+                emailToRemove: email,
+                entityId: workspaceId
+            } )
+        } );
+
+        if ( response.ok ) {
+            const data = await response.json();
+            alert( data.message || 'User removed successfully' );
+            fetchSharedWorkspace();
+        } 
+        else {
+            const errorData = await response.json();
+            alert( errorData.message || 'Failed to remove user' );
+        }
+    } 
+    catch ( error ) {
+        console.error( 'Error removing user:', error );
+        alert( 'Error removing user' );
+        
+    }
 }
 
 window.addEventListener( "load", () => {
