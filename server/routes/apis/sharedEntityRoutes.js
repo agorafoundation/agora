@@ -42,6 +42,11 @@ router.route( '/shared-entity/:entityId' )
     }   
     );
 
+router.route( '/getPermission/:entityId')
+    .get( ( req, res ) => {
+        sharedController.getPermission( req, res );
+    })
+ 
 router.route( '/updatePermission' )
     .post( ( req, res ) => {
         sharedController.updatePermission ( req, res );

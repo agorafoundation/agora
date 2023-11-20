@@ -108,7 +108,9 @@ const createTopic = async( id, name ) => {
     else{
         topicTitle.value = "Untitled";
     }
-
+    if(editPermission == false){
+        topicTitle.readOnly = true;
+    }
     // let saveIcon = document.createElement( "span" );
     // saveIcon.classList.add( "material-symbols-outlined" );
     // saveIcon.classList.add( "saveBtn" );
@@ -160,7 +162,9 @@ const createTopic = async( id, name ) => {
 
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
-            closeTab( e.target.id );
+            if(editPermission == true){
+                closeTab( e.target.id );
+            }
         } 
         else {
             openTab( newTab.id );
@@ -498,13 +502,16 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     }
 
     removeTagBtn.addEventListener( "click", () => {
-        // Get the id portion with the tag name
-        document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        for ( let i=0; i<currTagList.length; i++ ) {
-            if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
-                currTagList[i] = "";
+        if (editPermission == true){
+            // Get the id portion with the tag name
+            document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
+            for ( let i=0; i<currTagList.length; i++ ) {
+                if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
+                    currTagList[i] = "";
+                }
             }
         }
+        
 
         const [ isTopic, id ] = getPrefixAndId();
         const tagType = isTopic ? "topic" : "workspace";
@@ -648,6 +655,10 @@ function createTextArea( name, id ) {
         }
         else{
             title.value = "Untitled";
+        }
+
+        if(editPermission == false){
+            title.readOnly = true;
         }
 
         // Edit icon
@@ -1088,7 +1099,10 @@ const openTopicModal = document.getElementById( "open-topic-modal-div" );
 // open the modal
 if( openBtn ) {
     openBtn.onclick = () => {
-        modal.style.display = "block";
+        if (editPermission == true){
+            modal.style.display = "block";
+        }
+        
     };
 }
 
@@ -1269,6 +1283,11 @@ const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a
 
 const shareButton = document.getElementById( "share-button" );
 const shareInput = document.getElementById( "share-input" );
+const workspaceTitle = document.getElementById( "workspace-title" );
+const workspaceDescription = document.getElementById( "workspace-desc" );
+const tagBox = document.getElementById( "mySearch" );
+const editors = document.getElementsByClassName("se-wrapper");
+var editPermission = false;
 
 const getPrefixAndId = () => {
 
@@ -1284,6 +1303,7 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
+    getPermission(id);
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1318,6 +1338,35 @@ const idAndFetch = () => {
             } );
     }
 };
+
+const getPermission = ( workspaceId ) => {
+    fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    })
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            if ( response.permission_level == "edit" ){
+                editPermission = true;
+                applyEditPermission( editPermission );
+            }
+            else{
+                applyEditPermission( editPermission );
+            }
+        })
+}
+
+const applyEditPermission = (editTool) => {
+    if ( editTool == false ){
+        workspaceTitle.readOnly = true;
+        workspaceDescription.readOnly = true;
+        tagBox.readOnly = true;
+        console.log(editors);
+        Array.from(editors).forEach(function(editor){
+            console.log(editor);
+        })
+    }
+}
 
 const fetchSharedWorkspace = () => {
     const [ isTopic, id ] = getPrefixAndId();
@@ -1392,7 +1441,7 @@ const sharedUsers = async ( workspace ) => {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } );
-      
+
         // Fetch workspace owner information
         const workspaceOwnerResponse = await fetch( "/api/v1/auth/user/userId/" + workspace.ownedBy, {
             method: "GET",

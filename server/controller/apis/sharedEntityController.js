@@ -391,3 +391,18 @@ exports.updatePermission = async ( req, res ) => {
     }
 };
 
+exports.getPermission = async ( req, res ) => {
+    try{
+        let workspaceId = req.params.entityId;
+        const workspace = await workspaceService.getWorkspaceById( workspaceId );
+        if ( req.user.userId == workspace.ownedBy ){
+            return res.status( 200 ).json( { permission_level: "edit" });
+        }
+        const sharedUser = await sharedEntityService.getSharedEntityByUserId( workspaceId, req.user.userId );
+        return res.status( 200 ).json( sharedUser );
+    }
+    catch ( error ){
+        // Handle any other errors 
+        res.status( 500 ).json( { message: error.message } );
+    }
+};
