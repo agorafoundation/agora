@@ -518,6 +518,220 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /workspaces/shared:
+     get:
+      tags:
+      - Workspaces
+      summary: Get all shared workspaces, provide limit and offset for pagnation, top limit 100.
+      description: Retrieve all shared workspaces.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of records to return, maximum 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The starting record number, defaults to 0
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                sharedWorkspaces: [shared workspace details]
+  /workspaces/shared/{workspaceId}:
+    get:
+      tags:
+      - Workspaces
+      summary: Get shared workspace by ID
+      description: Retrieve shared workspace details by ID.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the shared workspace.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                sharedWorkspace: {shared workspace details}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    delete:
+      tags:
+      - Workspaces
+      summary: Remove shared workspace by ID
+      description: Remove a shared workspace by its ID from the shared_entities table.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the shared workspace to be removed.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully removed
+          content:
+            application/json:
+              example:
+                success: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /workspaces/shared/topics/{workspaceId}:
+    get:
+      tags:
+      - Workspaces
+      summary: Get all topics for shared workspace by ID
+      description: Retrieves all topics for a given workspace.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the workspace.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                topicsList: [topic details]
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /workspaces/shared/visible/{ownerId}:
+    get:
+      tags:
+      - Workspaces
+      summary: Get all the active workspaces
+      description: Retrieve all active workspaces for owner
+      parameters:
+        - in: query
+          name: ownerId
+          required: true
+          description: The ID of the owner for whom visible workspaces should be retrieved.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                workspaces: [workspace details with topics]
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /workspaces/image:
+    post:
+      tags:
+      - Workspaces
+      summary: Save workspace image
+      description: Save the image for the specified workspace.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                workspaceId:
+                  type: integer
+                  description: The ID of the workspace.
+                filename:
+                  type: string
+                  description: The filename of the image.
+      responses:
+        '200':
+          description: Successfully saved
+          content:
+            application/json:
+              example:
+                success: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /topics:
     get:
       tags:
