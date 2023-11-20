@@ -928,4 +928,9 @@
     height: 20px;
     margin: 0 auto;
 }
-    
+
+.agnes-current-document {
+    display: flex; 
+    font-size: 12px;
+    color: #ffffff;
+}

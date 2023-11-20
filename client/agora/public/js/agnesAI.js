@@ -23,6 +23,11 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
 
 } );
 
+document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
+    allCardsContainer.innerHTML = ""; // Clear the current cards.
+    await makeAPICall();
+} );
+
 // Copy Button Logic
 function enableCiteButtons() {
     // get all the copy button text and add the click event listener
@@ -62,6 +67,9 @@ function copyContentText ( cardText, cardDiv ) {
     const copyContent = async () => {
         try {
             await navigator.clipboard.writeText( cardText );
+          
+            buttonText.innerHTML = 'Copied';
+          
             console.log( 'Content copied to clipboard' );
 
             buttonText.innerHTML = 'Copied!';
@@ -69,6 +77,7 @@ function copyContentText ( cardText, cardDiv ) {
             setTimeout( () => {
                 buttonText.innerHTML = 'Copy';
             }, 2000 );
+            
             createToastNotification( "Copied Link! Paste citation into document where needed." );
         } 
         catch ( err ) {
@@ -199,19 +208,22 @@ function getFirstNameLastNames( authors ) {
 
 }
 
-// const apiEndpoint = '/server/controller/apis/aiController.js'; // Relative path
-
-var lastEditedResource; // This is set in the topic-view.js
+var lastEditedResourceId; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+    await makeAPICall();
+} );
+
+async function makeAPICall() {
     var selectedValue = this.value; // This is either set to "notes" or "paper"
     var selectedContent = document.getElementById( 'selectedContent' );
 
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
-        resourceId: ( lastEditedResource != null ) ? lastEditedResource : getResources()[0] // get the first one if none are selected
+        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getResources()[0], // get the first one if none are selected
+        removedArticles: JSON.parse( localStorage.getItem( 'removed' ) )
     };
 
     try {
@@ -280,7 +292,7 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
         // Handle network or other errors here
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
-} );
+}
 
 // Preparing Articles for formatting
 function processJsonData( articlesObj ) {
@@ -383,3 +395,4 @@ function writeDeletedToLocalStorage( articleObj ) {
 
     localStorage.setItem( 'removed', JSON.stringify( localRemovedArticlesArray ) );
 }
+

@@ -1407,7 +1407,10 @@ async function renderTopic( topic ) {
 
                     // This allows us to get which resource the user's cursor was in for the Agnes assistant
                     document.getElementById( "suneditor_" + editor ).addEventListener( 'click', ( e ) => {
-                        lastEditedResource = resources[i].resourceId;
+                        lastEditedResourceId = resources[i].resourceId;
+                        let lastEditedResourceName = resources[i].resourceName;
+
+                        document.getElementById( 'current-document' ).innerHTML = lastEditedResourceName;                        
                     } );
 
                     //docType1Count++;
