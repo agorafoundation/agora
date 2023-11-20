@@ -1799,6 +1799,201 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /user/{email}:
+    get:
+      tags:
+      - Users
+      summary: Get user by email
+      description: Retrieve user by email.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: The email address of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "User retrieved"
+                user: {userdetails}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/{username}:
+    get:
+      tags:
+      - Users
+      summary: Get user by username
+      description: Retrieve user by username.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: The username of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "User retrieved"
+                user: {user details}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/{userId}:
+    get:
+      tags:
+      - Users
+      summary: Get active user by user ID
+      description: Retrieve active user by user ID.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: The ID of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "User retrieved"
+                user: {user details}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/verify-username/{username}:
+    get:
+      tags:
+      - Users
+      summary: Verify username
+      description: Verify if the username exists.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: The username to be verified.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully verified
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Username verified"
+                valid: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/verify-email/{email}:
+    get:
+      tags:
+      - Users
+      summary: Verify email
+      description: Verify if the email exists.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: The email to be verified.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully verified
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Email verified"
+                valid: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 
 servers:
   - url: http://localhost:4200/api/v1/auth
