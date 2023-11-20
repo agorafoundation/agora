@@ -1303,7 +1303,9 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
-    getPermission( id );
+    if ( id ){
+       getPermission( id ); 
+    }
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
