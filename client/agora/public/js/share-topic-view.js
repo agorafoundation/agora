@@ -1474,6 +1474,7 @@ const sharedUsers = async ( workspace ) => {
                       <span class="profile-email">${profile.email}</span>
                     </div>
                     <span class="profile-status">${profile.status}</span>
+                    ${removeButtonHtml}
                   </div>
                 `;
       
