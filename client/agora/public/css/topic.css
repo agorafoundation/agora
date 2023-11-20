@@ -770,6 +770,18 @@
     margin: 0px;
 }
 
+#regenerate-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 12px;
+    width: 130px;
+    height: 40px;
+    padding: 2px 4px;
+    margin: 0px;
+}
+
 .ag-generate-icon {
     margin-left: 5px;
     color: rgb(255, 255, 255);
