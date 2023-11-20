@@ -2208,7 +2208,660 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-
+  /sharing:
+    post:
+      tags:
+      - Sharing
+      summary: Share a workspace with another user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityId:
+                  type: integer
+                  description: The ID of the workspace to be shared.
+                  example: 123
+                sharedWithEmail:
+                  type: string
+                  description: The email of the user with whom to share the workspace.
+                  example: user@example.com
+                permissionLevel:
+                  type: string
+                  description: The permission level for the shared user.
+                  enum: [read, write, admin]
+                  example: read
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              example:
+                message: Workspace shared successfully
+                sharedEntityId: "shared entity 123"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/removeID:
+    delete:
+      tags:
+      - Sharing
+      summary: Remove a shared user from a workspace by ID.
+      parameters:
+        - name: entityId
+          in: query
+          description: The ID of the workspace from which to remove the shared user.
+          required: true
+          schema:
+            type: integer
+            example: 123
+        - name: sharedUserId
+          in: query
+          description: The ID of the user to be removed from the shared workspace.
+          required: true
+          schema:
+            type: string
+            example: "sharedUser123"
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              example:
+                message: Shared user removed successfully
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/removeEmail:
+    delete:
+      tags:
+      - Sharing
+      summary: Remove a user from a workspace by email
+      description: Remove user from workspace with workspace ID and email
+      parameters:
+        - in: query
+          name: entityId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the workspace from which the user should be removed.
+          example: 123
+        - in: query
+          name: emailToRemove
+          required: true
+          schema:
+            type: string
+            format: email
+          description: The email of the user to be removed from the workspace.
+          example: user@example.com
+      responses:
+        '200':
+          description: User removed from workspace successfully.
+          content:
+            application/json:
+              example:
+                message: User removed from workspace successfully
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/entity:
+    post:
+      tags:
+      - Sharing
+      summary: Save a shared entity
+      description: Save a shared entity based on the provided data.
+      parameters:
+        - name: sharedEntityId
+          in: query
+          description: The ID of the shared entity to check if it's shared.
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - name: entityId
+          in: query
+          description: The ID of the entity to be shared.
+          required: true
+          schema:
+            type: integer
+          example: 456
+        - name: entityType
+          in: query
+          description: The type of the shared entity.
+          required: true
+          schema:
+            type: string
+          example: "workspace"
+        - name: shareUserId
+          in: query
+          description: The ID of the user with whom the entity is shared.
+          required: true
+          schema:
+            type: integer
+          example: 789
+        - name: ownerUserId
+          in: query
+          description: The ID of the owner of the shared entity.
+          required: true
+          schema:
+            type: integer
+          example: 101
+        - name: permissionLevel
+          in: query
+          description: The permission level for the shared entity.
+          required: true
+          schema:
+            type: string
+          example: "read"
+        - name: canCopy
+          in: query
+          description: Indicates whether the shared entity can be copied.
+          required: true
+          schema:
+            type: boolean
+          example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sharedEntityId:
+                  type: integer
+                  description: The ID of the shared entity (optional if updating an existing entity).
+                  example: 123
+                entityId:
+                  type: integer
+                  description: The ID of the shared entity (optional if updating an existing entity).
+                  example: 456
+                entityType:
+                  type: string
+                  description: The type of the shared entity.
+                  example: "workspace"
+                shareUserId:
+                  type: integer
+                  description: The ID of the user with whom the entity is shared.
+                  example: 789
+                ownerUserId:
+                  type: integer
+                  description: The ID of the owner of the shared entity.
+                  example: 101
+                permissionLevel:
+                  type: string
+                  description: The permission level for the shared entity.
+                  example: "read"
+                canCopy:
+                  type: boolean
+                  description: Indicates whether the shared entity can be copied.
+                  example: true
+      responses:
+        '200':
+          description: Successfully saved or updated
+          content:
+            application/json:
+              example: 123
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    put:
+      tags:
+      - Sharing
+      summary: Update a shared entity
+      description: Update a shared entity based on the provided data.
+      parameters:
+        - name: sharedEntityId
+          in: query
+          description: The ID of the shared entity to check if it's shared.
+          required: false
+          schema:
+            type: integer
+          example: 123
+        - name: entityId
+          in: query
+          description: The ID of the entity to be shared.
+          required: true
+          schema:
+            type: integer
+          example: 456
+        - name: entityType
+          in: query
+          description: The type of the shared entity.
+          required: true
+          schema:
+            type: string
+          example: "workspace"
+        - name: shareUserId
+          in: query
+          description: The ID of the user with whom the entity is shared.
+          required: true
+          schema:
+            type: integer
+          example: 789
+        - name: ownerUserId
+          in: query
+          description: The ID of the owner of the shared entity.
+          required: true
+          schema:
+            type: integer
+          example: 101
+        - name: permissionLevel
+          in: query
+          description: The permission level for the shared entity.
+          required: true
+          schema:
+            type: string
+          example: "read"
+        - name: canCopy
+          in: query
+          description: Indicates whether the shared entity can be copied.
+          required: true
+          schema:
+            type: boolean
+          example: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sharedEntityId:
+                  type: integer
+                  description: The ID of the shared entity (optional if updating an existing entity).
+                  example: 123
+                entityId:
+                  type: integer
+                  description: The ID of the shared entity (optional if updating an existing entity).
+                  example: 456
+                entityType:
+                  type: string
+                  description: The type of the shared entity.
+                  example: "workspace"
+                shareUserId:
+                  type: integer
+                  description: The ID of the user with whom the entity is shared.
+                  example: 789
+                ownerUserId:
+                  type: integer
+                  description: The ID of the owner of the shared entity.
+                  example: 101
+                permissionLevel:
+                  type: string
+                  description: The permission level for the shared entity.
+                  example: "read"
+                canCopy:
+                  type: boolean
+                  description: Indicates whether the shared entity can be copied.
+                  example: true
+      responses:
+        '200':
+          description: Successfully saved or updated
+          content:
+            application/json:
+              example: 123
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/saveCopiedEntity:
+    post:
+      tags:
+      - Sharing
+      summary: Save a copied entity
+      requestBody:
+        description: Save or update a copied entity based on the provided data.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityType:
+                  type: integer
+                  description: The type of the entity (1-Workspace, 2-Topic, 3-Resource).
+                entityId:
+                  type: string
+                  description: The ID of the entity to be copied.
+                ownerUserId:
+                  type: string
+                  description: The ID of the owner of the copied entity.
+                shareUserId:
+                  type: string
+                  description: The ID of the user with whom the entity is shared.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                workspaceId: 1
+                ownedBy: shareUserId
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    patch:
+      tags:
+      - Sharing
+      summary: Update a copied entity
+      parameters:
+        - name: entityType
+          in: query
+          description: The type of the entity (1-Workspace, 2-Topic, 3-Resource).
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: entityId
+          in: query
+          description: The ID of the entity to be copied.
+          required: true
+          schema:
+            type: integer
+            example: 123
+        - name: ownerUserId
+          in: query
+          description: The ID of the owner user.
+          required: true
+          schema:
+            type: string
+            example: "user123"
+        - name: shareUserId
+          in: query
+          description: The ID of the user to whom the entity is shared.
+          required: true
+          schema:
+            type: string
+            example: "sharedUser123"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                workspaceId: 1
+                ownedBy: shareUserId
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/sharedUsers/{entityId}:
+    get:
+      tags:
+      - Sharing
+      summary: Get all shared users by workspace ID
+      description: Retrieve all shared users related to a specific workspace ID.
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the workspace for which shared users should be retrieved.
+          example: 123
+      responses:
+        '200':
+          description: Successful response. Returns a list of shared users.
+          content:
+            application/json:
+              example:
+                - entityId: 123
+                  entityType: workspace
+                  shareUserId: 456
+                  ownerUserId: 789
+                  permissionLevel: read
+                  canCopy: false
+                - entityId: 123
+                  entityType: workspace
+                  shareUserId: 789
+                  ownerUserId: 456
+                  permissionLevel: write
+                  canCopy: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/allSharedUsers/{entityId}:
+    get:
+      tags:
+      - Sharing
+      summary: Get all shared users for a specific entity
+      description: Retrieve all users who have shared a specific entity.
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the entity for which shared users should be retrieved.
+          example: 123
+      responses:
+        '200':
+          description: Successful response. Returns a list of shared users.
+          content:
+            application/json:
+              example:
+                - userId: 456
+                  username: user1
+                  email: user1@example.com
+                - userId: 789
+                  username: user2
+                  email: user2@example.com
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/permissions/{entityId}:
+    get:
+      tags:
+      - Sharing
+      summary: Get permissions for an entity
+      description: Retrieve the permissions for a specific entity.
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the entity for which the permission level should be retrieved.
+          example: 123
+      responses:
+        '200':
+          description: Successful response. Returns the permission level.
+          content:
+            application/json:
+              example:
+                permission_level: write
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /sharing/permissions/update:
+    put:
+      tags:
+      - Sharing
+      summary: Update permission level for a shared entity
+      description: Update the permission level of a shared entity (e.g., workspace) for a specific user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityId:
+                  type: integer
+                  description: The ID of the entity (e.g., workspace) for which the permission level should be updated.
+                  example: 123
+                sharedUserId:
+                  type: string
+                  description: The ID of the user for whom the permission level should be updated.
+                  example: user123
+                permissionLevel:
+                  type: string
+                  description: The new permission level for the shared user.
+                  example: read
+      responses:
+        '200':
+          description: Successful response. Returns a message indicating successful permission update.
+          content:
+            application/json:
+              example:
+                message: Permission updated successfully for the shared user.
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.org/api/v1/auth
