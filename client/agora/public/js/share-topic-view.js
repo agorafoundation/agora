@@ -1392,7 +1392,7 @@ const fetchSharedWorkspace = () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
-                sharedUsers( response );
+                fetchAndDisplaySharedUsers( response );
                 fillFields(
                     response.workspaceName,
                     response.workspaceDescription,
