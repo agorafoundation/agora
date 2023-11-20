@@ -171,7 +171,9 @@ function saveTextResource( resource, content ) {
         resource.resourceName = document.getElementById( "input-title-" + resource.resourceId ).value;
 
         // update the resource content
-        resource.resourceContentHtml = content;
+        if( content != null ) {
+            resource.resourceContentHtml = content;
+        }
 
         // save the resource
         saveResource( resource );

@@ -60,6 +60,7 @@ window.addEventListener( "load", async () => {
      */
     const openBtn = document.getElementById( "new-element" );
     if( openBtn ) {
+        console.log( "-------------------------------- hi ----------" );
         openBtn.addEventListener( "click", async () => {
             ( debug ) ? console.log( "New Topic: start" ) : null;
             
@@ -101,19 +102,64 @@ window.addEventListener( "load", async () => {
 
 
 
+/**
+ * Event to handle saving changes to resources
+ * @param {uuidv4} resourceId 
+ * @param {String} content 
+ */
 function textEditorUpdateEvent( resourceId, content ) {
     ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
 
     // get the resource from the current state
     let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
+    console.log( "resource html: " + resource.resourceContentHtml );
 
     saveTextResource( resource, content );
 
     ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
 }
 
+async function tabClickEvent( event, topicId ) {
+    ( debug ) ? console.log( "tabClickEvent() : Start - event: " + event + " topicId : " + topicId ) : null;
 
-export { textEditorUpdateEvent };
+    if ( event.target.className.includes( "close-tab" ) ) {
+        ( debug ) ? console.log( "tabClickEvent() : close tab event" ) : null;
+        //closeTab( event.target.id );
+    } 
+    else {
+        console.log( '1' );
+        if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+            console.log( '2' );
+            /**
+             * EVENT:: Entry point for changing tab event
+             */
+            // check to see if this is not the same tab as the active one
+            console.log( "active topic: " + getCurrentActiveTopic().topicId + " topicId: " + topicId );
+            if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {  
+                ( debug ) ? console.log( "tabClickEvent() : same tab" ) : null;
+            }
+            else {
+                await setActiveTopicAndResources( topicId );
+
+                await createTopicEditorGui();
+            }
+
+            
+        }
+
+    }
+
+    ( debug ) ? console.log( "tabClickEvent() : Complete" ) : null;
+}
+
+async function tabDoubleClickEvent( event, topicId ) {
+    ( debug ) ? console.log( "tabDoubleClickEvent() : Start" ) : null;
+
+    ( debug ) ? console.log( "tabDoubleClickEvent() : Complete" ) : null;
+}
+
+
+export { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent };
 
 
 

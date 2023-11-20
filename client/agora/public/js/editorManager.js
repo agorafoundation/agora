@@ -9,9 +9,9 @@
  * imports
  */
 // state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, resetTabs, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, setActiveTopicAndResources } from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import {textEditorUpdateEvent} from "./editorMain.js";
+import {textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent} from "./editorMain.js";
 
 
 /**
@@ -102,7 +102,7 @@ const createTopicEditorGui = async function ( ) {
                 tabBtn.id = "tablinks-" + i;
 
                 let tabBtnName = document.createElement( "span" );
-                tabBtnName.id = "tabTopicName-" + i;
+                tabBtnName.id = "tabTopicName-" + getCurrentWorkspace().topics[i];
                 if( getCurrentWorkspace().topics[i].topicName ){
                     tabBtnName.innerHTML = getCurrentWorkspace().topics[i].topicName;
                 }
@@ -118,23 +118,13 @@ const createTopicEditorGui = async function ( ) {
                 closeTabBtn.innerHTML = "&times;";
                 tabBtn.appendChild( closeTabBtn );
 
-                tabBtn.onclick = async ( e ) => {
-                    if ( e.target.className.includes( "close-tab" ) ) {
-                        closeTab( e.target.id );
-                    } 
-                    else {
-                        if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-                            /**
-                             * EVENT:: Entry point for changing tab event
-                             */
+                tabBtn.addEventListener( "click", async ( e ) => {
+                    tabClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                } );
 
-                            await setActiveTopicAndResources( getCurrentWorkspace().topics[e.target.id.split( "-" )[1]].topicId );
-
-                            await createTopicEditorGui();
-                        }
-          
-                    }
-                };
+                tabBtn.addEventListener( "contextmenu", async ( e ) => {
+                    tabDoubleClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                } );
                 
                 currTabs.appendChild( tabBtn );
 
@@ -513,6 +503,12 @@ function createTextArea( resource ) {
             else{
                 title.value = "Untitled";
             }
+            // add the change listener for the title
+            title.addEventListener( "change", async () => {
+                ( debug ) ? console.log( "title change event : Start - resourceId: " + resource.resourceId ) : null;
+                textEditorUpdateEvent( resource.resourceId, null );
+                ( debug ) ? console.log( "title change event : Complete" ) : null;
+            } );
 
             // Edit icon
             let editIcon = document.createElement( 'span' );
