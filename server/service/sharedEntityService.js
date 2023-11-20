@@ -102,7 +102,6 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
 };
 
 exports.removeSharedUserById = async ( entityId, sharedUserId ) => {
-    console.log( "hello" );
     let text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
     let values = [ entityId, sharedUserId ];
 

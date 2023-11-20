@@ -51,4 +51,9 @@ router.route( '/updatePermission' )
         sharedController.updatePermission ( req, res );
     } );
 
+router.route( '/removeShare' )
+    .delete( ( req, res ) => {
+        sharedController.removeSharedUserById( req, res );
+    } );
+
 module.exports = router;

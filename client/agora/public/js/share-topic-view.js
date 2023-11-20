@@ -1477,7 +1477,7 @@ async function fetchAndDisplaySharedUsers( workspace ) {
                 } ) );
             }
             else {
-                console.error( "Unable to retrieve shared users." );
+                console.error( "Unable to retrieve shared users OR no shared users." );
             }
 
             allUsers = [ ownerDetails, ...sharedUsers ];
@@ -1573,6 +1573,7 @@ function createUserSearchCard( userData, workspace ) {
             body: JSON.stringify( {
                 entityId: workspace.entityId,
                 sharedWithUserId: user.userId,
+                sharedWithEmail: user.email,
                 permissionLevel: "view",
                 canCopy: "false",
             } ),
