@@ -1284,7 +1284,6 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
-    //console.log( id );
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1304,12 +1303,6 @@ const idAndFetch = () => {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } )
-            .then( response => {
-                if( response.status === 404 ) {
-                    throw new Error( 'Resource Not Found' );
-                }
-                return response.json();
-            } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
                 sharedUsers( response );
@@ -1393,7 +1386,6 @@ const getTags = async () => {
 
 const sharedUsers = async ( workspace ) => {
     const workspaceId = workspace.workspaceId;
-      
     try {
         // Fetch shared entities for the workspace
         const sharedUsersResponse = await fetch( "/api/v1/auth/shared/shared-entity/" + workspaceId, {
