@@ -30,7 +30,7 @@ exports.callOpenAI = async ( req, res ) => {
         let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
-            let prompt = createPaperPrompt( parsedResourceContent[0] ); // get the first 
+            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0] ) : createNotesPrompt( parsedResourceContent ); 
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
@@ -40,7 +40,7 @@ exports.callOpenAI = async ( req, res ) => {
                     model: "gpt-3.5-turbo",
                     temperature: 0, // variance in the response - play with this for different results
                     messages: [ 
-                        { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
+                        { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
                         { role: "user", content: prompt }
                     ]
                 } );
@@ -89,6 +89,16 @@ function createPaperPrompt( abstract ) {
             ${abstract}
             '''
            `;
+}
+
+function createNotesPrompt( notes ) {
+    return `I am writing notes. Please return literature that is related to my notes, but also any literature you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+
+            Here are my notes:
+            '''
+            ${notes}
+            '''
+            `;
 }
 
 
