@@ -319,7 +319,7 @@ function processJsonData( articlesObj ) {
                </div>
                <div class="row">
                    <div class="col text-end">
-                       <button class="btn btn-sm card-cite-btn">Cite</button>
+                       <button class="btn btn-sm card-cite-btn">Copy</button>
                    </div>
                </div>
            `;
