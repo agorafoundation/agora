@@ -733,11 +733,20 @@
 
 /* Syles for Agnes    */
 .agnes-button {
-    position: absolute;
-    right: 43px;
-    top: -20px;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: #3f3f3f;
+    border-radius: 50%;
+    padding: 10px 10px;
+    z-index: 200; 
+    
 }
 
+/* agne btn shadow */
+.agnes-button:hover{
+    box-shadow:  0 0 21px rgba(33,33,33,.2); 
+}
 .agnes-modal-shape {
     padding: 15px;
     gap: 5px;
@@ -774,11 +783,15 @@
 
 .agnes-modal-pos {
     right: 2vw;
-    top: 8vh;
+    top: 85vh;
+    bottom: -20;
     display: none;
-    position: absolute;
+    position: fixed;
     z-index: 200; 
+    transform: translate(0%, -95%);
+
 }
+
 .text-center-mod {
     text-align: center;
     justify-content: space-around;

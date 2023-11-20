@@ -83,14 +83,18 @@
         <%-include('./comment-template.ejs'); %>
 
         <!-- AI - Agnes with Modal Trigger -->
-        <span
+        <div class="agnes-btn-container">
+          <span
           class="material-symbols-outlined agnes-button"
-          style="color: rgb(212, 202, 202)"
+          style="color: rgb(250, 246, 246)"
           data-bs-toggle="modal"
           data-bs-target="#agnesModal"
-        >
-          robot_2
-        </span>
+
+          >
+            robot_2
+          </span>
+        </div>
+        
         <%- include('./agnes-modal.ejs'); %>
         <!-- <%- include('./agnes-data-template.ejs'); %> -->
 
