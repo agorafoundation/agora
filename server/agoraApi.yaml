@@ -711,6 +711,70 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /topics/sharedtopic/resources/{topicId}:
+    get:
+      tags: 
+        - Topics
+      summary: Get all resources for a shared topic by ID
+      parameters:
+        - in: path
+          name: topicId
+          required: true
+          description: The ID of the shared topic.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                resourcesList: [list of resources]
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /topics/sharedtopic/{topicId}:
+    get:
+      tags:
+        - Topics
+      summary: Get shared topic by ID
+      parameters:
+        - in: path
+          name: topicId
+          required: true
+          description: The ID of the shared topic.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                topic: {topic details}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
   /resources:
     get:
       tags:
@@ -1468,6 +1532,15 @@ paths:
                     username: "friend1"
                   - userId: "456"
                     username: "friend2"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1502,6 +1575,15 @@ paths:
                 x-agora-message-title: "Success"
                 x-agora-message-detail: "Friend Request Sent"
                 result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1532,6 +1614,15 @@ paths:
                 x-agora-message-title: "Success"
                 x-agora-message-detail: "Friend Request Accepted"
                 result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1562,6 +1653,15 @@ paths:
                 x-agora-message-title: "Success"
                 x-agora-message-detail: "Friend Request Denied"
                 result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1596,6 +1696,15 @@ paths:
                 x-agora-message-title: "Success"
                 x-agora-message-detail: "Removed friend"
                 result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1622,6 +1731,15 @@ paths:
                   - friendRequest1
                   - friendRequest2
                   - friendRequest3
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
