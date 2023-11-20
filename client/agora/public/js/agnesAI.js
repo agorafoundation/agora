@@ -223,7 +223,7 @@ async function makeAPICall() {
     let requestData = {
         mode: selectedValue, // Use the selected mode
         resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getResources()[0], // get the first one if none are selected
-        removedArticles: JSON.parse( localStorage.getItem( 'removed' ) )
+        removedArticles: JSON.parse( localStorage.getItem( 'removed' ) ) ?? []
     };
 
     try {
