@@ -69,7 +69,7 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
             res.rows.forEach( ( row ) => {
                 sharedUsers.push( SharedEntity.ormSharedEntity( row ) );
             } );
-            return sharedEntities;
+            return sharedUsers;
         }
         else{
             return false;
@@ -102,14 +102,35 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
     }
 };
 
+exports.removeSharedUserById = async ( entityId, sharedUserId ) => {
+    console.log( "hello" );
+    let text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
+    let values = [ entityId, sharedUserId ];
+
+    try {
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( "[ERR]: [shared] - delete shared user by id - " + e );
+        return false;
+    }
+
+};
+
 exports.updatePermission = async ( sharedEntity ) => {
     if ( sharedEntity ) {
         let text = "UPDATE shared_entities SET permission_level = $1 WHERE entity_id = $2 AND shared_with_user_id = $3 RETURNING shared_entity_id";
-        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id];
+        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id ];
 
         try{
             let res = await db.query( text, values );
-            if ( res.rowCount > 0){
+            if ( res.rowCount > 0 ){
                 return res.rows[0].shared_entity_id;
             }
             else{
@@ -120,7 +141,7 @@ exports.updatePermission = async ( sharedEntity ) => {
             console.log( e.stack );
         }
     }
-}
+};
 
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 

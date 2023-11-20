@@ -3,8 +3,18 @@
         <div class="modal-content" style="border-radius: 10px; box-shadow: 3px rgba(0.5,0.5,0.5,0.5);">
             <div class="modal-header" style="display: flex; flex-direction: column;">
                 <h5 class="share-modal-title" id="share-modal-title"></h5>
-                <input class="share-modal-input" placeholder="Enter email address"></input>
+                <div class="share-search-bar">
+                    <input id="share-user-search" class="card-search form-control" placeholder="Enter a username"/>
+                    <button id="share-btn-search" type="button" class="btn btn-dark">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 20px; margin: 0; padding: 0; color: white;">
+                            Search
+                        </span>
+                    </button>
+                </div>
                 <hr class="permissions-hr">
+                <div id="searched-users">
+                </div>
             </div>
             <div class="modal-body">
                 <ul id="profiles-list" class="currently-shared-with">

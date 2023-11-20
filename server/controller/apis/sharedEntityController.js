@@ -159,6 +159,47 @@ exports.saveCopiedEntity = async ( req, res ) => {
     }
 };
 
+exports.removeSharedUserById = async ( req, res ) => {
+    try {
+        // authenticate the user sharing 
+        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
+        if ( !authUserId ) {
+            console.log( "1" );
+            return res.status( 403 ).json( { message: 'User not authenticated' } );
+        }
+
+        // Fetch user details from the User model
+        const sharingUser = await userService.getActiveUserById( authUserId );
+        if ( !sharingUser ) {
+            console.log( "1" );
+            return res.status( 404 ).json( { message: 'User not found' } );
+        }
+
+        const workspaceId = req.body.entityId;
+        const workspace = await workspaceService.getWorkspaceById( workspaceId );
+        if ( !workspace ) {
+            console.log( "1" );
+            return res.status( 404 ).json( { message: 'Workspace not found' } );
+        }
+        if ( workspace.ownedBy !== sharingUser.userId ) {
+            return res.status( 403 ).json( { message: 'Unauthorized: You do not own this workspace' } );
+        }
+
+        // Fetch shared users id
+        const sharedUserId = req.body.sharedUserId;
+
+        // Remove the shared entity (shared user)
+        await sharedEntityService.removeSharedUserById( workspaceId, sharedUserId );
+
+        // Send success response
+        res.status( 200 ).json( { message: 'Shared user removed successfully' } );
+    }
+    catch ( error ) {
+        // Handle any other errors
+        res.status( 500 ).json( { message: error.message } );
+    }
+};
+
 //Share workspace 
 exports.sharedWorkspace = async ( req, res ) => {
     try {
@@ -299,4 +340,4 @@ exports.updatePermission = async ( req, res ) => {
         // Handle any other errors 
         res.status( 500 ).json( { message: error.message } );
     }
-}
+};
