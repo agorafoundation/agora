@@ -904,7 +904,7 @@
 }
 
 .btn.btn-danger:hover {
-    background-color: transparent;
+    background-color: red;
     border: none;
 }
 
