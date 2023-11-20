@@ -10,6 +10,7 @@ const db = require( '../db/connection' );
 
 // import models
 const SharedEntity = require( '../model/sharedEntity' );
+const userService = require( '../service/userService' );
 
 
 /**
@@ -53,8 +54,8 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
             u.profile_filename,
             u.first_name,
             u.last_name
-        FROM shared_entities se
-        INNER JOIN users u ON se.shared_with_user_id = u.user_id
+        FROM shared_entities AS se
+        INNER JOIN users AS u ON se.shared_with_user_id = u.user_id
         WHERE se.entity_id = $1
           AND se.entity_type = 'workspace'
     `;
@@ -92,8 +93,6 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
         else{
             return false;
         }
-        }
-        return sharedUsers;
     }
     catch ( e ) {
         console.log( e.stack );
@@ -185,5 +184,41 @@ exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
             }
         }
         return sharedEntity;
+    }
+};
+
+// Remove a user from a shared workspace
+exports.removeUserByEmailFromWorkspace = async ( workspaceId, email ) => {
+    try {
+        // First, get the user ID from the email
+        const user = await userService.getUserByEmail( email );
+        if ( !user ) {
+            return false; // User not found
+        }
+
+        const userId = user.userId;
+        const text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2 RETURNING *";
+        const values = [ workspaceId, userId ];
+
+        const res = await db.query( text, values );
+        return res.rowCount > 0;
+    } 
+    catch ( e ) {
+        console.log( e.stack );
+        return false;
+    }
+};
+
+exports.removeUserFromWorkspace = async ( workspaceId, userId ) => {
+    const text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2 RETURNING *";
+    const values = [ workspaceId, userId ];
+
+    try {
+        const res = await db.query( text, values );
+        return res.rowCount > 0;  // returns true if a row was deleted
+    } 
+    catch ( e ) {
+        console.log( e.stack );
+        return false;  // returns false in case of an error
     }
 };

@@ -108,7 +108,9 @@ const createTopic = async( id, name ) => {
     else{
         topicTitle.value = "Untitled";
     }
-
+    if( editPermission == false ){
+        topicTitle.readOnly = true;
+    }
     // let saveIcon = document.createElement( "span" );
     // saveIcon.classList.add( "material-symbols-outlined" );
     // saveIcon.classList.add( "saveBtn" );
@@ -160,7 +162,9 @@ const createTopic = async( id, name ) => {
 
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
-            closeTab( e.target.id );
+            if( editPermission == true ){
+                closeTab( e.target.id );
+            }
         } 
         else {
             openTab( newTab.id );
@@ -498,13 +502,16 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     }
 
     removeTagBtn.addEventListener( "click", () => {
-        // Get the id portion with the tag name
-        document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        for ( let i=0; i<currTagList.length; i++ ) {
-            if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
-                currTagList[i] = "";
+        if ( editPermission == true ){
+            // Get the id portion with the tag name
+            document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
+            for ( let i=0; i<currTagList.length; i++ ) {
+                if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
+                    currTagList[i] = "";
+                }
             }
         }
+        
 
         const [ isTopic, id ] = getPrefixAndId();
         const tagType = isTopic ? "topic" : "workspace";
@@ -579,7 +586,7 @@ function createResource( name, type, imagePath, id ) {
    
 }
 
-// get the topic id based on the currently visible topic tab
+// get the topic id based on the visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
@@ -648,6 +655,10 @@ function createTextArea( name, id ) {
         }
         else{
             title.value = "Untitled";
+        }
+
+        if( editPermission == false ){
+            title.readOnly = true;
         }
 
         // Edit icon
@@ -1088,7 +1099,10 @@ const openTopicModal = document.getElementById( "open-topic-modal-div" );
 // open the modal
 if( openBtn ) {
     openBtn.onclick = () => {
-        modal.style.display = "block";
+        if ( editPermission == true ){
+            modal.style.display = "block";
+        }
+        
     };
 }
 
@@ -1267,6 +1281,14 @@ const prefixPattern = /#t/;
 //const idPattern = /-([0-9]+)/;
 const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
+const shareButton = document.getElementById( "share-button" );
+const shareInput = document.getElementById( "share-input" );
+const workspaceTitle = document.getElementById( "workspace-title" );
+const workspaceDescription = document.getElementById( "workspace-desc" );
+const tagBox = document.getElementById( "mySearch" );
+const editors = document.getElementsByClassName( "se-wrapper" );
+var editPermission = false;
+
 const getPrefixAndId = () => {
 
     const url = window.location.href;
@@ -1281,7 +1303,7 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
-    //console.log( id );
+    getPermission( id );
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1309,10 +1331,76 @@ const idAndFetch = () => {
                     response.workspaceDescription,
                     response.workspaceImage
                 );
+            } )
+            .catch( error => {
+                //console.error( 'Fetch Error: not owner' );
+                fetchSharedWorkspace();
             } );
     }
 };
 
+const getPermission = ( workspaceId ) => {
+    fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            if ( response.permission_level == "edit" ){
+                editPermission = true;
+                applyEditPermission( editPermission );
+            }
+            else{
+                applyEditPermission( editPermission );
+            }
+        } );
+};
+
+const applyEditPermission = ( editTool ) => {
+    if ( editTool == false ){
+        workspaceTitle.readOnly = true;
+        workspaceDescription.readOnly = true;
+        tagBox.readOnly = true;
+        console.log( editors );
+        Array.from( editors ).forEach( function( editor ){
+            console.log( editor );
+        } );
+    }
+};
+
+const fetchSharedWorkspace = () => {
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( id );
+    if ( isTopic && id ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.topicName,
+                    response.topicDescription,
+                    response.topicImage
+                );
+            } );
+    }
+    else if ( id ) {
+        fetch( "api/v1/auth/workspaces/shared/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                sharedUsers( response );
+                fillFields(
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
+                );
+            } );
+    }
+};
 
 const getTags = async () => {
     const [ isTopic, id ] = getPrefixAndId();
@@ -1600,6 +1688,26 @@ const renderTopics = async ( workspace ) => {
                 await renderTopic( topics[i] );
             
             }
+        }
+        else{
+            renderSharedTopics();
+        }   
+    }
+    
+   
+};
+
+const renderSharedTopics = async ( workspace ) => {
+    const [ isTopic, id ] = getPrefixAndId();
+    if( id ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/shared/"+ id   );
+        let topics = await response.json();
+   
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderSharedTopic( topics[i] );
+            
+            }
         }   
     }
     
@@ -1647,12 +1755,90 @@ async function renderTopic( topic ) {
     return topics;
 }
 
+totalTopicsRendered = 0;
+async function renderSharedTopic( topic ) {
+  
+    await createTopic( topic.topicId, topic.topicName );
+    const resources = await renderSharedResources( topic.topicId );
+    console.log( resources );
+    if ( resources.length > 0 ) {
+        //let docType1Count = 0;
+        for ( let i = 0; i < resources.length; i++ ) {
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //if resource is a document
+            if( resources[i].resourceType == 1 ){
+                await createTextArea( resources[i].resourceName, resources[i].resourceId );
+                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
+                    totalTopicsRendered++; 
+                    let editor = "sunEditor" + ( totalTopicsRendered );
+                    //console.log( editor );
+                    //console.log( sunEditor[editor] );
+                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+
+                    //docType1Count++;
+                    //val++;
+                }
+
+
+            }
+            else if( resources[i].resourceType == 3 ) {
+                // todo: add code to deal with resource type 3
+            }
+            else if ( resources[i].resourceType == 2 ) {
+                console.log( "other resource type??? " + resources[i].resourceName );
+            }
+            
+        }
+        window.scrollTo( 0, 0 );
+    }
+    return topics;
+}
+
 async function renderResources( topicId ) {
     //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
     const data = await response.json();
     //console.log( "render resources response: " + JSON.stringify( data ) );
     return data;
+}
+
+async function renderSharedResources( topicId ) {
+    //console.log( "render resources call: " + topicId );
+    const response = await fetch( "api/v1/auth/topics/resources/shared/" + topicId );
+    const data = await response.json();
+    //console.log( "render resources response: " + JSON.stringify( data ) );
+    return data;
+}
+
+async function removeUser( email, workspaceId ) {
+    try {
+        const response = await fetch( "api/v1/auth/shared/removeUserFromWorkspaceByEmail", { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify( {
+                emailToRemove: email,
+                entityId: workspaceId
+            } )
+        } );
+
+        if ( response.ok ) {
+            const data = await response.json();
+            alert( data.message || 'User removed successfully' );
+            fetchSharedWorkspace();
+        } 
+        else {
+            const errorData = await response.json();
+            alert( errorData.message || 'Failed to remove user' );
+        }
+    } 
+    catch ( error ) {
+        console.error( 'Error removing user:', error );
+        alert( 'Error removing user' );
+        
+    }
 }
 
 window.addEventListener( "load", () => {
