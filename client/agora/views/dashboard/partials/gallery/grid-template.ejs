@@ -1,10 +1,17 @@
 <% //name:string, description:string, tags:array, content:array %>
 <% const renderCard=(workspaceId,name,desc,tags,contentType, content)=> { 
   //stops text overflow
-  name = name.slice(0,18)
+  if(name) {
+    name = name.slice(0,18)
+
+  }
+  else {
+    name = "Untitled"
+  }
   if(desc){
     desc = desc.slice(0,180)
   }
+  
   if (contentType === "Topic") { 
 %>
 
@@ -52,14 +59,20 @@
           <div>
             <% if (content) { %>
               <ul class="list-group list-group-flush list-grid">
-                <% content.slice(0,6).forEach((item) => { 
-                  if(item) {
-                    //stops overflow of text
-                    item = item.slice(0,12)%>
-                  <!--topicReroute() below has a filler id-->
-                  
-                  <li class="list-group-item item-list"  title='Open <%=item.slice(0,3)%>' > <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
-                <% }}) %>
+                <% 
+                  content.slice(0,6).forEach((item) => { 
+                    if(item) {
+                      //stops overflow of text
+                      item = item.slice(0,12)
+                
+                %>
+                      <!--topicReroute() below has a filler id-->
+                
+                      <li class="list-group-item item-list"  title='Open <%=item.slice(0,3)%>' > <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                <% 
+                    }
+                  }) 
+                %>
               </ul>
             <% } %>
           </div>

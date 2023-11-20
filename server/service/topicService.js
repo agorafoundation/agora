@@ -613,44 +613,57 @@ exports.saveTopic = async function( topic ) {
  * @param {*} resourceIds Array of resource id's to be associated with the topic
  * @returns true for success / false for failure
  */                                               
-exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesRequired ) {
+exports.saveResourcesForTopic = async function( topic, resourceIds ) {
     // get the most recent version of the topic
-    let text = "SELECT * from topics where topic_id = $1";
-    let values = [ topicId ];
+    console.log( "[INFO]: Saving resources for topic: " + topic.topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds );
+    // let rIds = resourceIds;
+    // if( typeof resourceIds == "object" ) {
+    //     rIds = resourceIds.map( r => ( String.toString( r ) ) );
+    // }
+    //console.log( "[DEBUG]: rIds: " + rIds + " typeOf rIds: " + typeof rIds + " length: " + rIds.length );
+
+    // first remove current resources associated with the topic
+    let text = "DELETE FROM topic_resources WHERE topic_id = $1";
+    let values = [ topic.topicId ];
+
     try {
-         
-        let res = await db.query( text, values );
-        
-        if( res.rowCount > 0 ) {
-
-            // first remove current resources associated with the topic
-            text = "DELETE FROM topic_resources WHERE topic_id = $1";
-            values = [ topicId ];
-
-            let res2 = await db.query( text, values );
-
-            // now loop through the array and add the new resources
-            /**
-             * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
-             * This probably means having the pathway be an array of objects containing id and isRequired
-             */
-            if( resourceIds && resourceIds.length > 0 ) {
-                for( let i=0; i < resourceIds.length; i++ ) {
-                    let isRequired = true;
-                    if( resourcesRequired.length > i ) {
-                        isRequired = resourcesRequired[i];
-                    }
-                    text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
-                    values = [ topicId, resourceIds[i], ( i + 1 ), isRequired, true, res.rows[0].ownedBy ];
-
-                    let res3 = await db.query( text, values );
-                }
-            }
-        }
+        await db.query( text, values );
     }
     catch( e ) {
-        console.log( "[ERR]: Error [Topic] - save resources for topic - " + e );
+        console.log( "[ERR]: Error [saveResourcesForTopic] - delete topic_resources for topic - " + e );
         return false;
+    }
+        
+
+
+    // now loop through the array and add the new resources
+    /**
+         * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
+         * This probably means having the pathway be an array of objects containing id and isRequired
+         */
+    console.log( "[DEBUG]: resourceIds: " + resourceIds );
+    if( resourceIds && resourceIds.length > 0 ) {
+        for( let i=0; i < resourceIds.length; i++ ) {
+            console.log( "[DEBUG]: resourceIds[i]: " + resourceIds[i] );
+            let isRequired = true;
+
+            text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
+            console.log( "[DEBUG]: text: " + text );
+            console.log( "ownedBy: " + topic.ownedBy );
+            values = [ topic.topicId, resourceIds[i], ( i + 1 ), isRequired, true, topic.ownedBy ];
+            console.log( "values: " + values );
+            console.log( "1" );
+
+            try {
+                let res3 = await db.query( text, values );
+            }
+            catch( e ) {
+                console.log( "[ERR]: Error [saveResourcesForTopic] - add topic_resource for topic - " + e );
+                return false;
+            }
+                
+            console.log( "2" );
+        }
     }
 
     return true;

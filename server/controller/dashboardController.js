@@ -132,7 +132,7 @@ exports.getDashboard = async function( req, res ) {
                 ownerWorkspaces[i].topics.push( topics );
             }
             else {
-                console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                console.log( "Error retrieving topic " + topicsIds[index] + "\n" );
             }
         }
 

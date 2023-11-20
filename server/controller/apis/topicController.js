@@ -470,8 +470,23 @@ exports.saveTopic = async ( req, res, redirect ) => {
         */
 
         // Resources are held as a list of resource id's.
+        console.log( "req.body.resources: " + JSON.stringify( req.body.resources ) );
+       
         topic.resources = req.body.resources;
+        console.log( "all resources: " + JSON.stringify( topic.resources ) );
+        //console.log( "first resource: " + topic.resources[0] );
 
+        // // move the resources into flat string array
+        // let objectResources = topic.resources;
+        // let stringResources = [];
+        // objectResources.forEach( ( resource ) => {
+        //     stringResources.push( resource.toString() );
+        //     console.log( "resource (item in resources): " + resource );
+        // } );
+
+        // console.log( "string resources: " + JSON.stringify( stringResources ) );
+
+        
         // Associated resource id's (by position) are required. E.g. below.
         topic.resourcesRequired = req.body.resourcesRequired;
 
@@ -487,7 +502,8 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
-            let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, req.body.resources, req.body.resourcesRequired );
+
+            await topicService.saveResourcesForTopic( topic, topic.resources );
             //console.log( "@ -- @" +resourcesSaved );
         }
 

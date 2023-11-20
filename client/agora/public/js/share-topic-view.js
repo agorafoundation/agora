@@ -5,7 +5,32 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// get models and controller functions from modules
+import { resourceModel, saveResource } from "./controllers/clientResourceController.js";
+import { topicModel, saveTopic, getTopic } from "./controllers/clientTopicController.js";
+import { workspaceModel, saveWorkspace, getWorkspace } from "./controllers/clientWorkspaceController.js";
+
+/** Globals */
+let resources = [];
+let numResources = 0;
+
+let numTopics = 0;
+let topics = [];
+
+
+
+// keeps track of the current topic tab identifier. When a user selects a tab, the div with name
+// matching this tabName is displayed. The divs have a class 'tabcontent'.
 let tabName = "";
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
+=======
+
+// Keeps track of the index of the current tab this may be referenced before the tab is created or rendered
+// previously this was done by using the tabName and the match function to get the number at the end of the name
+// which is probimattic if you want to work with the index number to organize the topics and resources before the 
+// tab has been cerated.
+let currentTabIndex = -1;
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
 // Workspace resizing
 let activeHeightObj = {};
@@ -29,11 +54,17 @@ function checkActiveHeight() {
 }
 
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 /* Topic Functions -------------------------------------------------------------------------- */
 let numTopics = 1;
 let topics = {};
+=======
 
-// Creates a new topic
+
+
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
+
+// Renders a new topic
 const createTopic = async( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
@@ -122,7 +153,7 @@ const createTopic = async( id, name ) => {
     // };
 
     let topicDivider = document.createElement( "div" );
-    topicDivider.id = "topic-divider";
+    topicDivider.id = "topic-divider" + numTopics   ;
 
     let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + numTopics;
@@ -167,7 +198,7 @@ const createTopic = async( id, name ) => {
             }
         } 
         else {
-            openTab( newTab.id );
+            openTab( newTab.id );            
         }
     };
 
@@ -189,6 +220,7 @@ const createTopic = async( id, name ) => {
     createNewActiveHeight();
     openTab( newTab.id );
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
     if( !id ) {
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
@@ -222,9 +254,17 @@ const createTopic = async( id, name ) => {
         topics[numTopics] = id;
         numTopics ++;
     }
+=======
+    console.log( "currentTabIndex 1: " + currentTabIndex );
+    saveTopic( topicName, resources[currentTabIndex] );
+    console.log( "createTopic() Complete " );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 };
 
+
+
 // Updates topic name
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 const updateTopic = async( name ) => {
     let isRequired = [];
     let resources = getResources();
@@ -278,18 +318,60 @@ const saveWorkspace = async( topics ) => {
         //console.log( JSON.stringify( data ) );
     }
 };
+=======
+// defunct reaplacing with saveTopic
+// const updateTopic = async( name ) => {
+//     console.log( "updateTopic() " + name );
+//     let isRequired = [];
+
+//     // console.log( "resources found: " + JSON.stringify( resources ) );
+//     for( let i = 0; i < resources.length; i++ ){
+//         isRequired.push( "true" );
+//     }
+//     let id = getCurrTopicID();
+//     // console.log( "topic object: " + JSON.stringify( {
+//     //     "topicId": id,
+//     //     "topicName": name ? name : "Untitled",
+//     //     "resources": resources ? resources : [],
+//     //     "resourcesRequired": isRequired,
+//     //     "visibility": "private",
+//     //     "isRequired": true
+//     // } ) );
+//     const response = await fetch( "api/v1/auth/topics", {
+//         method: "POST",
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify( {
+//             "topicId": id,
+//             "topicName": name ? name : "Untitled",
+//             "resources": resources ? resources : [],
+//             "resourcesRequired": isRequired,
+//             "visibility": "private",
+//             "isRequired": true
+//         } )
+//     } );
+
+//     if( response.ok ) {
+//         const data = await response.json();
+//         console.log( "updateTopic() saved and Complete" );
+//         return data;
+//     }
+// };
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
 
 
-/* Tab Functions -------------------------------------------------------------------------------------------- */
-// Workspace empty state
-let activeTab = document.getElementById( "resources-zone0" );
+let activeTab = null;
 
 
 // Change tabs
 function openTab( name ) {
     tabName = name;
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
     //console.log( tabName );
+=======
+    console.log( "openTab : " + tabName );
+    //console.log( "tab id name: " + currentTagId ) ;
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
     let i, tabcontent, tablinks;
 
     tabcontent = document.getElementsByClassName( "tabcontent" );
@@ -306,6 +388,10 @@ function openTab( name ) {
     }
 
     activeTab = document.getElementById( "resources-zone" + name.slice( -1 ) );
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
+=======
+    //currentTagId = name.slice( -1 );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
     // Show the current tab
     document.getElementById( name ).style.display = "block";
@@ -541,11 +627,23 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
 
 
+// comment out to identify all of the areas using the previous approach
 
-/* Resource Functions --------------------------------------------------------------------------------- */
-let resources = {};
-let numResources = 1;
+// get the topic uuid id based on the currently visible topic tab
+// function getCurrTopicID() {
+//     let topicID = null;
+//     if( tabName ) {
+//         let topicVal = tabName.match( /\d+/g )[0];
+//         topicID = topics[topicVal];
+//     //console.log( "returning topic id: " + topicID );
+//     }
+//     else {
+//         topicID = 0;
+//     }
+//     return topicID;
+// }
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 // create a new resource
 function createResource( name, type, imagePath, id ) {
     //console.log( "createResource call: " + name + ", " + type + ", " + imagePath + ", " + id );
@@ -612,6 +710,54 @@ function getResources() {
     }
     return sorted;
 }
+=======
+// // get the tab index based on the currently visible topic tab
+// function getCurrTopicIndex() {
+//     let topicIndex = 0;
+//     if( tabName ) {
+//         topicIndex = tabName.match( /\d+/g )[0];
+//         //topicIndex = topics.indexOf( topicVal );
+
+//         console.log( "returning topic id: " + topicIndex + " from tabname: " + tabName );
+//     }
+//     return topicIndex;
+// }
+
+// --------------------------------------------------------------------------------
+
+
+// returns an array of resource id's within a given topic, sorted by position
+// this is the old function that completes it task using the queryselectorall 
+// lookingonly at the display property.  This is not a good way to do this.
+// function getResourcesQs() {
+//     console.log( "getResources() : Start" );
+//     console.log( "contents of the resources array: " + JSON.stringify( resources ) );
+//     let topicResources = document.querySelectorAll( '.drop-zone__title' );
+//     //console.log( "topicResources: " + JSON.stringify( topicResources ) );
+//     let sorted = [];
+//     for ( let i=0; i<topicResources.length; i++ ) {
+//         //console.log( "in the loop" );
+//         if ( topicResources-i].style.display == 'none' ) {
+//             //console.log( true );
+//         }
+//         let val = topicResources-i].id.match( /\d+/g )[0];
+//         //console.log( "val: " + val );
+//         let propertyNames = Object.getOwnPropertyNames( resources );
+//         //console.log( "propertyNames: " + propertyNames );
+//         console.log( "tetsingeee : " +  tabName.match( /\d+/g ) );
+//         if( tabName.match( /\d+/g ).length > 1 ) {
+//             for ( let j=0; j<propertyNames.length; j++ ) {
+//                 if ( val == propertyNames[j] && resources-val][1] == getCurrTopicID() ) {
+//                     sorted.push ( resources-val][0] );
+//                 }
+//             }
+//         }
+        
+//     }
+//     console.log( "getResources() : Complete : list - " + sorted );
+//     return sorted;
+// }
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
 // Create the suneditor text area
 
@@ -631,7 +777,38 @@ function createTextArea( name, id ) {
 
         // Create drop zone
         let newDropZone = document.createElement( "div" );
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
         newDropZone.className = "drop-zone";
+=======
+        newDropZone.className = "drop-zone-new";
+        newDropZone.innerHTML = "Drop a file or click here to create an addtional text area";
+        newDropZone.addEventListener( "click", async () => {
+            console.log( "createTextArea - Promise - createResource() call" );
+
+            //console.log( "getCurrTopicID: " + getCurrTopicID() );
+            console.log( "getCurrTopicIndex: " + currentTabIndex );
+
+            console.log( "create new resource click event - createResource() call" );
+            const newResource = await clientController.createResource( null, 1, null, null );
+            console.log( "newResource: " + JSON.stringify( newResource ) );
+
+            console.log( "create new resource click event - updateTopic() call" );
+            let topicTitle = document.getElementById( 'tabTopicName' + tabName.match( /\d+/g ) );
+            console.log( "topicTitle: " + topicTitle );
+
+            //const newTopic = await updateTopic( topicTitle.innerHTML )
+            // send the resources from the current;
+            const newTopic = await saveTopic( topicTitle.innerHTML, resources[currentTabIndex] );
+            
+            console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+            // render the resource text area
+            createTextArea();
+
+            numTopics++;
+
+        } );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
         // Create drop zone filler space
         let newDropZoneFiller = document.createElement( "div" );
@@ -708,12 +885,18 @@ function createTextArea( name, id ) {
     promise.then(
         ( value ) => {
             createSunEditor();
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
             if( name ){
                 createResource( name, 1, null, id  );
             }
             else{
                 createResource( null, 1, null );
             }
+=======
+            numResources++;
+
+            console.log( "createTextArea() complete promise then (suneditor) completed" );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
         }
     );
 }
@@ -723,6 +906,7 @@ function createTextArea( name, id ) {
 let sunEditor = {};
 let sunEditorList = [];
 const createSunEditor = async() => {
+    console.log( "createSunEditor() : " + numResources );
     // eslint-disable-next-line no-undef
     sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
         toolbarContainer: "#toolbar_container",
@@ -771,6 +955,7 @@ const createSunEditor = async() => {
     sunEditorList.push( sunEditor["sunEditor"+numResources] );
 };
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 // update the sun editor contents
 function updateSunEditor( id, name, contents ) {
     //console.log( "updateSunEditor call: " + id + " " + name + " " + contents );
@@ -799,20 +984,35 @@ function updateSunEditor( id, name, contents ) {
 
 function getResourceID( val ) {
     let resourceID = resources[val][0];
+=======
+
+
+// 
+function getResourceUuidByEditorNumber( val ) {
+    console.log( "getResourceID: start" );
+    console.log( "val: " +val );
+    console.log( "resources: " + JSON.stringify( resources ) );
+    let resourceID = resources[currentTabIndex][val];
+    console.log( "getResourceID: complete returning: " + resourceID );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
     return resourceID;
 }
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    
+    //console.log( "mouse move event" );
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
+            console.log( "onChange event for sunEditor: " + getResourceID( i ) );
             sunEditorList[i][1].save();
 
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
-            let id = getResourceID( sunEditorList[i][0] );
+            let id = getResourceID( ( i ) );
+            //let id = resources-i - 1];
+            console.log( "resources: " + resources + " at index " + ( ( i ) + "is : " + id ) );
             let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            console.log( "calling from move" );
             updateSunEditor( id, title, contents );
         };
         sunEditorList[i][1].onKeyUp = ( e ) => {
@@ -955,7 +1155,11 @@ function updateThumbnail( dropZoneElement, file ) {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 
+=======
+            console.log( "updateThumbnail - getFile - createResource() call" );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
             createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
@@ -967,6 +1171,10 @@ function updateThumbnail( dropZoneElement, file ) {
         thumbnailElement.style.backgroundSize = "200px";
         mydiv.style.height = "200px";
         activeHeightObj[tabName] += 200;
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
+=======
+        console.log( "updateThumbnail - getFile - else - createResource() call" );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
         createResource( file.name, 3, null );
     }
     mydiv.appendChild( inputfile );
@@ -1020,18 +1228,21 @@ function getFile( file ) {
 
 
 document.addEventListener( "click", function( e ) {
+    console.log( "suneditor click event" ); 
     // toggle edit and done icons
     if ( ( e.target.id ).includes( "done" ) ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
-        //console.log( sunEditor["sunEditor" + val] );
+        console.log( sunEditor["sunEditor" + val] );
         sunEditor["sunEditor" + val][1].readOnly( true );
 
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
-        let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        //let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        let id = resources[currentTabIndex][val];
         let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        console.log( "calling from click" );
         updateSunEditor( id, title, contents );
     }
     if ( ( e.target.id ).includes( "edit" ) ) {
@@ -1041,9 +1252,9 @@ document.addEventListener( "click", function( e ) {
     }
 
     // open suneditor in new tab
-    if ( e.target.id.includes( "open-tab" ) ) {
-        window.open( "http://localhost:4200/note", "_blank" );
-    }
+    // if ( e.target.id.includes( "open-tab" ) ) {
+    //     window.open( "http://localhost:4200/note", "_blank" );
+    // }
 
     // close tag list elements
     if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
@@ -1067,11 +1278,11 @@ document.addEventListener( "click", function( e ) {
         }
 
         // replace the close tab button
-        let closeTabBtn = document.createElement( "span" );
-        closeTabBtn.className = "close-tab";
-        closeTabBtn.id = "close-tab" + tabName.slice( -1 );
-        closeTabBtn.innerHTML = "&times;";
-        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+        // let closeTabBtn = document.createElement( "span" );
+        // closeTabBtn.className = "close-tab";
+        // closeTabBtn.id = "close-tab" + tabName.slice( -1 );
+        // closeTabBtn.innerHTML = "&times;";
+        // document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
     }
 } );
 
@@ -1087,47 +1298,74 @@ document.addEventListener( 'keyup', ( e ) => {
 
 
 /* Workspace Manager Modal ----------------------------------------------- */
-const modal = document.getElementById( "resource-modal-div" );
+// URBG: I removed the modal - commenting these out
+// const modal = document.getElementById( "resource-modal-div" );
 const openBtn = document.getElementById( "new-element" );
-const closeBtns = document.querySelectorAll( ".close" );
-const createDocBtn = document.getElementById( "create-doc-div" );
-const createTopicBtn = document.getElementById( "create-topic-div" );
+//const closeBtns = document.querySelectorAll( ".close" );
+// const createDocBtn = document.getElementById( "create-doc-div" );
+// const createTopicBtn = document.getElementById( "create-topic-div" );
 const fileUploadBtn = document.getElementById( "file-upload-div" );
-const openTopicBtn = document.getElementById( "open-topic-div" );
-const openTopicModal = document.getElementById( "open-topic-modal-div" );
+// const openTopicBtn = document.getElementById( "open-topic-div" );
+// const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
 if( openBtn ) {
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
     openBtn.onclick = () => {
         if ( editPermission == true ){
             modal.style.display = "block";
         }
+=======
+    openBtn.onclick = async () => {
+        //modal.style.display = "block";
+        let tname = prompt( "Enter a name for your new Topic" );
+        //console.log( 'Took input from prompt' );
+
+        // increase the currentTabIndex
+        currentTabIndex++;
+
+        console.log( "main click event - createResource() call" );
+        const newResource = await createResource( null, 1, null, null );
+        console.log( "newResource: " + JSON.stringify( newResource ) );
+
+        console.log( "main click event - createTopic() call" );
+        const newTopic = await createTopic( null, tname );
+        console.log( "newTopic: " + JSON.stringify( newTopic ) );
+
+        // render the resource text area
+        createTextArea();
+        
+        numTopics++;
+
+        // this is where i should call updateTopic sending the topic id retrieved from createTopic??
+        
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
         
     };
 }
 
-//close the modal
-if( closeBtns ) {
-    closeBtns.forEach( ( btn ) => {
-        btn.onclick = () => {
-            if ( modal.style.display == "block" ) {
-                modal.style.display = "none";
-            }
-            else if ( openTopicModal.style.display == "block" ) {
-                openTopicModal.style.display = "none";
-            }
-        };
-    } );
-}
+// //close the modal
+// if( closeBtns ) {
+//     closeBtns.forEach( ( btn ) => {
+//         btn.onclick = () => {
+//             if ( modal.style.display == "block" ) {
+//                 modal.style.display = "none";
+//             }
+//             else if ( openTopicModal.style.display == "block" ) {
+//                 openTopicModal.style.display = "none";
+//             }
+//         };
+//     } );
+// }
 
-window.onclick = function( event ) {
-    if ( event.target == modal ) {
-        modal.style.display = "none";
-    }
-    else if ( event.target == openTopicModal ) {
-        openTopicModal.style.display = "none";
-    }
-};
+// window.onclick = function( event ) {
+//     if ( event.target == modal ) {
+//         modal.style.display = "none";
+//     }
+//     else if ( event.target == openTopicModal ) {
+//         openTopicModal.style.display = "none";
+//     }
+// };
 
 // option hover events
 document.addEventListener( "mousemove", function( e ) {
@@ -1146,19 +1384,19 @@ document.addEventListener( "mousemove", function( e ) {
     }
 } );
 
-// option events
-if ( createDocBtn ) { 
-    createDocBtn.onclick = () => {
-        modal.style.display = "none";
-        createTextArea();
-    };
-}
-if ( createTopicBtn ) {
-    createTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        createTopic();
-    };
-}
+// // option events
+// if ( createDocBtn ) { 
+//     createDocBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTextArea();
+//     };
+// }
+// if ( createTopicBtn ) {
+//     createTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTopic();
+//     };
+// }
 if ( fileUploadBtn ) {
     const pickerOpts = {
         types: [
@@ -1179,12 +1417,12 @@ if ( fileUploadBtn ) {
 
     } );
 }
-if ( openTopicBtn ) {
-    openTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        openTopicModal.style.display = "block";
-    };
-}
+// if ( openTopicBtn ) {
+//     openTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         openTopicModal.style.display = "block";
+//     };
+// }
 /* END Workspace Manager Modal ----------------------------------------------- */
 
 const toggleProfileList = () => {
@@ -1301,6 +1539,7 @@ const getPrefixAndId = () => {
     return [ prefixPattern.test( url ), urlId ];
 };
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
     if ( id ){
@@ -1401,6 +1640,36 @@ const fetchSharedWorkspace = () => {
                     response.workspaceImage
                 );
             } );
+=======
+const fetchWorkspace = async () => {
+    console.log( "fetchWorkspace() : Start" );
+    const [ , id ] = getPrefixAndId();
+    if ( id ) {
+        await getWorkspace( id );
+        console.log( "fetchWorkspace() : End" );
+        
+    }
+};
+
+const idAndFetch = async () => {
+    console.log( "idAndFetch() : Start" );
+    const [ isTopic, id ] = getPrefixAndId();
+    console.log( isTopic, id );
+
+    if ( isTopic && id ) {
+        //console.log( "idAndFetch() : fetch topic" );
+        let topic = await clientController.getTopic( id );
+
+        // update topic html??
+       
+    }
+    else if ( id ) {
+        let workspace = await clientController.getWorkspace( id );
+        document.getElementById( "workspace-title" ).value = workspace.title.trim();
+        document.getElementById( "workspace-desc" ).value = workspace.description.trim();
+
+        
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
     }
 };
 
@@ -1434,6 +1703,7 @@ const getTags = async () => {
     }
 };
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 async function refreshSharedUserList( ) {
     // Call fetchAndDisplaySharedUsers again to update the shared user list
     idAndFetch();
@@ -1679,6 +1949,8 @@ const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
 };
+=======
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 
 const renderTopics = async ( workspace ) => {
     const [ isTopic, id ] = getPrefixAndId();
@@ -1686,6 +1958,7 @@ const renderTopics = async ( workspace ) => {
         const response = await fetch( "api/v1/auth/workspaces/topics/"+ id   );
         let topics = await response.json();
    
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderTopic( topics[i] );
@@ -1709,6 +1982,11 @@ const renderSharedTopics = async ( workspace ) => {
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderSharedTopic( topics[i] );
+=======
+        if ( topics.results.length > 0 ) {
+            for ( let i = 0; i < topics.results.length; i++ ) {
+                await renderTopic( topics.results[i], i );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
             
             }
         }   
@@ -1720,6 +1998,7 @@ const renderSharedTopics = async ( workspace ) => {
 //change order so the create stuff will all happen after information is gathered
 //let val = 1;
 let totalTopicsRendered = 0;
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 async function renderTopic( topic ) {
   
     await createTopic( topic.topicId, topic.topicName );
@@ -1769,15 +2048,33 @@ async function renderSharedTopic( topic ) {
         for ( let i = 0; i < resources.length; i++ ) {
             //console.log( "resource: " + i + " of " + resources.length );
             //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+=======
+async function renderTopic( topic, topicNum ) {
+    console.log( 'renderTopic() start for topic:' );
+    //console.log( JSON.stringify( topic ) );
+    await createTopic( topic.topicId, topic.topicName );
+    //console.log( "creating topic, passed name: " + topic.topicName );
+    const localResources = await getResourcesForTopicId( topic.topicId );
+    //console.log( "resources: " + JSON.stringify( resources ) );
+
+    if ( localResources.length > 0 ) {
+        //let docType1Count = 0;
+        for ( let i = 0; i < localResources.length; i++ ) {
+            console.log( "resource: " + i + " of " + localResources.length );
+            console.log( localResources[i].resourceName + " id: " + localResources[i].resourceId );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
             //if resource is a document
-            if( resources[i].resourceType == 1 ){
-                await createTextArea( resources[i].resourceName, resources[i].resourceId );
-                if( resources[i].resourceContentHtml && resources[i].resourceContentHtml.length > 0 ){
-                    totalTopicsRendered++; 
+            if( localResources[i].resourceType == 1 ){
+                await createTextArea( localResources[i].resourceName, localResources[i].resourceId );
+                if( localResources[i].resourceContentHtml && localResources[i].resourceContentHtml.length > 0 ){
+                     
                     let editor = "sunEditor" + ( totalTopicsRendered );
+
+                    totalTopicsRendered++;
+
                     //console.log( editor );
                     //console.log( sunEditor[editor] );
-                    sunEditor[editor][1].insertHTML( resources[i].resourceContentHtml );
+                    sunEditor[editor][1].insertHTML( localResources[i].resourceContentHtml );
 
                     //docType1Count++;
                     //val++;
@@ -1785,12 +2082,17 @@ async function renderSharedTopic( topic ) {
 
 
             }
-            else if( resources[i].resourceType == 3 ) {
+            else if( localResources[i].resourceType == 3 ) {
                 // todo: add code to deal with resource type 3
             }
-            else if ( resources[i].resourceType == 2 ) {
-                console.log( "other resource type??? " + resources[i].resourceName );
+            else if ( localResources[i].resourceType == 2 ) {
+                console.log( "other resource type??? " + localResources[i].resourceName );
             }
+
+            // add the resource to the resources array
+            console.log( "----------------- saving resource to list 3 --------------- " );
+            resources[topicNum] = [];
+            resources[topicNum].push( localResources[i].resourceId );
             
         }
         window.scrollTo( 0, 0 );
@@ -1798,6 +2100,7 @@ async function renderSharedTopic( topic ) {
     return topics;
 }
 
+<<<<<<< HEAD:client/agora/public/js/share-topic-view.js
 async function renderResources( topicId ) {
     //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
@@ -1848,6 +2151,30 @@ window.addEventListener( "load", () => {
     idAndFetch();
     getTags();  
     renderTopics();
+=======
+async function getResourcesForTopicId( topicId ) {
+    console.log( "getResourcesForTopicId() : Start for topicId: " + topicId );
+    const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
+    const data = await response.json();
+    console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) );
+    return data.results;
+}
+
+/**
+ * Entry point for page
+ * Start here either for requesting a new workspace or opeing an existing one.
+ * 
+ */
+window.addEventListener( "load", async () => {
+    console.log( "window load event: start" );
+    // fetch the workspace
+    await fetchWorkspace();
+    console.log( "about to run getTags" );
+    getTags();
+    console.log( "about to run render topics" );
+    renderTopics();
+    console.log( "window load event: complete" );
+>>>>>>> 91162959089324acd13583f4f4d2e1970f781e8e:client/agora/public/js/topic-view.js
 } );
 
 

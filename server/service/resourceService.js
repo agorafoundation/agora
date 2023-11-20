@@ -298,6 +298,7 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
  */
 exports.saveResource = async ( resource ) => {
     // check to see if an id exists - insert / update check
+    console.log( "incomming resource: " + JSON.stringify( resource ) );
     if( resource ) {
         // query to see if the resourceId exists
         let text = "SELECT resource_id FROM resources WHERE resource_id = $1;";

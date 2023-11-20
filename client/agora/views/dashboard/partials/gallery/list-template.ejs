@@ -8,7 +8,13 @@
 
 <% //name:string, description:string, tags:array, content:array %>
     <% const renderListCard=(id,name,desc,tags,contentType, content)=> { 
+      if(name) {
         name = name.slice(0,18)
+      }
+      else {
+        name = "Untitled"
+      }
+      
       if(desc){
         desc = desc.slice(0,180)
       }
