@@ -17,6 +17,12 @@ router.route( '/' )
     }
     );
 
+router.route( '/sharedUser/:entityId' ) 
+    .get( ( req, res ) => { 
+        sharedController.getSharedEntityUser( req, res );
+    }
+    );
+
 router.route( '/copy' ) 
     .post( ( req, res ) => { 
         sharedController.saveCopiedEntity( req, res );
@@ -35,14 +41,14 @@ router.route( '/shared-entity/:entityId' )
     }   
     );
 
+router.route( '/getPermission/:entityId' )
+    .get( ( req, res ) => {
+        sharedController.getPermission( req, res );
+    } );
+ 
 router.route( '/updatePermission' )
     .post( ( req, res ) => {
         sharedController.updatePermission ( req, res );
-    } );
-
-router.route( '/removeShare' )
-    .delete( ( req, res ) => {
-        sharedController.removeSharedUserById( req, res );
     } );
 
 module.exports = router;
