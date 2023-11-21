@@ -26,7 +26,7 @@ import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
 
-
+console.log( "testing" );
 
 /**
  * window onLoad starts retreval for page render

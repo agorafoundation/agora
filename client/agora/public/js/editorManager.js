@@ -473,7 +473,7 @@ function createTextArea( resource ) {
         } );
 
 
-
+        console.log( " ------------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ------------------" );
         // Create drop zone filler space
         let newDropZoneFiller = document.createElement( "div" );
         newDropZoneFiller.className = "dropzone-filler";

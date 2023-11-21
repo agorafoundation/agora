@@ -40,7 +40,9 @@ exports.getAllVisibleWorkspaces = async ( req, res ) => {
     let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId, req.query.limit, req.query.offset );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    }  );
 };
 
 //get shared workspaces
@@ -85,7 +87,9 @@ exports.getWorkspaceById = async ( req, res ) => {
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
-            res.status( 200 ).json( workspace );
+            res.status( 200 ).json( {
+                results: workspace
+            } );
         }
         else {
             const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
@@ -176,7 +180,9 @@ exports.getAllTopicsForSharedWorkspaceId = async ( req, res ) => {
             // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( topicsList );
+            res.status( 200 ).json( {
+                results: topicsList
+            } );
         }
 
         else {
@@ -221,7 +227,9 @@ exports.getAllVisibleWorkspacesWithTopics = async ( req, res ) => {
 
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    } );
 };
 
 
@@ -233,11 +241,11 @@ exports.getAllWorkspacesForauthUser = async ( req, res ) => {
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.userId, false );
 
-
-
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces for user" );
-    res.status( 200 ).json( ownerWorkspaces );
+    res.status( 200 ).json( {
+        results: ownerWorkspaces
+    } );
 };
 
 /**
