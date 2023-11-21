@@ -36,37 +36,40 @@ window.onload = getResources = () => {
 
 
 // queries the users by username
-searchButton.addEventListener( 'click', queryUsers = () => {
-    fetch( "/api/v1/auth/user/username/" + userSearch.value, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) =>  response.json() )
-        .then( ( response ) => {
+if ( searchButton ) {
+    searchButton.addEventListener( 'click', queryUsers = () => {
+        fetch( "/api/v1/auth/user/username/" + userSearch.value, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) =>  response.json() )
+            .then( ( response ) => {
+    
+                for ( i = 0; i < response.length; i++ ) {
+                    var data = response[i];
+                    var isFriend = false;
+                    var isSentRequest = false;
+                    for( j = 0; j < friends[0].length; j++ ){
+                        if ( ( data.username == friends[0][j].friend_username ) ){
+                            isFriend = true;
+                        }
+                    }
+                    for( k = 0; k < requests[0].length; k++ ){
+                        if( ( data.userId == requests[0][k].initiatedby_id ) ||
+                            ( data.userId == requests[0][k].recipient_id ) ){
+                            isSentRequest =  true;
+                        }
+                    }
+                    if ( !( displayedUsers.has( data.username ) ) && 
+                    !( data.username == authUser[0].username ) && !( isFriend ) && !( isSentRequest ) ) {
+                        createUserCard( data );
+                        displayedUsers.add( data.username );
+                    }
+                }
+            } );
+    } );
+}
 
-            for ( i = 0; i < response.length; i++ ) {
-                var data = response[i];
-                var isFriend = false;
-                var isSentRequest = false;
-                for( j = 0; j < friends[0].length; j++ ){
-                    if ( ( data.username == friends[0][j].friend_username ) ){
-                        isFriend = true;
-                    }
-                }
-                for( k = 0; k < requests[0].length; k++ ){
-                    if( ( data.userId == requests[0][k].initiatedby_id ) ||
-                        ( data.userId == requests[0][k].recipient_id ) ){
-                        isSentRequest =  true;
-                    }
-                }
-                if ( !( displayedUsers.has( data.username ) ) && 
-                !( data.username == authUser[0].username ) && !( isFriend ) && !( isSentRequest ) ) {
-                    createUserCard( data );
-                    displayedUsers.add( data.username );
-                }
-            }
-        } );
-} );
 
 // creates a user card for each user
 function createUserCard( userData ){

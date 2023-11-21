@@ -282,66 +282,71 @@ if( document.getElementById( 'passwordToggle' ) ) {
   
 const acceptRequestButton = document.getElementById( 'btn-accept-request' );
 
-acceptRequestButton.addEventListener( 'click', () => {
-    // Get the friend_id from the data-id attribute of the button
-    const friendshipId = acceptRequestButton.getAttribute( 'data-id' );
-
-    fetch( '/api/v1/auth/friends/requestResponse', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( {
-            friendship_id: friendshipId, // Pass the friend_id as a parameter
-        } ),
-    } )
-        .then( ( response ) => {
-            if ( response.status === 201 ) {
-                // Successfully accepted friend request
-                const message = 'Friend request accepted successfully.';
-                console.log( message );
-                alert( message ); // Display a pop-up with the message
-                location.reload(); // Refresh the page
-            }
-            else {
-                const errorMessage = 'Failed to accept friend request.';
-                console.error( errorMessage );
-                alert( errorMessage ); // Display a pop-up with the error message
-            }
+if( acceptRequestButton ) {
+    acceptRequestButton.addEventListener( 'click', () => {
+        // Get the friend_id from the data-id attribute of the button
+        const friendshipId = acceptRequestButton.getAttribute( 'data-id' );
+    
+        fetch( '/api/v1/auth/friends/requestResponse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                friendship_id: friendshipId, // Pass the friend_id as a parameter
+            } ),
         } )
-        .catch( ( error ) => {
-            console.error( 'Error making accept request:', error );
-            alert( 'Error making accept request: ' + error ); // Display a pop-up with the error message
-        } );
-} );
+            .then( ( response ) => {
+                if ( response.status === 201 ) {
+                    // Successfully accepted friend request
+                    const message = 'Friend request accepted successfully.';
+                    console.log( message );
+                    alert( message ); // Display a pop-up with the message
+                    location.reload(); // Refresh the page
+                }
+                else {
+                    const errorMessage = 'Failed to accept friend request.';
+                    console.error( errorMessage );
+                    alert( errorMessage ); // Display a pop-up with the error message
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error making accept request:', error );
+                alert( 'Error making accept request: ' + error ); // Display a pop-up with the error message
+            } );
+    } );
+}
+
 
 const denyRequestButton = document.getElementById( 'btn-deny-request' );
 
-denyRequestButton.addEventListener( 'click', () => {
-    // Get the friend_id from the data-id attribute of the button
-    const friendshipId = denyRequestButton.getAttribute( 'data-id' );
-    
-    fetch( '/api/v1/auth/friends/requestResponse', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( {
-            friendship_id: friendshipId, // Pass the friend_id as a parameter
-        } ),
-    } )
-        .then( ( response ) => {
-            if ( response.status === 201 ) {
-                // Successfully denied friend request
-                const message = 'Friend request denied successfully.';
-                console.log( message );
-                alert( message ); // Display a pop-up with the message
-                location.reload(); // Refresh the page
-            }
-            else {
-                const errorMessage = 'Failed to deny friend request.';
-                console.error( errorMessage );
-                alert( errorMessage ); // Display a pop-up with the error message
-            }
+if ( denyRequestButton ) {
+    denyRequestButton.addEventListener( 'click', () => {
+        // Get the friend_id from the data-id attribute of the button
+        const friendshipId = denyRequestButton.getAttribute( 'data-id' );
+        
+        fetch( '/api/v1/auth/friends/requestResponse', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                friendship_id: friendshipId, // Pass the friend_id as a parameter
+            } ),
         } )
-        .catch( ( error ) => {
-            console.error( 'Error making deny request:', error );
-            alert( 'Error making deny request: ' + error ); // Display a pop-up with the error message
-        } );
-} );
+            .then( ( response ) => {
+                if ( response.status === 201 ) {
+                    // Successfully denied friend request
+                    const message = 'Friend request denied successfully.';
+                    console.log( message );
+                    alert( message ); // Display a pop-up with the message
+                    location.reload(); // Refresh the page
+                }
+                else {
+                    const errorMessage = 'Failed to deny friend request.';
+                    console.error( errorMessage );
+                    alert( errorMessage ); // Display a pop-up with the error message
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error making deny request:', error );
+                alert( 'Error making deny request: ' + error ); // Display a pop-up with the error message
+            } );
+    } );
+}

@@ -52,8 +52,12 @@
                 <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
                     forum
                 </span>
+                <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
+                    share
+                </span>
                 <%-include('./discussion-modal.ejs'); %>
                 <%-include('./comment-template.ejs'); %>
+                <%-include('./share-modal.ejs'); %>
 
                 <!--Sharing-->
                 <!-- URBG TODO: removed until sharing is implemented-->
@@ -106,6 +110,9 @@
 
     <%- include('../../../partials/jsincludes'); %>
     <!-- Include the editor js -->
+    <script>
+        console.log("is this going to happen?");
+    </script>
     <script async type="module" src="/js/editorMain.js"></script>
     
     <%- include ('../gallery/dropdown'); %>

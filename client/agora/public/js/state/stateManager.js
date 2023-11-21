@@ -7,7 +7,7 @@ import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clie
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = false;
+const dataDebug = true;
 
 
 /**
@@ -30,7 +30,7 @@ let activeTopic = topicModel;
 const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     workspace = await getWorkspace( workspaceUuid );
-    //( debug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) );
+    ( debug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
     ( debug ) ? console.log( "initializeWorkspace() : Complete" ) : null;
 
 };

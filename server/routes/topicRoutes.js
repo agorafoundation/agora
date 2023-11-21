@@ -11,7 +11,8 @@ var router = express.Router( );
 
 router.route( '/' )
     .get( ( req, res ) => {
-        res.render( 'dashboard/partials/topic/share-topic-view' );
+        console.log( "GET /dashboard/topics" );
+        res.render( 'dashboard/partials/topic/topic-view' );
     }
     );  
 
