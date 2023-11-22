@@ -29,7 +29,12 @@ let activeTopic = topicModel;
  */
 const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
-    workspace = await getWorkspace( workspaceUuid );
+    if( !workspace || workspace.workspaceId !== workspaceUuid ) {
+        workspace = await getWorkspace( workspaceUuid );
+    }
+    else {
+        console.log( "workspace already initialized" );
+    }
     ( debug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
     ( debug ) ? console.log( "initializeWorkspace() : Complete" ) : null;
 
@@ -72,6 +77,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
         // get the resources for the active topic
         if( activeTopic ) {
             const resources = await getResourcesForTopic( activeTopic.topicId );
+            console.log( "resources: after call : " + JSON.stringify( resources ) );
             
             if( resources ) {
                 activeTopic.resources = await resources;

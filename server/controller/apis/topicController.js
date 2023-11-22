@@ -125,7 +125,9 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
             // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( resourcesList );
+            res.status( 200 ).json( {
+                results: resourcesList
+            } );
         }
 
         else {
