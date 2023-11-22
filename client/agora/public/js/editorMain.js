@@ -54,28 +54,9 @@ window.addEventListener( "load", async () => {
         createTopicEditorGui();
     }
 
-
-    /**
-     * EVENT:: Event listener for adding a new topic
-     */
-    const openBtn = document.getElementById( "new-element" );
-    if( openBtn ) {
-        console.log( "-------------------------------- hi ----------" );
-        openBtn.addEventListener( "click", async () => {
-            ( debug ) ? console.log( "New Topic: start" ) : null;
-            
-            let tname = prompt( "Enter a name for your new Topic" );
-            //console.log( 'Took input from prompt' );
-
-            await addNewTopic( tname );
-
-            // render the topics for the workspace
-            await createTopicEditorGui();
-
-            
-            ( debug ) ? console.log( "New topic: complete" ) : null;
-        } );
-    }
+    // add the event listener for adding a new topic
+    addTopicEvent();
+    
 
     /**
      * EVENT:: Event listener for saving workspace data
@@ -99,6 +80,33 @@ window.addEventListener( "load", async () => {
 
     ( debug ) ? console.log( "window load event: complete" ) : null;
 } );
+
+/**
+ * EVENT:: Event listener for adding a new topic to the workspace
+ */
+function addTopicEvent() {
+    /**
+     * EVENT:: Event listener for adding a new topic
+     */
+    const openBtn = document.getElementById( "new-element" );
+    if( openBtn ) {
+        console.log( "-------------------------------- hi ----------" );
+        openBtn.addEventListener( "click", async () => {
+            ( debug ) ? console.log( "New Topic: start" ) : null;
+            
+            let tname = prompt( "Enter a name for your new Topic" );
+            //console.log( 'Took input from prompt' );
+
+            await addNewTopic( tname );
+
+            // render the topics for the workspace
+            await createTopicEditorGui();
+
+            
+            ( debug ) ? console.log( "New topic: complete" ) : null;
+        } );
+    }
+}
 
 
 
@@ -127,14 +135,11 @@ async function tabClickEvent( event, topicId ) {
         //closeTab( event.target.id );
     } 
     else {
-        console.log( '1' );
         if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-            console.log( '2' );
             /**
              * EVENT:: Entry point for changing tab event
              */
             // check to see if this is not the same tab as the active one
-            console.log( "active topic: " + getCurrentActiveTopic().topicId + " topicId: " + topicId );
             if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {  
                 ( debug ) ? console.log( "tabClickEvent() : same tab" ) : null;
             }
@@ -143,6 +148,9 @@ async function tabClickEvent( event, topicId ) {
 
                 await createTopicEditorGui();
             }
+
+            // add the event listener for adding a new topic
+            addTopicEvent();
 
             
         }

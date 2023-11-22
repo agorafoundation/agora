@@ -452,44 +452,6 @@ function createTextArea( resource ) {
             document.getElementById( "filler-space" ).remove();
         }
 
-        // Create drop zone
-        let newDropZone = document.createElement( "div" );
-        newDropZone.id = "drop-zone-" + resourceId;
-        newDropZone.className = "drop-zone-new";
-        newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
-        newDropZone.addEventListener( "click", async () => {
-            /**
-             * EVENT:: listener for adding a text resource via clicking the drop-zone-new
-             */
-            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
-
-            await addNewTextResource();
-
-            // update the gui
-            createTopicEditorGui();
-
-
-            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
-        } );
-
-
-        console.log( " ------------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ------------------" );
-        // Create drop zone filler space
-        let newDropZoneFiller = document.createElement( "div" );
-        newDropZoneFiller.className = "dropzone-filler";
-        newDropZone.appendChild( newDropZoneFiller );
-
-        // Create drop zone input
-        let newDropZoneInput = document.createElement( "input" );
-        newDropZoneInput.className = "drop-zone__input";
-        newDropZoneInput.type = "file";
-
-        
-        newDropZone.appendChild( newDropZoneInput );
-        createDropZoneEventListeners( newDropZone, newDropZoneInput );
-
-        resourcesZone.appendChild( newDropZone );
-
         if( resource ) {
 
             // Title element
@@ -550,6 +512,44 @@ function createTextArea( resource ) {
             resolve( "TA created" );
 
         }
+
+        // Create drop zone
+        let newDropZone = document.createElement( "div" );
+        newDropZone.id = "drop-zone-" + resourceId;
+        newDropZone.className = "drop-zone-new";
+        newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
+        newDropZone.addEventListener( "click", async () => {
+            /**
+              * EVENT:: listener for adding a text resource via clicking the drop-zone-new
+              */
+            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
+ 
+            await addNewTextResource();
+ 
+            // update the gui
+            createTopicEditorGui();
+ 
+ 
+            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
+        } );
+ 
+        // Create drop zone filler space
+        let newDropZoneFiller = document.createElement( "div" );
+        newDropZoneFiller.className = "dropzone-filler";
+        newDropZone.appendChild( newDropZoneFiller );
+ 
+        // Create drop zone input
+        let newDropZoneInput = document.createElement( "input" );
+        newDropZoneInput.className = "drop-zone__input";
+        newDropZoneInput.type = "file";
+ 
+
+        // add the new drop zone
+        newDropZone.appendChild( newDropZoneInput );
+        createDropZoneEventListeners( newDropZone, newDropZoneInput );
+        resourcesZone.appendChild( newDropZone );
+
+
         //alert( "hold" );
         ( debug ) ? console.log( "createTextArea() complete promise cerated" ) : null;
         
@@ -575,10 +575,6 @@ export { updateWorkspaceDom, createTopicEditorGui, createTextArea };
 /**
  * Private functions
  */
-
-
-
-
 
 function getTabLocation( id ) {
     let tabContent = document.getElementsByClassName( "tabcontent" );
