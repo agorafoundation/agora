@@ -56,7 +56,6 @@ exports.orcidSignUp = async function( req, res ) {
 
         HTTPres.on("end", function () {
             const body = Buffer.concat(chunks);
-            //console.log(body.toString());
             xmlString = body.toString();
 
             const { DOMParser } = require('xmldom');

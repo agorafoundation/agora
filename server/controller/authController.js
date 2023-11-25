@@ -205,7 +205,7 @@ exports.orcidSignIn = async function(req, res) {
 
             if (emailElements.length === 0){
                 //console.log('No email found in ORCID record');
-                res.end(JSON.stringify({"redirect": "/orcid-auth-issue"}));
+                res.end(JSON.stringify({"redirect": "/user/orcid-user-issue"}));
             }
 
             function getEmailAddress(emailElement) {
@@ -244,16 +244,7 @@ exports.orcidSignIn = async function(req, res) {
         else {
             res.end(JSON.stringify({"redirect": "/orcid-auth-issue"}))
         }
-        
-        
-
     }
-
-   
-    
-    //res.end(JSON.stringify({"redirect": "/about"}))
-    //res.redirect( 303, '/about' );
-    //await signIn(req, res);
 };
 
 /**
