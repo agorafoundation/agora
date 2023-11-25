@@ -26,8 +26,6 @@ import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
 
-console.log( "testing" );
-
 /**
  * window onLoad starts retreval for page render
  */
@@ -90,7 +88,6 @@ function addTopicEvent() {
      */
     const openBtn = document.getElementById( "new-element" );
     if( openBtn ) {
-        console.log( "-------------------------------- hi ----------" );
         openBtn.addEventListener( "click", async () => {
             ( debug ) ? console.log( "New Topic: start" ) : null;
             
@@ -132,10 +129,33 @@ async function deleteResourceEvent( resourceId ) {
 
 }
 
+async function changeTopicEvent( topicId ) {
+    if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+        /**
+         * EVENT:: Entry point for changing tab event
+         */
+        // check to see if this is not the same tab as the active one
+        if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {  
+            ( debug ) ? console.log( "tabClickEvent() : same tab" ) : null;
+        }
+        else {
+            await setActiveTopicAndResources( topicId );
+
+            await createTopicEditorGui();
+        }
+
+        // add the event listener for adding a new topic
+        addTopicEvent();
+
+        
+    }
+}
+
 
 
 /**
- * Event to handle saving changes to resources
+ * Event to handle saving changes to resources either because the content of the editor was changed
+ * or because the resource title was updated.
  * @param {uuidv4} resourceId 
  * @param {String} content 
  */
@@ -159,26 +179,8 @@ async function tabClickEvent( event, topicId ) {
         //closeTab( event.target.id );
     } 
     else {
-        if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-            /**
-             * EVENT:: Entry point for changing tab event
-             */
-            // check to see if this is not the same tab as the active one
-            if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {  
-                ( debug ) ? console.log( "tabClickEvent() : same tab" ) : null;
-            }
-            else {
-                await setActiveTopicAndResources( topicId );
-
-                await createTopicEditorGui();
-            }
-
-            // add the event listener for adding a new topic
-            addTopicEvent();
-
-            
-        }
-
+        
+        changeTopicEvent( topicId );
     }
 
     ( debug ) ? console.log( "tabClickEvent() : Complete" ) : null;

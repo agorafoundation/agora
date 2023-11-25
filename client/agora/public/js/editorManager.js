@@ -928,9 +928,6 @@ const createSunEditor = async( resourceId ) => {
             alert( contents );
         },
     } ) ];
-    
-    console.log( "1: " + sunEditor["sunEditor" + resourceId] );
-    console.log( "2: " + newEditor );
 
     newEditor[1].onChange = function( content ) {
         // ENTRY point for text editor update event, for ease of understanding function is called in editorMain.js

@@ -6,8 +6,8 @@ import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clie
 /**
  * Client side debugging flags
  */
-const debug = true;
-const dataDebug = true;
+const debug = false;
+const dataDebug = false;
 
 
 /**
@@ -77,7 +77,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
         // get the resources for the active topic
         if( activeTopic ) {
             const resources = await getResourcesForTopic( activeTopic.topicId );
-            console.log( "resources: after call : " + JSON.stringify( resources ) );
+            ( debug && dataDebug ) ? console.log( "resources: after call : " + JSON.stringify( resources ) ) : null;
             
             if( resources ) {
                 activeTopic.resources = await resources;
