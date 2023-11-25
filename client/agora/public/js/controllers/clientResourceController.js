@@ -57,6 +57,23 @@ async function saveResource( resource ) {
 
 }
 
+async function deleteResource( resourceId ) {
+    ( debug ) ? console.log( "deleteResource() : start" ) : null;
+
+    const response = await fetch( "api/v1/auth/resources/" + resourceId, {
+        method: "DELETE",
+        headers: {'Content-Type': 'application/json'},
+    } );
+
+    if( response.ok ) {
+        const data = await response.json();
+        ( debug ) ? console.log( "deleteResource() resource deleted : " + JSON.stringify( data ) ) : null;
+        
+        ( debug && dataDebug ) ? console.log( "deleteResource() : resource deleted" ) : null;
+        return data;
+    }
+}
+
 // async function updateResource( id, name, contents ) {
 //     console.log( "updateResource() call: " + id + " " + name + " " + contents );
 //     fetch( "api/v1/auth/resources", {
@@ -160,4 +177,4 @@ async function saveResource( resource ) {
    
 // }
 
-export { saveResource, resourceModel };
+export { saveResource, resourceModel, deleteResource };

@@ -11,7 +11,7 @@
 // state manager
 import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import {textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent} from "./editorMain.js";
+import { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent, deleteResourceEvent } from "./editorMain.js";
 
 
 /**
@@ -479,11 +479,18 @@ function createTextArea( resource ) {
             editIcon.innerHTML = "edit";
             editIcon.style.display = "none";
 
-            // Done icon
+            // Delete icon
             let doneIcon = document.createElement( 'span' );
             doneIcon.setAttribute( "class", "material-symbols-outlined" );
-            doneIcon.setAttribute( "id", "done-icon-" + resourceId );
-            doneIcon.innerHTML = "done";
+            doneIcon.setAttribute( "id", "delete-icon-" + resourceId );
+            doneIcon.innerHTML = "delete";
+            doneIcon.addEventListener( "click", async () => {
+                ( debug ) ? console.log( "delete-icon-resourceId - deleteResource() call : Start" ) : null;
+                await deleteResourceEvent( resource.resourceId );
+                // update the gui
+                createTopicEditorGui();
+                ( debug ) ? console.log( "delete-icon-resourceId - deleteResource() call : Complete" ) : null;
+            } );
 
             // New Tab
             let newTabIcon = document.createElement( 'span' );

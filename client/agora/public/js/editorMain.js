@@ -15,10 +15,10 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, saveActiveTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic } from "./state/stateManager.js";
 
 // get the data models
-import { resourceModel } from "./controllers/clientResourceController.js";
+import { deleteResource } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
 import { updateWorkspaceDom, createTopicEditorGui } from "./editorManager.js";
@@ -108,6 +108,30 @@ function addTopicEvent() {
     }
 }
 
+async function deleteResourceEvent( resourceId ) {
+    let deleteConfirm = confirm( "Are you sure you want to delete this resource?" );
+    if( deleteConfirm ) {
+        // get the resource id from the element
+        //let resourceId = e.target.id.split( "-" )[1];
+        let response = await deleteResource( resourceId );
+        console.log( "response: " + response );
+        if ( response == "Success" ) {
+            // remove the resource from the currentTopic
+            getCurrentActiveTopic().resources = getCurrentActiveTopic().resources.filter( resource => resource.resourceId !== resourceId );
+            // save the current topic
+            saveActiveTopic();
+        }
+        console.log( "resourceId: " + resourceId );
+
+        // get the resource from the current state
+        //let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
+
+        // delete the resource
+        //deleteResource( resource );
+    }
+
+}
+
 
 
 /**
@@ -167,7 +191,7 @@ async function tabDoubleClickEvent( event, topicId ) {
 }
 
 
-export { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent };
+export { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent, deleteResourceEvent };
 
 
 
