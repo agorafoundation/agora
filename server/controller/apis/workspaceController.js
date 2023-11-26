@@ -308,7 +308,19 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 }             
             }
             else if( workspace ) {
-                await file.mv( workspaceUploadPath + timeStamp + file.name, async ( err ) => {
+                // Sanitize the file name
+                function getSanitizedExtension(filename) {
+                    let parts = filename.split('.');
+                    let extension = parts.pop(); // Get the last part after the dot
+                    return extension.replace(/[^a-z0-9]/gi, ''); // Remove anything that is not alphanumeric
+                }
+
+                // When handling the file upload
+                const sanitizedExtension = getSanitizedExtension(file.name);
+                const safeFileName = `${timeStamp}.${sanitizedExtension}`;
+                const fullPath = `${workspaceUploadPath}/${safeFileName}`;
+
+                await file.mv( fullPath, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
                         if( redirect ) {
@@ -326,7 +338,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveWorkspaceImage( req, res, workspace.workspaceId, timeStamp + file.name );
+                        await this.saveWorkspaceImage( req, res, workspace.workspaceId, safeFileName );
                     }
                 } );
             }

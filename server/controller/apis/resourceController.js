@@ -345,7 +345,19 @@ exports.saveResource = async ( req, res, redirect ) => {
                 
             }
             else if( resource ) {
-                await file.mv( resourceUploadPath + timeStamp + file.name, async ( err ) => {
+                // Sanitize the file name
+                function getSanitizedExtension(filename) {
+                    let parts = filename.split('.');
+                    let extension = parts.pop(); // Get the last part after the dot
+                    return extension.replace(/[^a-z0-9]/gi, ''); // Remove anything that is not alphanumeric
+                }
+
+                // When handling the file upload
+                const sanitizedExtension = getSanitizedExtension(file.name);
+                const safeFileName = `${timeStamp}.${sanitizedExtension}`;
+                const fullPath = `${resourceUploadPath}/${safeFileName}`;
+
+                await file.mv( fullPath, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
                         if( redirect ) {
@@ -363,7 +375,7 @@ exports.saveResource = async ( req, res, redirect ) => {
                         }
                     }
                     else {
-                        await this.saveResourceImage( req, res, resource.resourceId, timeStamp + file.name );
+                        await this.saveResourceImage( req, res, resource.resourceId, safeFileName );
                     }
                 } );
             }

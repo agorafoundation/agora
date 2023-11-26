@@ -105,7 +105,19 @@ router.route('/uploadProfilePicture')
                 res.redirect( 303, '/profile/manageProfile' );
             }
             else {
-                await file.mv( imageUploadPath + timeStamp + file.name, async ( err ) => {
+                // Function to sanitize file extension
+                function getSanitizedExtension(filename) {
+                    let parts = filename.split('.');
+                    let extension = parts.pop(); // Get the last part after the dot
+                    return extension.replace(/[^a-z0-9]/gi, ''); // Remove anything that is not alphanumeric
+                }
+
+                // When handling the file upload
+                const sanitizedExtension = getSanitizedExtension(file.name);
+                const safeFileName = `${timeStamp}.${sanitizedExtension}`;
+                const fullPath = `${imageUploadPath}/${safeFileName}`;
+
+                await file.mv( fullPath, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
                         req.session.messageType = "error";
@@ -115,7 +127,7 @@ router.route('/uploadProfilePicture')
                         return;
                     }
                     else {
-                        await userController.saveProfileImage( req, res, req.session.authUser.email, timeStamp + file.name );
+                        await userController.saveProfileImage( req, res, req.session.authUser.email, safeFileName );
                         req.session.messageType = "success";
                         req.session.messageTitle = "Image Saved";
                         req.session.messageBody = "Profile image saved successfully!";
