@@ -614,7 +614,9 @@ exports.saveResourcesForTopic = async function( topicId, resourceIds, resourcesR
              * This probably means having the pathway be an array of objects containing id and isRequired
              */
             if( resourceIds && resourceIds.length > 0 ) {
-                for( let i=0; i < resourceIds.length; i++ ) {
+                const resourceCount = Math.min(resourceIds.length, 10000);
+
+                for( let i=0; i < resourceCount; i++ ) {
                     let isRequired = true;
                     if( resourcesRequired.length > i ) {
                         isRequired = resourcesRequired[i];
