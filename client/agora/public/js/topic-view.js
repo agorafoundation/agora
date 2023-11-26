@@ -439,7 +439,7 @@ function newTag( tagName, isNewSave ) {
 
         // create the tag and add to existing tags
         li.setAttribute( "class", "tag-list-element" );
-        li.innerHTML = tagName;
+        li.textContent = tagName;
         addTagToWorkspace( li, isNewSave );
         currTagList.push( tagName );
     }
@@ -468,7 +468,7 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     const tagType = isTopic ? "topic" : "workspace";
 
 
-    newTag.innerHTML = selectedTag.innerHTML;
+    newTag.textContent = selectedTag.textContent;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
         
@@ -1052,7 +1052,7 @@ document.addEventListener( "click", function( e ) {
     if ( document.getElementById( "tablinks" + tabName.slice( -1 ) ) && e.target.className != "topic-title" ) {
         if ( document.getElementById( "topic-title" + tabName.slice( -1 ) ).value != "" ) {
             // change the tab name to the new topic title
-            document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = document.getElementById( "topic-title" + tabName.slice( -1 ) ).value;
+            document.getElementById("tablinks" + tabName.slice(-1)).textContent = document.getElementById("topic-title" + tabName.slice(-1)).value;
         } 
         else {
             document.getElementById( "tablinks" + tabName.slice( -1 ) ).innerHTML = "Untitled";
