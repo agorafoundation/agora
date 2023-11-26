@@ -7,6 +7,7 @@
 
 var express = require( 'express' );
 var router = express.Router( );
+const rateLimit = require('express-rate-limit');
 
 // dependencies
 const fs = require( 'fs' );
@@ -72,8 +73,15 @@ router.route( '/' )
  * Form enctype="multipart/form-data" route using express-fileupload for file upload
  * 
  */
+
+const workspaceLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 2, // Limit each IP to 50 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 1 minutes"
+});
+
 router.route( '/workspace' )
-    .post( async ( req, res ) => {
+    .post( workspaceLimiter, async ( req, res ) => {
 
         // save the workspace
         await workspaceController.saveWorkspace( req, res, true );
@@ -87,8 +95,15 @@ router.route( '/workspace' )
  * Form enctype="multipart/form-data" route using express-fileupload for file upload
  * 
  */
+
+const resourceLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 60, // Limit each IP to 60 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 1 minutes"
+});
+
 router.route( '/resource' )
-    .post( async ( req, res ) => {
+    .post( resourceLimiter, async ( req, res ) => {
         
         // save the resource
         await resourceController.saveResource( req, res, true );

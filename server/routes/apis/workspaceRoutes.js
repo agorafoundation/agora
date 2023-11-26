@@ -16,9 +16,17 @@ router.use( bodyParser.json() );
 
 //dependencies 
 
+const rateLimit = require('express-rate-limit');
+
 // controllers
 const workspaceController = require( '../../controller/apis/workspaceController' );
 const { get } = require( './tagRoutes' );
+
+const workspacesLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 50, // Limit each IP to 50 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 15 minutes"
+});
 
 
 // workspaces /api/v1/auth/workspaces
@@ -28,7 +36,7 @@ router.route( '/' )
         workspaceController.getAllVisibleWorkspaces( req, res );
     } )    
     // save a new workspace
-    .post( async ( req, res ) => { 
+    .post(workspacesLimiter, async ( req, res ) => { 
         workspaceController.saveWorkspace( req, res );
     }
     );

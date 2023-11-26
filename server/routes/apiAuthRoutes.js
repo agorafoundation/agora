@@ -7,6 +7,7 @@
 
 var express = require( 'express' );
 var router = express.Router();
+const rateLimit = require('express-rate-limit');
 
 // import util Models
 const ApiMessage = require( '../model/util/ApiMessage' );
@@ -16,7 +17,13 @@ const authController = require( '../controller/authController' );
 
 // check that the user is logged in!
 // Currently by being here all APIs should require an authenicated user to work
-router.use( function ( req, res, next ) {
+const authCheckLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 125, // Limit each IP to 125 auth chechs per windowMs
+    message: "Too many auth checks from this IP, please try again after 1 minutes"
+});
+
+router.use(authCheckLimiter, function ( req, res, next ) {
     // This is the case if using UI.
     const authTest = req.session.isAuth;
     if( authTest ){

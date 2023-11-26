@@ -7,6 +7,7 @@
 
 const express = require( 'express' );
 const router = express.Router( );
+const rateLimit = require('express-rate-limit');
  
 // import controllers
 const resourceController = require( '../../controller/apis/resourceController' );
@@ -20,12 +21,18 @@ const resourceController = require( '../../controller/apis/resourceController' )
  * /sharedAndVisible <- all resources that are shared or visible to the user but are not their own
  */ 
 
+const resourcesLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 50, // Limit each IP to 50 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 15 minutes"
+});
+
 // resources /api/v1/auth/resources/
 router.route( '/' )
     .get( async function ( req, res ) {
         resourceController.getAllVisibleResources( req, res );
     } )    
-    .post( ( req, res ) => { 
+    .post(resourcesLimiter, ( req, res ) => { 
         resourceController.saveResource( req, res );
     }
     );
