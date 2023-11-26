@@ -237,7 +237,6 @@ const createTopicEditorGui = async function ( ) {
                     // TODO: evaluate what are these two??? why are there 2?
                     await createTextArea( getCurrentActiveTopic().resources[i] );
         
-                    ( debug ) ? console.log( "renderTextArea() : Start html: " + currentResource.resourceContentHtml ) : null;
                     if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
                                         
                         let editor = "sunEditor-" + ( currentResource.resourceId );
@@ -427,14 +426,6 @@ const createTopicEditorGui = async function ( ) {
 
     
 };
-
-
-
-
-
-
-
-
 
 
 

@@ -164,7 +164,6 @@ function textEditorUpdateEvent( resourceId, content ) {
 
     // get the resource from the current state
     let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
-    console.log( "resource html: " + resource.resourceContentHtml );
 
     saveTextResource( resource, content );
 

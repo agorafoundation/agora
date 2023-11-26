@@ -50,8 +50,8 @@ async function saveResource( resource ) {
 
     if( response.ok ) {
         const data = await response.json();
-        ( debug ) ? console.log( "saveResource() resource saved : " + JSON.stringify( data ) ) : null;
-        ( debug && dataDebug ) ? console.log( "saveResource() : resource created" ) : null;
+        ( debug && dataDebug ) ? console.log( "saveResource() resource saved : " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "saveResource() : resource created" ) : null;
         return data;
     }
 

@@ -6,7 +6,7 @@ import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clie
 /**
  * Client side debugging flags
  */
-const debug = false;
+const debug = true;
 const dataDebug = false;
 
 
@@ -35,7 +35,7 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     else {
         console.log( "workspace already initialized" );
     }
-    ( debug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
+    ( debug & dataDebug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
     ( debug ) ? console.log( "initializeWorkspace() : Complete" ) : null;
 
 };
