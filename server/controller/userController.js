@@ -136,15 +136,24 @@ const createUser = async function( email, username, firstName, lastName, passwor
                     siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
                 }
 
+                function encodeHtmlEntities(str) {
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
+                                
                 const mailOptions = {
                     from: process.env.EMAIL_FROM, // sender address
-                    to: email,
+                    to: encodeHtmlEntities(email),
                     subject: "Verify your email", // Subject line
-                    html: "<p>Hello, we hope this email finds you well!</p>"
-                        + "<p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community."
-                        + "Complete the process by <strong><a href='" + siteUrl + "/verifyEmail/" + email + "/" + insertResult + "'>clicking this link!</a></strong></p>"
-                        + "<p>Carpe Diem!</p>"
-                        + "<p>The Agora Team</p>", // plain text body
+                    html: `<p>Hello, we hope this email finds you well!</p>
+                           <p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community.
+                           Complete the process by <strong><a href='${encodeHtmlEntities(siteUrl)}/verifyEmail/${encodeHtmlEntities(email)}/${encodeHtmlEntities(insertResult)}'>clicking this link!</a></strong></p>
+                           <p>Carpe Diem!</p>
+                           <p>The Agora Team</p>` // encoded dynamic content
                 };
 
                 transporter.sendMail( mailOptions, function( err, info ) {
@@ -259,15 +268,24 @@ exports.reValidateEmail = async function( req, res ) {
                 siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
             }
 
+            function encodeHtmlEntities(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+            
             const mailOptions = {
                 from: process.env.EMAIL_FROM, // sender address
-                to: req.session.authUser.email,
+                to: encodeHtmlEntities(req.session.authUser.email),
                 subject: "Verify your email", // Subject line
-                html: "<p>Hello, we hope this email finds you well!</p>"
-                    + "<p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam free a community."
-                    + "Complete the process by <strong><a href='" + siteUrl + "/verifyEmail/" + req.session.authUser.email + "/" + newToken + "'>clicking this link!</a></strong></p>"
-                    + "<p>Carpe Diem!</p>"
-                    + "<p>The Agora Team</p>", // plain text body
+                html: `<p>Hello, we hope this email finds you well!</p>
+                       <p>Thank you for taking a moment to verify your email. Doing so helps us ensure we maintain as spam-free a community.
+                       Complete the process by <strong><a href='${encodeHtmlEntities(siteUrl)}/verifyEmail/${encodeHtmlEntities(req.session.authUser.email)}/${encodeHtmlEntities(newToken)}'>clicking this link!</a></strong></p>
+                       <p>Carpe Diem!</p>
+                       <p>The Agora Team</p>` // encoded dynamic content
             };
 
             transporter.sendMail( mailOptions, function( err, info ) {
