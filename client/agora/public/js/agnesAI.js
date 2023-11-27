@@ -212,7 +212,7 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
 } );
 
 async function makeAPICall() {
-    var selectedValue = this.value; // This is either set to "notes" or "paper"
+    var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
 
     if ( selectedValue != 'notes' && selectedValue != 'paper' ) return;
