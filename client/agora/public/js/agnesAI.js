@@ -19,8 +19,6 @@ citationsDropdown.addEventListener( 'change', ( event ) => {
     allCitationCards.forEach( ( cardTextElement, index ) => {
         cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
     } );
-
-
 } );
 
 document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
@@ -212,6 +210,7 @@ var lastEditedResourceId; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+    allCardsContainer.innerHTML = ""; // Clear the current cards.
     await makeAPICall();
 } );
 
