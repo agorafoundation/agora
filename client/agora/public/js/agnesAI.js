@@ -5,13 +5,17 @@
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
 
-document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", () => {
+document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
+    let modal = document.querySelector( ".agnes-modal-pos" );
     let agnesButton = document.querySelector( ".agnes-btn-container" );
 
     let rect = agnesButton.getBoundingClientRect();
-    let top = window.innerHeight- rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
+    let top = ( window.innerHeight - window.scrollY ) - rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
 
-    document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
+    // Set the 'top' value, only if it is currently unset.
+    if ( !modal.style.top ) {
+        document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
+    }
 } );
 
 citationsDropdown.addEventListener( 'change', ( event ) => {
