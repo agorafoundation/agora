@@ -794,14 +794,11 @@
 }
 
 .agnes-modal-pos {
-    right: 2vw;
-    top: 85vh;
-    bottom: -20;
+    right: 0vw;
     display: none;
     position: fixed;
     z-index: 200; 
     transform: translate(0%, -95%);
-
 }
 
 .text-center-mod {

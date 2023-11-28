@@ -5,6 +5,15 @@
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
 
+document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", () => {
+    let agnesButton = document.querySelector( ".agnes-btn-container" );
+
+    let rect = agnesButton.getBoundingClientRect();
+    let top = window.innerHeight- rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
+
+    document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
+} );
+
 citationsDropdown.addEventListener( 'change', ( event ) => {
     const citationType = event.target.value;
     const articleInfoObj = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
