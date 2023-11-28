@@ -135,6 +135,21 @@ const addNewTopic = async function ( topicName ) {
 
 };
 
+const updateTopicName = async function ( topicId, topicName ) {
+    ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+
+    // get the topic from the current workspace
+    let topic = getCurrentWorkspace().topics.find( topic => topic.topicId === topicId );
+
+    // update the topic name
+    topic.topicName = topicName;
+
+    // save the topic
+    await saveTopic( topic );
+
+    ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+};
+
 const saveActiveTopic = async function ( ) {
     ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
 
@@ -238,7 +253,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName };
 
 // Export GUI state
 export { tabs, activeTab };

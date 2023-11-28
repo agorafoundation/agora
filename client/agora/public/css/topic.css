@@ -266,6 +266,16 @@
     border-top: none;
 }
 
+.tablink-edit {
+  width: 80%;
+  display: flex;
+  text-align: center;
+  vertical-align: middle;
+}
+.tablink-edit input, span {
+  margin-right: 10px; /* Adjust as needed */
+}
+
 .tablinks {
     height: 50px;
 }
@@ -277,6 +287,15 @@
 }
 .close-tab:hover {
     color: black
+}
+
+.check-tab {
+  position: relative;
+  color: rgb(100, 98, 98);
+  top: -25px;
+}
+.check-tab:hover {
+  color: white;
 }
 
 /* END Tabs --------------------------------- */

@@ -21,7 +21,7 @@ import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, ge
 import { deleteResource } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
-import { updateWorkspaceDom, createTopicEditorGui } from "./editorManager.js";
+import { updateWorkspaceDom, createTopicEditorGui, editTopicName } from "./editorManager.js";
 import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
@@ -181,18 +181,19 @@ async function tabClickEvent( event, topicId ) {
         
         changeTopicEvent( topicId );
     }
+    
 
     ( debug ) ? console.log( "tabClickEvent() : Complete" ) : null;
 }
 
-async function tabDoubleClickEvent( event, topicId ) {
+async function tabLongClickEvent( event, topicId ) {
     ( debug ) ? console.log( "tabDoubleClickEvent() : Start" ) : null;
-
+    editTopicName( topicId );
     ( debug ) ? console.log( "tabDoubleClickEvent() : Complete" ) : null;
 }
 
 
-export { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent, deleteResourceEvent };
+export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent };
 
 
 

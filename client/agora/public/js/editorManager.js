@@ -9,9 +9,9 @@
  * imports
  */
 // state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource } from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import { textEditorUpdateEvent, tabClickEvent, tabDoubleClickEvent, deleteResourceEvent } from "./editorMain.js";
+import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent } from "./editorMain.js";
 
 
 /**
@@ -69,6 +69,7 @@ const updateWorkspaceDom = function ( ) {
  * It might make sense to break this up into smaller functions, but for now I want to keep it all together
  * while I disect the old methods into the new to understand the flow. TODO: comeback to when done.
  */
+       
 const createTopicEditorGui = async function ( ) {
     ( debug ) ? console.log( "createTopicEditorGui() : start" ) : null;
 
@@ -99,10 +100,10 @@ const createTopicEditorGui = async function ( ) {
                 // Create a new tab button
                 let tabBtn = document.createElement( "button" );
                 tabBtn.className = "tablinks";
-                tabBtn.id = "tablinks-" + i;
+                tabBtn.id = "tablinks-" + getCurrentWorkspace().topics[i].topicId;
 
                 let tabBtnName = document.createElement( "span" );
-                tabBtnName.id = "tabTopicName-" + getCurrentWorkspace().topics[i];
+                tabBtnName.id = "tabTopicName-" + getCurrentWorkspace().topics[i].topicId;
                 if( getCurrentWorkspace().topics[i].topicName ){
                     tabBtnName.innerHTML = getCurrentWorkspace().topics[i].topicName;
                 }
@@ -114,17 +115,44 @@ const createTopicEditorGui = async function ( ) {
                 // Create close tab button
                 let closeTabBtn = document.createElement( "span" );
                 closeTabBtn.className = "close-tab";
-                closeTabBtn.id = "close-tab-" + i;
+                closeTabBtn.id = "close-tab-" + getCurrentWorkspace().topics[i].topicId;
                 closeTabBtn.innerHTML = "&times;";
                 tabBtn.appendChild( closeTabBtn );
 
-                tabBtn.addEventListener( "click", async ( e ) => {
-                    tabClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                // click timer
+                let pressTimer;
+                const longPressThreshold = 500; // time in ms
+                let longPressDetected = false;  // flag to indicate a long press was detected
+
+                tabBtn.addEventListener( "mousedown", async ( e ) => {
+                    // Reset the long press flag
+                    longPressDetected = false;
+                    pressTimer = window.setTimeout( function() {
+                        longPressDetected = true; // Set the flag indicating a long press occurred
+                        console.log( 'Long press activated' );
+                        // Your long press logic here
+                    }, longPressThreshold );
                 } );
 
-                tabBtn.addEventListener( "contextmenu", async ( e ) => {
-                    tabDoubleClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                tabBtn.addEventListener( 'mouseup', function( e ) {
+                    // Clear the timer
+                    clearTimeout( pressTimer );
+                  
+                    if ( !longPressDetected ) {
+                        // Normal click / press detected
+                        tabClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                    }
+                    else {
+                        // long click / press detected
+                        tabLongClickEvent( e, getCurrentWorkspace().topics[i].topicId );
+                    }
                 } );
+                  
+                // Reset the long press flag when the mouse leaves the element
+                tabBtn.addEventListener( 'mouseleave', function( e ) {
+                    clearTimeout( pressTimer );
+                    longPressDetected = false;
+                } );        
                 
                 currTabs.appendChild( tabBtn );
 
@@ -427,7 +455,57 @@ const createTopicEditorGui = async function ( ) {
     
 };
 
+/**
+ * Makes the tab (topic) name editable by replacing the text with an input field
+ * @param {uuid} topicId 
+ */
+function editTopicName( topicId ) {
 
+    // get the current tab button
+    let tab = document.getElementById( "tablinks-" + topicId );
+    let existingTopicName = document.getElementById( "tabTopicName-" + topicId ).innerHTML;
+
+    // create a empty div to replace the tab button that will contain the input field and checkbox
+    let newTab = document.createElement( "div" );
+    newTab.id = "tabTopicName-" + topicId;
+    newTab.className = "tablink-edit";
+
+
+    // create the input field
+    let input = document.createElement( "input" );
+    input.type = "text";
+    input.value = existingTopicName;
+    input.id = "tabTopicNameInput-" + topicId;
+    tab.innerHTML = "";
+    newTab.appendChild( input );
+
+    //tab.preventDefault();
+
+    // add a checkmark to confirm the change
+    let checkmark = document.createElement( "span" );
+    checkmark.setAttribute( "class", "material-symbols-outlined check-tab" );
+    checkmark.id = "checkmark-" + topicId;
+    checkmark.innerHTML = "check";
+    newTab.appendChild( checkmark );
+
+    // replace the tab with the newTab
+    tab.parentNode.replaceChild( newTab, tab );
+
+    // add the event listener for the checkmark to save the change
+    checkmark.addEventListener( "click", async () => {
+        ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Start" ) : null;
+
+        let topicName = document.getElementById( "tabTopicNameInput-" + topicId ).value;
+        console.log( "topicName: " + topicName );
+        
+        // update the topic
+        await updateTopicName( topicId, topicName );
+        // update the gui
+        createTopicEditorGui();
+
+        ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Complete" ) : null;
+    } );
+}
 
 
 function createTextArea( resource ) {
@@ -567,7 +645,7 @@ function createTextArea( resource ) {
 
 
 
-export { updateWorkspaceDom, createTopicEditorGui, createTextArea };
+export { updateWorkspaceDom, createTopicEditorGui, createTextArea, editTopicName };
 
 
 /**
