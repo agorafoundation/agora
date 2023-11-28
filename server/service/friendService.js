@@ -9,7 +9,6 @@
 const db = require( '../db/connection' );
 
 // import models
-const notificationService = require( '../service/notificationService' );
 const userService = require( '../../server/service/userService' );
 const { ormFriendship } = require( '../model/friendship' );
 
@@ -79,8 +78,6 @@ exports.sendFriendRequest = async ( requesterID, recipientID ) => {
         let res = await db.query( text, values );
 
         if ( res.rows.length > 0 ){
-            let requesterUsername = await userService.getActiveUserById( requesterID );
-            await notificationService.addNotification( recipientID, "You have received a friend request from " + requesterUsername.username );
             return res.rows[0];
         }
         else{

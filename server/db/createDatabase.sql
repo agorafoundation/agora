@@ -133,17 +133,6 @@ CREATE TABLE IF NOT EXISTS agora.friendships (
 
 GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 
--- Notifications table
-CREATE TABLE IF NOT EXISTS agora.notifications (
-    notification_id SERIAL PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES users(user_id),
-    message TEXT NOT NULL,
-    notification_time TIMESTAMP DEFAULT current_timestamp,
-    read_status BOOLEAN DEFAULT FALSE
-);
-
-GRANT ALL PRIVILEGES ON TABLE notifications TO agora;
-
 INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active
 )
