@@ -290,16 +290,25 @@ exports.generateResetPasswordEmail = async function( req, res ) {
                     siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
                 }
     
+                function encodeHtmlEntities(str) {
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
+                
                 const mailOptions = {
                     from: process.env.EMAIL_FROM, // sender address
-                    to: req.body.forgotPasswordEmail,
+                    to: encodeHtmlEntities(req.body.forgotPasswordEmail),
                     subject: "Reset your password", // Subject line
-                    html: "<p>Hello, we hope this email finds you well!</p>"
-                        + "<p>You can reset your password by clicking on "
-                        + "<strong><a href='" + siteUrl + "/resetPass/" + req.body.forgotPasswordEmail + "/" + token + "'>this link!</a></strong></p>"
-                        + "<p>This link will expire in 24 hours!</p>"
-                        + "<p>Carpe Diem!</p>"
-                        + "<p>The Agora Team</p>", // plain text body
+                    html: `<p>Hello, we hope this email finds you well!</p>
+                           <p>You can reset your password by clicking on 
+                           <strong><a href='${encodeHtmlEntities(siteUrl)}/resetPass/${encodeHtmlEntities(req.body.forgotPasswordEmail)}/${encodeHtmlEntities(token)}'>this link!</a></strong></p>
+                           <p>This link will expire in 24 hours!</p>
+                           <p>Carpe Diem!</p>
+                           <p>The Agora Team</p>` // encoded dynamic content
                 };
     
                 await transporter.sendMail( mailOptions, function( err, info ) {

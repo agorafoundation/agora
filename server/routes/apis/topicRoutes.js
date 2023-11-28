@@ -7,6 +7,7 @@
 
 const express = require( 'express' );
 const router = express.Router( );
+const rateLimit = require('express-rate-limit');
   
 // import controllers
 const topicController = require( '../../controller/apis/topicController' );
@@ -20,12 +21,17 @@ const topicController = require( '../../controller/apis/topicController' );
   * /sharedAndVisible <- all Topics that are shared or visible to the user but are not their own
   */ 
  
- 
+const topicLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 50, // Limit each IP to 50 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 15 minutes"
+});
+
 router.route( '/' )
     .get( async function ( req, res ) {
         topicController.getAllVisibleTopics( req, res );
     } )    
-    .post( ( req, res ) => { 
+    .post(topicLimiter, ( req, res ) => { 
         topicController.saveTopic( req, res );
     }
     );

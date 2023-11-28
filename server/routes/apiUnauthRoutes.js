@@ -10,11 +10,17 @@ var router = express.Router();
 
 // import controllers
 const userController = require( '../controller/apis/userController' );
+const rateLimit = require('express-rate-limit');
 
+const vEmailLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Limit each IP to 10 upload attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 15 minutes"
+});
 
 // verify email existence
 router.route( '/verifyEmail/:email' )
-    .get( function( req, res ) {
+    .get(vEmailLimiter, function( req, res ) {
         userController.verifyEmail( req, res );
 
     }
@@ -22,7 +28,7 @@ router.route( '/verifyEmail/:email' )
 
 // verify username existence
 router.route( '/verifyUsername/:username' )
-    .get( function( req, res ) {
+    .get(vEmailLimiter, function( req, res ) {
         userController.verifyUsername( req, res );
 
     }

@@ -7,14 +7,26 @@
 
 var express = require( 'express' );
 var router = express.Router( );
+const rateLimit = require('express-rate-limit');
 
 // controllers
 const authController = require( '../controller/authController' );
 
+const emailLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 email attempts per windowMs
+    message: "Too many uploads from this IP, please try again after 15 minutes"
+});
+
+const googleLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Limit each IP to 10 auths attempts per windowMs
+    message: "Too many google auths from this IP, please try again after 15 minutes"
+});
 
 
 router.route( '/google-auth' )
-    .post( async ( req, res ) => {
+    .post( googleLimiter, async ( req, res ) => {
 
         await authController.googleSignIn( req, res );
         // Use the googleUser information to authenticate the user
@@ -65,7 +77,7 @@ router.route( '/resetPass' )
     );
 
 router.route( '/resetPass/:email/:token' )
-    .get( ( req, res ) => {
+    .get( emailLimiter, ( req, res ) => {
         authController.verifyResetPasswordToken( req, res );
     }
     );
@@ -77,7 +89,7 @@ router.route( '/newPass' )
     );
 
 router.route( '/verifyEmail/:email/:token' )
-    .get( ( req, res ) => {
+    .get( emailLimiter, ( req, res ) => {
         authController.verifyEmailWithToken( req, res );
     }
     );

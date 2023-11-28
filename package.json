@@ -12,6 +12,7 @@
     "ejs": "^3.1.8",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
+    "express-rate-limit": "^7.1.4",
     "express-response-hooks": "^1.0.4",
     "express-session": "^1.17.2",
     "google-auth-library": "^8.7.0",

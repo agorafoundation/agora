@@ -46,7 +46,7 @@
                             
                             
                             <div id="user-badges">
-                                <h2><span class="text-primary" ><%- (!!user)?user.username:'' %></span></h2>
+                                <h2><span class="text-primary" ><%= (!!user)?user.username:'' %></span></h2>
                                 <%
                                 if( user && (user.admin || user.member || user.creator || user.codebot) ) {
                                     %>
@@ -54,6 +54,7 @@
                                     <%
                                 }
                                 %>
+                            </div>
                                 
                                 <%
                                 if(user && user.admin) {
@@ -109,14 +110,9 @@
                         <div id="story1" class="row justify-content-left">
     
                             <div class="col-lg-4">
-                                
-                                <h5><%- (!!user)?user.username:'' %>'s Interests</h5>
-                                <h5>Letting us know which topics your are most intested in helps us find related research and
-                                    collaborators that might be of interest to you (optional)</h5>
+                                <h5><%= (!!user)?user.username:'' %>'s Interests</h5>
+                                <h5>Letting us know which topics your are most interested in helps us find related research and collaborators that might be of interest to you (optional)</h5>
                                 <p>TODO:Tags Tag selection will go here</p> 
-                                
-                                
-                                
                             </div>
                             
     
