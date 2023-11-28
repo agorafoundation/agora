@@ -915,9 +915,6 @@ const createSunEditor = async( resourceId ) => {
         // eslint-disable-next-line no-undef
         lang: SUNEDITOR_LANG.en,
         "lang(In nodejs)": "en",
-        callBackSave: function ( contents ) {
-            alert( contents );
-        },
     } ) ];
 
     newEditor[1].onChange = function( content ) {
