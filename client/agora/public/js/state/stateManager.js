@@ -7,7 +7,7 @@ import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = true;
+const dataDebug = false;
 
 
 /**
@@ -171,12 +171,8 @@ const addNewTextResource = async function ( ) {
     // create a new resource
     let resource = createNewResource();
 
-    console.log( "the resource created is: " + JSON.stringify( resource ) );
-
     // save the resource
     await saveResource( resource );
-
-    console.log( "the current topic is: " + JSON.stringify( getCurrentActiveTopic() ) );
 
     // add the resource to the current topic
     getCurrentActiveTopic().resources.push( resource );

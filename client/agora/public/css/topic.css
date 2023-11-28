@@ -1,3 +1,7 @@
+.editor-body {
+  background-color: #17191a;
+}
+
 .topic-body {
     transition: margin-left .5s;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
@@ -249,6 +253,7 @@
     /* border: 1px solid #ccc; */
     background-color: #f1f1f1;
     height: 50px;
+    display: flex;
   }
   
 .tabBar button {
@@ -259,7 +264,7 @@
     padding: 14px 10px;
     transition: 0.3s;
     border: none;
-  }
+}
   
 .tabcontent {
     padding: 6px 12px;
@@ -267,13 +272,20 @@
 }
 
 .tablink-edit {
-  width: 80%;
   display: flex;
-  text-align: center;
-  vertical-align: middle;
+  padding-right:10px;
 }
 .tablink-edit input, span {
   margin-right: 10px; /* Adjust as needed */
+}
+
+.check-tab {
+  position: relative;
+  color: rgb(100, 98, 98);
+  top: -25px;
+}
+.check-tab:hover {
+  color: white;
 }
 
 .tablinks {
@@ -289,14 +301,7 @@
     color: black
 }
 
-.check-tab {
-  position: relative;
-  color: rgb(100, 98, 98);
-  top: -25px;
-}
-.check-tab:hover {
-  color: white;
-}
+
 
 /* END Tabs --------------------------------- */
 

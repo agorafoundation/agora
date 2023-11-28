@@ -60,8 +60,8 @@ const saveWorkspace = async( workspace ) => {
         if( response.ok ) {
             const data = await response.json();
             
-            ( debug ) ? console.log( "saveWorkspace() workspace saved : " + JSON.stringify( data ) ) : null;
-            ( debug && dataDebug ) ? console.log( "saveWorkspace() : Workspace created" ) : null;
+            ( debug && dataDebug ) ? console.log( "saveWorkspace() workspace saved : " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "saveWorkspace() : Workspace created" ) : null;
             return data;
         }
     }

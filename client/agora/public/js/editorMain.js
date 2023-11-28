@@ -53,7 +53,7 @@ window.addEventListener( "load", async () => {
     }
 
     // add the event listener for adding a new topic
-    addTopicEvent();
+    //addTopicEvent();
     
 
     /**
@@ -82,27 +82,30 @@ window.addEventListener( "load", async () => {
 /**
  * EVENT:: Event listener for adding a new topic to the workspace
  */
-function addTopicEvent() {
+async function addTopicEvent() {
     /**
      * EVENT:: Event listener for adding a new topic
      */
-    const openBtn = document.getElementById( "new-element" );
-    if( openBtn ) {
-        openBtn.addEventListener( "click", async () => {
-            ( debug ) ? console.log( "New Topic: start" ) : null;
-            
-            let tname = prompt( "Enter a name for your new Topic" );
-            //console.log( 'Took input from prompt' );
+    ( debug ) ? console.log( "addTopicEvent: start" ) : null;
+  
+    let tname = "Unnamed Topic";
+    //console.log( 'Took input from prompt' );
 
-            await addNewTopic( tname );
+    let newTopic = await addNewTopic( tname );
 
-            // render the topics for the workspace
-            await createTopicEditorGui();
+    // set the new topic as the active topic to switch tabs
+    await changeTopicEvent( newTopic.topicId );
 
-            
-            ( debug ) ? console.log( "New topic: complete" ) : null;
-        } );
-    }
+    // render the topics for the workspace
+    await createTopicEditorGui();
+
+    // add the event listener for adding a new topic
+    //addTopicEvent();   
+
+    // prompt the user to name the topic
+    editTopicName( newTopic.topicId );
+    ( debug ) ? console.log( "addTopicEvent: complete" ) : null;
+  
 }
 
 async function deleteResourceEvent( resourceId ) {
@@ -129,6 +132,18 @@ async function deleteResourceEvent( resourceId ) {
 
 }
 
+async function deleteTopicEvent( topicId ) {
+    let deleteConfirm = confirm( "Are you sure you want to delete this topic?" );
+    if( deleteConfirm ) {
+        // get the topic id from the element
+        //let topicId = e.target.id.split( "-" )[1];
+        // remove the topic from the currentWorkspace
+        getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
+        // save the current workspace
+        saveWorkspace( getCurrentWorkspace() );
+    }
+}
+
 async function changeTopicEvent( topicId ) {
     if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
         /**
@@ -145,7 +160,7 @@ async function changeTopicEvent( topicId ) {
         }
 
         // add the event listener for adding a new topic
-        addTopicEvent();
+        //addTopicEvent();
 
         
     }
@@ -159,15 +174,18 @@ async function changeTopicEvent( topicId ) {
  * @param {uuidv4} resourceId 
  * @param {String} content 
  */
-function textEditorUpdateEvent( resourceId, content ) {
-    ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
+async function textEditorUpdateEvent( resourceId, content ) {
+    ( debug ) ? console.log( "textEditorUpdateEvent() : Start" ) : null;
 
     // get the resource from the current state
     let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
 
-    saveTextResource( resource, content );
+    await saveTextResource( resource, content );
 
-    ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
+    // add the event listener for adding a new topic
+    //addTopicEvent();
+
+    ( debug ) ? console.log( "textEditorUpdateEvent() : Complete" ) : null;
 }
 
 async function tabClickEvent( event, topicId ) {
@@ -175,7 +193,9 @@ async function tabClickEvent( event, topicId ) {
 
     if ( event.target.className.includes( "close-tab" ) ) {
         ( debug ) ? console.log( "tabClickEvent() : close tab event" ) : null;
-        //closeTab( event.target.id );
+        
+        // call the delete topic event
+
     } 
     else {
         
@@ -193,7 +213,7 @@ async function tabLongClickEvent( event, topicId ) {
 }
 
 
-export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent };
+export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent };
 
 
 

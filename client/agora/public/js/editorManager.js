@@ -11,7 +11,7 @@
 // state manager
 import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent } from "./editorMain.js";
+import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
 
 
 /**
@@ -84,6 +84,15 @@ const createTopicEditorGui = async function ( ) {
     newTab.id = "new-element";
     newTab.style.color = "white";
     newTab.innerHTML = "add";
+    newTab.addEventListener( "click", async () => {
+
+        ( debug ) ? console.log( "New Topic: start" ) : null;
+            
+        addTopicEvent();
+
+        ( debug ) ? console.log( "New topic: complete" ) : null;
+
+    } );
 
     currTabs.appendChild( newTab );
     
@@ -460,6 +469,7 @@ const createTopicEditorGui = async function ( ) {
  * @param {uuid} topicId 
  */
 function editTopicName( topicId ) {
+    ( debug ) ? console.log( "editTopicName : Start" ) : null;
 
     // get the current tab button
     let tab = document.getElementById( "tablinks-" + topicId );
@@ -505,6 +515,7 @@ function editTopicName( topicId ) {
 
         ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Complete" ) : null;
     } );
+    ( debug ) ? console.log( "editTopicName : Complete" ) : null;
 }
 
 
@@ -705,7 +716,7 @@ function refreshTabs( ) {
 
     // Set tab button to active
     for ( i=0; i<tablinks.length; i++ ) {
-        if ( tablinks[i].id.slice( -1 ) == activeTab.id.slice( -1 ) ) {
+        if ( tablinks[i].id.split( "-" )[1] == activeTab.id.split( "-" )[1] ) {
             tablinks[i].className += " active";
             tablinks[i].style.backgroundColor = "#3f3f3f";
         }

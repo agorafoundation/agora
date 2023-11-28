@@ -75,8 +75,6 @@ const saveTopic = async( topic ) => {
             } );
         }
 
-        console.log( "resource uuid array: " + resourceUuids );
-
         const response = await fetch( "api/v1/auth/topics", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
