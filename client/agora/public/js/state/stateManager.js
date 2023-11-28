@@ -1,23 +1,23 @@
 // get models and controller functions from modules
-import { resourceModel, saveResource } from "../controllers/clientResourceController.js";
-import { topicModel, saveTopic, getTopic, getResourcesForTopic } from "../controllers/clientTopicController.js";
-import { workspaceModel, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
+import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
+import { createNewTopic, saveTopic, getTopic, getResourcesForTopic } from "../controllers/clientTopicController.js";
+import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = false;
+const dataDebug = true;
 
 
 /**
  * Client model state 
  */
 // Workspace for the loaded editor
-let workspace = workspaceModel;
+let workspace = createNewResource;
 
 // Active topic for the chosen tab
-let activeTopic = topicModel;
+let activeTopic = createNewTopic();
 /*--------------------------------------------------------------------------------*/
 
 /**
@@ -77,7 +77,6 @@ const setActiveTopicAndResources = async function ( topicId ) {
         // get the resources for the active topic
         if( activeTopic ) {
             const resources = await getResourcesForTopic( activeTopic.topicId );
-            ( debug && dataDebug ) ? console.log( "resources: after call : " + JSON.stringify( resources ) ) : null;
             
             if( resources ) {
                 activeTopic.resources = await resources;
@@ -88,7 +87,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
     }
     else {
         // there are currently no topics in the workspace, create a new one
-        activeTopic = topicModel;
+        activeTopic = createNewTopic();
         activeTopic.topicName = "Untitled-test";
         activeTopic.topicDescription = "";
 
@@ -108,7 +107,7 @@ const addNewTopic = async function ( topicName ) {
 
     if( getCurrentWorkspace() ) {
         // create a new topic
-        let newTopic = topicModel;
+        let newTopic = createNewTopic();
         newTopic.topicName = topicName;
 
         // make sure the worspace fields are up to date
@@ -155,10 +154,14 @@ const addNewTextResource = async function ( ) {
     ( debug ) ? console.log( "addNewTextResource() : Start" ) : null;
 
     // create a new resource
-    let resource = resourceModel;
+    let resource = createNewResource();
+
+    console.log( "the resource created is: " + JSON.stringify( resource ) );
 
     // save the resource
     await saveResource( resource );
+
+    console.log( "the current topic is: " + JSON.stringify( getCurrentActiveTopic() ) );
 
     // add the resource to the current topic
     getCurrentActiveTopic().resources.push( resource );

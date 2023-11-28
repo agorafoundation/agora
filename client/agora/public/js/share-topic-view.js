@@ -6,9 +6,9 @@
  */
 
 // get models and controller functions from modules
-import { resourceModel, saveResource } from "./controllers/clientResourceController.js";
-import { topicModel, saveTopic, getTopic } from "./controllers/clientTopicController.js";
-import { workspaceModel, saveWorkspace, getWorkspace } from "./controllers/clientWorkspaceController.js";
+import { createNewResource, saveResource } from "./controllers/clientResourceController.js";
+import { createNewTopic, saveTopic, getTopic } from "./controllers/clientTopicController.js";
+import { saveWorkspace, getWorkspace } from "./controllers/clientWorkspaceController.js";
 
 /** Globals */
 let resources = [];

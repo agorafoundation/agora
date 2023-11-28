@@ -13,22 +13,24 @@
 // import debug
 import { debug, dataDebug } from "../state/stateManager.js";
 
-const workspaceModel = {
-    workspaceRid: -1,
-    workspaceId: null,
-    workspaceVersion: 1,
-    workspaceName: "",
-    workspaceDescription: "",
-    workspaceImage: "",
-    active: true,
-    completable: false,
-    createTime: null,
-    visibility: "private",
-    ownedBy: -1,
+function createNewWorkspace() {
+    return {
+        workspaceRid: -1,
+        workspaceId: null,
+        workspaceVersion: 1,
+        workspaceName: "",
+        workspaceDescription: "",
+        workspaceImage: "",
+        active: true,
+        completable: false,
+        createTime: null,
+        visibility: "private",
+        ownedBy: -1,
 
-    topics: [],
-    tags: []
-};
+        topics: [],
+        tags: []
+    };
+}
 
 const saveWorkspace = async( workspace ) => {
     ( debug ) ? console.log( "saveWorkspace() : Start" ) : null;
@@ -103,4 +105,4 @@ const getWorkspace = async( id ) => {
     }
 };
 
-export { workspaceModel, saveWorkspace, getWorkspace };
+export { createNewWorkspace, saveWorkspace, getWorkspace };

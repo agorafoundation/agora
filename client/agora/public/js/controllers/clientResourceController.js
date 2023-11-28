@@ -14,20 +14,23 @@ import { debug, dataDebug } from "../state/stateManager.js";
 import { uuidv4 } from "../util/editorUtil.js";
 
 
-const resourceModel = {
-    resourceId: uuidv4(),
-    resourceType: 1,
-    resourceName: "",
-    resourceDescription: "",
-    resourceContentHtml: "",
-    resourceImage: "",
-    resourceLink: "",
-    isRequired: -1,
-    active: true,
-    visibility: "private",
-    createTime: null,
-    ownedBy: -1
-};
+
+function createNewResource() {
+    return {
+        resourceId: uuidv4(),
+        resourceType: 1,
+        resourceName: "",
+        resourceDescription: "",
+        resourceContentHtml: "",
+        resourceImage: "",
+        resourceLink: "",
+        isRequired: -1,
+        active: true,
+        visibility: "private",
+        createTime: null,
+        ownedBy: -1
+    };
+}
 
 async function saveResource( resource ) {
     ( debug ) ? console.log( "saveResource() : start" ) : null;
@@ -177,4 +180,4 @@ async function deleteResource( resourceId ) {
    
 // }
 
-export { saveResource, resourceModel, deleteResource };
+export { saveResource, createNewResource, deleteResource };

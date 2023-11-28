@@ -15,26 +15,28 @@ import { debug, dataDebug } from "../state/stateManager.js";
 import { uuidv4 } from "../util/editorUtil.js";
 
 
-const topicModel = {
-    topicId: uuidv4(),
-    topicType: 0,
-    topicName: "",
-    topicDescription: "",
-    topicImage: "",
-    topicHtml: "",
-    assessmentId: -1,
-    hasActivity: false,
-    hasAssessment: false,
-    activityId: -1,
-    active: true,
-    visibility: "private",
-    createTime: null,
-    ownedBy: -1,
-    assessment: null,
-    activity: null,
-    resources: [],
-    resourcesRequired: []
-};
+function createNewTopic() {
+    return {
+        topicId: uuidv4(),
+        topicType: 0,
+        topicName: "",
+        topicDescription: "",
+        topicImage: "",
+        topicHtml: "",
+        assessmentId: -1,
+        hasActivity: false,
+        hasAssessment: false,
+        activityId: -1,
+        active: true,
+        visibility: "private",
+        createTime: null,
+        ownedBy: -1,
+        assessment: null,
+        activity: null,
+        resources: [],
+        resourcesRequired: []
+    };
+}
 
 const getTopic = async( id ) => {
     ( debug ) ? console.log( "getTopic() : Start - id: " + id ) : null;
@@ -63,13 +65,12 @@ const getResourcesForTopic = async function ( topicId ) {
 };
 
 const saveTopic = async( topic ) => {
-    console.log( "saveTopic() : Start : + topic: " + JSON.stringify( topic ) );
+    ( debug ) ? console.log( "saveTopic() : Start for topic -  " + topic.topicId ) : null;
     if( topic ) {
         // prepare the topics as an array of uuids
         let resourceUuids = [];
         if( topic.resources ) {
             topic.resources.forEach( resource => {
-                console.log( "resource: " + JSON.stringify( resource ) + " going into array" );
                 resourceUuids.push( resource.resourceId );
             } );
         }
@@ -137,4 +138,4 @@ const saveTopic = async( topic ) => {
     // }
 };
 
-export { topicModel, getTopic, getResourcesForTopic, saveTopic };
+export { createNewTopic, getTopic, getResourcesForTopic, saveTopic };
