@@ -135,12 +135,31 @@ async function deleteResourceEvent( resourceId ) {
 async function deleteTopicEvent( topicId ) {
     let deleteConfirm = confirm( "Are you sure you want to delete this topic?" );
     if( deleteConfirm ) {
-        // get the topic id from the element
-        //let topicId = e.target.id.split( "-" )[1];
-        // remove the topic from the currentWorkspace
-        getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
-        // save the current workspace
-        saveWorkspace( getCurrentWorkspace() );
+        if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
+            getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
+            // save the current workspace
+            await saveWorkspace( getCurrentWorkspace() );
+
+            // set a new active topic
+            // if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
+            //     await setActiveTopicAndResources();
+            // }
+
+            // set the new active topic if the active topic was deleted
+            if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {
+                // get another topic id
+                if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
+                    await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );
+                }
+                else {
+                    await setActiveTopicAndResources();
+                }
+            }
+
+            // update the ui
+            await createTopicEditorGui();
+
+        }
     }
 }
 
@@ -195,6 +214,7 @@ async function tabClickEvent( event, topicId ) {
         ( debug ) ? console.log( "tabClickEvent() : close tab event" ) : null;
         
         // call the delete topic event
+        deleteTopicEvent( topicId );
 
     } 
     else {

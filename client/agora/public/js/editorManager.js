@@ -73,6 +73,8 @@ const updateWorkspaceDom = function ( ) {
 const createTopicEditorGui = async function ( ) {
     ( debug ) ? console.log( "createTopicEditorGui() : start" ) : null;
 
+    console.log( "getCurrentActiveTopic(): " + JSON.stringify( getCurrentActiveTopic() ) );
+
     // Dom parent for tabs
     let currTabs = document.querySelector( ".tabBar" );
     // clear tabs parent
@@ -98,6 +100,7 @@ const createTopicEditorGui = async function ( ) {
     
 
     // verify we have a workspace and it has topics
+    
     if( getCurrentWorkspace() && getCurrentWorkspace().topics && getCurrentActiveTopic() ) {
         
         /**
@@ -132,8 +135,6 @@ const createTopicEditorGui = async function ( ) {
                 let pressTimer;
                 const longPressThreshold = 500; // time in ms
                 let longPressDetected = false;  // flag to indicate a long press was detected
-
-
 
                 tabBtn.addEventListener( "mousedown", async ( e ) => {
                     // Reset the long press flag
