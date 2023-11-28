@@ -242,7 +242,7 @@ const createTopicEditorGui = async function ( ) {
                         let editor = "sunEditor-" + ( currentResource.resourceId );
 
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
-                        sunEditor[editor][1].insertHTML( currentResource.resourceContentHtml );
+                        sunEditor[editor][1].setContents( currentResource.resourceContentHtml );
                     }        
                 }
                 if ( getCurrentActiveTopic().resources.length === 0 ) {
