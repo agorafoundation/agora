@@ -133,27 +133,32 @@ const createTopicEditorGui = async function ( ) {
                 const longPressThreshold = 500; // time in ms
                 let longPressDetected = false;  // flag to indicate a long press was detected
 
+
+
                 tabBtn.addEventListener( "mousedown", async ( e ) => {
                     // Reset the long press flag
                     longPressDetected = false;
+                
+                    // Clear any existing timer
+                    clearTimeout( pressTimer );
+                
                     pressTimer = window.setTimeout( function() {
                         longPressDetected = true; // Set the flag indicating a long press occurred
                         console.log( 'Long press activated' );
-                        // Your long press logic here
+                
+                        // Long click / press detected, execute the long press event
+                        tabLongClickEvent( e, getCurrentWorkspace().topics[i].topicId );
                     }, longPressThreshold );
                 } );
-
+                
                 tabBtn.addEventListener( 'mouseup', function( e ) {
-                    // Clear the timer
-                    clearTimeout( pressTimer );
-                  
+                    // If it's a short press (not a long press)
                     if ( !longPressDetected ) {
-                        // Normal click / press detected
+                        // Clear the timer
+                        clearTimeout( pressTimer );
+                
+                        // Normal click / press detected, execute the click event
                         tabClickEvent( e, getCurrentWorkspace().topics[i].topicId );
-                    }
-                    else {
-                        // long click / press detected
-                        tabLongClickEvent( e, getCurrentWorkspace().topics[i].topicId );
                     }
                 } );
                   
@@ -487,6 +492,13 @@ function editTopicName( topicId ) {
     input.value = existingTopicName;
     input.id = "tabTopicNameInput-" + topicId;
     tab.innerHTML = "";
+    input.addEventListener( 'keydown', function( event ) {
+        // Check if the pressed key is the Enter key
+        if ( event.key === 'Enter' ) {
+            console.log( 'Enter key pressed' );
+            saveTopicName( topicId );
+        }
+    } );
     newTab.appendChild( input );
 
     //tab.preventDefault();
@@ -503,19 +515,23 @@ function editTopicName( topicId ) {
 
     // add the event listener for the checkmark to save the change
     checkmark.addEventListener( "click", async () => {
-        ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Start" ) : null;
-
-        let topicName = document.getElementById( "tabTopicNameInput-" + topicId ).value;
-        console.log( "topicName: " + topicName );
-        
-        // update the topic
-        await updateTopicName( topicId, topicName );
-        // update the gui
-        createTopicEditorGui();
-
-        ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Complete" ) : null;
+        saveTopicName( topicId );
     } );
     ( debug ) ? console.log( "editTopicName : Complete" ) : null;
+}
+
+async function saveTopicName( topicId ) {
+    ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Start" ) : null;
+
+    let topicName = document.getElementById( "tabTopicNameInput-" + topicId ).value;
+    console.log( "topicName: " + topicName );
+    
+    // update the topic
+    await updateTopicName( topicId, topicName );
+    // update the gui
+    createTopicEditorGui();
+
+    ( debug ) ? console.log( "checkmark-topicId - updateTopic() call : Complete" ) : null;
 }
 
 
