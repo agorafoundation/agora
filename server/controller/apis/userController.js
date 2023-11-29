@@ -16,9 +16,9 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 
 exports.getUserByEmail = async function( req, res ) {
-    let user = await userService.getUserByEmail( req.params.email )
+    let user = await userService.getUserByEmail( req.params.email );
     if ( user ) {
-        console.log(user);
+        console.log( user );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned user by email" );
         res.status( 200 ).json( user );

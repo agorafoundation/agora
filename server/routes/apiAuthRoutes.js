@@ -132,7 +132,7 @@ router.use( '/user', userRoutes );
  */
 
 const friendRoutes = require( './apis/friendRoutes' );
-router.use( '/friends', friendRoutes);
+router.use( '/friends', friendRoutes );
 
 /**
  * Discussion APIs

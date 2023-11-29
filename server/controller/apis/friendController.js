@@ -52,7 +52,7 @@ exports.getResources = async ( req, res ) => {
         let friends = await friendService.getAllFriends( req.user.userId );
         let requests = await friendService.getUnreadFriendRequests( req.user.userId );
         let count = await friendService.getUnreadFriendRequestCount( req.user.userId );
-        resources.push(req.user, friends, requests, count);
+        resources.push( req.user, friends, requests, count );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all user details" );
         res.status( 200 ).json( resources );
@@ -63,7 +63,7 @@ exports.getResources = async ( req, res ) => {
         res.set( "x-agora-message-detail", "User details not found" );
         res.status( 400 ).json( message );
     }
-}
+};
 
 /*
 //Get a specific friend, by their ID.
@@ -175,7 +175,7 @@ exports.rejectFriendRequest = async ( req, res ) => {
 
 //Deletes a friend.
 exports.deleteFriendByID = async ( req, res ) => {
-    let success = await friendService.deleteFriendByID( req.body.friendshipId);
+    let success = await friendService.deleteFriendByID( req.body.friendshipId );
     if ( success ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Removed friend" );

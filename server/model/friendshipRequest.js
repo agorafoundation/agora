@@ -11,10 +11,10 @@ exports.emptyFriendshipRequest = () => {
     return new friendshipRequest();
 };
 
-exports.ormFriendshipRequest = function (row) {
+exports.ormFriendshipRequest = function ( row ) {
     let friendshipRequest = exports.emptyFriendshipRequest();
     friendshipRequest.request_id = row.request_id;
     friendshipRequest.requester_id = row.requester_id;
     friendshipRequest.recipient_id = row.recipient_id;
     friendshipRequest.request_time = row.request_time;
-}
+};

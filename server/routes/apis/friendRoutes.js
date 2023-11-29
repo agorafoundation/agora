@@ -37,7 +37,7 @@ router.route( '/sendFriendRequest' )
 router.route( '/getResources' )
     .get( async ( req, res ) => {
         friendController.getResources( req, res );
-    })
+    } );
 
 router.route( '/requestResponse' )
     .post( async ( req, res ) => { 
@@ -51,11 +51,11 @@ router.route( '/getFriend/:userID' )
     //get a friend by their user ID.
     .get( async ( req, res ) => {
         friendController.getFriendByID( req, res );
-    } )
+    } );
    
 router.route( '/deleteFriend' )
     .delete( async ( req, res ) => {
-            friendController.deleteFriendByID( req, res );
-        } );
+        friendController.deleteFriendByID( req, res );
+    } );
 
 module.exports = router;
