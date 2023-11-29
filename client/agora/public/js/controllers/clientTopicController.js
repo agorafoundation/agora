@@ -136,4 +136,19 @@ const saveTopic = async( topic ) => {
     // }
 };
 
-export { createNewTopic, getTopic, getResourcesForTopic, saveTopic };
+const deleteTopic = async function ( topicId ) {
+    ( debug ) ? console.log( "deleteTopic() : Start for topicId: " + topicId ) : null;
+    const response = await fetch( "api/v1/auth/topics/" + topicId, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+    } );
+
+    if( response.ok ) {
+        const data = await response.json();
+        ( debug && dataDebug ) ? console.log( "deleteTopic() : Topic and resources deleted: " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "deleteTopic() : Complete" ) : null;
+        return data;
+    }
+};
+
+export { createNewTopic, getTopic, getResourcesForTopic, saveTopic, deleteTopic };

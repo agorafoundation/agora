@@ -1,6 +1,7 @@
 // get models and controller functions from modules
+import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
-import { createNewTopic, saveTopic, getTopic, getResourcesForTopic } from "../controllers/clientTopicController.js";
+import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
 import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
@@ -87,16 +88,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
     }
     else {
         // there are currently no topics in the workspace, create a new one
-        activeTopic = createNewTopic();
-        activeTopic.topicName = "Untitled-test";
-        activeTopic.topicDescription = "";
-
-        // save the new topic
-        activeTopic = await saveTopic( activeTopic );
-        
-        workspace.topics.push( activeTopic );
-        // save the workspace to associate the topic with the workspace
-        await saveWorkspace( workspace );
+        addTopicEvent();
     }
 
     ( debug ) ? console.log( "setActiveTopicAndResources() : Complete" ) : null;
@@ -161,6 +153,23 @@ const saveActiveTopic = async function ( ) {
 
     ( debug ) ? console.log( "saveActiveTopic() : Complete" ) : null;
 
+};
+
+const deleteTopicFromWorkspace = async function ( topicId ) {
+    ( debug ) ? console.log( "deleteTopicFromWorkspace() : Start for topicId - " + topicId ) : null;
+
+    // delete the topic and resources
+    await deleteTopic( topicId );
+
+    // remove the topic from the current workspace
+    getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
+
+    // save the current workspace (deletes association with workspace)
+    await saveWorkspace( getCurrentWorkspace() );
+
+    
+    
+    ( debug ) ? console.log( "deleteTopicFromWorkspace() : Complete" ) : null;
 };
 
 const addNewTextResource = async function ( ) {
@@ -249,7 +258,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName };
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace };
 
 // Export GUI state
 export { tabs, activeTab };

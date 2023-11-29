@@ -298,7 +298,6 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
  */
 exports.saveResource = async ( resource ) => {
     // check to see if an id exists - insert / update check
-    console.log( "incomming resource: " + JSON.stringify( resource ) );
     if( resource ) {
         // query to see if the resourceId exists
         let text = "SELECT resource_id FROM resources WHERE resource_id = $1;";
@@ -360,6 +359,13 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
     try {
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
+
+            // check to see if there are any references to this resource in the topic_resources table and remove them
+            text = "DELETE FROM topic_resources WHERE resource_id = $1 and owned_by = $2";
+            values = [ resourceId, ownerId ];
+
+            let res2 = await db.query( text, values );
+
             return true;
         }
         else {
@@ -370,4 +376,5 @@ exports.deleteResourceById = async ( resourceId, ownerId ) => {
         console.log( e.stack );
         return false;
     }
+    
 };

@@ -324,7 +324,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 //console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
             }
             else {
-                console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
+                //console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
             }
         }
 

@@ -73,8 +73,6 @@ const updateWorkspaceDom = function ( ) {
 const createTopicEditorGui = async function ( ) {
     ( debug ) ? console.log( "createTopicEditorGui() : start" ) : null;
 
-    console.log( "getCurrentActiveTopic(): " + JSON.stringify( getCurrentActiveTopic() ) );
-
     // Dom parent for tabs
     let currTabs = document.querySelector( ".tabBar" );
     // clear tabs parent

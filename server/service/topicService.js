@@ -615,7 +615,6 @@ exports.saveTopic = async function( topic ) {
  */                                               
 exports.saveResourcesForTopic = async function( topic, resourceIds ) {
     // get the most recent version of the topic
-    console.log( "[INFO]: Saving resources for topic: " + topic.topicId + " resources: " + resourceIds + " typeOf resourceId: " + typeof resourceIds );
     // let rIds = resourceIds;
     // if( typeof resourceIds == "object" ) {
     //     rIds = resourceIds.map( r => ( String.toString( r ) ) );
@@ -641,18 +640,12 @@ exports.saveResourcesForTopic = async function( topic, resourceIds ) {
          * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
          * This probably means having the pathway be an array of objects containing id and isRequired
          */
-    console.log( "[DEBUG]: resourceIds: " + resourceIds );
     if( resourceIds && resourceIds.length > 0 ) {
         for( let i=0; i < resourceIds.length; i++ ) {
-            console.log( "[DEBUG]: resourceIds[i]: " + resourceIds[i] );
             let isRequired = true;
 
             text = "INSERT INTO topic_resources (topic_id, resource_id, position, is_required, active, owned_by) VALUES ($1, $2, $3, $4, $5, $6);";
-            console.log( "[DEBUG]: text: " + text );
-            console.log( "ownedBy: " + topic.ownedBy );
             values = [ topic.topicId, resourceIds[i], ( i + 1 ), isRequired, true, topic.ownedBy ];
-            console.log( "values: " + values );
-            console.log( "1" );
 
             try {
                 let res3 = await db.query( text, values );
@@ -662,7 +655,6 @@ exports.saveResourcesForTopic = async function( topic, resourceIds ) {
                 return false;
             }
                 
-            console.log( "2" );
         }
     }
 

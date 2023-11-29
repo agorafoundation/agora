@@ -15,7 +15,7 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace } from "./state/stateManager.js";
 
 // get the data models
 import { deleteResource } from "./controllers/clientResourceController.js";
@@ -136,14 +136,9 @@ async function deleteTopicEvent( topicId ) {
     let deleteConfirm = confirm( "Are you sure you want to delete this topic?" );
     if( deleteConfirm ) {
         if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
-            getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
-            // save the current workspace
-            await saveWorkspace( getCurrentWorkspace() );
 
-            // set a new active topic
-            // if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
-            //     await setActiveTopicAndResources();
-            // }
+            // delete the topic from the workspace
+            await deleteTopicFromWorkspace( topicId );
 
             // set the new active topic if the active topic was deleted
             if( getCurrentActiveTopic() && getCurrentActiveTopic().topicId == topicId ) {

@@ -484,10 +484,8 @@ exports.saveTopic = async ( req, res, redirect ) => {
         */
 
         // Resources are held as a list of resource id's.
-        console.log( "req.body.resources: " + JSON.stringify( req.body.resources ) );
        
         topic.resources = req.body.resources;
-        console.log( "all resources: " + JSON.stringify( topic.resources ) );
         //console.log( "first resource: " + topic.resources[0] );
 
         // // move the resources into flat string array
@@ -659,6 +657,16 @@ exports.deleteTopicById = async ( req, res ) => {
     }
 
     const topicId = req.params.topicId;
+
+    // find any resources associated with the topic and delete them
+    let resources = await topicService.getAllResourceIdsFromTopic( topicId );
+    if( resources ) {
+        resources.forEach( async ( resource ) => {
+            await resourceService.deleteResourceById( resource, authUserId );
+        } );
+    }
+
+    
     let success = await topicService.deleteTopicById( topicId, authUserId );
 
     if ( success ) {
