@@ -12,7 +12,7 @@ let path = require( 'path' );
 // import models
 const Workspace = require( '../../model/workspace' );
 // import controllers
-const {errorController} = require( "./apiErrorController" );
+const { errorController } = require( "./apiErrorController" );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -37,31 +37,59 @@ const workspaceUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH;
 
 exports.getAllVisibleWorkspaces = async ( req, res ) => {
     // get all the active workspaces
-    console.log( '1' );
-    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId );
-    console.log( '2' );
+    let workspaces = await workspaceService.getAllVisibleWorkspaces( req.user.userId, req.query.limit, req.query.offset );
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    }  );
+};
+
+//get shared workspaces
+exports.getSharedWorkspaces = async ( req, res ) => {
+    //get all shared workspaces
+    let sharedWorkspaces = await workspaceService.getAllSharedWorkspaces( req.user.userId );
+    res.set( "x-agora-message-title", "Success" );
+    res.set( "x-agora-message-detail", "Returned all shared workspaces" );
+    res.status( 200 ).json( sharedWorkspaces );
+};
+
+exports.getSharedWorkspaceByID = async ( req, res ) => {
+    //get shared workspace by ID.
+    console.log( "Getting Shared Workspace" );
+    let sharedWorkspace = await workspaceService.getSharedWorkspaceByID( req.params.workspaceId );
+    if ( sharedWorkspace ) {
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Returned workspace by id" );
+        res.status( 200 ).json( sharedWorkspace );
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Workspace not found" );
+        res.status( 404 ).json( message );
+    }
 };
 
 exports.getWorkspaceById = async ( req, res ) => {
 
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
-    if( req.user ) {
+    if ( req.user ) {
         authUserId = req.user.userId;
     }
-    else if( req.session.authUser ) {
+    else if ( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
-    if( authUserId ) {
+    if ( authUserId ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
-            res.status( 200 ).json( workspace );
+            res.status( 200 ).json( {
+                results: workspace
+            } );
         }
         else {
             const message = ApiMessage.createApiMessage( 404, "Not Found", "Workspace not found" );
@@ -73,34 +101,34 @@ exports.getWorkspaceById = async ( req, res ) => {
 };
 
 exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
-    
+
     // Get the auth user id from either the basic auth header or the session.
     let authUserId;
-    if( req.user ) {
+    if ( req.user ) {
         authUserId = req.user.userId;
     }
-    else if( req.session.authUser ) {
+    else if ( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
 
-    if( authUserId ){
+    if ( authUserId ) {
         // Check if valid workspaceId given.
         let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
-        if( workspace ) {
+        if ( workspace ) {
 
             let topicsList = [];
             // Get all topics Ids associated with our workspaceId.
             let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
-            
+
             // Grab each topic by id and append it to our list of topics
             for ( let index in topicsIds ) {
                 let topics = await topicService.getTopicById( topicsIds[index], authUserId );
 
-                if ( topics ){ // Ensure retrieval of topics
+                if ( topics ) { // Ensure retrieval of topics
                     topicsList.push( topics );
                 }
                 else {
-                    console.log( "Error retrieving resource " + topicsIds[index] + "\n" );
+                    console.log( "Error retrieving resource  " + topicsIds[index] + "\n" );
                 }
             }
 
@@ -111,7 +139,54 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
         }
 
         else {
-            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+            return errorController( ApiMessage.createNotFoundError( "Topic", res ) );
+        }
+    }
+
+};
+
+exports.getAllTopicsForSharedWorkspaceId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if ( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if ( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+
+    if ( authUserId ) {
+        // Check if valid workspaceId given.
+        let workspace = await workspaceService.getSharedWorkspaceByID( req.params.workspaceId );
+        if ( workspace ) {
+
+            let topicsList = [];
+            // Get all topics Ids associated with our workspaceId.
+            let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
+
+            // Grab each topic by id and append it to our list of topics
+            for ( let index in topicsIds ) {
+                let topics = await topicService.getSharedTopicById( topicsIds[index] );
+
+                if ( topics ) { // Ensure retrieval of topics
+                    topicsList.push( topics );
+                }
+                else {
+                    console.log( "Error retrieving topic2 " + topicsIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( {
+                results: topicsList
+            } );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError( "Topic", res ) );
         }
     }
 
@@ -121,10 +196,10 @@ exports.getAllTopicsForWorkspaceId = async ( req, res ) => {
 exports.deleteWorkspaceById = async ( req, res ) => {
 
     let authUserId;
-    if( req.user ) {
+    if ( req.user ) {
         authUserId = req.user.userId;
     }
-    else if( req.session.authUser ) {
+    else if ( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
 
@@ -149,26 +224,28 @@ exports.deleteWorkspaceById = async ( req, res ) => {
 exports.getAllVisibleWorkspacesWithTopics = async ( req, res ) => {
     // get all the active workspaces
     let workspaces = await workspaceService.getAllVisibleWorkspacesWithTopics();
-    
+
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces" );
-    res.status( 200 ).json( workspaces );
+    res.status( 200 ).json( {
+        results: workspaces
+    } );
 };
 
 
 
 exports.getAllWorkspacesForauthUser = async ( req, res ) => {
-    
+
     console.log( "The rquest: " + JSON.stringify( req.user ) );
 
     // get all the workspaces for this owner
     let ownerWorkspaces = await workspaceService.getAllWorkspacesForOwner( req.user.userId, false );
-    
-        
-      
+
     res.set( "x-agora-message-title", "Success" );
     res.set( "x-agora-message-detail", "Returned all workspaces for user" );
-    res.status( 200 ).json( ownerWorkspaces );
+    res.status( 200 ).json( {
+        results: ownerWorkspaces
+    } );
 };
 
 /**
@@ -180,25 +257,25 @@ exports.getAllWorkspacesForauthUser = async ( req, res ) => {
 exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
 
     // save image in db and delete old file  
-    if( workspaceId > 0 ) {
+    if ( workspaceId > 0 ) {
         workspaceService.updateWorkspaceImage( workspaceId, filename ).then( ( rValue ) => {
             if ( rValue === filename ) {
                 console.log( 'No image update occurred - exiting image update function.' );
                 return false;
             }
 
-            if( rValue && rValue.length > 0 && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
+            if ( rValue && rValue.length > 0 && ( rValue != 'workspace-default.png' || rValue != 'peak.svg' ) ) {
                 fs.unlink( UPLOAD_PATH_BASE + "/" + FRONT_END + WORKSPACE_PATH + rValue, ( err ) => {
-                    if( err ) {
+                    if ( err ) {
                         console.log( "[workspaceController.saveWorkspaceImage] file delete error status: " + err );
                         return false;
                     }
-                    
+
                 } );
-            } 
+            }
         } );
     }
-    
+
     return true;
 };
 
@@ -212,21 +289,21 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
 exports.saveWorkspace = async ( req, res, redirect ) => {
 
     let workspace = Workspace.emptyWorkspace();
-    
+
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
-    if( req.user ) {
+    if ( req.user ) {
         authUserId = req.user.userId;
     }
-    else if( req.session.authUser ) {
+    else if ( req.session.authUser ) {
         authUserId = req.session.authUser.userId;
     }
-    
-    workspace.ownedBy = authUserId; 
+
+    workspace.ownedBy = authUserId;
     //console.log( "workspace owned by: " + workspace.ownedBy + " from " + authUserId ); 
 
-    if( authUserId ) {
-        if( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
+    if ( authUserId ) {
+        if ( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
             workspace.workspaceId = req.body.workspaceId;
         }
 
@@ -234,11 +311,11 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId.toString() );
 
         // if this is an update replace the workspace with teh existing one as the starting point
-        if( existingWorkspace ) {
-            
+        if ( existingWorkspace ) {
+
             workspace = existingWorkspace;
-  
-            if( ( existingWorkspace.visibility != req.body.visibility )
+
+            if ( ( existingWorkspace.visibility != req.body.visibility )
                 || ( existingWorkspace.workspaceName != req.body.workspaceName )
                 || ( existingWorkspace.workspaceDescription != req.body.workspaceDescription )
                 || ( existingWorkspace.active != req.body.active )
@@ -247,7 +324,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 //console.log( "[workspaceController.saveWorkspace]: Modifications made; Workspace Version incremented - version: " + workspace.workspaceVersion );
             }
             else {
-                console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
+                //console.log( "[workspaceController.saveWorkspace]: No modifications were made" );
             }
         }
 
@@ -256,7 +333,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
         // add changes from the body if they are passed
         if ( req.body.visibility == "public" || req.body.visibility == "private" ) { // TODO: this checking needs to be done via frontend form validation
-            workspace.visibility = req.body.visibility;   
+            workspace.visibility = req.body.visibility;
         }
         else {
             console.error( "[workspaceController.saveWorkspace]: NON-VALID 'visibility' VALUE REQUESTED - 'public', 'private' " );
@@ -268,7 +345,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
         workspace = await workspaceService.saveWorkspace( workspace );
 
-        if ( req.body.topics ){
+        if ( req.body.topics ) {
             await workspaceService.saveTopicsForWorkspace( workspace.workspaceRid, req.body.topics, req.body.topicsRequired );
         }
 
@@ -282,7 +359,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
             this.saveWorkspaceImage( req, res, workspace.workspaceId, 'peak.svg' );
-            
+
         }
         else {
             // files included
@@ -290,10 +367,10 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
             const timeStamp = Date.now();
 
             // check the file size
-            if( file.size > maxSize ) {
+            if ( file.size > maxSize ) {
                 console.log( `File ${file.name} size limit has been exceeded for workspace` );
 
-                if( redirect ) {
+                if ( redirect ) {
                     req.session.messageType = "warn";
                     req.session.messageTitle = "Image too large!";
                     req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file. Your workspace was saved without the image.";
@@ -305,13 +382,13 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                     res.set( "x-agora-message-title", "Image too large!" );
                     res.set( "x-agora-message-detail", "Image size was larger then " + maxSizeText + ", please use a smaller file. Your workspace was saved without the image." );
                     res.status( 422 ).json( message );
-                }             
+                }
             }
-            else if( workspace ) {
+            else if ( workspace ) {
                 await file.mv( workspaceUploadPath + timeStamp + file.name, async ( err ) => {
                     if ( err ) {
                         console.log( "Error uploading profile picture : " + err );
-                        if( redirect ) {
+                        if ( redirect ) {
                             req.session.messageType = "error";
                             req.session.messageTitle = "Error saving image!";
                             req.session.messageBody = "There was a error uploading your image for this workspace. Your workspace should be saved without the image.";
@@ -331,7 +408,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
                 } );
             }
             else {
-                if( redirect ) {
+                if ( redirect ) {
                     req.session.messageType = "error";
                     req.session.messageTitle = "Error saving image!";
                     req.session.messageBody = "There was a error uploading your image for this workspace. Your workspace should be saved without the image.";
@@ -349,7 +426,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
 
 
-        if( workspace ) {
+        if ( workspace ) {
             req.session.messageType = "success";
             req.session.messageTitle = "Workspace Saved";
             req.session.messageBody = "Workspace " + workspace.workspaceName + " saved successfully!";
@@ -362,7 +439,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
 
         // get the pathway
         let pathway = null;
-        if( req.body.pathway ) {
+        if ( req.body.pathway ) {
             pathway = req.body.pathway.split( "," );
             workspaceService.savePathwayToexistingWorkspaceVersion( workspace.workspaceId, pathway );
         }
@@ -371,7 +448,7 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
     }
     else {
         // there was no authenicated user
-        if( redirect ) {
+        if ( redirect ) {
             return workspace;
         }
         else {
@@ -381,8 +458,8 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
             res.status( 401 ).json( message );
         }
     }
-    
-    if( redirect ) {
+
+    if ( redirect ) {
         //console.log( "workspaceController.saveWorkspace() - END - Redirect" );
         return workspace;
     }

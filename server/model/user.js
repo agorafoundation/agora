@@ -20,7 +20,7 @@ class User {
         this.lastName = lastName;
         this.hashedPassword = hashedPassword;
         this.roleId = roleId;
-        this.subscriptionActive =subscriptionActive;
+        this.subscriptionActive = subscriptionActive;
         this.stripeId = stripeId;
         this.availableAccessTokens = availableAccessTokens;
 

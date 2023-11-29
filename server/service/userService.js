@@ -262,12 +262,12 @@ exports.getActiveUserById = async function( id ) {
     const values = [ id ];
     
     try {
-        console.log( "u-1" );
+        //console.log( "u-1" );
         let res = await db.query( text, values );
-        console.log( "u-2" );
+        //console.log( "u-2" );
         if( res.rows.length > 0 ) {
             let user = User.ormUser( res.rows[0] );
-            console.log( "u-1 user: " + JSON.stringify( user ) );
+            //console.log( "u-1 user: " + JSON.stringify( user ) );
 
             // get roles for the user
             let userRoles = await exports.getActiveRolesForUserId( user.userId );
@@ -316,19 +316,20 @@ exports.getActiveUserById = async function( id ) {
     }
 };
 
-
-
-
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
     let values = [ username ];
+    let users = [];
     
     try {
          
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            return User.ormUser( res.rows[0] );
+            for ( let i = 0; i < res.rows.length; i++ ){
+                users.push( User.ormUser( res.rows[i] ) );
+            }
+            return users;
         }
         else {
             return false;

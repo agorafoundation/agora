@@ -5,6 +5,22 @@
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
 
+// get models and controller functions from modules
+import { createNewResource, saveResource } from "./controllers/clientResourceController.js";
+import { createNewTopic, saveTopic, getTopic } from "./controllers/clientTopicController.js";
+import { getWorkspace } from "./controllers/clientWorkspaceController.js";
+
+/** Globals */
+let resources = [];
+let numResources = 0;
+
+let numTopics = 0;
+let topics = [];
+
+
+
+// keeps track of the current topic tab identifier. When a user selects a tab, the div with name
+// matching this tabName is displayed. The divs have a class 'tabcontent'.
 let tabName = "";
 
 // Workspace resizing
@@ -29,14 +45,11 @@ function checkActiveHeight() {
 }
 
 
-
-
-
 /* Topic Functions -------------------------------------------------------------------------- */
-let numTopics = 1;
-let topics = {};
+// let numTopics = 1;
+// let topics = {};
 
-// Creates a new topic
+// Renders a new topic
 const createTopic = async( id, name ) => {
     let tabContent = document.getElementsByClassName( "tabcontent" );
     let lastTab = tabContent[tabContent.length-1];
@@ -111,7 +124,9 @@ const createTopic = async( id, name ) => {
     else{
         topicTitle.value = "Untitled";
     }
-
+    if( editPermission == false ){
+        topicTitle.readOnly = true;
+    }
     // let saveIcon = document.createElement( "span" );
     // saveIcon.classList.add( "material-symbols-outlined" );
     // saveIcon.classList.add( "saveBtn" );
@@ -123,7 +138,7 @@ const createTopic = async( id, name ) => {
     // };
 
     let topicDivider = document.createElement( "div" );
-    topicDivider.id = "topic-divider";
+    topicDivider.id = "topic-divider" + numTopics   ;
 
     let resourcesZone = document.createElement( "div" );
     resourcesZone.id = "resources-zone" + numTopics;
@@ -163,10 +178,12 @@ const createTopic = async( id, name ) => {
 
     tabBtn.onclick = ( e ) => {
         if ( e.target.className.includes( "close-tab" ) ) {
-            closeTab( e.target.id );
+            if( editPermission == true ){
+                closeTab( e.target.id );
+            }
         } 
         else {
-            openTab( newTab.id );
+            openTab( newTab.id );            
         }
     };
 
@@ -222,6 +239,8 @@ const createTopic = async( id, name ) => {
         numTopics ++;
     }
 };
+
+
 
 // Updates topic name
 const updateTopic = async( name ) => {
@@ -280,9 +299,7 @@ const saveWorkspace = async( topics ) => {
 
 
 
-/* Tab Functions -------------------------------------------------------------------------------------------- */
-// Workspace empty state
-let activeTab = document.getElementById( "resources-zone0" );
+let activeTab = null;
 
 
 // Change tabs
@@ -501,13 +518,16 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
     }
 
     removeTagBtn.addEventListener( "click", () => {
-        // Get the id portion with the tag name
-        document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        for ( let i=0; i<currTagList.length; i++ ) {
-            if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
-                currTagList[i] = "";
+        if ( editPermission == true ){
+            // Get the id portion with the tag name
+            document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
+            for ( let i=0; i<currTagList.length; i++ ) {
+                if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
+                    currTagList[i] = "";
+                }
             }
         }
+        
 
         const [ isTopic, id ] = getPrefixAndId();
         const tagType = isTopic ? "topic" : "workspace";
@@ -537,10 +557,21 @@ function addTagToWorkspace( selectedTag, isNewSave ) {
 
 
 
+// comment out to identify all of the areas using the previous approach
 
-/* Resource Functions --------------------------------------------------------------------------------- */
-let resources = {};
-let numResources = 1;
+// get the topic uuid id based on the currently visible topic tab
+// function getCurrTopicID() {
+//     let topicID = null;
+//     if( tabName ) {
+//         let topicVal = tabName.match( /\d+/g )[0];
+//         topicID = topics[topicVal];
+//     //console.log( "returning topic id: " + topicID );
+//     }
+//     else {
+//         topicID = 0;
+//     }
+//     return topicID;
+// }
 
 // create a new resource
 function createResource( name, type, imagePath, id ) {
@@ -582,7 +613,7 @@ function createResource( name, type, imagePath, id ) {
    
 }
 
-// get the topic id based on the currently visible topic tab
+// get the topic id based on the visible topic tab
 function getCurrTopicID() {
     let topicVal = tabName.match( /\d+/g )[0];
     let topicID = topics[topicVal];
@@ -653,6 +684,10 @@ function createTextArea( name, id ) {
             title.value = "Untitled";
         }
 
+        if( editPermission == false ){
+            title.readOnly = true;
+        }
+
         // Edit icon
         let editIcon = document.createElement( 'span' );
         editIcon.setAttribute( "class", "material-symbols-outlined" );
@@ -715,6 +750,7 @@ function createTextArea( name, id ) {
 let sunEditor = {};
 let sunEditorList = [];
 const createSunEditor = async() => {
+    console.log( "createSunEditor() : " + numResources );
     // eslint-disable-next-line no-undef
     sunEditor["sunEditor"+numResources] = [ numResources, SUNEDITOR.create( "sunEditor" + numResources, {
         toolbarContainer: "#toolbar_container",
@@ -796,15 +832,19 @@ function getResourceID( val ) {
 
 /* Suneditor Events ------------------------------------------------------*/
 document.addEventListener( "mousemove", function() {
-    
+    //console.log( "mouse move event" );
     for ( let i=0; i<sunEditorList.length; i++ ) {
         sunEditorList[i][1].onChange = () => {
+            console.log( "onChange event for sunEditor: " + getResourceID( i ) );
             sunEditorList[i][1].save();
 
             // actively get sun editor contents and make updates
             let contents = sunEditorList[i][1].getContents();
-            let id = getResourceID( sunEditorList[i][0] );
+            let id = getResourceID( ( i ) );
+            //let id = resources-i - 1];
+            console.log( "resources: " + resources + " at index " + ( ( i ) + "is : " + id ) );
             let title = document.getElementById( "input-title" + sunEditorList[i][0] ).value;
+            console.log( "calling from move" );
             updateSunEditor( id, title, contents );
         };
         sunEditorList[i][1].onKeyUp = ( e ) => {
@@ -947,7 +987,6 @@ function updateThumbnail( dropZoneElement, file ) {
             thumbnailElement.style.backgroundImage = url;
             // PayloadTooLargeError: request entity too large
             // createResource( file.name, 2, url );
-
             createResource( file.name, 2, file.name );
             // console.log( url ) ;
         } );
@@ -1010,20 +1049,24 @@ function getFile( file ) {
 
 
 
+let currentTabIndex = null; 
 
 document.addEventListener( "click", function( e ) {
+    console.log( "suneditor click event" ); 
     // toggle edit and done icons
     if ( ( e.target.id ).includes( "done" ) ) {
         let val = e.target.id.match( /\d+/g )[0];
         e.target.style.display = "none";
         document.getElementById( "edit-icon" + val ).style.display = "block";
-        //console.log( sunEditor["sunEditor" + val] );
+        console.log( sunEditor["sunEditor" + val] );
         sunEditor["sunEditor" + val][1].readOnly( true );
 
         // actively get sun editor contents and make updates
         let contents = sunEditor["sunEditor" + val][1].getContents();
-        let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        //let id = getResourceID( sunEditor["sunEditor" + val][0] );
+        let id = resources[currentTabIndex][val];
         let title = document.getElementById( "input-title" + sunEditor["sunEditor" + val][0] ).value;
+        console.log( "calling from click" );
         updateSunEditor( id, title, contents );
     }
     if ( ( e.target.id ).includes( "edit" ) ) {
@@ -1033,9 +1076,9 @@ document.addEventListener( "click", function( e ) {
     }
 
     // open suneditor in new tab
-    if ( e.target.id.includes( "open-tab" ) ) {
-        window.open( "http://localhost:4200/note", "_blank" );
-    }
+    // if ( e.target.id.includes( "open-tab" ) ) {
+    //     window.open( "http://localhost:4200/note", "_blank" );
+    // }
 
     // close tag list elements
     if ( document.querySelector( ".tag-list" ) && document.querySelector( ".tag-list" ).style.display == "block" ) {
@@ -1059,11 +1102,11 @@ document.addEventListener( "click", function( e ) {
         }
 
         // replace the close tab button
-        let closeTabBtn = document.createElement( "span" );
-        closeTabBtn.className = "close-tab";
-        closeTabBtn.id = "close-tab" + tabName.slice( -1 );
-        closeTabBtn.innerHTML = "&times;";
-        document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
+        // let closeTabBtn = document.createElement( "span" );
+        // closeTabBtn.className = "close-tab";
+        // closeTabBtn.id = "close-tab" + tabName.slice( -1 );
+        // closeTabBtn.innerHTML = "&times;";
+        // document.getElementById( "tablinks" + tabName.slice( -1 ) ).appendChild( closeTabBtn );
     }
 } );
 
@@ -1079,44 +1122,49 @@ document.addEventListener( 'keyup', ( e ) => {
 
 
 /* Workspace Manager Modal ----------------------------------------------- */
-const modal = document.getElementById( "resource-modal-div" );
+// URBG: I removed the modal - commenting these out
+// const modal = document.getElementById( "resource-modal-div" );
 const openBtn = document.getElementById( "new-element" );
-const closeBtns = document.querySelectorAll( ".close" );
-const createDocBtn = document.getElementById( "create-doc-div" );
-const createTopicBtn = document.getElementById( "create-topic-div" );
+//const closeBtns = document.querySelectorAll( ".close" );
+// const createDocBtn = document.getElementById( "create-doc-div" );
+// const createTopicBtn = document.getElementById( "create-topic-div" );
 const fileUploadBtn = document.getElementById( "file-upload-div" );
-const openTopicBtn = document.getElementById( "open-topic-div" );
-const openTopicModal = document.getElementById( "open-topic-modal-div" );
+// const openTopicBtn = document.getElementById( "open-topic-div" );
+// const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
+let modal = null;
 if( openBtn ) {
     openBtn.onclick = () => {
-        modal.style.display = "block";
+        if ( editPermission == true ){
+            modal.style.display = "block";
+        }
+        
     };
 }
 
-//close the modal
-if( closeBtns ) {
-    closeBtns.forEach( ( btn ) => {
-        btn.onclick = () => {
-            if ( modal.style.display == "block" ) {
-                modal.style.display = "none";
-            }
-            else if ( openTopicModal.style.display == "block" ) {
-                openTopicModal.style.display = "none";
-            }
-        };
-    } );
-}
+// //close the modal
+// if( closeBtns ) {
+//     closeBtns.forEach( ( btn ) => {
+//         btn.onclick = () => {
+//             if ( modal.style.display == "block" ) {
+//                 modal.style.display = "none";
+//             }
+//             else if ( openTopicModal.style.display == "block" ) {
+//                 openTopicModal.style.display = "none";
+//             }
+//         };
+//     } );
+// }
 
-window.onclick = function( event ) {
-    if ( event.target == modal ) {
-        modal.style.display = "none";
-    }
-    else if ( event.target == openTopicModal ) {
-        openTopicModal.style.display = "none";
-    }
-};
+// window.onclick = function( event ) {
+//     if ( event.target == modal ) {
+//         modal.style.display = "none";
+//     }
+//     else if ( event.target == openTopicModal ) {
+//         openTopicModal.style.display = "none";
+//     }
+// };
 
 // option hover events
 document.addEventListener( "mousemove", function( e ) {
@@ -1135,19 +1183,19 @@ document.addEventListener( "mousemove", function( e ) {
     }
 } );
 
-// option events
-if ( createDocBtn ) { 
-    createDocBtn.onclick = () => {
-        modal.style.display = "none";
-        createTextArea();
-    };
-}
-if ( createTopicBtn ) {
-    createTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        createTopic();
-    };
-}
+// // option events
+// if ( createDocBtn ) { 
+//     createDocBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTextArea();
+//     };
+// }
+// if ( createTopicBtn ) {
+//     createTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         createTopic();
+//     };
+// }
 if ( fileUploadBtn ) {
     const pickerOpts = {
         types: [
@@ -1168,24 +1216,24 @@ if ( fileUploadBtn ) {
 
     } );
 }
-if ( openTopicBtn ) {
-    openTopicBtn.onclick = () => {
-        modal.style.display = "none";
-        openTopicModal.style.display = "block";
-    };
-}
+// if ( openTopicBtn ) {
+//     openTopicBtn.onclick = () => {
+//         modal.style.display = "none";
+//         openTopicModal.style.display = "block";
+//     };
+// }
 /* END Workspace Manager Modal ----------------------------------------------- */
 
 const toggleProfileList = () => {
     let arrow = document.getElementById( "profiles-toggle" );
 
-    if ( arrow.classList.contains( "down-arrow" ) ) {
+    if ( arrow.classList.contains( "up-arrow" ) ) {
         document.getElementById( "permissions-box" ).style.display = "none";
-        arrow.setAttribute( 'class', 'arrow up-arrow' );
+        arrow.setAttribute( 'class', 'arrow down-arrow' );
     }
     else {
         document.getElementById( "permissions-box" ).style.display = "flex";
-        arrow.setAttribute( 'class', 'arrow down-arrow' );
+        arrow.setAttribute( 'class', 'arrow up-arrow' );
     }
 };
 
@@ -1270,6 +1318,14 @@ const prefixPattern = /#t/;
 //const idPattern = /-([0-9]+)/;
 const uuidPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/;
 
+const shareButton = document.getElementById( "share-button" );
+const shareInput = document.getElementById( "share-input" );
+const workspaceTitle = document.getElementById( "workspace-title" );
+const workspaceDescription = document.getElementById( "workspace-desc" );
+const tagBox = document.getElementById( "mySearch" );
+const editors = document.getElementsByClassName( "se-wrapper" );
+var editPermission = false;
+
 const getPrefixAndId = () => {
 
     const url = window.location.href;
@@ -1284,7 +1340,9 @@ const getPrefixAndId = () => {
 
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
-    //console.log( isTopic, id );
+    if ( id ){
+        getPermission( id ); 
+    }
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
             method: "GET",
@@ -1306,6 +1364,74 @@ const idAndFetch = () => {
         } )
             .then( ( response ) => response.json() )
             .then( ( response ) => {
+                fetchAndDisplaySharedUsers( response );
+                fillFields(
+                    response.workspaceName,
+                    response.workspaceDescription,
+                    response.workspaceImage
+                );
+            } )
+            .catch( error => {
+                //console.error( 'Fetch Error: not owner' );
+                fetchSharedWorkspace();
+            } );
+    }
+};
+
+const getPermission = ( workspaceId ) => {
+    fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            if ( response.permission_level == "edit" ){
+                editPermission = true;
+                applyEditPermission( editPermission );
+            }
+            else{
+                applyEditPermission( editPermission );
+            }
+        } );
+};
+
+const applyEditPermission = ( editTool ) => {
+    if ( editTool == false ){
+        workspaceTitle.readOnly = true;
+        workspaceDescription.readOnly = true;
+        tagBox.readOnly = true;
+        console.log( editors );
+        Array.from( editors ).forEach( function( editor ){
+            console.log( editor );
+        } );
+    }
+};
+
+const fetchSharedWorkspace = () => {
+    const [ isTopic, id ] = getPrefixAndId();
+    //console.log( id );
+    if ( isTopic && id ) {
+        fetch( "api/v1/auth/topics/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fillFields(
+                    response.topicName,
+                    response.topicDescription,
+                    response.topicImage
+                );
+            } );
+    }
+    else if ( id ) {
+        fetch( "api/v1/auth/workspaces/shared/" + id, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                fetchAndDisplaySharedUsers( response );
                 fillFields(
                     response.workspaceName,
                     response.workspaceDescription,
@@ -1345,6 +1471,247 @@ const getTags = async () => {
     }
 };
 
+async function refreshSharedUserList( ) {
+    // Call fetchAndDisplaySharedUsers again to update the shared user list
+    idAndFetch();
+}
+
+// Define a function to fetch and display shared users
+async function fetchAndDisplaySharedUsers( workspace ) {
+    const workspaceId = workspace.workspaceId;
+    const shareSearchButton = document.getElementById( 'share-btn-search' );
+    let ownerDetails = null, allUsers = null, sharedUsers = [];
+
+    try {
+        const sharedUsersResponse = await fetch( `/api/v1/auth/shared/shared-entity/${workspaceId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } );
+
+        const workspaceOwnerResponse = await fetch( `/api/v1/auth/user/userId/${workspace.ownedBy}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } );
+
+        if ( workspaceOwnerResponse.ok ) {
+            const workspaceOwner = await workspaceOwnerResponse.json();
+
+            ownerDetails = {
+                name: workspaceOwner.firstName + " " + workspaceOwner.lastName,
+                pfp: workspaceOwner.profileFilename,
+                status: "Owner",
+                email: workspaceOwner.email,
+                userId: workspaceOwner.userId,
+                entityId: workspaceId,
+            };
+
+            if ( sharedUsersResponse.ok ) {
+                const sharedEntities = await sharedUsersResponse.json();
+                sharedUsers = sharedEntities.map( ( entity ) => ( {
+                    name: entity.first_name + " " + entity.last_name,
+                    pfp: entity.profile_filename,
+                    status: entity.permissionLevel.charAt( 0 ).toUpperCase() + entity.permissionLevel.slice( 1 ),
+                    email: entity.email,
+                    userId: entity.sharedWithUserId,
+                } ) );
+            }
+            else {
+                console.error( "Unable to retrieve shared users OR no shared users." );
+            }
+
+            allUsers = [ ownerDetails, ...sharedUsers ];
+
+            const profilesList = document.getElementById( "profiles-list" );
+            profilesList.innerHTML = "";
+            allUsers.forEach( ( profile ) => {
+                const userProfileElement = createUserProfile( profile, workspace );
+                profilesList.appendChild( userProfileElement );
+            } );
+        }
+        else {
+            console.error( "Unable to retrieve workspace owner." );
+        }
+    }
+    catch ( error ) {
+        console.error( error );
+    }
+
+    let name = document.getElementById( "share-modal-title" );
+    name.textContent = `Share "${workspace.workspaceName}"`;
+
+    shareSearchButton.addEventListener( 'click', function () {
+        shareSearchUsers( ownerDetails, allUsers );
+    } );
+    
+    // Clear old search results before displaying new ones
+    const searchedUsersContainer = document.getElementById( "searched-users" );
+    searchedUsersContainer.innerHTML = "";
+}
+
+const shareSearchUsers = ( workspaceOwner, allUsers ) => {
+    const shareUserSearch = document.getElementById( 'share-user-search' );
+    const excludedUserIds = new Set();
+
+    // Add workspace owner's ID to the excluded list
+    excludedUserIds.add( workspaceOwner.userId );
+    for ( let n = 0; n < allUsers.length; n++ ) {
+        excludedUserIds.add( allUsers[n].userId );
+    }
+
+    // Fetch the list of users matching the search term
+    fetch( "/api/v1/auth/user/username/" + shareUserSearch.value, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+        // Clear old search results before displaying new ones
+            const searchedUsersContainer = document.getElementById( "searched-users" );
+            searchedUsersContainer.innerHTML = "";
+
+            for ( let i = 0; i < response.length; i++ ) {
+                const data = response[i];
+            
+                // Check if the user is not in the excluded list (owner or shared)
+                if ( !excludedUserIds.has( data.userId ) ) {
+                    createUserSearchCard( data, workspaceOwner );
+                }
+            }
+        } );
+};
+
+// creates a user card for each user
+function createUserSearchCard( userData, workspace ) {
+    // Create a div element for the user card
+    const card = document.createElement( "div" );
+    card.className = "searched-user-card";
+    const user = {
+        name: userData.firstName + " " + userData.lastName,
+        pfp: userData.profileFilename,
+        email: userData.email,
+        userId: userData.userId,
+    };
+
+    // Create the HTML structure for the user card
+    card.innerHTML = `
+            <div class="profile-status-container">
+                <img class="shared-profile-picture" src="/assets/uploads/profile/${user.pfp}">
+                <div class="profile-info">
+                    <span class="profile-name">${user.name}</span>
+                    <span class="profile-email">${user.email}</span>
+                </div>
+                <button class="add-user-button" style="margin-right: 10px;">Add</button>    
+            </div>
+        `;
+
+    const addUserButton = card.querySelector( ".add-user-button" );
+    addUserButton.addEventListener( "click", async () => {
+        await fetch( "/api/v1/auth/shared/shareworkspace/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                entityId: workspace.entityId,
+                sharedWithUserId: user.userId,
+                sharedWithEmail: user.email,
+                permissionLevel: "view",
+                canCopy: "false",
+            } ),
+        } );
+      
+        // Refresh the shared user list
+        await refreshSharedUserList( );
+    } );
+
+    // Get the container for searched users and append the card
+    const searchedUsersContainer = document.getElementById( "searched-users" );
+    searchedUsersContainer.appendChild( card );
+}
+
+function createUserProfile( profile, workspace ) {
+    const li = document.createElement( "li" );
+    li.className = "profile-shared-with";
+
+    // Create only the necessary HTML elements based on the profile status
+    li.innerHTML = `
+        <div class="profile-status-container">
+            <img class="shared-profile-picture" src="/assets/uploads/profile/${profile.pfp}">
+            <div class="profile-info">
+                <span class="profile-name">${profile.name}</span>
+                <span class="profile-email">${profile.email}</span>
+            </div>
+            <span class="profile-status">${profile.status}</span>
+            ${profile.status !== 'Owner' ? `
+            <button class="arrow down-arrow" id="toggle-button-${profile.userId}" style="margin-right: 10px;"></button>
+            <div class="permissions-box" id="permissions-box-${profile.userId}" style="display: none;">
+                <div class="permissions-col">
+                    <span class="permission-li">
+                        <button class="permission-button" data-permission="edit">Edit</button>
+                    </span>
+                    <span class="permission-li">  
+                        <button class="permission-button" data-permission="view">View</button>
+                    </span>
+                    <span class="permission-li removes">
+                        <button class="remove-button">Remove</button>
+                    </span>
+                </div> 
+            </div>` : ''}
+        </div>
+    `;
+
+    // Add event listeners only if the profile is not an 'Owner'
+    if ( profile.status !== 'Owner' ) {
+        const permissionButtons = li.querySelectorAll( ".permission-button" );
+        const removeButton = li.querySelector( ".remove-button" );
+
+        permissionButtons.forEach( button => {
+            button.addEventListener( "click", async () => {
+                const permission = button.getAttribute( "data-permission" );
+                fetch( "/api/v1/auth/shared/updatePermission/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify( {
+                        entityId: workspace.workspaceId,
+                        permissionLevel: permission,
+                        sharedUserId: profile.userId
+                    } ),
+                } );
+                await refreshSharedUserList();
+            } );
+        } );
+
+        removeButton.addEventListener( "click", async () => {
+            fetch( "/api/v1/auth/shared/removeShare/", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    entityId: workspace.workspaceId,
+                    sharedUserId: profile.userId,
+                } ),
+            } );
+            await refreshSharedUserList();
+        } );
+
+        // Attach event listener to the toggle button
+        const toggleButton = li.querySelector( `#toggle-button-${profile.userId}` );
+        const permissionsBox = li.querySelector( `#permissions-box-${profile.userId}` );
+
+        toggleButton.addEventListener( "click", () => {
+            if ( permissionsBox.style.display === "none" ) {
+                permissionsBox.style.display = "block";
+                toggleButton.classList.remove( "down-arrow" );
+                toggleButton.classList.add( "up-arrow" );
+            }
+            else {
+                permissionsBox.style.display = "none";
+                toggleButton.classList.remove( "up-arrow" );
+                toggleButton.classList.add( "down-arrow" );
+            }
+        } );
+    }
+
+    return li;
+}
+
 const fillFields = ( title, description, image ) => {
     document.getElementById( "workspace-title" ).value = title.trim();
     document.getElementById( "workspace-desc" ).value = description.trim();
@@ -1359,6 +1726,26 @@ const renderTopics = async ( workspace ) => {
         if ( topics.length > 0 ) {
             for ( let i = 0; i < topics.length; i++ ) {
                 await renderTopic( topics[i] );
+            
+            }
+        }
+        else{
+            renderSharedTopics();
+        }   
+    }
+    
+   
+};
+
+const renderSharedTopics = async ( workspace ) => {
+    const [ isTopic, id ] = getPrefixAndId();
+    if( id ) {
+        const response = await fetch( "api/v1/auth/workspaces/topics/shared/"+ id   );
+        let topics = await response.json();
+   
+        if ( topics.length > 0 ) {
+            for ( let i = 0; i < topics.length; i++ ) {
+                await renderSharedTopic( topics[i] );
             
             }
         }   
@@ -1408,6 +1795,57 @@ async function renderTopic( topic ) {
     return topics;
 }
 
+let topicNum = 0;
+totalTopicsRendered = 0;
+async function renderSharedTopic( topic ) {
+
+    let localResources = null;
+  
+    await createTopic( topic.topicId, topic.topicName );
+    const resources = await renderSharedResources( topic.topicId );
+    console.log( resources );
+    if ( resources.length > 0 ) {
+        //let docType1Count = 0;
+        for ( let i = 0; i < resources.length; i++ ) {
+            //console.log( "resource: " + i + " of " + resources.length );
+            //console.log( resources[i].resourceName + " id: " + resources[i].resourceId );
+            //if resource is a document
+            if( localResources[i].resourceType == 1 ){
+                await createTextArea( localResources[i].resourceName, localResources[i].resourceId );
+                if( localResources[i].resourceContentHtml && localResources[i].resourceContentHtml.length > 0 ){
+                     
+                    let editor = "sunEditor" + ( totalTopicsRendered );
+
+                    totalTopicsRendered++;
+
+                    //console.log( editor );
+                    //console.log( sunEditor[editor] );
+                    sunEditor[editor][1].insertHTML( localResources[i].resourceContentHtml );
+
+                    //docType1Count++;
+                    //val++;
+                }
+
+
+            }
+            else if( localResources[i].resourceType == 3 ) {
+                // todo: add code to deal with resource type 3
+            }
+            else if ( localResources[i].resourceType == 2 ) {
+                console.log( "other resource type??? " + localResources[i].resourceName );
+            }
+
+            // add the resource to the resources array
+            console.log( "----------------- saving resource to list 3 --------------- " );
+            resources[topicNum] = [];
+            resources[topicNum].push( localResources[i].resourceId );
+            
+        }
+        window.scrollTo( 0, 0 );
+    }
+    return topics;
+}
+
 async function renderResources( topicId ) {
     //console.log( "render resources call: " + topicId );
     const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
@@ -1416,11 +1854,48 @@ async function renderResources( topicId ) {
     return data;
 }
 
+async function renderSharedResources( topicId ) {
+    //console.log( "render resources call: " + topicId );
+    const response = await fetch( "api/v1/auth/topics/resources/shared/" + topicId );
+    const data = await response.json();
+    //console.log( "render resources response: " + JSON.stringify( data ) );
+    return data;
+}
+
+async function removeUser( email, workspaceId ) {
+    try {
+        const response = await fetch( "api/v1/auth/shared/removeUserFromWorkspaceByEmail", { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify( {
+                emailToRemove: email,
+                entityId: workspaceId
+            } )
+        } );
+
+        if ( response.ok ) {
+            const data = await response.json();
+            alert( data.message || 'User removed successfully' );
+            fetchSharedWorkspace();
+        } 
+        else {
+            const errorData = await response.json();
+            alert( errorData.message || 'Failed to remove user' );
+        }
+    } 
+    catch ( error ) {
+        console.error( 'Error removing user:', error );
+        alert( 'Error removing user' );
+        
+    }
+}
+
 window.addEventListener( "load", () => {
     idAndFetch();
-    getTags();
+    getTags();  
     renderTopics();
-   
 } );
 
 

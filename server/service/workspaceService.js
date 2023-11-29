@@ -24,29 +24,46 @@ const Event = require( '../model/event' );
  * all user workspaces and other public ones.
  * @returns List<Workspace>
  */
-exports.getAllVisibleWorkspaces = async ( ownerId ) => {
+exports.getAllVisibleWorkspaces = async ( ownerId, limit, offset ) => {
 
-    if( ownerId ) {
+    if ( ownerId ) {
 
         //const text = "select * from workspaces where owned_by = $1 AND active = $2 AND (visibility = $3 OR visibility = $4) ORDER BY id"; ??
-        const text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' ) order by gl.workspace_id;";
-        const values = [ ownerId, true ];
+        let text = "select * from workspaces gl " + 
+            "INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $2 group by workspace_id) " +
+            "goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $1 OR gl.visibility = 'public' )";
+        
+        let values = [ ownerId, true ];
+
+        // apply a default offset if none is provided
+        if ( !offset ) offset = 0;
+
+        if( limit ) {
+            text += " ORDER BY gl.create_time DESC LIMIT $3 OFFSET $4";
+
+            values.push( limit );
+            values.push( offset );
+        }
+        else {
+            text += " ORDER BY gl.create_time DESC LIMIT 100 OFFSET $3";
+            values.push( offset );
+        }
 
         let workspaces = [];
-        
-        try {
-            
-            let res = await db.query( text, values );
-            
 
-            for( let i=0; i<res.rows.length; i++ ) {
+        try {
+
+            let res = await db.query( text, values );
+
+
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 workspaces.push( Workspace.ormWorkspace( res.rows[i] ) );
             }
 
             return workspaces;
-            
+
         }
-        catch( e ) {
+        catch ( e ) {
             console.log( "[ERR]: Error getting visible workspaces - " + e );
             return false;
         }
@@ -57,53 +74,177 @@ exports.getAllVisibleWorkspaces = async ( ownerId ) => {
     }
 };
 
-/**
- * Returns all active workspaces including topics associated, that are either
- * public, owned by the requestor, or shared with the requesting user.
- * Retrvievs all workspaces
- * TODO: sharing is not implemented yet so currently this function will return 
- * all user workspaces and other public ones.
- * @returns List<workspace> with topics
- */
+exports.getSharedWorkspaces = async ( sharedUserID ) => {
+    if ( sharedUserID ) {
+        /*
+        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
+            + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version INNER JOIN shared_entities shared ON gl.owned_by = shared_by_user_id WHERE shared.shared_with_user_id = $1" 
+            + "order by gl.workspace_id;";
+        */
+        let text = `SELECT w.* FROM agora.shared_entities AS se 
+            JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
+            WHERE se.shared_with_user_id = $1 AND se.entity_type = 'workspace'`;
+
+        const values = [ sharedUserID ];
+        let workspaces = [];
+        //console.log( sharedUserID );
+
+        try {
+
+            let res = await db.query( text, values );
+
+
+            for ( let i = 0; i < res.rows.length; i++ ) {
+                workspaces.push( Workspace.ormWorkspace( res.rows[i] ) );
+            }
+
+            return workspaces;
+
+        }
+        catch ( e ) {
+            console.log( "[ERR]: Error getting shared workspaces - " + e );
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+};
+
+
+
+
+// Get shared workspace details by its ID
+exports.getSharedWorkspaceByID = async ( workspaceID ) => {
+    //console.log( "Getting Shared Workspace query.." );
+    let text = `SELECT w.* FROM agora.shared_entities AS se 
+                  JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
+                  WHERE se.entity_id = $1 AND se.entity_type = 'workspace'`;
+    let values = [ workspaceID ];
+    console.log( workspaceID );
+    
+    try {
+        
+        let workspace = null;
+        //console.log( " text: " + text + " values: " + values );
+        let res = await db.query( text, values );
+        //console.log( " res.rowCount: " + res.rowCount + "" );
+        if ( res.rowCount > 0 ) {
+            text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
+            values = [ true, res.rows[0].workspace_rid ];
+            let topics = [];
+            let res2 = await db.query( text, values );
+
+            for ( let j = 0; j < res2.rowCount; j++ ) {
+                text = "select * from topics where active = $1 and topic_id = $2;";
+                values = [ true, res2.rows[j].topic_id ];
+
+                let res3 = await db.query( text, values );
+                if ( res3.rowCount > 0 ) {
+                    topics.push( Topic.ormTopic( res3.rows[0] ) );
+                }
+
+            }
+            workspace = Workspace.ormWorkspace( res.rows[0] );
+            workspace.topics = topics;
+
+        }
+        //console.log( workspace );
+        return workspace;
+
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+
+
+
+
+
+exports.removeSharedWorkspaceByID = async ( workspaceID ) => {
+    const text = `DELETE FROM agora.shared_entities 
+                  WHERE entity_id = $1 AND entity_type = 'workspace'`;
+    const values = [ workspaceID ];
+    
+    try {
+        const res = await db.query( text, values );
+        return ( res.rowCount > 0 ) ? { success: true } : { error: "Shared workspace not found." };
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+
+exports.shareWorkspaceByID = async ( workspaceID, sharedByUserID, sharedWithUserID, permissionLevel, canCopy ) => {
+    const text = `INSERT INTO agora.shared_entities (entity_id, entity_type, shared_by_user_id, shared_with_user_id, permission_level, can_copy) 
+                  VALUES ($1, 'workspace', $2, $3, $4, $5)
+                  RETURNING shared_entity_id`;
+    const values = [ workspaceID, sharedByUserID, sharedWithUserID, permissionLevel, canCopy ];
+    
+    try {
+        const res = await db.query( text, values );
+        if ( res.rows.length > 0 ) {
+            return res.rows[0];
+        }
+        else {
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+
+
+
+
 exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
 
-    if( ownerId ) {
+    if ( ownerId ) {
 
-        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 'public' ) order by gl.workspace_id;";
+        let text = "select * from workspaces gl " + 
+            "INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version " + 
+                "FROM workspaces where active = $1 group by workspace_id) " + 
+            "goalmax on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and (gl.owned_by = $2 OR gl.visibility = 'public' ) " + 
+            "order by gl.workspace_id;";
         let values = [ true, ownerId ];
 
         let workspaces = [];
-        
+
         try {
-            
+
             let res = await db.query( text, values );
-            for( let i=0; i<res.rows.length; i++ ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
                 values = [ true, res.rows[i].workspace_rid ];
                 let topics = [];
                 let res2 = await db.query( text, values );
 
-                for( let j=0; j<res2.rowCount; j++ ) {
+                for ( let j = 0; j < res2.rowCount; j++ ) {
                     text = "select * from topics where active = $1 and topic_id = $2;";
                     values = [ true, res2.rows[j].topic_id ];
 
                     let res3 = await db.query( text, values );
-                    if( res3.rows[0] ) {
+                    if ( res3.rows[0] ) {
                         topics.push( Topic.ormTopic( res3.rows[0] ) );
                     }
-                    
+
                 }
                 let workspace = Workspace.ormWorkspace( res.rows[i] );
                 workspace.topics = topics;
-                
+
                 workspaces.push( workspace );
             }
 
-            
+
             return workspaces;
-            
+
         }
-        catch( e ) {
+        catch ( e ) {
             console.log( "[ERR]: Error getting visible workspaces with topics - " + e );
             return false;
         }
@@ -111,7 +252,7 @@ exports.getAllVisibleWorkspacesWithTopics = async ( ownerId ) => {
     else {
         return false;
     }
-    
+
 };
 
 /**
@@ -124,33 +265,33 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
 
     let text = "";
     let values = [];
-    if( !isActive ) {
+    if ( !isActive ) {
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.workspace_id;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.create_time DESC;";
         values = [ ownerId ];
     }
     else {
         // default to only retreiving active topics
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.workspace_id;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.create_time DESC;";
         values = [ true, ownerId ];
     }
 
     let workspaces = [];
-    
-    try {
-         
-        let res = await db.query( text, values );
-        
 
-        for( let i=0; i<res.rows.length; i++ ) {
+    try {
+
+        let res = await db.query( text, values );
+
+
+        for ( let i = 0; i < res.rows.length; i++ ) {
             workspaces.push( Workspace.ormWorkspace( res.rows[i] ) );
         }
 
         return workspaces;
-        
+
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: Error getting all workspaces for owner - " + e );
         return false;
     }
@@ -165,18 +306,18 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
  * @returns workspace with topics
  */
 exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActive ) => {
-
+    //console.log( "Getting Workspaces...." );
     let text = "";
     let values = [];
-    if( !isActive ) {
+    if ( !isActive ) {
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where workspace_id = $1 AND (owned_by = $2 OR visibility = 'public') group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
+            + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ workspaceId, ownerId ];
     }
     else {
         // default to only retreiving active topics
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 AND workspace_id = $2 AND (owned_by = $3 OR visibility = 'public') group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
+            + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version order by gl.workspace_id;";
         values = [ true, workspaceId, ownerId ];
     }
 
@@ -186,31 +327,31 @@ exports.getActiveWorkspaceWithTopicsById = async ( workspaceId, ownerId, isActiv
         //console.log( " text: " + text + " values: " + values );
         let res = await db.query( text, values );
         //console.log( " res.rowCount: " + res.rowCount + "" );
-        if( res.rowCount > 0 ) {
+        if ( res.rowCount > 0 ) {
             text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
             values = [ true, res.rows[0].workspace_rid ];
             let topics = [];
             let res2 = await db.query( text, values );
 
-            for( let j=0; j<res2.rowCount; j++ ) {
+            for ( let j = 0; j < res2.rowCount; j++ ) {
                 text = "select * from topics where active = $1 and topic_id = $2;";
                 values = [ true, res2.rows[j].topic_id ];
 
                 let res3 = await db.query( text, values );
-                if( res3.rowCount > 0 ) {
+                if ( res3.rowCount > 0 ) {
                     topics.push( Topic.ormTopic( res3.rows[0] ) );
                 }
-                
+
             }
             workspace = Workspace.ormWorkspace( res.rows[0] );
             workspace.topics = topics;
-               
+
         }
 
         return workspace;
-        
+
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: Error getting active workspaces with topics by id - " + e );
         return false;
     }
@@ -227,16 +368,16 @@ exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
     let values = [ workspaceId ];
     try {
         let workspace = "";
-         
+
         let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
+        if ( res.rowCount > 0 ) {
             workspace = Workspace.ormWorkspace( res.rows[0] );
-                  
+
         }
         return workspace;
-        
+
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: getting most recent workspace by Id - " + e );
         return false;
     }
@@ -248,22 +389,22 @@ exports.getMostRecentWorkspaceById = async ( workspaceId ) => {
  * @returns workspace
  */
 exports.getWorkspaceById = async ( workspaceId ) => {
-   
+
     let text = "select * from workspaces WHERE workspace_id = $1;";
     let values = [ workspaceId ];
     try {
         let workspace = "";
-         
+
         let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
+        if ( res.rowCount > 0 ) {
             workspace = Workspace.ormWorkspace( res.rows[0] );
-                  
+
         }
-       
+
         return workspace;
-        
+
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: Error getting workspace by Id - " + e );
         return false;
     }
@@ -280,7 +421,7 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
     // save the current filename so that we can delete it after.
     let prevFileName = "";
 
-    if( workspace ) {
+    if ( workspace ) {
         try {
             // retrieve the current filename so that we can delete it after.
             let text = "SELECT workspace_image FROM workspaces WHERE workspace_rid = $1";
@@ -288,9 +429,9 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
 
             // perform the query
             let res = await db.query( text, values );
-            
+
             // set the prevFileName with the prev name
-            if( res.rows.length > 0 ) {
+            if ( res.rows.length > 0 ) {
                 prevFileName = res.rows[0].workspace_image;
             }
 
@@ -300,9 +441,9 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
 
             // perform query
             await db.query( text, values );
-            
+
         }
-        catch( e ) {
+        catch ( e ) {
             console.log( "[ERR]: Error updating workspace image - " + e );
             return false;
         }
@@ -323,23 +464,23 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
 exports.saveWorkspace = async ( workspace ) => {
     // check to see if an id exists - insert / update check
     //console.log( "about to save workspace " + JSON.stringify( workspace ) );
-    if( workspace ) {
+    if ( workspace ) {
         // query to see if the workspace exists
         let text = "SELECT * FROM workspaces WHERE workspace_id = $1";
         let values = [ workspace.workspaceId ];
         try {
             let res = await db.query( text, values );
-            if( res.rowCount > 0 ) {
+            if ( res.rowCount > 0 ) {
                 // row exists, update
                 //console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) + " id : " + workspace.workspaceId );
                 text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING workspace_rid;";
                 values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
-    
+
                 try {
                     res = await db.query( text, values );
                     workspace.workspaceRid = res.rows[0].workspace_rid;
                 }
-                catch( e ) {
+                catch ( e ) {
                     console.log( "[ERR]: Error updating workspace - " + e );
                     return false;
                 }
@@ -348,28 +489,28 @@ exports.saveWorkspace = async ( workspace ) => {
                 // row does not exist, insert
                 text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, workspace_rid;";
                 values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
-            
+
                 try {
                     res = await db.query( text, values );
                 }
-                catch( e ) {
+                catch ( e ) {
                     console.log( "[ERR]: Error inserting workspace - " + e );
                     return false;
                 }
 
-                if( res.rowCount > 0 ) {
+                if ( res.rowCount > 0 ) {
                     workspace.workspaceId = res.rows[0].workspace_id;
                     workspace.workspaceRid = res.rows[0].workspace_rid;
                 }
             }
 
         }
-        catch( e ) {
+        catch ( e ) {
             console.log( "[ERR]: Error querying to determine if workspace exists - " + e );
             return false;
         }
 
-        
+
         return workspace;
     }
     else {
@@ -385,16 +526,16 @@ exports.saveWorkspace = async ( workspace ) => {
  * @param {Integer} workspaceRid id of the topic 
  * @param {*} topicIds Array of topic id's to be associated with the woorkspace
  * @returns true for success / false for failure
- */                                               
-exports.saveTopicsForWorkspace = async function( workspaceRid, topicIds, topicsRequired ) {
+ */
+exports.saveTopicsForWorkspace = async function ( workspaceRid, topicIds, topicsRequired ) {
     // get the most recent version of the workspace
     let text = "SELECT * from workspaces where workspace_rid = $1";
     let values = [ workspaceRid ];
     try {
-         
+
         let res = await db.query( text, values );
-        
-        if( res.rowCount > 0 ) {
+
+        if ( res.rowCount > 0 ) {
 
             // first remove current resources associated with the topic
             text = "DELETE FROM workspace_paths WHERE workspace_rid = $1";
@@ -408,8 +549,8 @@ exports.saveTopicsForWorkspace = async function( workspaceRid, topicIds, topicsR
                  * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
                  * This probably means having the pathway be an array of objects containing id and isRequired
                  */
-                if( topicIds && topicIds.length > 0 ) {
-                    for( let i=0; i < topicIds.length; i++ ) {  
+                if ( topicIds && topicIds.length > 0 ) {
+                    for ( let i = 0; i < topicIds.length; i++ ) {
 
                         let isRequired = true;
                         // always setting to true for now
@@ -420,25 +561,25 @@ exports.saveTopicsForWorkspace = async function( workspaceRid, topicIds, topicsR
                         text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
                         values = [ workspaceRid, topicIds[i], ( i + 1 ), true, true ];
 
-                        try{
+                        try {
                             let res3 = await db.query( text, values );
 
                         }
-                        catch( e ) {
+                        catch ( e ) {
                             console.log( "[ERR]: Error inserting workspace_path - " + e );
                             return false;
                         }
                     }
                 }
             }
-            catch( e ) {
+            catch ( e ) {
                 console.log( "[ERR]: Error deleting workspace paths - " + e );
                 return false;
             }
-            
+
         }
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: Error looking up workspace by id - " + e );
         return false;
     }
@@ -461,10 +602,10 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
     let values = [ workspaceId ];
 
     try {
-         
+
         let res = await db.query( text, values );
-        
-        if( res.rowCount > 0 ) {
+
+        if ( res.rowCount > 0 ) {
             /**
              * TODO: the idea behind the workspace version was to keep track of changes to the pathway and not 
              * just delete it and replace it.  This way if students finished a workspace under with a particular 
@@ -483,8 +624,8 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
              * TODO: is_required needs to be passed in from the UI so we are just making everything required for now.  
              * This probably means having the pathway be an array of objects containing id and isRequired
              */
-            if( pathway && pathway.length > 0 ) {
-                for( let i=0; i < pathway.length; i++ ) {
+            if ( pathway && pathway.length > 0 ) {
+                for ( let i = 0; i < pathway.length; i++ ) {
                     text = "INSERT INTO workspace_paths (workspace_rid, topic_id, position, is_required, active) VALUES ($1, $2, $3, $4, $5);";
                     values = [ res.rows[0].workspace_rid, pathway[i], ( i + 1 ), true, true ];
 
@@ -493,7 +634,7 @@ exports.savePathwayToMostRecentWorkspaceVersion = async ( workspaceId, pathway )
             }
         }
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - save path to most recent version - " + e );
         return false;
     }
@@ -515,15 +656,15 @@ exports.saveWorkspaceEnrollmentMostRecentWorkspaceVersion = async ( userId, work
     let values = [ workspaceId ];
 
     try {
-         
+
         let res = await db.query( text, values );
-        
-        if( res.rowCount > 0 ) {
+
+        if ( res.rowCount > 0 ) {
             return exports.saveWorkspaceEnrollment( userId, workspaceId, res.rows[0].version );
-            
+
         }
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - save workspace enrollment most recent version - " + e );
         return false;
     }
@@ -541,24 +682,24 @@ exports.saveWorkspaceEnrollment = async ( userId, workspaceRid ) => {
     let values = [ true, userId, workspaceRid ];
 
     try {
-         
+
         let response = await db.query( text, values );
 
-        if( !response.rowCount > 0 ) {       
+        if ( !response.rowCount > 0 ) {
             text = 'INSERT INTO user_workspaces (workspace_rid, user_id, active, is_completed)'
                 + 'VALUES($1, $2, $3, $4)';
             values = [ workspaceRid, userId, true, false ];
 
             let response = await db.query( text, values );
-    
+
         }
         else {
             console.log( "Duplicate user_workspace not saved!!" );
         }
-        
+
         return true;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - save workspace enrollment - " + e );
         return false;
     }
@@ -578,7 +719,7 @@ exports.completeWorkspaceEnrollment = async ( userId, workspaceRid ) => {
         let response = await db.query( text, values );
         return true;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: Error updating workspace enrollment - " + e );
         return false;
     }
@@ -594,31 +735,31 @@ exports.getEnrolledWorkspaceByUserAndWorkspaceRid = async ( userId, workspaceRid
     console.log( "params: userId " + userId + " workspaceRid: " + workspaceRid );
     let text = "SELECT ug.* FROM user_workspaces ug where ug.user_id = $1 AND ug.workspace_rid = $2 and active = $3;";
     let values = [ userId, workspaceRid, true ];
-    
+
     let workspace;
     try {
-         
+
         let res = await db.query( text, values );
-        if( res.rows.length > 0 ) {
-            for( let i=0; i<res.rows.length; i++ ) {
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 // get the workspace for each user_workspace
                 text = "SELECT * FROM workspaces WHERE active = $1 AND workspace_rid = $2;";
                 values = [ true, res.rows[i].workspace_rid ];
 
                 let res2 = await db.query( text, values );
 
-                if( res2.rows.length > 0 ) {
+                if ( res2.rows.length > 0 ) {
                     workspace = Workspace.ormWorkspace( res2.rows[0] );
-                }     
+                }
             }
 
         }
         else {
             return false;
         }
-        return workspace ;
+        return workspace;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - get enrolled workspace by user and workspace rid - " + e );
         return false;
     }
@@ -698,13 +839,13 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
     // note this is historical, upon testing I realized that implementing this code meant that completed workspaces were not showing up in users profiles and in feeds
     // so the approach taken was to have all active / inactive workspaces returned if the user has been enrolled and use workspace.active to filter in the views where showing
     // the workspace is not desirable 
-    
+
     let enrollments = [];
     try {
-         
+
         let res = await db.query( text, values );
-        if( res.rows.length > 0 ) {
-            for( let i=0; i<res.rows.length; i++ ) {
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 let enrollment = WorkspaceEnrollment.ormWorkspaceEnrollment( res.rows[i] );
 
                 // get the workspace for each user_workspace
@@ -713,10 +854,10 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
 
                 let res2 = await db.query( text, values );
 
-                if( res2.rows.length > 0 ) {
+                if ( res2.rows.length > 0 ) {
                     enrollment.workspace = Workspace.ormWorkspace( res2.rows[0] );
-                } 
-                
+                }
+
                 enrollments.push( enrollment );
             }
 
@@ -726,7 +867,7 @@ exports.getActiveEnrollmentsForUserId = async ( userId ) => {
         }
         return enrollments;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - get active enrollment for user Id - " + e );
         return false;
     }
@@ -737,14 +878,14 @@ exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
     let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.workspace_rid as workspace_id, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.create_time as create_time from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.workspace_rid and mode.active = true ORDER BY mode.create_time desc LIMIT $1;";
     let values = [ limit ];
-    
+
     try {
-        
+
         let res = await db.query( text, values );
-        
+
         let enrollmentEvents = [];
-        if( res.rows.length > 0 ) {
-            for( let i=0; i<res.rows.length; i++ ) {
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
                 event.eventItemId = res.rows[i].workspace_rid;
@@ -763,10 +904,10 @@ exports.getRecentWorkspaceEnrollmentEvents = async ( limit ) => {
         }
         return enrollmentEvents;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - get recent workspace enrollment events - " + e );
         return false;
-    }  
+    }
 };
 
 exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
@@ -775,7 +916,7 @@ exports.deleteWorkspaceById = async ( workspaceId, ownerId ) => {
 
     try {
         let res = await db.query( text, values );
-        if( res.rowCount > 0 ) {
+        if ( res.rowCount > 0 ) {
             return true;
         }
         else {
@@ -792,14 +933,14 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
     limit = ( !limit ) ? 10 : limit;
     let text = "select ud.user_id as user_id, ud.username as username, ud.profile_filename as user_image, mod.workspace_rid as workspace_rid, mod.workspace_name as workspace_name, mod.workspace_image as workspace_image, mode.completed_date as completed_date from users ud, workspaces mod, user_workspaces mode where mode.user_id = ud.user_id AND mode.workspace_rid = mod.workspace_rid and mode.active = true AND mode.is_completed = true ORDER BY mode.completed_date desc LIMIT $1;";
     let values = [ limit ];
-    
+
     try {
-        
+
         let res = await db.query( text, values );
-        
+
         let enrollmentEvents = [];
-        if( res.rows.length > 0 ) {
-            for( let i=0; i<res.rows.length; i++ ) {
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
                 let event = Event.emptyEvent();
                 event.eventUserId = res.rows[i].user_id;
                 event.eventItemId = res.rows[i].workspace_rid;
@@ -818,10 +959,10 @@ exports.getRecentWorkspaceCompletionEvents = async ( limit ) => {
         }
         return enrollmentEvents;
     }
-    catch( e ) {
+    catch ( e ) {
         console.log( "[ERR]: [workspace] - get recent workspace completion events - " + e );
         return false;
-    }  
+    }
 };
 // Takes in a workspaceId and finds each topicId associated with it.
 exports.getAllTopicsIdsForWorkspace = async function ( workspaceRid ) {
@@ -835,8 +976,8 @@ exports.getAllTopicsIdsForWorkspace = async function ( workspaceRid ) {
         let res = await db.query( text, values );
 
         // console.log( " RESPONSE : " + JSON.stringify( res ) );
-        if ( res.rowCount > 0 ){
-            for ( let i=0; i<res.rowCount; i++ ){
+        if ( res.rowCount > 0 ) {
+            for ( let i = 0; i < res.rowCount; i++ ) {
                 topicIds[i] = res.rows[i].topic_id;
             }
         }
@@ -848,5 +989,5 @@ exports.getAllTopicsIdsForWorkspace = async function ( workspaceRid ) {
     }
 
     return topicIds;
-       
+
 };

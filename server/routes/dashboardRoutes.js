@@ -97,8 +97,4 @@ router.route( '/resource' )
     }
     );
 
-
-
-
-
 module.exports = router;

@@ -1,3 +1,7 @@
+.editor-body {
+  background-color: #17191a;
+}
+
 .topic-body {
     transition: margin-left .5s;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
@@ -6,7 +10,6 @@
 .topic-content {
     width: 100%;
     justify-content: center;
-    border-radius: 20px;
     border:1px solid lightgray;
     background-color: white;
   }
@@ -112,6 +115,10 @@
     margin-top: 0px;
     margin-right: 5px;
     font-size: 40px;
+}
+
+#new-element:hover {
+  background-color: #AE7A0B; 
 }
 
 .descriptionTA {
@@ -241,15 +248,15 @@
 
 
 /* Tabs ---------------------------------- */
-.tab {
+.tabBar {
     overflow: hidden;
     /* border: 1px solid #ccc; */
     background-color: #f1f1f1;
-    margin-bottom: 20px;
     height: 50px;
+    display: flex;
   }
   
-.tab button {
+.tabBar button {
     background-color: inherit;
     float: left;
     outline: none;
@@ -257,12 +264,28 @@
     padding: 14px 10px;
     transition: 0.3s;
     border: none;
-  }
+}
   
 .tabcontent {
-    display: none;
     padding: 6px 12px;
     border-top: none;
+}
+
+.tablink-edit {
+  display: flex;
+  padding-right:10px;
+}
+.tablink-edit input, span {
+  margin-right: 10px; /* Adjust as needed */
+}
+
+.check-tab {
+  position: relative;
+  color: rgb(100, 98, 98);
+  top: -25px;
+}
+.check-tab:hover {
+  color: white;
 }
 
 .tablinks {
@@ -277,6 +300,8 @@
 .close-tab:hover {
     color: black
 }
+
+
 
 /* END Tabs --------------------------------- */
 
@@ -400,6 +425,28 @@
     height: 20px;
     background-color:#2c3e50;
     display: none;
+  }
+
+  .drop-zone-new {
+    margin: 0 auto;
+    height: inherit;
+    line-height: inherit;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: inset 0 0 0 0 #54b3d6;
+    color: white;
+    font-size: 36px;
+    margin: 0 -.25rem;
+    padding: 0 .25rem;
+    transition: color .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.drop-zone-new:hover {
+    box-shadow: inset 200vh 0 0 0 #64cc5b;
+    color: white;
   }
     
   .drop-zone--over {
@@ -549,6 +596,14 @@
     top: -20px;
   }
 
+  .share-modal-title {
+    flex-grow: 1;
+    white-space: normal; 
+    overflow: hidden;
+    max-width: calc(100% - 80px);
+    text-align: center; 
+  }
+
   #share-modal-title {
     font-size: xx-large;
     font-weight: 400;
@@ -571,36 +626,65 @@
     padding-top: 0;
   }
 
+  .shared-profile-picture {
+    width: 10%;
+    height: auto;
+    margin-top: 50px;
+  }
+
+  .profile-info {
+    margin-top: 50px;
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(87%);   
+  }
+
   .profile-shared-with {
     display: flex; 
     flex-direction: row; 
+    align-items: center;  
     margin-left: -30px; 
     margin-top: -25px;
-  }
-  
-  .profile-name {
-    height: 50%; 
-    margin-left: 15px; 
-    margin-top: 36px;
   }
 
   .profile-status {
     margin-top: 36px;
-    margin-left: 230px;
-    font-weight: 500px;
+  }
+
+  .custom-input-height {
+    height: 10px;   
+  }
+  
+  .remove{
+    margin-top: 100px;
+  }
+
+  .permissions-box {
+    display: none;
+    margin-left: 20px;
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    z-index: 1; 
   }
 
   .permissions-row {
-    display: flex; 
-    flex-direction: row; 
-    margin-right: 0px; 
-    font-size: medium
+    display: flex;
+    flex-direction: row;
+    margin-right: 0px;
+    font-size: medium;
   }
 
   .permissions-col {
     display: flex; 
     flex-direction: column; 
     margin-right: 34px;
+    align-items: center;
   }
 
   .permission-li {
@@ -619,16 +703,22 @@
     width: 100%;
   }
 
+  .profile-status-container {
+    display: flex;
+    align-items: center;
+}
+
   .arrow {
     cursor: pointer;
     border: solid black;
     border-width: 0 3px 3px 0;
     display: inline-block;
-    padding: 3px;
-    height: 15px;
-    width: 15px;
+    padding: 1px;
+    height: 10px;
+    width: 10px;
     background-color: transparent;
-    margin-right: 20px;
+    margin-top: 36px;
+    margin-left: 20px;
   }
 
   .arrow:focus {
@@ -693,6 +783,22 @@
   .flex-row {
     display: flex;
     flex-direction: row;
+  }
+
+  .share-search-bar {
+    display: flex;
+    align-items: center;
+    width: 400px; /* Adjust the width as needed */
+}
+
+  /* Adjust the margin between the input field and the button */
+  #user-search {
+      margin-right: 10px; /* Adjust the margin as needed */
+  }
+
+  /* Center the button vertically within the search bar */
+  #btn-search {
+      align-self: center;
   }
 
 .post-comment-btn {

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS agora.users (
     create_time TIMESTAMP DEFAULT current_timestamp
 );
 
+
 GRANT ALL PRIVILEGES ON TABLE users TO agora;
 --GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO agora;
 
@@ -100,7 +101,10 @@ CREATE TABLE IF NOT EXISTS agora.products (
 GRANT ALL PRIVILEGES ON TABLE products TO agora;
 GRANT USAGE, SELECT ON SEQUENCE products_product_id_seq TO agora;
 
-CREATE TABLE IF NOT EXISTS agora.product_images (
+
+
+
+CREATE TABLE IF NOT EXISTS product_images (
     product_image_id SERIAL PRIMARY KEY,
     product_id INTEGER,
     image_name VARCHAR,
@@ -114,6 +118,20 @@ CREATE TABLE IF NOT EXISTS agora.product_images (
 GRANT ALL PRIVILEGES ON TABLE product_images TO agora;
 GRANT USAGE, SELECT ON SEQUENCE product_images_product_image_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images (product_id);
+
+CREATE TYPE status AS ENUM ('pending', 'accepted', 'rejected');
+
+-- Add Friendship table
+CREATE TABLE IF NOT EXISTS agora.friendships (
+    friendship_id SERIAL PRIMARY KEY,
+    initiatedby_id UUID NOT NULL REFERENCES users(user_id),
+    recipient_id UUID NOT NULL REFERENCES users(user_id),
+    friendship_status status NOT NULL, -- Changed from Varchar to an Enum type. 
+    created_time TIMESTAMP DEFAULT current_timestamp,
+    UNIQUE (initiatedby_id, recipient_id)
+);
+
+GRANT ALL PRIVILEGES ON TABLE friendships TO agora;
 
 INSERT INTO products (
     product_name, product_type, product_description_1, product_description_2, product_purchase_text, stripe_product_id, stripe_price_id, price, product_url, product_static_image, active
@@ -592,10 +610,10 @@ CREATE TYPE shared_permission_level AS ENUM ('view', 'discussion', 'edit');
 
 CREATE TABLE IF NOT EXISTS agora.shared_entities (
     shared_entity_id SERIAL PRIMARY KEY,
-    entity_id INTEGER,          -- unique id number of the entity being shared
+    entity_id UUID NOT NULL,          -- unique id number of the entity being shared
     entity_type shared_entity_type,      
-    shared_by_user_id INTEGER,  -- user id of the user who shared the entity
-    shared_with_user_id INTEGER,-- user id of the user who the entity was shared with
+    shared_by_user_id UUID NOT NULL REFERENCES users(user_id),  -- user id of the user who shared the entity
+    shared_with_user_id UUID NOT NULL REFERENCES users(user_id),-- user id of the user who the entity was shared with
     -- share_type INTEGER,      -- removed as each entity has visibility settings for public / private. Entries in this table are exceptions to private
     permission_level shared_permission_level,  
     can_copy BOOLEAN,           -- can the shared entity be copied by another user?

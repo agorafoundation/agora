@@ -5,7 +5,7 @@
         <%- include('../../../partials/head'); %>
     </head>
 
-    <body class="dashboard-content">
+    <body class="dashboard-content editor-body">
         <!--File Upload Drop Zone-->
         <!-- <div class="drop-zone"> -->
             <!-- <span class="drop-zone__prompt"></span> -->
@@ -52,8 +52,12 @@
                 <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
                     forum
                 </span>
+                <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
+                    share
+                </span>
                 <%-include('./discussion-modal.ejs'); %>
                 <%-include('./comment-template.ejs'); %>
+                <%-include('./share-modal.ejs'); %>
 
                 <!--Sharing-->
                 <!-- URBG TODO: removed until sharing is implemented-->
@@ -69,26 +73,27 @@
 
             <div id="topic-background" style="background-color:#17191a">
                 <!-- Tabs -->
-                <div class="tab" style="background-color: #17191a">
+                <div class="tabBar" title="Topic name - Long press to edit" style="background-color: #17191a">
                     <span id="new-element" class="material-symbols-outlined" style="color: white">add</span>
                 </div>
 
                 <!--Workspace Empty State -->
                 <div id="workspace-empty-state">
-                    <div class="topic-content">
-                    <div class="drop-zone" id="drop-zone0">
+                    <div class="topic-content" id="topic-editor">
+                        <div class="drop-zone" id="drop-zone0">
 
-                        <div class="dropzone-filler"></div>
-                        
-                            <div id="resources-zone0" class="resources-zone">
-                                <div class="empty-state" id="empty-state0">
-                                    <label class="empty-state-text"><h3>Your Workspace is Empty</h3></label>
-                                    <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                            <div class="dropzone-filler"></div>
+                            
+                                <div id="resources-zone0" class="resources-zone">
+                                    <div class="empty-state" id="empty-state0">
+                                        <label class="empty-state-text"><h3>Your Workspace is Empty</h3></label>
+                                        <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                                    </div>
                                 </div>
+                                <input type="file" name="resourceImageField" class="drop-zone__input" />
                             </div>
-                            <input type="file" name="resourceImageField" class="drop-zone__input" />
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,6 +109,10 @@
     </div>
 
     <%- include('../../../partials/jsincludes'); %>
+
+    <!-- include the JS for editor -->
+    <script type="module" src="/js/editorMain.js"></script>
+
     <%- include ('../gallery/dropdown'); %>
 
     </body>
