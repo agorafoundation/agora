@@ -1,7 +1,7 @@
 // get models and controller functions from modules
 import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
-import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
+import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, getSharedResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
 import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
@@ -35,6 +35,7 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         if( !workspace ){
             workspace = await getSharedWorkspace( workspaceUuid );
         }
+        console.log( workspace );
     }
     else {
         console.log( "workspace already initialized" );
@@ -80,7 +81,11 @@ const setActiveTopicAndResources = async function ( topicId ) {
 
         // get the resources for the active topic
         if( activeTopic ) {
-            const resources = await getResourcesForTopic( activeTopic.topicId );
+            let resources = await getResourcesForTopic( activeTopic.topicId );
+
+            if( !resources ){
+                resources = await getSharedResourcesForTopic( activeTopic.topicId );
+            }
             
             if( resources ) {
                 activeTopic.resources = await resources;

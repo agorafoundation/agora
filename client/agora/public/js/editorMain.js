@@ -35,6 +35,8 @@ window.addEventListener( "load", async () => {
     // initialize the workspace
     await initializeWorkspace( await getWorkspaceUuid() );
 
+    console.log( getCurrentWorkspace() );
+
     // retrieve the resources for the active topic, add them to the current state
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
         await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );

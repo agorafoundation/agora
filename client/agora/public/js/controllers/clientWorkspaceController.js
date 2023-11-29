@@ -116,7 +116,8 @@ const getSharedWorkspace = async( id ) => {
         const workspace = await response.json();
         ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
         ( debug ) ? console.log( "getSharedWorkspace() : Complete" ) : null;
-        return workspace.results;
+        console.log( workspace.results );
+        return workspace;
     }
 };
 export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace };
