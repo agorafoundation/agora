@@ -326,7 +326,7 @@ exports.getUserByUsername = async function( username ) {
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            for ( i = 0; i < res.rows.length; i++ ){
+            for ( let i = 0; i < res.rows.length; i++ ){
                 users.push( User.ormUser( res.rows[i] ) );
             }
             return users;
