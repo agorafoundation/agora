@@ -2,7 +2,7 @@
 import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
-import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
+import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
  * Client side debugging flags
@@ -32,6 +32,9 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     if( !workspace || workspace.workspaceId !== workspaceUuid ) {
         workspace = await getWorkspace( workspaceUuid );
+        if( !workspace ){
+            workspace = await getSharedWorkspace( workspaceUuid );
+        }
     }
     else {
         console.log( "workspace already initialized" );
