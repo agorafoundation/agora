@@ -8,7 +8,7 @@
 // get models and controller functions from modules
 import { createNewResource, saveResource } from "./controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic } from "./controllers/clientTopicController.js";
-import { saveWorkspace, getWorkspace } from "./controllers/clientWorkspaceController.js";
+import { getWorkspace } from "./controllers/clientWorkspaceController.js";
 
 /** Globals */
 let resources = [];
@@ -46,8 +46,8 @@ function checkActiveHeight() {
 
 
 /* Topic Functions -------------------------------------------------------------------------- */
-let numTopics = 1;
-let topics = {};
+// let numTopics = 1;
+// let topics = {};
 
 // Renders a new topic
 const createTopic = async( id, name ) => {
@@ -1049,6 +1049,7 @@ function getFile( file ) {
 
 
 
+let currentTabIndex = null; 
 
 document.addEventListener( "click", function( e ) {
     console.log( "suneditor click event" ); 
@@ -1132,6 +1133,7 @@ const fileUploadBtn = document.getElementById( "file-upload-div" );
 // const openTopicModal = document.getElementById( "open-topic-modal-div" );
 
 // open the modal
+let modal = null;
 if( openBtn ) {
     openBtn.onclick = () => {
         if ( editPermission == true ){
@@ -1339,7 +1341,7 @@ const getPrefixAndId = () => {
 const idAndFetch = () => {
     const [ isTopic, id ] = getPrefixAndId();
     if ( id ){
-       getPermission( id ); 
+        getPermission( id ); 
     }
     if ( isTopic && id ) {
         fetch( "api/v1/auth/topics/" + id, {
@@ -1793,8 +1795,11 @@ async function renderTopic( topic ) {
     return topics;
 }
 
+let topicNum = 0;
 totalTopicsRendered = 0;
 async function renderSharedTopic( topic ) {
+
+    let localResources = null;
   
     await createTopic( topic.topicId, topic.topicName );
     const resources = await renderSharedResources( topic.topicId );

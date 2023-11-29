@@ -761,10 +761,10 @@ function closeTab( tabId ) {
 
     if ( isActiveTab ) {
         if ( tabLocation+1 != tabContent.length ) {                                               // Open the tab to the right if there is one
-            openTab( tabContent[tabLocation+1] );
+            //openTab( tabContent[tabLocation+1] );
         }
         else if ( tabLocation-1 >= 0 ) {                                                          // Otherwise, open the tab to the left
-            openTab( tabContent[tabLocation-1] );
+            //openTab( tabContent[tabLocation-1] );
         }
         else if ( tabLocation-1 < 0 ) {                                                           // Show the workspace empty state if closing only open tab
             document.getElementById( "workspace-empty-state" ).style.display = "block";
