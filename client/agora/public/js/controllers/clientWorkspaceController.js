@@ -105,4 +105,18 @@ const getWorkspace = async( id ) => {
     }
 };
 
-export { createNewWorkspace, saveWorkspace, getWorkspace };
+const getSharedWorkspace = async( id ) => {
+    ( debug ) ? console.log( "getSharedWorkspace() - Start - id: " + id ) : null;
+    const response = await fetch( "api/v1/auth/workspaces/shared/" + id, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } );
+
+    if( response.ok ){
+        const workspace = await response.json();
+        ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
+        ( debug ) ? console.log( "getSharedWorkspace() : Complete" ) : null;
+        return workspace.results;
+    }
+};
+export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace };
