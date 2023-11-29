@@ -65,6 +65,9 @@ function copyContentText ( cardText, cardDiv ) {
     const copyContent = async () => {
         try {
             await navigator.clipboard.writeText( cardText );
+          
+            buttonText.innerHTML = 'Copied';
+          
             console.log( 'Content copied to clipboard' );
 
             buttonText.innerHTML = 'Copied!';
@@ -72,6 +75,7 @@ function copyContentText ( cardText, cardDiv ) {
             setTimeout( () => {
                 buttonText.innerHTML = 'Copy';
             }, 2000 );
+            
             createToastNotification( "Copied Link! Paste citation into document where needed." );
         } 
         catch ( err ) {
