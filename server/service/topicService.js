@@ -1273,12 +1273,20 @@ exports.getAllPublicTopics = async ( limit, offset ) => {
 };
 
 exports.deleteTopicById = async ( topicId, authUserId ) => {
+
     let text = "DELETE FROM topics WHERE topic_id = $1 and owned_by = $2";
     let values = [ topicId, authUserId ];
 
     try {
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
+            
+            // check to see if there are any references to this topic in the workspace_paths table and remove them
+            text = "DELETE FROM workspace_paths WHERE topic_id = $1";
+            values = [ topicId ];
+
+            await db.query( text, values );
+
             return true;
         }
         else {

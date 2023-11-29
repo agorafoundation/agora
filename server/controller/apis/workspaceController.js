@@ -19,8 +19,8 @@ const ApiMessage = require( '../../model/util/ApiMessage' );
 
 // import services
 const workspaceService = require( '../../service/workspaceService' );
-const userService = require( '../../service/userService' );
 const topicService = require( '../../service/topicService' );
+const resourceService = require( '../../service/resourceService' );
 
 // set up file paths for user profile images
 let UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../../client' );
@@ -205,6 +205,30 @@ exports.deleteWorkspaceById = async ( req, res ) => {
 
     if ( authUserId ) {
         const workspaceId = req.params.workspaceId;
+
+        // Check if valid workspaceId given.
+        let workspace = await workspaceService.getWorkspaceById( req.params.workspaceId, authUserId );
+        if ( workspace ) {
+
+            // Get all topics Ids associated with our workspaceId.
+            const topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( workspace.workspaceRid );
+
+            // Grab each topic by id and append it to our list of topics
+            topicsIds.forEach( async ( topicId ) => { 
+                // find any resources associated with the topic and delete them
+                let resources = await topicService.getAllResourceIdsFromTopic( topicId );
+                if( resources ) {
+                    resources.forEach( async ( resource ) => {
+                        await resourceService.deleteResourceById( resource, authUserId );
+                    } );
+                }
+
+                // delete the topic
+                await topicService.deleteTopicById( topicId, authUserId );
+            } );
+        }
+        
+        // delete the workspace
         let success = await workspaceService.deleteWorkspaceById( workspaceId, authUserId );
 
         if ( success ) {
