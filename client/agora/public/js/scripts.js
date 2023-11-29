@@ -18,40 +18,40 @@ let sideBarStatus = true;
 /**
  * Triggered when the page is loaded.
  */
-window.addEventListener("load", () => {
+window.addEventListener( "load", () => {
     // Determines whether the user is on a page that contains the sidebar
-    if (document.querySelector("#agoraSideBar")) {
+    if ( document.querySelector( "#agoraSideBar" ) ) {
         loadClientSettings();
 
         // Only add the hover events if the sidebar is not in the docked position
-        if (!clientSettings.sideBarLocked) {
+        if ( !clientSettings.sideBarLocked ) {
             // add events for toggle sidebar
-            if (document.getElementById("agoraSideBar")) {
+            if ( document.getElementById( "agoraSideBar" ) ) {
                 toggleSidebar();
-                document.getElementById("agoraSideBar").addEventListener("mouseenter", toggleSidebar);
-                document.getElementById("agoraSideBar").addEventListener("mouseleave", toggleSidebar);
+                document.getElementById( "agoraSideBar" ).addEventListener( "mouseenter", toggleSidebar );
+                document.getElementById( "agoraSideBar" ).addEventListener( "mouseleave", toggleSidebar );
             }
         }
 
-        if (document.getElementById("pin-menu")) {
-            document.getElementById("pin-menu").addEventListener("click", lockSidebar);
+        if ( document.getElementById( "pin-menu" ) ) {
+            document.getElementById( "pin-menu" ).addEventListener( "click", lockSidebar );
         }
     }
-});
+} );
 
 /**
  * Toggles the sidebar.
  */
 function toggleSidebar() {
-    if (!sideBarStatus) {
-        document.getElementById("agoraSideBar").style.width = "250px";
-        document.querySelector(".dashboard-content").style.marginLeft = "250px";
+    if ( !sideBarStatus ) {
+        document.getElementById( "agoraSideBar" ).style.width = "250px";
+        document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
         // document.querySelector(".friends-content").style.marginLeft = "250px";
     }
     else {
-        document.getElementById("agoraSideBar").style.width = "85px";
-        if (window.innerWidth > 992) {
-            document.querySelector(".dashboard-content").style.marginLeft = "85px";
+        document.getElementById( "agoraSideBar" ).style.width = "85px";
+        if ( window.innerWidth > 992 ) {
+            document.querySelector( ".dashboard-content" ).style.marginLeft = "85px";
             // document.querySelector(".friends-content").style.marginLeft = "85px";
         }
     }
@@ -62,24 +62,24 @@ function toggleSidebar() {
  * Locks the sidebar into position.
  */
 function lockSidebar() {
-    if (!clientSettings.sideBarLocked) {
-        document.querySelector(".dashboard-content").style.marginLeft = "250px";
+    if ( !clientSettings.sideBarLocked ) {
+        document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
         // document.querySelector(".friends-content").style.marginLeft = "250px";
 
-        document.getElementById("agoraSideBar").removeEventListener("mouseenter", toggleSidebar);
-        document.getElementById("agoraSideBar").removeEventListener("mouseleave", toggleSidebar);
+        document.getElementById( "agoraSideBar" ).removeEventListener( "mouseenter", toggleSidebar );
+        document.getElementById( "agoraSideBar" ).removeEventListener( "mouseleave", toggleSidebar );
 
-        document.getElementById("agoraSideBar").style.width = "250px";
+        document.getElementById( "agoraSideBar" ).style.width = "250px";
 
-        document.getElementById("tack-icon").style.rotate = "45deg";
+        document.getElementById( "tack-icon" ).style.rotate = "45deg";
 
         sideBarStatus = true; // important to prevent glitching when enabling/disabling the menu
     }
     else {
-        document.getElementById("tack-icon").style.rotate = "0deg";
+        document.getElementById( "tack-icon" ).style.rotate = "0deg";
 
-        document.getElementById("agoraSideBar").addEventListener("mouseenter", toggleSidebar);
-        document.getElementById("agoraSideBar").addEventListener("mouseleave", toggleSidebar);
+        document.getElementById( "agoraSideBar" ).addEventListener( "mouseenter", toggleSidebar );
+        document.getElementById( "agoraSideBar" ).addEventListener( "mouseleave", toggleSidebar );
     }
 
     clientSettings.sideBarLocked = !clientSettings.sideBarLocked;
@@ -91,22 +91,22 @@ function lockSidebar() {
  * Loads the client settings from local storage and sets the properties associated with them.
  */
 function loadClientSettings() {
-    if (!localStorage.getItem('client-settings')) {
+    if ( !localStorage.getItem( 'client-settings' ) ) {
         saveClientSettings();
     }
     else {
-        clientSettings = JSON.parse(localStorage.getItem('client-settings'));
+        clientSettings = JSON.parse( localStorage.getItem( 'client-settings' ) );
 
-        if (clientSettings.sideBarLocked) {
-            document.querySelector(".dashboard-content").style.marginLeft = "250px";
+        if ( clientSettings.sideBarLocked ) {
+            document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
             // document.querySelector(".friends-content").style.marginLeft = "250px";
 
-            document.getElementById("agoraSideBar").removeEventListener("mouseenter", toggleSidebar);
-            document.getElementById("agoraSideBar").removeEventListener("mouseleave", toggleSidebar);
+            document.getElementById( "agoraSideBar" ).removeEventListener( "mouseenter", toggleSidebar );
+            document.getElementById( "agoraSideBar" ).removeEventListener( "mouseleave", toggleSidebar );
 
-            document.getElementById("agoraSideBar").style.width = "250px";
+            document.getElementById( "agoraSideBar" ).style.width = "250px";
 
-            document.getElementById("tack-icon").style.rotate = "45deg";
+            document.getElementById( "tack-icon" ).style.rotate = "45deg";
 
             sideBarStatus = true; // important to prevent glitching when enabling/disabling the menu
         }
@@ -117,5 +117,5 @@ function loadClientSettings() {
  * Saves the client settings to local storage.
  */
 function saveClientSettings() {
-    localStorage.setItem('client-settings', JSON.stringify(clientSettings));
+    localStorage.setItem( 'client-settings', JSON.stringify( clientSettings ) );
 }
