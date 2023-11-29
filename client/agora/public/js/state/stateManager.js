@@ -8,7 +8,7 @@ import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/
  * Client side debugging flags
  */
 const debug = true;
-const dataDebug = false;
+const dataDebug = true;
 
 
 /**

@@ -24,7 +24,7 @@ const Resource = require( '../model/resource' );
 exports.getResourceById = async ( resourceId, active ) => {
     let text = "SELECT * FROM resources WHERE resource_id = $1";
     if( active ) {
-        text += "AND active = $2";
+        text += " AND active = $2";
     }
     text += ";";
 
