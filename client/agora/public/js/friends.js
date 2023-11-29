@@ -13,7 +13,7 @@ var friends = [ ];
 var requests = [ ];
 
 // gets the authenticated user, their friends and sent friend requests
-window.onload = getResources = () => {
+window.onload = () => {
     
     fetch( "/api/v1/auth/friends/getResources", {
         method: "GET",
@@ -37,7 +37,7 @@ window.onload = getResources = () => {
 
 // queries the users by username
 if ( searchButton ) {
-    searchButton.addEventListener( 'click', queryUsers = () => {
+    searchButton.addEventListener( 'click', () => {
         fetch( "/api/v1/auth/user/username/" + userSearch.value, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -45,16 +45,16 @@ if ( searchButton ) {
             .then( ( response ) =>  response.json() )
             .then( ( response ) => {
     
-                for ( i = 0; i < response.length; i++ ) {
+                for ( let i = 0; i < response.length; i++ ) {
                     var data = response[i];
                     var isFriend = false;
                     var isSentRequest = false;
-                    for( j = 0; j < friends[0].length; j++ ){
+                    for( let j = 0; j < friends[0].length; j++ ){
                         if ( ( data.username == friends[0][j].friend_username ) ){
                             isFriend = true;
                         }
                     }
-                    for( k = 0; k < requests[0].length; k++ ){
+                    for( let k = 0; k < requests[0].length; k++ ){
                         if( ( data.userId == requests[0][k].initiatedby_id ) ||
                             ( data.userId == requests[0][k].recipient_id ) ){
                             isSentRequest =  true;
@@ -102,7 +102,7 @@ function createUserCard( userData ){
     friendsDashboard.appendChild( userContainer );
     
     
-    userContainer.addEventListener( 'click', sendFriendRequest = () => {
+    userContainer.addEventListener( 'click', () => {
         if( confirm( "Are you sure you want to send a friend request to " + userData.username + "?" ) == true ){
             userContainer.style.display = "none";
             fetch( "/api/v1/auth/friends/sendFriendRequest", {
