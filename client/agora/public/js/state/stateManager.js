@@ -32,9 +32,6 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     if( !workspace || workspace.workspaceId !== workspaceUuid ) {
         workspace = await getWorkspace( workspaceUuid );
-        if( !workspace ){
-            workspace = await getSharedWorkspace( workspaceUuid );
-        }
         console.log( workspace );
     }
     else {
@@ -82,10 +79,6 @@ const setActiveTopicAndResources = async function ( topicId ) {
         // get the resources for the active topic
         if( activeTopic ) {
             let resources = await getResourcesForTopic( activeTopic.topicId );
-
-            if( !resources ){
-                resources = await getSharedResourcesForTopic( activeTopic.topicId );
-            }
             
             if( resources ) {
                 activeTopic.resources = await resources;

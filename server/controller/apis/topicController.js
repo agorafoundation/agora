@@ -103,6 +103,10 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
 
         // Check if valid topicId given.
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
+        if( !topic ){
+            topic = await topicService.getSharedTopicById( req.params.topicId, authUserId );
+        }
+
         if( topic ) {
 
             let resourcesList = [];

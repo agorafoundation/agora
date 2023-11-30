@@ -84,6 +84,9 @@ exports.getWorkspaceById = async ( req, res ) => {
     if ( authUserId ) {
         // get all the active workspaces by user
         let workspace = await workspaceService.getActiveWorkspaceWithTopicsById( req.params.workspaceId, authUserId, true );
+        if( !workspace ){
+            workspace = await workspaceService.getSharedWorkspaceByID( req.params.workspaceId );
+        }
         if ( workspace ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned workspace by id" );
