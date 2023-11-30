@@ -4,7 +4,9 @@
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
-const aiSnipper = document.querySelector( '.ai-snipper' );
+const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
+const citationsContainer = document.getElementById( 'citations-cont' );
+
 
 citationsDropdown.addEventListener( 'change', ( event ) => {
     const citationType = event.target.value;
@@ -216,6 +218,11 @@ document.getElementById( 'doc-type' ).addEventListener( 'change', async function
 } );
 
 async function makeAPICall() {
+    loadingSpinnerContainer.hidden = false;
+    citationsContainer.hidden = true;
+    
+    
+
     var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
 
@@ -251,9 +258,17 @@ async function makeAPICall() {
 
                 enableXButtons();
                 enableCiteButtons();
+
+                loadingSpinnerContainer.hidden = true;
+                citationsContainer.hidden = false;
+
             }
             else {
                 // Create a card to display the error of not finding any articles
+
+                loadingSpinnerContainer.hidden = true;
+                citationsContainer.hidden = false;
+
                 const card = document.createElement( 'div' );
                 card.classList.add( 'container', 'citation-card' );
                 
@@ -271,8 +286,13 @@ async function makeAPICall() {
         }
         else {
             selectedContent.classList.remove( 'hidden' );
+            loadingSpinnerContainer.hidden = true;
+            citationsContainer.hidden = false;
+
+            
 
             let responseJson = await response.json();
+
 
             // Create a card to display the error of not finding any articles
             const card = document.createElement( 'div' );
@@ -292,6 +312,8 @@ async function makeAPICall() {
     }
     catch ( error ) {
         // Handle network or other errors here
+        loadingSpinnerContainer.hidden = true;
+        citationsContainer.hidden = false;
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
 }
