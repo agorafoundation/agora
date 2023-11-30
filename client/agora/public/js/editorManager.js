@@ -619,7 +619,10 @@ function createTextArea( resource ) {
         let newDropZone = document.createElement( "div" );
         newDropZone.id = "drop-zone-" + resourceId;
         newDropZone.className = "drop-zone-new";
-        newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\"></i>";
+        // URBG: TODO removed the icon for file upload for now until / if this function in brought back.
+        //newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\">";
+        newDropZone.innerHTML = "+";
+
         newDropZone.addEventListener( "click", async () => {
             /**
               * EVENT:: listener for adding a text resource via clicking the drop-zone-new
