@@ -4,6 +4,7 @@
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
+const aiSnipper = document.querySelector( '.ai-snipper' );
 
 citationsDropdown.addEventListener( 'change', ( event ) => {
     const citationType = event.target.value;
@@ -210,8 +211,8 @@ var lastEditedResourceId; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
 document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
-    allCardsContainer.innerHTML = ""; // Clear the current cards.
     await makeAPICall();
+    
 } );
 
 async function makeAPICall() {
