@@ -21,6 +21,7 @@ const OPENAI_CONFIG = new openAi.Configuration( {
 } );
 
 exports.callOpenAI = async ( req, res ) => {
+
     let mode = req.body.mode; // TODO: use this for notes vs paper
     let resourceId = req.body.resourceId;
     let removedArticles = req.body.removedArticles;
