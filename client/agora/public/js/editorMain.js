@@ -25,6 +25,9 @@ import { updateWorkspaceDom, createTopicEditorGui, editTopicName } from "./edito
 import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
+import { shareWorkspace } from "./controllers/clientWorkspaceController.js";
+
+
 
 /**
  * window onLoad starts retreval for page render

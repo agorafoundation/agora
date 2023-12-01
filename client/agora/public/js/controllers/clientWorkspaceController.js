@@ -120,4 +120,44 @@ const getSharedWorkspace = async( id ) => {
         return workspace;
     }
 };
-export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace };
+
+
+// Function to share a workspace
+const shareWorkspace = async ( workspaceId, sharedWithEmail ) => {
+    // Construct the request body
+    const body = JSON.stringify( {
+        entityId: workspaceId,
+        sharedWithEmail: sharedWithEmail,
+        permissionLevel: 'view', // Hardcode the permission level to 'view'
+    } );
+
+    // Send the request to the server
+    try {
+        const response = await fetch( '/shareworkspace', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        } );
+
+        
+        if ( response.ok ) {
+            const result = await response.json();
+            // TODO Update the UI to reflect the shared workspace
+            alert( 'Workspace shared successfully.' );
+            return result;
+        } 
+        else {
+            // The server responded with an error
+            const errorResult = await response.json();
+            alert( `Error sharing workspace: ${errorResult.message}` );
+            return null;
+        }
+    } 
+    catch ( error ) {
+        // There was an error sending the request
+        alert( `An error occurred: ${error.message}` );
+        return null;
+    }
+};
+
+export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace, shareWorkspace };
