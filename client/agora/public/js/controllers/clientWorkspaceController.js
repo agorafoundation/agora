@@ -105,22 +105,6 @@ const getWorkspace = async( id ) => {
     }
 };
 
-const getSharedWorkspace = async( id ) => {
-    ( debug ) ? console.log( "getSharedWorkspace() - Start - id: " + id ) : null;
-    const response = await fetch( "api/v1/auth/workspaces/shared/" + id, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } );
-
-    if( response.ok ){
-        const workspace = await response.json();
-        ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
-        ( debug ) ? console.log( "getSharedWorkspace() : Complete" ) : null;
-        console.log( workspace.results );
-        return workspace;
-    }
-};
-
 
 // Function to share a workspace
 const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = 'view' ) => {
@@ -158,4 +142,4 @@ const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = '
 };
 
 
-export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace, shareWorkspace };
+export { createNewWorkspace, saveWorkspace, getWorkspace, shareWorkspace };

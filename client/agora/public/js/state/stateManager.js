@@ -1,8 +1,8 @@
 // get models and controller functions from modules
 import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
-import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, getSharedResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
-import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } from "../controllers/clientWorkspaceController.js";
+import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
+import { createNewWorkspace, saveWorkspace, getWorkspace } from "../controllers/clientWorkspaceController.js";
 
 /**
  * Client side debugging flags
