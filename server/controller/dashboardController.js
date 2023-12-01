@@ -38,7 +38,7 @@ exports.getSharedDashboard = async function ( req, res ) {
 
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
-            let topics = await topicService.getTopicById( topicsIds[index], sharedWorkspaces[i].ownedBy );
+            let topics = await topicService.getSharedTopicById( topicsIds[index] );
 
             if ( topics ) { // Ensure retrieval of topics
                 sharedWorkspaces[i].topics.push( topics );
@@ -110,7 +110,7 @@ exports.getDashboard = async function( req, res ) {
         // Grab each topic by id and append it to our list of topics
         for ( let index in topicsIds ) {
             let topics = await topicService.getTopicById( topicsIds[index], req.session.authUser.userId );
-
+            console.log( topics );
             if ( topics ){ // Ensure retrieval of topics
                 ownerWorkspaces[i].topics.push( topics );
             }

@@ -98,12 +98,7 @@ router.route( '/resource' )
     );
 
 
-router.route( '/' )
-    .get( ( req, res ) => {
-    //res.render( 'dashboard-shared/dashboard-shared' );
-        dashboardController.getSharedDashboard( req, res );
-    }
-    );
+
 
 module.exports = router;
 module.exports = router;
