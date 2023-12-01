@@ -240,8 +240,8 @@ const createTopicEditorGui = async function ( ) {
             // createDropZoneEventListeners( emptyDropZone, emptyDropZoneInput );
             // // -------------------------------------------------------------
 
-            let topicDivider = document.createElement( "div" );
-            topicDivider.id = "topic-divider"   ;
+            // let topicDivider = document.createElement( "div" );
+            // topicDivider.id = "topic-divider"   ;
 
             resourcesZone = document.createElement( "div" );
             resourcesZone.id = "resources-zone";
@@ -262,13 +262,13 @@ const createTopicEditorGui = async function ( ) {
 
             //topicContent.appendChild( topicTitle );
             // topicContent.appendChild( saveIcon );
-            topicEditor.appendChild( topicDivider );
+            // topicEditor.appendChild( topicDivider );
             topicEditor.appendChild( resourcesZone );
             // resourcesZone.appendChild( newDropZone );
             // resourcesZone.appendChild( emptyDropZone );
             // emptyDropZone.appendChild( emptyState );
 
-            
+            createDropZone( "drop-zone-initial", 0 );
 
             //createNewActiveHeight();
             if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
@@ -276,7 +276,7 @@ const createTopicEditorGui = async function ( ) {
                     let currentResource = getCurrentActiveTopic().resources[i];
                        
                     // TODO: evaluate what are these two??? why are there 2?
-                    await createTextArea( getCurrentActiveTopic().resources[i] );
+                    await createTextArea( getCurrentActiveTopic().resources[i], i );
         
                     if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
                                         
@@ -288,7 +288,7 @@ const createTopicEditorGui = async function ( ) {
                 }
                 if ( getCurrentActiveTopic().resources.length === 0 ) {
                     // there are now resources, so show the empty state
-                    await createTextArea( null );
+                    await createTextArea( null, 0 );
                 }
 
                 
@@ -534,7 +534,7 @@ async function saveTopicName( topicId ) {
 }
 
 
-function createTextArea( resource ) {
+function createTextArea( resource, position ) {
     // Text area has to be created before suneditor initialization, 
     // so we have to return a promise indicating whether or not text area has been successfully created
     let promise =  new Promise( ( resolve ) => {
@@ -568,11 +568,11 @@ function createTextArea( resource ) {
             } );
 
             // Edit icon
-            let editIcon = document.createElement( 'span' );
-            editIcon.setAttribute( "class", "material-symbols-outlined" );
-            editIcon.setAttribute( "id", "edit-icon-" + resourceId );
-            editIcon.innerHTML = "edit";
-            editIcon.style.display = "none";
+            // let editIcon = document.createElement( 'span' );
+            // editIcon.setAttribute( "class", "material-symbols-outlined" );
+            // editIcon.setAttribute( "id", "edit-icon-" + resourceId );
+            // editIcon.innerHTML = "edit";
+            // editIcon.style.display = "none";
 
             // Delete icon
             let doneIcon = document.createElement( 'span' );
@@ -602,7 +602,7 @@ function createTextArea( resource ) {
             // Append elemets accordingly
             resourcesZone.appendChild( title );
             // resourcesZone.appendChild( newTabIcon );
-            resourcesZone.appendChild( editIcon );
+            // resourcesZone.appendChild( editIcon );
             resourcesZone.appendChild( doneIcon );
             resourcesZone.appendChild( sunEditor );
             
@@ -615,45 +615,22 @@ function createTextArea( resource ) {
 
         }
 
-        // Create drop zone
-        let newDropZone = document.createElement( "div" );
-        newDropZone.id = "drop-zone-" + resourceId;
-        newDropZone.className = "drop-zone-new";
-        // URBG: TODO removed the icon for file upload for now until / if this function in brought back.
-        //newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\">";
-        newDropZone.innerHTML = "+";
-
-        newDropZone.addEventListener( "click", async () => {
-            /**
-              * EVENT:: listener for adding a text resource via clicking the drop-zone-new
-              */
-            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
- 
-            await addNewTextResource();
- 
-            // update the gui
-            createTopicEditorGui();
- 
- 
-            ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
-        } );
+        createDropZone( "drop-zone-" + resourceId, position + 1 );
  
         // Create drop zone filler space
-        let newDropZoneFiller = document.createElement( "div" );
-        newDropZoneFiller.className = "dropzone-filler";
-        newDropZone.appendChild( newDropZoneFiller );
+        // let newDropZoneFiller = document.createElement( "div" );
+        // newDropZoneFiller.className = "dropzone-filler";
+        // newDropZone.appendChild( newDropZoneFiller );
  
         // Create drop zone input
-        let newDropZoneInput = document.createElement( "input" );
-        newDropZoneInput.className = "drop-zone__input";
-        newDropZoneInput.type = "file";
+        // let newDropZoneInput = document.createElement( "input" );
+        // newDropZoneInput.className = "drop-zone__input";
+        // newDropZoneInput.type = "file";
  
-
         // add the new drop zone
-        newDropZone.appendChild( newDropZoneInput );
-        createDropZoneEventListeners( newDropZone, newDropZoneInput );
-        resourcesZone.appendChild( newDropZone );
-
+        // newDropZone.appendChild( newDropZoneInput );
+        // createDropZoneEventListeners( newDropZone, newDropZoneInput );
+        
 
         //alert( "hold" );
         ( debug ) ? console.log( "createTextArea() complete promise cerated" ) : null;
@@ -690,6 +667,34 @@ function getTabLocation( id ) {
         }
     }
     return location;
+}
+
+function createDropZone( resourceId, position ) {
+    // Create drop zone
+    let newDropZone = document.createElement( "div" );
+    newDropZone.id = resourceId;
+    newDropZone.className = "drop-zone-new";
+    // URBG: TODO removed the icon for file upload for now until / if this function in brought back.
+    //newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\">";
+    newDropZone.innerHTML = "+";
+
+    newDropZone.addEventListener( "click", async () => {
+        /**
+          * EVENT:: listener for adding a text resource via clicking the drop-zone-new
+          */
+        ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Start" ) : null;
+
+        // create the new resource pass one more then the position of the current resource to add it to the end of the list
+        await addNewTextResource( position );
+
+        // update the gui
+        createTopicEditorGui();
+
+
+        ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
+    } );
+
+    resourcesZone.appendChild( newDropZone );
 }
 
 
