@@ -312,6 +312,8 @@ exports.saveWorkspaceImage = async ( req, res, workspaceId, filename ) => {
  */
 exports.saveWorkspace = async ( req, res, redirect ) => {
 
+    console.log( " ----------------- save workspace ---------------------" );
+
     let workspace = Workspace.emptyWorkspace();
 
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
@@ -330,6 +332,8 @@ exports.saveWorkspace = async ( req, res, redirect ) => {
         if ( req.body.workspaceId != null && req.body.workspaceId != -1 ) {
             workspace.workspaceId = req.body.workspaceId;
         }
+
+        console.log( " body : " + JSON.stringify( req.body ) );
 
         // see if this is a modification of an existing workspace
         let existingWorkspace = await workspaceService.getMostRecentWorkspaceById( workspace.workspaceId.toString() );

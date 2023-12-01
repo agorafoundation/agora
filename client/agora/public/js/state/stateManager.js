@@ -117,7 +117,6 @@ const addNewTopic = async function ( topicName ) {
 
         // save the current workspace
         await saveWorkspace( getCurrentWorkspace() );
-
         
         ( debug ) ? console.log( "addNewTopic() : Complete" ) : null;
         return newTopic;
@@ -175,7 +174,7 @@ const deleteTopicFromWorkspace = async function ( topicId ) {
     ( debug ) ? console.log( "deleteTopicFromWorkspace() : Complete" ) : null;
 };
 
-const addNewTextResource = async function ( ) {
+const addNewTextResource = async function ( position ) {
 
 
     ( debug ) ? console.log( "addNewTextResource() : Start" ) : null;
@@ -186,8 +185,8 @@ const addNewTextResource = async function ( ) {
     // save the resource
     await saveResource( resource );
 
-    // add the resource to the current topic
-    getCurrentActiveTopic().resources.push( resource );
+    // add the resource to the current topic in the correct position
+    getCurrentActiveTopic().resources.splice( position, 0, resource );
 
     // save the topic
     await saveActiveTopic( );

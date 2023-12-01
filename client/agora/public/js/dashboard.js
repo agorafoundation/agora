@@ -433,6 +433,7 @@ const createNewTopic = async () => {
 
 //creates a empty topic
 const createNewWorkspace = async () => {
+    console.log( "about to send workspace!!!!!" );
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},

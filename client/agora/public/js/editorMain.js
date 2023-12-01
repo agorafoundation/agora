@@ -15,7 +15,7 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource } from "./state/stateManager.js";
 
 // get the data models
 import { deleteResource } from "./controllers/clientResourceController.js";
@@ -96,6 +96,9 @@ async function addTopicEvent() {
     // set the new topic as the active topic to switch tabs
     await changeTopicEvent( newTopic.topicId );
 
+    // create a new resource for the topic and put in the first position
+    await addNewTextResource( 0 );
+
     // render the topics for the workspace
     await createTopicEditorGui();
 
@@ -104,6 +107,8 @@ async function addTopicEvent() {
 
     // prompt the user to name the topic
     editTopicName( newTopic.topicId );
+
+
     ( debug ) ? console.log( "addTopicEvent: complete" ) : null;
   
 }
