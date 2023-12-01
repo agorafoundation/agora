@@ -123,41 +123,39 @@ const getSharedWorkspace = async( id ) => {
 
 
 // Function to share a workspace
-const shareWorkspace = async ( workspaceId, sharedWithEmail ) => {
-    // Construct the request body
-    const body = JSON.stringify( {
-        entityId: workspaceId,
-        sharedWithEmail: sharedWithEmail,
-        permissionLevel: 'view', // Hardcode the permission level to 'view'
-    } );
+const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = 'view' ) => {
+    ( debug ) ? console.log( "shareWorkspace() : Start" )  : null;
 
-    // Send the request to the server
     try {
-        const response = await fetch( '/shareworkspace', {
-            method: 'POST',
+        const response = await fetch( "api/v1/auth/shareworkspace", {
+            method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: body
-        } );
+            body: JSON.stringify( {
+                entityId: workspaceId,
+                sharedWithEmail: sharedWithEmail,
+                permissionLevel: permissionLevel,
+                canCopy: false  // Users can't copy the workspace on an initial share
+            } 
+            )
+        }
+        );
 
-        
         if ( response.ok ) {
-            const result = await response.json();
-            // TODO Update the UI to reflect the shared workspace
-            alert( 'Workspace shared successfully.' );
-            return result;
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "shareWorkspace() : Workspace shared successfully: " + JSON.stringify( data ) ) : null;
+            return data;
         } 
         else {
-            // The server responded with an error
-            const errorResult = await response.json();
-            alert( `Error sharing workspace: ${errorResult.message}` );
-            return null;
+            const errorData = await response.json();
+            ( debug ) ? console.log( "shareWorkspace() : Error - " + errorData.message ) : null;
         }
     } 
     catch ( error ) {
-        // There was an error sending the request
-        alert( `An error occurred: ${error.message}` );
-        return null;
+        ( debug ) ? console.log( "shareWorkspace() : Exception - " + error.message ) : null;
     }
+
+    return null;
 };
+
 
 export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace, shareWorkspace };
