@@ -145,8 +145,21 @@ const getPermission = async ( workspaceId ) => {
     return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-    } );
-
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            if ( response.permission_level == "edit" ) {
+                console.log( "It's finished." );
+                return true;
+            }
+            else {
+                return false;
+            }
+        } )
+        .catch( ( error ) => {
+            console.error( "Error fetching permission:", error );
+            return false;
+        } );
 };
 
 const getAllSharedUsersForWorkspace = async ( id ) => {
@@ -207,4 +220,4 @@ const updatePermission = async ( id, permission, profile ) => {
 
 };
 
-export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission};
+export { createNewWorkspace, saveWorkspace, getWorkspace, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission, getPermission, shareWorkspace};
