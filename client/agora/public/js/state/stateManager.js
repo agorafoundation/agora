@@ -2,7 +2,7 @@
 import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, getSharedResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
-import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } from "../controllers/clientWorkspaceController.js";
+import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission } from "../controllers/clientWorkspaceController.js";
 
 /**
  * Client side debugging flags
@@ -17,8 +17,14 @@ const dataDebug = true;
 // Workspace for the loaded editor
 let workspace = createNewResource;
 
+// Workspace owner for the loaded editor
+let workspaceOwner = createNewResource;
+
+// Workspace shared users for the loaded editor
+let workspaceSharedUsers = createNewResource;
+
 // Active topic for the chosen tab
-let activeTopic = createNewTopic();
+let activeTopic = createNewTopic;
 /*--------------------------------------------------------------------------------*/
 
 /**
@@ -32,7 +38,11 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     if( !workspace || workspace.workspaceId !== workspaceUuid ) {
         workspace = await getWorkspace( workspaceUuid );
-        console.log( workspace );
+        workspaceOwner = await getWorkspaceOwner( workspace.ownedBy );
+        workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
+        console.log( "workspace" + workspace );
+        console.log( "workspaceOwner" + workspaceOwner );
+        console.log( "workspaceSharedUsers" + workspaceSharedUsers );
     }
     else {
         console.log( "workspace already initialized" );
@@ -51,11 +61,27 @@ const getCurrentWorkspace = ( ) => {
 };
 
 /**
+ * Getter for the current workspace owner
+ * @returns the current workspace owner
+ */
+const getCurrentWorkspaceOwner = ( ) => {
+    return workspaceOwner;
+};
+
+/**
  * Gettr for the current active topic
  * @returns the current active topic
  */
 const getCurrentActiveTopic = ( ) => {
     return activeTopic;
+};
+
+/**
+ * Getter for the current workspace
+ * @returns the current workspace
+ */
+const getCurrentWorkspaceSharedUsers = ( ) => { 
+    return workspaceSharedUsers;
 };
 
 /**
@@ -214,6 +240,16 @@ function saveTextResource( resource, content ) {
     
 }
 
+async function updateUserPermission( newWorkspace, newPermission, profile ) {
+    ( debug ) ? console.log( "updateUserPermission() : Start" ) : null;
+
+    // update the users permission
+    await updatePermission( newWorkspace, newPermission, profile );
+
+    ( debug ) ? console.log( "updateUserPermission() : Complete" ) : null;
+
+}
+
 /*--------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------*/
 
@@ -259,7 +295,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace };
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission};
 
 // Export GUI state
 export { tabs, activeTab };
