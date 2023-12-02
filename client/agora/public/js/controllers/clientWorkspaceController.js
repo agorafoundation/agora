@@ -141,5 +141,26 @@ const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = '
     return null;
 };
 
+const getPermission = async ( workspaceId ) => {
+    return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            console.log( response.permission_level );
+            if ( response.permission_level == "edit" ) {
+                console.log( "It's finished." );
+                return true;
+            }
+            else {
+                return false;
+            }
+        } )
+        .catch( ( error ) => {
+            console.error( "Error fetching permission:", error );
+            return false;
+        } );
+};
 
-export { createNewWorkspace, saveWorkspace, getWorkspace, shareWorkspace };
+export { createNewWorkspace, saveWorkspace, getWorkspace, shareWorkspace, getPermission };
