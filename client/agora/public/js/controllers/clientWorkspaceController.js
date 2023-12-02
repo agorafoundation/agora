@@ -105,20 +105,48 @@ const getWorkspace = async( id ) => {
     }
 };
 
-const getSharedWorkspace = async( id ) => {
-    ( debug ) ? console.log( "getSharedWorkspace() - Start - id: " + id ) : null;
-    const response = await fetch( "api/v1/auth/workspaces/shared/" + id, {
+
+// Function to share a workspace
+const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = 'view' ) => {
+    ( debug ) ? console.log( "shareWorkspace() : Start" )  : null;
+
+    try {
+        const response = await fetch( "api/v1/auth/shareworkspace", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                entityId: workspaceId,
+                sharedWithEmail: sharedWithEmail,
+                permissionLevel: permissionLevel,
+                canCopy: false  // Users can't copy the workspace on an initial share
+            } 
+            )
+        }
+        );
+
+        if ( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "shareWorkspace() : Workspace shared successfully: " + JSON.stringify( data ) ) : null;
+            return data;
+        } 
+        else {
+            const errorData = await response.json();
+            ( debug ) ? console.log( "shareWorkspace() : Error - " + errorData.message ) : null;
+        }
+    } 
+    catch ( error ) {
+        ( debug ) ? console.log( "shareWorkspace() : Exception - " + error.message ) : null;
+    }
+
+    return null;
+};
+
+const getPermission = async ( workspaceId ) => {
+    return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } );
 
-    if( response.ok ){
-        const workspace = await response.json();
-        ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
-        ( debug ) ? console.log( "getSharedWorkspace() : Complete" ) : null;
-        console.log( workspace.results );
-        return workspace;
-    }
 };
 
 const getAllSharedUsersForWorkspace = async ( id ) => {

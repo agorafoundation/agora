@@ -70,22 +70,6 @@ const getResourcesForTopic = async function ( topicId ) {
     }
 };
 
-// retrieve the shared resources associated with a shared topic
-const getSharedResourcesForTopic = async function ( topicId ) {
-    ( debug ) ? console.log( "getSharedResourcesForTopicId() : Start for topicId: " + topicId ) : null;
-    const response = await fetch( "api/v1/auth/topics/resources/shared/" + topicId, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } );
-
-    if( response.ok ){
-        const data = await response.json();
-        ( debug && dataDebug ) ? console.log( "getSharedResourcesForTopicId() : complete - response: " + JSON.stringify( data ) ) : null;
-        ( debug ) ? console.log( "getSharedResourcesForTopicId() : Complete" ) : null;
-        return data.results;
-    }
-};
-
 const saveTopic = async( topic ) => {
     ( debug ) ? console.log( "saveTopic() : Start for topic -  " + topic.topicId ) : null;
     if( topic ) {
@@ -173,4 +157,4 @@ const deleteTopic = async function ( topicId ) {
     }
 };
 
-export { createNewTopic, getTopic, getResourcesForTopic, getSharedResourcesForTopic, saveTopic, deleteTopic };
+export { createNewTopic, getTopic, getResourcesForTopic, saveTopic, deleteTopic };
