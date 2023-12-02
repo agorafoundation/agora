@@ -149,7 +149,6 @@ const getPermission = async ( workspaceId ) => {
         .then( ( response ) => response.json() )
         .then( ( response ) => {
             if ( response.permission_level == "edit" ) {
-                console.log( "It's finished." );
                 return true;
             }
             else {

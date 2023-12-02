@@ -43,22 +43,21 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         console.log( "workspace" + workspace );
         console.log( "workspaceOwner" + workspaceOwner );
         console.log( "workspaceSharedUsers" + workspaceSharedUsers );
+
+        const workspaceTitle = document.getElementById( "workspace-title" );
+        const workspaceDescription = document.getElementById( "workspace-desc" );
+        const tagBox = document.getElementById( "mySearch" );
+        if ( await getPermission( workspace.workspaceId ) == false ){
+            workspaceTitle.readOnly = true;
+            workspaceDescription.readOnly = true;
+            tagBox.readOnly = true;
+        }
     }
     else {
         console.log( "workspace already initialized" );
     }
     ( debug & dataDebug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
     ( debug ) ? console.log( "initializeWorkspace() : Complete" ) : null;
-
-    const workspaceTitle = document.getElementById( "workspace-title" );
-    const workspaceDescription = document.getElementById( "workspace-desc" );
-    const tagBox = document.getElementById( "mySearch" );
-    if ( await getPermission( workspace.workspaceId ) == false ){
-        workspaceTitle.readOnly = true;
-        workspaceDescription.readOnly = true;
-        tagBox.readOnly = true;
-    }
-
 };
 
 /**

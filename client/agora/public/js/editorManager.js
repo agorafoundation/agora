@@ -13,6 +13,9 @@ import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiv
 // DOM event functions (eg. 
 import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
 
+//clientWorkspaceController
+import { getPermission } from "./controllers/clientWorkspaceController.js";
+
 
 /**
  * DOM manipulation functions for the editor
@@ -615,11 +618,18 @@ function createTextArea( resource ) {
             else{
                 title.value = "Untitled";
             }
+
+            
             // add the change listener for the title
             title.addEventListener( "change", async () => {
-                ( debug ) ? console.log( "title change event : Start - resourceId: " + resource.resourceId ) : null;
-                textEditorUpdateEvent( resource.resourceId, null );
-                ( debug ) ? console.log( "title change event : Complete" ) : null;
+                if( await getPermission( getCurrentWorkspace().workspaceId ) != false ){
+                    ( debug ) ? console.log( "title change event : Start - resourceId: " + resource.resourceId ) : null;
+                    textEditorUpdateEvent( resource.resourceId, null );
+                    ( debug ) ? console.log( "title change event : Complete" ) : null;
+                }
+                else{
+                    title.readOnly = true;
+                }
             } );
 
             // Edit icon
@@ -651,8 +661,6 @@ function createTextArea( resource ) {
             // Suneditor textarea
             let sunEditor = document.createElement( "textarea" );
             sunEditor.setAttribute( "id", "sunEditor-" + resourceId );
-
-        
 
             // Append elemets accordingly
             resourcesZone.appendChild( title );
