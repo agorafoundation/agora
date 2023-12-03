@@ -45,7 +45,7 @@
   <% } else if (contentType === "Workspace") { %>
 
     <!--Workspace Card-->
-    <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-workspace">
+    <div class="col mb-3 new- gallery-col align-items-stretch gallery-col">
       <div class="card h-100" id="w-gv-<%= workspaceId %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
         <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="w-gv-option-<%= workspaceId %>" style="visibility: hidden">
           <img src="/assets/img/buttons/more-options.png" class="dropbtn"/>
@@ -97,32 +97,37 @@
 <div id="grid-container" style="display: none">
   
   <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
-    <div class="col mb-3 gallery-col align-items-stretch gallery-col">
+    <!-- <div class="col mb-3 new- gallery-col align-items-stretch gallery-col">
       <div class="card h-100" onclick = "createNewWorkspace()">
-          <div class="card-body d-flex flex-column mt-1" id="add">
-            <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content" alt="Add content">
-          </div>
+        <div class="card-body d-flex flex-column mt-1" id="add">
+          <img src="/assets/img/buttons/new-content.png" class="mx-auto d-block btn-add-content" alt="Add content">
         </div>
       </div>
+    </div> -->
           
-      <%
-        for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
-          let topics = [];
-          let tags = [];
-          topics = ownerWorkspaces[i].topics.map(a => a.topicName);
-          tags = ownerWorkspaces[i].tags.map(a => a.tag);
-          renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,tags,"Workspace", topics); 
-        }
+    <%
+      for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
+        let topics = [];
+        let tags = [];
+        topics = ownerWorkspaces[i].topics.map(a => a.topicName);
+        tags = ownerWorkspaces[i].tags.map(a => a.tag);
+        renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,tags,"Workspace", topics); 
+      }
 
-        //render resources for Now
-        for (let i = 0; i <  ownerTopics.length ; i++) { 
-          
-          renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Biom","Chem"],"Topic", null) 
-            
-        }
-      %>
+      //render resources for Now
+      // this has been removed, only workspaces are displayed in the dashboard now.
+      //for (let i = 0; i <  ownerTopics.length ; i++) {         
+      //  renderCard(ownerTopics[i].topicId,ownerTopics[i].topicName,ownerTopics[i].topicDescription,["Biom","Chem"],"Topic", null) 
+      //}
+    %>
         
       <%=//c console.log(ownerWorkspaces[0]) %>
+
+      <div class="add-button-wrapper">
+        <button class="btn btn-primary add-button" onclick="createNewWorkspace()">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
     </div> 
   </div> 
           

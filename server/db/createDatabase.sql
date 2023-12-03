@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS agora.users (
     profile_filename VARCHAR,
     email_token VARCHAR,
     email_validated BOOLEAN,
+    desktop_first_visit BOOLEAN,
+    editor_first_visit BOOLEAN,
     first_name VARCHAR,
     last_name VARCHAR,
     hashed_password VARCHAR,

@@ -9,13 +9,15 @@
 const { v4: uuidv4 } = require( "uuid" );
 
 class User {
-    constructor( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    constructor( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
 
         this.userId = uuidv4();
         this.email = email;
         this.username = username;
         this.profileFilename = profileFilename;
         this.emailValidated = emailValidated;
+        this.desktopFirstVisit = desktopFirstVisit;
+        this.editorFirstVisit = editorFirstVisit;
         this.firstName = firstName;
         this.lastName = lastName;
         this.hashedPassword = hashedPassword;
@@ -39,8 +41,8 @@ exports.emptyUser = () => {
     return new User();
 };
 
-exports.createUser = function( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
-    let newUser = new User( email, username, profileFilename, emailValidated, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
+exports.createUser = function( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    let newUser = new User( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
     return newUser;
 };
 
@@ -54,6 +56,8 @@ exports.ormUser = function( userRow ) {
     user.username = userRow.username;
     user.profileFilename = userRow.profile_filename;
     user.emailValidated = userRow.email_validated;
+    user.desktopFirstVisit = userRow.desktop_first_visit;
+    user.editorFirstVisit = userRow.editor_first_visit;
     user.roleId = userRow.role_id;
     user.firstName = userRow.first_name;
     user.lastName = userRow.last_name;
