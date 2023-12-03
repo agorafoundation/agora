@@ -51,7 +51,7 @@ exports.googleSignUp = async function( req, res ) {
 
         console.log( "[google-signup] about to create user" );
 
-        createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
 
         console.log( "[google-signup] user created, email: " + payload['email'] );
         

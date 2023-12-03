@@ -13,6 +13,9 @@ const nodemailer = require( "nodemailer" );
 const DeviceDetector = require( "device-detector-js" );
 const deviceDetector = new DeviceDetector();
 
+// controllers
+const userController = require( './userController' );
+
 // services
 const userService = require( '../service/userService' );
 
@@ -131,11 +134,17 @@ exports.googleSignIn = async function( req, res ) {
             }
         }
         else {
+
+            // user is not signed up yet, create account and then sign in.
             console.log( "[google-auth] user was not found" );
-            req.session.messageType = "info";
-            req.session.messageTitle = "User Account Not Found";
-            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
-            res.redirect( 303, '/dashboard' );
+            // req.session.messageType = "info";
+            // req.session.messageTitle = "User Account Not Found";
+            // req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
+            // res.redirect( 303, '/dashboard' );
+
+            await userController.googleSignUp( req, res );
+
+            
         }
         
     }
