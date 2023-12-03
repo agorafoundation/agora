@@ -13,6 +13,9 @@ const nodemailer = require( "nodemailer" );
 const DeviceDetector = require( "device-detector-js" );
 const deviceDetector = new DeviceDetector();
 
+// controllers
+const userController = require( './userController' );
+
 // services
 const userService = require( '../service/userService' );
 
@@ -88,6 +91,7 @@ const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 
 exports.googleSignIn = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+    //console.log( "[google-auth] - Start controller" );
 
     if( req.body.credential ) {
         const ticket = await client.verifyIdToken( {
@@ -99,24 +103,27 @@ exports.googleSignIn = async function( req, res ) {
         const payload = ticket.getPayload();
         const userid = payload['sub'];
 
+        //console.log( "[google-auth] payload: " + payload );
+
         let user = await userService.getUserByEmail( payload['email'] );
 
         // decision on email
         if( user ) {
+            console.log( "[google-auth] - User with email " + user.email + " logging in" );
             req.session.isAuth = true;
             req.body.signInEmail = payload['email'];
             await signIn( req, res );
 
             if( req.query.redirect ) {
-                //console.log( "2" );
+                //console.log( "google-auth] Complete - redirect in url - following: " + req.query.redirect );
                 res.redirect( 303, req.query.redirect );
             }
             else if( req.session.authUser.emailValidated ) {
-                //console.log( "3" );
+                //console.log( "google-auth] Complete - email validated - going to /dashboard" );
                 res.redirect( 303, '/dashboard' );
             }
             else {
-                //console.log( "4" );
+                //console.log( "google-auth] Complete - email not validated - going to /dashboard" );
                 req.session.messageType = "info";
                 req.session.messageTitle = "Email not verified!";
                 req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
@@ -124,10 +131,17 @@ exports.googleSignIn = async function( req, res ) {
             }
         }
         else {
-            req.session.messageType = "info";
-            req.session.messageTitle = "User Account Not Found";
-            req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
-            res.redirect( 303, '/dashboard' );
+
+            // user is not signed up yet, create account and then sign in.
+            console.log( "[google-auth] user was not found" );
+            // req.session.messageType = "info";
+            // req.session.messageTitle = "User Account Not Found";
+            // req.session.messageBody = "You are not currently registered with Agora. You can sign up either with your Google account by filling out the informtion in the form</a>";
+            // res.redirect( 303, '/dashboard' );
+
+            await userController.googleSignUp( req, res );
+
+
         }
         
     }
@@ -208,7 +222,7 @@ exports.passwordSignIn = async function( req, res ) {
  * @param {HTTP response} res 
  */
 const signIn = async function( req, res ) {
-
+    console.log( "[signIn] - Start controller" );
     // now that we know they have valid password, get the whole user with role and topic data
     let user = await userService.setUserSession( req.body.signInEmail );
     //console.log( "full user output: " + JSON.stringify( user ) );
@@ -218,11 +232,13 @@ const signIn = async function( req, res ) {
 
     // decision on wether user has an authorized role
     if( user.roles && user.roles.filter( role => role.roleId === uRole.roleId ).length > 0 ) {
+        console.log( "[signIn] - User has authorized role!" );
         // assign the user to the session
         req.session.authUser = user;
 
         // parse and log the User client data if enabled
         if( process.env.REQUEST_DATA_LOGGING ) {
+            console.log( "[signIn] - Request data logging enabled!" );
 
             // parse the UA data
             let device = deviceDetector.parse( req.headers['user-agent'] );
@@ -248,6 +264,7 @@ const signIn = async function( req, res ) {
             // log the data
             if( user && device ) {
                 await userService.logUserSession( user.userId, ip, device );
+                console.log( "[signIn] - User session logged!" );
 
             }
         }
@@ -255,6 +272,7 @@ const signIn = async function( req, res ) {
         
     }
     else {
+        console.log( "[signIn] - User not authorized!" );
         res.render( 'sign-in', {
             redirect: req.query.redirect,
             passwordMessage: "You are not authorized!"} );

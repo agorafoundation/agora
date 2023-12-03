@@ -23,6 +23,7 @@ const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 
 
 exports.googleSignUp = async function( req, res ) {
+    console.log( "[google-signup] - Start" );
     res.setHeader( 'Content-Type', 'text/html' );
     req.session.messageType = null;
     req.session.messageTitle = null;
@@ -48,10 +49,15 @@ exports.googleSignUp = async function( req, res ) {
         const extension = createRandomExtension( 7 );
         const usename = payload['given_name'] + "-" + extension;
 
-        createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+        console.log( "[google-signup] about to create user" );
+
+        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+
+        console.log( "[google-signup] user created, email: " + payload['email'] );
         
     }
     else {
+        console.log( "[google-signup] - Error: no credential" );
         res.render( 'user-signup', {error_message: "Google Authentication failure"} );
     }
 
