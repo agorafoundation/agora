@@ -91,7 +91,7 @@ const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 
 exports.googleSignIn = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
-    console.log( "[google-auth] - Start controller" );
+    //console.log( "[google-auth] - Start controller" );
 
     if( req.body.credential ) {
         const ticket = await client.verifyIdToken( {
@@ -103,30 +103,27 @@ exports.googleSignIn = async function( req, res ) {
         const payload = ticket.getPayload();
         const userid = payload['sub'];
 
-        console.log( "[google-auth] payload: " + payload );
+        //console.log( "[google-auth] payload: " + payload );
 
         let user = await userService.getUserByEmail( payload['email'] );
 
         // decision on email
         if( user ) {
-            console.log( "[google-auth] - User with email " + user.email + " found!" );
+            console.log( "[google-auth] - User with email " + user.email + " logging in" );
             req.session.isAuth = true;
             req.body.signInEmail = payload['email'];
             await signIn( req, res );
 
             if( req.query.redirect ) {
-                console.log( "google-auth] Complete - redirect in url - following: " + req.query.redirect );
-                //console.log( "2" );
+                //console.log( "google-auth] Complete - redirect in url - following: " + req.query.redirect );
                 res.redirect( 303, req.query.redirect );
             }
             else if( req.session.authUser.emailValidated ) {
-                console.log( "google-auth] Complete - email validated - going to /dashboard" );
-                //console.log( "3" );
+                //console.log( "google-auth] Complete - email validated - going to /dashboard" );
                 res.redirect( 303, '/dashboard' );
             }
             else {
-                //console.log( "4" );
-                console.log( "google-auth] Complete - email not validated - going to /dashboard" );
+                //console.log( "google-auth] Complete - email not validated - going to /dashboard" );
                 req.session.messageType = "info";
                 req.session.messageTitle = "Email not verified!";
                 req.session.messageBody = "Please check your email for a verifacation link and click on it to finish the verification process.  <strong>Be sure to check your spam folder</strong> if you do not see it in your inbox. If it has not arrived after a few minutes <a href='/user/revalidate/<%- user.email %>'>Re-send verification email</a>";
@@ -144,7 +141,7 @@ exports.googleSignIn = async function( req, res ) {
 
             await userController.googleSignUp( req, res );
 
-            
+
         }
         
     }
