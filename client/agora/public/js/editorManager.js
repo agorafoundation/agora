@@ -268,7 +268,7 @@ const createTopicEditorGui = async function ( ) {
             // resourcesZone.appendChild( emptyDropZone );
             // emptyDropZone.appendChild( emptyState );
 
-            createDropZone( "drop-zone-initial", 0 );
+            //createDropZone( "drop-zone-initial", 0 );
 
             //createNewActiveHeight();
             if( getCurrentActiveTopic() && getCurrentActiveTopic().resources ) {
@@ -293,6 +293,14 @@ const createTopicEditorGui = async function ( ) {
 
                 
             }
+
+            totalNumberResources = getCurrentActiveTopic().resources.length;
+            if( totalNumberResources < 0 ) {
+                totalNumberResources = 0;
+            }
+
+            // create a drop zone for the resource
+            createDropZone( "drop-zone-end", totalNumberResources );
             
             // since we have a topic, remove the empty state
             let emptyState = document.getElementById( "workspace-empty-state" );
@@ -498,6 +506,10 @@ function editTopicName( topicId ) {
             saveTopicName( topicId );
         }
     } );
+    input.addEventListener( 'blur', function( event ) {
+        console.log( 'blur event' );
+        saveTopicName( topicId );
+    } );
     newTab.appendChild( input );
 
     //tab.preventDefault();
@@ -547,7 +559,19 @@ function createTextArea( resource, position ) {
             document.getElementById( "filler-space" ).remove();
         }
 
+        
+
         if( resource ) {
+
+            
+
+            
+
+            // title container
+            let titleContainer = document.createElement( "div" );
+            titleContainer.className = "title-container";
+            titleContainer.id = "title-container-" + resourceId;
+            titleContainer.style.display = "none";
 
             // Title element
             let title = document.createElement( 'input' );
@@ -567,6 +591,17 @@ function createTextArea( resource, position ) {
                 ( debug ) ? console.log( "title change event : Complete" ) : null;
             } );
 
+            resourcesZone.appendChild( titleContainer );
+            titleContainer.appendChild( title );
+
+            
+            // create a drop zone for the resource
+            createDropZone( resourceId, position );
+            
+
+
+            
+
             // Edit icon
             // let editIcon = document.createElement( 'span' );
             // editIcon.setAttribute( "class", "material-symbols-outlined" );
@@ -576,7 +611,7 @@ function createTextArea( resource, position ) {
 
             // Delete icon
             let doneIcon = document.createElement( 'span' );
-            doneIcon.setAttribute( "class", "material-symbols-outlined" );
+            doneIcon.setAttribute( "class", "material-symbols-outlined no-top-margin" );
             doneIcon.setAttribute( "id", "delete-icon-" + resourceId );
             doneIcon.innerHTML = "delete";
             doneIcon.addEventListener( "click", async () => {
@@ -599,11 +634,10 @@ function createTextArea( resource, position ) {
 
         
 
-            // Append elemets accordingly
-            resourcesZone.appendChild( title );
+            
             // resourcesZone.appendChild( newTabIcon );
             // resourcesZone.appendChild( editIcon );
-            resourcesZone.appendChild( doneIcon );
+            titleContainer.appendChild( doneIcon );
             resourcesZone.appendChild( sunEditor );
             
 
@@ -615,7 +649,7 @@ function createTextArea( resource, position ) {
 
         }
 
-        createDropZone( "drop-zone-" + resourceId, position + 1 );
+        
  
         // Create drop zone filler space
         // let newDropZoneFiller = document.createElement( "div" );
@@ -670,6 +704,39 @@ function getTabLocation( id ) {
 }
 
 function createDropZone( resourceId, position ) {
+
+    // drop zone container
+    let dropZoneContainer = document.createElement( "div" );
+    dropZoneContainer.className = "drop-zone-container";
+    dropZoneContainer.id = "drop-zone-container-" + resourceId;
+
+    // create a toggle for the resource title and meta data
+    if( resourceId != "drop-zone-end" ) {
+        let titleToggle = document.createElement( "span" );
+        titleToggle.setAttribute( "class", "resource-toggle" );
+        titleToggle.innerHTML = "\u21A7";
+        titleToggle.setAttribute( "id", "title-toggle-" + resourceId );
+        titleToggle.setAttribute( "alt", "Show/Hide Resource Meta information / Title" );
+        titleToggle.addEventListener( "click", async () => {
+        // shows or hides the title-contain element
+            let titleContainer = document.getElementById( "title-container-" + resourceId );
+            let titleToggle = document.getElementById( "title-toggle-" + resourceId );
+            console.log( "titleContainer.: " + titleContainer.style + ' resource id  : ' + resourceId + ' titleContainer.style.display: ' + titleContainer.style.display );
+            if( titleContainer.style.display === "none" ) {
+                titleContainer.style.display = "block";
+                titleToggle.innerHTML = "\u21A5";
+            }
+            else {
+                titleContainer.style.display = "none";
+                titleToggle.innerHTML = "\u21A7";
+            }
+        } );
+
+        dropZoneContainer.appendChild( titleToggle );
+
+    }
+
+
     // Create drop zone
     let newDropZone = document.createElement( "div" );
     newDropZone.id = resourceId;
@@ -694,7 +761,9 @@ function createDropZone( resourceId, position ) {
         ( debug ) ? console.log( "drop-zone-resourceId - createResource() call : Complete" ) : null;
     } );
 
-    resourcesZone.appendChild( newDropZone );
+    dropZoneContainer.appendChild( newDropZone );
+
+    resourcesZone.appendChild( dropZoneContainer );
 }
 
 

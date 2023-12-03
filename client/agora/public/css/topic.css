@@ -14,9 +14,39 @@
     background-color: white;
   }
 
+.drop-zone-container {
+  width: 100%;
+}
+
 #topic-background {
     background-color: #f1f1f1;
     padding-bottom: 50px;
+}
+
+.resource-toggle {
+    text-align: center;
+    font-weight: bolder;
+    outline: orange solid 3px;
+    min-width: 6%;
+    padding-left: 2%;
+    padding-right: 2%;
+    font-size: 20px;
+    color: black;
+    cursor: pointer;
+    flex-direction: column;
+
+   
+
+}
+
+.title-container {
+  display: none;
+  width: 100%;
+}
+
+.no-top-margin {
+  margin-top: 0 !important;
+
 }
 
 .topic-title {
@@ -429,11 +459,12 @@
 
   .drop-zone-new {
     margin: 0 auto;
+    float: right;
     height: inherit;
     line-height: inherit;
     text-align: center;
     vertical-align: middle;
-    width: 100%;
+    width: 94%;
     border-radius: 15px;
     text-align: center;
     box-shadow: inset 0 0 0 0 #54b3d6;
