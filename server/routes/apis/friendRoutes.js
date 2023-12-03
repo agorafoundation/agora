@@ -46,12 +46,6 @@ router.route( '/requestResponse' )
     .delete( async ( req, res ) => {
         friendController.denyFriendRequest( req, res );
     } );
-
-router.route( '/getFriend/:userID' )
-    //get a friend by their user ID.
-    .get( async ( req, res ) => {
-        friendController.getFriendByID( req, res );
-    } );
    
 router.route( '/deleteFriend' )
     .delete( async ( req, res ) => {
