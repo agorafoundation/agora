@@ -10,7 +10,6 @@ const db = require( '../db/connection' );
 
 // import models
 const SharedEntity = require( '../model/sharedEntity' );
-const userService = require( '../service/userService' );
 
 
 /**
@@ -41,6 +40,11 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
 
 };
 
+/**
+ * Gets details of shared users for a shared entity
+ * @param {*} workspaceId 
+ * @returns Details of shared users
+ */
 exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
     let text = `
         SELECT
@@ -81,6 +85,12 @@ exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
     }
 };
 
+/**
+ * Gets the entity shared with a user
+ * @param {*} entityId 
+ * @param {*} sharedUserId 
+ * @returns The entity shared with the user
+ */
 exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
     let text = "SELECT * FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
     const values = [ entityId, sharedUserId ];
@@ -101,6 +111,12 @@ exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
     }
 };
 
+/**
+ * Removes a user from a shared entity
+ * @param {*} entityId 
+ * @param {*} sharedUserId 
+ * @returns Whether user was removed or not
+ */
 exports.removeSharedUserById = async ( entityId, sharedUserId ) => {
     let text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
     let values = [ entityId, sharedUserId ];
@@ -121,6 +137,11 @@ exports.removeSharedUserById = async ( entityId, sharedUserId ) => {
 
 };
 
+/**
+ * Updated the permission of a user for a shared entity
+ * @param {*} sharedEntity 
+ * @returns Whether permission was updated or not
+ */
 exports.updatePermission = async ( sharedEntity ) => {
     if ( sharedEntity ) {
         let text = "UPDATE shared_entities SET permission_level = $1 WHERE entity_id = $2 AND shared_with_user_id = $3 RETURNING shared_entity_id";
@@ -141,6 +162,11 @@ exports.updatePermission = async ( sharedEntity ) => {
     }
 };
 
+/**
+ * Inserts or updates a shared entity
+ * @param {*} sharedEntity 
+ * @returns Whether entity was updated/inserted or not
+ */
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 
     if ( sharedEntity ) {
@@ -186,28 +212,12 @@ exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
     }
 };
 
-// Remove a user from a shared workspace
-exports.removeUserByEmailFromWorkspace = async ( workspaceId, email ) => {
-    try {
-        // First, get the user ID from the email
-        const user = await userService.getUserByEmail( email );
-        if ( !user ) {
-            return false; // User not found
-        }
-
-        const userId = user.userId;
-        const text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2 RETURNING *";
-        const values = [ workspaceId, userId ];
-
-        const res = await db.query( text, values );
-        return res.rowCount > 0;
-    } 
-    catch ( e ) {
-        console.log( e.stack );
-        return false;
-    }
-};
-
+/**
+ * Removes a shared user from a workspace
+ * @param {*} workspaceId 
+ * @param {*} userId 
+ * @returns Whether a shared user was removed or not
+ */
 exports.removeUserFromWorkspace = async ( workspaceId, userId ) => {
     const text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2 RETURNING *";
     const values = [ workspaceId, userId ];

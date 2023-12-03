@@ -518,6 +518,140 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /workspaces/shared:
+     get:
+      tags:
+      - Workspaces
+      summary: Get all shared workspaces, provide limit and offset for pagnation, top limit 100.
+      description: Retrieve all shared workspaces.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of records to return, maximum 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The starting record number, defaults to 0
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                sharedWorkspaces: [shared workspace details]
+  /workspaces/shared/{workspaceId}:
+    get:
+      tags:
+      - Workspaces
+      summary: Get shared workspace by ID
+      description: Retrieve shared workspace details by ID.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the shared workspace.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                sharedWorkspace: {shared workspace details}
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    delete:
+      tags:
+      - Workspaces
+      summary: Remove shared workspace by ID
+      description: Remove a shared workspace by its ID from the shared_entities table.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the shared workspace to be removed.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully removed
+          content:
+            application/json:
+              example:
+                success: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /workspaces/topics/shared/{workspaceId}:
+    get:
+      tags:
+      - Workspaces
+      summary: Get all topics for shared workspace by ID
+      description: Retrieves all topics for a given workspace.
+      parameters:
+        - in: path
+          name: workspaceId
+          required: true
+          description: The ID of the workspace.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                topicsList: [topic details]
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
   /topics:
     get:
       tags:
@@ -1442,7 +1576,629 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-
+  /friends/allFriends:
+    get:
+      summary: Get all friends
+      description: Retrieve all friends for a specific user.
+      parameters:
+        - name: userId
+          in: query
+          description: The ID of the user to retrieve friends for.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Returned all Friends"
+                friends:
+                  - userId: "123"
+                    username: "friend1"
+                  - userId: "456"
+                    username: "friend2"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/sendFriendRequest:
+    post:
+      tags:
+        - Friending
+      summary: Send a friend request
+      requestBody:
+        description: Send a friend request to another user.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - userId
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Sent"
+                result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/requestResponse:
+    post:
+      summary: Accept a friend request
+      description: Accept a friend request from another user.
+      parameters:
+        - name: friendship_id
+          in: query
+          description: The ID of the friend request to accept.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Accepted"
+                result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    delete:
+      summary: Deny a friend request
+      description: Deny a friend request from another user.
+      parameters:
+        - name: friendship_id
+          in: query
+          description: The ID of the friend request to deny.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Friend Request Denied"
+                result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/deleteFriend:
+    delete:
+      tags:
+        - Friending
+      summary: Delete a friend by ID
+      description: Remove a friend by their friendship ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friendshipId:
+                  type: string
+              required:
+                - friendshipId
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Removed friend"
+                result: "Success"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError" 
+  /friends/unreadRequests:
+    get:
+      summary: Get unaccepted friend requests
+      description: Retrieve a list of unaccepted friend requests for the authenticated user.
+      tags:
+        - Friending
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Returned all non friends"
+                data:
+                  - friendRequest1
+                  - friendRequest2
+                  - friendRequest3
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /friends/getResources:
+    get:
+      tags:
+        - Friending
+      summary: Get resources for friending
+      description: Retrieve the authenticated user, their friends, unread friend requests, and the number of unread friend requests.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Returned all user details"
+                data: Authenticated user, friends, friend requests and friend request count
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/email/{email}:
+    get:
+      tags:
+      - Users
+      summary: Get user by email
+      description: Retrieve user by email.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: The email address of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "User retrieved"
+                user: user details
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/username/{username}:
+    get:
+      tags:
+      - Users
+      summary: Get users by username
+      description: Retrieve users by username.
+      parameters:
+        - in: path
+          name: partial username
+          required: true
+          description: The partial username of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "Users retrieved"
+                user: user details
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /user/userId/{userId}:
+    get:
+      tags:
+      - Users
+      summary: Get active user by user ID
+      description: Retrieve active user by user ID.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: The ID of the user.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved
+          content:
+            application/json:
+              example:
+                x-agora-message-title: "Success"
+                x-agora-message-detail: "User retrieved"
+                user: user details
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /shared/shareworkspace:
+    post:
+      tags:
+      - Sharing
+      summary: Share a workspace with another user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityId:
+                  type: integer
+                  description: The ID of the workspace to be shared.
+                  example: '123'
+                entityType:
+                  type: string
+                  description: Type of entity being shared.
+                  example: 'workspace'
+                shareUserId:
+                  type: string
+                  description: The id of the user with whom to share the workspace.
+                  example: '123'
+                ownerUserId:
+                  type: string
+                  description: The id of the user that owns the workspace.
+                  example: '123'
+                permissionLevel:
+                  type: string
+                  description: The permission level for the shared user.
+                  enum: [view, edit, discussion]
+                  example: view
+                canCopy:
+                  type: boolean
+                  description: Whether user can copy workspace or not.
+                  example: false
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              example:
+                message: Workspace shared successfully
+                sharedEntityId: "123"
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /shared/removeShare:
+    delete:
+      tags:
+      - Sharing
+      summary: Remove a shared user from a workspace by ID.
+      parameters:
+        - name: entityId
+          in: query
+          description: The ID of the workspace from which to remove the shared user.
+          required: true
+          schema:
+            type: string
+            example: '123'
+        - name: sharedUserId
+          in: query
+          description: The ID of the user to be removed from the shared workspace.
+          required: true
+          schema:
+            type: string
+            example: "sharedUser123"
+      responses:
+        '200':
+          description: Success response.
+          content:
+            application/json:
+              example:
+                message: Shared user removed successfully
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /shared/shared-entity/{entityId}:
+    get:
+      tags:
+      - Sharing
+      summary: Get all shared users by workspace ID
+      description: Retrieve all shared users related to a specific workspace ID.
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: string
+          description: The ID of the workspace for which shared users should be retrieved.
+          example: '123'
+      responses:
+        '200':
+          description: Successful response. Returns a list of shared users.
+          content:
+            application/json:
+              example:
+                - entityId: '123'
+                  entityType: workspace
+                  shareUserId: '456'
+                  ownerUserId: '789'
+                  permissionLevel: view
+                  canCopy: false
+                - entityId: '123'
+                  entityType: workspace
+                  shareUserId: '789'
+                  ownerUserId: '456'
+                  permissionLevel: edit
+                  canCopy: true
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /shared/getPermission:
+    get:
+      tags:
+      - Sharing
+      summary: Get permission for a user
+      description: Retrieve the permission for a specific user.
+      parameters:
+        - in: query
+          name: entityId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the entity for which the permission level should be retrieved.
+          example: '123'
+      responses:
+        '200':
+          description: Successful response. Returns the permission level.
+          content:
+            application/json:
+              example:
+                permission_level: edit
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /shared/updatePermission:
+    put:
+      tags:
+      - Sharing
+      summary: Update permission level for a shared entity
+      description: Update the permission level of a shared entity (e.g., workspace) for a specific user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityId:
+                  type: integer
+                  description: The ID of the entity (e.g., workspace) for which the permission level should be updated.
+                  example: 123
+                sharedUserId:
+                  type: string
+                  description: The ID of the user for whom the permission level should be updated.
+                  example: user123
+                permissionLevel:
+                  type: string
+                  description: The new permission level for the shared user.
+                  example: view
+      responses:
+        '200':
+          description: Successful response. Returns a message indicating successful permission update.
+          content:
+            application/json:
+              example:
+                message: Permission updated successfully for the shared user.
+          headers:
+            x-agora-message-title:
+              schema:
+                type: string
+              description: Title of Agora API message
+            x-agora-message-message:
+              schema:
+                type: string
+              description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.org/api/v1/auth
