@@ -222,9 +222,10 @@ async function makeAPICall() {
     citationsContainer.hidden = true;
     
     
-
-    var selectedValue = this.value; // This is either set to "notes" or "paper"
+    var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
+
+    if ( selectedValue != 'notes' && selectedValue != 'paper' ) return;
 
     // Define the data you want to send in the request body
     let requestData = {
