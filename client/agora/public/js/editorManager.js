@@ -1249,8 +1249,3 @@ function createUserProfile( profile, workspace ) {
 
     return li;
 }
-
-async function refreshSharedUserList( ) {
-    // Call fetchAndDisplaySharedUsers again to update the shared user list
-    createTopicEditorGui();
-}

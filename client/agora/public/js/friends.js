@@ -12,7 +12,8 @@ var authUser = [ ];
 var friends = [ ];
 var requests = [ ];
 
-// gets the authenticated user, their friends and sent friend requests
+// gets the authenticated user, their friends and sent friend requests, as well as the number of sent 
+// friend requests
 window.onload = () => {
     
     fetch( "/api/v1/auth/friends/getResources", {
@@ -25,6 +26,7 @@ window.onload = () => {
             friends.push( response[1] );
             requests.push( response[2] );
             let requestCount = response[3][0].count;
+            // let user know they have a friend request
             if ( requestCount > 0 ){
                 let span = document.createElement( "span" );
                 span.textContent = requestCount;
@@ -45,6 +47,8 @@ if ( searchButton ) {
             .then( ( response ) =>  response.json() )
             .then( ( response ) => {
     
+                // prevent cards from appearing for users
+                // that are friends or have requests sent to
                 for ( let i = 0; i < response.length; i++ ) {
                     var data = response[i];
                     var isFriend = false;
@@ -101,7 +105,7 @@ function createUserCard( userData ){
     userContainer.appendChild( rowDiv );
     friendsDashboard.appendChild( userContainer );
     
-    
+    // sends the request to the user
     userContainer.addEventListener( 'click', () => {
         if( confirm( "Are you sure you want to send a friend request to " + userData.username + "?" ) == true ){
             userContainer.style.display = "none";

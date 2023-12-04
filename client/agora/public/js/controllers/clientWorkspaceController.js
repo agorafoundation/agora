@@ -141,6 +141,7 @@ const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = '
     return null;
 };
 
+// used for permission checks
 const getPermission = async ( workspaceId ) => {
     return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
         method: "GET",
@@ -161,6 +162,7 @@ const getPermission = async ( workspaceId ) => {
         } );
 };
 
+// for displaying shared users in a workspace
 const getAllSharedUsersForWorkspace = async ( id ) => {
     ( debug ) ? console.log( "getAllSharedUsersForWorkspace() - Start - id: " + id ) : null;
     const response = await fetch( "/api/v1/auth/shared/shared-entity/" + id, {
@@ -176,6 +178,7 @@ const getAllSharedUsersForWorkspace = async ( id ) => {
     }
 };
 
+// for displaying workspace owner
 const getWorkspaceOwner = async ( ownerId ) => {
     ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
     const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
@@ -191,6 +194,7 @@ const getWorkspaceOwner = async ( ownerId ) => {
     }
 };
 
+// for updating a user's permission
 const updatePermission = async ( id, permission, profile ) => {
     ( debug ) ? console.log( "updatePermission() : Start" ) : null;
     if( id && profile ) {

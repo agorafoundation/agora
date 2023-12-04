@@ -554,7 +554,7 @@ paths:
           required: true
           description: The ID of the shared workspace.
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Successfully retrieved
@@ -590,7 +590,7 @@ paths:
           required: true
           description: The ID of the shared workspace to be removed.
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Successfully removed
@@ -627,7 +627,7 @@ paths:
           required: true
           description: The ID of the workspace.
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Successfully retrieved
@@ -1970,7 +1970,7 @@ paths:
               type: object
               properties:
                 entityId:
-                  type: integer
+                  type: string
                   description: The ID of the workspace to be shared.
                   example: '123'
                 entityType:
@@ -2123,7 +2123,7 @@ paths:
           name: entityId
           required: true
           schema:
-            type: integer
+            type: string
           description: The ID of the entity for which the permission level should be retrieved.
           example: '123'
       responses:
@@ -2164,9 +2164,9 @@ paths:
               type: object
               properties:
                 entityId:
-                  type: integer
+                  type: string
                   description: The ID of the entity (e.g., workspace) for which the permission level should be updated.
-                  example: 123
+                  example: '123'
                 sharedUserId:
                   type: string
                   description: The ID of the user for whom the permission level should be updated.
