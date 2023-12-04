@@ -29,10 +29,10 @@ exports.callOpenAI = async ( req, res ) => {
     let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
 
     if ( resourceContent ) {
-        let parsedResourceContent = parseResourceContentHtml( resourceContent );
+        let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
-            let prompt = createPaperPrompt( parsedResourceContent[0], removedArticles ); // get the first 
+            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0], removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
@@ -42,7 +42,7 @@ exports.callOpenAI = async ( req, res ) => {
                     model: "gpt-3.5-turbo",
                     temperature: 0, // variance in the response - play with this for different results
                     messages: [ 
-                        { role: "system", content: "You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff." },
+                        { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
                         { role: "user", content: prompt }
                     ]
                 } );
@@ -105,6 +105,29 @@ function createPaperPrompt( abstract, ignoredArticles ) {
     return basePrompt;
 }
 
+function createNotesPrompt( notes, ignoredArticles ) {
+    let basePrompt = `I am writing notes. Please return literature that is related to my notes, but also any literature you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+
+            Here are my notes:
+            '''
+            ${notes}
+            '''
+            `;
+    
+
+    if ( ignoredArticles ) {
+        let removedArticles = "Please don't return the articles that match the following:\n";
+
+        ignoredArticles.forEach( article => {
+            removedArticles +=  article.title + " by " + article.authors[0];
+        } );
+
+        basePrompt += removedArticles;
+    }
+
+    return basePrompt;
+}
+
 
 /**
  * Parses resource content for paragraphs longer than min length.
@@ -119,7 +142,7 @@ const parseResourceContentHtml = ( content ) => {
 
     // removing all html tags in individual strings
     for ( var i = 0; i < paragraphs.length; i++ ) {
-        paragraphs[i] = paragraphs[i].replace( /<[^>]*>/g, '' ).trim();
+        paragraphs[i] = parseOutHtmlTags( paragraphs[i] );
     }
 
     // shifting array to ignore first empty string
@@ -127,6 +150,10 @@ const parseResourceContentHtml = ( content ) => {
 
     // filter out all paragraphs with length less than min
     return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
+};
+
+const parseOutHtmlTags = ( text ) => {
+    return text.replace( /<[^>]*>/g, '' ).trim();
 };
 
 /** 
