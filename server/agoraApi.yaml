@@ -1442,6 +1442,47 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  /ai/suggest:
+    get:
+      tags:
+        - AI
+      summary: Retrieves existing suggested article
+      parameters:
+        - in: mode
+          name: mode
+          schema:
+            type: string
+          description: Paper or Notes
+        - in: resourceId
+          name: resourceId
+          schema:
+            type: string
+          description: The Resource Id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/AI"
+        headers:
+          x-agora-message-title:
+            schema:
+              type: string
+            description: Title of Agora API message
+          x-agora-message-message:
+            schema:
+              type: string
+            description: Message of Agora API message
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 
 servers:
   - url: http://localhost:4200/api/v1/auth
@@ -1908,6 +1949,28 @@ components:
           type: integer
         dislikes:
           type: integer
+    AI:
+      type: object
+      properties:
+        citations:
+          type: array
+        keywords:
+          type: array
+      example:
+        citations:
+          - title: 'GPT-3: Language Models are Few-Shot Learners'
+            authors: Tom B. Brown et al.
+            publication: arXiv
+            publicationDate: 2020
+            link: https://arxiv.org/abs/2005.14165,
+            summary: This paper introduces GPT-3, a state-of-the-art language model, and demonstrates its ability to perform various language tasks with minimal training.
+        keywords:
+          - "quality sources"
+          - "research"
+          - "keyword search"
+          - "information retrieval"
+          - "citations"
+          - "large language models"
     Search:
       type: object
       properties:
