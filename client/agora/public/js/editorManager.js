@@ -40,6 +40,7 @@ let totalNumberResources = 0;
 let activeHeightObj = {};
 let activeHeightList = [];
 
+let lastEditedResourceId;
 
 /**=
  * Public functions exported from this module
@@ -281,6 +282,11 @@ const createTopicEditorGui = async function ( ) {
                     if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
                                         
                         let editor = "sunEditor-" + ( currentResource.resourceId );
+
+                        document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
+                            lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
+                            document.getElementById( "current-document" ).innerHTML = currentResource.resourceName; // Set the name in the Modal
+                        } );
 
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].setContents( currentResource.resourceContentHtml );
