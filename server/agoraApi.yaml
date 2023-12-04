@@ -2232,10 +2232,6 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-<<<<<<< HEAD
-
-=======
->>>>>>> 4b2e65c1fd848061818513896a59e4c7c9031799
 servers:
   - url: http://localhost:4200/api/v1/auth
   - url: http://freeagora.org/api/v1/auth
