@@ -222,7 +222,6 @@ async function makeAPICall() {
     citationsContainer.hidden = true;
     
     
-
     var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
 
