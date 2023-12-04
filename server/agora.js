@@ -27,7 +27,6 @@ app.use(
     } )
 );
 app.use( bodyParser.json() );
-//app.use( responseHooks() );
 
 
 // cross origin

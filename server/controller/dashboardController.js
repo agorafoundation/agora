@@ -125,20 +125,14 @@ exports.getDashboard = async function( req, res ) {
     if( req.session.authUser ) {
         // set the first visit flag if this is the first visit
         firstVisit = req.session.authUser.desktopFirstVisit;
-        console.log( "req.session.authUser.desktopFirstVisit: " + req.session.authUser.desktopFirstVisit );
-
-        console.log( "firstVisit: " + firstVisit );
 
         if( firstVisit ) {
             // set the users flag to false so they don't see this again
             let user = req.session.authUser;
-            //user.desktopFirstVisit = false;
-            //await userService.updateUser( user );
+            user.desktopFirstVisit = false;
+            userService.saveUser( user );
         }
     }
-
-    console.log( "firstVisit 2: " + firstVisit );
-
 
     for( let i =0; i < ownerWorkspaces.length; i++ ) {
         // Get all topics Ids associated with our workspaceId.

@@ -21,6 +21,26 @@
             <%- include('./workspace-manager-modal.ejs');%>
             <%- include('./open-topic.ejs');%>  
 
+            <!-- Tutorial check -->
+            <%- include('./editor-tutorial.ejs'); %>
+
+            <%
+            if(firstVisit) {
+                %>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function(event) {
+                    let myModal = new bootstrap.Modal( document.getElementById( 'editor-tutorial-modal' ), {
+                        keyboard: true,
+                        backdrop: true
+                    } );
+                    myModal.show();
+                  });
+                </script>
+                <%
+    
+              }
+            %>
+
             <!--Workspace Title-->
             <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
                 <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">

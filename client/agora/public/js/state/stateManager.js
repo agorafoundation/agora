@@ -7,8 +7,8 @@ import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } f
 /**
  * Client side debugging flags
  */
-const debug = true;
-const dataDebug = true;
+const debug = false;
+const dataDebug = false;
 
 
 /**

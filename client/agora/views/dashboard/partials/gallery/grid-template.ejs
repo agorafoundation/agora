@@ -2,14 +2,14 @@
 <% const renderCard=(workspaceId,name,desc,tags,contentType, content)=> { 
   //stops text overflow
   if(name) {
-    name = name.slice(0,18)
+    name = name.slice(0,27)
 
   }
   else {
     name = "Untitled"
   }
   if(desc){
-    desc = desc.slice(0,180)
+    desc = desc.slice(0,95)
   }
   
   if (contentType === "Topic") { 

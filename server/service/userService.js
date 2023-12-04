@@ -169,6 +169,8 @@ exports.saveUser = async function( record ) {
         return false;
     }
 
+    console.log( "record first visit: " + record.desktopFirstVisit + " and " + record.editorFirstVisit );
+
     let currentEmail = await exports.verifyEmail( record.email );
     // if email exists do update, else create
     if( !currentEmail ) {
@@ -210,8 +212,8 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive ];
 
         try {
             
