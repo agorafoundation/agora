@@ -1018,6 +1018,13 @@ const getTopics = () => {
 window.addEventListener( 'load', () => {
     getTopics();
     toggleGrid();
+
+    // // eslint-disable-next-line no-undef
+    // let myModal = new bootstrap.Modal( document.getElementById( 'workspace-tutorial-modal' ), {
+    //     keyboard: true,
+    //     backdrop: true
+    // } );
+    // myModal.show();
 } );
 
 //what changes the DOM and modifies removed topics depending on search

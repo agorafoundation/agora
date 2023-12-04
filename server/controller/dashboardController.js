@@ -18,6 +18,7 @@ const workspaceService = require( '../service/workspaceService' );
 const topicService = require( '../service/topicService' );
 const resourceService = require( '../service/resourceService' );
 const tagService = require( '../service/tagService' );
+const userService = require( '../service/userService' );
 
 exports.getSharedDashboard = async function( req, res ) {
     
@@ -120,6 +121,25 @@ exports.getDashboard = async function( req, res ) {
     // create an empty workspace to use if the user creates a new one
     let workspace = Workspace.emptyWorkspace();
 
+    let firstVisit = false;
+    if( req.session.authUser ) {
+        // set the first visit flag if this is the first visit
+        firstVisit = req.session.authUser.desktopFirstVisit;
+        console.log( "req.session.authUser.desktopFirstVisit: " + req.session.authUser.desktopFirstVisit );
+
+        console.log( "firstVisit: " + firstVisit );
+
+        if( firstVisit ) {
+            // set the users flag to false so they don't see this again
+            let user = req.session.authUser;
+            //user.desktopFirstVisit = false;
+            //await userService.updateUser( user );
+        }
+    }
+
+    console.log( "firstVisit 2: " + firstVisit );
+
+
     for( let i =0; i < ownerWorkspaces.length; i++ ) {
         // Get all topics Ids associated with our workspaceId.
         let topicsIds = await workspaceService.getAllTopicsIdsForWorkspace( ownerWorkspaces[i].workspaceRid );
@@ -181,7 +201,7 @@ exports.getDashboard = async function( req, res ) {
 
     // make sure the user has access to this workspace (is owner)
     if( workspace.ownedBy === req.session.authUser.userId ) {
-        res.render( 'dashboard/dashboard', { ownerWorkspaces: ownerWorkspaces, workspace: workspace, ownerTopics: ownerTopics, topic: topic, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
+        res.render( 'dashboard/dashboard', { ownerWorkspaces: ownerWorkspaces, workspace: workspace, ownerTopics: ownerTopics, topic: topic, firstVisit, availableTopics: availableTopics, availableResources: availableResources, resource: resource, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
     }
     else {
         req.session.messageType = "warn";
