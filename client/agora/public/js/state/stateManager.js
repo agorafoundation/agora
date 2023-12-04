@@ -2,7 +2,7 @@
 import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
-import { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace } from "../controllers/clientWorkspaceController.js";
+import { createNewWorkspace, saveWorkspace, getWorkspace, getPermission, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission } from "../controllers/clientWorkspaceController.js";
 
 /**
  * Client side debugging flags
@@ -17,8 +17,14 @@ const dataDebug = false;
 // Workspace for the loaded editor
 let workspace = createNewResource;
 
+// Workspace owner for the loaded editor
+let workspaceOwner = createNewResource;
+
+// Workspace shared users for the loaded editor
+let workspaceSharedUsers = createNewResource;
+
 // Active topic for the chosen tab
-let activeTopic = createNewTopic();
+let activeTopic = createNewTopic;
 /*--------------------------------------------------------------------------------*/
 
 /**
@@ -32,8 +38,19 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     if( !workspace || workspace.workspaceId !== workspaceUuid ) {
         workspace = await getWorkspace( workspaceUuid );
-        if( !workspace ){
-            workspace = await getSharedWorkspace( workspaceUuid );
+        workspaceOwner = await getWorkspaceOwner( workspace.ownedBy );
+        workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
+        console.log( "workspace" + workspace );
+        console.log( "workspaceOwner" + workspaceOwner );
+        console.log( "workspaceSharedUsers" + workspaceSharedUsers );
+
+        const workspaceTitle = document.getElementById( "workspace-title" );
+        const workspaceDescription = document.getElementById( "workspace-desc" );
+        const tagBox = document.getElementById( "mySearch" );
+        if ( await getPermission( workspace.workspaceId ) == false ){
+            workspaceTitle.readOnly = true;
+            workspaceDescription.readOnly = true;
+            tagBox.readOnly = true;
         }
     }
     else {
@@ -41,7 +58,6 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     }
     ( debug & dataDebug ) ? console.log( "initializeWorkspace() : workspace: " + JSON.stringify( workspace ) ) : null; 
     ( debug ) ? console.log( "initializeWorkspace() : Complete" ) : null;
-
 };
 
 /**
@@ -53,11 +69,27 @@ const getCurrentWorkspace = ( ) => {
 };
 
 /**
+ * Getter for the current workspace owner
+ * @returns the current workspace owner
+ */
+const getCurrentWorkspaceOwner = ( ) => {
+    return workspaceOwner;
+};
+
+/**
  * Gettr for the current active topic
  * @returns the current active topic
  */
 const getCurrentActiveTopic = ( ) => {
     return activeTopic;
+};
+
+/**
+ * Getter for the current workspace
+ * @returns the current workspace
+ */
+const getCurrentWorkspaceSharedUsers = ( ) => { 
+    return workspaceSharedUsers;
 };
 
 /**
@@ -80,7 +112,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
 
         // get the resources for the active topic
         if( activeTopic ) {
-            const resources = await getResourcesForTopic( activeTopic.topicId );
+            let resources = await getResourcesForTopic( activeTopic.topicId );
             
             if( resources ) {
                 activeTopic.resources = await resources;
@@ -99,8 +131,7 @@ const setActiveTopicAndResources = async function ( topicId ) {
 
 const addNewTopic = async function ( topicName ) {
     ( debug ) ? console.log( "addNewTopic() : Start - topicName: " + topicName ) : null;
-
-    if( getCurrentWorkspace() ) {
+    if( getCurrentWorkspace() && await getPermission( getCurrentWorkspace().workspaceId ) ) {
         // create a new topic
         let newTopic = createNewTopic();
         newTopic.topicName = topicName;
@@ -117,7 +148,7 @@ const addNewTopic = async function ( topicName ) {
 
         // save the current workspace
         await saveWorkspace( getCurrentWorkspace() );
-        
+            
         ( debug ) ? console.log( "addNewTopic() : Complete" ) : null;
         return newTopic;
     }
@@ -130,18 +161,20 @@ const addNewTopic = async function ( topicName ) {
 };
 
 const updateTopicName = async function ( topicId, topicName ) {
-    ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+    if ( await getPermission( getCurrentWorkspace().workspaceId ) ){
+        ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
 
-    // get the topic from the current workspace
-    let topic = getCurrentWorkspace().topics.find( topic => topic.topicId === topicId );
+        // get the topic from the current workspace
+        let topic = getCurrentWorkspace().topics.find( topic => topic.topicId === topicId );
 
-    // update the topic name
-    topic.topicName = topicName;
+        // update the topic name
+        topic.topicName = topicName;
 
-    // save the topic
-    await saveTopic( topic );
+        // save the topic
+        await saveTopic( topic );
 
-    ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+        ( debug ) ? console.log( "saveActiveTopic() : Start" ) : null;
+    }
 };
 
 const saveActiveTopic = async function ( ) {
@@ -158,41 +191,44 @@ const saveActiveTopic = async function ( ) {
 };
 
 const deleteTopicFromWorkspace = async function ( topicId ) {
-    ( debug ) ? console.log( "deleteTopicFromWorkspace() : Start for topicId - " + topicId ) : null;
+    if( await getPermission( getCurrentWorkspace().workspaceId ) ){
+        ( debug ) ? console.log( "deleteTopicFromWorkspace() : Start for topicId - " + topicId ) : null;
 
-    // delete the topic and resources
-    await deleteTopic( topicId );
+        // delete the topic and resources
+        await deleteTopic( topicId );
 
-    // remove the topic from the current workspace
-    getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
+        // remove the topic from the current workspace
+        getCurrentWorkspace().topics = getCurrentWorkspace().topics.filter( topic => topic.topicId !== topicId );
 
-    // save the current workspace (deletes association with workspace)
-    await saveWorkspace( getCurrentWorkspace() );
+        // save the current workspace (deletes association with workspace)
+        await saveWorkspace( getCurrentWorkspace() );
 
     
     
-    ( debug ) ? console.log( "deleteTopicFromWorkspace() : Complete" ) : null;
+        ( debug ) ? console.log( "deleteTopicFromWorkspace() : Complete" ) : null;
+    }
 };
 
 const addNewTextResource = async function ( position ) {
 
+    if ( await getPermission( getCurrentWorkspace().workspaceId ) ){
+        ( debug ) ? console.log( "addNewTextResource() : Start" ) : null;
 
-    ( debug ) ? console.log( "addNewTextResource() : Start" ) : null;
+        // create a new resource
+        let resource = createNewResource();
 
-    // create a new resource
-    let resource = createNewResource();
+        // save the resource
+        await saveResource( resource );
 
-    // save the resource
-    await saveResource( resource );
+        // add the resource to the current topic in the correct position
+        getCurrentActiveTopic().resources.splice( position, 0, resource );
 
-    // add the resource to the current topic in the correct position
-    getCurrentActiveTopic().resources.splice( position, 0, resource );
-
-    // save the topic
-    await saveActiveTopic( );
+        // save the topic
+        await saveActiveTopic( );
 
 
-    ( debug ) ? console.log( "addNewTextResource() : Complete" ) : null;
+        ( debug ) ? console.log( "addNewTextResource() : Complete" ) : null;
+    }
 };
 
 function saveTextResource( resource, content ) {
@@ -213,6 +249,16 @@ function saveTextResource( resource, content ) {
     }
     ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
     
+}
+
+async function updateUserPermission( newWorkspace, newPermission, profile ) {
+    ( debug ) ? console.log( "updateUserPermission() : Start" ) : null;
+
+    // update the users permission
+    await updatePermission( newWorkspace, newPermission, profile );
+
+    ( debug ) ? console.log( "updateUserPermission() : Complete" ) : null;
+
 }
 
 /*--------------------------------------------------------------------------------*/
@@ -260,7 +306,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace };
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission};
 
 // Export GUI state
 export { tabs, activeTab };

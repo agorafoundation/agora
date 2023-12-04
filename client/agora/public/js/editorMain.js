@@ -22,7 +22,10 @@ import { deleteResource } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
 import { updateWorkspaceDom, createTopicEditorGui, editTopicName } from "./editorManager.js";
-import { saveWorkspace } from "./controllers/clientWorkspaceController.js";
+import { saveWorkspace, getPermission } from "./controllers/clientWorkspaceController.js";
+
+
+import { shareWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
 
@@ -34,6 +37,8 @@ window.addEventListener( "load", async () => {
 
     // initialize the workspace
     await initializeWorkspace( await getWorkspaceUuid() );
+
+    console.log( getCurrentWorkspace() );
 
     // retrieve the resources for the active topic, add them to the current state
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
@@ -114,25 +119,27 @@ async function addTopicEvent() {
 }
 
 async function deleteResourceEvent( resourceId ) {
-    let deleteConfirm = confirm( "Are you sure you want to delete this resource?" );
-    if( deleteConfirm ) {
+    if ( await getPermission( getCurrentWorkspace().workspaceId ) ){
+        let deleteConfirm = confirm( "Are you sure you want to delete this resource?" );
+        if( deleteConfirm ) {
         // get the resource id from the element
         //let resourceId = e.target.id.split( "-" )[1];
-        let response = await deleteResource( resourceId );
-        console.log( "response: " + response );
-        if ( response == "Success" ) {
+            let response = await deleteResource( resourceId );
+            console.log( "response: " + response );
+            if ( response == "Success" ) {
             // remove the resource from the currentTopic
-            getCurrentActiveTopic().resources = getCurrentActiveTopic().resources.filter( resource => resource.resourceId !== resourceId );
-            // save the current topic
-            saveActiveTopic();
-        }
-        console.log( "resourceId: " + resourceId );
+                getCurrentActiveTopic().resources = getCurrentActiveTopic().resources.filter( resource => resource.resourceId !== resourceId );
+                // save the current topic
+                saveActiveTopic();
+            }
+            console.log( "resourceId: " + resourceId );
 
-        // get the resource from the current state
-        //let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
+            // get the resource from the current state
+            //let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );
 
         // delete the resource
         //deleteResource( resource );
+        }
     }
 
 }

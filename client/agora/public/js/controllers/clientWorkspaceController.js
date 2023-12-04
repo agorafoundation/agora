@@ -105,18 +105,122 @@ const getWorkspace = async( id ) => {
     }
 };
 
-const getSharedWorkspace = async( id ) => {
-    ( debug ) ? console.log( "getSharedWorkspace() - Start - id: " + id ) : null;
-    const response = await fetch( "api/v1/auth/workspaces/shared/" + id, {
+
+// Function to share a workspace
+const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = 'view' ) => {
+    ( debug ) ? console.log( "shareWorkspace() : Start" )  : null;
+
+    try {
+        const response = await fetch( "api/v1/auth/shareworkspace", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                entityId: workspaceId,
+                sharedWithEmail: sharedWithEmail,
+                permissionLevel: permissionLevel,
+                canCopy: false  // Users can't copy the workspace on an initial share
+            } 
+            )
+        }
+        );
+
+        if ( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "shareWorkspace() : Workspace shared successfully: " + JSON.stringify( data ) ) : null;
+            return data;
+        } 
+        else {
+            const errorData = await response.json();
+            ( debug ) ? console.log( "shareWorkspace() : Error - " + errorData.message ) : null;
+        }
+    } 
+    catch ( error ) {
+        ( debug ) ? console.log( "shareWorkspace() : Exception - " + error.message ) : null;
+    }
+
+    return null;
+};
+
+// used for permission checks
+const getPermission = async ( workspaceId ) => {
+    return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+            if ( response.permission_level == "edit" ) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } )
+        .catch( ( error ) => {
+            console.error( "Error fetching permission:", error );
+            return false;
+        } );
+};
+
+// for displaying shared users in a workspace
+const getAllSharedUsersForWorkspace = async ( id ) => {
+    ( debug ) ? console.log( "getAllSharedUsersForWorkspace() - Start - id: " + id ) : null;
+    const response = await fetch( "/api/v1/auth/shared/shared-entity/" + id, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } );
 
     if( response.ok ){
-        const workspace = await response.json();
-        ( debug && dataDebug ) ? console.log( "getWorkspace() : workspace retrieved: " + JSON.stringify( workspace ) ): null;
-        ( debug ) ? console.log( "getSharedWorkspace() : Complete" ) : null;
-        return workspace.results;
+        const sharedUsers = await response.json();
+        ( debug && dataDebug ) ? console.log( "getAllSharedUsersForWorkspace() : shared workspace users retrieved: " + JSON.stringify( sharedUsers ) ): null;
+        ( debug ) ? console.log( "getAllSharedUsersForWorkspace() : Complete" ) : null;
+        return sharedUsers;
     }
 };
-export { createNewWorkspace, saveWorkspace, getWorkspace, getSharedWorkspace };
+
+// for displaying workspace owner
+const getWorkspaceOwner = async ( ownerId ) => {
+    ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
+    const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } );
+
+    if( response.ok ){
+        const workspaceOwner = await response.json();
+        ( debug && dataDebug ) ? console.log( "getWorkspaceOwner() : workspace owner retrieved: " + JSON.stringify( workspaceOwner ) ): null;
+        ( debug ) ? console.log( "getWorkspaceOwner() : Complete" ) : null;
+        return workspaceOwner;
+    }
+};
+
+// for updating a user's permission
+const updatePermission = async ( id, permission, profile ) => {
+    ( debug ) ? console.log( "updatePermission() : Start" ) : null;
+    if( id && profile ) {
+        const response = await fetch( "/api/v1/auth/shared/updatePermission/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                entityId: id.workspaceId,
+                permissionLevel: permission,
+                sharedUserId: profile.userId
+            } ),
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            
+            ( debug && dataDebug ) ? console.log( "updatePermission() permission updated : " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "updatePermission() : Permission updated" ) : null;
+            return data;
+        }
+    }
+    else {
+        ( debug ) ? console.log( "updatePermission() : Error - workspace and or shared user dont exist" ) : null;
+        return null;
+    }
+
+};
+
+export { createNewWorkspace, saveWorkspace, getWorkspace, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission, getPermission, shareWorkspace};
