@@ -40,7 +40,7 @@ let totalNumberResources = 0;
 let activeHeightObj = {};
 let activeHeightList = [];
 
-let lastEditedResourceId;
+export let lastEditedResourceId;
 
 /**=
  * Public functions exported from this module

@@ -1,5 +1,13 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2023 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
 
-import { getCurrentActiveTopic, lastEditedResourceId} from "./editorManager.js";
+// Imports
+import { getCurrentActiveTopic } from "./state/stateManager.js";
+import { lastEditedResourceId } from "./editorManager.js";
 
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
