@@ -8,26 +8,30 @@ const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContaine
 const citationsContainer = document.getElementById( 'citations-cont' );
 
 
-citationsDropdown.addEventListener( 'change', ( event ) => {
-    const citationType = event.target.value;
-    const articleInfoObj = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
-  
-    // return here if there is no article info in localstorage
-    if ( !articleInfoObj ) return;
+if( citationsDropdown ) {
+    citationsDropdown.addEventListener( 'change', ( event ) => {
+        const citationType = event.target.value;
+        const articleInfoObj = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
       
-    // get all card text elements
-    const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
-    
-    const allCitations = articleInfoObj.citations;
-    allCitationCards.forEach( ( cardTextElement, index ) => {
-        cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
+        // return here if there is no article info in localstorage
+        if ( !articleInfoObj ) return;
+          
+        // get all card text elements
+        const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
+        
+        const allCitations = articleInfoObj.citations;
+        allCitationCards.forEach( ( cardTextElement, index ) => {
+            cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
+        } );
     } );
-} );
+}
 
-document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
-    allCardsContainer.innerHTML = ""; // Clear the current cards.
-    await makeAPICall();
-} );
+if( document.getElementById( "regenerate-button" ) ) {
+    document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
+        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        await makeAPICall();
+    } );
+}
 
 // Copy Button Logic
 function enableCiteButtons() {
@@ -212,10 +216,13 @@ function getFirstNameLastNames( authors ) {
 var lastEditedResourceId; // This is set in the topic-view.js
 
 // Dropdown logic + Fetching data
-document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
-    await makeAPICall();
-    
-} );
+if( document.getElementById( 'doc-type' ) ) {
+    document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+        await makeAPICall();
+        
+    } );
+}
+
 
 async function makeAPICall() {
     loadingSpinnerContainer.hidden = false;
@@ -358,15 +365,20 @@ function processJsonData( articlesObj ) {
 }
 
 // Popover logic
-var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
-    trigger: 'manual'
-} );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
-    myPopover.show();
-} );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
-    myPopover.hide();
-} );
+if( document.getElementById( 'myPopover' ) ) {
+    
+    // eslint-disable-next-line no-undef
+    var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
+        trigger: 'manual'
+    } );
+    document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
+        myPopover.show();
+    } );
+    document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
+        myPopover.hide();
+    } );
+}
+
 
 
 // X button logic
