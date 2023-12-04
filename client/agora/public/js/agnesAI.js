@@ -1,5 +1,13 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2023 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
 
-// Citations logic
+// Imports
+import { getCurrentActiveTopic } from "./state/stateManager.js";
+import { lastEditedResourceId } from "./editorManager.js";
 
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
@@ -213,8 +221,6 @@ function getFirstNameLastNames( authors ) {
 
 }
 
-var lastEditedResourceId; // This is set in the topic-view.js
-
 // Dropdown logic + Fetching data
 if( document.getElementById( 'doc-type' ) ) {
     document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
@@ -237,7 +243,7 @@ async function makeAPICall() {
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
-        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getResources()[0], // get the first one if none are selected
+        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
         removedArticles: JSON.parse( localStorage.getItem( 'removed' ) ) ?? []
     };
 

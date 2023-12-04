@@ -43,6 +43,7 @@ let totalNumberResources = 0;
 let activeHeightObj = {};
 let activeHeightList = [];
 
+export let lastEditedResourceId;
 
 /**=
  * Public functions exported from this module
@@ -335,14 +336,19 @@ const createTopicEditorGui = async function ( ) {
                        
                     // TODO: evaluate what are these two??? why are there 2?
                     await createTextArea( getCurrentActiveTopic().resources[i], i );
-        
-                    if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
-                                        
-                        let editor = "sunEditor-" + ( currentResource.resourceId );
+             
+                    let editor = "sunEditor-" + ( currentResource.resourceId );
 
+                    if( currentResource.resourceContentHtml && currentResource.resourceContentHtml.length > 0 ){
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].setContents( currentResource.resourceContentHtml );
-                    }        
+                    }       
+                    
+                    document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
+                        lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
+                        document.getElementById( "current-document" ).innerHTML = currentResource.resourceName; // Set the name in the Modal
+                    } );
+
                 }
                 if ( getCurrentActiveTopic().resources.length === 0 ) {
                     // there are now resources, so show the empty state
