@@ -181,6 +181,7 @@ const getAllSharedUsersForWorkspace = async ( id ) => {
 // for displaying workspace owner
 const getWorkspaceOwner = async ( ownerId ) => {
     ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
+    console.log( "urbg: t2" );
     const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
         method: "GET",
         headers: { "Content-Type": "application/json" },

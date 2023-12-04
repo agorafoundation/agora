@@ -1488,6 +1488,7 @@ async function fetchAndDisplaySharedUsers( workspace ) {
             headers: { "Content-Type": "application/json" },
         } );
 
+        console.log( "urbg: t1" );
         const workspaceOwnerResponse = await fetch( `/api/v1/auth/user/userId/${workspace.ownedBy}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

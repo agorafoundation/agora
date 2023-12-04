@@ -38,6 +38,7 @@ const initializeWorkspace = async ( workspaceUuid ) => {
     ( debug ) ? console.log( "initializeWorkspace() : Start" ) : null;
     if( !workspace || workspace.workspaceId !== workspaceUuid ) {
         workspace = await getWorkspace( workspaceUuid );
+        console.log( " URBG workspace" + workspace );
         workspaceOwner = await getWorkspaceOwner( workspace.ownedBy );
         workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
         console.log( "workspace" + workspace );

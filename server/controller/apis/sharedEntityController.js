@@ -166,6 +166,7 @@ exports.removeSharedUserById = async ( req, res ) => {
         }
 
         // Fetch user details from the User model
+        console.log( "2" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             console.log( "1" );
@@ -207,6 +208,7 @@ exports.sharedWorkspace = async ( req, res ) => {
         }
 
         // Fetch user details from the User model
+        console.log( "3" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             return res.status( 404 ).json( { message: 'User not found' } );
@@ -295,6 +297,7 @@ exports.updatePermission = async ( req, res ) => {
             return res.status( 403 ).json( { message: 'User not authenticated' } );
         }
         // Fetch user details from the User model
+        console.log( "4" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             return res.status( 404 ).json( { message: 'User not found' } );
