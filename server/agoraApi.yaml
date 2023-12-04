@@ -1576,7 +1576,6 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-<<<<<<< HEAD
   /ai/suggest:
     get:
       tags:
@@ -1610,7 +1609,6 @@ paths:
             schema:
               type: string
             description: Message of Agora API message
-=======
   /friends/allFriends:
     get:
       summary: Get all friends
@@ -2226,7 +2224,6 @@ paths:
               schema:
                 type: string
               description: Message of Agora API message
->>>>>>> 4b2e65c1fd848061818513896a59e4c7c9031799
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
