@@ -16,6 +16,21 @@ const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContaine
 const citationsContainer = document.getElementById( 'citations-cont' );
 
 
+if( document.getElementById( "agnesModal" ) ) {
+    document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
+        let modal = document.querySelector( ".agnes-modal-pos" );
+        let agnesButton = document.querySelector( ".agnes-btn-container" );
+
+        let rect = agnesButton.getBoundingClientRect();
+        let top = ( window.innerHeight - window.scrollY ) - rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
+
+        // Set the 'top' value, only if it is currently unset.
+        if ( !modal.style.top ) {
+            document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
+        }
+    } );
+}
+
 if( citationsDropdown ) {
     citationsDropdown.addEventListener( 'change', ( event ) => {
         const citationType = event.target.value;
