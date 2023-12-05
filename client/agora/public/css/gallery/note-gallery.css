@@ -50,6 +50,30 @@
   margin-top: 15%;
 }
 
+.add-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 18rem;
+  margin-top: 20px; /* Adjust as needed */
+}
+
+.add-button {
+  border-radius: 50%; /* Makes the button circular */
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Adjust icon size as needed */
+}
+
+/* Optional: Add hover effect */
+.add-button:hover {
+  background-color: #007bff; /* Darker shade of primary color */
+  color: white;
+}
+
 /* Drop-down option */
 .dropbtn {
   background-color: none;

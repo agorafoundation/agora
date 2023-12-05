@@ -1,0 +1,111 @@
+<% //name:string, description:string, tags:array, content:array %>
+    <% const renderCard=(workspaceId,name,desc,tags,contentType, content)=> {
+        //stops text overflow
+        name = name.slice(0,18)
+        if(desc){
+        desc = desc.slice(0,180)
+        }
+        if (contentType === "Topic") {
+        %>
+
+        <!--Topic Card -->
+        <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-topic">
+            <div class="card h-100" id="t-gv-<%= workspaceId %>" onmouseover="toggleMoreOptionsOn(id)"
+                onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
+                <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="t-gv-option-<%= workspaceId %>"
+                    style="visibility: hidden">
+                    <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
+                    <%- include('./dropdown.ejs'); %>
+                </div>
+                <div class="card-body d-flex flex-column" id="topic">
+                    <h5 class="card-title" id="t-gv-card-title-<%= workspaceId %>">
+                        <%= name %>
+                    </h5>
+                    <p class="card-text mb-4" id="t-gv-card-desc-<%= workspaceId %>">
+                        <%= desc %>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <% for(let i=0; i < tags.length; i++) { %>
+                        <span class="badge badge-med topic-badge">
+                            <%= tags[i]%>
+                        </span>
+                        <% } %>
+                            <span class="badge badge-dark note-badge">
+                                <%= contentType %>
+                            </span>
+                </div>
+            </div>
+        </div>
+        <% } else if (contentType==="Workspace" ) { %>
+
+            <!--Workspace Card-->
+            <div class="col mb-3 align-items-stretch gallery-col query-countable view-check a-workspace">
+                <div class="card h-100" id="w-gv-<%= workspaceId %>" onmouseover="toggleMoreOptionsOn(id)"
+                    onmouseout="toggleMoreOptionsOff(id)" onclick="topicReroute(id, false, null)">
+                    <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="w-gv-option-<%= workspaceId %>"
+                        style="visibility: hidden">
+                        <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
+                        <%- include('./dropdown.ejs'); %>
+                    </div>
+                    <div class="card-body d-flex flex-column" id="workspace">
+                        <h5 class="card-title" id="w-gv-card-title-<%= workspaceId %>">
+                            <%= name %>
+                        </h5>
+                        <div id="w-gv-card-desc-<%= workspaceId %>">
+                            <%= desc %>
+                        </div>
+                        <div>
+                            <% if (content) { %>
+                                <ul class="list-group list-group-flush list-grid">
+                                    <% content.slice(0,6).forEach((item)=> {
+                                        if(item) {
+                                        //stops overflow of text
+                                        item = item.slice(0,12)%>
+                                        <!--topicReroute() below has a filler id-->
+
+                                        <li class="list-group-item item-list" title='Open <%=item.slice(0,3)%>'> <span
+                                                class="material-icons document-icon">&nbsp;description</span><span
+                                                class="item-list-text">
+                                                <%= item %>
+                                            </span></li>
+                                        <% }}) %>
+                                </ul>
+                                <% } %>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <% for(let i=0; i < tags.length; i++) { %>
+                            <span class="badge badge-med topic-badge">
+                                <%= tags[i]%>
+                            </span>
+                            <% } %>
+                                <span class="badge badge-dark note-badge">
+                                    <%= contentType %>
+                                </span>
+                    </div>
+                </div>
+            </div>
+            <% } } %>
+
+                <div id="grid-container" style="display: none">
+
+                    <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
+
+                    <%
+                        for (let i = 0; i <  sharedWorkspaces.length ; i++) { 
+                            let topics = [];
+                            let tags = [];
+                            topics = sharedWorkspaces[i].topics.map(a => a.topicName);
+                            tags = sharedWorkspaces[i].tags.map(a => a.tag);
+                            renderCard(sharedWorkspaces[i].workspaceId,sharedWorkspaces[i].workspaceName,sharedWorkspaces[i].workspaceDescription,tags,"Workspace", topics); 
+                        }
+
+                    %>
+                        
+                    <%=//c console.log(sharedWorkspaces[0]) %>
+
+                    </div>
+                </div>
+
+            </div>

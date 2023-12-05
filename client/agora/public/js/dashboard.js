@@ -431,6 +431,7 @@ const createNewTopic = async () => {
 
 //creates a empty topic
 const createNewWorkspace = async () => {
+    console.log( "about to send workspace!!!!!" );
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1044,6 +1045,13 @@ const getTopics = () => {
 window.addEventListener( "load", () => {
     getTopics();
     toggleGrid();
+
+    // // eslint-disable-next-line no-undef
+    // let myModal = new bootstrap.Modal( document.getElementById( 'workspace-tutorial-modal' ), {
+    //     keyboard: true,
+    //     backdrop: true
+    // } );
+    // myModal.show();
 } );
 
 //what changes the DOM and modifies removed topics depending on search
@@ -1239,6 +1247,52 @@ function getOffset( el ) {
         left: rect.left + window.scrollX,
         top: rect.top + window.scrollY,
     };
+}
+
+const friendsContainer = document.querySelectorAll( '#friend-card' );
+
+function filterFriends( searchTerm ){
+
+    for ( const friend of friendsContainer ){
+
+        const friendCard = friend.outerText.toLowerCase();
+
+        if ( friendCard.includes( searchTerm.toLowerCase() ) ){
+            friend.style.display = 'block';
+        }
+        else {
+            friend.style.display = 'none';
+        }
+    }
+}
+
+function deleteFriend( friendshipId ) {
+    if ( confirm( "Are you sure you want to remove this friend?" ) == true ){
+        fetch( "/api/v1/auth/friends/deleteFriend", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                "friendshipId": friendshipId,
+            } )
+        } )
+            .then( ( response ) => {
+                if ( response.status == 200 ) {
+                    const message = 'Friend deleted successfully';
+                    console.log( message );
+                    alert( message );
+                    location.reload();
+                }
+                else{
+                    const errorMessage = 'Failed to delete friend.';
+                    console.error( errorMessage );
+                    alert( errorMessage );
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error deleting friend:', error );
+                alert( 'Error deleting friend: ' + error );
+            } );
+    }
 }
 
 // manage highlighting of control bar buttons

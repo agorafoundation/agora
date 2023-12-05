@@ -8,11 +8,33 @@
     <!-- Gallery View-->
     <%- include('./side-menu/side-menu.ejs'); %> 
     <%- include('./partials/gallery/note-gallery.ejs') %>
+    
     <!-- Legacy About Section-->
     <section class="page-section-top-padded mb-0" id="about">
       <div class="container navbar-interior font-weight-bold text-primary right-of-bar">
+
+        <%- include('./partials/dashboard-tutorial.ejs'); %>
+
+        <%
+          if(firstVisit) {
+            %>
+            <%- include('../partials/message'); %> 
+            <script>
+              document.addEventListener("DOMContentLoaded", function(event) {
+                let myModal = new bootstrap.Modal( document.getElementById( 'workspace-tutorial-modal' ), {
+                    keyboard: true,
+                    backdrop: true
+                } );
+                myModal.show();
+              });
+            </script>
+            <%
+
+          }
+        %>
         
-        <%- include('../partials/message'); %> 
+        
+
         
       </div>
 

@@ -169,6 +169,8 @@ exports.saveUser = async function( record ) {
         return false;
     }
 
+    console.log( "record first visit: " + record.desktopFirstVisit + " and " + record.editorFirstVisit );
+
     let currentEmail = await exports.verifyEmail( record.email );
     // if email exists do update, else create
     if( !currentEmail ) {
@@ -178,9 +180,9 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, desktop_first_visit, editor_first_visit, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.desktopFirstVisit, record.editorFirstVisit, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
 
         try {
              
@@ -210,8 +212,8 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, subscription_active=$4 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.subscriptionActive ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive ];
 
         try {
             
@@ -259,15 +261,16 @@ exports.reValidateEmail = async function( email ) {
  */
 exports.getActiveUserById = async function( id ) {
     const text = "SELECT * FROM users WHERE user_id = $1;";
+    console.log( "user id : " + id );
     const values = [ id ];
     
     try {
-        console.log( "u-1" );
+        //console.log( "u-1" );
         let res = await db.query( text, values );
-        console.log( "u-2" );
+        //console.log( "u-2" );
         if( res.rows.length > 0 ) {
             let user = User.ormUser( res.rows[0] );
-            console.log( "u-1 user: " + JSON.stringify( user ) );
+            //console.log( "u-1 user: " + JSON.stringify( user ) );
 
             // get roles for the user
             let userRoles = await exports.getActiveRolesForUserId( user.userId );
@@ -316,19 +319,25 @@ exports.getActiveUserById = async function( id ) {
     }
 };
 
-
-
-
+/**
+ * Gets users by partial username
+ * @param {*} username 
+ * @returns Users searched with partial username
+ */
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
+    let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
     let values = [ username ];
+    let users = [];
     
     try {
          
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            return User.ormUser( res.rows[0] );
+            for ( let i = 0; i < res.rows.length; i++ ){
+                users.push( User.ormUser( res.rows[i] ) );
+            }
+            return users;
         }
         else {
             return false;
@@ -367,7 +376,11 @@ exports.getUserByStripeCustomerId = async function( stripeCustomerId ) {
     }
 };
 
-
+/**
+ * Gets a user by their email
+ * @param {*} email 
+ * @returns User details
+ */
 exports.getUserByEmail = async function( email ) {
     let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
     let values = [ email ];

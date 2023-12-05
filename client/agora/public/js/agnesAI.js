@@ -1,43 +1,60 @@
+/**
+ * Agora - Close the loop
+ * © 2021-2023 Brian Gormanly
+ * BSD 3-Clause License
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ */
 
-// Citations logic
+// Imports
+import { getCurrentActiveTopic } from "./state/stateManager.js";
+import { lastEditedResourceId } from "./editorManager.js";
 
 // citation dropdown functionality
 const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
+const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
+const citationsContainer = document.getElementById( 'citations-cont' );
 
-document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
-    let modal = document.querySelector( ".agnes-modal-pos" );
-    let agnesButton = document.querySelector( ".agnes-btn-container" );
 
-    let rect = agnesButton.getBoundingClientRect();
-    let top = ( window.innerHeight - window.scrollY ) - rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
+if( document.getElementById( "agnesModal" ) ) {
+    document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
+        let modal = document.querySelector( ".agnes-modal-pos" );
+        let agnesButton = document.querySelector( ".agnes-btn-container" );
 
-    // Set the 'top' value, only if it is currently unset.
-    if ( !modal.style.top ) {
-        document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
-    }
-} );
+        let rect = agnesButton.getBoundingClientRect();
+        let top = ( window.innerHeight - window.scrollY ) - rect.top; // get the entire page height, subtract the top value of the button from it to get the spot right above the button.
 
-citationsDropdown.addEventListener( 'change', ( event ) => {
-    const citationType = event.target.value;
-    const articleInfoObj = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
-  
-    // return here if there is no article info in localstorage
-    if ( !articleInfoObj ) return;
-      
-    // get all card text elements
-    const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
-    
-    const allCitations = articleInfoObj.citations;
-    allCitationCards.forEach( ( cardTextElement, index ) => {
-        cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
+        // Set the 'top' value, only if it is currently unset.
+        if ( !modal.style.top ) {
+            document.querySelector( ".agnes-modal-pos" ).style.top = ( top - 40 ) + "px";
+        }
     } );
-} );
+}
 
-document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
-    allCardsContainer.innerHTML = ""; // Clear the current cards.
-    await makeAPICall();
-} );
+if( citationsDropdown ) {
+    citationsDropdown.addEventListener( 'change', ( event ) => {
+        const citationType = event.target.value;
+        const articleInfoObj = JSON.parse( localStorage.getItem( 'last-retrieved' ) ?? 'null' );
+      
+        // return here if there is no article info in localstorage
+        if ( !articleInfoObj ) return;
+          
+        // get all card text elements
+        const allCitationCards = document.querySelectorAll( 'span.card-citation-text' );
+        
+        const allCitations = articleInfoObj.citations;
+        allCitationCards.forEach( ( cardTextElement, index ) => {
+            cardTextElement.textContent = formatCitationByType( allCitations[index], citationType );
+        } );
+    } );
+}
+
+if( document.getElementById( "regenerate-button" ) ) {
+    document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
+        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        await makeAPICall();
+    } );
+}
 
 // Copy Button Logic
 function enableCiteButtons() {
@@ -219,22 +236,29 @@ function getFirstNameLastNames( authors ) {
 
 }
 
-var lastEditedResourceId; // This is set in the topic-view.js
-
 // Dropdown logic + Fetching data
-document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
-    allCardsContainer.innerHTML = ""; // Clear the current cards.
-    await makeAPICall();
-} );
+if( document.getElementById( 'doc-type' ) ) {
+    document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+        await makeAPICall();
+        
+    } );
+}
+
 
 async function makeAPICall() {
-    var selectedValue = this.value; // This is either set to "notes" or "paper"
+    loadingSpinnerContainer.hidden = false;
+    citationsContainer.hidden = true;
+    
+    
+    var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
+
+    if ( selectedValue != 'notes' && selectedValue != 'paper' ) return;
 
     // Define the data you want to send in the request body
     let requestData = {
         mode: selectedValue, // Use the selected mode
-        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getResources()[0], // get the first one if none are selected
+        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
         removedArticles: JSON.parse( localStorage.getItem( 'removed' ) ) ?? []
     };
 
@@ -261,9 +285,17 @@ async function makeAPICall() {
 
                 enableXButtons();
                 enableCiteButtons();
+
+                loadingSpinnerContainer.hidden = true;
+                citationsContainer.hidden = false;
+
             }
             else {
                 // Create a card to display the error of not finding any articles
+
+                loadingSpinnerContainer.hidden = true;
+                citationsContainer.hidden = false;
+
                 const card = document.createElement( 'div' );
                 card.classList.add( 'container', 'citation-card' );
                 
@@ -281,8 +313,13 @@ async function makeAPICall() {
         }
         else {
             selectedContent.classList.remove( 'hidden' );
+            loadingSpinnerContainer.hidden = true;
+            citationsContainer.hidden = false;
+
+            
 
             let responseJson = await response.json();
+
 
             // Create a card to display the error of not finding any articles
             const card = document.createElement( 'div' );
@@ -302,6 +339,8 @@ async function makeAPICall() {
     }
     catch ( error ) {
         // Handle network or other errors here
+        loadingSpinnerContainer.hidden = true;
+        citationsContainer.hidden = false;
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
 }
@@ -348,15 +387,20 @@ function processJsonData( articlesObj ) {
 }
 
 // Popover logic
-var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
-    trigger: 'manual'
-} );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
-    myPopover.show();
-} );
-document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
-    myPopover.hide();
-} );
+if( document.getElementById( 'myPopover' ) ) {
+    
+    // eslint-disable-next-line no-undef
+    var myPopover = new bootstrap.Popover( document.getElementById( 'myPopover' ), {
+        trigger: 'manual'
+    } );
+    document.getElementById( 'myPopover' ).addEventListener( 'mouseenter', function () {
+        myPopover.show();
+    } );
+    document.getElementById( 'myPopover' ).addEventListener( 'mouseleave', function () {
+        myPopover.hide();
+    } );
+}
+
 
 
 // X button logic

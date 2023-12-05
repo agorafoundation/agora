@@ -4,52 +4,55 @@
     <%- include('../../../partials/head'); %>
   </head>
 
-  <body class="dashboard-content">
-    <!--File Upload Drop Zone-->
-    <!-- <div class="drop-zone"> -->
-    <!-- <span class="drop-zone__prompt"></span> -->
-    <!-- <input type="file" name="resourceImageField" class="drop-zone__input" /> -->
+    <body class="dashboard-content editor-body">
+        <!--File Upload Drop Zone-->
+        <!-- <div class="drop-zone"> -->
+            <!-- <span class="drop-zone__prompt"></span> -->
+            <!-- <input type="file" name="resourceImageField" class="drop-zone__input" /> -->
+            
+        <div class="topic-body">
+            
 
-    <div class="topic-body">
-      <!--Side Nav-->
-      <%- include('../../side-menu/side-menu.ejs');%>
+            <!--Side Nav-->
+            <%- include('../../side-menu/side-menu.ejs');%> 
+            
+            <!--Workspace Manager Modal-->
+            <%- include('./workspace-manager-modal.ejs');%>
+            <%- include('./open-topic.ejs');%>  
 
-      <!--Workspace Manager Modal-->
-      <%- include('./workspace-manager-modal.ejs');%> <%-
-      include('./open-topic.ejs');%>
+            <!-- Tutorial check -->
+            <%- include('./editor-tutorial.ejs'); %>
 
-      <!--Workspace Title-->
-      <div
-        class="header"
-        id="title-div"
-        style="background-color: #17191a; margin-bottom: 0"
-      >
-        <input
-          class="placeholder"
-          id="workspace-title"
-          type="text"
-          placeholder="Untitled"
-        />
-      </div>
-      <div
-        class="header-div"
-        style="
-          height: 8vh;
-          background-color: #17191a;
-          border-bottom: solid;
-          border-color: #818181;
-        "
-      >
-        <!--Workspace Description-->
-        <div class="header" id="tag-div">
-          <label class="label">Description:</label>
-          <!--<textarea class="descriptionTA" id="workspace-desc" ></textarea>-->
-          <input
-            type="text"
-            id="workspace-desc"
-            class="placeholder"
-            placeholder=" Add description..."
-          />
+            <%
+            if(firstVisit) {
+                %>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function(event) {
+                    let myModal = new bootstrap.Modal( document.getElementById( 'editor-tutorial-modal' ), {
+                        keyboard: true,
+                        backdrop: true
+                    } );
+                    myModal.show();
+                  });
+                </script>
+                <%
+    
+              }
+            %>
+
+            <!--Workspace Title-->
+            <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
+                <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+            </div>
+            <div class="header-div" style="height: 8vh; background-color: #17191a; border-bottom: solid;border-color: #818181;">
+
+                <!--Workspace Description-->
+                <div class="header" id="tag-div">
+                    <label class="label">Description:</label>
+                    <!--<textarea class="descriptionTA" id="workspace-desc" ></textarea>-->
+                    <input type="text" id="workspace-desc" class="placeholder" placeholder=" Add description...">
+                
+
 
           <label class="label">Tags:</label>
           <input
@@ -69,19 +72,17 @@
         <!--More Options-->
         <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
 
-        <!--Discussions-->
-        <span
-          class="material-symbols-outlined discussion-button"
-          title="Discussons"
-          data-bs-toggle="modal"
-          data-bs-target="#discussion-modal"
-          style="color: rgb(212, 202, 202)"
-        >
-          forum
-        </span>
-        <%-include('./discussion-modal.ejs'); %>
-        <%-include('./comment-template.ejs'); %>
-
+                <!--Discussions-->
+                <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
+                    forum
+                </span>
+                <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
+                    share
+                </span>
+                <%-include('./discussion-modal.ejs'); %>
+                <%-include('./comment-template.ejs'); %>
+                <%-include('./share-modal.ejs'); %>
+        
         <!-- AI - Agnes with Modal Trigger -->
         <div class="agnes-btn-container">
           <span
@@ -96,7 +97,6 @@
         </div>
         
         <%- include('./agnes-modal.ejs'); %>
-        <!-- <%- include('./agnes-data-template.ejs'); %> -->
 
         <!--Sharing-->
         <!-- URBG TODO: removed until sharing is implemented-->
@@ -106,47 +106,39 @@
                  <%- include('./share-modal.ejs'); %> -->
       </div>
 
-      <!-- <div class="hidden" id="file-display"> -->
-      <!--<%- include('./file-display'); %>-->
-      <!-- </div> -->
+            <!-- <div class="hidden" id="file-display"> -->
+            <!--<%- include('./file-display'); %>-->
+            <!-- </div> -->
 
-      <div id="topic-background" style="background-color: #17191a">
-        <!-- Tabs -->
-        <div class="tab" style="background-color: #17191a">
-          <span
-            id="new-element"
-            class="material-symbols-outlined"
-            style="color: white"
-            >add</span
-          >
-        </div>
-
-        <!--Workspace Empty State -->
-        <div id="workspace-empty-state">
-          <div class="topic-content">
-            <div class="drop-zone" id="drop-zone0">
-              <div class="dropzone-filler"></div>
-
-              <div id="resources-zone0" class="resources-zone">
-                <div class="empty-state" id="empty-state0">
-                  <label class="empty-state-text"
-                    ><h3>Your Workspace is Empty</h3></label
-                  >
-                  <label class="empty-state-text"
-                    >Drop a file or tap the + above to get started!</label
-                  >
+            <div id="topic-background" style="background-color:#17191a">
+                <!-- Tabs -->
+                <div class="tabBar" title="Topic name - Long press to edit" style="background-color: #17191a">
+                    <span id="new-element" class="material-symbols-outlined" style="color: white">add</span>
                 </div>
-              </div>
-              <input
-                type="file"
-                name="resourceImageField"
-                class="drop-zone__input"
-              />
+
+                <!--Workspace Empty State -->
+                <div id="workspace-empty-state">
+                    <div class="topic-content" id="topic-editor">
+                        <div class="drop-zone" id="drop-zone0">
+
+                            <div class="dropzone-filler"></div>
+                            
+                                <div id="resources-zone0" class="resources-zone">
+                                    <div class="empty-state" id="empty-state0">
+                                        <label class="empty-state-text"><h3>Your Workspace is Empty</h3></label>
+                                        <label class="empty-state-text">Drop a file or tap the + above to get started!</label>
+                                    </div>
+                                </div>
+                                <input type="file" name="resourceImageField" class="drop-zone__input" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+             
+
         </div>
-      </div>
-    </div>
     <!-- </div> -->
 
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
@@ -158,14 +150,14 @@
       ></a>
     </div>
 
+    <%- include('../../../partials/jsincludes'); %>
 
-<%- include('../../../partials/jsincludes'); %>
-<%- include('../gallery/dropdown'); %>
-</body>
-</html>
+    <!-- include the JS for editor and agnes -->
+    <script type="module" src="/js/editorMain.js"></script>
+    <script async type="module" src="/js/agnesAI.js"></script>
 
+    <%- include ('../gallery/dropdown'); %>
 
-    <%- include('../../../partials/jsincludes'); %> <%- include
-    ('../gallery/dropdown'); %>
-  </body>
+    </body>
+    
 </html>

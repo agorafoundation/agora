@@ -1,0 +1,51 @@
+<div id="gallery-header">
+    <div class="container-fluid">
+        <div class="row pt-2 pb-2">
+            <!-- <div class="col-md-2">
+                <h4 class="text-primary ">Dashboard</h4>
+            </div> -->
+            <div class='col-md-4'>
+                <!--Search bar-->
+                <input id="topic-search" class="card-search form-control" placeholder="Search"
+                    oninput="queryTopics(document.getElementById('topic-search').value, topicArr) " />
+            </div>
+
+            <div class="btn-toolbar col-md-8" role="toolbar" aria-label="Dashboard Tools">
+                <div id="controlbar-buttons-group-1" class="controlbar-buttons btn-group me-1" role="group"
+                    aria-label="View">
+                    <button id="select-grid" type="button" class="btn btn-secondary" onclick="toggleGrid()" checked>
+                        <span class="material-symbols-outlined"
+                            style="font-size: 20px; margin: 0; padding: 0; color: white">
+                            grid_view
+                        </span>
+                    </button>
+                    <button id="select-list" type="button" class="btn btn-secondary" onclick="toggleList()">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 20px; margin: 0; padding: 0; color: white;">
+                            format_list_bulleted
+                        </span>
+                    </button>
+                </div>
+
+                <span id="control-bar-tooltip"></span>
+
+                <div class="btn-group" role="group" aria-label="Sign Out">
+                    <button id="btn-logout" type="button" class="btn btn-dark" onclick="logout()">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 20px; margin: 0; padding: 0; color: white">
+                            logout
+                        </span>
+                    </button>
+                </div>
+
+                <div class="title d-flex align-items-center" role="group" aria-label="Title"
+                    style="margin-left: 12.5px;">
+
+                    <h4 style=" font-size: 30px; color: black; margin: 0;">Shared Dashboard</h4>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

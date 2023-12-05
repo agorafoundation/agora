@@ -26,13 +26,13 @@ window.addEventListener( "load", () => {
         // Only add the hover events if the sidebar is not in the docked position
         if ( !clientSettings.sideBarLocked ) {
             // add events for toggle sidebar
-            if( document.getElementById( "agoraSideBar" ) ) {
+            if ( document.getElementById( "agoraSideBar" ) ) {
                 toggleSidebar();
                 document.getElementById( "agoraSideBar" ).addEventListener( "mouseenter", toggleSidebar );
                 document.getElementById( "agoraSideBar" ).addEventListener( "mouseleave", toggleSidebar );
             }
         }
-        
+
         if ( document.getElementById( "pin-menu" ) ) {
             document.getElementById( "pin-menu" ).addEventListener( "click", lockSidebar );
         }
@@ -46,11 +46,13 @@ function toggleSidebar() {
     if ( !sideBarStatus ) {
         document.getElementById( "agoraSideBar" ).style.width = "250px";
         document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
+        // document.querySelector(".friends-content").style.marginLeft = "250px";
     }
     else {
         document.getElementById( "agoraSideBar" ).style.width = "85px";
-        if( window.innerWidth > 992 ) {
+        if ( window.innerWidth > 992 ) {
             document.querySelector( ".dashboard-content" ).style.marginLeft = "85px";
+            // document.querySelector(".friends-content").style.marginLeft = "85px";
         }
     }
     sideBarStatus = !sideBarStatus;
@@ -62,6 +64,7 @@ function toggleSidebar() {
 function lockSidebar() {
     if ( !clientSettings.sideBarLocked ) {
         document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
+        // document.querySelector(".friends-content").style.marginLeft = "250px";
 
         document.getElementById( "agoraSideBar" ).removeEventListener( "mouseenter", toggleSidebar );
         document.getElementById( "agoraSideBar" ).removeEventListener( "mouseleave", toggleSidebar );
@@ -96,6 +99,7 @@ function loadClientSettings() {
 
         if ( clientSettings.sideBarLocked ) {
             document.querySelector( ".dashboard-content" ).style.marginLeft = "250px";
+            // document.querySelector(".friends-content").style.marginLeft = "250px";
 
             document.getElementById( "agoraSideBar" ).removeEventListener( "mouseenter", toggleSidebar );
             document.getElementById( "agoraSideBar" ).removeEventListener( "mouseleave", toggleSidebar );
