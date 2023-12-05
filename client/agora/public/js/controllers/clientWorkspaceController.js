@@ -165,10 +165,7 @@ const getPermission = async ( workspaceId ) => {
 // for displaying shared users in a workspace
 const getAllSharedUsersForWorkspace = async ( id ) => {
     ( debug ) ? console.log( "getAllSharedUsersForWorkspace() - Start - id: " + id ) : null;
-    const response = await fetch( "/api/v1/auth/shared/shared-entity/" + id, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } );
+    const response = await fetch( "/api/v1/auth/shared/shared-entity/" + id, );
 
     if( response.ok ){
         const sharedUsers = await response.json();
@@ -181,7 +178,6 @@ const getAllSharedUsersForWorkspace = async ( id ) => {
 // for displaying workspace owner
 const getWorkspaceOwner = async ( ownerId ) => {
     ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
-    console.log( "urbg: t2" );
     const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
         method: "GET",
         headers: { "Content-Type": "application/json" },

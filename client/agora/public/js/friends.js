@@ -15,25 +15,28 @@ var requests = [ ];
 // gets the authenticated user, their friends and sent friend requests, as well as the number of sent 
 // friend requests
 window.onload = () => {
-    
-    fetch( "/api/v1/auth/friends/getResources", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( response ) => {
-            authUser.push( response[0] );
-            friends.push( response[1] );
-            requests.push( response[2] );
-            let requestCount = response[3][0].count;
-            // let user know they have a friend request
-            if ( requestCount > 0 ){
-                let span = document.createElement( "span" );
-                span.textContent = requestCount;
-                redCircle.appendChild( span );
-                redCircle.style.display = "flex";
-            }
-        } );
+    // URBG - this is being called (and failing) when the user is not logged in, for now to avoid the 
+    // call for unauthenticated users, I am wrapping it in an if statement looking for the menu
+    if( document.getElementById( "agoraSideBar" ) ) {
+        fetch( "/api/v1/auth/friends/getResources", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } )
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                authUser.push( response[0] );
+                friends.push( response[1] );
+                requests.push( response[2] );
+                let requestCount = response[3][0].count;
+                // let user know they have a friend request
+                if ( requestCount > 0 ){
+                    let span = document.createElement( "span" );
+                    span.textContent = requestCount;
+                    redCircle.appendChild( span );
+                    redCircle.style.display = "flex";
+                }
+            } );
+    }
 };
 
 

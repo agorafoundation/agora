@@ -38,8 +38,6 @@ window.addEventListener( "load", async () => {
     // initialize the workspace
     await initializeWorkspace( await getWorkspaceUuid() );
 
-    console.log( getCurrentWorkspace() );
-
     // retrieve the resources for the active topic, add them to the current state
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
         await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );
@@ -125,14 +123,12 @@ async function deleteResourceEvent( resourceId ) {
         // get the resource id from the element
         //let resourceId = e.target.id.split( "-" )[1];
             let response = await deleteResource( resourceId );
-            console.log( "response: " + response );
             if ( response == "Success" ) {
             // remove the resource from the currentTopic
                 getCurrentActiveTopic().resources = getCurrentActiveTopic().resources.filter( resource => resource.resourceId !== resourceId );
                 // save the current topic
                 saveActiveTopic();
             }
-            console.log( "resourceId: " + resourceId );
 
             // get the resource from the current state
             //let resource = getCurrentActiveTopic().resources.find( resource => resource.resourceId === resourceId );

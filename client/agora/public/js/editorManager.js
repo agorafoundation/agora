@@ -133,7 +133,7 @@ const createTopicEditorGui = async function ( ) {
                 } ) );
             }
             else {
-                console.error( "Unable to retrieve shared users OR no shared users." );
+                ( debug ) ? console.log( "Unable to retrieve shared users OR no shared users." ): null;
             }
 
             allUsers = [ ownerDetails, ...sharedUsers ];
@@ -346,7 +346,12 @@ const createTopicEditorGui = async function ( ) {
                     
                     document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
                         lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
-                        document.getElementById( "current-document" ).innerHTML = currentResource.resourceName; // Set the name in the Modal
+                        let resourceName = currentResource.resourceName;
+                        if( resourceName == null || resourceName == "Untitled" ){
+                            resourceName = getCurrentActiveTopic().topicName;
+                        }
+
+                        document.getElementById( "current-document" ).innerHTML = resourceName; // Set the name in the Modal
                     } );
 
                 }
@@ -707,7 +712,7 @@ function createTextArea( resource, position ) {
 
             // Append elemets accordingly
             // URBG this was not in the current version without sharing (line below) might need to double checked.
-            resourcesZone.appendChild( title );
+            //resourcesZone.appendChild( title );
             // resourcesZone.appendChild( newTabIcon );
             // resourcesZone.appendChild( editIcon );
             titleContainer.appendChild( doneIcon );
@@ -794,7 +799,6 @@ function createDropZone( resourceId, position ) {
         // shows or hides the title-contain element
             let titleContainer = document.getElementById( "title-container-" + resourceId );
             let titleToggle = document.getElementById( "title-toggle-" + resourceId );
-            console.log( "titleContainer.: " + titleContainer.style + ' resource id  : ' + resourceId + ' titleContainer.style.display: ' + titleContainer.style.display );
             if( titleContainer.style.display === "none" ) {
                 titleContainer.style.display = "block";
                 titleToggle.innerHTML = "\u21A5";

@@ -271,7 +271,6 @@ exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
     try {
         // Fetch all shared entities related to the given workspace ID
         const sharedEntities = await sharedEntityService.getAllSharedUsersByWorkspaceId( workspaceId );
-
         if ( sharedEntities ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned shared entities by workspace id" );
