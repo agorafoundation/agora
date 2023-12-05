@@ -50,9 +50,10 @@ if ( userSearch ) {
 
                 // clear the dashboard
                 friendsDashboard.innerHTML = "";
-    
+                l;
                 // prevent cards from appearing for users
                 // that are friends or have requests sent to
+                let isSentRequest = false;
                 for ( let i = 0; i < response.length; i++ ) {
                     var data = response[i];
                     var isFriend = false;
@@ -61,8 +62,14 @@ if ( userSearch ) {
                             isFriend = true;
                         }
                     }
+                    for( k = 0; k < requests[0].length; k++ ){
+                        if( ( data.userId == requests[0][k].initiatedby_id ) ||
+                            ( data.userId == requests[0][k].recipient_id ) ){
+                            isSentRequest =  true;
+                        }
+                    }
                     
-                    if ( !( data.username == authUser[0].username ) && !( isFriend ) ) {
+                    if ( !( data.username == authUser[0].username ) && !isFriend && !isSentRequest ) {
                         await createUserCard( data );
 
                     }
