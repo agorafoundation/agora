@@ -47,33 +47,32 @@ if ( userSearch ) {
         } )
             .then( ( response ) =>  response.json() )
             .then( async ( response ) => {
-                if( response.ok ) {
                 // clear the dashboard
-                    friendsDashboard.innerHTML = "";
-                    // prevent cards from appearing for users
-                    // that are friends or have requests sent to
-                    let isSentRequest = false;
-                    for ( let i = 0; i < response.length; i++ ) {
-                        var data = response[i];
-                        var isFriend = false;
-                        for( let j = 0; j < friends[0].length; j++ ){
-                            if ( ( data.username == friends[0][j].friend_username ) ){
-                                isFriend = true;
-                            }
-                        }
-                        for( let k = 0; k < requests[0].length; k++ ){
-                            if( ( data.userId == requests[0][k].initiatedby_id ) ||
-                            ( data.userId == requests[0][k].recipient_id ) ){
-                                isSentRequest =  true;
-                            }
-                        }
-                    
-                        if ( !( data.username == authUser[0].username ) && !isFriend && !isSentRequest ) {
-                            await createUserCard( data );
-
+                friendsDashboard.innerHTML = "";
+                // prevent cards from appearing for users
+                // that are friends or have requests sent to
+                let isSentRequest = false;
+                for ( let i = 0; i < response.length; i++ ) {
+                    var data = response[i];
+                    var isFriend = false;
+                    for( let j = 0; j < friends[0].length; j++ ){
+                        if ( ( data.username == friends[0][j].friend_username ) ){
+                            isFriend = true;
                         }
                     }
+                    for( let k = 0; k < requests[0].length; k++ ){
+                        if( ( data.userId == requests[0][k].initiatedby_id ) ||
+                            ( data.userId == requests[0][k].recipient_id ) ){
+                            isSentRequest =  true;
+                        }
+                    }
+                    
+                    if ( !( data.username == authUser[0].username ) && !isFriend && !isSentRequest ) {
+                        await createUserCard( data );
+
+                    }
                 }
+                
             } );
     }, 500 ) );
 }
