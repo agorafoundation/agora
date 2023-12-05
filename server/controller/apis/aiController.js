@@ -153,7 +153,7 @@ const parseResourceContentHtml = ( content ) => {
 };
 
 const parseOutHtmlTags = ( text ) => {
-    return text.replace( /<[^>]*>/g, '' ).trim();
+    return text.replace( /<[^>]*>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '' ).trim();
 };
 
 /** 
