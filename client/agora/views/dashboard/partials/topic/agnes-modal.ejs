@@ -1,0 +1,122 @@
+
+<div
+  class="fade agnes-modal-pos"
+  id="agnesModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="agnesModalLabel"
+  aria-hidden="true"
+  data-bs-backdrop="false"
+  data-bs-focus="false"
+>
+  <div class="modal-dialog custom-modal" role="document">
+    <div
+      class="modal-content discussion-modal-edges custom-background-color agnes-modal-shape"
+    >
+      <div class="modal-header">
+        <h5 class="modal-title text-center text-white" id="agnesModalLabel">
+          Agnes
+        </h5>
+
+        <div class="agnes-info">
+          <button id="myPopover" type="button" class="btn-info" data-bs-toggle="popover" title="Agnes" data-bs-content="Agnes is an AI integration feature, that aids user's in finding validated, scholarly content." data-bs-placement="bottom">
+            <i class="material-icons">info</i> 
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          id="btn-remove-content"
+          data-bs-toggle="modal"
+          data-bs-target="#agnesModal"
+        ></button>
+      </div>
+      <div class="modal-body modal-title-body">
+        <div class="agnes-current-document"><em>Current Document: </em> <div id="current-document"></div></div> 
+        <!-- Use text-center to center the content -->
+
+        <label class="document-types-label" for="document-types"
+        >Document Type</label
+      >        <!-- dropdown for doc type -->
+        <select class="form-select form-select-sm" id="doc-type">
+          <option value="empty"></option>
+          <option value="notes">Notes</option>
+          <option value="paper">Paper</option>
+        </select>
+       
+      </div>
+    
+      <!-- Container for the content -->
+      <div id="selectedContent" class="content-margin-top hidden">
+        <!-- Citation Dropdown -->
+        <label class="citation-types-label" for="citation-types"
+          >Citation Type</label
+        >
+        <select
+          name="citation-types"
+          class="form-select form-select-sm"
+          id="citations-dropdown"
+          autocomplete="off"
+        >
+          <option value="apa" selected>APA</option>
+          <option value="mla">MLA</option>
+          <option value="harvard">Harvard</option>
+          <option value="chicago">Chicago</option>
+        </select>
+
+        <div class="d-flex flex-column">
+          <!-- Agnes Header Data -->
+            <div class="d-flex justify-content-center ai-loading">
+              <div id="loadingSpinnerContainer" class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+          <div
+            id="citations-cont"
+            class="p-3 bg-primary text-white citations-btns-container"
+          >
+            <p class="citations-title">Agnes suggests the following articles</p>
+
+            <div class="all-cards">
+            
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="regenerate-button"
+          >
+            Regenerate
+            <span class="material-symbols-outlined ag-generate-icon"
+              >cached</span
+            >
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="show-toast">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body show-toast-text" id="toast-text">
+      Copied Link! Paste citation into document where needed.
+      </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("doc-type").addEventListener("change", function () {
+    var selectedValue = this.value;
+    var selectedContent = document.getElementById("selectedContent");
+    if (selectedValue === "notes" || selectedValue === "paper") {
+      selectedContent.classList.remove("hidden");
+    } else {
+      selectedContent.classList.add("hidden");
+    }
+  });
+</script>

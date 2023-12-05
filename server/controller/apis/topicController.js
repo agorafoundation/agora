@@ -49,7 +49,9 @@ exports.getAllVisibleTopics = async ( req, res ) => {
         let topics = await topicService.getAllVisibleTopics( authUserId, req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all visible topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -74,7 +76,9 @@ exports.getAllPublicTopics = async ( req, res ) => {
         let topics = await topicService.getAllPublicTopics( req.query.limit, req.query.offset );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all public topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -99,6 +103,10 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
 
         // Check if valid topicId given.
         let topic = await topicService.getTopicById( req.params.topicId, authUserId );
+        if( !topic ){
+            topic = await topicService.getSharedTopicById( req.params.topicId );
+        }
+
         if( topic ) {
 
             let resourcesList = [];
@@ -114,6 +122,56 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
                     resourcesList.push( resource );
                 }
                 else {
+                    console.log( "Error retrieving resource  " + resourceIds[index] + "\n" );
+                }
+            }
+
+            // Return our resourcesList.
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned resources list" );
+            res.status( 200 ).json( {
+                results: resourcesList
+            } );
+        }
+
+        else {
+            return errorController( ApiMessage.createNotFoundError ( "Topic", res ) );
+        }
+    }
+    
+};
+
+exports.getAllResourcesForSharedTopicId = async ( req, res ) => {
+
+    // Get the auth user id from either the basic auth header or the session.
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+
+    if( authUserId ){
+
+        // Check if valid topicId given.
+        let topic = await topicService.getSharedTopicById( req.params.topicId );
+        if( topic ) {
+
+            let resourcesList = [];
+
+            // Get all resource Ids associated with our topicId.
+            let resourceIds = await topicService.getAllResourceIdsFromTopic( topic.topicId );
+
+            // Grab each resource by id and append it to our list of resources.
+            for ( let index in resourceIds ) {
+                let resource = await resourceService.getResourceById( resourceIds[index], authUserId );
+
+                if ( resource ){ // Ensure retrieval of resource.
+                    console.log( resource );
+                    resourcesList.push( resource );
+                }
+                else {
                     console.log( "Error retrieving resource " + resourceIds[index] + "\n" );
                 }
             }
@@ -121,7 +179,9 @@ exports.getAllResourcesForTopicId = async ( req, res ) => {
             // Return our resourcesList.
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned resources list" );
-            res.status( 200 ).json( resourcesList );
+            res.status( 200 ).json( {
+                results: resourcesList
+            } );
         }
 
         else {
@@ -148,7 +208,50 @@ exports.getTopicById = async ( req, res ) => {
         if( topic ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned topic by id" );
-            res.status( 200 ).json( topic );
+            res.status( 200 ).json( {
+                results: topic
+            } );
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Topic not found" );
+            res.status( 404 ).json( message );
+        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 401, "Unauthorized", "Unauthorized user" );
+        res.set( "x-agora-message-title", "Unauthorized" );
+        res.set( "x-agora-message-detail", "Unauthorized user" );
+        res.status( 401 ).json( message );
+    }
+
+    // topic file path
+    // const topicUploadPath = UPLOAD_PATH_BASE + "/" + FRONT_END + TOPIC_PATH;
+
+};
+
+
+exports.getSharedTopicById = async ( req, res ) => {
+    // get the auth user id from either the basic auth header or the session
+    console.log( "t-2" );
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+    console.log( "auth user id: " + authUserId );
+
+    if( authUserId ){
+        let topic = await topicService.getSharedTopicById( req.params.topicId, authUserId );
+        if( topic ) {
+            res.set( "x-agora-message-title", "Success" );
+            res.set( "x-agora-message-detail", "Returned topic by id" );
+            res.status( 200 ).json( {
+                results: topic
+            } );
         }
         else {
             const message = ApiMessage.createApiMessage( 404, "Not Found", "Topic not found" );
@@ -189,7 +292,9 @@ exports.getAllActiveTopicsForUser = async ( req, res ) => {
     if( topics ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all active topics" );
-        res.status( 200 ).json( topics );
+        res.status( 200 ).json( {
+            results: topics
+        } );
     }
     else {
         const message = ApiMessage.createApiMessage( 404, "Not Found", "Topics not found" );
@@ -383,8 +488,21 @@ exports.saveTopic = async ( req, res, redirect ) => {
         */
 
         // Resources are held as a list of resource id's.
+       
         topic.resources = req.body.resources;
+        //console.log( "first resource: " + topic.resources[0] );
 
+        // // move the resources into flat string array
+        // let objectResources = topic.resources;
+        // let stringResources = [];
+        // objectResources.forEach( ( resource ) => {
+        //     stringResources.push( resource.toString() );
+        //     console.log( "resource (item in resources): " + resource );
+        // } );
+
+        // console.log( "string resources: " + JSON.stringify( stringResources ) );
+
+        
         // Associated resource id's (by position) are required. E.g. below.
         topic.resourcesRequired = req.body.resourcesRequired;
 
@@ -400,7 +518,8 @@ exports.saveTopic = async ( req, res, redirect ) => {
 
         // Need to do this after saveTopic to ensure a topic id > -1.
         if ( req.body.resources ){
-            let resourcesSaved = await topicService.saveResourcesForTopic( topic.topicId, req.body.resources, req.body.resourcesRequired );
+
+            await topicService.saveResourcesForTopic( topic, topic.resources );
             //console.log( "@ -- @" +resourcesSaved );
         }
 
@@ -542,6 +661,16 @@ exports.deleteTopicById = async ( req, res ) => {
     }
 
     const topicId = req.params.topicId;
+
+    // find any resources associated with the topic and delete them
+    let resources = await topicService.getAllResourceIdsFromTopic( topicId );
+    if( resources ) {
+        resources.forEach( async ( resource ) => {
+            await resourceService.deleteResourceById( resource, authUserId );
+        } );
+    }
+
+    
     let success = await topicService.deleteTopicById( topicId, authUserId );
 
     if ( success ) {

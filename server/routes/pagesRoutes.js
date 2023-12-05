@@ -6,7 +6,7 @@
  */
 
 var express = require( 'express' );
-var router = express.Router( );
+var router = express.Router();
 
 
 
@@ -31,7 +31,7 @@ router.route( '/privacy' )
 router.route( '/tos' )
     .get( ( req, res ) => {
         res.render( './website/terms' );
-    }   
+    }
     );
 
 router.route( '/codebot' )

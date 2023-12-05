@@ -27,8 +27,11 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
         let res = await db.query( text, values );
         if( res.rowCount > 0 ) {
             sharedEntity = SharedEntity.ormSharedEntity( res.rows[0] );
+            return sharedEntity;
         }
-        return sharedEntity;
+        else{
+            return false;
+        }
     
     }
     catch( e ) {
@@ -37,6 +40,133 @@ exports.getSharedEntity = async ( sharedEntityId ) => {
 
 };
 
+/**
+ * Gets details of shared users for a shared entity
+ * @param {*} workspaceId 
+ * @returns Details of shared users
+ */
+exports.getAllSharedUsersByWorkspaceId = async ( workspaceId ) => {
+    let text = `
+        SELECT
+            se.entity_id,
+            se.entity_type,
+            se.shared_by_user_id,
+            se.shared_with_user_id,
+            se.permission_level,
+            u.email,
+            u.username,
+            u.profile_filename,
+            u.first_name,
+            u.last_name
+        FROM shared_entities AS se
+        INNER JOIN users AS u ON se.shared_with_user_id = u.user_id
+        WHERE se.entity_id = $1
+          AND se.entity_type = 'workspace'
+    `;
+    const values = [ workspaceId ];
+
+    try {
+        let sharedUsers = [];
+
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            // Convert the retrieved rows into SharedEntity objects and add them to the sharedEntities array
+            res.rows.forEach( ( row ) => {
+                sharedUsers.push( SharedEntity.ormSharedEntity( row ) );
+            } );
+            return sharedUsers;
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+/**
+ * Gets the entity shared with a user
+ * @param {*} entityId 
+ * @param {*} sharedUserId 
+ * @returns The entity shared with the user
+ */
+exports.getSharedEntityByUserId = async ( entityId, sharedUserId ) => {
+    let text = "SELECT * FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
+    const values = [ entityId, sharedUserId ];
+
+    try {
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            return res.rows[0];
+        }
+        else{
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+        // Handle the error and return an empty array or null
+        return null;
+    }
+};
+
+/**
+ * Removes a user from a shared entity
+ * @param {*} entityId 
+ * @param {*} sharedUserId 
+ * @returns Whether user was removed or not
+ */
+exports.removeSharedUserById = async ( entityId, sharedUserId ) => {
+    let text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2";
+    let values = [ entityId, sharedUserId ];
+
+    try {
+        let res = await db.query( text, values );
+        if ( res.rowCount > 0 ) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( "[ERR]: [shared] - delete shared user by id - " + e );
+        return false;
+    }
+
+};
+
+/**
+ * Updated the permission of a user for a shared entity
+ * @param {*} sharedEntity 
+ * @returns Whether permission was updated or not
+ */
+exports.updatePermission = async ( sharedEntity ) => {
+    if ( sharedEntity ) {
+        let text = "UPDATE shared_entities SET permission_level = $1 WHERE entity_id = $2 AND shared_with_user_id = $3 RETURNING shared_entity_id";
+        let values = [ sharedEntity.permission_level, sharedEntity.entity_id, sharedEntity.shared_with_user_id ];
+
+        try{
+            let res = await db.query( text, values );
+            if ( res.rowCount > 0 ){
+                return res.rows[0].shared_entity_id;
+            }
+            else{
+                return false;
+            }
+        }
+        catch ( e ){
+            console.log( e.stack );
+        }
+    }
+};
+
+/**
+ * Inserts or updates a shared entity
+ * @param {*} sharedEntity 
+ * @returns Whether entity was updated/inserted or not
+ */
 exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
 
     if ( sharedEntity ) {
@@ -79,5 +209,25 @@ exports.insertOrUpdateSharedEntity = async ( sharedEntity ) => {
             }
         }
         return sharedEntity;
+    }
+};
+
+/**
+ * Removes a shared user from a workspace
+ * @param {*} workspaceId 
+ * @param {*} userId 
+ * @returns Whether a shared user was removed or not
+ */
+exports.removeUserFromWorkspace = async ( workspaceId, userId ) => {
+    const text = "DELETE FROM shared_entities WHERE entity_id = $1 AND shared_with_user_id = $2 RETURNING *";
+    const values = [ workspaceId, userId ];
+
+    try {
+        const res = await db.query( text, values );
+        return res.rowCount > 0;  // returns true if a row was deleted
+    } 
+    catch ( e ) {
+        console.log( e.stack );
+        return false;  // returns false in case of an error
     }
 };

@@ -5,17 +5,33 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
                 {id: 3, user: "Alesha", pfp: "account_circle", text: "This is a comment as well", likes: 0, timestamp: "11/15/2022"}];
 %>-->
 
-<div class="modal fade discussion-modal-pos" id="discussion-modal" tabindex="-1" role="dialog" aria-labelledby="discussion-title" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content discussion-modal-edges">
-        <div class="modal-header">
-          <h5 class="modal-title" id="discussion-title">Comments</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body flex-column" id="discussions-body">
-            <div contenteditable="true" class="discussion-textarea" id="discussion-textarea"></div>
-            <button class="post-comment-btn" id="post-comment-btn">Send</button>
-            <!-- <% comments.forEach((comment)=> { %>
+<div
+  class="modal fade discussion-modal-pos"
+  id="discussion-modal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="discussion-title"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content discussion-modal-edges">
+      <div class="modal-header">
+        <h5 class="modal-title" id="discussion-title">Comments</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body flex-column" id="discussions-body">
+        <div
+          contenteditable="true"
+          class="discussion-textarea"
+          id="discussion-textarea"
+        ></div>
+        <button class="post-comment-btn" id="post-comment-btn">Send</button>
+        <!-- <% comments.forEach((comment)=> { %>
                 <div class="flex-column comment-countable" id="comment-<%=comment.commentId%>">
                     <div class="flex-row">
                         <span class="material-symbols-outlined" style="margin: 0"><%= comment.pfp %></span>
@@ -33,7 +49,7 @@ var comments = [{id: 0, user: "John", pfp: "account_circle", text: "This is a co
                     <hr style="width: 100%;">
                 </div>
             <% }) %> -->
-        </div>
       </div>
     </div>
   </div>
+</div>

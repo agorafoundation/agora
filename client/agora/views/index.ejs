@@ -1,80 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <%- include('./partials/head'); %>
-    </head>
-    <body id="page-top">
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-            <%- include('./partials/topmenu'); %>
-        </nav>
-        <!-- Masthead-->
-        <content>
-            <div class="header-container bg-primary">
-                <header class="masthead text-white text-center main-content" style="height:100%">
-                    <div class="d-flex align-items-center flex-column">
-        
-                        <div class="row">
-                            <div class="col-lg-6 order-lg-1">
-                                <!-- Masthead Heading-->
-                                <h1 class="masthead-heading text-uppercase mb-0 agora-font-large">Agora</h1>
-                                
-                                </br></br>
-                                <h5 class="agora-font-light">Agora is an open, free, cloud based platform you can use to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy</h5>
-                            
-                                </br></br>
-                                <a class="masthead-subheading homepageButton" href="/dashboard">Get Started</a>
-                                </br></br>
-                            </div>
-                            <div class="col-lg-6 order-lg-2">
-                                <img class="website-image website-image-95" src="/assets/img/dashboard_preview.png"/>
-                            </div>
+
+<head>
+    <%- include('./partials/head'); %>
+</head>
+
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+        <%- include('./partials/topmenu'); %>
+    </nav>
+    <!-- Masthead-->
+    <content>
+        <div class="header-container bg-primary">
+            <header class="masthead text-white text-center main-content" style="height:100%">
+                <div class="d-flex align-items-center flex-column">
+
+                    <div class="row">
+                        <div class="col-lg-6 order-lg-1">
+                            <!-- Masthead Heading-->
+                            <h1 class="masthead-heading text-uppercase mb-0 agora-font-large">Agora</h1>
+
+                            </br></br>
+                            <h5 class="agora-font-light">Agora is an open, free, cloud based platform you can use to
+                                take notes, research and learn. A free digital space that resets our expectations
+                                regarding cloud data ownership and privacy</h5>
+
+                            </br></br>
+                            <a class="masthead-subheading homepageButton" href="/dashboard">Get Started</a>
+                            </br></br>
+                        </div>
+                        <div class="col-lg-6 order-lg-2">
+                            <img class="website-image website-image-95" src="/assets/img/dashboard_preview.png" />
                         </div>
                     </div>
-                </header>
-            </div>
-            
-            <!-- Portfolio Section-->
-            <section class="page-section portfolio text-center main-content mt-3" id="portfolio">
-               
-                <div class="row">
-                    <div class="col-lg-5 order-lg-3">
-                        <img class="website-image website-image-95" src="/assets/img/topic_preview.png"/>
-                    </div>
-                    <div class="col-lg-7 order-lg-4">
-                        <i class="fas fa-chalkboard-teacher fa-8x text-primary"></i>
-                        <h4 class="agora-font">Agora for your notes</h4></br>
-                        <h5 class="agora-font analogous2">Notetaking, researching and learning,</h5>
-                        <h5 class="agora-font analogous2">For everyone.</h5>
-                        <h5 class="agora-font analogous2">Privacy guaranteed.</h5></br>
-                        <h5 class="agora-font analogous2">Agora creates a secure, private, online environment focused on protecting privacy and ownership of data within the system with infrastructure and data that will be managed and protected by the Agora Foundation.</h5>
-                    </div>
                 </div>
-                
-                
-                <div class="divider-custom">
-                    <div class="divider-custom-line divider-bg-color"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-code-branch divider-color"></i></div>
-                    <div class="divider-custom-line divider-bg-color"></div>
-                </div>
-                <h2 class="page-section-heading text-center text-uppercase text-primary mb-3 pt-0"><a href="/dashboard">Create your account Today!</a> </h2>
-                <!-- Icon Divider-->
-                
-    
-            </section>
-        </content>
-       
+            </header>
+        </div>
 
-        <!-- Footer-->
-        <%- include('./partials/footer'); %>
+        <!-- Portfolio Section-->
+        <section class="page-section portfolio text-center main-content mt-3" id="portfolio">
+
+            <div class="row">
+                <div class="col-lg-5 order-lg-3">
+                    <img class="website-image website-image-95" src="/assets/img/topic_preview.png" />
+                </div>
+                <div class="col-lg-7 order-lg-4">
+                    <i class="fas fa-chalkboard-teacher fa-8x text-primary"></i>
+                    <h4 class="agora-font">Agora for your notes</h4></br>
+                    <h5 class="agora-font analogous2">Notetaking, researching and learning,</h5>
+                    <h5 class="agora-font analogous2">For everyone.</h5>
+                    <h5 class="agora-font analogous2">Privacy guaranteed.</h5></br>
+                    <h5 class="agora-font analogous2">Agora creates a secure, private, online environment focused on
+                        protecting privacy and ownership of data within the system with infrastructure and data that
+                        will be managed and protected by the Agora Foundation.</h5>
+                </div>
+            </div>
+
+
+            <div class="divider-custom">
+                <div class="divider-custom-line divider-bg-color"></div>
+                <div class="divider-custom-icon"><i class="fas fa-code-branch divider-color"></i></div>
+                <div class="divider-custom-line divider-bg-color"></div>
+            </div>
+            <h2 class="page-section-heading text-center text-uppercase text-primary mb-3 pt-0"><a
+                    href="/dashboard">Create your account Today!</a> </h2>
+            <!-- Icon Divider-->
+
+
+        </section>
+    </content>
+
+
+    <!-- Footer-->
+    <%- include('./partials/footer'); %>
 
         <!-- Copyright Section-->
         <%- include('./partials/copyright'); %>
-        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
-        <div class="scroll-to-top d-lg-none position-fixed">
-            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
-        </div>
-        
-        <%- include('./partials/jsincludes'); %>
-    </body>
+            <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+            <div class="scroll-to-top d-lg-none position-fixed">
+                <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i
+                        class="fa fa-chevron-up"></i></a>
+            </div>
+
+            <%- include('./partials/jsincludes'); %>
+</body>
+
 </html>

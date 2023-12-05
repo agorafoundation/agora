@@ -11,12 +11,14 @@
 // services
 const productService = require ( '../service/productService' );
 const userService = require( '../service/userService' );
+const friendService = require( '../service/friendService' );
 
 exports.getProfile = async function( req, res ) {
     // get the user data
     let userId = req.params.userId.toString();
     let user = null;
     if( userId ) {
+        console.log( "1" );
         user = await userService.getActiveUserById( userId );
 
         if( user ) {
@@ -37,8 +39,6 @@ exports.getProfile = async function( req, res ) {
     
 };
 
-
-
 exports.manageProfile = async function ( req, res ) {
 
     if( req.session.authUser ) {
@@ -52,7 +52,7 @@ exports.manageProfile = async function ( req, res ) {
 
         // get all products ordered
         let products = [];
-        for( let i=0; i<orders.length; i++ ) {
+        for( let i = 0; i<orders.length; i++ ) {
             let product = await productService.getProductById( orders[i].productId );
             product.status = orders[i].orderStatus;
             products.push( product );
@@ -72,7 +72,9 @@ exports.manageProfile = async function ( req, res ) {
             delete req.session.messageBody;
         }
         
-        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody } );
+        const unacceptedFriendRequests = await friendService.getUnacceptedFriendRequests( authUser.userId );
+
+        res.render( './profile/manage', { authUser: authUser, user: authUser, products: products, messageType: messageType, messageTitle: messageTitle, messageBody: messageBody, nonFriends: unacceptedFriendRequests } );
         
         
     }
