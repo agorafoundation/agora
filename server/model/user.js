@@ -56,8 +56,6 @@ exports.ormUser = function( userRow ) {
     user.username = userRow.username;
     user.profileFilename = userRow.profile_filename;
     user.emailValidated = userRow.email_validated;
-    console.log( "desktop first visit: " + userRow.desktop_first_visit );
-    console.log( "editor first visit: " + userRow.editor_first_visit );
     user.desktopFirstVisit = userRow.desktop_first_visit;
     user.editorFirstVisit = userRow.editor_first_visit;
     user.roleId = userRow.role_id;

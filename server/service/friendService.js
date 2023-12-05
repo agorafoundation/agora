@@ -25,6 +25,7 @@ exports.getAllFriends = async ( userID ) => {
             u.last_name AS friend_last_name,
             u.username AS friend_username,
             u.email AS friend_email,
+            u.profile_filename AS friend_profile_filename,
             f.friendship_id as friendship_id
         FROM agora.friendships AS f
         JOIN agora.users AS u ON u.user_id = CASE
