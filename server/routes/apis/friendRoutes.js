@@ -17,13 +17,6 @@ router.route( '/allFriends' )
         friendController.getAllFriends( req, res );
     } );
 
-// Route to handle sending friend requests
-router.route( '/request' )
-    // Get all pending friend requests for the user
-    .get( async ( req, res ) => {
-        friendController.getUnreadFriendRequests( req, res );
-    } );
-
 router.route( '/unreadRequests' )
     .get( async ( req, res ) => {
         friendController.getUnacceptedFriendRequests( req, res );
@@ -45,12 +38,6 @@ router.route( '/requestResponse' )
     } )
     .delete( async ( req, res ) => {
         friendController.denyFriendRequest( req, res );
-    } );
-
-router.route( '/getFriend/:userID' )
-    //get a friend by their user ID.
-    .get( async ( req, res ) => {
-        friendController.getFriendByID( req, res );
     } );
    
 router.route( '/deleteFriend' )

@@ -74,20 +74,19 @@ exports.getAllVisibleWorkspaces = async ( ownerId, limit, offset ) => {
     }
 };
 
+/**
+ * Gets workspaces shared with user
+ * @param {*} sharedUserID 
+ * @returns Shared workspaces
+ */
 exports.getSharedWorkspaces = async ( sharedUserID ) => {
     if ( sharedUserID ) {
-        /*
-        let text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
-            + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version INNER JOIN shared_entities shared ON gl.owned_by = shared_by_user_id WHERE shared.shared_with_user_id = $1" 
-            + "order by gl.workspace_id;";
-        */
         let text = `SELECT w.* FROM agora.shared_entities AS se 
             JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
             WHERE se.shared_with_user_id = $1 AND se.entity_type = 'workspace'`;
 
         const values = [ sharedUserID ];
         let workspaces = [];
-        //console.log( sharedUserID );
 
         try {
 
@@ -114,9 +113,12 @@ exports.getSharedWorkspaces = async ( sharedUserID ) => {
 
 
 
-// Get shared workspace details by its ID
+/**
+ * Get shared workspace details by its ID
+ * @param {*} workspaceID 
+ * @returns Shared workspace details
+ */
 exports.getSharedWorkspaceByID = async ( workspaceID ) => {
-    //console.log( "Getting Shared Workspace query.." );
     let text = `SELECT w.* FROM agora.shared_entities AS se 
                   JOIN agora.workspaces AS w ON se.entity_id = w.workspace_id 
                   WHERE se.entity_id = $1 AND se.entity_type = 'workspace'`;
@@ -126,9 +128,7 @@ exports.getSharedWorkspaceByID = async ( workspaceID ) => {
     try {
         
         let workspace = null;
-        //console.log( " text: " + text + " values: " + values );
         let res = await db.query( text, values );
-        //console.log( " res.rowCount: " + res.rowCount + "" );
         if ( res.rowCount > 0 ) {
             text = "select * from workspace_paths where active = $1 and workspace_rid = $2 order by position;";
             values = [ true, res.rows[0].workspace_rid ];
@@ -149,7 +149,6 @@ exports.getSharedWorkspaceByID = async ( workspaceID ) => {
             workspace.topics = topics;
 
         }
-        //console.log( workspace );
         return workspace;
 
     }
@@ -162,7 +161,11 @@ exports.getSharedWorkspaceByID = async ( workspaceID ) => {
 
 
 
-
+/**
+ * Removes a shared workspace
+ * @param {*} workspaceID 
+ * @returns Whether shared workspace was removed or not
+ */
 exports.removeSharedWorkspaceByID = async ( workspaceID ) => {
     const text = `DELETE FROM agora.shared_entities 
                   WHERE entity_id = $1 AND entity_type = 'workspace'`;
@@ -177,7 +180,15 @@ exports.removeSharedWorkspaceByID = async ( workspaceID ) => {
     }
 };
 
-
+/**
+ * Shares a workspace with a user
+ * @param {*} workspaceID 
+ * @param {*} sharedByUserID 
+ * @param {*} sharedWithUserID 
+ * @param {*} permissionLevel 
+ * @param {*} canCopy 
+ * @returns Whether workspace was shared or not
+ */
 exports.shareWorkspaceByID = async ( workspaceID, sharedByUserID, sharedWithUserID, permissionLevel, canCopy ) => {
     const text = `INSERT INTO agora.shared_entities (entity_id, entity_type, shared_by_user_id, shared_with_user_id, permission_level, can_copy) 
                   VALUES ($1, 'workspace', $2, $3, $4, $5)

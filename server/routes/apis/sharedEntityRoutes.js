@@ -17,12 +17,6 @@ router.route( '/' )
     }
     );
 
-router.route( '/sharedUser/:entityId' ) 
-    .get( ( req, res ) => { 
-        sharedController.getSharedEntityUser( req, res );
-    }
-    );
-
 router.route( '/copy' ) 
     .post( ( req, res ) => { 
         sharedController.saveCopiedEntity( req, res );
