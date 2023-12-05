@@ -214,6 +214,7 @@ exports.getFriends = async function ( req, res ) {
 
         const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
 
+        console.log( JSON.stringify( userFriends ) );
         res.render( './friends/friends', { user: authUser, friends: userFriends} );
         
     }

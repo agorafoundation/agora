@@ -3,6 +3,7 @@
     <!-- Repeat the above structure for each friend -->
     <% if (friends.length > 0) { %>
       <% friends.forEach((friend) => { %>
+        
         <!-- Friend Card -->
         <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend" id="friend-card">
           <div class="card h-100" id="f-gv-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
@@ -17,6 +18,22 @@
               <p class="card-text mb-4" id="f-gv-card-desc-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
                 <%= friend.friend_email %>
               </p>
+              <%
+              if( friend.friend_profile_filename.toString().substring(0, 7) == "http://" || friend.friend_profile_filename.toString().substring(0, 8) == "https://" ) {
+              %>
+                <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
+                    <img src="<%- friend.friend_profile_filename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                </a>    
+              <%
+              } else {
+              %>
+                <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
+                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- friend.friend_profile_filename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
+                </a>
+              <%
+              }
+              %>
+
             </div>
             <div class="card-footer">
               <span class="badge badge-dark note-badge">
