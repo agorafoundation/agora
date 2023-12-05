@@ -153,7 +153,7 @@ const parseResourceContentHtml = ( content ) => {
 };
 
 const parseOutHtmlTags = ( text ) => {
-    return text.replace( /<[^>]*>/g, '' ).trim();
+    return text.replace( /[^a-zA-Z0-9\s,.!?:;'-]/, '' ).trim();
 };
 
 /** 
@@ -210,7 +210,7 @@ const validateSources = async ( json ) => {
 const querySemanticScholar = async ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
-        let response = await fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=\"${title}\"&limit=${limit}&fields=title,authors,year,url,publicationVenue`, {
+        let response = await fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=${title}&limit=${limit}&fields=title,authors,year,url,publicationVenue`, {
             headers: {
                 'x-api-key': process.env.SEMANTIC_SCHOLAR_API_KEY
             }

@@ -261,6 +261,7 @@ exports.reValidateEmail = async function( email ) {
  */
 exports.getActiveUserById = async function( id ) {
     const text = "SELECT * FROM users WHERE user_id = $1;";
+    console.log( "user id : " + id );
     const values = [ id ];
     
     try {
@@ -318,6 +319,11 @@ exports.getActiveUserById = async function( id ) {
     }
 };
 
+/**
+ * Gets users by partial username
+ * @param {*} username 
+ * @returns Users searched with partial username
+ */
 exports.getUserByUsername = async function( username ) {
     let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
     let values = [ username ];
@@ -370,7 +376,11 @@ exports.getUserByStripeCustomerId = async function( stripeCustomerId ) {
     }
 };
 
-
+/**
+ * Gets a user by their email
+ * @param {*} email 
+ * @returns User details
+ */
 exports.getUserByEmail = async function( email ) {
     let text = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
     let values = [ email ];

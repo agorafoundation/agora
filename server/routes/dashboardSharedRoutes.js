@@ -20,7 +20,7 @@ router.use( bodyParser.urlencoded( {
 router.use( bodyParser.json() );
 
 // controllers
-const dashboardController = require( '../controller/dashboardSharedController' );
+const dashboardController = require( '../controller/dashboardController' );
 
 /**
  * Pre Route
@@ -50,7 +50,7 @@ router.use( function ( req, res, next ) {
 router.route( '/' )
     .get( ( req, res ) => {
         //res.render( 'dashboard-shared/dashboard-shared' );
-        dashboardController.getDashboard( req, res );
+        dashboardController.getSharedDashboard( req, res );
     }
     );
 

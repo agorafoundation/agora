@@ -28,6 +28,7 @@ exports.ormFriendship = function ( row ) {
     friendshipInstance.friend_last_name = row.friend_last_name;
     friendshipInstance.friend_username = row.friend_username;
     friendshipInstance.friend_email = row.friend_email;
+    friendshipInstance.friend_profile_filename = row.friend_profile_filename;
 
     return friendshipInstance; 
 };

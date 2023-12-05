@@ -18,6 +18,7 @@ exports.getProfile = async function( req, res ) {
     let userId = req.params.userId.toString();
     let user = null;
     if( userId ) {
+        console.log( "1" );
         user = await userService.getActiveUserById( userId );
 
         if( user ) {

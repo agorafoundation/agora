@@ -9,12 +9,15 @@
 const db = require( '../db/connection' );
 
 // import models
-const userService = require( '../../server/service/userService' );
 const { ormFriendship } = require( '../model/friendship' );
 
 //SQL queries
 
-// Get all friends of a user
+/**
+ * Gets all friends of a user
+ * @param {*} userID 
+ * @returns All friends of user
+ */
 exports.getAllFriends = async ( userID ) => {
     let text = `
         SELECT 
@@ -22,6 +25,7 @@ exports.getAllFriends = async ( userID ) => {
             u.last_name AS friend_last_name,
             u.username AS friend_username,
             u.email AS friend_email,
+            u.profile_filename AS friend_profile_filename,
             f.friendship_id as friendship_id
         FROM agora.friendships AS f
         JOIN agora.users AS u ON u.user_id = CASE
@@ -50,6 +54,11 @@ exports.getAllFriends = async ( userID ) => {
     }
 };
 
+/**
+ * Returns number of unread requests of user
+ * @param {*} userID 
+ * @returns Number of unread friend requests
+ */
 exports.getUnreadFriendRequestCount = async ( userID ) => {
     let text = `SELECT COUNT(*) FROM friendships WHERE recipient_id = $1 AND friendship_status = $2`;
     let values = [ userID, 'pending' ];
@@ -68,7 +77,12 @@ exports.getUnreadFriendRequestCount = async ( userID ) => {
     }
 };
 
-// Send a friend request
+/**
+ * Sends a friend request to recipient user.
+ * @param {*} requesterID 
+ * @param {*} recipientID 
+ * @returns Successful request or false
+ */
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
 
     let text = 'INSERT INTO friendships (initiatedby_id, recipient_id,friendship_status) VALUES ($1, $2, $3);';
@@ -89,32 +103,11 @@ exports.sendFriendRequest = async ( requesterID, recipientID ) => {
     }
 };
 
-/*
-// Get a specific friend by ID
-exports.getFriendByID = async ( userID, friendID ) => {
-    let text = `SELECT * 
-    FROM friendships 
-    WHERE (initiatedby_id = $1 AND recipient_id = $2) 
-    OR (initiatedby_id = $2 AND recipient_id = $1)
-    AND status = 'accepted'`;
-    let values = [ userID, friendID ];
-    try{
-        let res = await db.query( text, values );
-        if ( res.rows.length > 0 ){
-            return res.rows[0];
-        }
-        else{
-            return false;
-        }
-    }
-    catch ( e ){
-        console.log( e.stack );
-    }
-    
-};
-*/
-
-// Accept a friend request
+/**
+ * Accepts a friend request.
+ * @param {*} friendship_id 
+ * @returns Friend request was accepted
+ */
 exports.acceptFriendRequest = async ( friendship_id ) => {
 
     const request = await db.query(
@@ -140,7 +133,11 @@ exports.acceptFriendRequest = async ( friendship_id ) => {
     }
 };
 
-// Deny a friend request
+/**
+ * Denies a friend request
+ * @param {*} friendship_id 
+ * @returns Friend request was denied
+ */
 exports.denyFriendRequest = async ( friendship_id ) => {
 
     const request = await db.query(
@@ -160,7 +157,11 @@ exports.denyFriendRequest = async ( friendship_id ) => {
     }
 };
 
-// Delete a friend by ID
+/**
+ * Deletes friend from user's friend list
+ * @param {*} friendshipId 
+ * @returns Whether friend was removed or not
+ */
 exports.deleteFriendByID = async ( friendshipId ) => {
     let text = `DELETE FROM friendships 
     WHERE friendship_id = $1`;
@@ -180,7 +181,11 @@ exports.deleteFriendByID = async ( friendshipId ) => {
     }
 };
 
-// Get details of unaccepted friend requests for a user
+/**
+ * Get details of unaccepted friend requests for a user
+ * @param {*} userID 
+ * @returns User's unaccepted friend requests
+ */
 exports.getUnacceptedFriendRequests = async ( userID ) => {
     let text = `SELECT 
             f.friendship_id,
@@ -216,7 +221,11 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
 };
 
 
-// Get details of unread friend requests for a user
+/**
+ * Get details of unread friend requests for a user
+ * @param {*} userID 
+ * @returns User's unread friend requests
+ */
 exports.getUnreadFriendRequests = async ( userID ) => {
     let text = `SELECT initiatedby_id, recipient_id FROM friendships WHERE recipient_id = $1 OR initiatedby_id = $1 AND friendship_status = 'pending'`;
     let values = [ userID ];

@@ -20,9 +20,6 @@ const resourceService = require( '../../service/resourceService' );
 const SharedEntity = require( '../../model/sharedEntity' );
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
-const { Console } = require( 'console' );
-
-const User = require( '../../model/user' ); // Import the User model
 
 /**
  * 
@@ -169,6 +166,7 @@ exports.removeSharedUserById = async ( req, res ) => {
         }
 
         // Fetch user details from the User model
+        console.log( "2" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             console.log( "1" );
@@ -210,6 +208,7 @@ exports.sharedWorkspace = async ( req, res ) => {
         }
 
         // Fetch user details from the User model
+        console.log( "3" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             return res.status( 404 ).json( { message: 'User not found' } );
@@ -266,62 +265,12 @@ exports.sharedWorkspace = async ( req, res ) => {
     }
 };
 
-exports.removeUserFromWorkspaceByEmail = async ( req, res ) => {
-    try {
-        // Authenticate the user making the request
-        let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
-        if ( !authUserId ) {
-            return res.status( 403 ).json( { message: 'User not authenticated' } );
-        }
-
-        // Fetch user details of the requester
-        const requestingUser = await userService.getActiveUserById( authUserId );
-        if ( !requestingUser ) {
-            return res.status( 404 ).json( { message: 'User not found' } );
-        }
-
-        // Get workspace ID and email of the user to be removed from the request body
-        const workspaceId = req.body.entityId;
-        const emailToRemove = req.body.emailToRemove;
-
-        // Verify the owner of the workspace
-        const workspace = await workspaceService.getWorkspaceById( workspaceId );
-        if ( !workspace ) {
-            return res.status( 404 ).json( { message: 'Workspace not found' } );
-        }
-        if ( workspace.ownedBy !== requestingUser.userId ) {
-            return res.status( 403 ).json( { message: 'Unauthorized: You are not the owner of this workspace' } );
-        }
-
-        // Prevent owner from removing themselves
-        if ( requestingUser.email === emailToRemove ) {
-            return res.status( 403 ).json( { message: 'You cannot remove yourself from the workspace' } );
-        }
-
-        // Call the service function to remove the user
-        const removalSuccess = await sharedEntityService.removeUserByEmailFromWorkspace( workspaceId, emailToRemove );
-        if ( !removalSuccess ) {
-            return res.status( 404 ).json( { message: 'Error removing user from workspace or user not found' } );
-        }
-
-        // Send success response
-        res.status( 200 ).json( { message: 'User removed from workspace successfully' } );
-    } 
-    catch ( error ) {
-        // Handle any other errors 
-        res.status( 500 ).json( { message: error.message } );
-    }
-};
-
-
-
 exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
     const workspaceId = req.params.entityId;
 
     try {
         // Fetch all shared entities related to the given workspace ID
         const sharedEntities = await sharedEntityService.getAllSharedUsersByWorkspaceId( workspaceId );
-
         if ( sharedEntities ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Returned shared entities by workspace id" );
@@ -340,59 +289,6 @@ exports.getAllSharedUsersByWorkspaceId = async ( req, res ) => {
     }
 };
 
-exports.getAllSharedEntityUsers = async ( req, res ) => {
-    try {
-        // You need to get the entity ID from the request, assuming it's provided in req.params or req.query
-        const entityId = req.params.entityId; // Update this to match your actual request parameter name
-
-        // Fetch all shared entities related to the given entity ID
-        const sharedEntities = await sharedEntityService.getAllSharedEntitiesByEntityId( entityId );
-
-        // Initialize an array to store user IDs who have shared the entity
-        const sharedUserIds = [];
-
-        // Iterate through the shared entities to collect shared user IDs
-        sharedEntities.forEach( ( sharedEntity ) => {
-            sharedUserIds.push( sharedEntity.shareUserId );
-        } );
-
-        // Fetch user details for the collected user IDs
-        const sharedUsers = await userService.getUsersByIds( sharedUserIds );
-
-        // Send the list of shared users in the response
-        res.status( 200 ).json( sharedUsers );
-    }
-    catch ( error ) {
-        // Handle any errors that occur during the process
-        res.status( 500 ).json( { message: error.message } );
-    }
-};
-
-exports.getSharedEntityUser = async ( req, res ) => {
-    try{
-        console.log( "Getting User ID...." );
-        const authUser = req.user.userId;
-        console.log( req.user.userId );
-        const workspaceId = req.params.entityId;
-        const sharedEntities = await sharedEntityService.getAllSharedUsersByWorkspaceId( workspaceId );
-        var sharedUserId = null;
-
-        sharedEntities.forEach( ( sharedEntity ) => {
-            //console.log( sharedEntity );
-            //console.log( sharedEntity.sharedWithUserId );
-            if ( sharedEntity.sharedWithUserId == authUser ) {
-                sharedUserId = sharedEntity.sharedUserId;
-            }
-        } );
-        
-        res.status( 200 ).json( sharedUserId );
-
-    }
-    catch ( error ) {
-        res.status( 500 ).json( { message: error.message } );
-    }
-};
-
 exports.updatePermission = async ( req, res ) => {
     try{
         let authUserId = req.user ? req.user.userId : req.session.authUser?.userId;
@@ -400,6 +296,7 @@ exports.updatePermission = async ( req, res ) => {
             return res.status( 403 ).json( { message: 'User not authenticated' } );
         }
         // Fetch user details from the User model
+        console.log( "4" );
         const sharingUser = await userService.getActiveUserById( authUserId );
         if ( !sharingUser ) {
             return res.status( 404 ).json( { message: 'User not found' } );

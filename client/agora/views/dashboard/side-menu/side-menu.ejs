@@ -65,11 +65,11 @@
                         locals.authUser.profileFilename.toString().substring(0, 8)=="https://" ) { %>
                         <img src="<%- locals.authUser.profileFilename %>" alt="User Dashboard avatar"
                             title="User Dashboard" class="profile-top-image" />
-                        <% } else { %>
-                            <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>"
-                                alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
-                            <% } %>
-                                <span class="icon-text">&nbsp;&nbsp;&nbsp;Account</span>
+                    <% } else { %>
+                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.authUser.profileFilename %>"
+                            alt="User Dashboard avatar" title="User Dashboard" class="profile-top-image" />
+                    <% } %>
+                    <span class="icon-text">&nbsp;&nbsp;&nbsp;Account</span>
                 </a><br>
                 <% } %>
         </div>

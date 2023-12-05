@@ -18,8 +18,6 @@ router.use( bodyParser.json() );
 
 // controllers
 const workspaceController = require( '../../controller/apis/workspaceController' );
-const sharedEntityController = require( '../../controller/apis/sharedEntityController' );
-const { get } = require( './tagRoutes' );
 
 
 // workspaces /api/v1/auth/workspaces

@@ -57,11 +57,17 @@ const getTopic = async( id ) => {
 // retrieve the resources associated with a topic given the topic id
 const getResourcesForTopic = async function ( topicId ) {
     ( debug ) ? console.log( "getResourcesForTopicId() : Start for topicId: " + topicId ) : null;
-    const response = await fetch( "api/v1/auth/topics/resources/" + topicId );
-    const data = await response.json();
-    ( debug && dataDebug ) ? console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) ) : null;
-    ( debug ) ? console.log( "getResourcesForTopicId() : Complete" ) : null;
-    return data.results;
+    const response = await fetch( "api/v1/auth/topics/resources/" + topicId, { 
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } );
+    
+    if( response.ok ){
+        const data = await response.json();
+        ( debug && dataDebug ) ? console.log( "getResourcesForTopicId() : complete - response: " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "getResourcesForTopicId() : Complete" ) : null;
+        return data.results;
+    }
 };
 
 const saveTopic = async( topic ) => {

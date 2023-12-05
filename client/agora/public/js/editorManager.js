@@ -9,9 +9,12 @@
  * imports
  */
 // state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName } from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission} from "./state/stateManager.js";
 // DOM event functions (eg. 
 import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
+
+//clientWorkspaceController
+import { getPermission } from "./controllers/clientWorkspaceController.js";
 
 
 /**
@@ -101,6 +104,61 @@ const createTopicEditorGui = async function ( ) {
     // verify we have a workspace and it has topics
     
     if( getCurrentWorkspace() && getCurrentWorkspace().topics && getCurrentActiveTopic() ) {
+
+        /**
+         * create share button
+         * This builds the tabs based upon the topics in the getCurrentWorkspace() model
+         */
+        if ( getCurrentWorkspaceOwner() ) {
+            const workspaceId = getCurrentWorkspace().workspaceId;
+            const shareSearchButton = document.getElementById( 'share-btn-search' );
+            let ownerDetails = null, allUsers = null, sharedUsers = [];
+
+            ownerDetails = {
+                name: getCurrentWorkspaceOwner().firstName + " " + getCurrentWorkspaceOwner().lastName,
+                pfp: getCurrentWorkspaceOwner().profileFilename,
+                status: "Owner",
+                email: getCurrentWorkspaceOwner().email,
+                userId: getCurrentWorkspaceOwner().userId,
+                entityId: workspaceId,
+            };
+
+            if ( getCurrentWorkspaceSharedUsers() ) {
+                sharedUsers = getCurrentWorkspaceSharedUsers().map( ( entity ) => ( {
+                    name: entity.first_name + " " + entity.last_name,
+                    pfp: entity.profile_filename,
+                    status: entity.permissionLevel.charAt( 0 ).toUpperCase() + entity.permissionLevel.slice( 1 ),
+                    email: entity.email,
+                    userId: entity.sharedWithUserId,
+                } ) );
+            }
+            else {
+                ( debug ) ? console.log( "Unable to retrieve shared users OR no shared users." ): null;
+            }
+
+            allUsers = [ ownerDetails, ...sharedUsers ];
+
+            const profilesList = document.getElementById( "profiles-list" );
+            profilesList.innerHTML = "";
+            allUsers.forEach( ( profile ) => {
+                const userProfileElement = createUserProfile( profile, getCurrentWorkspace() );
+                profilesList.appendChild( userProfileElement );
+            } );
+            
+            let name = document.getElementById( "share-modal-title" );
+            name.textContent = `Share "${getCurrentWorkspace().workspaceName}"`;
+
+            shareSearchButton.addEventListener( 'click', function () {
+                shareSearchUsers( ownerDetails, allUsers );
+            } );
+        
+            // Clear old search results before displaying new ones
+            const searchedUsersContainer = document.getElementById( "searched-users" );
+            searchedUsersContainer.innerHTML = "";
+        }
+        else {
+            console.error( "Unable to retrieve workspace owner." );
+        }
         
         /**
          * create the tabs for each topic above the topic editor
@@ -288,7 +346,12 @@ const createTopicEditorGui = async function ( ) {
                     
                     document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
                         lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
-                        document.getElementById( "current-document" ).innerHTML = currentResource.resourceName; // Set the name in the Modal
+                        let resourceName = currentResource.resourceName;
+                        if( resourceName == null || resourceName == "Untitled" ){
+                            resourceName = getCurrentActiveTopic().topicName;
+                        }
+
+                        document.getElementById( "current-document" ).innerHTML = resourceName; // Set the name in the Modal
                     } );
 
                 }
@@ -590,11 +653,18 @@ function createTextArea( resource, position ) {
             else{
                 title.value = "Untitled";
             }
+
+            
             // add the change listener for the title
             title.addEventListener( "change", async () => {
-                ( debug ) ? console.log( "title change event : Start - resourceId: " + resource.resourceId ) : null;
-                textEditorUpdateEvent( resource.resourceId, null );
-                ( debug ) ? console.log( "title change event : Complete" ) : null;
+                if( await getPermission( getCurrentWorkspace().workspaceId ) != false ){
+                    ( debug ) ? console.log( "title change event : Start - resourceId: " + resource.resourceId ) : null;
+                    textEditorUpdateEvent( resource.resourceId, null );
+                    ( debug ) ? console.log( "title change event : Complete" ) : null;
+                }
+                else{
+                    title.readOnly = true;
+                }
             } );
 
             resourcesZone.appendChild( titleContainer );
@@ -640,7 +710,9 @@ function createTextArea( resource, position ) {
 
         
 
-            
+            // Append elemets accordingly
+            // URBG this was not in the current version without sharing (line below) might need to double checked.
+            //resourcesZone.appendChild( title );
             // resourcesZone.appendChild( newTabIcon );
             // resourcesZone.appendChild( editIcon );
             titleContainer.appendChild( doneIcon );
@@ -727,7 +799,6 @@ function createDropZone( resourceId, position ) {
         // shows or hides the title-contain element
             let titleContainer = document.getElementById( "title-container-" + resourceId );
             let titleToggle = document.getElementById( "title-toggle-" + resourceId );
-            console.log( "titleContainer.: " + titleContainer.style + ' resource id  : ' + resourceId + ' titleContainer.style.display: ' + titleContainer.style.display );
             if( titleContainer.style.display === "none" ) {
                 titleContainer.style.display = "block";
                 titleToggle.innerHTML = "\u21A5";
@@ -1113,3 +1184,159 @@ const createSunEditor = async( resourceId ) => {
     ( debug ) ? console.log( "createSunEditor() complete current editors: " ) : null;
     window.scrollTo( 0, 0 );
 };
+
+const shareSearchUsers = ( workspaceOwner, allUsers ) => {
+    const shareUserSearch = document.getElementById( 'share-user-search' );
+    const excludedUserIds = new Set();
+
+    // Add workspace owner's ID to the excluded list
+    excludedUserIds.add( workspaceOwner.userId );
+    for ( let n = 0; n < allUsers.length; n++ ) {
+        excludedUserIds.add( allUsers[n].userId );
+    }
+
+    // Fetch the list of users matching the search term
+    fetch( "/api/v1/auth/user/username/" + shareUserSearch.value, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } )
+        .then( ( response ) => response.json() )
+        .then( ( response ) => {
+        // Clear old search results before displaying new ones
+            const searchedUsersContainer = document.getElementById( "searched-users" );
+            searchedUsersContainer.innerHTML = "";
+
+            for ( let i = 0; i < response.length; i++ ) {
+                const data = response[i];
+            
+                // Check if the user is not in the excluded list (owner or shared)
+                if ( !excludedUserIds.has( data.userId ) ) {
+                    createUserSearchCard( data, workspaceOwner );
+                }
+            }
+        } );
+};
+
+// creates a user card for each user
+function createUserSearchCard( userData, workspace ) {
+    // Create a div element for the user card
+    const card = document.createElement( "div" );
+    card.className = "searched-user-card";
+    const user = {
+        name: userData.firstName + " " + userData.lastName,
+        pfp: userData.profileFilename,
+        email: userData.email,
+        userId: userData.userId,
+    };
+
+    // Create the HTML structure for the user card
+    card.innerHTML = `
+            <div class="profile-status-container">
+                <img class="shared-profile-picture" src="/assets/uploads/profile/${user.pfp}">
+                <div class="profile-info">
+                    <span class="profile-name">${user.name}</span>
+                    <span class="profile-email">${user.email}</span>
+                </div>
+                <button class="add-user-button" style="margin-right: 10px;">Add</button>    
+            </div>
+        `;
+
+    const addUserButton = card.querySelector( ".add-user-button" );
+    addUserButton.addEventListener( "click", async () => {
+        await fetch( "/api/v1/auth/shared/shareworkspace/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                entityId: workspace.entityId,
+                sharedWithUserId: user.userId,
+                sharedWithEmail: user.email,
+                permissionLevel: "view",
+                canCopy: "false",
+            } ),
+        } );
+      
+        // Refresh the shared user list
+        location.reload();
+    } );
+
+    // Get the container for searched users and append the card
+    const searchedUsersContainer = document.getElementById( "searched-users" );
+    searchedUsersContainer.appendChild( card );
+}
+
+function createUserProfile( profile, workspace ) {
+    const li = document.createElement( "li" );
+    li.className = "profile-shared-with";
+
+    // Create only the necessary HTML elements based on the profile status
+    li.innerHTML = `
+        <div class="profile-status-container">
+            <img class="shared-profile-picture" src="/assets/uploads/profile/${profile.pfp}">
+            <div class="profile-info">
+                <span class="profile-name">${profile.name}</span>
+                <span class="profile-email">${profile.email}</span>
+            </div>
+            <span class="profile-status">${profile.status}</span>
+            ${profile.status !== 'Owner' ? `
+            <button class="arrow down-arrow" id="toggle-button-${profile.userId}" style="margin-right: 10px;"></button>
+            <div class="permissions-box" id="permissions-box-${profile.userId}" style="display: none;">
+                <div class="permissions-col">
+                    <span class="permission-li">
+                        <button class="permission-button" data-permission="edit">Edit</button>
+                    </span>
+                    <span class="permission-li">  
+                        <button class="permission-button" data-permission="view">View</button>
+                    </span>
+                    <span class="permission-li removes">
+                        <button class="remove-button">Remove</button>
+                    </span>
+                </div> 
+            </div>` : ''}
+        </div>
+    `;
+
+    // Add event listeners only if the profile is not an 'Owner'
+    if ( profile.status !== 'Owner' ) {
+        const permissionButtons = li.querySelectorAll( ".permission-button" );
+        const removeButton = li.querySelector( ".remove-button" );
+
+        permissionButtons.forEach( button => {
+            button.addEventListener( "click", async () => {
+                const permission = button.getAttribute( "data-permission" );
+                updateUserPermission( getCurrentWorkspace(), permission, profile );
+                location.reload();
+            } );
+        } );
+
+        removeButton.addEventListener( "click", async () => {
+            fetch( "/api/v1/auth/shared/removeShare/", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( {
+                    entityId: workspace.workspaceId,
+                    sharedUserId: profile.userId,
+                } ),
+            } );
+            location.reload();
+        } );
+
+        // Attach event listener to the toggle button
+        const toggleButton = li.querySelector( `#toggle-button-${profile.userId}` );
+        const permissionsBox = li.querySelector( `#permissions-box-${profile.userId}` );
+
+        toggleButton.addEventListener( "click", () => {
+            if ( permissionsBox.style.display === "none" ) {
+                permissionsBox.style.display = "block";
+                toggleButton.classList.remove( "down-arrow" );
+                toggleButton.classList.add( "up-arrow" );
+            }
+            else {
+                permissionsBox.style.display = "none";
+                toggleButton.classList.remove( "up-arrow" );
+                toggleButton.classList.add( "down-arrow" );
+            }
+        } );
+    }
+
+    return li;
+}

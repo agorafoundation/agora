@@ -65,33 +65,6 @@ exports.getResources = async ( req, res ) => {
     }
 };
 
-/*
-//Get a specific friend, by their ID.
-exports.getFriendByID = async ( req, res ) => {
-    let authUserID;
-    if( req.user ) {
-        authUserID = req.user.userId;
-    }
-    else if( req.session.authUser ) {
-        authUserID = req.session.authUser.userId;
-    }
-    if( authUserID ) {
-        let friend = await friendService.getFriendByID( req.params.userID, authUserID );
-        if ( friend ) {
-            res.set( "x-agora-message-title", "Success" );
-            res.set( "x-agora-message-detail", "Returned friend by id" );
-            res.status( 200 ).json( friend );
-        }
-        else {
-            const message = ApiMessage.createApiMessage( 404, "Not Found", "Friend not found" );
-            res.set( "x-agora-message-title", "Not Found" );
-            res.set( "x-agora-message-detail", "Friend not found" );
-            res.status( 400 ).json( message );
-        }
-    }
-};
-*/
-
 //Sends a friend request.
 exports.sendFriendRequest = async ( req, res ) => {
     let authUserID;
@@ -241,6 +214,7 @@ exports.getFriends = async function ( req, res ) {
 
         const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
 
+        console.log( JSON.stringify( userFriends ) );
         res.render( './friends/friends', { user: authUser, friends: userFriends} );
         
     }
