@@ -1229,10 +1229,19 @@ function createUserSearchCard( userData, workspace ) {
         userId: userData.userId,
     };
 
+    if ( user.pfp.toString().substring( 0, 7 )=="http://" || user.pfp.toString().substring( 0, 8 )=="https://" ) {
+        // correct
+    }
+    else {
+        user.pfp = "/assets/uploads/profile/" + user.pfp;
+    }
+
+    console.log( "user.pfp: " + user.pfp );
+
     // Create the HTML structure for the user card
     card.innerHTML = `
             <div class="profile-status-container">
-                <img class="shared-profile-picture" src="/assets/uploads/profile/${user.pfp}">
+                <img class="shared-profile-picture" src="${user.pfp}">
                 <div class="profile-info">
                     <span class="profile-name">${user.name}</span>
                     <span class="profile-email">${user.email}</span>
@@ -1267,11 +1276,18 @@ function createUserSearchCard( userData, workspace ) {
 function createUserProfile( profile, workspace ) {
     const li = document.createElement( "li" );
     li.className = "profile-shared-with";
+    
+    if ( profile.pfp.toString().substring( 0, 7 )=="http://" || profile.pfp.toString().substring( 0, 8 )=="https://" ) {
+        // correct
+    }
+    else {
+        profile.pfp = "/assets/uploads/profile/" + profile.pfp;
+    }
 
     // Create only the necessary HTML elements based on the profile status
     li.innerHTML = `
         <div class="profile-status-container">
-            <img class="shared-profile-picture" src="/assets/uploads/profile/${profile.pfp}">
+            <img class="shared-profile-picture" src="${profile.pfp}">
             <div class="profile-info">
                 <span class="profile-name">${profile.name}</span>
                 <span class="profile-email">${profile.email}</span>
