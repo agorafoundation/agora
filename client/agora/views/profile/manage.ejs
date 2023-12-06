@@ -75,6 +75,10 @@
                                     <br />
                                 </section>
     
+                                
+                            </div>
+                            <div class="col-lg-5">
+
                                 <!-- -----TODO-----
                                     Change to a updating friendRequestCount
                                 -->
@@ -119,8 +123,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-5">
                                 
                                 <div class="profile-image-wrapper" style="position: relative;"></div>
                                 
@@ -136,8 +138,7 @@
                                 }
                                 %>
                                 <span class="notification-count" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px;">0</span>
-                            </div>
-                                
+
                                 <%- include('../partials/message'); %>
     
                                 <form action="/user/uploadProfilePicture" method="POST" enctype="multipart/form-data" style="width: 100%;">
@@ -147,6 +148,9 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </form>
+                            </div>
+                                
+                                
                                 
     
                                 <!-- All users are creators in agora, this is a relic from cc -->
@@ -280,9 +284,10 @@
         <%- include('../partials/jsincludes'); %>
         <script>
             
+            //URBG: removed this as comment out for now, not sure why it was here, but this one line is the only reference I can find to liTemplates
 
             // inject into modal body
-            document.querySelector('.modal-body').innerHTML = liTemplates
+            //document.querySelector('.modal-body').innerHTML = liTemplates
         </script>
     </body>
 </html>
