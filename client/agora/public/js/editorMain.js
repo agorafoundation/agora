@@ -15,7 +15,7 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource, addNewTag } from "./state/stateManager.js";
 
 // get the data models
 import { deleteResource } from "./controllers/clientResourceController.js";
@@ -234,6 +234,28 @@ async function tabLongClickEvent( event, topicId ) {
     editTopicName( topicId );
     ( debug ) ? console.log( "tabDoubleClickEvent() : Complete" ) : null;
 }
+
+
+// Add new tag by pressing enter key
+let ul = document.querySelector( ".tag-list" );
+ul.addEventListener( "keyup", function( e ) {
+    const tagName = document.getElementById( "mySearch" ).value;
+    if ( e.key == "Enter" && ul.style.display == "block" ) {
+        ( debug ) ? console.log( "addTagEvent() : Start" ) : null;
+
+
+        addNewTag( tagName );
+        document.querySelector( ".tag-list" ).style.display = "none";
+        // document.querySelector( "#new-tag-element" ).style.display = "none";
+        document.querySelector( "#mySearch" ).value = "";
+
+
+        ( debug ) ? console.log( "addTagEvent() : Complete" ) : null;
+    }
+    
+    
+} );
+
 
 
 export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent };

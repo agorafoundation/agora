@@ -22,7 +22,6 @@ router.route( '/' )
             user.editorFirstVisit = false;
             userService.saveUser( user );
         }
-        console.log( " this is a test of topic " );
         res.render( 'dashboard/partials/topic/topic-view', {firstVisit: editorFirstVisit} );
     }
     );  

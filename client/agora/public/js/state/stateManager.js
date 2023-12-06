@@ -3,12 +3,14 @@ import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
 import { createNewWorkspace, saveWorkspace, getWorkspace, getPermission, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission } from "../controllers/clientWorkspaceController.js";
+import { createNewTag, saveTag, deleteTag } from "../controllers/clientTagController.js";
+
 
 /**
  * Client side debugging flags
  */
-const debug = false;
-const dataDebug = false;
+const debug = true;
+const dataDebug = true;
 
 
 /**
@@ -248,6 +250,21 @@ function saveTextResource( resource, content ) {
     
 }
 
+// create a new tag
+const addNewTag = async function ( tag, entityType, entityId ) {
+    ( debug ) ? console.log( "addNewTag() : Start" ) : null;
+
+    // create a new tag
+    let newTag = createNewTag();
+    newTag.tag = tag;
+
+    // save the tag
+    await saveTag( newTag, entityType, entityId );
+
+    ( debug ) ? console.log( "addNewTag() : Complete" ) : null;
+
+};
+
 async function updateUserPermission( newWorkspace, newPermission, profile ) {
     ( debug ) ? console.log( "updateUserPermission() : Start" ) : null;
 
@@ -303,7 +320,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag};
 
 // Export GUI state
 export { tabs, activeTab };

@@ -15,6 +15,7 @@ import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResource
 
 //clientWorkspaceController
 import { getPermission } from "./controllers/clientWorkspaceController.js";
+import { render } from "ejs";
 
 
 /**
@@ -159,6 +160,11 @@ const createTopicEditorGui = async function ( ) {
         else {
             console.error( "Unable to retrieve workspace owner." );
         }
+
+        /**
+         * Generate the tags that are associtad with the workspace
+         */
+        renderTags();
         
         /**
          * create the tabs for each topic above the topic editor
@@ -1356,3 +1362,27 @@ function createUserProfile( profile, workspace ) {
 
     return li;
 }
+
+/**
+ * Iterates through the tags associated with the workspace and renders them in the tag list
+ */
+const renderTags = ( ) => {
+    ( debug ) ? console.log( "renderTags() : Start" ) : null;
+    const ul = document.querySelector( ".tag-list" );
+    
+    ul.innerHTML = "";
+    if( getCurrentWorkspace() && getCurrentWorkspace().tags ) {
+        for ( let i = 0; i < getCurrentWorkspace().tags.length; i++ ) {
+            renderTag( getCurrentWorkspace().tags[i].tag );
+        }
+    }
+    ( debug ) ? console.log( "renderTags() : Complete" ) : null;
+};
+
+const renderTag = ( tag ) => {
+    const ul = document.querySelector( ".tag-list" );
+    const li = document.createElement( "li" );
+    li.setAttribute( "class", "tag-list-element" );
+    li.innerHTML = tag;
+    ul.appendChild( li );
+};
