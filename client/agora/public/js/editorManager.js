@@ -11,10 +11,11 @@
 // state manager
 import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
+import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent } from "./editorMain.js";
 
 //clientWorkspaceController
 import { getPermission } from "./controllers/clientWorkspaceController.js";
+import { deleteTag } from "./controllers/clientTagController.js";
 
 
 /**
@@ -166,7 +167,9 @@ const createTopicEditorGui = async function ( ) {
         /**
          * Generate the tags that are associtad with the workspace
          */
-        renderTags();
+        if( getCurrentWorkspace().tags && getCurrentWorkspace().tags.length > 0 ) {
+            renderTags();
+        }
         
         /**
          * create the tabs for each topic above the topic editor
@@ -769,30 +772,20 @@ function createTextArea( resource, position ) {
 
 
 
-const addTagToWorkspace = async function ( ) {
-    let ul = document.querySelector( ".tag-list" );
-    let tagInput = document.getElementById( "mySearch" );
-    if( tagInput ) {
-        console.log( "tagInput exists" );
-        tagInput.addEventListener( "keyup", function( e ) {
-            console.log( "tagInput keyup event" );
-            const tagName = document.getElementById( "mySearch" ).value;
-            if ( e.key == "Enter" ) {
-                ( debug ) ? console.log( "addTagEvent() : Star  t" ) : null;
-                console.log( "tag name:" + tagName );
-
-                addNewTag( tagName, getCurrentWorkspace().workspaceId );
-                document.querySelector( ".tag-list" ).style.display = "none";
-                // document.querySelector( "#new-tag-element" ).style.display = "none";
-                document.querySelector( "#mySearch" ).value = "";
-
-
-                ( debug ) ? console.log( "addTagEvent() : Complete" ) : null;
-            }
+const addTagToWorkspace = async function ( tagName ) {
     
-    
-        } );
-    }
+    ( debug ) ? console.log( "addTagToWorkspace() : Start" ) : null;
+    console.log( "tag name:" + tagName );
+
+                
+    document.querySelector( ".tag-list" ).style.display = "none";
+    // document.querySelector( "#new-tag-element" ).style.display = "none";
+    document.querySelector( "#mySearch" ).value = "";
+
+    //renderTag( tagName );
+
+
+    ( debug ) ? console.log( "addTagToWorkspace() : Complete" ) : null;
 };
 
 
@@ -1397,6 +1390,10 @@ function createUserProfile( profile, workspace ) {
 const renderTags = ( ) => {
     ( debug ) ? console.log( "renderTags() : Start" ) : null;
     const ul = document.querySelector( ".tag-list" );
+    const currTags = document.getElementById( "curr-tags" );
+
+    // clear the current tags
+    currTags.innerHTML = "";
     
     ul.innerHTML = "";
     if( getCurrentWorkspace() && getCurrentWorkspace().tags ) {
@@ -1425,27 +1422,19 @@ const renderTag = ( tag ) => {
     removeTagBtn.style.color = "#aaa";
 
 
-    removeTagBtn.addEventListener( "click", () => {
-        // if ( editPermission == true ){
-        //     // Get the id portion with the tag name
-        //     document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
-        //     for ( let i=0; i<currTagList.length; i++ ) {
-        //         if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
-        //             currTagList[i] = "";
-        //         }
-        //     }
-        // }
-        
+    removeTagBtn.addEventListener( "click", async () => {
 
-        // const [ isTopic, id ] = getPrefixAndId();
-        // const tagType = isTopic ? "topic" : "workspace";
+        ( debug ) ? console.log( "removeTagBtn.addEventListener( click : Start for tag: " + tag ) : null;
 
-        // // call the .delete on the tagged
-        // //console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id );
-        // fetch( "api/v1/auth/tags/tagged/" + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id, {
-        //     method: "DELETE",
-        //     headers: { "Content-Type": "application/json" },
-        // } );
+        // // delete the tag from the workspace
+        // await deleteTag( tag, "workspace", getCurrentWorkspace().workspaceId );
+
+        // // remove the tag from the current workspace
+        // getCurrentWorkspace().tags = getCurrentWorkspace().tags.filter( ( item ) => item.tag !== tag );
+
+        await deleteTagEvent( tag );
+
+        ( debug ) ? console.log( "removeTagBtn.addEventListener( click : Complete" ) : null;
             
 
     } );

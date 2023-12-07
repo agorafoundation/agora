@@ -100,14 +100,16 @@ const saveTag = async ( tag, entityType, entityId ) => {
 const deleteTag = async ( tag, entityType, entityId ) => {
     ( debug ) ? console.log( "deleteTag() : Start" ) : null;
 
-    const response = fetch( "api/v1/auth/tags/tagged/" + tag + "/" + entityType + "/" + entityId, {
+    const response = await fetch( "api/v1/auth/tags/tagged/" + tag + "/" + entityType + "/" + entityId, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     } );
 
+    console.log( "deleteTag() response: " + JSON.stringify( response ) );
+
     if( response.ok ) {
         const data = await response.json();
-        ( debug ) ? console.log( "deleteTag() tag deleted : " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "deleteTag() tag deleted : " + data ) : null;
         
         ( debug && dataDebug ) ? console.log( "deleteTag() : tag deleted" ) : null;
         return data;

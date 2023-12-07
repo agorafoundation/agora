@@ -44,7 +44,10 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
 
         // get tags associated with the workspace
-        workspace.tags = await getTags( "workspace", workspaceUuid );
+        workspace.tags = [];
+        const tags = await getTags( "workspace", workspaceUuid );
+        ( tags ) ? workspace.tags = tags: [];
+        console.log( "workspace.tags: " + JSON.stringify( workspace.tags ) );
 
         const workspaceTitle = document.getElementById( "workspace-title" );
         const workspaceDescription = document.getElementById( "workspace-desc" );
@@ -264,7 +267,23 @@ const addNewTag = async function ( tag, entityId ) {
     // save the tag
     await saveTag( newTag.tag, "workspace", entityId );
 
+    // add the tag to the current workspace
+    await getCurrentWorkspace().tags.push( newTag );
+
     ( debug ) ? console.log( "addNewTag() : Complete" ) : null;
+
+};
+
+const deleteExistingTag = async function ( tagName ) {
+    ( debug ) ? console.log( "deleteTag() : Start" ) : null;
+
+    // delete the tag
+    await deleteTag( tagName, "workspace", getCurrentWorkspace().workspaceId );
+
+    // remove the tag from the current workspace
+    getCurrentWorkspace().tags = getCurrentWorkspace().tags.filter( tag => tag.tag !== tagName );
+
+    ( debug ) ? console.log( "deleteTag() : Complete" ) : null;
 
 };
 
@@ -323,7 +342,7 @@ const resetTabs = () => {
 // Export members (Client state)
 export { debug, dataDebug };
 // Export methods to manage state
-export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag};
+export { getCurrentWorkspace, getCurrentActiveTopic, initializeWorkspace, setActiveTopicAndResources, addNewTopic, saveActiveTopic, addNewTextResource, saveTextResource, updateTopicName, deleteTopicFromWorkspace, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag, deleteExistingTag };
 
 // Export GUI state
 export { tabs, activeTab };

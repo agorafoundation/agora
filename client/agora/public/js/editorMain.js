@@ -15,7 +15,7 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource, addNewTag, deleteExistingTag } from "./state/stateManager.js";
 
 // get the data models
 import { deleteResource } from "./controllers/clientResourceController.js";
@@ -23,9 +23,6 @@ import { deleteResource } from "./controllers/clientResourceController.js";
 // get DOM manipulation functions from modules
 import { updateWorkspaceDom, createTopicEditorGui, editTopicName, addTagToWorkspace } from "./editorManager.js";
 import { saveWorkspace, getPermission } from "./controllers/clientWorkspaceController.js";
-
-
-import { shareWorkspace } from "./controllers/clientWorkspaceController.js";
 
 
 
@@ -82,7 +79,24 @@ window.addEventListener( "load", async () => {
     /**
      * Event listener for entering a tag
      */
-    addTagToWorkspace();
+    let ul = document.querySelector( ".tag-list" );
+    let tagInput = document.getElementById( "mySearch" );
+    if( tagInput ) {
+        tagInput.addEventListener( "keyup", async function( e ) {
+            const tagName = document.getElementById( "mySearch" ).value;
+            if ( e.key == "Enter" ) {
+
+
+                await addTagEvent( tagName );
+                
+                //addTagToWorkspace();
+                
+            }
+    
+    
+        } );
+    }
+    //addTagToWorkspace();
 
 
 
@@ -173,6 +187,33 @@ async function deleteTopicEvent( topicId ) {
     }
 }
 
+async function addTagEvent( tagName ) {
+    ( debug ) ? console.log( "addTagEvent() : Start" ) : null;
+
+    // ad the tag to the workspace and database
+    await addNewTag( tagName, getCurrentWorkspace().workspaceId );
+
+    // add the tag to the UI
+    await addTagToWorkspace( tagName ); 
+
+    // update the ui
+    await createTopicEditorGui();
+    
+    ( debug ) ? console.log( "addTagEvent() : Complete" ) : null;
+}
+
+async function deleteTagEvent( tagName ) {
+    ( debug ) ? console.log( "deleteTagEvent() : Start" ) : null;
+
+    // delete the tag from the workspace and database
+    await deleteExistingTag( tagName ); 
+
+    // update the ui
+    await createTopicEditorGui();
+    
+    ( debug ) ? console.log( "deleteTagEvent() : Complete" ) : null;
+}
+
 async function changeTopicEvent( topicId ) {
     if ( getCurrentWorkspace() && getCurrentWorkspace().topics ) {
         /**
@@ -243,7 +284,7 @@ async function tabLongClickEvent( event, topicId ) {
 }
 
 
-export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent };
+export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent };
 
 
 
