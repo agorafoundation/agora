@@ -47,6 +47,21 @@ const EntityType = {
 };
 
 
+const getTags = async ( entityType, entityId ) => {
+    ( debug ) ? console.log( "getTags() : Start" ) : null;
+
+    const response = await fetch( "api/v1/auth/tags/tagged/" + entityType + "/" + entityId, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    } );
+
+    if( response.ok ) {
+        const data = await response.json();
+        ( debug && dataDebug ) ? console.log( "getTags() tags retrieved : " + JSON.stringify( data ) ) : null;
+        ( debug ) ? console.log( "getTags() : tags retrieved" ) : null;
+        return data;
+    }
+};
 
 const saveTag = async ( tag, entityType, entityId ) => {
     ( debug ) ? console.log( "saveTag() : Start" ) : null;
@@ -100,4 +115,4 @@ const deleteTag = async ( tag, entityType, entityId ) => {
 };
 
 
-export { createNewTag, saveTag, deleteTag, getEntityTypeEnum };
+export { createNewTag, saveTag, deleteTag, getEntityTypeEnum, getTags };

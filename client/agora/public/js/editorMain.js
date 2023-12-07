@@ -15,13 +15,13 @@
 import { getWorkspaceUuid } from "./util/editorUtil.js";
 
 // get the state manager
-import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource, addNewTag } from "./state/stateManager.js";
+import { initializeWorkspace, setActiveTopicAndResources, debug, addNewTopic, getCurrentActiveTopic, getCurrentWorkspace, saveTextResource, saveActiveTopic, deleteTopicFromWorkspace, addNewTextResource } from "./state/stateManager.js";
 
 // get the data models
 import { deleteResource } from "./controllers/clientResourceController.js";
 
 // get DOM manipulation functions from modules
-import { updateWorkspaceDom, createTopicEditorGui, editTopicName } from "./editorManager.js";
+import { updateWorkspaceDom, createTopicEditorGui, editTopicName, addTagToWorkspace } from "./editorManager.js";
 import { saveWorkspace, getPermission } from "./controllers/clientWorkspaceController.js";
 
 
@@ -77,6 +77,13 @@ window.addEventListener( "load", async () => {
         await saveWorkspace( getCurrentWorkspace() );
         ( debug ) ? console.log( "Workspace Description Change: complete" ) : null;
     } );
+
+
+    /**
+     * Event listener for entering a tag
+     */
+    addTagToWorkspace();
+
 
 
     ( debug ) ? console.log( "window load event: complete" ) : null;
@@ -234,28 +241,6 @@ async function tabLongClickEvent( event, topicId ) {
     editTopicName( topicId );
     ( debug ) ? console.log( "tabDoubleClickEvent() : Complete" ) : null;
 }
-
-
-// Add new tag by pressing enter key
-let ul = document.querySelector( ".tag-list" );
-ul.addEventListener( "keyup", function( e ) {
-    const tagName = document.getElementById( "mySearch" ).value;
-    if ( e.key == "Enter" && ul.style.display == "block" ) {
-        ( debug ) ? console.log( "addTagEvent() : Start" ) : null;
-
-
-        addNewTag( tagName );
-        document.querySelector( ".tag-list" ).style.display = "none";
-        // document.querySelector( "#new-tag-element" ).style.display = "none";
-        document.querySelector( "#mySearch" ).value = "";
-
-
-        ( debug ) ? console.log( "addTagEvent() : Complete" ) : null;
-    }
-    
-    
-} );
-
 
 
 export { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent };

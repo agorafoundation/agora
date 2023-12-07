@@ -9,13 +9,12 @@
  * imports
  */
 // state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission} from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag } from "./state/stateManager.js";
 // DOM event functions (eg. 
 import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
 
 //clientWorkspaceController
 import { getPermission } from "./controllers/clientWorkspaceController.js";
-import { render } from "ejs";
 
 
 /**
@@ -100,6 +99,9 @@ const createTopicEditorGui = async function ( ) {
     } );
 
     currTabs.appendChild( newTab );
+
+    // render the tags for the workspace
+
     
 
     // verify we have a workspace and it has topics
@@ -767,9 +769,35 @@ function createTextArea( resource, position ) {
 
 
 
+const addTagToWorkspace = async function ( ) {
+    let ul = document.querySelector( ".tag-list" );
+    let tagInput = document.getElementById( "mySearch" );
+    if( tagInput ) {
+        console.log( "tagInput exists" );
+        tagInput.addEventListener( "keyup", function( e ) {
+            console.log( "tagInput keyup event" );
+            const tagName = document.getElementById( "mySearch" ).value;
+            if ( e.key == "Enter" ) {
+                ( debug ) ? console.log( "addTagEvent() : Star  t" ) : null;
+                console.log( "tag name:" + tagName );
+
+                addNewTag( tagName, getCurrentWorkspace().workspaceId );
+                document.querySelector( ".tag-list" ).style.display = "none";
+                // document.querySelector( "#new-tag-element" ).style.display = "none";
+                document.querySelector( "#mySearch" ).value = "";
 
 
-export { updateWorkspaceDom, createTopicEditorGui, createTextArea, editTopicName };
+                ( debug ) ? console.log( "addTagEvent() : Complete" ) : null;
+            }
+    
+    
+        } );
+    }
+};
+
+
+
+export { updateWorkspaceDom, createTopicEditorGui, createTextArea, editTopicName, addTagToWorkspace };
 
 
 /**
@@ -1380,9 +1408,57 @@ const renderTags = ( ) => {
 };
 
 const renderTag = ( tag ) => {
-    const ul = document.querySelector( ".tag-list" );
-    const li = document.createElement( "li" );
-    li.setAttribute( "class", "tag-list-element" );
-    li.innerHTML = tag;
-    ul.appendChild( li );
+    ( debug ) ? console.log( "renderTag() : Start" ) : null;
+
+    const currTags = document.getElementById( "curr-tags" );
+    const newTag = document.createElement( "div" );
+
+    newTag.innerHTML = tag;
+    newTag.setAttribute( "class", "styled-tags" );
+    newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
+        
+    // Create remove tag button
+    let removeTagBtn = document.createElement( "span" );
+    removeTagBtn.className = "close-tag";
+    removeTagBtn.id = "close-tag-" + newTag.innerHTML;
+    removeTagBtn.innerHTML = "&times;";
+    removeTagBtn.style.color = "#aaa";
+
+
+    removeTagBtn.addEventListener( "click", () => {
+        // if ( editPermission == true ){
+        //     // Get the id portion with the tag name
+        //     document.getElementById( "tag-" + removeTagBtn.id.substring( 10 ) ).remove();
+        //     for ( let i=0; i<currTagList.length; i++ ) {
+        //         if ( removeTagBtn.id.substring( 10 ) === currTagList[i] ) {
+        //             currTagList[i] = "";
+        //         }
+        //     }
+        // }
+        
+
+        // const [ isTopic, id ] = getPrefixAndId();
+        // const tagType = isTopic ? "topic" : "workspace";
+
+        // // call the .delete on the tagged
+        // //console.log( "tag name to delete: " + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id );
+        // fetch( "api/v1/auth/tags/tagged/" + removeTagBtn.id.substring( 10 ) + "/" + tagType + "/" + id, {
+        //     method: "DELETE",
+        //     headers: { "Content-Type": "application/json" },
+        // } );
+            
+
+    } );
+    removeTagBtn.addEventListener( "mouseenter", () => {
+        removeTagBtn.style.color = "black";
+    } );
+    removeTagBtn.addEventListener( "mouseleave", () => {
+        removeTagBtn.style.color = "#aaa";
+    } );
+
+    newTag.appendChild( removeTagBtn );
+    currTags.appendChild( newTag );
+
+
+    ( debug ) ? console.log( "renderTag() : Complete" ) : null;
 };

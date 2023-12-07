@@ -3,7 +3,7 @@ import { addTopicEvent } from "../editorMain.js";
 import { createNewResource, saveResource } from "../controllers/clientResourceController.js";
 import { createNewTopic, saveTopic, getTopic, getResourcesForTopic, deleteTopic } from "../controllers/clientTopicController.js";
 import { createNewWorkspace, saveWorkspace, getWorkspace, getPermission, getAllSharedUsersForWorkspace, getWorkspaceOwner, updatePermission } from "../controllers/clientWorkspaceController.js";
-import { createNewTag, saveTag, deleteTag } from "../controllers/clientTagController.js";
+import { createNewTag, saveTag, deleteTag, getTags } from "../controllers/clientTagController.js";
 
 
 /**
@@ -42,6 +42,9 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         workspace = await getWorkspace( workspaceUuid );
         workspaceOwner = await getWorkspaceOwner( workspace.ownedBy );
         workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
+
+        // get tags associated with the workspace
+        workspace.tags = await getTags( "workspace", workspaceUuid );
 
         const workspaceTitle = document.getElementById( "workspace-title" );
         const workspaceDescription = document.getElementById( "workspace-desc" );
@@ -251,7 +254,7 @@ function saveTextResource( resource, content ) {
 }
 
 // create a new tag
-const addNewTag = async function ( tag, entityType, entityId ) {
+const addNewTag = async function ( tag, entityId ) {
     ( debug ) ? console.log( "addNewTag() : Start" ) : null;
 
     // create a new tag
@@ -259,7 +262,7 @@ const addNewTag = async function ( tag, entityType, entityId ) {
     newTag.tag = tag;
 
     // save the tag
-    await saveTag( newTag, entityType, entityId );
+    await saveTag( newTag.tag, "workspace", entityId );
 
     ( debug ) ? console.log( "addNewTag() : Complete" ) : null;
 
