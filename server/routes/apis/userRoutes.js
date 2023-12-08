@@ -19,7 +19,7 @@ router.route( '/email/:email' )
     );
 
 // Get user data by username
-router.route( '/username/:username' )
+router.route( '/search/:username' )
     .get( ( req, res ) => {
         userController.getUserByUsername( req, res );
     }

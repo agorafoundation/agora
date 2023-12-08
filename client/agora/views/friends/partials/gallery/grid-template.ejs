@@ -18,18 +18,18 @@
               <p class="card-text mb-4" id="f-gv-card-desc-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
                 <%= friend.friend_email %>
               </p>
+              <p class="card-text mb-4" id="f-gv-card-bio-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
+                <%= friend.friend_bio %>
+              </p>
               <%
               if( friend.friend_profile_filename.toString().substring(0, 7) == "http://" || friend.friend_profile_filename.toString().substring(0, 8) == "https://" ) {
               %>
-                <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
-                    <img src="<%- friend.friend_profile_filename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
-                </a>    
+                <div class="card-background-image" style="background-image: url('<%- friend.friend_profile_filename %>')"></div>  
               <%
               } else {
               %>
-                <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger profile-picture btn-light btn-light-hover" href="/profile/manageProfile" style="margin-left: auto; margin-right: 0;">
-                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- friend.friend_profile_filename %>" alt="User Dash" title="User Dashboard" class="profile-top-image" />
-                </a>
+              <div class="card-background-image" style="background-image: url('<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- friend.friend_profile_filename %>')">
+                </div>
               <%
               }
               %>

@@ -1912,7 +1912,7 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
-  /user/username/{username}:
+  /user/search/{username}:
     get:
       tags:
       - Users

@@ -218,6 +218,8 @@ exports.updateUser = async function( req, res ){
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.subscriptionActive =subscriptionActive;
+        user.bio = req.body.bio;
+        user.isPrivate = ( req.body.isPrivate == "on" ) ? true : false;
 
         // TODO:Tags may need to parsed here when form is submitted, previously interests were done here.
 

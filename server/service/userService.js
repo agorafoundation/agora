@@ -322,7 +322,7 @@ exports.getActiveUserById = async function( id ) {
  * @returns Users searched with partial username
  */
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
+    let text = "SELECT * FROM users WHERE (LOWER(first_name) ILIKE $1 || '%' OR LOWER(last_name) ILIKE $1 || '%' OR LOWER(username) ILIKE $1 || '%' OR LOWER(email) ILIKE $1 || '%') AND is_private = false;";
     let values = [ username ];
     let users = [];
     
