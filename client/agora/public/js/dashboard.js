@@ -1203,7 +1203,7 @@ const logout = () => {
 
 // set the initial selections in the control bar
 window.addEventListener( "load", () => {
-    if ( document.getElementById( "controlbar-buttons-group-1" ) ) {
+    if ( document.getElementById( "controlbar-buttons-group-1" ) && document.getElementById( "all-initial-selection" ) ) {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
 

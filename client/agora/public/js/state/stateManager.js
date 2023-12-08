@@ -9,8 +9,8 @@ import { createNewTag, saveTag, deleteTag, getTags } from "../controllers/client
 /**
  * Client side debugging flags
  */
-const debug = true;
-const dataDebug = true;
+const debug = false;
+const dataDebug = false;
 
 
 /**
@@ -47,7 +47,6 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         workspace.tags = [];
         const tags = await getTags( "workspace", workspaceUuid );
         ( tags ) ? workspace.tags = tags: [];
-        console.log( "workspace.tags: " + JSON.stringify( workspace.tags ) );
 
         const workspaceTitle = document.getElementById( "workspace-title" );
         const workspaceDescription = document.getElementById( "workspace-desc" );

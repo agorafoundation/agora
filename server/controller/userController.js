@@ -304,8 +304,6 @@ exports.reValidateEmail = async function( req, res ) {
 
 
 exports.saveProfileImage = async function( req, res, email, filename ) {
-
-    console.log( "upload 2!" );
     
     // save image in db and delete old file  
     if( email ) {
