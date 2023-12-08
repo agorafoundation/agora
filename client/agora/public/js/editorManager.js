@@ -1223,7 +1223,7 @@ const shareSearchUsers = ( workspaceOwner, allUsers ) => {
     }
 
     // Fetch the list of users matching the search term
-    fetch( "/api/v1/auth/user/username/" + shareUserSearch.value, {
+    fetch( "/api/v1/auth/user/search/" + shareUserSearch.value, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     } )

@@ -41,3 +41,7 @@ update users set profile_filename = REPLACE ( profile_filename, '/assets/uploads
 update workspacespacesworkspace workspace_image = workspaceACE ( workspace_image, '/workspacets/uploads/workspace/', '');
 update topics set topic_image = REPLACE ( topic_image, '/assets/uploads/topic/', '');
 update resources set resource_image = REPLACE ( resource_image, '/assets/uploads/resource/', '');
+
+-- #508 about me and private flag 
+alter table users add column bio VARCHAR;
+alter table users add column is_private BOOLEAN DEFAULT false;

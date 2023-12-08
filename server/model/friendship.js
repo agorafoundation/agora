@@ -26,6 +26,7 @@ exports.ormFriendship = function ( row ) {
     friendshipInstance.created_time = row.created_time;
     friendshipInstance.friend_first_name = row.friend_first_name;
     friendshipInstance.friend_last_name = row.friend_last_name;
+    friendshipInstance.friend_bio = row.friend_bio;
     friendshipInstance.friend_username = row.friend_username;
     friendshipInstance.friend_email = row.friend_email;
     friendshipInstance.friend_profile_filename = row.friend_profile_filename;

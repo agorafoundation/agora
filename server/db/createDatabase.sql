@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS agora.users (
     editor_first_visit BOOLEAN,
     first_name VARCHAR,
     last_name VARCHAR,
+    is_private BOOLEAN default false,
+    bio VARCHAR,
     hashed_password VARCHAR,
     password_token VARCHAR,
     password_token_expiration BIGINT,

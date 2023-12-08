@@ -55,6 +55,12 @@
                                             First Name: <input type="input" class="form-control form-control-lg" name="firstName" value="<%- user.firstName %>" id="firstName" placeholder="First Name" required>
                                             Last Name: <input type="input" class="form-control form-control-lg" name="lastName" value="<%- user.lastName %>" id="lastName" placeholder="Last Name" required>
                                             <br />  
+
+                                            <!-- Bio textarea -->
+                                            <div class="form-group">
+                                                <label for="bio">Bio</label>
+                                                <textarea class="form-control" id="bio" name="bio" rows="3"><%- user.bio %></textarea>
+                                            </div>
     
                                             <div class="custom-control custom-checkbox">
                                                 <% if(user.subscriptionActive) { %>
@@ -64,6 +70,17 @@
                                                 <% } %>
                                                 <label class="custom-control-label" for="subscriptionActive">Subcription Active <- Turn on or off emails from us</label>
                                             </div>
+
+                                            <div class="custom-control custom-checkbox">
+                                                <% if(user.isPrivate) { %>
+                                                    <input type="checkbox" class="custom-control-input" id="isPrivate" name="isPrivate" checked />
+                                                <% } else { %>
+                                                    <input type="checkbox" class="custom-control-input" id="isPrivate" name="isPrivate" />
+                                                <% } %>
+                                                <label class="custom-control-label" for="subscriptionActive">Remain Private <- Checking this box removes you from user search results</label>
+                                            </div>
+
+
                                             <br />
                                             <h5>Letting us know which topics your are most intested in helps us find related research and
                                                 collaborators that might be of interest to you (optional)</h5>

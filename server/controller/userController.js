@@ -51,7 +51,7 @@ exports.googleSignUp = async function( req, res ) {
 
         console.log( "[google-signup] about to create user" );
 
-        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], null, false, req.body.credential, profileImage, req, res, true );
 
         console.log( "[google-signup] user created, email: " + payload['email'] );
         
@@ -79,7 +79,7 @@ exports.createUserForm = async function( req, res ) {
 
             let profileImage = 'profile-default.png';
             
-            createUser( email, username, firstName, lastName, req.body.psw, profileImage, req, res, false );
+            createUser( email, username, firstName, lastName, null, false, req.body.psw, profileImage, req, res, false );
 
         }
         else {
@@ -96,7 +96,7 @@ exports.createUserForm = async function( req, res ) {
  * @param {} req 
  * @param {*} res 
  */
-const createUser = async function( email, username, firstName, lastName, password, profileImage, req, res, isGoogle ) {
+const createUser = async function( email, username, firstName, lastName, bio, isPrivate, password, profileImage, req, res, isGoogle ) {
     let user = "";
 
     let subscriptionActive = true;
@@ -116,7 +116,7 @@ const createUser = async function( email, username, firstName, lastName, passwor
         emailValidated = true;
     }
 
-    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );
+    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0 );
     
     // save the user to the database!
     userService.saveUser( user ).then( ( insertResult ) => {
@@ -218,6 +218,8 @@ exports.updateUser = async function( req, res ){
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.subscriptionActive =subscriptionActive;
+        user.bio = req.body.bio;
+        user.isPrivate = ( req.body.isPrivate == "on" ) ? true : false;
 
         // TODO:Tags may need to parsed here when form is submitted, previously interests were done here.
 

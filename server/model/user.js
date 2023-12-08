@@ -9,7 +9,7 @@
 const { v4: uuidv4 } = require( "uuid" );
 
 class User {
-    constructor( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    constructor( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
 
         this.userId = uuidv4();
         this.email = email;
@@ -20,6 +20,8 @@ class User {
         this.editorFirstVisit = editorFirstVisit;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.bio = bio;
+        this.isPrivate = isPrivate;
         this.hashedPassword = hashedPassword;
         this.roleId = roleId;
         this.subscriptionActive = subscriptionActive;
@@ -41,8 +43,8 @@ exports.emptyUser = () => {
     return new User();
 };
 
-exports.createUser = function( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
-    let newUser = new User( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
+exports.createUser = function( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    let newUser = new User( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
     return newUser;
 };
 
@@ -61,6 +63,8 @@ exports.ormUser = function( userRow ) {
     user.roleId = userRow.role_id;
     user.firstName = userRow.first_name;
     user.lastName = userRow.last_name;
+    user.bio = userRow.bio;
+    user.isPrivate = userRow.is_private;
     user.subscriptionActive = userRow.subscription_active;
     user.stripeId = userRow.stripe_id;
     user.availableAccessTokens = userRow.available_access_tokens;

@@ -23,6 +23,7 @@ exports.getAllFriends = async ( userID ) => {
         SELECT 
             u.first_name AS friend_first_name,
             u.last_name AS friend_last_name,
+            u.bio AS friend_bio,
             u.username AS friend_username,
             u.email AS friend_email,
             u.profile_filename AS friend_profile_filename,
@@ -191,6 +192,7 @@ exports.getUnacceptedFriendRequests = async ( userID ) => {
             f.friendship_id,
             u.first_name AS friend_first_name,
             u.last_name AS friend_last_name,
+            u.bio AS friend_bio,
             u.username AS friend_username,
             u.email AS friend_email
         FROM friendships AS f

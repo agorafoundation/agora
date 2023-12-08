@@ -41,11 +41,12 @@ window.onload = () => {
 // queries the users by username
 if ( userSearch ) {
     userSearch.addEventListener( 'keyup', delay( () => {
-        fetch( "/api/v1/auth/user/username/" + userSearch.value, {
+        console.log( "userSearch.value: " + userSearch.value );
+        fetch( "/api/v1/auth/user/search/" + userSearch.value, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } )
-            .then( ( response ) =>  response.json() )
+            .then( ( response ) => ( response ) ? response.json(): null )
             .then( async ( response ) => {
                 // clear the dashboard
                 friendsDashboard.innerHTML = "";
@@ -73,7 +74,7 @@ if ( userSearch ) {
                     }
                 }
                 
-            } );
+            } ).catch( ( error ) => friendsDashboard.innerHTML = "" );
     }, 500 ) );
 }
 
@@ -93,17 +94,20 @@ async function createUserCard( userData ){
     username.innerText = userData.username;
     let personname = document.createElement( "p" );
     personname.innerText = userData.firstName + " " + userData.lastName;
+    let bioParagraph = document.createElement( "p" );
+    bioParagraph.innerText = userData.bio;
 
-    var userProfile = document.createElement( "img" );
+    var userProfile = document.createElement( "div" );
+    userProfile.className = "card-background-image";
     userProfile.width = 180;
     userProfile.style = "margin: auto";
 
     // 
     if ( userData.profileFilename.toString().substring( 0, 7 )=="http://" || userData.profileFilename.toString().substring( 0, 8 )=="https://" ) {
-        userProfile.src = userData.profileFilename;
+        userProfile.style = "background-image: url('" + userData.profileFilename + "'); ";
     }
     else {
-        userProfile.src = "/assets/uploads/profile/" + userData.profileFilename;
+        userProfile.style = "background-image: url('" + "/assets/uploads/profile/" + userData.profileFilename + "'); ";
     }
     
     userProfile.alt = "user's profile";
@@ -115,6 +119,7 @@ async function createUserCard( userData ){
 
     cardBodyDiv.appendChild( username );
     cardBodyDiv.appendChild( personname );
+    cardBodyDiv.appendChild( bioParagraph );
     cardBodyDiv.appendChild( userProfile );
     cardDiv.appendChild( cardBodyDiv );
     columnDiv.appendChild( cardDiv );

@@ -31,14 +31,19 @@ exports.getUserByEmail = async function( req, res ) {
     }
 };
 
-exports.getUserByUsername = async function( req, res ) {
+exports.findUserBySearchString = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
     var username = req.params.username;
 
-    userService.getUserByUsername( username ).then( ( user ) => {
+    userService.findUserBySearchString( username ).then( ( user ) => {
 
         res.setHeader( 'Content-Type', 'application/json' );
-        res.send( user );
+        if( user ) {
+            res.send( user );
+        }
+        else {
+            res.send( JSON.stringify( { "error": "User not found" } ) );
+        }
     } );
 };
 
