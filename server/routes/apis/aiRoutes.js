@@ -18,4 +18,11 @@ router.route( '/suggest' )
     }
     );
 
+router.route( '/generateAvatar' )
+    .post( function( req, res ) {
+        console.log( 'generateAvatar route' );
+        aiController.generateAvatar( req, res );
+    }
+    );
+
 module.exports = router;
