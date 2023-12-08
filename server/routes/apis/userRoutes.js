@@ -30,7 +30,6 @@ router.route( '/username/:username' )
 router.route( '/userId/:userId' )
   
     .get( ( req, res ) => {
-        console.log( "6" );
         userController.getActiveUserById( req, res );
     }
     );

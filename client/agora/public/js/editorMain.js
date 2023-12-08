@@ -85,12 +85,9 @@ window.addEventListener( "load", async () => {
         tagInput.addEventListener( "keyup", async function( e ) {
             const tagName = document.getElementById( "mySearch" ).value;
             if ( e.key == "Enter" ) {
-
-
+                // add the tag to the workspace and database and update the ui
                 await addTagEvent( tagName );
-                
-                //addTagToWorkspace();
-                
+
             }
     
     
@@ -190,12 +187,23 @@ async function deleteTopicEvent( topicId ) {
 async function addTagEvent( tagName ) {
     ( debug ) ? console.log( "addTagEvent() : Start" ) : null;
 
+    // verify that the tag is not already in the workspace
+    let repeat = false;
+    if( getCurrentWorkspace().tags ) {
+        let tag = getCurrentWorkspace().tags.find( tag => tag.tag === tagName );
+        if( tag ) {
+            repeat = true;
+        }
+    }
+
+    if( !repeat ) {
     // ad the tag to the workspace and database
-    await addNewTag( tagName, getCurrentWorkspace().workspaceId );
+        await addNewTag( tagName, getCurrentWorkspace().workspaceId );
 
-    // add the tag to the UI
-    await addTagToWorkspace( tagName ); 
+        // add the tag to the UI
+        await addTagToWorkspace( tagName ); 
 
+    }
     // update the ui
     await createTopicEditorGui();
     

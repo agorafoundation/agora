@@ -46,7 +46,6 @@ exports.getActiveUserById = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
     var userId = req.params.userId;
 
-    console.log( "5" );
     userService.getActiveUserById( userId ).then( ( user ) => {
 
         res.setHeader( 'Content-Type', 'application/json' );
