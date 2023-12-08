@@ -178,9 +178,9 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, desktop_first_visit, editor_first_visit, first_name, last_name, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.desktopFirstVisit, record.editorFirstVisit, record.firstName, record.lastName, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, desktop_first_visit, editor_first_visit, first_name, last_name, bio, is_private, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.desktopFirstVisit, record.editorFirstVisit, record.firstName, record.lastName, record.bio, record.isPrivate, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
 
         try {
              
@@ -210,8 +210,8 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6, bio=$7, is_private=$8 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive, record.bio, record.isPrivate ];
 
         try {
             
