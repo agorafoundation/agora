@@ -21,7 +21,8 @@ router.route( '/email/:email' )
 // Get user data by username
 router.route( '/search/:username' )
     .get( ( req, res ) => {
-        userController.getUserByUsername( req, res );
+        console.log( "userRoutes.js: req.params.username: ", req.params.username );
+        userController.findUserBySearchString( req, res );
     }
     );
 

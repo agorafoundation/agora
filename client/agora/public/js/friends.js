@@ -41,11 +41,12 @@ window.onload = () => {
 // queries the users by username
 if ( userSearch ) {
     userSearch.addEventListener( 'keyup', delay( () => {
+        console.log( "userSearch.value: " + userSearch.value );
         fetch( "/api/v1/auth/user/search/" + userSearch.value, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         } )
-            .then( ( response ) =>  response.json() )
+            .then( ( response ) => ( response ) ? response.json(): null )
             .then( async ( response ) => {
                 // clear the dashboard
                 friendsDashboard.innerHTML = "";
@@ -73,7 +74,7 @@ if ( userSearch ) {
                     }
                 }
                 
-            } );
+            } ).catch( ( error ) => friendsDashboard.innerHTML = "" );
     }, 500 ) );
 }
 

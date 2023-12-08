@@ -322,8 +322,37 @@ exports.getActiveUserById = async function( id ) {
  * @returns Users searched with partial username
  */
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE (LOWER(first_name) ILIKE $1 || '%' OR LOWER(last_name) ILIKE $1 || '%' OR LOWER(username) ILIKE $1 || '%' OR LOWER(email) ILIKE $1 || '%') AND is_private = false;";
+    let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
     let values = [ username ];
+    let users = [];
+    
+    try {
+         
+        let res = await db.query( text, values );
+        
+        if( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ){
+                users.push( User.ormUser( res.rows[i] ) );
+            }
+            return users;
+        }
+        else {
+            return false;
+        }
+    }
+    catch( e ) {
+        console.log( e.stack );
+    }
+};
+
+/**
+ * Gets users by passed search string
+ * @param {*} searchString 
+ * @returns Users searched with partial username
+ */
+exports.findUserBySearchString = async function( searchString ) {
+    let text = "SELECT * FROM users WHERE (LOWER(first_name) ILIKE $1 || '%' OR LOWER(last_name) ILIKE $1 || '%' OR LOWER(username) ILIKE $1 || '%' OR LOWER(email) ILIKE $1 || '%') AND is_private = false;";
+    let values = [ searchString ];
     let users = [];
     
     try {
