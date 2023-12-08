@@ -1058,6 +1058,7 @@ window.addEventListener( "load", () => {
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = ( newVal, arr ) => {
+    console.log( "querying" );
     let elemName,
         idToRemove,
         badListElement,
@@ -1067,9 +1068,10 @@ const queryTopics = ( newVal, arr ) => {
     const len = arr.length;
     newVal = newVal.toLowerCase();
 
+    console.log( "topic Array: " + JSON.stringify( arr ) );
+
     for ( let i = 0; i < len; i++ ) {
-        elemName =
-      arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase(); //name of arr[i] element to be tested
+        elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase(); //name of arr[i] element to be tested
 
         idToRemove = arr[i].childNodes[1].id.substring( 5 ); //id of the element being checked
 
@@ -1201,7 +1203,7 @@ const logout = () => {
 
 // set the initial selections in the control bar
 window.addEventListener( "load", () => {
-    if ( document.getElementById( "controlbar-buttons-group-1" ) ) {
+    if ( document.getElementById( "controlbar-buttons-group-1" ) && document.getElementById( "all-initial-selection" ) ) {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
 

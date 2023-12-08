@@ -169,8 +169,6 @@ exports.saveUser = async function( record ) {
         return false;
     }
 
-    console.log( "record first visit: " + record.desktopFirstVisit + " and " + record.editorFirstVisit );
-
     let currentEmail = await exports.verifyEmail( record.email );
     // if email exists do update, else create
     if( !currentEmail ) {
