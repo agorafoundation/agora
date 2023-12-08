@@ -14,14 +14,14 @@
             
 
             <!--Side Nav-->
-            <%- include('../../side-menu/side-menu.ejs');%> 
+            <%- include('../../side-menu/side-menu');%> 
             
             <!--Workspace Manager Modal-->
-            <%- include('./workspace-manager-modal.ejs');%>
-            <%- include('./open-topic.ejs');%>  
+            <%- include('./workspace-manager-modal');%>
+            <%- include('./open-topic');%>  
 
             <!-- Tutorial check -->
-            <%- include('./editor-tutorial.ejs'); %>
+            <%- include('./editor-tutorial'); %>
 
             <%
             if(firstVisit) {
@@ -79,9 +79,9 @@
                 <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
                     share
                 </span>
-                <%-include('./discussion-modal.ejs'); %>
-                <%-include('./comment-template.ejs'); %>
-                <%-include('./share-modal.ejs'); %>
+                <%-include('./discussion-modal'); %>
+                <%-include('./comment-template'); %>
+                <%-include('./share-modal'); %>
         
         <!-- AI - Agnes with Modal Trigger -->
         <div class="agnes-btn-container">
@@ -96,7 +96,7 @@
           </span>
         </div>
         
-        <%- include('./agnes-modal.ejs'); %>
+        <%- include('./agnes-modal'); %>
 
         <!--Sharing-->
         <!-- URBG TODO: removed until sharing is implemented-->

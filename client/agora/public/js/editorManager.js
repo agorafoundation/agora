@@ -9,12 +9,13 @@
  * imports
  */
 // state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission} from "./state/stateManager.js";
+import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag } from "./state/stateManager.js";
 // DOM event functions (eg. 
-import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent } from "./editorMain.js";
+import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent } from "./editorMain.js";
 
 //clientWorkspaceController
 import { getPermission } from "./controllers/clientWorkspaceController.js";
+import { deleteTag } from "./controllers/clientTagController.js";
 
 
 /**
@@ -99,6 +100,9 @@ const createTopicEditorGui = async function ( ) {
     } );
 
     currTabs.appendChild( newTab );
+
+    // render the tags for the workspace
+
     
 
     // verify we have a workspace and it has topics
@@ -158,6 +162,13 @@ const createTopicEditorGui = async function ( ) {
         }
         else {
             console.error( "Unable to retrieve workspace owner." );
+        }
+
+        /**
+         * Generate the tags that are associtad with the workspace
+         */
+        if( getCurrentWorkspace().tags && getCurrentWorkspace().tags.length > 0 ) {
+            renderTags();
         }
         
         /**
@@ -761,9 +772,25 @@ function createTextArea( resource, position ) {
 
 
 
+const addTagToWorkspace = async function ( tagName ) {
+    
+    ( debug ) ? console.log( "addTagToWorkspace() : Start" ) : null;
+    console.log( "tag name:" + tagName );
+
+                
+    document.querySelector( ".tag-list" ).style.display = "none";
+    // document.querySelector( "#new-tag-element" ).style.display = "none";
+    document.querySelector( "#mySearch" ).value = "";
+
+    //renderTag( tagName );
 
 
-export { updateWorkspaceDom, createTopicEditorGui, createTextArea, editTopicName };
+    ( debug ) ? console.log( "addTagToWorkspace() : Complete" ) : null;
+};
+
+
+
+export { updateWorkspaceDom, createTopicEditorGui, createTextArea, editTopicName, addTagToWorkspace };
 
 
 /**
@@ -1356,3 +1383,71 @@ function createUserProfile( profile, workspace ) {
 
     return li;
 }
+
+/**
+ * Iterates through the tags associated with the workspace and renders them in the tag list
+ */
+const renderTags = ( ) => {
+    ( debug ) ? console.log( "renderTags() : Start" ) : null;
+    const ul = document.querySelector( ".tag-list" );
+    const currTags = document.getElementById( "curr-tags" );
+
+    // clear the current tags
+    currTags.innerHTML = "";
+    
+    ul.innerHTML = "";
+    if( getCurrentWorkspace() && getCurrentWorkspace().tags ) {
+        for ( let i = 0; i < getCurrentWorkspace().tags.length; i++ ) {
+            renderTag( getCurrentWorkspace().tags[i].tag );
+        }
+    }
+    ( debug ) ? console.log( "renderTags() : Complete" ) : null;
+};
+
+const renderTag = ( tag ) => {
+    ( debug ) ? console.log( "renderTag() : Start" ) : null;
+
+    const currTags = document.getElementById( "curr-tags" );
+    const newTag = document.createElement( "div" );
+
+    newTag.innerHTML = tag;
+    newTag.setAttribute( "class", "styled-tags" );
+    newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
+        
+    // Create remove tag button
+    let removeTagBtn = document.createElement( "span" );
+    removeTagBtn.className = "close-tag";
+    removeTagBtn.id = "close-tag-" + newTag.innerHTML;
+    removeTagBtn.innerHTML = "&times;";
+    removeTagBtn.style.color = "#aaa";
+
+
+    removeTagBtn.addEventListener( "click", async () => {
+
+        ( debug ) ? console.log( "removeTagBtn.addEventListener( click : Start for tag: " + tag ) : null;
+
+        // // delete the tag from the workspace
+        // await deleteTag( tag, "workspace", getCurrentWorkspace().workspaceId );
+
+        // // remove the tag from the current workspace
+        // getCurrentWorkspace().tags = getCurrentWorkspace().tags.filter( ( item ) => item.tag !== tag );
+
+        await deleteTagEvent( tag );
+
+        ( debug ) ? console.log( "removeTagBtn.addEventListener( click : Complete" ) : null;
+            
+
+    } );
+    removeTagBtn.addEventListener( "mouseenter", () => {
+        removeTagBtn.style.color = "black";
+    } );
+    removeTagBtn.addEventListener( "mouseleave", () => {
+        removeTagBtn.style.color = "#aaa";
+    } );
+
+    newTag.appendChild( removeTagBtn );
+    currTags.appendChild( newTag );
+
+
+    ( debug ) ? console.log( "renderTag() : Complete" ) : null;
+};

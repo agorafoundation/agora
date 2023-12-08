@@ -261,7 +261,6 @@ exports.reValidateEmail = async function( email ) {
  */
 exports.getActiveUserById = async function( id ) {
     const text = "SELECT * FROM users WHERE user_id = $1;";
-    console.log( "user id : " + id );
     const values = [ id ];
     
     try {
