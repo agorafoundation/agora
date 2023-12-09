@@ -20,6 +20,25 @@ const OPENAI_CONFIG = new openAi.Configuration( {
     apiKey: process.env.OPENAI_API_KEY,
 } );
 
+exports.generateAvatar = async ( req, res ) => {
+
+    let prompt = req.body.prompt;
+
+    console.log( "prompt: " + prompt );
+    let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+    console.log( "openai:" );
+    
+    const response = await openai.createImage( {
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+    } );
+    let image_url = response.data.data[0].url;
+
+    return image_url;
+};
+
 exports.callOpenAI = async ( req, res ) => {
 
     let mode = req.body.mode; // TODO: use this for notes vs paper

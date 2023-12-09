@@ -57,10 +57,19 @@
                                             <br />  
 
                                             <!-- Bio textarea -->
+                                            <hr />
                                             <div class="form-group">
                                                 <label for="bio">Bio</label>
                                                 <textarea class="form-control" id="bio" name="bio" rows="3"><%- user.bio %></textarea>
                                             </div>
+
+                                            <div>
+                                                <h4>Create AI generated Avatar</h4>
+                                                <p>Agora will generate an avatar based on your profile in your Bio</p>
+                                                <input type="button" id="btn-generate-avatar" class="btn btn-primary" value="Generate Avatar" />
+                                            </div>
+
+                                            <hr />
     
                                             <div class="custom-control custom-checkbox">
                                                 <% if(user.subscriptionActive) { %>
@@ -142,18 +151,27 @@
                                 </div>
                                 
                                 <div class="profile-image-wrapper" style="position: relative;"></div>
+
+                                <div class="avatar-container">                                    
                                 
-                                <%
-                                if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
-                                    %>
-                                    <img src="<%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
                                     <%
-                                } else {
+                                    if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
+                                        %>
+                                        <img src="<%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                        <%
+                                    } else {
+                                        %>
+                                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                        <%
+                                    }
                                     %>
-                                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
-                                    <%
-                                }
-                                %>
+                                    <div class="spinner-grow primary avatar-spinner-1" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="spinner-grow complementary avatar-spinner-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                                 <span class="notification-count" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px;">0</span>
 
                                 <%- include('../partials/message'); %>
@@ -166,6 +184,8 @@
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </form>
                             </div>
+
+                            
                                 
                                 
                                 

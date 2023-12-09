@@ -350,3 +350,63 @@ if ( denyRequestButton ) {
             } );
     } );
 }
+
+const generateAvatarButton = document.getElementById( 'btn-generate-avatar' );
+generateAvatarButton.addEventListener( 'click', () => {
+    // get the users profile bio
+    const bio = document.getElementById( 'bio' ).value;
+    console.log( 'bio retrieved : ' + bio );
+    generateAvatarButton.disabled = true;
+
+    const spinner1 = document.querySelector( '.avatar-spinner-1' );
+    const spinner2 = document.querySelector( '.avatar-spinner-2' );
+    spinner1.style.display = 'block';
+    spinner2.style.display = 'block';
+
+    fetch( '/api/v1/auth/ai/generateAvatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify( {
+            prompt: bio, // Pass the friend_id as a parameter
+        } ),
+    } )
+
+        .then( ( response ) => {
+            response.json().then( ( data ) => {
+                console.log( 'response: ' + JSON.stringify( response ) );
+                if( response.status === 200 ) {
+                    // Successfully generated avatar
+                    const message = 'Avatar generated successfully.';
+                    console.log( message );
+                    generateAvatarButton.disabled = false;
+                    spinner1.style.display = 'none';
+                    spinner2.style.display = 'none';
+
+                    location.reload(); // Refresh the page
+                }
+                else if( response.status === 429 ) {
+                    const errorMessage = 'Too many requests, you must wait at least 3 minutes before trying again!';
+                    generateAvatarButton.disabled = false;
+                    spinner1.style.display = 'none';
+                    spinner2.style.display = 'none';
+                    alert( errorMessage ); // Display a pop-up with the error message
+                    console.error( errorMessage );
+                }
+                else {
+                    console.log( "other: " + JSON.stringify( response ) );
+                    const errorMessage = 'Failed to generate avatar.';
+                    generateAvatarButton.disabled = false;
+                    spinner1.style.display = 'none';
+                    spinner2.style.display = 'none';
+
+                    console.error( errorMessage );
+                }
+            } );
+        
+        } ).catch( ( error ) => {
+            console.error( 'Error generating avatar:', error );
+        } );
+
+    console.log( 'avatar generated' );
+       
+} );
