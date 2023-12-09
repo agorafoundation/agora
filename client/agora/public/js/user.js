@@ -381,11 +381,19 @@ generateAvatarButton.addEventListener( 'click', () => {
                     generateAvatarButton.disabled = false;
                     spinner1.style.display = 'none';
                     spinner2.style.display = 'none';
-                    
+
                     location.reload(); // Refresh the page
                 }
+                else if( response.status === 429 ) {
+                    const errorMessage = 'Too many requests, you must wait at least 3 minutes before trying again!';
+                    generateAvatarButton.disabled = false;
+                    spinner1.style.display = 'none';
+                    spinner2.style.display = 'none';
+                    alert( errorMessage ); // Display a pop-up with the error message
+                    console.error( errorMessage );
+                }
                 else {
-                    alert( "other" );
+                    console.log( "other: " + JSON.stringify( response ) );
                     const errorMessage = 'Failed to generate avatar.';
                     generateAvatarButton.disabled = false;
                     spinner1.style.display = 'none';

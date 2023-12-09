@@ -21,13 +21,6 @@ const OPENAI_CONFIG = new openAi.Configuration( {
 } );
 
 exports.generateAvatar = async ( req, res ) => {
-    let authUserID;
-    if ( req.user ) {
-        authUserID = req.user.userId;
-    }
-    else if ( req.session.authUser ) {
-        authUserID = req.session.authUser.userId;
-    }
 
     let prompt = req.body.prompt;
 

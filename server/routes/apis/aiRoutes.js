@@ -50,53 +50,71 @@ router.route( '/suggest' )
     }
     );
 
-router.route( '/generateAvatar' )
-    .post( async function( req, res ) {
-        console.log( 'generateAvatar route' );
+const generateAvatarLimiter = ( () => {
+    let lastCallTime = 0;
+    const cooldown = 3 * 60 * 1000; // 3 minutes in milliseconds
 
-        let user = null;
-        if ( req.user ) {
-            user = req.user;
-        }
-        else if ( req.session.authUser ) {
-            user = req.session.authUser;
-        }
-
-        console.log( 'user: ' + JSON.stringify( user ) );
-        console.log( 'req.user: ' + JSON.stringify( req.user ) );
-    
-        let fileUrl = await aiController.generateAvatar( req, res );
-        
-        if( fileUrl ){
-
-            // files included
-            const timeStamp = Date.now();
-            
-            const fileName = timeStamp + user.username + '.png';
-            const fullFilePath = imageUploadPath + fileName;
-
-            const stream = await fs.createWriteStream( fullFilePath );
-            const { body } = await fetch( fileUrl );
-            await finished( Readable.fromWeb( body ).pipe( stream ) );
-
-            // save the file to the user profile
-            await userController.saveProfileImage( req, res, user.email, fileName );
-
-            console.log( "about to return!!!" );
-    
-            res.set( "x-agora-message-title", "Success" );
-            res.set( "x-agora-message-detail", "Image generated and saved to user profile" );
-            res.status( 200 ).json( {fileUrl: fileUrl} );
-            return;
+    return ( req, res, next ) => {
+        const currentTime = Date.now();
+        if ( currentTime - lastCallTime < cooldown ) {
+            const remainingTime = cooldown - ( currentTime - lastCallTime );
+            res.status( 429 ).json( {
+                message: `Too many requests. Please try again in ${remainingTime / 1000} seconds.`,
+            } );
         }
         else {
-            const message = ApiMessage.createApiMessage( 404, "Image Generation Failed", "Image Generation Failed" );
-            res.set( "x-agora-message-title", "Image not Generated" );
-            res.set( "x-agora-message-detail", "The image was not generated or saved" );
-            res.status( 404 ).json( message );
-            return;
+            lastCallTime = currentTime;
+            next();
         }
+    };
+} )();
+
+router.route( '/generateAvatar' ).post( generateAvatarLimiter, async function ( req, res ) {
+    console.log( 'generateAvatar route' );
+    // Your existing code for generating the avatar
+
+    let user = null;
+    if ( req.user ) {
+        user = req.user;
     }
-    );
+    else if ( req.session.authUser ) {
+        user = req.session.authUser;
+    }
+
+    console.log( 'user: ' + JSON.stringify( user ) );
+    console.log( 'req.user: ' + JSON.stringify( req.user ) );
+    
+    let fileUrl = await aiController.generateAvatar( req, res );
+        
+    if( fileUrl ){
+
+        // files included
+        const timeStamp = Date.now();
+            
+        const fileName = timeStamp + user.username + '.png';
+        const fullFilePath = imageUploadPath + fileName;
+
+        const stream = await fs.createWriteStream( fullFilePath );
+        const { body } = await fetch( fileUrl );
+        await finished( Readable.fromWeb( body ).pipe( stream ) );
+
+        // save the file to the user profile
+        await userController.saveProfileImage( req, res, user.email, fileName );
+
+        console.log( "about to return!!!" );
+    
+        res.set( "x-agora-message-title", "Success" );
+        res.set( "x-agora-message-detail", "Image generated and saved to user profile" );
+        res.status( 200 ).json( {fileUrl: fileUrl} );
+        return;
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Image Generation Failed", "Image Generation Failed" );
+        res.set( "x-agora-message-title", "Image not Generated" );
+        res.set( "x-agora-message-detail", "The image was not generated or saved" );
+        res.status( 404 ).json( message );
+        return;
+    }
+} );
 
 module.exports = router;
