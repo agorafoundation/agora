@@ -31,55 +31,19 @@ exports.generateAvatar = async ( req, res ) => {
 
     let prompt = req.body.prompt;
 
-    try {
-        console.log( "prompt: " + prompt );
-        let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
-        console.log( "openai:" );
+    console.log( "prompt: " + prompt );
+    let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+    console.log( "openai:" );
     
-        const response = await openai.createImage( {
-            model: "dall-e-3",
-            prompt: prompt,
-            n: 1,
-            size: "1024x1024",
-        } );
-        let image_url = resonse.data.data[0].url;
+    const response = await openai.createImage( {
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+    } );
+    let image_url = response.data.data[0].url;
 
-        // Function to download and save the image
-        const downloadImage = async ( url, filepath ) => {
-            const response = await fetch( url );
-            if ( !response.ok ) throw new Error( `unexpected response ${response.statusText}` );
-    
-            const pipeline = promisify( stream.pipeline );
-            const fileStream = fs.createWriteStream( filepath );
-    
-            await pipeline( response.body, fileStream );
-        };
-
-        // Specify the path where the image will be saved
-        const filepath = path.resolve( __dirname, 'downloads', 'dalle-image.png' );
-
-        // Download and save the image
-        try {
-            await downloadImage( image_url, filepath );
-            console.log( 'Image downloaded successfully:', filepath );
-        }
-        catch ( error ) {
-            console.error( 'Error downloading the image:', error );
-        }
-        
-    
-        console.log( "url: " + image_url );
-
-        res.set( "x-agora-message-title", "Success" );
-        res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-        res.status( 200 ).json( {url: image_url} );
-    } 
-    catch ( e ) {
-        console.log( e );
-        res.set( "x-agora-message-title", "Error" );
-        res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
-        res.status( 500 ).json( {"error": "Failed to return response from OpenAI"} );
-    }
+    return image_url;
 };
 
 exports.callOpenAI = async ( req, res ) => {

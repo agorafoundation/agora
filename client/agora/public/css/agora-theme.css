@@ -1227,6 +1227,24 @@ a:hover {
     margin-left: 2rem;
 }
 
+.avatar-container {
+    position: relative;
+    display: inline-block; /* Or whatever suits your layout */
+}
+
+.avatar-spinner-1 {
+    display: none;
+    position: absolute;
+    top: 42%; /* Center the spinner */
+    left: 38%;
+}
+.avatar-spinner-2 {
+    display: none;
+    position: absolute;
+    top: 42%; /* Center the spinner */
+    left: 52%;
+}
+
 .profile-picture:hover {
     color: red;
 }
