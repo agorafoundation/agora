@@ -178,9 +178,9 @@ exports.saveUser = async function( record ) {
         // hash the token
         let emailVerificationToken = await crypto.createHash( 'sha256' ).update( token ).digest( 'hex' );
 
-        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, desktop_first_visit, editor_first_visit, first_name, last_name, bio, is_private, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, user_id)'
-            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)';
-        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.desktopFirstVisit, record.editorFirstVisit, record.firstName, record.lastName, record.bio, record.isPrivate, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.userId ];
+        let text = 'INSERT INTO users (email, username, profile_filename, email_token, email_validated, desktop_first_visit, editor_first_visit, first_name, last_name, bio, is_private, hashed_password, role_id, subscription_active, stripe_id, available_access_tokens, num_avatar_generations, user_id)'
+            + 'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)';
+        let values = [ record.email, record.username, record.profileFilename, emailVerificationToken, record.emailValidated, record.desktopFirstVisit, record.editorFirstVisit, record.firstName, record.lastName, record.bio, record.isPrivate, record.hashedPassword, record.roleId, record.subscriptionActive, record.stripeId, 1, record.numAvatarGenerations, record.userId ];
 
         try {
              
@@ -225,6 +225,22 @@ exports.saveUser = async function( record ) {
         return true;
     }
     
+};
+
+exports.decrementAvatarGenerations = async function( email ) {
+    let text = 'UPDATE users SET num_avatar_generations=num_avatar_generations - 1 WHERE email=$1';
+    let values = [ email ];
+
+    try {
+         
+        await db.query( text, values );
+        
+        return true;
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
 };
 
 exports.reValidateEmail = async function( email ) {

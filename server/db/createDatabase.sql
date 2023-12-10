@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS agora.users (
     password_token_expiration BIGINT,
     role_id INTEGER DEFAULT 0,
     subscription_active BOOLEAN,
+    num_avatar_generations INTEGER,
     stripe_id VARCHAR,
     available_access_tokens INTEGER,
     create_time TIMESTAMP DEFAULT current_timestamp

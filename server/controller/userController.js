@@ -116,7 +116,7 @@ const createUser = async function( email, username, firstName, lastName, bio, is
         emailValidated = true;
     }
 
-    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0 );
+    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0, 3 );
     
     // save the user to the database!
     userService.saveUser( user ).then( ( insertResult ) => {
@@ -239,6 +239,23 @@ exports.updateUser = async function( req, res ){
         res.redirect( 303, "/userError" );
     }
     
+};
+
+exports.decrementAvatarGenerations = async function( email ) {
+    if( email ) {
+        userService.decrementAvatarGenerations( email ).then( ( rValue ) => {
+            console.log( "rValue: " + rValue );
+            if( rValue ) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } );
+    }
+    else {
+        return false;
+    }
 };
 
 exports.reValidateEmail = async function( req, res ) {
