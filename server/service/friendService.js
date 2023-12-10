@@ -18,7 +18,7 @@ const { ormFriendship } = require( '../model/friendship' );
  * @param {*} userID 
  * @returns All friends of user
  */
-exports.getAllFriends = async ( userID ) => {
+exports.getAllFriends = async ( userID, friendshipStatus ) => {
     let text = `
         SELECT 
             u.first_name AS friend_first_name,
@@ -34,8 +34,8 @@ exports.getAllFriends = async ( userID ) => {
             ELSE f.initiatedby_id
         END
         WHERE (f.initiatedby_id = $1 OR f.recipient_id = $1)
-            AND f.friendship_status = 'accepted'`;
-    let values = [ userID ];
+            AND f.friendship_status = $2`;
+    let values = [ userID, friendshipStatus ];
     let friends = [];
 
     try {
@@ -187,21 +187,69 @@ exports.deleteFriendByID = async ( friendshipId ) => {
  * @param {*} userID 
  * @returns User's unaccepted friend requests
  */
-exports.getUnacceptedFriendRequests = async ( userID ) => {
-    let text = `SELECT 
-            f.friendship_id,
-            u.first_name AS friend_first_name,
-            u.last_name AS friend_last_name,
-            u.bio AS friend_bio,
-            u.username AS friend_username,
-            u.email AS friend_email
-        FROM friendships AS f
-        JOIN users AS u ON u.user_id = CASE
-            WHEN f.initiatedby_id = $1 THEN f.recipient_id
-            ELSE f.initiatedby_id
-        END
-        WHERE f.recipient_id = $1 
-            AND f.friendship_status = 'pending'`; // Filter by pending status and recipient ID
+exports.getPendingFriendRequestsForUser = async ( userID ) => {
+    let text = `SELECT
+        f.friendship_id,
+        f.initiatedby_id,
+        u.first_name AS friend_first_name,
+        u.last_name AS friend_last_name,
+        u.bio AS friend_bio,
+        u.username AS friend_username,
+        u.profile_filename AS friend_profile_filename,
+        u.email AS friend_email
+    FROM friendships AS f
+    JOIN users AS u ON u.user_id = CASE
+        WHEN f.initiatedby_id = $1 THEN f.recipient_id
+        ELSE f.initiatedby_id
+    END
+    WHERE (f.recipient_id = $1)
+        AND f.friendship_status = 'pending';`; // Filter by pending status and recipient ID
+
+            
+    let values = [ userID ];
+    let requests = [];
+        
+    try {
+        let res = await db.query( text, values );
+        if ( res.rows.length > 0 ) {
+            for ( let i = 0; i < res.rows.length; i++ ) {
+                requests.push( ormFriendship( res.rows[i] ) );
+            }
+            return requests;
+        }
+        else {
+            return false;
+        }
+    }
+    catch ( e ) {
+        console.log( e.stack );
+    }
+};
+
+/**
+ * Get details of unaccepted friend requests for a user
+ * @param {*} userID 
+ * @returns User's unaccepted friend requests
+ */
+exports.getAllPendingFriendRequestsAssociatedWithUser = async ( userID ) => {
+    let text = `SELECT
+        f.friendship_id,
+        f.initiatedby_id,
+        u.first_name AS friend_first_name,
+        u.last_name AS friend_last_name,
+        u.bio AS friend_bio,
+        u.username AS friend_username,
+        u.profile_filename AS friend_profile_filename,
+        u.email AS friend_email
+    FROM friendships AS f
+    JOIN users AS u ON u.user_id = CASE
+        WHEN f.initiatedby_id = $1 THEN f.recipient_id
+        ELSE f.initiatedby_id
+    END
+    WHERE (f.recipient_id = $1 OR f.initiatedby_id = $1)
+        AND f.friendship_status = 'pending';`; // Filter by pending status and recipient ID
+
+            
     let values = [ userID ];
     let requests = [];
         

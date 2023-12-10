@@ -6,19 +6,24 @@
         
         <!-- Friend Card -->
         <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend" id="friend-card">
-          <div class="card h-100" id="f-gv-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+          <div class="card h-100 d-flex flex-column" id="f-gv-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
             <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="f-gv-option-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" style="visibility: hidden">
               <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
               <%- include('./dropdown.ejs', {friend: friend}); %>
             </div>
-            <div class="card-body d-flex flex-column" id="friend">
+            <div class="card-body d-flex flex-column flex-grow-1" id="friend">
               <h5 class="card-title" id="f-gv-card-title-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
-                <%= friend.friend_first_name %> <%= friend.friend_last_name %>
+                <%= friend.friend_first_name %> <%= friend.friend_last_name %> (<%= friend.friend_username %>)
               </h5>
               <p class="card-text mb-4" id="f-gv-card-desc-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
                 <%= friend.friend_email %>
               </p>
               <p class="card-text mb-4" id="f-gv-card-bio-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
+                <%
+                if (friend.friend_bio != null && friend.friend_bio.length > 120) {
+                  friend.friend_bio = friend.friend_bio.substring(0, 120) + "...";
+                }
+                %>
                 <%= friend.friend_bio %>
               </p>
               <%

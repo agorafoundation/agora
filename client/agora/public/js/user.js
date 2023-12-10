@@ -299,7 +299,6 @@ if( acceptRequestButton ) {
                     // Successfully accepted friend request
                     const message = 'Friend request accepted successfully.';
                     console.log( message );
-                    alert( message ); // Display a pop-up with the message
                     location.reload(); // Refresh the page
                 }
                 else {

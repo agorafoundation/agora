@@ -14,11 +14,17 @@
 
 <body id="page-top" class="dashboard-content">
 
+    <!-- Include the requests ejs to show friend requests-->
+    <%- include('../friends/partials/requests'); %>
+
     <!-- Gallery View-->
     <%- include('../dashboard/side-menu/side-menu.ejs'); %>
-        <%- include('./partials/gallery/note-gallery.ejs') %>
-            <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
-            <%- include('../partials/jsincludes'); %>
+    <%- include('./partials/gallery/note-gallery.ejs') %>
+
+    
+           
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+    <%- include('../partials/jsincludes'); %>
 </body>
 
 </html>

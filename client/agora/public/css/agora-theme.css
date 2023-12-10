@@ -411,7 +411,7 @@ a.text-secondary:focus {
 }
 
 .masthead-jr {
-    padding-top: calc(4rem + 104px);
+    padding-top: calc(4rem + 40px);
     padding-bottom: 4rem;
 }
 
@@ -1346,6 +1346,7 @@ div.product-card a {
 }
 
 .card-body {
+    flex-grow: 1;
     border-radius: 5px;
     opacity: 1;
     display: block;

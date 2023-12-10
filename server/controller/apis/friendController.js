@@ -26,7 +26,7 @@ exports.getAllFriends = async ( req, res ) => {
         authUserID = req.session.authUser.userId;
     }
     if ( authUserID ){
-        let friends = await friendService.getAllFriends( req.user.userId );
+        let friends = await friendService.getAllFriends( req.user.userId, 'accepted' );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all Friends" );
         res.status( 200 ).json( friends );
@@ -49,10 +49,11 @@ exports.getResources = async ( req, res ) => {
     }
     if( authUserID ){
         let resources = [ ];
-        let friends = await friendService.getAllFriends( req.user.userId );
-        let requests = await friendService.getUnreadFriendRequests( req.user.userId );
+        const friends = await friendService.getAllFriends( req.user.userId, "accepted" );
+        const requests = await friendService.getUnreadFriendRequests( req.user.userId );
+        const requestedFriends = await friendService.getAllPendingFriendRequestsAssociatedWithUser( req.user.userId );
         let count = await friendService.getUnreadFriendRequestCount( req.user.userId );
-        resources.push( req.user, friends, requests, count );
+        resources.push( req.user, friends, requests, requestedFriends, count );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all user details" );
         res.status( 200 ).json( resources );
@@ -171,7 +172,7 @@ exports.getUnacceptedFriendRequests = async ( req, res ) => {
         authUserID = req.session.authUser.userId;
     }
     if ( authUserID ){
-        let friends = await friendService.getUnacceptedFriendRequests( req.user.userId );
+        let friends = await friendService.getAllPendingFriendRequestsAssociatedWithUser( req.user.userId );
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Returned all non friends" );
         res.status( 200 ).json( friends );
@@ -193,9 +194,10 @@ exports.getAddFriends = async function ( req, res ) {
         req.session.authUser = authUser;
         res.locals.authUser = req.session.authUser;
 
-        const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
+        const userFriends = await friendService.getAllFriends( req.session.authUser.userId, "accepted" );
+        const unacceptedFriendRequests = await friendService.getPendingFriendRequestsForUser( authUser.userId );
         
-        res.render( './add-friends/add-friends', { user: authUser, friends: userFriends} );
+        res.render( './add-friends/add-friends', { user: authUser, friends: userFriends, nonFriends: unacceptedFriendRequests} );
         
     }
     else {
@@ -212,10 +214,11 @@ exports.getFriends = async function ( req, res ) {
         req.session.authUser = authUser;
         res.locals.authUser = req.session.authUser;
 
-        const userFriends = await friendService.getAllFriends( req.session.authUser.userId );
+        const userFriends = await friendService.getAllFriends( req.session.authUser.userId, 'accepted' );
 
-        console.log( JSON.stringify( userFriends ) );
-        res.render( './friends/friends', { user: authUser, friends: userFriends} );
+        const unacceptedFriendRequests = await friendService.getPendingFriendRequestsForUser( authUser.userId );
+
+        res.render( './friends/friends', { user: authUser, friends: userFriends, nonFriends: unacceptedFriendRequests} );
         
     }
     else {
