@@ -400,11 +400,12 @@ if( generateAvatarButton ) {
                         generateAvatarButton.disabled = false;
                         spinner1.style.display = 'none';
                         spinner2.style.display = 'none';
-    
+
                         location.reload(); // Refresh the page
                     }
                     else if( response.status === 429 ) {
-                        const errorMessage = 'Too many requests, you must wait at least 3 minutes before trying again!';
+                        const errorMessage = 'Too many requests, you must wait at least 1 minutes before trying again!';
+                    
                         generateAvatarButton.disabled = false;
                         spinner1.style.display = 'none';
                         spinner2.style.display = 'none';

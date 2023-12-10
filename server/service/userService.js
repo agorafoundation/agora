@@ -227,6 +227,22 @@ exports.saveUser = async function( record ) {
     
 };
 
+exports.decrementAvatarGenerations = async function( email ) {
+    let text = 'UPDATE users SET num_avatar_generations=num_avatar_generations - 1 WHERE email=$1';
+    let values = [ email ];
+
+    try {
+         
+        await db.query( text, values );
+        
+        return true;
+    }
+    catch( e ) {
+        console.log( e.stack );
+        return false;
+    }
+};
+
 exports.reValidateEmail = async function( email ) {
     // create a random hash for email varification
     const token = await crypto.randomBytes( 20 ).toString( 'hex' );

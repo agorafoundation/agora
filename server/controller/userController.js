@@ -241,6 +241,23 @@ exports.updateUser = async function( req, res ){
     
 };
 
+exports.decrementAvatarGenerations = async function( email ) {
+    if( email ) {
+        userService.decrementAvatarGenerations( email ).then( ( rValue ) => {
+            console.log( "rValue: " + rValue );
+            if( rValue ) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } );
+    }
+    else {
+        return false;
+    }
+};
+
 exports.reValidateEmail = async function( req, res ) {
     // check to see that user is logged in with matching email address
     if( req.session.authUser.email && req.params.email === req.session.authUser.email ) {

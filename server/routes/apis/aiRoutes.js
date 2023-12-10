@@ -52,7 +52,7 @@ router.route( '/suggest' )
 
 const generateAvatarLimiter = ( () => {
     let lastCallTime = 0;
-    const cooldown = 3 * 60 * 1000; // 3 minutes in milliseconds
+    const cooldown = 1 * 60 * 1000; // 3 minutes in milliseconds
 
     return ( req, res, next ) => {
         const currentTime = Date.now();
@@ -100,6 +100,9 @@ router.route( '/generateAvatar' ).post( generateAvatarLimiter, async function ( 
 
         // save the file to the user profile
         await userController.saveProfileImage( req, res, user.email, fileName );
+
+        // decrement the available avatar tokens
+        await userController.decrementAvatarGenerations( user.email );
 
         console.log( "about to return!!!" );
     

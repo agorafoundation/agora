@@ -63,11 +63,18 @@
                                                 <textarea class="form-control" id="bio" name="bio" rows="3"><%- user.bio %></textarea>
                                             </div>
 
-                                            <div>
-                                                <h4>Create AI generated Avatar</h4>
-                                                <p>Agora will generate an avatar based on your profile description in your Bio. <strong>Your Bio must be more than   20 characters long</strong> and you have <strong><%- user.numAvatarGenerations %> generations available</strong> (due to the high cost, this is a limited feature on free accounts). </p>
-                                                <input type="button" id="btn-generate-avatar" class="btn btn-primary" value="Generate Avatar" disabled />
-                                            </div>
+                                            <% if( user.numAvatarGenerations > 0 ) { %>
+                                                <div>
+                                                    <h4>Create AI generated Avatar</h4>
+                                                    <p>Agora will generate an avatar based on your profile description in your Bio. <strong>Your Bio must be more than   20 characters long</strong> and you have <strong><%- user.numAvatarGenerations %> generations available</strong> (due to the high cost, this is a limited feature on free accounts). </p>
+                                                    <input type="button" id="btn-generate-avatar" class="btn btn-primary" value="Generate Avatar" />
+                                                </div>
+                                            <% } else { %>
+                                                <div>
+                                                    <h4>Create AI generated Avatar</h4>
+                                                    <p>You do not have any remaining AI Avatar generations available</p>
+                                                </div>
+                                            <% } %>
 
                                             <hr />
     
