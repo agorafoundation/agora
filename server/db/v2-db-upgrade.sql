@@ -45,3 +45,7 @@ update resources set resource_image = REPLACE ( resource_image, '/assets/uploads
 -- #508 about me and private flag 
 alter table users add column bio VARCHAR;
 alter table users add column is_private BOOLEAN DEFAULT false;
+
+-- #519 517-limit-the-number-of-free-dall-e-generations
+alter table users add column num_avatar_generations INTEGER DEFAULT 3;
+

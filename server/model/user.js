@@ -9,7 +9,7 @@
 const { v4: uuidv4 } = require( "uuid" );
 
 class User {
-    constructor( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
+    constructor( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens, numAvatarGenerations ) {
 
         this.userId = uuidv4();
         this.email = email;
@@ -27,6 +27,7 @@ class User {
         this.subscriptionActive = subscriptionActive;
         this.stripeId = stripeId;
         this.availableAccessTokens = availableAccessTokens;
+        this.numAvatarGenerations = numAvatarGenerations;
 
         // populate with user_role
         this.roles = [];
@@ -43,8 +44,8 @@ exports.emptyUser = () => {
     return new User();
 };
 
-exports.createUser = function( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens ) {
-    let newUser = new User( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens );
+exports.createUser = function( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens, numAvatarGenerations ) {
+    let newUser = new User( email, username, profileFilename, emailValidated, desktopFirstVisit, editorFirstVisit, firstName, lastName, bio, isPrivate, hashedPassword, roleId, subscriptionActive, stripeId, availableAccessTokens, numAvatarGenerations );
     return newUser;
 };
 
@@ -68,5 +69,6 @@ exports.ormUser = function( userRow ) {
     user.subscriptionActive = userRow.subscription_active;
     user.stripeId = userRow.stripe_id;
     user.availableAccessTokens = userRow.available_access_tokens;
+    user.numAvatarGenerations = userRow.num_avatar_generations;
     return user;
 };

@@ -116,7 +116,7 @@ const createUser = async function( email, username, firstName, lastName, bio, is
         emailValidated = true;
     }
 
-    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0 );
+    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0, 3 );
     
     // save the user to the database!
     userService.saveUser( user ).then( ( insertResult ) => {
