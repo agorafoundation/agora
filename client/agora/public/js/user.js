@@ -353,6 +353,24 @@ if ( denyRequestButton ) {
 
 const generateAvatarButton = document.getElementById( 'btn-generate-avatar' );
 if( generateAvatarButton ) {
+    const bio = document.getElementById( 'bio' );
+
+    document.addEventListener( 'DOMContentLoaded', () => {
+        if( bio && bio.value.length > 20 ) {
+            generateAvatarButton.disabled = false;
+        }
+    } );
+
+    bio.addEventListener( 'keyup', ( e ) => {
+        console.log( "testing --- " );
+        if( e.target.value.length > 20 ) {
+            generateAvatarButton.disabled = false;
+        }
+        else {
+            generateAvatarButton.disabled = true;
+        }
+    } );
+
     generateAvatarButton.addEventListener( 'click', () => {
         // get the users profile bio
         const bio = document.getElementById( 'bio' ).value;
