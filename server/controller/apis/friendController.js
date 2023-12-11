@@ -75,6 +75,11 @@ exports.sendFriendRequest = async ( req, res ) => {
     else if ( req.session.authUser ) {
         authUserID = req.session.authUser.userId;
     }
+
+    // logging
+    console.log( "authUserID: " + authUserID );
+    console.log( "req.body.username: " + req.body.username );
+
     //Checks if user exists.
     let friendUsername = userService.verifyUsername( req.body.username );
     if ( friendUsername ) {
