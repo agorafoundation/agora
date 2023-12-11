@@ -6,8 +6,7 @@
  */
 
 // dependencies
-const fs = require( 'fs' );
-let path = require( 'path' );
+const nodemailer = require( "nodemailer" );
 
 // import util Models
 const ApiMessage = require( '../../model/util/ApiMessage' );
@@ -81,6 +80,50 @@ exports.sendFriendRequest = async ( req, res ) => {
     if ( friendUsername ) {
         let friend = await userService.getUserByUsername( req.body.username );
         let request = friendService.sendFriendRequest( authUserID, friend.userId );
+        //console.log( "authUserID: " + authUserID );
+        let currentUser = await userService.getActiveUserById( authUserID );
+        //console.log( "currentUser: " + JSON.stringify( currentUser ) );
+
+        // send notification email to recipient if they have a valid email and are subscribed
+        if( process.env.EMAIL_TOGGLE == "true" && friend.emailValidated == true && friend.subscriptionActive == true ) {
+            let secure = ( process.env.EMAIL_SECURE === 'true' );
+            let transporter = nodemailer.createTransport( {
+                host: process.env.EMAIL_HOST,
+                secure: secure,
+                port: process.env.EMAIL_PORT,
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASSWORD,
+                },
+            } );
+
+            let siteUrl = "";
+            if( process.env.SITE_PORT && process.env.SITE_PORT > 0 ) {
+                siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST + ':' +process.env.SITE_PORT;
+            }
+            else {
+                siteUrl = process.env.SITE_PROTOCOL + process.env.SITE_HOST;
+            }
+
+            const mailOptions = {
+                from: process.env.EMAIL_FROM, // sender address
+                to: friend.email,
+                subject: "Agora - Friend Request", // Subject line
+                html: "<p>Hello, we hope this email finds you well!</p>"
+                        + "<p>You have received a friend request from <strong>" + currentUser.firstName + " " + currentUser.lastName + "(" + currentUser.username + ")</strong> on Agora.</p>"
+                        + "You may accept or deny the request in your friends panel here: <strong><a href='https://freeagora.org/friends'>https://freeagora.org/friends</a></strong></p>"
+                        + "<p>Carpe Diem!</p>"
+                        + "<p>The Agora Team</p>", // plain text body
+            };
+
+            transporter.sendMail( mailOptions, function( err, info ) {
+
+                if ( err ) {
+                    // handle error
+                    console.log( err );
+                }
+            } );
+        }
         if ( request ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Friend Request Sent" );
