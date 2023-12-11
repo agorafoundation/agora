@@ -338,7 +338,7 @@ exports.getActiveUserById = async function( id ) {
  * @returns Users searched with partial username
  */
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE LOWER(username) ILIKE $1 || '%'";
+    let text = "SELECT * FROM users WHERE LOWER(username) = $1";
     let values = [ username ];
     let users = [];
     
@@ -347,10 +347,8 @@ exports.getUserByUsername = async function( username ) {
         let res = await db.query( text, values );
         
         if( res.rows.length > 0 ) {
-            for ( let i = 0; i < res.rows.length; i++ ){
-                users.push( User.ormUser( res.rows[i] ) );
-            }
-            return users;
+            // only 1 user with any username
+            return User.ormUser( res.rows[0] );
         }
         else {
             return false;

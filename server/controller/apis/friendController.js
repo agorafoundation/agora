@@ -81,12 +81,12 @@ exports.sendFriendRequest = async ( req, res ) => {
     console.log( "req.body.username: " + req.body.username );
 
     //Checks if user exists.
-    let friendUsername = userService.verifyUsername( req.body.username );
+    let friendUsername = await userService.verifyUsername( req.body.username );
     if ( friendUsername ) {
         console.log( "friendUsername: " + friendUsername );
         let friend = await userService.getUserByUsername( req.body.username );
         console.log( "friend: " + JSON.stringify( friend ) );
-        let request = friendService.sendFriendRequest( authUserID, friend[0].userId );
+        let request = friendService.sendFriendRequest( authUserID, friend.userId );
         if ( request ) {
             res.set( "x-agora-message-title", "Success" );
             res.set( "x-agora-message-detail", "Friend Request Sent" );
