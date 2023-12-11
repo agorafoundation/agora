@@ -338,7 +338,7 @@ exports.getActiveUserById = async function( id ) {
  * @returns Users searched with partial username
  */
 exports.getUserByUsername = async function( username ) {
-    let text = "SELECT * FROM users WHERE LOWER(username) = $1";
+    let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
     let values = [ username ];
     let users = [];
     
