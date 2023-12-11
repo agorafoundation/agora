@@ -80,7 +80,9 @@ exports.sendFriendRequest = async ( req, res ) => {
     if ( friendUsername ) {
         let friend = await userService.getUserByUsername( req.body.username );
         let request = friendService.sendFriendRequest( authUserID, friend.userId );
-        let currentUser = userService.getActiveUserById( authUserID );
+        //console.log( "authUserID: " + authUserID );
+        let currentUser = await userService.getActiveUserById( authUserID );
+        //console.log( "currentUser: " + JSON.stringify( currentUser ) );
 
         // send notification email to recipient if they have a valid email and are subscribed
         if( process.env.EMAIL_TOGGLE == "true" && friend.emailValidated == true && friend.subscriptionActive == true ) {

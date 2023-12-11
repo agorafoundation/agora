@@ -280,7 +280,7 @@ exports.getActiveUserById = async function( id ) {
     try {
         //console.log( "u-1" );
         let res = await db.query( text, values );
-        //console.log( "u-2" );
+        //console.log( "u-2 res: " +  res.rows[0] );
         if( res.rows.length > 0 ) {
             let user = User.ormUser( res.rows[0] );
             //console.log( "u-1 user: " + JSON.stringify( user ) );
