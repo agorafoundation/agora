@@ -85,9 +85,13 @@ exports.getUnreadFriendRequestCount = async ( userID ) => {
  * @returns Successful request or false
  */
 exports.sendFriendRequest = async ( requesterID, recipientID ) => {
-
+    console.log( "requesterID: " + requesterID );
+    console.log( "recipientID: " + recipientID );
+    
     let text = 'INSERT INTO friendships (initiatedby_id, recipient_id,friendship_status) VALUES ($1, $2, $3);';
     let values = [ requesterID, recipientID, 'pending' ];
+    
+    console.log( "text: " + text );
 
     try {
         let res = await db.query( text, values );
