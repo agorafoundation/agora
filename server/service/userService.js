@@ -368,18 +368,15 @@ exports.findUserBySearchString = async function( searchString ) {
     let text = "SELECT * FROM users WHERE (LOWER(first_name) ILIKE $1 || '%' OR LOWER(last_name) ILIKE $1 || '%' OR LOWER(username) ILIKE $1 || '%' OR LOWER(email) ILIKE $1 || '%') AND is_private = false;";
     let values = [ searchString ];
     let users = [];
-    console.log( "searchString: " + text );
     
     try {
          
         let res = await db.query( text, values );
-        console.log( "res.rows.length: " + res.rows.length );
         if( res.rows.length > 0 ) {
             
             for ( let i = 0; i < res.rows.length; i++ ){
                 users.push( User.ormUser( res.rows[i] ) );
             }
-            console.log( "users: " + JSON.stringify( users ) );
             return users;
         }
         else {
