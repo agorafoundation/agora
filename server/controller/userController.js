@@ -103,7 +103,7 @@ exports.orcidSignUp = async function( req, res ) {
         // randomly generate a 7 character extesion
         const extension = createRandomExtension( 7 );
         const usename = req.body.orcidGivenName + "-" + extension;
-        createUser( primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, false, true );                
+        createUser( primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, null, false, req.body.orcidIdToken, profileImage, req, res, false, true );                
     }
 
     HTTPreq.end();
@@ -149,7 +149,7 @@ exports.googleSignUp = async function( req, res ) {
 
         console.log( "[google-signup] about to create user" );
 
-        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], null, false, req.body.credential, profileImage, req, res, true );
+        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], null, false, req.body.credential, profileImage, req, res, true, false );
 
         console.log( "[google-signup] user created, email: " + payload['email'] );
         
@@ -177,7 +177,7 @@ exports.createUserForm = async function( req, res ) {
 
             let profileImage = 'profile-default.png';
             
-            createUser( email, username, firstName, lastName, null, false, req.body.psw, profileImage, req, res, false );
+            createUser( email, username, firstName, lastName, null, false, req.body.psw, profileImage, req, res, false, false );
 
         }
         else {
