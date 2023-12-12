@@ -8,7 +8,13 @@
 
 <% //name:string, description:string, tags:array, content:array %>
     <% const renderListCard=(id,name,desc,tags,contentType, content)=> { 
+      if(name) {
         name = name.slice(0,18)
+      }
+      else {
+        name = "Untitled"
+      }
+      
       if(desc){
         desc = desc.slice(0,180)
       }
@@ -65,6 +71,16 @@
          }
          
         %>
+
+        <li class="list-group-item list-view view-check a-workspace" id="w-lv-new" onclick="createNewWorkspace()">
+            <span id="w-lv-card-title-new">Create New Workspace</span>
+            <span class="badge badge-dark note-badge" style="position: absolute; left: 33.1%;">Workspace</span>
+            <span class="badge badge-med topic-badge" style="position: absolute; left: 45.7%"></span>
+            <span class="trigger1 trigger2" id="w-lv-option-new">
+                <img class="list-more-options" src="/assets/img/buttons/more-options.png" class="dropbtn"/>
+               
+            </span>
+        </li>
     </ul>
 
 

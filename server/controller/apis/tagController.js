@@ -280,11 +280,11 @@ exports.deleteTagged = async function( req, res ) {
     if( success ) {
         res.set( "x-agora-message-title", "Success" );
         res.set( "x-agora-message-detail", "Tag association deleted" );
-        res.status( 200 ).send( "Tag association deleted" );
+        res.status( 200 ).send( JSON.stringify( "Tag association deleted" ) );
     }
     else {
         res.set( "x-agora-message-title", "Not Found" );
         res.set( "x-agora-message-detail", "No tags were found meeting the query criteria" );
-        res.status( 404 ).send( "No Tags Found" );
+        res.status( 404 ).send( JSON.stringify( "No Tags Found" ) );
     }
 };

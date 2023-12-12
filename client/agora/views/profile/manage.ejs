@@ -55,6 +55,28 @@
                                             First Name: <input type="input" class="form-control form-control-lg" name="firstName" value="<%- user.firstName %>" id="firstName" placeholder="First Name" required>
                                             Last Name: <input type="input" class="form-control form-control-lg" name="lastName" value="<%- user.lastName %>" id="lastName" placeholder="Last Name" required>
                                             <br />  
+
+                                            <!-- Bio textarea -->
+                                            <hr />
+                                            <div class="form-group">
+                                                <label for="bio">Bio</label>
+                                                <textarea class="form-control" id="bio" name="bio" rows="3"><%- user.bio %></textarea>
+                                            </div>
+
+                                            <% if( user.numAvatarGenerations > 0 ) { %>
+                                                <div>
+                                                    <h4>Create AI generated Avatar</h4>
+                                                    <p>Agora will generate an avatar based on your profile description in your Bio. <strong>Your Bio must be more than   20 characters long</strong> and you have <strong><%- user.numAvatarGenerations %> generations available</strong> (due to the high cost, this is a limited feature on free accounts). </p>
+                                                    <input type="button" id="btn-generate-avatar" class="btn btn-primary" value="Generate Avatar" />
+                                                </div>
+                                            <% } else { %>
+                                                <div>
+                                                    <h4>Create AI generated Avatar</h4>
+                                                    <p>You do not have any remaining AI Avatar generations available</p>
+                                                </div>
+                                            <% } %>
+
+                                            <hr />
     
                                             <div class="custom-control custom-checkbox">
                                                 <% if(user.subscriptionActive) { %>
@@ -64,6 +86,17 @@
                                                 <% } %>
                                                 <label class="custom-control-label" for="subscriptionActive">Subcription Active <- Turn on or off emails from us</label>
                                             </div>
+
+                                            <div class="custom-control custom-checkbox">
+                                                <% if(user.isPrivate) { %>
+                                                    <input type="checkbox" class="custom-control-input" id="isPrivate" name="isPrivate" checked />
+                                                <% } else { %>
+                                                    <input type="checkbox" class="custom-control-input" id="isPrivate" name="isPrivate" />
+                                                <% } %>
+                                                <label class="custom-control-label" for="subscriptionActive">Remain Private <- Checking this box removes you from user search results</label>
+                                            </div>
+
+
                                             <br />
                                             <h5>Letting us know which topics your are most intested in helps us find related research and
                                                 collaborators that might be of interest to you (optional)</h5>
@@ -75,21 +108,42 @@
                                     <br />
                                 </section>
     
+                                
                             </div>
                             <div class="col-lg-5">
+
+                                <!-- -----TODO-----
+                                    Change to a updating friendRequestCount
+                                -->
                                 
-                                <%
-                                if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
-                                    %>
-                                    <img src="<%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
-                                    <%
-                                } else {
-                                    %>
-                                    <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
-                                    <%
-                                }
-                                %>
+
+                                <!-- Include the requests ejs to show friend requests-->
+                                <%- include('../friends/partials/requests'); %>
                                 
+                                <div class="profile-image-wrapper" style="position: relative;"></div>
+
+                                <div class="avatar-container">                                    
+                                
+                                    <%
+                                    if( locals.user.profileFilename.toString().substring(0, 7) == "http://" || locals.user.profileFilename.toString().substring(0, 8) == "https://" ) {
+                                        %>
+                                        <img src="<%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                        <%
+                                    } else {
+                                        %>
+                                        <img src="<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- locals.user.profileFilename %>" alt="Profile Picture" title="Profile Picture" class="profile-large-image" />
+                                        <%
+                                    }
+                                    %>
+                                    <div class="spinner-grow primary avatar-spinner-1" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="spinner-grow complementary avatar-spinner-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <span class="notification-count" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px;">0</span>
+
                                 <%- include('../partials/message'); %>
     
                                 <form action="/user/uploadProfilePicture" method="POST" enctype="multipart/form-data" style="width: 100%;">
@@ -99,6 +153,11 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </form>
+                            </div>
+
+                            
+                                
+                                
                                 
     
                                 <!-- All users are creators in agora, this is a relic from cc -->
@@ -230,5 +289,12 @@
             <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
         </div>
         <%- include('../partials/jsincludes'); %>
+        <script>
+            
+            //URBG: removed this as comment out for now, not sure why it was here, but this one line is the only reference I can find to liTemplates
+
+            // inject into modal body
+            //document.querySelector('.modal-body').innerHTML = liTemplates
+        </script>
     </body>
 </html>

@@ -15,87 +15,87 @@ const UPLOAD_PATH_BASE = path.resolve( __dirname, '..', '../client' );
 const FRONT_END = process.env.FRONT_END_NAME;
 const IMAGE_PATH = process.env.AVATAR_IMAGE_PATH;
 
-exports.orcidSignUpPassthrough = async function(req, res) {
-    if (!res.headersSent) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+exports.orcidSignUpPassthrough = async function( req, res ) {
+    if ( !res.headersSent ) {
+        res.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
     }
     res.render( 'orcid-sign-up-loading' );
-} 
+}; 
 
 exports.orcidSignUp = async function( req, res ) {
-    if (!res.headersSent) {
-        res.setHeader("Content-Type", "application/json; charset=utf-8")
+    if ( !res.headersSent ) {
+        res.setHeader( "Content-Type", "application/json; charset=utf-8" );
     }
     
 
     // TODO: Get email from ORCID user record
-    const orcidID = req.body.orcidId.replace('https://sandbox.orcid.org/', ''); // "0000-0003-4863-649X";
+    const orcidID = req.body.orcidId.replace( 'https://sandbox.orcid.org/', '' ); // "0000-0003-4863-649X";
 
     const apiUrl = `/v3.0/${orcidID}/email`;
 
     let xmlString = '';
 
-    const http = require("https");
+    const http = require( "https" );
 
     const options = {
-    "method": "GET",
-    "hostname": "pub.sandbox.orcid.org",
-    "port": null,
-    "path": apiUrl,
-    "headers": {
-        "Accept": "*/*",
-    }
+        "method": "GET",
+        "hostname": "pub.sandbox.orcid.org",
+        "port": null,
+        "path": apiUrl,
+        "headers": {
+            "Accept": "*/*",
+        }
     };
 
-    const HTTPreq = http.request(options, function (HTTPres) {
+    const HTTPreq = http.request( options, function ( HTTPres ) {
         const chunks = [];
 
-        HTTPres.on("data", function (chunk) {
-            chunks.push(chunk);
-        });
+        HTTPres.on( "data", function ( chunk ) {
+            chunks.push( chunk );
+        } );
 
-        HTTPres.on("end", function () {
-            const body = Buffer.concat(chunks);
+        HTTPres.on( "end", function () {
+            const body = Buffer.concat( chunks );
             xmlString = body.toString();
 
-            const { DOMParser } = require('xmldom');
+            const { DOMParser } = require( 'xmldom' );
 
             // Parse the XML string
             var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+            var xmlDoc = parser.parseFromString( xmlString, "text/xml" );
 
             // Get all email elements
-            var emailElements = xmlDoc.getElementsByTagName("email:email");
+            var emailElements = xmlDoc.getElementsByTagName( "email:email" );
             
-            for (var i = 0; i < emailElements.length; i++) {
+            for ( var i = 0; i < emailElements.length; i++ ) {
                 var emailElement = emailElements[i];
-                var email = getEmailAddress(emailElement);
+                var email = getEmailAddress( emailElement );
                 const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-                if (emailPattern.test(email)){
-                    createOrcidAccount(email);
+                if ( emailPattern.test( email ) ){
+                    createOrcidAccount( email );
                     break;
                 }
             }
             
-            if (emailElements.length === 0){
+            if ( emailElements.length === 0 ){
                 //console.log('No email found in ORCID record');
-                res.end(JSON.stringify({"redirect": "/user/orcid-user-issue"}));
+                res.end( JSON.stringify( {"redirect": "/user/orcid-user-issue"} ) );
             }
             
-            function getEmailAddress(emailElement) {
+            function getEmailAddress( emailElement ) {
                 var emailNodes = emailElement.childNodes;
-                for (var i = 0; i < emailNodes.length; i++) {
+                for ( var i = 0; i < emailNodes.length; i++ ) {
                     var node = emailNodes[i];
-                    if (node.nodeType === 3) { // Text node
+                    if ( node.nodeType === 3 ) { // Text node
                         return node.textContent.trim();
                     }
                 }
                 return null;
             }
-        });
-    });
+        } );
+    } );
 
-    async function createOrcidAccount(primaryEmail) {
+    async function createOrcidAccount( primaryEmail ) {
         const userid = req.body.orcidGivenName;
 
         let profileImage = 'profile-default.png';
@@ -103,7 +103,7 @@ exports.orcidSignUp = async function( req, res ) {
         // randomly generate a 7 character extesion
         const extension = createRandomExtension( 7 );
         const usename = req.body.orcidGivenName + "-" + extension;
-        createUser(primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, false, true);                
+        createUser( primaryEmail, usename, req.body.orcidGivenName, req.body.orcidFamilyName, req.body.orcidIdToken, profileImage, req, res, false, true );                
     }
 
     HTTPreq.end();
@@ -121,6 +121,7 @@ const client = new OAuth2Client( '${process.env.GOOGLE_CLIENT_ID}' );
 
 
 exports.googleSignUp = async function( req, res ) {
+    console.log( "[google-signup] - Start" );
     res.setHeader( 'Content-Type', 'text/html' );
     req.session.messageType = null;
     req.session.messageTitle = null;
@@ -146,10 +147,15 @@ exports.googleSignUp = async function( req, res ) {
         const extension = createRandomExtension( 7 );
         const usename = payload['given_name'] + "-" + extension;
 
-        createUser( payload['email'], usename, payload['given_name'], payload['family_name'], req.body.credential, profileImage, req, res, true );
+        console.log( "[google-signup] about to create user" );
+
+        await createUser( payload['email'], usename, payload['given_name'], payload['family_name'], null, false, req.body.credential, profileImage, req, res, true );
+
+        console.log( "[google-signup] user created, email: " + payload['email'] );
         
     }
     else {
+        console.log( "[google-signup] - Error: no credential" );
         res.render( 'user-signup', {error_message: "Google Authentication failure"} );
     }
 
@@ -171,7 +177,7 @@ exports.createUserForm = async function( req, res ) {
 
             let profileImage = 'profile-default.png';
             
-            createUser( email, username, firstName, lastName, req.body.psw, profileImage, req, res, false );
+            createUser( email, username, firstName, lastName, null, false, req.body.psw, profileImage, req, res, false );
 
         }
         else {
@@ -188,7 +194,7 @@ exports.createUserForm = async function( req, res ) {
  * @param {} req 
  * @param {*} res 
  */
-const createUser = async function( email, username, firstName, lastName, password, profileImage, req, res, isGoogle, isOrcid ) {
+const createUser = async function( email, username, firstName, lastName, bio, isPrivate, password, profileImage, req, res, isGoogle, isOrcid ) {
     let user = "";
 
     let subscriptionActive = true;
@@ -209,7 +215,7 @@ const createUser = async function( email, username, firstName, lastName, passwor
         emailValidated = true;
     }
 
-    user = User.createUser( email, username, profileImage, emailValidated, firstName, lastName, hashedPassword, 0, subscriptionActive, stripeId, 0 );
+    user = User.createUser( email, username, profileImage, emailValidated, true, true, firstName, lastName, bio, isPrivate, hashedPassword, 0, subscriptionActive, stripeId, 0, 3 );
     
     // save the user to the database!
     userService.saveUser( user ).then( ( insertResult ) => {
@@ -262,7 +268,7 @@ const createUser = async function( email, username, firstName, lastName, passwor
                 }
             }
             else {
-                if( !isGoogle && !isOrcid) {
+                if( !isGoogle && !isOrcid ) {
                     console.log( "[WARN] Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" );
                     if( req.query.redirect ) {
                         res.render( 'user-welcome', { redirect: req.query.redirect, message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
@@ -271,8 +277,8 @@ const createUser = async function( email, username, firstName, lastName, passwor
                         res.render( 'user-welcome', { message: "Save user verification email not sent because EMAIL_TOGGLE value set to false (sending emails is turned off!)" } );
                     }
                 }
-                else if(isOrcid){
-                    res.end(JSON.stringify({"redirect": "/signin"})) //res.render("user-signup", {message: "Login with orcid"} );
+                else if( isOrcid ){
+                    res.end( JSON.stringify( {"redirect": "/signin"} ) ); //res.render("user-signup", {message: "Login with orcid"} );
                 }
                 else {
                     res.redirect( 307, "/google-auth" );
@@ -313,6 +319,8 @@ exports.updateUser = async function( req, res ){
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.subscriptionActive =subscriptionActive;
+        user.bio = req.body.bio;
+        user.isPrivate = ( req.body.isPrivate == "on" ) ? true : false;
 
         // TODO:Tags may need to parsed here when form is submitted, previously interests were done here.
 
@@ -332,6 +340,23 @@ exports.updateUser = async function( req, res ){
         res.redirect( 303, "/userError" );
     }
     
+};
+
+exports.decrementAvatarGenerations = async function( email ) {
+    if( email ) {
+        userService.decrementAvatarGenerations( email ).then( ( rValue ) => {
+            console.log( "rValue: " + rValue );
+            if( rValue ) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } );
+    }
+    else {
+        return false;
+    }
 };
 
 exports.reValidateEmail = async function( req, res ) {
@@ -399,8 +424,6 @@ exports.reValidateEmail = async function( req, res ) {
 
 
 exports.saveProfileImage = async function( req, res, email, filename ) {
-
-    console.log( "upload 2!" );
     
     // save image in db and delete old file  
     if( email ) {

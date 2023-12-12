@@ -7,13 +7,17 @@
 
 // import and initizialize express
 const express = require( "express" );
-const app = express();
+const app = express(); 
 
 // config env library setup
 require( "dotenv" ).config();
 
 // manage parsing json from body of the request
 const bodyParser = require( "body-parser" );
+
+// set the size limit for incoming requests
+app.use( bodyParser.json( { limit: '50mb' } ) );
+
 
 var path = require( "path" );
 
@@ -25,12 +29,6 @@ app.use(
 app.use( bodyParser.json() );
 
 
-// library that allows us to hook responses in the middleware
-const responseHooks = require( "express-response-hooks" );
-
-app.use( responseHooks() );
-
-
 // cross origin
 const cors = require( "cors" );
 app.use(
@@ -39,6 +37,7 @@ app.use(
         methods: [ "GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH" ],
     } )
 );
+
 
 // get the port from the env file or set 4200 as default
 const PORT = process.env.SITE_PORT || 4200;
@@ -141,6 +140,18 @@ app.use( "/profile", profileRoutes );
  */
 const dashboardRoutes = require( "./routes/dashboardRoutes" );
 app.use( "/dashboard", dashboardRoutes );
+
+/**
+ * User Shared Dashboard routes
+ */
+const dashboardSharedRoutes = require( "./routes/dashboardSharedRoutes" );
+app.use( "/dashboard-shared", dashboardSharedRoutes );
+
+/**
+ * User Friends routes
+ */
+const friendsRoutes = require( "./routes/friendsRoutes" );
+app.use( "/friends", friendsRoutes );
 
 /**
  * Topic / Main editor routes

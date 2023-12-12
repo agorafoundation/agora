@@ -11,6 +11,18 @@
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.card-background-image {
+  position: absolute; 
+  background-size: cover; 
+  background-position: center; 
+  right:0px; 
+  bottom:0px; 
+  opacity: .35; 
+  width: 180px; 
+  height: 180px; 
+  margin: auto;
+}
+
 .badge-dark {
   color: #fff;
   background-color: #343a40;
@@ -48,6 +60,30 @@
 .btn-add-content {
   max-width: 40%;
   margin-top: 15%;
+}
+
+.add-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 18rem;
+  margin-top: 20px; /* Adjust as needed */
+}
+
+.add-button {
+  border-radius: 50%; /* Makes the button circular */
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Adjust icon size as needed */
+}
+
+/* Optional: Add hover effect */
+.add-button:hover {
+  background-color: #007bff; /* Darker shade of primary color */
+  color: white;
 }
 
 /* Drop-down option */

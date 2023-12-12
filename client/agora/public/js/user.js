@@ -72,7 +72,6 @@ if( document.getElementById( 'userManageButton' ) ) {
     } );
 }
 
-
 let manageEmail = document.getElementById( 'manageEmail' );
 if( manageEmail ) {
     // call to non-existant endpoint to check if email is unique
@@ -279,4 +278,156 @@ if( document.getElementById( 'passwordToggle' ) ) {
     document.getElementById( 'passwordToggle' ).addEventListener( 'click', () => {
         pwMask( 'psw' );
     } );
+}
+  
+const acceptRequestButton = document.getElementById( 'btn-accept-request' );
+
+if( acceptRequestButton ) {
+    acceptRequestButton.addEventListener( 'click', () => {
+        // Get the friend_id from the data-id attribute of the button
+        const friendshipId = acceptRequestButton.getAttribute( 'data-id' );
+    
+        fetch( '/api/v1/auth/friends/requestResponse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                friendship_id: friendshipId, // Pass the friend_id as a parameter
+            } ),
+        } )
+            .then( ( response ) => {
+                if ( response.status === 201 ) {
+                    // Successfully accepted friend request
+                    const message = 'Friend request accepted successfully.';
+                    console.log( message );
+                    location.reload(); // Refresh the page
+                }
+                else {
+                    const errorMessage = 'Failed to accept friend request.';
+                    console.error( errorMessage );
+                    alert( errorMessage ); // Display a pop-up with the error message
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error making accept request:', error );
+                alert( 'Error making accept request: ' + error ); // Display a pop-up with the error message
+            } );
+    } );
+}
+
+
+const denyRequestButton = document.getElementById( 'btn-deny-request' );
+
+if ( denyRequestButton ) {
+    denyRequestButton.addEventListener( 'click', () => {
+        // Get the friend_id from the data-id attribute of the button
+        const friendshipId = denyRequestButton.getAttribute( 'data-id' );
+        
+        fetch( '/api/v1/auth/friends/requestResponse', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( {
+                friendship_id: friendshipId, // Pass the friend_id as a parameter
+            } ),
+        } )
+            .then( ( response ) => {
+                if ( response.status === 201 ) {
+                    // Successfully denied friend request
+                    const message = 'Friend request denied successfully.';
+                    console.log( message );
+                    alert( message ); // Display a pop-up with the message
+                    location.reload(); // Refresh the page
+                }
+                else {
+                    const errorMessage = 'Failed to deny friend request.';
+                    console.error( errorMessage );
+                    alert( errorMessage ); // Display a pop-up with the error message
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error making deny request:', error );
+                alert( 'Error making deny request: ' + error ); // Display a pop-up with the error message
+            } );
+    } );
+}
+
+const generateAvatarButton = document.getElementById( 'btn-generate-avatar' );
+if( generateAvatarButton ) {
+    const bio = document.getElementById( 'bio' );
+
+    document.addEventListener( 'DOMContentLoaded', () => {
+        if( bio && bio.value.length > 20 ) {
+            generateAvatarButton.disabled = false;
+        }
+    } );
+
+    bio.addEventListener( 'keyup', ( e ) => {
+        console.log( "testing --- " );
+        if( e.target.value.length > 20 ) {
+            generateAvatarButton.disabled = false;
+        }
+        else {
+            generateAvatarButton.disabled = true;
+        }
+    } );
+
+    generateAvatarButton.addEventListener( 'click', () => {
+        // get the users profile bio
+        const bio = document.getElementById( 'bio' ).value;
+        console.log( 'bio retrieved : ' + bio );
+        generateAvatarButton.disabled = true;
+    
+        const spinner1 = document.querySelector( '.avatar-spinner-1' );
+        const spinner2 = document.querySelector( '.avatar-spinner-2' );
+        spinner1.style.display = 'block';
+        spinner2.style.display = 'block';
+    
+        fetch( '/api/v1/auth/ai/generateAvatar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+            body: JSON.stringify( {
+                prompt: bio, // Pass the friend_id as a parameter
+            } ),
+        } )
+    
+            .then( ( response ) => {
+                response.json().then( ( data ) => {
+                    console.log( 'response: ' + JSON.stringify( response ) );
+                    if( response.status === 200 ) {
+                        // Successfully generated avatar
+                        const message = 'Avatar generated successfully.';
+                        console.log( message );
+                        generateAvatarButton.disabled = false;
+                        spinner1.style.display = 'none';
+                        spinner2.style.display = 'none';
+
+                        location.reload(); // Refresh the page
+                    }
+                    else if( response.status === 429 ) {
+                        const errorMessage = 'Too many requests, you must wait at least 1 minutes before trying again!';
+                    
+                        generateAvatarButton.disabled = false;
+                        spinner1.style.display = 'none';
+                        spinner2.style.display = 'none';
+                        alert( errorMessage ); // Display a pop-up with the error message
+                        console.error( errorMessage );
+                    }
+                    else {
+                        console.log( "other: " + JSON.stringify( response ) );
+                        const errorMessage = 'Failed to generate avatar.';
+                        generateAvatarButton.disabled = false;
+                        spinner1.style.display = 'none';
+                        spinner2.style.display = 'none';
+    
+                        console.error( errorMessage );
+                    }
+                } );
+            
+            } ).catch( ( error ) => {
+                console.error( 'Error generating avatar:', error );
+            } );
+    
+        console.log( 'avatar generated' );
+           
+    } );
+    
 }

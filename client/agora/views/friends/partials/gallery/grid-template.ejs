@@ -1,0 +1,72 @@
+<div id="grid-container" style="display: none">
+  <div class="row row-cols-1 row-cols-md-3 g-4 " id="gallery-row">
+    <!-- Repeat the above structure for each friend -->
+    <% if (friends.length > 0) { %>
+      <% friends.forEach((friend) => { %>
+        
+        <!-- Friend Card -->
+        <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend" id="friend-card">
+          <div class="card h-100 d-flex flex-column" id="f-gv-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" onmouseover="toggleMoreOptionsOn(id)" onmouseout="toggleMoreOptionsOff(id)">
+            <div class="dropdown dropbtn trigger1 trigger2 grid-options" id="f-gv-option-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>" style="visibility: hidden">
+              <img src="/assets/img/buttons/more-options.png" class="dropbtn" />
+              <%- include('./dropdown.ejs', {friend: friend}); %>
+            </div>
+            <div class="card-body d-flex flex-column flex-grow-1" id="friend">
+              <h5 class="card-title" id="f-gv-card-title-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
+                <%= friend.friend_first_name %> <%= friend.friend_last_name %> (<%= friend.friend_username %>)
+              </h5>
+              <p class="card-text mb-4" id="f-gv-card-desc-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
+                <%= friend.friend_email %>
+              </p>
+              <p class="card-text mb-4" id="f-gv-card-bio-<%= friend.friendship_id %>" data-id="<%= friend.friendship_id %>">
+                <%
+                if (friend.friend_bio != null && friend.friend_bio.length > 120) {
+                  friend.friend_bio = friend.friend_bio.substring(0, 120) + "...";
+                }
+                %>
+                <%= friend.friend_bio %>
+              </p>
+              <%
+              if( friend.friend_profile_filename.toString().substring(0, 7) == "http://" || friend.friend_profile_filename.toString().substring(0, 8) == "https://" ) {
+              %>
+                <div class="card-background-image" style="background-image: url('<%- friend.friend_profile_filename %>')"></div>  
+              <%
+              } else {
+              %>
+              <div class="card-background-image" style="background-image: url('<%= process.env.AVATAR_IMAGE_WEB_PATH%><%- friend.friend_profile_filename %>')">
+                </div>
+              <%
+              }
+              %>
+
+            </div>
+            <div class="card-footer">
+              <span class="badge badge-dark note-badge">
+                Friend
+              </span>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <!-- Display a message when there are no friends -->
+      <div class="col mb-3 align-items-stretch gallery-col query-countable a-friend">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column" id="friend">
+            <h5 class="card-title" id="f-gv-card-title-">
+              No Friends
+            </h5>
+            <p class="card-text mb-4" id="f-gv-card-desc-">
+              You don't have any friends yet.
+            </p>
+          </div>
+          <div class="card-footer">
+            <span class="badge badge-dark note-badge">
+              Friend
+            </span>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>

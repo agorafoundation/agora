@@ -18,11 +18,21 @@ router.route( '/email/:email' )
     }
     );
 
+// Get user data by username
+router.route( '/search/:username' )
+    .get( ( req, res ) => {
+        userController.findUserBySearchString( req, res );
+    }
+    );
 
+// Get user data by userId
 
-
-
-
+router.route( '/userId/:userId' )
+  
+    .get( ( req, res ) => {
+        userController.getActiveUserById( req, res );
+    }
+    );
 
 module.exports = router;
 

@@ -2,10 +2,8 @@
  * Agora - Close the loop
  * © 2021-2023 Brian Gormanly
  * BSD 3-Clause License
- * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
+ * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause
  */
-
-
 
 /**
  * Expand metadata area
@@ -113,7 +111,6 @@
 //         toggleSunEditor();
 //     } );
 
-    
 //     toggleSunEditor();
 // }
 
@@ -411,47 +408,48 @@
 //     }
 // }
 
-
 //creates a empty topic
 const createNewTopic = async () => {
     console.log( "about to send topic!!!!!" );
     const temp = fetch( "api/v1/auth/topics", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "topicId": -1,
-            "topicType": 1,
-            "topicName": "Untitled",
-            "topicDescription": "",
-            "active": true,
-            "topicVisibility": "private",
-        } )
+            topicId: -1,
+            topicType: 1,
+            topicName: "Untitled",
+            topicDescription: "",
+            active: true,
+            topicVisibility: "private",
+        } ),
     } )
-        .then( response => response.json() )
-        .then( response => window.location.href = "/topic#t-" + response.topicId );
+        .then( ( response ) => response.json() )
+        .then(
+            ( response ) => ( window.location.href = "/topic#t-" + response.topicId )
+        );
 };
 
 //creates a empty topic
 const createNewWorkspace = async () => {
+    console.log( "about to send workspace!!!!!" );
     fetch( "api/v1/auth/workspaces", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
-            "workspaceId": -1,
-            "workspaceName": "Untitled",
-            "workspaceDescription": "",
-            "workspaceImage": "myImage.png",
-            "active": true,
-            "completable": true,
-            "visibility": "private",
-        } )
+            workspaceId: -1,
+            workspaceName: "Untitled",
+            workspaceDescription: "",
+            workspaceImage: "myImage.png",
+            active: true,
+            completable: true,
+            visibility: "private",
+        } ),
     } )
-        .then( response => response.json() )
-        .then( response => window.location.href = "/topic#w-" + response.workspaceId );
+        .then( ( response ) => response.json() )
+        .then(
+            ( response ) => ( window.location.href = "/topic#w-" + response.workspaceId )
+        );
 };
-
-
-
 
 //edit is a number if editing a resource, false if adding a resource
 //prefix indicates whether card is workspace or topic
@@ -462,47 +460,48 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
     }
 
     //if workspace
-    if( prefix === "w-" ) {
+    if ( prefix === "w-" ) {
         fetch( "api/v1/auth/workspaces", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify( {
-                "workspaceId": id,
-                "workspaceName": name,
-                "workspaceDescription": description,
-                "workspaceImage": "myImage.png",
-                "active": true,
-                "completable": true,
-                "visibility": "private",
-            } )
+                workspaceId: id,
+                workspaceName: name,
+                workspaceDescription: description,
+                workspaceImage: "myImage.png",
+                active: true,
+                completable: true,
+                visibility: "private",
+            } ),
         } )
-            .then( response => response.json() )
-            .then( response => {
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
                 return response.workspaceId;
             } );
     //if topic
-    } 
+    }
     else {
         fetch( "api/v1/auth/topics", {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify( {
-                "topicId": id,
-                "topicType": 1,
-                "topicName": name,
-                "topicDescription": description,
-                "topicImage": "myImage.png",
-                "topicHtml": "<div><img src=\"myImage.png\" width=\"500\" height=\"500\"></div>",
-                "assessmentId": 1,
-                "hasActivity": false,
-                "hasAssessment": false,
-                "activityId": 1,
-                "active": true,
-                "topicVisibility": "private",
-            } )
+                topicId: id,
+                topicType: 1,
+                topicName: name,
+                topicDescription: description,
+                topicImage: "myImage.png",
+                topicHtml:
+          '<div><img src="myImage.png" width="500" height="500"></div>',
+                assessmentId: 1,
+                hasActivity: false,
+                hasAssessment: false,
+                activityId: 1,
+                active: true,
+                topicVisibility: "private",
+            } ),
         } )
-            .then( response => response.json() )
-            .then( response => {
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
                 return response.topicId;
             } );
     }
@@ -510,14 +509,18 @@ const duplicateOrEditResource = ( prefix, name, description, edit ) => {
 
 const deleteResource = async ( resourceId, prefix ) => {
     if ( prefix === "w-" ) {
-        const response = await fetch( "api/v1/auth/workspaces/" + resourceId, { method: "DELETE" } );
-        if( response.ok ) {
+        const response = await fetch( "api/v1/auth/workspaces/" + resourceId, {
+            method: "DELETE",
+        } );
+        if ( response.ok ) {
             await response.json();
         }
-    } 
+    }
     else {
-        const response = await fetch( "api/v1/auth/topics/" + resourceId, { method: "DELETE" } );
-        if( response.ok ) {
+        const response = await fetch( "api/v1/auth/topics/" + resourceId, {
+            method: "DELETE",
+        } );
+        if ( response.ok ) {
             await response.json();
         }
     }
@@ -546,11 +549,10 @@ function toggleMoreOptionsOff( id ) {
     document.getElementById( dropId ).style.visibility = "hidden";
 }
 
-
 const toggleWorkspaceView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
-        if ( ( cards[i].classList ).contains( "a-workspace" ) ) {
+        if ( cards[i].classList.contains( "a-workspace" ) ) {
             cards[i].classList.remove( "d-none" );
         }
         else {
@@ -559,13 +561,11 @@ const toggleWorkspaceView = () => {
     }
 };
 
-
-
 // currently not used because the default view is workspace - URBG 20230123 - there used to be the ability to show topics
 const toggleTopicView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
-        if ( ( cards[i].classList ).contains( "a-workspace" ) ) {
+        if ( cards[i].classList.contains( "a-workspace" ) ) {
             cards[i].classList.add( "d-none" );
         }
         else {
@@ -578,11 +578,9 @@ const toggleAllView = () => {
     const cards = document.getElementsByClassName( "view-check" );
     for ( let i = 0; i < cards.length; i++ ) {
         cards[i].classList.remove( "d-none" );
-    
     }
 };
 // end currently not used
-
 
 // default to workspace, option to change removed - URBG 20230123 - see https://github.com/briangormanly/agora/issues/357
 toggleWorkspaceView();
@@ -616,12 +614,12 @@ const isTopic = ( e ) => {
     let output = false;
     const GE = goodElement( e );
     if ( isGrid( e ) ) {
-        if ( ( GE.parentElement.parentElement.id ).charAt( 0 ) === "t" ) {
+        if ( GE.parentElement.parentElement.id.charAt( 0 ) === "t" ) {
             output = true;
         }
     }
     else {
-        if ( ( GE.parentElement.parentElement.parentElement.id ).charAt( 0 ) === "t" ) {
+        if ( GE.parentElement.parentElement.parentElement.id.charAt( 0 ) === "t" ) {
             output = true;
         }
     }
@@ -644,8 +642,8 @@ const getId = ( e ) => {
 
 ////////Create a toast/////////
 const createToast = ( text ) => {
-    document.getElementById( 'toast-text' ).innerText = text;
-    const thisToast = document.getElementById( 'liveToast' );
+    document.getElementById( "toast-text" ).innerText = text;
+    const thisToast = document.getElementById( "liveToast" );
     // eslint-disable-next-line no-undef
     const toast = new bootstrap.Toast( thisToast );
     toast.show();
@@ -657,13 +655,17 @@ const createToast = ( text ) => {
 const fillNameandDescription = ( e ) => {
     let parentId = getId( e );
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "w-";
+    isTopic( e ) ? ( prefix = "t-" ) : ( prefix = "w-" );
 
     let parentNameId = "card-title-" + parentId;
     let parentDescId = "card-desc-" + parentId;
 
-    let parentName = document.getElementById( prefix + "lv-" + parentNameId ).innerText;
-    let parentDesc = document.getElementById( prefix + "gv-" + parentDescId ).innerText;
+    let parentName = document.getElementById(
+        prefix + "lv-" + parentNameId
+    ).innerText;
+    let parentDesc = document.getElementById(
+        prefix + "gv-" + parentDescId
+    ).innerText;
 
     //setting the onclick event of the save button depenidng on the id of the clicked card
     document
@@ -671,7 +673,8 @@ const fillNameandDescription = ( e ) => {
         .setAttribute(
             "onclick",
             `updateSaveButton(${JSON.stringify( parentNameId )},${JSON.stringify(
-                parentDescId )},${JSON.stringify( prefix )})`
+                parentDescId
+            )},${JSON.stringify( prefix )})`
         );
 
     //filling the input fields of the modal to the current values
@@ -700,12 +703,12 @@ var cards = document.querySelectorAll( "#rename-card" ).forEach( ( card ) => {
 
 //changing the properties of the save button of the rename-modal depending on the selected card
 const updateSaveButton = ( nameId, descId, prefix ) => {
-    let name = ( document.getElementById( "note-modal-name" ).value ).trim();
-    let desc = ( document.getElementById( "note-modal-description" ).value ).trim();
+    let name = document.getElementById( "note-modal-name" ).value.trim();
+    let desc = document.getElementById( "note-modal-description" ).value.trim();
     if ( name ) {
         document.getElementById( prefix + "gv-" + nameId ).innerText = name;
         document.getElementById( prefix + "lv-" + nameId ).innerText = name;
-        document.getElementById( prefix + "gv-" + descId ).innerText = desc;    
+        document.getElementById( prefix + "gv-" + descId ).innerText = desc;
 
         duplicateOrEditResource( prefix, name, desc, descId.substring( 10 ) );
 
@@ -714,8 +717,6 @@ const updateSaveButton = ( nameId, descId, prefix ) => {
     else {
         window.alert( "All workspaces/topics must have a name" );
     }
-
-  
 };
 
 //hides rename modal
@@ -740,10 +741,10 @@ const removeText = ( type ) => {
 //updating the input DOM of the delete-modal depending on the selected card
 const showDeleteModal = ( e ) => {
     let parentId = getId( e );
-    
+
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "w-"; 
-   
+    isTopic( e ) ? ( prefix = "t-" ) : ( prefix = "w-" );
+
     let parentNameId;
 
     if ( isGrid( e ) ) {
@@ -752,7 +753,7 @@ const showDeleteModal = ( e ) => {
     else {
         parentNameId = prefix + "lv-card-title-" + parentId;
     }
-   
+
     let parentName = document.getElementById( parentNameId ).innerText;
 
     //setting the text inside the delete modal to show user what they're deleting
@@ -761,7 +762,12 @@ const showDeleteModal = ( e ) => {
     //setting the properties of the confirm button to delete the correct card
     document
         .getElementById( "confirm-delete" )
-        .setAttribute( "onclick", `updateDeleteConfirmButton(${JSON.stringify( parentId )}, ${JSON.stringify( prefix )})` );
+        .setAttribute(
+            "onclick",
+            `updateDeleteConfirmButton(${JSON.stringify( parentId )}, ${JSON.stringify(
+                prefix
+            )})`
+        );
 
     //showing the delete modal
     document.getElementById( "delete-modal" ).style.display = "block";
@@ -808,14 +814,16 @@ const topicReroute = ( id, newTab, prefix ) => {
     }
 
     const title = document.getElementById( usedPrefix + "lv-card-title-" + id );
-    const description = document.getElementById( usedPrefix + "gv-card-desc-" + id );
+    const description = document.getElementById(
+        usedPrefix + "gv-card-desc-" + id
+    );
 
     //pass the title and description to backend
     if ( newTab ) {
         window.open( "/topic#" + usedPrefix + id, "_blank" );
     }
     else {
-        /*if (usedPrefix === "-t") {
+    /*if (usedPrefix === "-t") {
             window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
         } else {
             window.location.href = "/workspace#" + usedPrefix + id.substring( 5 );
@@ -829,7 +837,7 @@ const topicReroute = ( id, newTab, prefix ) => {
 const openInNewTab = ( e ) => {
     let parentId = getId( e );
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "w-";
+    isTopic( e ) ? ( prefix = "t-" ) : ( prefix = "w-" );
 
     topicReroute( parentId, true, prefix );
 
@@ -849,15 +857,16 @@ const copyLink = ( e ) => {
     let parentId = getId( e );
 
     let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "w-";
+    isTopic( e ) ? ( prefix = "t-" ) : ( prefix = "w-" );
 
-    navigator.clipboard.writeText( "http://localhost:4200/topic#" + prefix + parentId );
+    navigator.clipboard.writeText(
+        "http://localhost:4200/topic#" + prefix + parentId
+    );
 
     createToast( "Copied Link!" );
 
     e.stopPropagation();
 };
-
 
 var copyLinkCards = document
     .querySelectorAll( "#copy-link-card" )
@@ -865,35 +874,41 @@ var copyLinkCards = document
         copyLinkCard.addEventListener( "click", copyLink );
     } );
 
-
 ////////*Handling Duplicate*/////////////
 
 //handles cloning a card then updating it's id and properties
 const duplicateWorkspace = async ( e ) => {
-  
     let parentId = getId( e );
-   
-    let prefix;
-    isTopic( e ) ? prefix = "t-" : prefix = "w-";
 
-    let gridParent = document.getElementById( prefix + "gv-" + parentId ).parentElement;
+    let prefix;
+    isTopic( e ) ? ( prefix = "t-" ) : ( prefix = "w-" );
+
+    let gridParent = document.getElementById(
+        prefix + "gv-" + parentId
+    ).parentElement;
     let listParent = document.getElementById( prefix + "lv-" + parentId );
 
     //creating separate, autonomous element that's a clone of the original
     let gridClone = gridParent.cloneNode( true );
     let listClone = listParent.cloneNode( true );
-   
+
     //getting the next id to use
 
-    let nameOfClone = gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + " (copy)";
-    
+    let nameOfClone =
+    gridParent.childNodes[1].childNodes[3].childNodes[1].innerText + " (copy)";
+
     //fetch call to update backend
-    const newId = await duplicateOrEditResource( prefix, nameOfClone, gridParent.childNodes[1].childNodes[3].childNodes[3].innerText, null );
+    const newId = await duplicateOrEditResource(
+        prefix,
+        nameOfClone,
+        gridParent.childNodes[1].childNodes[3].childNodes[3].innerText,
+        null
+    );
 
     //changing the ids in the cloned element
     gridClone = replaceIds( gridClone, newId, true, prefix );
     listClone = replaceIds( listClone, newId, false, prefix );
-    
+
     //calculating new id then setting the elements ids to the new one
 
     //updating the more options of the grid clone
@@ -942,7 +957,6 @@ const duplicateWorkspace = async ( e ) => {
         fillNameandDescription
     );
 
-
     //makes the ellipsis of the clone hidden on initialization
     gridClone.childNodes[1].childNodes[1].style.visibility = "hidden";
 
@@ -956,7 +970,6 @@ const duplicateWorkspace = async ( e ) => {
     createToast( "Duplicated " + nameOfClone.trim() );
 
     e.stopPropagation();
-        
 };
 
 //A collection of the duplicate buttons
@@ -966,37 +979,52 @@ var duplicateCards = document
         duplicateCard.addEventListener( "click", duplicateWorkspace );
     } );
 
-
-const placeElement = ( gridElement, listElement, gridContainer, listContainer, prefix ) => {
+const placeElement = (
+    gridElement,
+    listElement,
+    gridContainer,
+    listContainer,
+    prefix
+) => {
     if ( prefix === "w-" ) {
         gridContainer.insertBefore( gridElement, gridContainer.childNodes[2] );
 
         listContainer.insertBefore( listElement, listContainer.childNodes[2] );
-    } 
+    }
     else {
-        gridContainer.insertBefore( gridElement, gridContainer.querySelector( ".a-topic" ) );
+        gridContainer.insertBefore(
+            gridElement,
+            gridContainer.querySelector( ".a-topic" )
+        );
 
-        listContainer.insertBefore( listElement, listContainer.querySelector( ".a-topic" ) );
+        listContainer.insertBefore(
+            listElement,
+            listContainer.querySelector( ".a-topic" )
+        );
     }
 };
 
 //handles updating an element's various ids
 const replaceIds = ( element, newId, grid, prefix ) => {
-    if ( grid ) {   //if element is in grid view
+    if ( grid ) {
+    //if element is in grid view
         element.childNodes[1].id = prefix + "gv-" + newId; //main id
 
         element.childNodes[1].childNodes[1].id = prefix + "gv-option-" + newId; //option id
-    
-        element.childNodes[1].childNodes[3].childNodes[1].id = prefix + "gv-card-title-" + newId; //card title id
-    
-        element.childNodes[1].childNodes[3].childNodes[3].id = prefix + "gv-card-desc-" + newId; //card description id
+
+        element.childNodes[1].childNodes[3].childNodes[1].id =
+      prefix + "gv-card-title-" + newId; //card title id
+
+        element.childNodes[1].childNodes[3].childNodes[3].id =
+      prefix + "gv-card-desc-" + newId; //card description id
     }
-    else {  //if element is in list view
+    else {
+    //if element is in list view
         element.id = prefix + "lv-" + newId; //main id
 
-        element.childNodes[1].id = prefix + "lv-card-title-" + newId;  //card title id
+        element.childNodes[1].id = prefix + "lv-card-title-" + newId; //card title id
 
-        element.childNodes[5].id = prefix + "lv-option-" + newId;  //option id
+        element.childNodes[5].id = prefix + "lv-option-" + newId; //option id
     }
     return element;
 };
@@ -1011,58 +1039,84 @@ var removedTopics = [];
 
 //this needs to be called whenever the topics are added or removed
 const getTopics = () => {
-    topicArr = document.querySelectorAll( '.query-countable' );
+    topicArr = document.querySelectorAll( ".query-countable" );
 };
 
-window.addEventListener( 'load', () => {
+window.addEventListener( "load", () => {
     getTopics();
     toggleGrid();
+
+    // // eslint-disable-next-line no-undef
+    // let myModal = new bootstrap.Modal( document.getElementById( 'workspace-tutorial-modal' ), {
+    //     keyboard: true,
+    //     backdrop: true
+    // } );
+    // myModal.show();
 } );
 
 //what changes the DOM and modifies removed topics depending on search
 //newVal is the input value
 //arr is the topicArray
 const queryTopics = ( newVal, arr ) => {
-    let elemName, idToRemove, badListElement, badGridElement, addedElements, prefix;
+    console.log( "querying" );
+    let elemName,
+        idToRemove,
+        badListElement,
+        badGridElement,
+        addedElements,
+        prefix;
     const len = arr.length;
     newVal = newVal.toLowerCase();
 
+    console.log( "topic Array: " + JSON.stringify( arr ) );
+
     for ( let i = 0; i < len; i++ ) {
-        elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase();  //name of arr[i] element to be tested
-    
-        idToRemove = ( arr[i].childNodes[1].id ).substring( 5 ); //id of the element being checked
+        elemName = arr[i].childNodes[1].childNodes[3].childNodes[1].innerText.toLowerCase(); //name of arr[i] element to be tested
 
-        prefix = ( arr[i].childNodes[1].id ).substring( 0, 2 );  //indicates whether is workspace or topic
+        idToRemove = arr[i].childNodes[1].id.substring( 5 ); //id of the element being checked
 
-        if ( !elemName.includes( newVal ) ) {   //checking query
-  
-            if ( !hasElement( idToRemove, prefix, removedTopics ) ) {  //has this element not yet already been removed?
+        prefix = arr[i].childNodes[1].id.substring( 0, 2 ); //indicates whether is workspace or topic
+
+        if ( !elemName.includes( newVal ) ) {
+            //checking query
+
+            if ( !hasElement( idToRemove, prefix, removedTopics ) ) {
+                //has this element not yet already been removed?
 
                 badListElement = document.getElementById( prefix + "lv-" + idToRemove ); //element in list view to be removed
 
-                badGridElement = document.getElementById( prefix + "gv-" + idToRemove ).parentNode;   //element in grid view to be removed
+                badGridElement = document.getElementById(
+                    prefix + "gv-" + idToRemove
+                ).parentNode; //element in grid view to be removed
 
-                removedTopics.push( { gridElement: badGridElement, listElement: badListElement, id: idToRemove, prefix: prefix } );   //add element to removedTopics
+                removedTopics.push( {
+                    gridElement: badGridElement,
+                    listElement: badListElement,
+                    id: idToRemove,
+                    prefix: prefix,
+                } ); //add element to removedTopics
 
                 badListElement.style.display = "none";
                 badGridElement.style.display = "none";
             }
         }
-        else if ( hasElement( idToRemove, prefix, removedTopics ) ) {  //does the query name exist in removedTopics?
+        else if ( hasElement( idToRemove, prefix, removedTopics ) ) {
+            //does the query name exist in removedTopics?
 
             addedElements = getElement( idToRemove, prefix, removedTopics );
 
             addedElements.gridEl.style.display = "block";
             addedElements.listEl.style.display = "block";
 
-            removedTopics = removeElement( idToRemove, prefix, removedTopics );  //remove element from removedTopics
+            removedTopics = removeElement( idToRemove, prefix, removedTopics ); //remove element from removedTopics
         }
     }
 };
 
 //checks if removedTopics contains a certain id
 const hasElement = ( id, prefix, removed ) => {
-    let done = false, index = 0;
+    let done = false,
+        index = 0;
     const removedLength = removed.length;
     while ( !done && index < removedLength ) {
         if ( removed[index].id === id && removed[index].prefix === prefix ) {
@@ -1075,11 +1129,16 @@ const hasElement = ( id, prefix, removed ) => {
 
 //returns an element from removedTopics depending on id
 const getElement = ( id, prefix, removed ) => {
-    let done = false, index = 0, output = null;
+    let done = false,
+        index = 0,
+        output = null;
     const removedLength = removed.length;
     while ( !done && index < removedLength ) {
         if ( removed[index].id === id && removed[index].prefix === prefix ) {
-            output = {gridEl: removed[index].gridElement, listEl: removed[index].listElement};
+            output = {
+                gridEl: removed[index].gridElement,
+                listEl: removed[index].listElement,
+            };
             done = true;
         }
         index++;
@@ -1089,7 +1148,8 @@ const getElement = ( id, prefix, removed ) => {
 
 //Removes an element from removedTopics then returns the updated array
 const removeElement = ( id, prefix, removed ) => {
-    let done = false, index = 0;
+    let done = false,
+        index = 0;
     const removedLength = removed.length;
     while ( !done && index < removedLength ) {
         if ( removed[index].id === id && removed[index].prefix === prefix ) {
@@ -1104,13 +1164,15 @@ const removeElement = ( id, prefix, removed ) => {
 //////View Toggle////////////
 
 const toggleGrid = () => {
-    if( document.getElementById( "list-container" ) ) {
+    if ( document.getElementById( "list-container" ) ) {
         document.getElementById( "list-container" ).style.display = "none";
     }
-    if( document.getElementById( "main-container" ) ) {
-        document.getElementById( "main-container" ).appendChild( document.getElementById( "grid-container" ) );
+    if ( document.getElementById( "main-container" ) ) {
+        document
+            .getElementById( "main-container" )
+            .appendChild( document.getElementById( "grid-container" ) );
     }
-    if( document.getElementById( "grid-container" ) ) {
+    if ( document.getElementById( "grid-container" ) ) {
         document.getElementById( "grid-container" ).style.display = "block";
     }
 
@@ -1122,9 +1184,11 @@ const toggleGrid = () => {
 
 const toggleList = () => {
     document.getElementById( "grid-container" ).style.display = "none";
-    document.getElementById( "main-container" ).appendChild( document.getElementById( "list-container" ) );
+    document
+        .getElementById( "main-container" )
+        .appendChild( document.getElementById( "list-container" ) );
     document.getElementById( "list-container" ).style.display = "block";
-    
+
     if ( document.getElementById( "controlbar-buttons-group-2" ) ) {
         document.getElementById( "select-grid" ).classList.remove( "active" );
         document.getElementById( "select-list" ).classList.add( "active" );
@@ -1132,18 +1196,18 @@ const toggleList = () => {
 };
 
 const logout = () => {
-    if( confirm( "Are you sure you want to logout?" ) === true ){
+    if ( confirm( "Are you sure you want to logout?" ) === true ) {
         window.location.href = "/signout";
     }
 };
 
 // set the initial selections in the control bar
-window.addEventListener( 'load', () => {
-    if( document.getElementById( "controlbar-buttons-group-1" ) ) {
+window.addEventListener( "load", () => {
+    if ( document.getElementById( "controlbar-buttons-group-1" ) && document.getElementById( "all-initial-selection" ) ) {
         document.getElementById( "all-initial-selection" ).classList.add( "active" );
     }
 
-    if( document.getElementById( "controlbar-buttons-group-2" ) ) {
+    if ( document.getElementById( "controlbar-buttons-group-2" ) ) {
         document.getElementById( "select-grid" ).classList.add( "active" );
 
         showTooltip( "select-grid", "Grid View" );
@@ -1161,11 +1225,11 @@ function showTooltip( id, text ) {
     document.getElementById( id ).addEventListener( "mouseenter", ( e ) => {
         let tooltip = document.getElementById( "control-bar-tooltip" );
         let offset = getOffset( document.getElementById( id ) );
-        
+
         tooltip.innerText = text;
 
-        tooltip.style.top = ( offset.top + 45 ) + "px";
-        tooltip.style.left = ( offset.left - 13 )  + "px";
+        tooltip.style.top = offset.top + 45 + "px";
+        tooltip.style.left = offset.left - 13 + "px";
 
         tooltip.style.visibility = "visible";
     } );
@@ -1173,7 +1237,7 @@ function showTooltip( id, text ) {
 
 function hideTooltip( id ) {
     document.getElementById( id ).addEventListener( "mouseleave", () => {
-        let tooltip =  document.getElementById( "control-bar-tooltip" );
+        let tooltip = document.getElementById( "control-bar-tooltip" );
         tooltip.style.visibility = "hidden";
     } );
 }
@@ -1183,27 +1247,80 @@ function getOffset( el ) {
 
     return {
         left: rect.left + window.scrollX,
-        top: rect.top + window.scrollY
+        top: rect.top + window.scrollY,
     };
 }
 
+const friendsContainer = document.querySelectorAll( '#friend-card' );
+
+function filterFriends( searchTerm ){
+
+    for ( const friend of friendsContainer ){
+
+        const friendCard = friend.outerText.toLowerCase();
+
+        if ( friendCard.includes( searchTerm.toLowerCase() ) ){
+            friend.style.display = 'block';
+        }
+        else {
+            friend.style.display = 'none';
+        }
+    }
+}
+
+function deleteFriend( friendshipId ) {
+    if ( confirm( "Are you sure you want to remove this friend?" ) == true ){
+        fetch( "/api/v1/auth/friends/deleteFriend", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify( {
+                "friendshipId": friendshipId,
+            } )
+        } )
+            .then( ( response ) => {
+                if ( response.status == 200 ) {
+                    const message = 'Friend deleted successfully';
+                    console.log( message );
+                    alert( message );
+                    location.reload();
+                }
+                else{
+                    const errorMessage = 'Failed to delete friend.';
+                    console.error( errorMessage );
+                    alert( errorMessage );
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( 'Error deleting friend:', error );
+                alert( 'Error deleting friend: ' + error );
+            } );
+    }
+}
 
 // manage highlighting of control bar buttons
-if( document.getElementById( "controlbar-buttons-group-1" ) ) {
-    document.getElementById( "controlbar-buttons-group-1" ).addEventListener( 'click', ( e ) => {
-        const target = e.target;
-        if( document.getElementById( "all-initial-selection" ).classList.contains( "active" ) ) {
-            document.getElementById( "all-initial-selection" ).classList.remove( "active" );
-        }
-        // if( target.classList.contains( "controlbar-buttons-group-1" ) ) {
-        //     const buttons = target.querySelectorAll( ".controlbar-buttons-group-1" );
-        //     console.log( "length 1 : " + buttons.length ); 
-        //     for( let i = 0; i < buttons.length; i++ ) {
-        //         buttons[i].classList.remove( "active" );
-        //     }
-        //     target.classList.add( "active" );
-        // }
-    } );
+if ( document.getElementById( "controlbar-buttons-group-1" ) ) {
+    document
+        .getElementById( "controlbar-buttons-group-1" )
+        .addEventListener( "click", ( e ) => {
+            const target = e.target;
+            if (
+                document
+                    .getElementById( "all-initial-selection" )
+                    .classList.contains( "active" )
+            ) {
+                document
+                    .getElementById( "all-initial-selection" )
+                    .classList.remove( "active" );
+            }
+            // if( target.classList.contains( "controlbar-buttons-group-1" ) ) {
+            //     const buttons = target.querySelectorAll( ".controlbar-buttons-group-1" );
+            //     console.log( "length 1 : " + buttons.length );
+            //     for( let i = 0; i < buttons.length; i++ ) {
+            //         buttons[i].classList.remove( "active" );
+            //     }
+            //     target.classList.add( "active" );
+            // }
+        } );
 }
 
 //window.onload( toggleGrid() );
