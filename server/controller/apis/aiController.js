@@ -45,32 +45,60 @@ exports.callOpenAI = async ( req, res ) => {
     let resourceId = req.body.resourceId;
     let removedArticles = req.body.removedArticles;
 
+    console.log( "removed Articles: " + removedArticles );
+
     let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
 
+    //console.log( "resourceContent: " + resourceContent );
+
     if ( resourceContent ) {
-        let parsedResourceContent = mode == 'paper' ? parseResourceContentHtml( resourceContent ) : parseOutHtmlTags( resourceContent );
+        let parsedResourceContent = cleanHtml( resourceContent );
+
+        //console.log( "\n\nmodified resourceContent: " + parsedResourceContent );
         
         if ( parsedResourceContent.length > 0 ) {
-            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent[0], removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
+            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent, removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
+            const systemMessage = mode == 'paper' ? `You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing. Please return ONLY JSON object, no fluff.` : `You are assisting me in finding relevant resources related to my writing, these could be blog posts, news articles, papers, or other reputable works. Please return ONLY JSON object, no fluff.`;
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
                 let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
             
+                // const completion = await openai.createChatCompletion( {
+                //     model: "gpt-4-1106-preview",
+                //     temperature: 0, // variance in the response - play with this for different results
+                //     response_format: { "type": "json_object" },
+                //     messages: [ 
+                //         { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
+                //         { role: "user", content: prompt }
+                //     ]
+                    
+                // } );
+
+                console.log( "systemMessage: " + systemMessage );
+                console.log( "prompt: " + prompt );
+
                 const completion = await openai.createChatCompletion( {
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-4-1106-preview",
                     temperature: 0, // variance in the response - play with this for different results
+                    response_format: { "type": "json_object" },
+                    max_tokens: 2000,
                     messages: [ 
-                        { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
+                        { role: "system", content: systemMessage },
                         { role: "user", content: prompt }
                     ]
+                    
                 } );
-            
+                
+
                 let returnValue = completion.data.choices[0];
+
+                console.log( "return value raw: " + JSON.stringify( returnValue.message ) );
         
                 let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
                 
-                let validatedCitations = await validateSources( rawJson );
+                let validatedCitations = await validateSources( rawJson, mode );
+                //console.log( "validatedCitations: " + validatedCitations );
         
                 let newJsonObject = {
                     citations: validatedCitations
@@ -103,9 +131,10 @@ exports.callOpenAI = async ( req, res ) => {
 // helper logic
 
 function createPaperPrompt( abstract, ignoredArticles ) {
+    //console.log( "abstract being used: " + abstract );
     let basePrompt = `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
 
-            Abstract of the paper I'm writing:
+            Content of the paper I'm writing:
             '''
             ${abstract}
             '''
@@ -125,7 +154,7 @@ function createPaperPrompt( abstract, ignoredArticles ) {
 }
 
 function createNotesPrompt( notes, ignoredArticles ) {
-    let basePrompt = `I am writing notes. Please return literature that is related to my notes, but also any literature you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+    let basePrompt = `I am writing notes. Please return resources that are related to my notes, but also items you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, link, summary.
 
             Here are my notes:
             '''
@@ -148,32 +177,22 @@ function createNotesPrompt( notes, ignoredArticles ) {
 }
 
 
-/**
- * Parses resource content for paragraphs longer than min length.
- * 
- * @param {string} content resourceContentHtml from resource.
- * @returns {string[]}
- */
-const parseResourceContentHtml = ( content ) => {
+function cleanHtml( htmlString ) {
+    // Replace <br> and <br /> with \n
+    htmlString = htmlString.replace( /<br\s*\/?>/gi, '\n' );
 
-    // getting all paragraphs by spliting by <p> tag
-    let paragraphs = content.split( '<p>' );
+    // Replace <p> with \n\n
+    htmlString = htmlString.replace( /<p>/gi, '\n\n' );
 
-    // removing all html tags in individual strings
-    for ( var i = 0; i < paragraphs.length; i++ ) {
-        paragraphs[i] = parseOutHtmlTags( paragraphs[i] );
-    }
+    // Remove all other HTML tags
+    htmlString = htmlString.replace( /<[^>]+>/gi, '' );
 
-    // shifting array to ignore first empty string
-    paragraphs.shift();
+    // Optional: Clean up extra whitespaces/newlines
+    //htmlString = htmlString.replace( /\n\s*\n/g, '\n\n' ); // Remove extra newlines
 
-    // filter out all paragraphs with length less than min
-    return paragraphs.filter( ( paragraph ) => paragraph.length >= MIN_CONTENT_LENGTH );
-};
+    return htmlString;
+}
 
-const parseOutHtmlTags = ( text ) => {
-    return text.replace( /[^a-zA-Z0-9\s,.!?:;'-]/, '' ).trim();
-};
 
 /** 
  * Validate all the sources in the specified JSON.
@@ -181,7 +200,7 @@ const parseOutHtmlTags = ( text ) => {
  * @param {JSON} json The JSON from OpenAI.
  * @returns {JSON[]}
  */
-const validateSources = async ( json ) => {
+const validateSources = async ( json, mode ) => {
     let citations = json["citations"];
 
     let newCitations = [];
@@ -190,7 +209,10 @@ const validateSources = async ( json ) => {
     for ( let i = 0; i < citations.length; i++ ) {
         let citation = citations[i];
 
-        let paper = await querySemanticScholar( citation.title );
+        let paper = citation.title;
+        if ( mode == 'paper' ) {
+            paper = await querySemanticScholar( citation.title );
+        } 
 
         if ( paper ) {
             paper = paper[0];
@@ -203,12 +225,21 @@ const validateSources = async ( json ) => {
                 let newCitation = {
                     id: newIndex,
                     title: paper.title,
-                    authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
-                    publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
-                    publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
                     link: paper.url,
                     summary: citation.summary,
                 };
+
+                if( mode == 'paper' ) {
+                    newCitation = {
+                        id: newIndex,
+                        title: paper.title,
+                        authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
+                        publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
+                        publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
+                        link: paper.url,
+                        summary: citation.summary,
+                    };
+                }
     
                 newCitations.push( newCitation );
 
