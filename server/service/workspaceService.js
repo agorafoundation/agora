@@ -278,13 +278,13 @@ exports.getAllWorkspacesForOwner = async ( ownerId, isActive ) => {
     let values = [];
     if ( !isActive ) {
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.create_time DESC;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $1 order by gl.modified_time DESC;";
         values = [ ownerId ];
     }
     else {
         // default to only retreiving active topics
         text = "select * from workspaces gl INNER JOIN (SELECT workspace_id, MAX(workspace_version) AS max_version FROM workspaces where active = $1 group by workspace_id) goalmax "
-        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.create_time DESC;";
+        + "on gl.workspace_id = goalmax.workspace_id AND gl.workspace_version = goalmax.max_version and gl.owned_by = $2 order by gl.modified_time DESC;";
         values = [ true, ownerId ];
     }
 
@@ -468,6 +468,25 @@ exports.updateWorkspaceImage = async ( workspaceId, filename ) => {
 };
 
 /**
+ * Trigger update of the modified time for the workspace if an associated topic is updated
+ * @param {UUID} topicId 
+ * @returns 
+ */
+exports.updateWorkspaceModifiedTimeForTopicUpdate = async ( topicId ) => {
+    let text = "UPDATE workspaces SET modified_time = NOW() WHERE workspace_rid IN (SELECT workspace_rid FROM workspace_paths WHERE topic_id = $1);";
+    let values = [ topicId ];
+
+    try {
+        let res = await db.query( text, values );
+        return true;
+    }
+    catch ( e ) {
+        console.log( "[ERR]: Error updating workspace modified time for topic update - " + e );
+        return false;
+    }
+};
+
+/**
  * Saves a workspace to the database, creates a new record if no id is assigned, updates existing record if there is an id.
  * @param {Workspace} workspace 
  * @returns Workspace object with id 
@@ -484,7 +503,7 @@ exports.saveWorkspace = async ( workspace ) => {
             if ( res.rowCount > 0 ) {
                 // row exists, update
                 //console.log( "[workspaceController.saveWorkspace]: Updating Workspace in DB - " + JSON.stringify( workspace ) + " id : " + workspace.workspaceId );
-                text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7 WHERE workspace_id = $8 RETURNING workspace_rid;";
+                text = "UPDATE workspaces SET workspace_version = $1, workspace_name = $2, workspace_description = $3, active = $4, completable = $5, owned_by = $6, visibility = $7, modified_time = NOW() WHERE workspace_id = $8 RETURNING workspace_rid;";
                 values = [ workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility, workspace.workspaceId ];
 
                 try {
@@ -498,7 +517,7 @@ exports.saveWorkspace = async ( workspace ) => {
             }
             else {
                 // row does not exist, insert
-                text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING workspace_id, workspace_rid;";
+                text = "INSERT INTO workspaces (workspace_id, workspace_version, workspace_name, workspace_description, active, completable, owned_by, visibility, modified_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) RETURNING workspace_id, workspace_rid;";
                 values = [ workspace.workspaceId, workspace.workspaceVersion, workspace.workspaceName, workspace.workspaceDescription, workspace.active, workspace.completable, workspace.ownedBy, workspace.visibility ];
 
                 try {

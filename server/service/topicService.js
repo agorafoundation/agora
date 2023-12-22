@@ -26,6 +26,7 @@ const CompletedResource = require( '../model/completedResource' );
 // any cross services required
 const userService = require( '../service/userService' );
 const assessmentService = require( '../service/assessmentService' );
+const workspaceService = require( './workspaceService' );
 
 
 /**
@@ -543,6 +544,35 @@ exports.getAllResourceIdsFromTopic = async function ( topicId ) {
        
 };
 
+exports.updateTopicModifiedTimeForResourceUpdate = async function( resourceId ) {
+    if( resourceId ) {
+        // update the modified time for the topic return the topicId
+        let text = "UPDATE topics SET modified_time = NOW() WHERE topic_id IN (SELECT topic_id FROM topic_resources WHERE resource_id = $1) RETURNING topic_id;";
+        let values = [ resourceId ];
+
+        try {
+            let res = await db.query( text, values );
+
+            if ( res.rowCount > 0 ) {
+                // trigger a workspace update for the modified time
+                await workspaceService.updateWorkspaceModifiedTimeForTopicUpdate( res.rows[0].topic_id );  
+                return true;
+            }
+            else {
+                return false;
+            }
+            
+        }
+        catch( e ) {
+            console.log( "[ERR]: Error [Topic] - update topic modified time for resource update - " + e );
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+};
+
 /**
  * Saves a topic to the database, creates a new record if no id is assigned, updates existing record if there is an id.
  * @param {Topic} topic 
@@ -561,11 +591,14 @@ exports.saveTopic = async function( topic ) {
 
             if( res.rowCount > 0 ) {
                 // update
-                text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13 WHERE topic_id = $10;";
-                values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment ];
+                text = "UPDATE topics SET topic_name = $1, topic_description = $2, topic_image = $3, topic_html=$4, assessment_id=$5, has_activity=$6, activity_id=$7, active = $8, owned_by = $9, visibility = $11, topic_type = $12, has_assessment = $13, modified_time = $14 WHERE topic_id = $10;";
+                values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.topicId, topic.visibility, topic.topicType, topic.hasAssessment, topic.modifiedTime ];
         
                 try {
                     res = await db.query( text, values );
+
+                    // trigger a workspace update for the modified time
+                    await workspaceService.updateWorkspaceModifiedTimeForTopicUpdate( topic.topicId );
                 }
                 catch( e ) {
                     console.log( "[ERR]: Error updating topic - " + e );
@@ -574,7 +607,7 @@ exports.saveTopic = async function( topic ) {
             }     
             else {
                 // insert
-                text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment, topic_id ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 ) RETURNING topic_id;";
+                text = "INSERT INTO topics ( topic_name, topic_description, topic_image, topic_html, assessment_id, has_activity, activity_id, active, owned_by, visibility, topic_type, has_assessment, modified_time, topic_id ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), $13 ) RETURNING topic_id;";
                 values = [ topic.topicName, topic.topicDescription, topic.topicImage, topic.topicHtml, topic.assessmentId, topic.hasActivity, topic.activityId, topic.active, topic.ownedBy, topic.visibility, topic.topicType, topic.hasAssessment, topic.topicId ];
     
                 try {
