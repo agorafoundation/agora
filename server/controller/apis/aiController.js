@@ -185,7 +185,7 @@ function cleanHtml( htmlString ) {
     htmlString = htmlString.replace( /<p>/gi, '\n\n' );
 
     // Remove all other HTML tags
-    htmlString = htmlString.replace( /<[^>]+>/gi, '' );
+    htmlString = htmlString.replace( /<|>/g, "" );
 
     // Optional: Clean up extra whitespaces/newlines
     //htmlString = htmlString.replace( /\n\s*\n/g, '\n\n' ); // Remove extra newlines
