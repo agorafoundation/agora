@@ -39,13 +39,13 @@ exports.getAllVisibleWorkspaces = async ( ownerId, limit, offset ) => {
         if ( !offset ) offset = 0;
 
         if( limit ) {
-            text += " ORDER BY gl.create_time DESC LIMIT $3 OFFSET $4";
+            text += " ORDER BY gl.modified_time DESC LIMIT $3 OFFSET $4";
 
             values.push( limit );
             values.push( offset );
         }
         else {
-            text += " ORDER BY gl.create_time DESC LIMIT 100 OFFSET $3";
+            text += " ORDER BY gl.modified_time DESC LIMIT 100 OFFSET $3";
             values.push( offset );
         }
 

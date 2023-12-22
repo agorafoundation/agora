@@ -53,3 +53,9 @@ alter table users add column num_avatar_generations INTEGER DEFAULT 3;
 alter table resources add column current_version INTEGER DEFAULT 1;
 alter table resources add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
+-- #523-workspaces-should-display-with-most-recently-changed-first
+-- remove unused lastmodified fields and replace with modified_time
+alter table workspaces drop column lastmodified;
+alter table topics drop column lastmodified;
+alter table workspaces add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+alter table topics add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

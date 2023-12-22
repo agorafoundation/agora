@@ -25,6 +25,7 @@ function topic() {
     this.active = true;
     this.visibility = "private";
     this.createTime;
+    this.modifiedTime;
     this.ownedBy = -1;
 
     this.assessment = Assessment.emptyAssessment();
@@ -52,6 +53,7 @@ exports.ormTopic = function ( row ) {
     topic.active = row.active;
     topic.visibility = row.visibility;
     topic.createTime = row.create_time;
+    topic.modifiedTime = row.modified_time;
     topic.ownedBy = row.owned_by;
     topic.assessment = row.assessment;
     topic.activity = row.activity;
