@@ -10,6 +10,27 @@ var router = express.Router( );
 
 const userService = require( '../service/userService' );
 
+/**
+ * Pre Route
+ * Check that the user is logged in (required!)
+ */
+router.use( function ( req, res, next ) {
+    //console.log( "req.query.redirect: " + req.query.redirect );
+    //console.log( "dashboard user: " + req.session.authUser );
+    if( !req.session.authUser ) {
+        
+        //console.log( "auth user invalid" );
+        if( req.query.redirect ) {
+            //console.log( "redirecting to: " + req.query.redirect );
+            res.locals.redirect = req.query.redirect;
+        } 
+
+        res.render( 'user-signup' );
+    }
+    else {
+        next( );
+    }
+} );
 
 router.route( '/' )
     .get( ( req, res ) => {

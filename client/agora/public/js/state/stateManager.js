@@ -247,7 +247,12 @@ function saveTextResource( resource, content ) {
         }
 
         // save the resource
-        saveResource( resource );
+        try {
+            saveResource( resource );
+        }
+        catch( error ) {
+            console.log( "saveTextResource() : Error - " + error );
+        }
 
         
     }
