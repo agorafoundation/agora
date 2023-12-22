@@ -13,10 +13,9 @@ import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiv
 // DOM event functions (eg. 
 import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent } from "./editorMain.js";
 
-//clientWorkspaceController
+// Controllers
 import { getPermission } from "./controllers/clientWorkspaceController.js";
-import { deleteTag } from "./controllers/clientTagController.js";
-
+import { getResourceById } from "./controllers/clientResourceController.js";
 
 /**
  * DOM manipulation functions for the editor
@@ -1208,12 +1207,28 @@ const createSunEditor = async( resource ) => {
     };
 
     // focus event handler to ensure that the editor is up to date anytime the user clicks on it
-    newEditor[1].onFocus = function() {
-        ( true ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Start" ) : null;
-        // do something
-        console.log( "check the version numbers " + resource.currentVersion );
-        ( true ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Complete" ) : null;
+    newEditor[1].onFocus = async function() {
+        ( debug ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Start" ) : null;
+        
+        // get the latest version of the resource from the server 
+        let latestResource = await getResourceById( resource.resourceId );
+        
+        if( latestResource.currentVersion > resource.currentVersion ) {
+            // update the resource
+            ( debug ) ? console.log( "-------------------- resource out of date with server, updating -------------------" ) : null;
+            resource = latestResource;
+            newEditor[1].setContents( resource.resourceContentHtml );
+        }
+
+        ( debug ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Complete" ) : null;
     };
+
+    newEditor[1].onBlur = function() {
+        ( debug ) ? console.log( "sunEditor-blur - textEditorUpdateEvent() call : Start" ) : null;
+        //newEditor[1].disabled();
+        ( debug ) ? console.log( "sunEditor-blur - textEditorUpdateEvent() call : Complete" ) : null;
+    };
+
     sunEditorList.push( newEditor );  
     ( debug ) ? console.log( "createSunEditor() complete current editors: " ) : null;
     window.scrollTo( 0, 0 );
