@@ -13,10 +13,9 @@ import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiv
 // DOM event functions (eg. 
 import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent } from "./editorMain.js";
 
-//clientWorkspaceController
+// Controllers
 import { getPermission } from "./controllers/clientWorkspaceController.js";
-import { deleteTag } from "./controllers/clientTagController.js";
-
+import { getResourceById } from "./controllers/clientResourceController.js";
 
 /**
  * DOM manipulation functions for the editor
@@ -762,7 +761,7 @@ function createTextArea( resource, position ) {
 
     promise.then(
         ( ) => {
-            createSunEditor( resource.resourceId );
+            createSunEditor( resource );
             
 
             ( debug ) ? console.log( "createTextArea() complete promise then (suneditor) completed" ) : null;
@@ -1158,10 +1157,10 @@ function checkActiveHeight() {
 let sunEditor = {};
 let sunEditorList = [];
 
-const createSunEditor = async( resourceId ) => {
-    ( debug ) ? console.log( "createSunEditor() num: " + resourceId ) : null;
+const createSunEditor = async( resource ) => {
+    ( debug ) ? console.log( "createSunEditor() num: " + resource.currentVersion ) : null;
     // eslint-disable-next-line no-undef
-    const newEditor = sunEditor["sunEditor-"+ resourceId] = [ resourceId, SUNEDITOR.create( "sunEditor-" + resourceId, {
+    const newEditor = sunEditor["sunEditor-"+ resource.resourceId] = [ resource.resourceId, SUNEDITOR.create( "sunEditor-" + resource.resourceId, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
         defaultTag: "p",
@@ -1204,7 +1203,30 @@ const createSunEditor = async( resourceId ) => {
 
     newEditor[1].onChange = function( content ) {
         // ENTRY point for text editor update event, for ease of understanding function is called in editorMain.js
-        textEditorUpdateEvent( resourceId, content );
+        textEditorUpdateEvent( resource.resourceId, content );
+    };
+
+    // focus event handler to ensure that the editor is up to date anytime the user clicks on it
+    newEditor[1].onFocus = async function() {
+        ( debug ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Start" ) : null;
+        
+        // get the latest version of the resource from the server 
+        let latestResource = await getResourceById( resource.resourceId );
+        
+        if( latestResource.currentVersion > resource.currentVersion ) {
+            // update the resource
+            ( debug ) ? console.log( "-------------------- resource out of date with server, updating -------------------" ) : null;
+            resource = latestResource;
+            newEditor[1].setContents( resource.resourceContentHtml );
+        }
+
+        ( debug ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Complete" ) : null;
+    };
+
+    newEditor[1].onBlur = function() {
+        ( debug ) ? console.log( "sunEditor-blur - textEditorUpdateEvent() call : Start" ) : null;
+        //newEditor[1].disabled();
+        ( debug ) ? console.log( "sunEditor-blur - textEditorUpdateEvent() call : Complete" ) : null;
     };
 
     sunEditorList.push( newEditor );  

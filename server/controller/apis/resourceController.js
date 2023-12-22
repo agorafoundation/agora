@@ -30,8 +30,6 @@ const maxSize = process.env.IMAGE_UPLOAD_MAX_SIZE;
 const maxSizeText = process.env.IMAGE_UPLOAD_MAX_SIZE_FRIENDLY_TEXT;
 
 const ApiMessage = require( "../../model/util/ApiMessage" );
-const { Console } = require( 'console' );
-
 
 /**
  * 
@@ -237,6 +235,8 @@ exports.saveResourceImage = async( req, res, resourceId, filename ) => {
 exports.saveResource = async ( req, res, redirect ) => {
     let resource = Resource.emptyResource();
 
+    
+
     // get the user id either from the request user from basic auth in API call, or from the session for the UI
     let authUserId;
     if( req.user ) {
@@ -254,11 +254,15 @@ exports.saveResource = async ( req, res, redirect ) => {
 
         // see if this is a modification of an existing resource
         let existingResource = await resourceService.getResourceById( resource.resourceId.toString(), false );
+        //console.log( "incomming resource version; " + existingResource.currentVersion );
 
         // if this is an update, replace the resource with the existing one as the starting point.
         if( existingResource ) {
             //console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
             resource = existingResource;
+
+            // increment the version number
+            resource.currentVersion++;
         }
 
         // add changes from the body if they are passed

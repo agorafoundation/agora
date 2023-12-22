@@ -245,11 +245,9 @@ function saveTextResource( resource, content ) {
         if( content != null ) {
             resource.resourceContentHtml = content;
         }
-
-        // save the resource
+         
         saveResource( resource );
 
-        
     }
     ( debug ) ? console.log( "textEditorUpdate() : Complete" ) : null;
     

@@ -408,6 +408,8 @@ CREATE TABLE IF NOT EXISTS agora.resources (
     is_required BOOLEAN,
     active BOOLEAN,
     visibility visibility,
+    current_version INTEGER DEFAULT 0,
+    modified_time TIMESTAMP DEFAULT current_timestamp,
     create_time TIMESTAMP DEFAULT current_timestamp,
     owned_by uuid
 );

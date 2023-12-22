@@ -19,6 +19,8 @@ function resource() {
     this.isRequired = -1;
     this.active = true;
     this.visibility = "private";
+    this.currentVersion = 0;
+    this.modifiedTime;
     this.createTime;
     this.ownedBy = -1;
 }
@@ -39,6 +41,8 @@ exports.ormResource = function ( row ) {
     resource.isRequired = row.is_required;
     resource.active = row.active;
     resource.visibility = row.visibility;
+    resource.currentVersion = row.current_version;
+    resource.modifiedTime = row.modified_time;
     resource.createTime = row.create_time;
     resource.ownedBy = row.owned_by;
     return resource;

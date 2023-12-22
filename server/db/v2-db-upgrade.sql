@@ -49,3 +49,7 @@ alter table users add column is_private BOOLEAN DEFAULT false;
 -- #519 517-limit-the-number-of-free-dall-e-generations
 alter table users add column num_avatar_generations INTEGER DEFAULT 3;
 
+-- #524-work-needs-a-version-or-method-to-ensure-new-work-is-overwritten
+alter table resources add column current_version INTEGER DEFAULT 1;
+alter table resources add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
