@@ -201,7 +201,7 @@ function cleanHtml( htmlString ) {
  * @returns {JSON[]}
  */
 const validateSources = async ( json, mode ) => {
-    console.log( "starting validateSources: " + JSON.stringify( json ) + "\n\n" );
+    //console.log( "starting validateSources: " + JSON.stringify( json ) + "\n\n" );
     let citations = json["citations"];
 
     let newCitations = [];
@@ -267,7 +267,7 @@ const validateSources = async ( json, mode ) => {
             
             // Search for the specific string
             if( siteText.includes( firstThreeWords ) ) {
-                console.log( "found a valid citation in the body: \n" );
+                //console.log( "found a valid citation in the body: \n" );
                 let newCitation = {
                     id: newIndex,
                     title: citation.title,
@@ -280,7 +280,7 @@ const validateSources = async ( json, mode ) => {
                 newIndex++;
             }
             else if( citation.link.includes( firstWord ) ) {
-                console.log( "found a valid citation in the url: \n" );
+                //console.log( "found a valid citation in the url: \n" );
                 let newCitation = {
                     id: newIndex,
                     title: citation.title,
@@ -294,7 +294,7 @@ const validateSources = async ( json, mode ) => {
             }
         }
     }
-    console.log( "newCitations: " + JSON.stringify( newCitations ) );
+    //console.log( "newCitations: " + JSON.stringify( newCitations ) );
 
     return newCitations;
 };
