@@ -12,7 +12,7 @@ const db = require( '../db/connection' );
 const Resource = require( '../model/resource' );
 
 // any cross services required
-
+const topicService = require( './topicService' );
 
 
 /**
@@ -314,6 +314,10 @@ exports.saveResource = async ( resource ) => {
         
                 try {
                     let res = await db.query( text, values );
+
+                    // update the topic modified time
+                    await topicService.updateTopicModifiedTimeForResourceUpdate( resource.resourceId );
+
                 }
                 catch( e ) {
                     console.log( "[ERR]: Error updating resources - " + e );

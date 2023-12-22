@@ -18,6 +18,7 @@ function workspace() {
     this.active = true;
     this.completable = false;
     this.createTime;
+    this.modifiedTime;
     this.visibility = "private";
     this.ownedBy = -1;
 
@@ -40,6 +41,7 @@ exports.ormWorkspace = function ( row ) {
     workspace.active = row.active;
     workspace.completable = row.completable;
     workspace.createTime = row.create_time;
+    workspace.modifiedTime = row.modified_time;
     workspace.visibility = row.visibility;
     workspace.ownedBy = row.owned_by;
     return workspace;

@@ -309,8 +309,8 @@ CREATE TABLE IF NOT EXISTS agora.workspaces (
     active BOOLEAN,
     completable BOOLEAN,
     visibility visibility, 
-    create_time TIMESTAMP DEFAULT current_timestamp,
-    lastmodified TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     owned_by uuid
 );
 
@@ -332,8 +332,8 @@ CREATE TABLE IF NOT EXISTS agora.topics ( -- <- pathService or separate topicSer
     active BOOLEAN,
     visibility visibility, 
     topic_type INTEGER,     -- Enumeration -> 0 = Research, 1 = Educational
-    create_time TIMESTAMP DEFAULT current_timestamp,
-    lastmodified TIMESTAMP,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     owned_by uuid
 );
 
