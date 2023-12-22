@@ -155,62 +155,69 @@ function formatAuthorsByCitationType( authors, citationFormat ) {
     let needsEtAl = false; // flag to include et al at the end of the authors names 
     let reducedAuthors = [];
 
-    if ( authors.length > 2 ) { // have to reduce for 3 or more
-        needsEtAl = true;
-
-        reducedAuthors = getFirstNameLastNames( [ authors[0], authors[1], authors[2] ] );
+    console.log( "authors: " + authors );
+    if( authors && authors.length > 0 ) {
+        if ( authors.length > 2 ) { // have to reduce for 3 or more
+            needsEtAl = true;
+    
+            reducedAuthors = getFirstNameLastNames( [ authors[0], authors[1], authors[2] ] );
+        }
+        else {
+            reducedAuthors = getFirstNameLastNames( authors );
+        }
+        
+        const finalAuthorStrings = [];
+    
+        switch ( citationFormat ) {
+    
+        case 'apa':
+            reducedAuthors.forEach( ( name ) => {
+                const [ lastName, firstName ] = name;
+    
+                // APA is lastName, firstInitial 
+                finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+            } );
+            break;
+        case 'mla':
+            reducedAuthors.forEach( ( name ) => {
+                const [ lastName, firstName ] = name;
+    
+                // MLA is lastName, firstName
+                finalAuthorStrings.push( `${lastName}, ${firstName}.` );
+            } );
+            break;
+    
+        case 'harvard': 
+            reducedAuthors.forEach( ( name ) => {
+                const [ lastName, firstName ] = name;
+    
+                // Harvard is lastName, firstInitial 
+                finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+            } );
+            break;
+    
+        case 'chicago': 
+            reducedAuthors.forEach( ( name ) => {
+                const [ lastName, firstName ] = name;
+    
+                // Chicago is lastName, firstName
+                finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
+            } );
+            break;
+        }
+    
+        // add et al if necessary
+        if ( needsEtAl ) {
+            return finalAuthorStrings.join( '; ' ) + ' et al.';
+        }
+        else {
+            return finalAuthorStrings.join( '; ' );
+        }
     }
     else {
-        reducedAuthors = getFirstNameLastNames( authors );
+        return "No Author";
     }
     
-    const finalAuthorStrings = [];
-
-    switch ( citationFormat ) {
-
-    case 'apa':
-        reducedAuthors.forEach( ( name ) => {
-            const [ lastName, firstName ] = name;
-
-            // APA is lastName, firstInitial 
-            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
-        } );
-        break;
-    case 'mla':
-        reducedAuthors.forEach( ( name ) => {
-            const [ lastName, firstName ] = name;
-
-            // MLA is lastName, firstName
-            finalAuthorStrings.push( `${lastName}, ${firstName}.` );
-        } );
-        break;
-
-    case 'harvard': 
-        reducedAuthors.forEach( ( name ) => {
-            const [ lastName, firstName ] = name;
-
-            // Harvard is lastName, firstInitial 
-            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
-        } );
-        break;
-
-    case 'chicago': 
-        reducedAuthors.forEach( ( name ) => {
-            const [ lastName, firstName ] = name;
-
-            // Chicago is lastName, firstName
-            finalAuthorStrings.push( `${lastName}, ${firstName.substring( 0, 1 )}.` );
-        } );
-        break;
-    }
-
-    // add et al if necessary
-    if ( needsEtAl ) {
-        return finalAuthorStrings.join( '; ' ) + ' et al.';
-    }
-    else {
-        return finalAuthorStrings.join( '; ' );
-    }
 }
 
 /**
@@ -278,13 +285,19 @@ async function makeAPICall() {
             // If the response is successful, parse the JSON data
             let articles = await response.json();
 
+            console.log( "articles returned: " + articles );
+
             if ( articles['citations'].length > 0 ) {
+                console.log( '0' );
                 localStorage.setItem( 'last-retrieved', JSON.stringify( articles ) );
-            
+                console.log( '1' );
                 processJsonData( articles['citations'] );
+                console.log( '2' );
 
                 enableXButtons();
+                console.log( '3' );
                 enableCiteButtons();
+                console.log( '4' );
 
                 loadingSpinnerContainer.hidden = true;
                 citationsContainer.hidden = false;

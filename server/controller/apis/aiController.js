@@ -8,6 +8,7 @@
 // dependencies
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
+const domParser = require( 'dom-parser' );
 
 // services
 const resourceService = require( '../../service/resourceService' );
@@ -58,7 +59,7 @@ exports.callOpenAI = async ( req, res ) => {
         
         if ( parsedResourceContent.length > 0 ) {
             let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent, removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
-            const systemMessage = mode == 'paper' ? `You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing. Please return ONLY JSON object, no fluff.` : `You are assisting me in finding relevant resources related to my writing, these could be blog posts, news articles, papers, or other reputable works. Please return ONLY JSON object, no fluff.`;
+            const systemMessage = mode == 'paper' ? `You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing. Please return ONLY JSON object, do not make up responses.` : `You are a research expert. Your goal is to find additional resources that are related to the text that I provide. Please return resources that are related to my notes, but also items you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, link, summary.`;
         
             // Wrap in a try catch so that the server doesn't crash when an error occurs
             try {
@@ -75,8 +76,8 @@ exports.callOpenAI = async ( req, res ) => {
                     
                 // } );
 
-                console.log( "systemMessage: " + systemMessage );
-                console.log( "prompt: " + prompt );
+                //console.log( "systemMessage: " + systemMessage );
+                //console.log( "prompt: " + prompt );
 
                 const completion = await openai.createChatCompletion( {
                     model: "gpt-4-1106-preview",
@@ -93,9 +94,10 @@ exports.callOpenAI = async ( req, res ) => {
 
                 let returnValue = completion.data.choices[0];
 
-                console.log( "return value raw: " + JSON.stringify( returnValue.message ) );
+                
         
                 let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+                //console.log( "json returned in content : \n" + JSON.stringify( returnValue.message ) + "\n\n" );
                 
                 let validatedCitations = await validateSources( rawJson, mode );
                 //console.log( "validatedCitations: " + validatedCitations );
@@ -132,7 +134,7 @@ exports.callOpenAI = async ( req, res ) => {
 
 function createPaperPrompt( abstract, ignoredArticles ) {
     //console.log( "abstract being used: " + abstract );
-    let basePrompt = `I am writing a paper. Please return literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary.
+    let basePrompt = `I am writing a paper. Please return published literature that supports my writing, but also any literature you find that might offer different perspectives on this problem. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, authors, publication, publicationDate, link, summary. DO NOT RETURN ANYTHING THAT IS NOT A PUBLISHED LITERATURE.    
 
             Content of the paper I'm writing:
             '''
@@ -154,9 +156,7 @@ function createPaperPrompt( abstract, ignoredArticles ) {
 }
 
 function createNotesPrompt( notes, ignoredArticles ) {
-    let basePrompt = `I am writing notes. Please return resources that are related to my notes, but also items you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, link, summary.
-
-            Here are my notes:
+    let basePrompt = `Please return only real web links that I should consider for the following text:
             '''
             ${notes}
             '''
@@ -201,6 +201,7 @@ function cleanHtml( htmlString ) {
  * @returns {JSON[]}
  */
 const validateSources = async ( json, mode ) => {
+    console.log( "starting validateSources: " + JSON.stringify( json ) + "\n\n" );
     let citations = json["citations"];
 
     let newCitations = [];
@@ -212,41 +213,88 @@ const validateSources = async ( json, mode ) => {
         let paper = citation.title;
         if ( mode == 'paper' ) {
             paper = await querySemanticScholar( citation.title );
-        } 
 
-        if ( paper ) {
-            paper = paper[0];
+            if ( paper ) {
+                //console.log( "returned a paper for the following citation: " + JSON.stringify( citation ) + "\n\n" );
+                paper = paper[0];
+                //console.log( "paper: " + JSON.stringify( paper ) + "\n\n" );
 
-            if ( citation.title.indexOf( paper.title ) >= 0 ) {
-                let authors = paper.authors.map ( function ( a ) {
-                    return a.name; 
-                } );
-
+                let authors = [];
+    
+                if ( paper.authors.length >= 0 ) {
+                    authors = paper.authors.map ( function ( a ) {
+                        return a.name; 
+                    } );
+                }
+                
                 let newCitation = {
                     id: newIndex,
                     title: paper.title,
+                    authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
+                    publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
+                    publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
                     link: paper.url,
                     summary: citation.summary,
                 };
-
-                if( mode == 'paper' ) {
-                    newCitation = {
-                        id: newIndex,
-                        title: paper.title,
-                        authors: ( paper.authors.length > 1 ) ? authors : [ paper.authors[0].name ],
-                        publication: ( paper.publicationVenue != null ) ? paper.publicationVenue.name : citation.publication,
-                        publicationDate: ( paper.year != null ) ? paper.year : citation.publicationDate,
-                        link: paper.url,
-                        summary: citation.summary,
-                    };
-                }
+                //console.log( "newCitation: " + JSON.stringify( newCitation ) + "\n\n" );    
+                
     
                 newCitations.push( newCitation );
+                //console.log( "newCitations at i: " + i + " : " + JSON.stringify( newCitations ) + "\n\n" );
 
+                newIndex++;
+            }
+        } 
+        else {
+            /* 
+             * to validate a paper url we neet to query it and parse the html for the title, if it is containted we will consider it valid.
+             */
+            
+            let siteHtml = await fetch( citation.link, {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0'} );
+            let siteText = await siteHtml.text();
+
+            // remove all the tags from the html but leave the text
+            //siteText = cleanHtml( siteText );
+
+            // get the first word of the title
+            let firstWord = citation.title.split( " " )[0];
+
+            // get the first 3 words of the title
+            let firstThreeWords = citation.title.split( " " ).slice( 0, 3 ).join( " " );
+
+            // console.log( "run : " + i + " body check: " + siteText.includes( firstThreeWords ) );
+            // console.log( "run : " + i + " url check: " + citation.link.includes( firstWord ) );
+            
+            // Search for the specific string
+            if( siteText.includes( firstThreeWords ) ) {
+                console.log( "found a valid citation in the body: \n" );
+                let newCitation = {
+                    id: newIndex,
+                    title: citation.title,
+                    link: citation.link,
+                    summary: citation.summary,
+                };
+    
+                newCitations.push( newCitation );
+        
+                newIndex++;
+            }
+            else if( citation.link.includes( firstWord ) ) {
+                console.log( "found a valid citation in the url: \n" );
+                let newCitation = {
+                    id: newIndex,
+                    title: citation.title,
+                    link: citation.link,
+                    summary: citation.summary,
+                };
+    
+                newCitations.push( newCitation );
+        
                 newIndex++;
             }
         }
     }
+    console.log( "newCitations: " + JSON.stringify( newCitations ) );
 
     return newCitations;
 };
@@ -260,13 +308,17 @@ const validateSources = async ( json, mode ) => {
 const querySemanticScholar = async ( title, limit = 1 ) => {
     try {
         // The quotes in the string make it so that we can match for a literal title
-        let response = await fetch( `https://api.semanticscholar.org/graph/v1/paper/search?query=${title}&limit=${limit}&fields=title,authors,year,url,publicationVenue`, {
+        let url = "https://api.semanticscholar.org/graph/v1/paper/search?query=" + title + "&limit=" + limit + "&fields=title,authors,year,url,publicationVenue";
+        // console.log( `semantic scholar url 1: https://api.semanticscholar.org/graph/v1/paper/search?query=${title}&limit=${limit}&fields=title,authors,year,url,publicationVenue` );
+        // console.log( "semantic scholar url 2: " + url );
+        let response = await fetch( url, {
             headers: {
                 'x-api-key': process.env.SEMANTIC_SCHOLAR_API_KEY
             }
         } );
 
         let json = await response.json();
+        console.log( "semantic scholar json.data: " + JSON.stringify( json.data ) + "\n\n" );
 
         return json.data;
     }
@@ -274,3 +326,4 @@ const querySemanticScholar = async ( title, limit = 1 ) => {
         console.log( "There was an error in validating the title with Semantic Scholar: " + e );
     }
 };
+
