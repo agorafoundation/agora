@@ -8,7 +8,6 @@
 // dependencies
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
-const domParser = require( 'dom-parser' );
 
 // services
 const resourceService = require( '../../service/resourceService' );
