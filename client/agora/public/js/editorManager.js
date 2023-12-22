@@ -762,7 +762,7 @@ function createTextArea( resource, position ) {
 
     promise.then(
         ( ) => {
-            createSunEditor( resource.resourceId );
+            createSunEditor( resource );
             
 
             ( debug ) ? console.log( "createTextArea() complete promise then (suneditor) completed" ) : null;
@@ -1158,10 +1158,10 @@ function checkActiveHeight() {
 let sunEditor = {};
 let sunEditorList = [];
 
-const createSunEditor = async( resourceId ) => {
-    ( debug ) ? console.log( "createSunEditor() num: " + resourceId ) : null;
+const createSunEditor = async( resource ) => {
+    ( debug ) ? console.log( "createSunEditor() num: " + resource.currentVersion ) : null;
     // eslint-disable-next-line no-undef
-    const newEditor = sunEditor["sunEditor-"+ resourceId] = [ resourceId, SUNEDITOR.create( "sunEditor-" + resourceId, {
+    const newEditor = sunEditor["sunEditor-"+ resource.resourceId] = [ resource.resourceId, SUNEDITOR.create( "sunEditor-" + resource.resourceId, {
         toolbarContainer: "#toolbar_container",
         showPathLabel: false,
         defaultTag: "p",
@@ -1204,9 +1204,16 @@ const createSunEditor = async( resourceId ) => {
 
     newEditor[1].onChange = function( content ) {
         // ENTRY point for text editor update event, for ease of understanding function is called in editorMain.js
-        textEditorUpdateEvent( resourceId, content );
+        textEditorUpdateEvent( resource.resourceId, content );
     };
 
+    // focus event handler to ensure that the editor is up to date anytime the user clicks on it
+    newEditor[1].onFocus = function() {
+        ( true ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Start" ) : null;
+        // do something
+        console.log( "check the version numbers " + resource.currentVersion );
+        ( true ) ? console.log( "sunEditor-focus - textEditorUpdateEvent() call : Complete" ) : null;
+    };
     sunEditorList.push( newEditor );  
     ( debug ) ? console.log( "createSunEditor() complete current editors: " ) : null;
     window.scrollTo( 0, 0 );

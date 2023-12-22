@@ -259,6 +259,9 @@ exports.saveResource = async ( req, res, redirect ) => {
         if( existingResource ) {
             //console.log( "there was an existing resource for this id: " + JSON.stringify(existingResource) );
             resource = existingResource;
+
+            // increment the version number
+            resource.currentVersion++;
         }
 
         // add changes from the body if they are passed

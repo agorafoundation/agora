@@ -305,10 +305,12 @@ exports.saveResource = async ( resource ) => {
         try {
             let res = await db.query( text, values );
             if( res.rowCount > 0 ) {
-            
+
+                console.log( "resource version: " + resource.currentVersion + " prior row version : " + res.rows[0].current_version );
+                
                 // update
-                let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10 WHERE resource_id = $11;";
-                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
+                let text = "UPDATE resources SET resource_type = $1, resource_name = $2, resource_description = $3, resource_image = $4, resource_content_html=$5, resource_link=$6, is_required=$7, active = $8, owned_by = $9, visibility = $10, current_version=$11, modified_time=NOW() WHERE resource_id = $12;";
+                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.currentVersion++, resource.resourceId ];
         
                 try {
                     let res = await db.query( text, values );
@@ -322,8 +324,8 @@ exports.saveResource = async ( resource ) => {
             else {
                 
                 // insert
-                let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility, resource_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING resource_id;";
-                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, resource.resourceId ];
+                let text = "INSERT INTO resources (resource_type, resource_name, resource_description, resource_image, resource_content_html, resource_link, is_required, active, owned_by, visibility, current_version, resource_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING resource_id;";
+                let values = [ resource.resourceType, resource.resourceName, resource.resourceDescription, resource.resourceImage, resource.resourceContentHtml, resource.resourceLink, resource.isRequired, resource.active, resource.ownedBy, resource.visibility, 1, resource.resourceId ];
     
                 try {
                     let res2 = await db.query( text, values );
