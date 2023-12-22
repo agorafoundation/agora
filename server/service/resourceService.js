@@ -300,7 +300,7 @@ exports.saveResource = async ( resource ) => {
     // check to see if an id exists - insert / update check
     if( resource ) {
         // query to see if the resourceId exists
-        let text = "SELECT resource_id FROM resources WHERE resource_id = $1;";
+        let text = "SELECT resource_id, current_version FROM resources WHERE resource_id = $1;";
         let values = [ resource.resourceId ];
         try {
             let res = await db.query( text, values );

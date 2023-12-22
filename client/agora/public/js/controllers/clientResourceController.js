@@ -34,28 +34,35 @@ function createNewResource() {
 
 async function saveResource( resource ) {
     ( debug ) ? console.log( "saveResource() : start" ) : null;
-    const response = await fetch( "api/v1/auth/resources", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify( {
-            "resourceId":  resource.resourceId,
-            "resourceType": resource.resourceType ? resource.resourceType : 1,
-            "resourceName": resource.resourceName ? resource.resourceName : "Untitled",
-            "resourceDescription": resource.resourceDescription,
-            "resourceContentHtml": resource.resourceContentHtml,
-            "resourceImage": resource.resourceImage,
-            "resourceLink": resource.resourceLink,
-            "isRequired": resource.isRequired ? resource.isRequired : false,
-            "active": resource.active ? resource.active : true,
-            "visibility": resource.visibility ? resource.visibility : "private"
-        } )
-    } );
+    try {
+        const response = await fetch( "api/v1/auth/resources", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify( {
+                "resourceId":  resource.resourceId,
+                "resourceType": resource.resourceType ? resource.resourceType : 1,
+                "resourceName": resource.resourceName ? resource.resourceName : "Untitled",
+                "resourceDescription": resource.resourceDescription,
+                "resourceContentHtml": resource.resourceContentHtml,
+                "resourceImage": resource.resourceImage,
+                "resourceLink": resource.resourceLink,
+                "isRequired": resource.isRequired ? resource.isRequired : false,
+                "active": resource.active ? resource.active : true,
+                "visibility": resource.visibility ? resource.visibility : "private"
+            } )
+        } );
 
-    if( response.ok ) {
-        const data = await response.json();
-        ( debug && dataDebug ) ? console.log( "saveResource() resource saved : " + JSON.stringify( data ) ) : null;
-        ( debug ) ? console.log( "saveResource() : resource created" ) : null;
-        return data;
+        if( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "saveResource() resource saved : " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "saveResource() : resource created" ) : null;
+            return data;
+        }
+    }
+    catch( err ) {
+        alert( "Error Saving Resource - Connection lost" );
+        window.location.reload();
+        throw new Error( 'Error Saving Resource - ' + err.message );
     }
 
 }
