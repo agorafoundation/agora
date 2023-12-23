@@ -76,10 +76,11 @@ exports.createUserForm = async function( req, res ) {
             let username = req.body.userUsername;
             let firstName = req.body.firstName;
             let lastName = req.body.lastName;
+            let bio = req.body.bio;
 
             let profileImage = 'profile-default.png';
             
-            createUser( email, username, firstName, lastName, null, false, req.body.psw, profileImage, req, res, false );
+            createUser( email, username, firstName, lastName, bio, false, req.body.psw, profileImage, req, res, false );
 
         }
         else {

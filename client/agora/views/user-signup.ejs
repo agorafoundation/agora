@@ -41,7 +41,7 @@
                     -->
                     <!-- About Section Button-->
                     <div class="text-left mt-4">
-                        <div id="story1" class="row justify-content-left">
+                        <div id="story1" class="row justify-content-left" order-last>
                             <div class="col-lg-5">
                                 <p>Have an account?&nbsp;&nbsp; <a class="text-primary text-uppercase tag-line-you"
                                         href="/signIn?redirect=<%- locals.currentUrl %>">SIGN IN</a> </p>
@@ -74,8 +74,7 @@
                                 }
                                 %>
                                 
-                                <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95"
-                                    style="height:70%" />
+                                <img src="/assets/img/logos/agora-logo-2023-800.png" class="website-image website-image-95" />
                                 <p></p>
                             </div>
                             <div class="col-lg-7">
@@ -125,7 +124,18 @@
                                         <br />
                                         <h5>Letting us know which topics your are most interested in helps us find related research and
                                             collaborators that might be of interest to you (optional)</h5>
-                                        <p>TODO:Tags Tag selection will go here</p> 
+                                        
+                                        <!-- Bio textarea -->
+                                        <hr />
+                                        <div class="form-group">
+                                            <label for="bio">Tell us a bit about you! This information will help us deliver the most helpful information with our AI assistants, it will also help us find you the best collaborators. It can also be used to generate a custom one of a kind avatar.</label>
+                                            <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
+                                        </div>
+
+                                        
+
+                                        <hr />
+
                                         <p>Please read our 
                                         
                                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#termsModal">
