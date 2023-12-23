@@ -804,7 +804,7 @@ function exitDeleteModal() {
 
 //////onclick handling for topic rerouting//////////
 
-const topicReroute = ( id, newTab, prefix ) => {
+const topicReroute = ( id, newTab, prefix, topicId = null ) => {
     let usedPrefix;
     if ( prefix ) {
         usedPrefix = prefix;
@@ -820,7 +820,8 @@ const topicReroute = ( id, newTab, prefix ) => {
 
     //pass the title and description to backend
     if ( newTab ) {
-        window.open( "/topic#" + usedPrefix + id, "_blank" );
+        topicId ? window.open( "/topic#" + usedPrefix + id + "&t-" + topicId, "_blank" ) :
+            window.open( "/topic#" + usedPrefix + id, "_blank" );
     }
     else {
     /*if (usedPrefix === "-t") {
@@ -828,7 +829,9 @@ const topicReroute = ( id, newTab, prefix ) => {
         } else {
             window.location.href = "/workspace#" + usedPrefix + id.substring( 5 );
         }*/
-        window.location.href = "/topic#" + usedPrefix + id.substring( 5 );
+        topicId
+            ? ( window.location.href = "/topic#" + usedPrefix + id.substring( 5 ) + "&t-" + topicId )
+            : ( window.location.href = "/topic#" + usedPrefix + id.substring( 5 ) );
     }
 };
 
