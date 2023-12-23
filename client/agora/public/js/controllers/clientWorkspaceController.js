@@ -143,23 +143,28 @@ const shareWorkspace = async ( workspaceId, sharedWithEmail, permissionLevel = '
 
 // used for permission checks
 const getPermission = async ( workspaceId ) => {
-    return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } )
-        .then( ( response ) => response.json() )
-        .then( ( response ) => {
-            if ( response.permission_level == "edit" ) {
-                return true;
-            }
-            else {
-                return false;
-            }
+    if( workspaceId ){
+        return fetch( "api/v1/auth/shared/getPermission/" + workspaceId, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
         } )
-        .catch( ( error ) => {
-            console.error( "Error fetching permission:", error );
-            return false;
-        } );
+            .then( ( response ) => response.json() )
+            .then( ( response ) => {
+                if ( response.permission_level == "edit" ) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } )
+            .catch( ( error ) => {
+                console.error( "Error fetching permission:", error );
+                return false;
+            } );
+    }
+    else {
+        window.location.href = "/dashboard";
+    }
 };
 
 // for displaying shared users in a workspace
@@ -177,17 +182,24 @@ const getAllSharedUsersForWorkspace = async ( id ) => {
 
 // for displaying workspace owner
 const getWorkspaceOwner = async ( ownerId ) => {
-    ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
-    const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    } );
+    if( ownerId ) {
+        ( debug ) ? console.log( "getWorkspaceOwner() - Start - id: " + ownerId ) : null;
+        const response = await fetch( "/api/v1/auth/user/userId/" + ownerId, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        } );
 
-    if( response.ok ){
-        const workspaceOwner = await response.json();
-        ( debug && dataDebug ) ? console.log( "getWorkspaceOwner() : workspace owner retrieved: " + JSON.stringify( workspaceOwner ) ): null;
-        ( debug ) ? console.log( "getWorkspaceOwner() : Complete" ) : null;
-        return workspaceOwner;
+        if( response.ok ){
+            const workspaceOwner = await response.json();
+            ( debug && dataDebug ) ? console.log( "getWorkspaceOwner() : workspace owner retrieved: " + JSON.stringify( workspaceOwner ) ): null;
+            ( debug ) ? console.log( "getWorkspaceOwner() : Complete" ) : null;
+            return workspaceOwner;
+        }
+    }
+    else {
+        ( debug ) ? console.log( "getWorkspaceOwner() : Error - no owner id passed" ) : null;
+        window.location.href = "/dashboard";
+    
     }
 };
 
