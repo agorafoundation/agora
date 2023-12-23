@@ -16,6 +16,13 @@ const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContaine
 const citationsContainer = document.getElementById( 'citations-cont' );
 
 
+
+document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
+    console.log( 'agnes button clicked' );
+    var drawer = document.getElementById( 'drawer' );
+    drawer.classList.toggle( 'open' );
+} );
+
 if( document.getElementById( "agnesModal" ) ) {
     document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
         let modal = document.querySelector( ".agnes-modal-pos" );

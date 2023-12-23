@@ -19,6 +19,7 @@
 }
 
 #topic-background {
+    position: relative;
     background-color: #f1f1f1;
     padding-bottom: 50px;
 }
@@ -872,6 +873,59 @@
 }
 
 /* Syles for Agnes    */
+
+.drawer-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #1f1f1f;
+    height: 50px; /* Initial height */
+    border-top: 1px solid #dee2e6;
+    z-index: 10;
+    overflow: hidden;
+    transition: height 0.5s; /* Animation for height change */
+}
+
+.drawer-header {
+    position: relative;
+    height: 50px; /* Initial height */
+    cursor: pointer;
+    transition: height 0.5s; /* Animation for height change */
+}
+
+.drawer-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%; /* Full width of the parent */
+    height: 100%; /* Full height of the parent */
+    background: radial-gradient(circle, rgba(255, 165, 0, 0.5) 10%, transparent 70%);
+    /* Radial gradient with fading edges */
+    border-radius: 50%; /* Make it circular */
+    transform: translate(-50%, -50%) scale(0); /* Center and scale down */
+    transition: transform 0.3s ease-in-out;
+    z-index: -1; /* Place it behind the content */
+}
+
+.drawer-header:hover::after {
+    transform: translate(-50%, -50%) scale(1); /* Scale up on hover */
+}
+
+.drawer-container.open {
+    height: 40%; /* Height when open */
+}
+
+.drawer-content {
+    padding: 20px;
+}
+
+.editor-container {
+    padding-bottom: 50px; /* Adjust as needed to prevent drawer overlap */
+}
+
+
+/* agnes original */
 .agnes-button {
     position: fixed;
     right: 20px;
@@ -935,6 +989,7 @@
 
 .agnes-modal-pos {
     right: 0vw;
+    width:100%;
     display: none;
     position: fixed;
     z-index: 200; 
