@@ -854,7 +854,7 @@ function createDropZone( resourceId, position ) {
 
 
     // Create drop zone
-    let newDropZone = document.createElement( "div" );
+    let newDropZone = document.createElement( "span" );
     newDropZone.id = "create-resource-" + resourceId;
     newDropZone.className = "drop-zone-new";
     // URBG: TODO removed the icon for file upload for now until / if this function in brought back.
@@ -880,31 +880,57 @@ function createDropZone( resourceId, position ) {
     dropZoneContainer.appendChild( newDropZone );
 
     // Show an icon for the currently selected resource type that shows a div with the other options when the user hovers over it.
-    let resourceType = document.createElement( "div" );
-    resourceType.className = "resource-type-container";
-    resourceType.id = "resource-type-" + resourceId;
-    // resourceType.innerHTML = '<span id="resource-selector" class="resource-selector">' +
-    //         '<i id="selected-icon" class="fa fa-file-alt"></i> <!-- Default selected icon -->' +
-    //         '<span class="options">' +
-    //         '<i class="fa fa-file-alt" data-resource="document"></i>' +
-    //         '<i class="fa fa-flask" data-resource="research"></i>' +
-    //         '<i class="fa fa-sticky-note" data-resource="notes"></i>' + 
-    //         '<i class="fa fa-boxes" data-resource="collection"></i>' +
-    //     '</span>' +
-    // '</span>';
-    //resourceType.innerHTML = '<div class="se-submenu se-list-layer se-list-format " style="display: block; left: 262px; top: 42px;"><div class="se-list-inner"><ul class="se-list-basic"><li><button type="button" class="se-btn-list" data-command="replace" data-value="p" data-class="" title="Paragraph" aria-label="Paragraph"><p>Paragraph</p></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="div" data-class="" title="Normal (DIV)" aria-label="Normal (DIV)"><div>Normal (DIV)</div></button></li><li><button type="button" class="se-btn-list" data-command="range" data-value="blockquote" data-class="" title="Quote" aria-label="Quote"><blockquote>Quote</blockquote></button></li><li><button type="button" class="se-btn-list" data-command="free" data-value="pre" data-class="" title="Code" aria-label="Code"><pre>Code</pre></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h1" data-class="" title="Header1" aria-label="Header1"><h1>Header1</h1></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h2" data-class="" title="Header2" aria-label="Header2"><h2>Header2</h2></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h3" data-class="" title="Header3" aria-label="Header3"><h3>Header3</h3></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h4" data-class="" title="Header4" aria-label="Header4"><h4>Header4</h4></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h5" data-class="" title="Header5" aria-label="Header5"><h5>Header5</h5></button></li><li><button type="button" class="se-btn-list" data-command="replace" data-value="h6" data-class="" title="Header6" aria-label="Header6"><h6>Header6</h6></button></li></ul></div></div>' +
+    let resourceTypeList = document.createElement( "span" );
+    resourceTypeList.className = "resource-type-container";
+    resourceTypeList.id = "resource-type-" + resourceId;
     
-    
-    resourceType.addEventListener( "click", async () => {
-        console.log( event.target + "tesitnhg " );
-        if ( event.target.classList.contains( 'fa' ) ) {
-            var selectedIcon = document.getElementById( 'selected-icon' );
-            selectedIcon.className = event.target.className;
-        }
+    // Text label for the icon selection
+    let selectionLabel = document.createElement( "p" );
+    resourceTypeList.appendChild( selectionLabel );
+
+    // create the icon for the document type
+    let selectedIcon = document.createElement( "i" );
+    selectedIcon.className = "fa fa-file-alt fa-sm icon";
+    selectedIcon.id = "selected-icon-" + resourceId;
+    resourceTypeList.appendChild( selectedIcon );
+    selectedIcon.addEventListener( "click", async () => {
+        //setResourceType*( resourceId, "document" );
         
     } );
 
-    dropZoneContainer.appendChild( resourceType );
+    // creeate the icon for the research type
+    let researchIcon = document.createElement( "i" );
+    researchIcon.className = "fa fa-flask fa-sm icon";
+    researchIcon.id = "research-icon-" + resourceId;
+    resourceTypeList.appendChild( researchIcon );
+    researchIcon.addEventListener( "click", async () => {
+        //setResourceType*( resourceId, "research" );
+        
+    } );
+
+    // create the icon for the notes type
+    let notesIcon = document.createElement( "i" );
+    notesIcon.className = "fa fa-sticky-note fa-sm icon";
+    notesIcon.id = "notes-icon-" + resourceId;
+    resourceTypeList.appendChild( notesIcon );
+    notesIcon.addEventListener( "click", async () => {
+        //setResourceType*( resourceId, "note" );
+        
+    } );
+
+    // create the icon for the collection type
+    let collectionIcon = document.createElement( "i" );
+    collectionIcon.className = "fa fa-boxes fa-sm icon";
+    collectionIcon.id = "collection-icon-" + resourceId;
+    resourceTypeList.appendChild( collectionIcon );
+    collectionIcon.addEventListener( "click", async () => {
+        //setResourceType*( resourceId, "collection" );
+        
+    } );
+
+    // add the resource type to the drop zone container
+    dropZoneContainer.appendChild( resourceTypeList );
+    
 
 
     resourcesZone.appendChild( dropZoneContainer );

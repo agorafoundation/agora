@@ -472,7 +472,9 @@
 
 
 
-  .resource-selector {
+
+
+/* .resource-selector {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -495,14 +497,15 @@
 .resource-selector i {
     margin: 5px;
     font-size: 20px;
-}
+} */
 
-  .drop-zone-container {
+.drop-zone-container {
+    display: flex;
     width: 100%;
-  }
+}
   
   
-  .resource-toggle {
+.resource-toggle {
       text-align: center;
       font-weight: bolder;
       outline: orange solid 3px;
@@ -513,19 +516,20 @@
       color: black;
       cursor: pointer;
       flex-direction: column;
+      max-width: 10%;
   }
 
 
 
-  .drop-zone-new {
+.drop-zone-new {
     /* margin: 0 auto; */
 
-    float: left;
+    float: right;
     height: inherit;
     line-height: inherit;
     text-align: center;
     vertical-align: middle;
-    width: 80%;
+    flex-grow: 1;
     border-radius: 15px;
     text-align: center;
     box-shadow: inset 0 0 0 0 #54b3d6;
@@ -539,9 +543,9 @@
 .drop-zone-new:hover {
     box-shadow: inset 200vh 0 0 0 #64cc5b;
     color: white;
-  }
+}
     
-  .drop-zone--over {
+.drop-zone--over {
     padding-bottom: 20px;
     border-radius: 20px;
     border: 2px solid #2c3e50;
@@ -586,6 +590,27 @@
     background: rgba(0, 0, 0, 0.75);
     font-size: large;
     text-align: center;
+}
+
+
+.resource-type-container {
+    float: right;   
+    border: 1px solid #ccc;
+    width:120px;
+}
+
+.icon {
+    margin: 5px;
+    cursor: pointer;
+}
+
+.icon:hover {
+    color: blue; /* Example hover effect */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+.selected {
+    border: 2px solid green; /* Example selected style */
 }
 /* End drag and drop -------------------------------------*/
 
