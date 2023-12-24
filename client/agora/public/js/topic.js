@@ -764,20 +764,20 @@ window.addEventListener( 'load', () => {
 /**
  * When toggling resource types set the correct editor in the UI
  */
-function toggleQuillEditor() {
-    if( document.getElementById( 'resourceType' ).value == "3" ) {
-        document.getElementById( 'quillWrapper' ).style.display = 'none';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'block';
-    }
-    else if( document.getElementById( 'resourceType' ).value == "2" ) {
-        document.getElementById( 'quillWrapper' ).style.display = 'none';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
-    }
-    else {
-        document.getElementById( 'quillWrapper' ).style.display = 'block';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
-    }
-}
+// function toggleQuillEditor() {
+//     if( document.getElementById( 'resourceType' ).value == "3" ) {
+//         document.getElementById( 'quillWrapper' ).style.display = 'none';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'block';
+//     }
+//     else if( document.getElementById( 'resourceType' ).value == "2" ) {
+//         document.getElementById( 'quillWrapper' ).style.display = 'none';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
+//     }
+//     else {
+//         document.getElementById( 'quillWrapper' ).style.display = 'block';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
+//     }
+// }
 
 
 /**

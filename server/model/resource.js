@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require( "uuid" );
 
 function resource() {
     this.resourceId = uuidv4();
-    this.resourceType = 1;
+    this.resourceType = 'document';
     this.resourceName = "";
     this.resourceDescription = "";
     this.resourceContentHtml = "";

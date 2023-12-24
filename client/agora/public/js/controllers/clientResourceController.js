@@ -18,7 +18,7 @@ import { uuidv4 } from "../util/editorUtil.js";
 function createNewResource() {
     return {
         resourceId: uuidv4(),
-        resourceType: 1,
+        resourceType: 'document',
         resourceName: "",
         resourceDescription: "",
         resourceContentHtml: "",
@@ -67,7 +67,7 @@ async function saveResource( resource ) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
                 "resourceId":  resource.resourceId,
-                "resourceType": resource.resourceType ? resource.resourceType : 1,
+                "resourceType": resource.resourceType ? resource.resourceType : 'document',
                 "resourceName": resource.resourceName ? resource.resourceName : "Untitled",
                 "resourceDescription": resource.resourceDescription,
                 "resourceContentHtml": resource.resourceContentHtml,

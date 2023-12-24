@@ -2776,7 +2776,7 @@ components:
           description: Assigned automatically for new resources, used to update existing resource if provided
           uniqueItems: true
         resourceType:
-          type: string
+          type: ENUM
           description: The type
         resourceName:
           type: string
@@ -2812,7 +2812,7 @@ components:
           description: Id of the user that first generated the tag
       example:
         id: 1
-        resourceType: 1
+        resourceType: 'document'
         resourceName: "Dashboard Screenshot"
         resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
         resourceContentHtml: '<div><img src="myImage.png" width="500" height="500"></div>'

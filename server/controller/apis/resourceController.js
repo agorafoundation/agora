@@ -277,19 +277,19 @@ exports.saveResource = async ( req, res, redirect ) => {
         resource.resourceName = req.body.resourceName;
         resource.resourceDescription = req.body.resourceDescription;
 
-        if( resource.resourceType == 3 ) {
+        // if( resource.resourceType == 3 ) {
             
-            resource.resourceContentHtml = req.body.embedded_submission_text_resource;
+        //     resource.resourceContentHtml = req.body.embedded_submission_text_resource;
+        // }
+        // else {
+        // check to see if the incomping message format is from the UI or the API
+        if( req.body.resourceContentHtml ) {
+            resource.resourceContentHtml = req.body.resourceContentHtml;
         }
         else {
-            // check to see if the incomping message format is from the UI or the API
-            if( req.body.resourceContentHtml ) {
-                resource.resourceContentHtml = req.body.resourceContentHtml;
-            }
-            else {
-                resource.resourceContentHtml = req.body.resourceEditor;
-            }
+            resource.resourceContentHtml = req.body.resourceEditor;
         }
+        //}
         resource.resourceLink = req.body.resourceLink;
         
         // check to see if the incoming message format is from the UI form or the API
@@ -318,21 +318,22 @@ exports.saveResource = async ( req, res, redirect ) => {
         }
         else if ( !req.files || Object.keys( req.files ).length === 0 ) {   // no files were uploaded       
             // no files uploaded
-            if ( req.body.resourceImage ) {
-                this.saveResourceImage( req, res, resource.resourceId, req.body.resourceImage );
-            }
-            else if( resource.resourceType == 1 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
-            }
-            else if ( resource.resourceType == 2 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'cell-molecule.svg' );
-            }
-            else if( resource.resourceType == 3 ) {
-                this.saveResourceImage( req, res, resource.resourceId, 'code.svg' );
-            }
-            else {
-                this.saveResourceImage( req, res, resource.resourceId, 'resource-default.png' );
-            }
+            // if ( req.body.resourceImage ) {
+            //     this.saveResourceImage( req, res, resource.resourceId, req.body.resourceImage );
+            // }
+            // else if( resource.resourceType == 1 ) {
+            //     this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
+            // }
+            // else if ( resource.resourceType == 2 ) {
+            //     this.saveResourceImage( req, res, resource.resourceId, 'cell-molecule.svg' );
+            // }
+            // else if( resource.resourceType == 3 ) {
+            //     this.saveResourceImage( req, res, resource.resourceId, 'code.svg' );
+            // }
+            // else {
+            //     this.saveResourceImage( req, res, resource.resourceId, 'resource-default.png' );
+            // }
+            this.saveResourceImage( req, res, resource.resourceId, 'notebook-pen.svg' );
         }
         else {
             // files included

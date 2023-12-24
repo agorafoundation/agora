@@ -14,9 +14,41 @@
     background-color: white;
 }
 
-.drop-zone-container {
-  width: 100%;
+/* icon dropdown selector */
+.custom-select {
+    width: 200px;
+    position: relative;
 }
+
+.options-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.option {
+    padding: 10px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.option:hover {
+    background-color: #f1f1f1;
+}
+
+.selected-value {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+
+
+
+
+
 
 #topic-background {
     position: relative;
@@ -24,21 +56,7 @@
     padding-bottom: 50px;
 }
 
-.resource-toggle {
-    text-align: center;
-    font-weight: bolder;
-    outline: orange solid 3px;
-    min-width: 6%;
-    padding-left: 2%;
-    padding-right: 2%;
-    font-size: 20px;
-    color: black;
-    cursor: pointer;
-    flex-direction: column;
 
-   
-
-}
 
 .title-container {
   display: none;
@@ -450,14 +468,64 @@
     display: none;
   }
 
+
+
+
+
+  .resource-selector {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.resource-selector .options {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 50px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.resource-selector:hover .options {
+    display: block;
+}
+
+.resource-selector i {
+    margin: 5px;
+    font-size: 20px;
+}
+
+  .drop-zone-container {
+    width: 100%;
+  }
+  
+  
+  .resource-toggle {
+      text-align: center;
+      font-weight: bolder;
+      outline: orange solid 3px;
+      min-width: 6%;
+      padding-left: 2%;
+      padding-right: 2%;
+      font-size: 20px;
+      color: black;
+      cursor: pointer;
+      flex-direction: column;
+  }
+
+
+
   .drop-zone-new {
-    margin: 0 auto;
-    float: right;
+    /* margin: 0 auto; */
+
+    float: left;
     height: inherit;
     line-height: inherit;
     text-align: center;
     vertical-align: middle;
-    width: 94%;
+    width: 80%;
     border-radius: 15px;
     text-align: center;
     box-shadow: inset 0 0 0 0 #54b3d6;
@@ -891,6 +959,11 @@
     height: 50px; /* Initial height */
     cursor: pointer;
     transition: height 0.5s; /* Animation for height change */
+    color: 1f1f1f;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 20px; /* Adjust as needed */
 }
 
 .drawer-header::after {
@@ -898,8 +971,8 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 100%; /* Full width of the parent */
-    height: 100%; /* Full height of the parent */
+    width: 160%; /* Full width of the parent */
+    height: 160%; /* Full height of the parent */
     background: radial-gradient(circle, rgba(255, 165, 0, 0.5) 10%, transparent 70%);
     /* Radial gradient with fading edges */
     border-radius: 50%; /* Make it circular */
