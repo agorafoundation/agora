@@ -36,12 +36,25 @@ window.addEventListener( "load", async () => {
     await initializeWorkspace( await getWorkspaceUuid() );
 
     // retrieve the resources for the active topic, add them to the current state
-    if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
-        await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );
+
+    const url = window.location.href;
+    const startIndexTopicId = url.indexOf( "&t-" );
+
+    if ( startIndexTopicId !== -1 ) {
+        const topicId = url.substring( startIndexTopicId + 3 );
+        await setActiveTopicAndResources( topicId );
     }
     else {
-        await setActiveTopicAndResources();
+        if ( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
+            await setActiveTopicAndResources( getCurrentWorkspace().topics[0].topicId );
+        }
+        else {
+            await setActiveTopicAndResources();
+        }
     }
+
+
+
     
 
     //update the workspace information in the GUI
