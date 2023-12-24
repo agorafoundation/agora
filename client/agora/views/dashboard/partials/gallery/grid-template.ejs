@@ -63,12 +63,11 @@
                   content.slice(0,6).forEach((item) => { 
                     if(item) {
                       //stops overflow of text
-                      item = item.slice(0,12)
-                
+                      itemName = item.topicName.slice(0,12)
                 %>
                       <!--topicReroute() below has a filler id-->
                 
-                      <li class="list-group-item item-list"  title='Open <%=item.slice(0,3)%>' > <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= item %></span></li>
+                      <li class="list-group-item item-list"  title='Open <%=item.topicName.slice(0,3)%>' onclick="event.stopPropagation(), topicReroute('w-gv-<%= workspaceId %>', false, null, '<%= item.topicId%>')"> <span class="material-icons document-icon" >&nbsp;description</span><span class="item-list-text"><%= itemName %></span></li>
                 <% 
                     }
                   }) 
@@ -109,7 +108,7 @@
       for (let i = 0; i <  ownerWorkspaces.length ; i++) { 
         let topics = [];
         let tags = [];
-        topics = ownerWorkspaces[i].topics.map(a => a.topicName);
+        topics = ownerWorkspaces[i].topics;
         tags = ownerWorkspaces[i].tags.map(a => a.tag);
         renderCard(ownerWorkspaces[i].workspaceId,ownerWorkspaces[i].workspaceName,ownerWorkspaces[i].workspaceDescription,tags,"Workspace", topics); 
       }
