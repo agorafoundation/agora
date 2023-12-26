@@ -158,6 +158,50 @@ exports.getAllResourcesForauthUser = async ( req, res ) => {
     } );
 };
 
+exports.saveResourceType = async ( req, res ) => { 
+    let authUserId;
+    if( req.user ) {
+        authUserId = req.user.userId;
+    }
+    else if( req.session.authUser ) {
+        authUserId = req.session.authUser.userId;
+    }
+
+    if( authUserId && req.params.resourceId && req.params.resourceType ) {
+        let resourceType = req.params.resourceType;
+        if ( resourceType in ( 'document', 'research', 'notes', 'collection' ) ) {
+            // save the resource type
+            let resource = await resourceService.saveResourceType( req.params.resourceId, resourceType );
+
+            if( resource ) {
+                res.set( "x-agora-message-title", "Success" );
+                res.set( "x-agora-message-detail", "Returned resource by id" );
+                res.status( 200 ).json( {
+                    results: resource
+                } );
+            }
+        }
+        else {
+            const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource Type not found" );
+            res.set( "x-agora-message-title", "Not Found" );
+            res.set( "x-agora-message-detail", "Resource Type not found" );
+            res.status( 404 ).json( message );
+        }
+    }
+    else {
+        const message = ApiMessage.createApiMessage( 404, "Not Found", "Resource not found" );
+        res.set( "x-agora-message-title", "Not Found" );
+        res.set( "x-agora-message-detail", "Resource Type not found" );
+        res.status( 404 ).json( message );
+    
+    }
+        
+};
+
+
+    
+
+
 /**
  * Update or create a completed resource for the resource Id passed.
  * Checks to see if there is an existing completedResource with the passed resourceId and

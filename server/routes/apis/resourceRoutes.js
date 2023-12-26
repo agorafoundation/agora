@@ -58,9 +58,16 @@ router.route( '/:resourceId' )
 
 
  
-router.route( '/resource/completed' )
+router.route( '/completed' )
     .post( async ( req, res ) => {
         resourceController.saveCompletedResource( req, res );
+    }
+    );
+
+// save the resource type /api/v1/auth/resources/saveType/:resourceId/:resourceType
+router.route( '/saveType/:resourceId/:resourceType' )
+    .post( async ( req, res ) => {
+        resourceController.saveResourceType( req, res );
     }
     );
  

@@ -597,20 +597,26 @@
     float: right;   
     border: 1px solid #ccc;
     width:120px;
+    height: 30px;
 }
 
 .icon {
-    margin: 5px;
+    position:relative;
+    top:-10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
     cursor: pointer;
 }
 
 .icon:hover {
     color: blue; /* Example hover effect */
-    transform: scale(1.1); /* Slightly enlarge on hover */
+    transform: scale(1.2); /* Slightly enlarge on hover */
 }
 
 .selected {
-    border: 2px solid green; /* Example selected style */
+    color: green;
+    transform: scale(1.4);
+    
 }
 /* End drag and drop -------------------------------------*/
 

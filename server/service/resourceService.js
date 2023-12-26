@@ -290,6 +290,18 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
     }
 };
 
+exports.saveResourceType = async ( resourceId, resourceType ) => {
+
+    // get the resource (required to exist)
+    let resource = await exports.getResourceById( resourceId );
+
+    // set the resource type
+    resource.resourceType = resourceType;
+
+    // save the resource
+    return await exports.saveResource( resource );
+};
+
 
 /**
  * Saves a resource to the database, creates a new record if no id is assigned, updates existing record if there is an id.

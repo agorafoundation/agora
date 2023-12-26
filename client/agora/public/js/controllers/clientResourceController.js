@@ -59,6 +59,29 @@ async function getResourceById( resourceId ) {
     }
 }
 
+async function setResourceType( resourceId, resourceType ) {
+    ( debug ) ? console.log( "setResourceType() : start" ) : null;
+    try {
+        const response = await fetch( "api/v1/auth/resources/saveType/" + resourceId + "/" + resourceType, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "setResourceType() resource retrieved : " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "setResourceType() : resource retrieved" ) : null;
+            return data;
+        }
+    }
+    catch( err ) {
+        //alert( "Error Getting Resource - Connection lost" );
+        //window.location.reload();
+        throw new Error( 'Error Getting Resource - ' + err.message );
+    }
+
+}
+
 async function saveResource( resource ) {
     ( debug ) ? console.log( "saveResource() : start" ) : null;
     try {
@@ -218,4 +241,4 @@ async function deleteResource( resourceId ) {
    
 // }
 
-export { saveResource, createNewResource, deleteResource, getResourceById };
+export { saveResource, createNewResource, deleteResource, getResourceById, setResourceType };
