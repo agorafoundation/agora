@@ -1,25 +1,38 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/Agora-Logo-1-wText-1080.png?raw=true)
-## To create the single best place to take notes, research and learn. A free digital space that resets our expectations regarding cloud data ownership and privacy.
+## The AI driven Research and Learning Platform [https://freeagora.org](https://freeagora.org)
 
 > *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
 
-Agora is an open, free, cloud based learning and research platform. We are creating the most intutitive way to research and learn available on the internet. Protected by the Agora Foundation, a Public Service charged with protecting individual data as a service rendered in the public interest, ensuring your privacy and ownership of data within the system now and for the lifetime of the foundation!
+### Let's build the next generation of software together.
+Agora is born of a moment. It is abundantly clear that AI will increase our productivity, help us make connections and discoveries, and collective make the world a better place. We know that technologies such as semantic search and generative AI improve vastly as the size of the context (our data) we provide increases. Having all lived through the birth of Web 2.0 we all watched as a few companies amassed immeasurable wealth by offering services that harvested the most valuable commodity, information. Our vision is to create a trusted platform, focused on the individual that allows people to safely collect their data in a cloud platform that is engineered to provide all the value of these data driven tools, but allowing them complete control over their data and serious value even when they choose to keep it 100% private.
 
-The workspaces behind agora are to be an open, decentralized, collaborative, and forever free environment where we can conduct our learning, research our ideas, and remember all the lessons we learn, forever. An environment that is not owned by an academic institution or corporation but by everyone. Guided only by virtue and principles:  
+Agora is an open, free, cloud based learning and research platform. It is a living experiment, built by educators, researchers and students to envision what is possible tomorrow, by building it today. Untethered by the past, a framework for developing the next generation of Human Computer Interaction (HCI) driven by safe AI interacting privately with your data. Its architecture is simple, fast and light, a solid core that allows endless experimentation in semantic search and generative AI assistance. We envision it growing into your cloud based operating system of the future. 
 
-The perfect research and learning platform:
-- Is accessible: Free and open source and will remain so forever
-- Provides feedback to both the learner and teacher. Learners can see what they have learned and what need more attention.  Teachers can see how well lessons are recieved and how well content is working. Agora closes the loop.
-- User, not institution centric: Lifelong learners require a lifelong system that follows them.
-- Is social: Opening a safe central hub of learning means collaboration and sharing of
-information can be easier than ever.
-- Is safe: Your data will never be used against you, only for you. it will not be sold or used
-for marketing and is only seen by people you authorize.
-- Is smart: It is intuitive to use and can suggest helpful resources getting you closer to the
-answers you seek
+Protected by the Agora Foundation, a Public Service charged with protecting individual data as a service rendered in the public interest, ensuring your privacy and ownership of data within the system now and for the lifetime of the foundation!
+
+##Agora's guiding principles:
+- Accessible: Free and open source and will remain so forever
+- Feedback: Agora will keep the loop closed, using visualizations and chain of thought reasoning.
+- User Centric: Lifelong learners require a lifelong system - not the institutions they are affiliated with.
+- Collaborative: Agora can help you make new connections based on the semantic meaning of your data, true connections with like-minded people working on related problems.
+- Safe: Your data will never be used against you, only for you. it will not be sold or used for marketing and is only seen by people you authorize.
+- Smart: It can suggest helpful resources getting you closer to the answers you seek
 - Listens: To its users, the sum of its parts, always remains a force for good.
+###Above all: The mission must remain first.
 
-## Installation  
+##Join the Agora Community Today!
+
+Take the first step in revolutionizing your learning and research experience. Agora is more than just a platform; it's a community of forward-thinkers, innovators, and lifelong learners like you. By joining Agora, you're not just accessing a powerful tool; you're becoming part of a movement to shape the future of human-computer interaction.
+
+###Don't just watch the future unfold; be a part of creating it.
+🌐 Explore the Possibilities: Visit freeagora.org to discover how Agora can transform your data into knowledge.
+💡 Sign Up for Free: Get immediate access to Agora's features by signing up here.
+👩‍💻 Contribute to Our Growth: If you're interested in contributing to Agora's development, check our Contribution Guide.
+Empower yourself with control over your data and join a community committed to innovation and privacy. Be a part of Agora – where your ideas and data drive the future.
+
+## Code Installation / Development  
+Agora is open source, and easy to install if you want to manage a local installation or setup a development environment to contribute to its growth.
+Before working with Agora source please read the [Contributor code of conduct](https://github.com/agorafoundation/agora?tab=coc-ov-file#readme) and the [security policy](https://github.com/agorafoundation/agora?tab=security-ov-file#readme). Also be aware that the Agora source is protected by the [BSD 3-clause License](https://github.com/agorafoundation/agora?tab=BSD-3-Clause-1-ov-file#readme).
 
 ### Dependencies:
  * Postgres 
@@ -60,16 +73,21 @@ answers you seek
 
 
 ### Current Features
-1. Improved main dashboard interface
+1. User management / email verification / Google SSO
 2. Sharing and Collaboration
-3. Full user creation / login / security / email verification
-4. Avatar / file upload
-5. Basic Stripe integration to allow for community support
-6. Advanced Workspace / Topic / Resource hierarchy for note taking and resource management 
-7. Fully responsive UI based on Bootstrap
+3. Advanced Workspace / Topic / Resource hierarchy for note taking and resource management
+4. Automated Semantic and GenAI based recommendations
+   - Keyword search assistance
+   - 
+   - Verified research and academic recommendations for current research
+   - Inter  
+5. AI generated avatar / avatar upload
+6. Basic Stripe integration to allow for community support
+8. 
+9. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
-1. Web3 and other decentrailized solution evaluation
+1. ORCID integration
 2. Discussions (At global, workspace and topic level)
 3. Classroom sharing (Workspaces can be shared as a classroom environment)
