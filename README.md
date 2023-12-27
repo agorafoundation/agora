@@ -52,23 +52,23 @@ Before working with Agora source please read the [Contributor code of conduct](h
 3. In the .env file: 
     1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme, set to agora by default. The theme is located in a folder of the same name in the client folder.
     2. Edit Postgres settings to connect to your database server (default shown)
-        > PG_USER = agora
-        > PG_HOST = localhost
-        > PG_PASSWORD = agora
-        > PG_DATABASE = agora
-        > PG_PORT = 5432
-        > PG_SSL = false
+        > PG_USER = agora  
+        > PG_HOST = localhost  
+        > PG_PASSWORD = agora  
+        > PG_DATABASE = agora  
+        > PG_PORT = 5432  
+        > PG_SSL = false  
     3. Set a random session secret string 
         > SESSION_SECRET = EUOee33unt5haEAOUOMAKE_THIS_YOUR_OWNa34uei58355
     4. You can set email, stripe, GitHub and OpenAI integrations off by setting the following:
         > EMAIL_TOGGLE = false  
         > STRPIE_TOGGLE = false  
-        > GITHUB_TOGGLE = false
-        > OPENAI_TOGGLE = false 
+        > GITHUB_TOGGLE = false  
+        > OPENAI_TOGGLE = false  
     5. To use any of these integrations (email is a good one as you will need it for user email verification and password reset) set the parameter to 'true' (lowercase without the single quotes). You must also then set all the affiliated settings for that integration.
     6. To use the openAI integrations you must apply your OpenAI API key, you should also provide a semantic scholar API key as this is used for sementic search and verification.
-        > OPENAI_API_KEY = YOUR_API_KEY
-        > SEMANTIC_SCHOLAR_API_KEY = API_KEY
+        > OPENAI_API_KEY = YOUR_API_KEY  
+        > SEMANTIC_SCHOLAR_API_KEY = API_KEY  
     7. Make sure not to commit any of your keys to Git! the .env is in the .gitignore by default but the .env.example file will be committed!
 4. Save your .env file
 5. Install dependencies 
