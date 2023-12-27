@@ -40,7 +40,7 @@ Before working with Agora source please read the [Contributor code of conduct](h
  * That's it!
 
 ### Clone the repo
-clone this git repo
+clone this git repo  
     > git clone https://github.com/briangormanly/agora.git  
     > cd agora 
 
@@ -92,20 +92,21 @@ After ensuring that Node.js and PostgreSQL are installed and working and your da
 API docs are managed in swagger and can be seen [here](https://freeagora.org/api-docs/). You can authenticate with your Agora user login.
 
 ## Current Features
-1. User management / email verification / Google SSO
-2. Sharing and Collaboration
-3. Advanced Workspace / Topic / Resource hierarchy for note taking and resource management
-4. Automated Semantic and GenAI based recommendations
+1. Fully functional Editor for notes, papers and more.
+2. Innovative Workspace / Topic / Resource organizational pattern for data
+3. User management / email verification / Google SSO
+4. Sharing and Collaboration of 
+5. Automated Semantic and GenAI based productivity features
    - Keyword search assistance
    - Verified research and academic recommendations for current research
    - Web resource recommendations   
-5. AI generated avatar / avatar upload
-6. Basic Stripe integration to allow for community support
-9. Fully responsive UI based on Bootstrap
+6. AI generated avatar image / avatar upload
+7. Basic Stripe integration to allow for community support
+8. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
-1. ORCID integration
+1. ORCID integration (in testing)
 2. Discussions (At global, workspace and topic level)
 3. Recommendations regarding future work, literature to read.
 4. Document formatting and grammar recommendations.
