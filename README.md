@@ -1,7 +1,7 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/Agora-Logo-1-wText-1080.png?raw=true)
 ## The AI driven Research and Learning Platform [https://freeagora.org](https://freeagora.org)
 
-> *"The natural can never be inferior to the articfical; art imitates nature, not the reverse. ... Now, all the arts move from the lower goals to higher ones. Won't nature do the same?"*. - Marcus Aurelius \ Meditations [11:10]
+> ### *"The natural can never be inferior to the artificial; art imitates nature, not the reverse. ... Now, all the arts move from the lower goals to higher ones. Won't nature do the same?"*. - Marcus Aurelius \ Meditations [11:10]
 
 ### Let's build the next generation of software together.
 Agora is born of a moment. It is abundantly clear that AI will increase our productivity, help us make connections and discoveries, and collective make the world a better place. We know that technologies such as semantic search and generative AI improve vastly as the size of the context (our data) we provide increases. Having all lived through the birth of Web 2.0 we all watched as a few companies amassed immeasurable wealth by offering services that harvested the most valuable commodity, information. Our vision is to create a trusted platform, focused on the individual that allows people to safely collect their data in a cloud platform that is engineered to provide all the value of these data driven tools, but allowing them complete control over their data and serious value even when they choose to keep it 100% private.
@@ -31,7 +31,7 @@ Take the first step in revolutionizing your learning and research experience. Ag
 Empower yourself with control over your data and join a community committed to innovation and privacy. Be a part of Agora – where your ideas and data drive the future.
 
 ## Code Installation / Development  
-Agora is open source, and easy to install if you want to manage a local installation or setup a development environment to contribute to its growth.
+Agora is open source, and easy to install if you want to manage a local installation or set up a development environment to contribute to its growth.
 Before working with Agora source please read the [Contributor code of conduct](https://github.com/agorafoundation/agora?tab=coc-ov-file#readme) and the [security policy](https://github.com/agorafoundation/agora?tab=security-ov-file#readme). Also be aware that the Agora source is protected by the [BSD 3-clause License](https://github.com/agorafoundation/agora?tab=BSD-3-Clause-1-ov-file#readme).
 
 ### Dependencies:
@@ -92,7 +92,7 @@ API docs are managed in swagger and can be seen [here](https://freeagora.org/api
 4. Automated Semantic and GenAI based recommendations
    - Keyword search assistance
    - Verified research and academic recommendations for current research
-   - Web resource recomendations   
+   - Web resource recommendations   
 5. AI generated avatar / avatar upload
 6. Basic Stripe integration to allow for community support
 9. Fully responsive UI based on Bootstrap
@@ -101,5 +101,5 @@ API docs are managed in swagger and can be seen [here](https://freeagora.org/api
 ### What's next (very soon!)
 1. ORCID integration
 2. Discussions (At global, workspace and topic level)
-3. Recomendations you should consider for future work, literature to read.
-4. Document formating recomendations and grammar.
+3. Recommendations regarding future work, literature to read.
+4. Document formatting and grammar recommendations.
