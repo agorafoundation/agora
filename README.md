@@ -41,13 +41,14 @@ Before working with Agora source please read the [Contributor code of conduct](h
 
 ## Database setup
 * You can either run /server/db/createDatabase.sql or create a copy and modify / comment out default data to your liking
->  psql -U postgres -f server/db/createDatabase.sql (from the root directory of the project, default agora password is 'agora')
+> from the project home: psql -U postgres -f server/db/createDatabase.sql
+> (default agora user password is 'agora')
 * Run the script to create the database.  If you run the script with postgres / root user it will create a database and user named 'agora', then connect to the new database and create the schema using the agora user.
 
 ### Quick start setup
 1. After installing and configuring Node.js and Postgres clone this git repo
-> git clone https://github.com/briangormanly/agora.git
-> cd agora
+> git clone https://github.com/briangormanly/agora.git  
+> cd agora  
 2. *Make a copy of the .env.example file called .env in the project home directory* 
 3. In the .env file: 
     1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme, set to agora by default. The theme is located in a folder of the same name in the client folder.
