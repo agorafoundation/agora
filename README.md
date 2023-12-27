@@ -46,11 +46,12 @@ Before working with Agora source please read the [Contributor code of conduct](h
 * Run the script to create the database.  If you run the script with postgres / root user it will create a database and user named 'agora', then connect to the new database and create the schema using the agora user.
 
 ### Quick start setup
-1. After installing and configuring Node.js and Postgres clone this git repo
+1. After ensuring that Node.js and PostgreSQL are installed and working
+2. clone this git repo
 > git clone https://github.com/briangormanly/agora.git  
 > cd agora  
-2. *Make a copy of the .env.example file called .env in the project home directory* 
-3. In the .env file: 
+3. *Make a copy of the .env.example file called .env in the project home directory* 
+4. In the .env file: 
     1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme, set to agora by default. The theme is located in a folder of the same name in the client folder.
     2. Edit Postgres settings to connect to your database server (default shown)
         > PG_USER = agora  
@@ -71,11 +72,11 @@ Before working with Agora source please read the [Contributor code of conduct](h
         > OPENAI_API_KEY = YOUR_API_KEY  
         > SEMANTIC_SCHOLAR_API_KEY = API_KEY  
     7. Make sure not to commit any of your keys to Git! the .env is in the .gitignore by default but the .env.example file will be committed!
-4. Save your .env file
-5. Install dependencies 
-> npm i
-6. Start the service
-> npm start
+5. Save your .env file
+6. Install dependencies 
+    > npm i
+7. Start the service
+    > npm start
 
 ----- output ------
 >
