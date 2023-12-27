@@ -1,7 +1,7 @@
 ![alt text](https://github.com/briangormanly/agora/blob/main/client/agora/public/assets/img/logos/Agora-Logo-1-wText-1080.png?raw=true)
 ## The AI driven Research and Learning Platform [https://freeagora.org](https://freeagora.org)
 
-> *"We should not trust the masses that say only the free can be educated, but rather the lovers of wisdom that say only the educated can be free"*. - Epictetus
+> *"The natural can never be inferior to the articfical; art imitates nature, not the reverse. ... Now, all the arts move from the lower goals to higher ones. Won't nature do the same?"*. - Marcus Aurelius \ Meditations [11:10]
 
 ### Let's build the next generation of software together.
 Agora is born of a moment. It is abundantly clear that AI will increase our productivity, help us make connections and discoveries, and collective make the world a better place. We know that technologies such as semantic search and generative AI improve vastly as the size of the context (our data) we provide increases. Having all lived through the birth of Web 2.0 we all watched as a few companies amassed immeasurable wealth by offering services that harvested the most valuable commodity, information. Our vision is to create a trusted platform, focused on the individual that allows people to safely collect their data in a cloud platform that is engineered to provide all the value of these data driven tools, but allowing them complete control over their data and serious value even when they choose to keep it 100% private.
