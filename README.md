@@ -10,7 +10,7 @@ Agora is an open, free, cloud based learning and research platform. It is a livi
 
 Protected by the Agora Foundation, a Public Service charged with protecting individual data as a service rendered in the public interest, ensuring your privacy and ownership of data within the system now and for the lifetime of the foundation!
 
-##Agora's guiding principles:
+## Agora's guiding principles:
 - Accessible: Free and open source and will remain so forever
 - Feedback: Agora will keep the loop closed, using visualizations and chain of thought reasoning.
 - User Centric: Lifelong learners require a lifelong system - not the institutions they are affiliated with.
@@ -18,16 +18,16 @@ Protected by the Agora Foundation, a Public Service charged with protecting indi
 - Safe: Your data will never be used against you, only for you. it will not be sold or used for marketing and is only seen by people you authorize.
 - Smart: It can suggest helpful resources getting you closer to the answers you seek
 - Listens: To its users, the sum of its parts, always remains a force for good.
-###Above all: The mission must remain first.
+### Above all: The mission must remain first.
 
-##Join the Agora Community Today!
+## Join the Agora Community Today!
 
 Take the first step in revolutionizing your learning and research experience. Agora is more than just a platform; it's a community of forward-thinkers, innovators, and lifelong learners like you. By joining Agora, you're not just accessing a powerful tool; you're becoming part of a movement to shape the future of human-computer interaction.
 
-###Don't just watch the future unfold; be a part of creating it.
-🌐 Explore the Possibilities: Visit freeagora.org to discover how Agora can transform your data into knowledge.
-💡 Sign Up for Free: Get immediate access to Agora's features by signing up here.
-👩‍💻 Contribute to Our Growth: If you're interested in contributing to Agora's development, check our Contribution Guide.
+### Don't just watch the future unfold; be a part of creating it.
+ * 🌐 Explore the Possibilities: Visit freeagora.org to discover how Agora can transform your data into knowledge.
+ * 💡 Sign Up for Free: Get immediate access to Agora's features by signing up here.
+ * 👩‍💻 Contribute to Our Growth: If you're interested in contributing to Agora's development, check our Contribution Guide.
 Empower yourself with control over your data and join a community committed to innovation and privacy. Be a part of Agora – where your ideas and data drive the future.
 
 ## Code Installation / Development  
