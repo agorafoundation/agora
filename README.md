@@ -25,9 +25,9 @@ Protected by the Agora Foundation, a Public Service charged with protecting indi
 Take the first step in revolutionizing your learning and research experience. Agora is more than just a platform; it's a community of forward-thinkers, innovators, and lifelong learners like you. By joining Agora, you're not just accessing a powerful tool; you're becoming part of a movement to shape the future of human-computer interaction.
 
 ### Don't just watch the future unfold; be a part of creating it.
- * 🌐 Explore the Possibilities: Visit freeagora.org to discover how Agora can transform your data into knowledge.
- * 💡 Sign Up for Free: Get immediate access to Agora's features by signing up here.
- * 👩‍💻 Contribute to Our Growth: If you're interested in contributing to Agora's development, check our Contribution Guide.
+ * 🧭 Explore the Possibilities: Visit freeagora.org to discover how Agora can transform your data into knowledge.
+ * 💡 Sign Up for Free: Get immediate access to Agora's features by [signing up here](https://freeagora.org/dashboard).
+ * 👩‍💻 Contribute to Our Growth: If you're interested in contributing to Agora's development, check our [Contribution Guide](https://github.com/agorafoundation/agora?tab=coc-ov-file#readme), [List of work to do](https://github.com/agorafoundation/agora/issues) and [Wiki](https://github.com/agorafoundation/agora/wiki).
 Empower yourself with control over your data and join a community committed to innovation and privacy. Be a part of Agora – where your ideas and data drive the future.
 
 ## Code Installation / Development  
@@ -50,15 +50,26 @@ Before working with Agora source please read the [Contributor code of conduct](h
 > cd agora
 2. *Make a copy of the .env.example file called .env in the project home directory* 
 3. In the .env file: 
-    1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme 
-    2. Edit Postgres settings to connect to your database server
+    1. Note the FRONT_END_NAME in the future you can change this to use your own front end / Theme, set to agora by default. The theme is located in a folder of the same name in the client folder.
+    2. Edit Postgres settings to connect to your database server (default shown)
+        > PG_USER = agora
+        > PG_HOST = localhost
+        > PG_PASSWORD = agora
+        > PG_DATABASE = agora
+        > PG_PORT = 5432
+        > PG_SSL = false
     3. Set a random session secret string 
-    > SESSION_SECRET = EUOee33unt5haEAOUOMAKE_THIS_YOUR_OWNa34uei58355
-    4. You can set email, stripe and github integrations off by setting the following:
-    > EMAIL_TOGGLE = false  
-    > STRPIE_TOGGLE = false  
-    > GITHUB_TOGGLE = false  
+        > SESSION_SECRET = EUOee33unt5haEAOUOMAKE_THIS_YOUR_OWNa34uei58355
+    4. You can set email, stripe, GitHub and OpenAI integrations off by setting the following:
+        > EMAIL_TOGGLE = false  
+        > STRPIE_TOGGLE = false  
+        > GITHUB_TOGGLE = false
+        > OPENAI_TOGGLE = false 
     5. To use any of these integrations (email is a good one as you will need it for user email verification and password reset) set the parameter to 'true' (lowercase without the single quotes). You must also then set all the affiliated settings for that integration.
+    6. To use the openAI integrations you must apply your OpenAI API key, you should also provide a semantic scholar API key as this is used for sementic search and verification.
+        > OPENAI_API_KEY = YOUR_API_KEY
+        > SEMANTIC_SCHOLAR_API_KEY = API_KEY
+    7. Make sure not to commit any of your keys to Git! the .env is in the .gitignore by default but the .env.example file will be committed!
 4. Save your .env file
 5. Install dependencies 
 > npm i
@@ -71,6 +82,8 @@ Before working with Agora source please read the [Contributor code of conduct](h
 7. Navigate your web browser to http://localhost:PORT (default port is 4200) if you are running on your local machine.
 8. Nice!
 
+### API Documentation
+API docs are managed in swagger and can be seen [here](https://freeagora.org/api-docs/). You can authenticate with your Agora user login.
 
 ### Current Features
 1. User management / email verification / Google SSO
@@ -78,16 +91,15 @@ Before working with Agora source please read the [Contributor code of conduct](h
 3. Advanced Workspace / Topic / Resource hierarchy for note taking and resource management
 4. Automated Semantic and GenAI based recommendations
    - Keyword search assistance
-   - 
    - Verified research and academic recommendations for current research
-   - Inter  
+   - Web resource recomendations   
 5. AI generated avatar / avatar upload
 6. Basic Stripe integration to allow for community support
-8. 
 9. Fully responsive UI based on Bootstrap
 
 
 ### What's next (very soon!)
 1. ORCID integration
 2. Discussions (At global, workspace and topic level)
-3. Classroom sharing (Workspaces can be shared as a classroom environment)
+3. Recomendations you should consider for future work, literature to read.
+4. Document formating recomendations and grammar.
