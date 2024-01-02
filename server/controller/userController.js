@@ -74,7 +74,7 @@ exports.createUserForm = async function( req, res ) {
         if( honeypotField ){
             res.render( 'user-signup', {error_message: "Error signing up!"} );
         }
-        if( req.body.userEmail ) {
+        else if( req.body.userEmail ) {
 
             // create model
             let email = req.body.userEmail;
