@@ -2216,3 +2216,13 @@ input:checked+.slider:after {
 .form-control-lg {
     margin-bottom: 10px;
 }
+/* CSS Class for Honeypot Field */
+.address-field {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+}
