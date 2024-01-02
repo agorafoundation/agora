@@ -938,11 +938,19 @@ function createDropZone( resourceId, position, resourceType ) {
         // add the resource type to the drop zone container
         dropZoneContainer.appendChild( resourceTypeList );
 
-        resourceTypeList.addEventListener( "click", async ( e ) => {
-            console.log( "1: " + e.target.id );
-
-            
-        
+        resourceTypeList.addEventListener( "click", function( e ) {
+            if ( e.target && e.target.id === "document-icon-" + resourceId ) {
+                console.log( "1" );
+            }
+            if ( e.target && e.target.id === "research-icon-" + resourceId ) {
+                console.log( "2" );
+            }
+            if ( e.target && e.target.id === "notes-icon-" + resourceId ) {
+                console.log( "3" );
+            }
+            if ( e.target && e.target.id === "collection-icon-" + resourceId ) {
+                console.log( "4" );
+            }
         } );
         
     }
