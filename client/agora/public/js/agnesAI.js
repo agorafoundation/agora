@@ -15,6 +15,11 @@ const allCardsContainer = document.querySelector( '.all-cards' );
 const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
 const citationsContainer = document.getElementById( 'citations-cont' );
 
+document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
+    console.log( 'agnes button clicked' );
+    var drawer = document.getElementById( 'drawer' );
+    drawer.classList.toggle( 'open' );
+} );
 
 
 if( document.getElementById( "agnesModal" ) ) {
