@@ -521,16 +521,19 @@ exports.verifyEmail = async function( email ) {
  * @param {String} username 
  * @returns True if a user already exists with that username, false otherwise
  */
-exports.verifyUsername = async function( username ) {
+exports.verifyUsername = async function( username, userId ) {
     let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
     let values = [ username ];
     
     try {
          
         let res = await db.query( text, values );
-        
+        var userIdFromDb;
         if( res.rows.length > 0 ) {
+            userIdFromDb = res.rows[0]['user_id'];
             // check case insensitive!
+            // current user holds the username asked for verification
+            if( userId == userIdFromDb ) return false;
             return true;
         }
         else {

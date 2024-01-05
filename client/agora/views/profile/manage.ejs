@@ -51,7 +51,13 @@
     
                                             <input type="hidden" value="<%- user.email %>" class="form-control form-control-lg" name="manageEmail" id="manageEmail" required>
                                             <br />
-                                            Username: <input type="input" class="form-control form-control-lg" name="username" value="<%- user.username %>" id="username" placeholder="Username" required>
+
+                                            <small id="usernameUpdateHelp" class="form-text text-muted"> Username must be unique </small>
+                                            <br/>
+                                            Username:
+                                             <input type="input" class="form-control form-control-lg" name="username" value="<%- user.username %>" id="userUsernameUpdate" aria-describedby="usernameHelp" placeholder="Username" required>
+     
+
                                             First Name: <input type="input" class="form-control form-control-lg" name="firstName" value="<%- user.firstName %>" id="firstName" placeholder="First Name" required>
                                             Last Name: <input type="input" class="form-control form-control-lg" name="lastName" value="<%- user.lastName %>" id="lastName" placeholder="Last Name" required>
                                             <br />  
