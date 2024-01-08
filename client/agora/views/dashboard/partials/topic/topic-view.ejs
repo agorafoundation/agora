@@ -84,17 +84,19 @@
                 <%-include('./share-modal'); %>
         
         <!-- AI - Agnes with Modal Trigger -->
-        <div class="agnes-btn-container">
-          <span
-          class="material-symbols-outlined agnes-button"
-          style="color: rgb(250, 246, 246)"
-          data-bs-toggle="modal"
-          data-bs-target="#agnesModal"
+        <% if( process.env.OPENAI_TOGGLE === 'true' ) { %>
+          <div class="agnes-btn-container">
+            <span
+            class="material-symbols-outlined agnes-button"
+            style="color: rgb(250, 246, 246)"
+            data-bs-toggle="modal"
+            data-bs-target="#agnesModal"
 
-          >
-            robot_2
-          </span>
-        </div>
+            >
+              robot_2
+            </span>
+          </div>
+        <% } %>
         
         <%- include('./agnes-modal'); %>
 
