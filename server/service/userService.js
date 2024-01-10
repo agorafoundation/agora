@@ -210,8 +210,8 @@ exports.saveUser = async function( record ) {
         
     }
     else {
-        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6, bio=$7, is_private=$8 WHERE email=$1';
-        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive, record.bio, record.isPrivate ];
+        let text = 'UPDATE users SET first_name=$2, last_name=$3, desktop_first_visit=$4, editor_first_visit=$5, subscription_active=$6, bio=$7, is_private=$8, username=$9 WHERE email=$1';
+        let values = [ record.email, record.firstName, record.lastName, record.desktopFirstVisit, record.editorFirstVisit, record.subscriptionActive, record.bio, record.isPrivate, record.username ];
 
         try {
             
@@ -521,16 +521,19 @@ exports.verifyEmail = async function( email ) {
  * @param {String} username 
  * @returns True if a user already exists with that username, false otherwise
  */
-exports.verifyUsername = async function( username ) {
+exports.verifyUsername = async function( username, userId ) {
     let text = "SELECT * FROM users WHERE LOWER(username) = LOWER($1)";
     let values = [ username ];
     
     try {
          
         let res = await db.query( text, values );
-        
+        var userIdFromDb;
         if( res.rows.length > 0 ) {
+            userIdFromDb = res.rows[0]['user_id'];
             // check case insensitive!
+            // current user holds the username asked for verification
+            if( userId == userIdFromDb ) return false;
             return true;
         }
         else {

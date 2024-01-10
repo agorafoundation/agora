@@ -223,6 +223,7 @@ exports.updateUser = async function( req, res ){
         user.email = email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
+        user.username = req.body.username;
         user.subscriptionActive =subscriptionActive;
         user.bio = req.body.bio;
         user.isPrivate = ( req.body.isPrivate == "on" ) ? true : false;

@@ -56,6 +56,15 @@ if( userUsername ) {
     } );
 }
 
+let userUpdateUsername = document.getElementById( 'userUsernameUpdate' );
+if( userUpdateUsername ) {
+    userUpdateUsername.addEventListener( 'input', ( e ) => {
+        validateCheckExistsUsernameForUpdate( userUpdateUsername.value );
+
+    } );
+}
+
+
 // Re-enable disabled fields on manage form so that data is not lost
 if( document.getElementById( 'userManageButton' ) ) {
     document.getElementById( 'userManageButton' ).addEventListener( 'click', () => {
@@ -120,6 +129,7 @@ function validateCheckExistsUsername( username, email, runOnce ) {
             res.json().then( ( data ) => {
                 if( data ) {
                     //console.log("data returned: " + data);
+
                     document.getElementById( 'usernameHelp' ).innerHTML = "<strong style='color:red'>Username is already in use</strong>";
                     document.getElementById( 'userButton' ).disabled = true;
                 }
@@ -139,6 +149,29 @@ function validateCheckExistsUsername( username, email, runOnce ) {
     else {
         document.getElementById( 'usernameHelp' ).innerHTML = "<strong style='color:red'>Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _</strong>";
         document.getElementById( 'userButton' ).disabled = true;
+    }
+}
+
+
+function validateCheckExistsUsernameForUpdate( username ) {
+    if( validateUsername( username ) ) {
+        fetch( '/api/v1/open/verifyUsername/' + username ).then( ( res ) => {
+            res.json().then( ( data ) => {
+                if( data ) {
+                    // console.log( "user email: ", userEmail.value );
+                    document.getElementById( 'usernameUpdateHelp' ).innerHTML = "<strong style='color:red'>Username is already in use</strong>";
+                    document.getElementById( 'userManageButton' ).disabled = true;
+                }
+                else {
+                    document.getElementById( 'usernameUpdateHelp' ).innerHTML = "Username is Valid";
+                    document.getElementById( 'userManageButton' ).disabled = false;
+                }
+            } );
+        } );
+    }
+    else {
+        document.getElementById( 'usernameUpdateHelp' ).innerHTML = "<strong style='color:red'>Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _</strong>";
+        document.getElementById( 'userManageButton' ).disabled = true;
     }
 }
 

@@ -22,110 +22,124 @@ const OPENAI_CONFIG = new openAi.Configuration( {
 
 exports.generateAvatar = async ( req, res ) => {
 
-    let prompt = req.body.prompt;
-
-    console.log( "prompt: " + prompt );
-    let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
-    console.log( "openai:" );
-    
-    const response = await openai.createImage( {
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1024",
-    } );
-    let image_url = response.data.data[0].url;
-
-    return image_url;
+    if( process.env.OPENAI_TOGGLE === "true" ){
+        let prompt = req.body.prompt;
+        
+        console.log( "prompt: " + prompt );
+        let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+        console.log( "openai:" );
+        
+        const response = await openai.createImage( {
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024",
+        } );
+        let image_url = response.data.data[0].url;
+        
+        return image_url;
+    }
+    else {
+        res.set( "x-agora-message-title", "OpenAI API Restricted" );
+        res.set( "x-agora-message-detail", "API is not enabled see OPENAI_TOGGLE flag in .env file" );
+        res.status( 403 ).json( {"error": "OpenAI API Restricted, Set the env variable OPENAI_TOGGLE to true"} );
+    }
 };
 
 exports.callOpenAI = async ( req, res ) => {
 
-    let mode = req.body.mode; // TODO: use this for notes vs paper
-    let resourceId = req.body.resourceId;
-    let removedArticles = req.body.removedArticles;
+    if( process.env.OPENAI_TOGGLE === "true" ){
+        let mode = req.body.mode; // TODO: use this for notes vs paper
+        let resourceId = req.body.resourceId;
+        let removedArticles = req.body.removedArticles;
 
-    console.log( "removed Articles: " + removedArticles );
+        console.log( "removed Articles: " + removedArticles );
 
-    let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
+        let resourceContent = await resourceService.getResourceContentById( resourceId, false ); 
 
-    //console.log( "resourceContent: " + resourceContent );
+        //console.log( "resourceContent: " + resourceContent );
 
-    if ( resourceContent ) {
-        let parsedResourceContent = cleanHtml( resourceContent );
+        if ( resourceContent ) {
+            let parsedResourceContent = cleanHtml( resourceContent );
 
-        //console.log( "\n\nmodified resourceContent: " + parsedResourceContent );
-        
-        if ( parsedResourceContent.length > 0 ) {
-            let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent, removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
-            const systemMessage = mode == 'paper' ? `You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing. Please return ONLY JSON object, do not make up responses.` : `You are a research expert. Your goal is to find additional resources that are related to the text that I provide. Please return resources that are related to my notes, but also items you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, link, summary.`;
-        
-            // Wrap in a try catch so that the server doesn't crash when an error occurs
-            try {
-                let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+            //console.log( "\n\nmodified resourceContent: " + parsedResourceContent );
             
-                // const completion = await openai.createChatCompletion( {
-                //     model: "gpt-4-1106-preview",
-                //     temperature: 0, // variance in the response - play with this for different results
-                //     response_format: { "type": "json_object" },
-                //     messages: [ 
-                //         { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
-                //         { role: "user", content: prompt }
-                //     ]
+            if ( parsedResourceContent.length > 0 ) {
+                let prompt = mode == 'paper' ? createPaperPrompt( parsedResourceContent, removedArticles ) : createNotesPrompt( parsedResourceContent, removedArticles );
+                const systemMessage = mode == 'paper' ? `You are assisting me in finding peer reviewed and scholarly research that is relevant to the paper I am writing. Please return ONLY JSON object, do not make up responses.` : `You are a research expert. Your goal is to find additional resources that are related to the text that I provide. Please return resources that are related to my notes, but also items you find that might offer different perspectives on the subject. Organize the data returned in a JSON object with an array titled citations, where each object in the array contains the following fields: title, link, summary.`;
+            
+                // Wrap in a try catch so that the server doesn't crash when an error occurs
+                try {
+                    let openai = new openAi.OpenAIApi( OPENAI_CONFIG );
+                
+                    // const completion = await openai.createChatCompletion( {
+                    //     model: "gpt-4-1106-preview",
+                    //     temperature: 0, // variance in the response - play with this for different results
+                    //     response_format: { "type": "json_object" },
+                    //     messages: [ 
+                    //         { role: "system", content: `You are assisting me in finding peer reviewed and scholarly research that is relevant to the ${mode} I am writing using the abstract, keywords and initial citations that I provide. Please return ONLY JSON object, no fluff.` },
+                    //         { role: "user", content: prompt }
+                    //     ]
+                        
+                    // } );
+
+                    //console.log( "systemMessage: " + systemMessage );
+                    //console.log( "prompt: " + prompt );
+
+                    const completion = await openai.createChatCompletion( {
+                        model: "gpt-4-1106-preview",
+                        temperature: 0, // variance in the response - play with this for different results
+                        response_format: { "type": "json_object" },
+                        max_tokens: 2000,
+                        messages: [ 
+                            { role: "system", content: systemMessage },
+                            { role: "user", content: prompt }
+                        ]
+                        
+                    } );
                     
-                // } );
 
-                //console.log( "systemMessage: " + systemMessage );
-                //console.log( "prompt: " + prompt );
+                    let returnValue = completion.data.choices[0];
 
-                const completion = await openai.createChatCompletion( {
-                    model: "gpt-4-1106-preview",
-                    temperature: 0, // variance in the response - play with this for different results
-                    response_format: { "type": "json_object" },
-                    max_tokens: 2000,
-                    messages: [ 
-                        { role: "system", content: systemMessage },
-                        { role: "user", content: prompt }
-                    ]
                     
-                } );
-                
+            
+                    let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
+                    //console.log( "json returned in content : \n" + JSON.stringify( returnValue.message ) + "\n\n" );
+                    
+                    let validatedCitations = await validateSources( rawJson, mode );
+                    //console.log( "validatedCitations: " + validatedCitations );
+            
+                    let newJsonObject = {
+                        citations: validatedCitations
+                    };
 
-                let returnValue = completion.data.choices[0];
-
-                
-        
-                let rawJson = JSON.parse( returnValue.message.content ); // the raw JSON response from the AI
-                //console.log( "json returned in content : \n" + JSON.stringify( returnValue.message ) + "\n\n" );
-                
-                let validatedCitations = await validateSources( rawJson, mode );
-                //console.log( "validatedCitations: " + validatedCitations );
-        
-                let newJsonObject = {
-                    citations: validatedCitations
-                };
-
-                res.set( "x-agora-message-title", "Success" );
-                res.set( "x-agora-message-detail", "Returned response from OpenAI" );
-                res.status( 200 ).json( newJsonObject );
+                    res.set( "x-agora-message-title", "Success" );
+                    res.set( "x-agora-message-detail", "Returned response from OpenAI" );
+                    res.status( 200 ).json( newJsonObject );
+                } 
+                catch ( e ) {
+                    console.log( e );
+                    res.set( "x-agora-message-title", "Error" );
+                    res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
+                    res.status( 500 ).json( {"error": "Failed to return response from OpenAI"} );
+                }
             } 
-            catch ( e ) {
-                console.log( e );
+            else {
                 res.set( "x-agora-message-title", "Error" );
-                res.set( "x-agora-message-detail", "Failed to return response from OpenAI" );
-                res.status( 500 ).json( {"error": "Failed to return response from OpenAI"} );
+                res.set( "x-agora-message-detail", "Content not long enough" );
+                res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 characters."} );
             }
         } 
         else {
             res.set( "x-agora-message-title", "Error" );
-            res.set( "x-agora-message-detail", "Content not long enough" );
-            res.status( 500 ).json( {"error": "You have not written enough to utilize Agnes. Please write a paragraph with a minimum of 650 characters."} );
+            res.set( "x-agora-message-detail", "Failed to find document/resource." );
+            res.status( 500 ).json( {"error": "Failed to find document/resource. Please create or select a document."}  );
         }
-    } 
+    }
     else {
-        res.set( "x-agora-message-title", "Error" );
-        res.set( "x-agora-message-detail", "Failed to find document/resource." );
-        res.status( 500 ).json( {"error": "Failed to find document/resource. Please create or select a document."}  );
+        res.set( "x-agora-message-title", "OpenAI API Restricted" );
+        res.set( "x-agora-message-detail", "API is not enabled see OPENAI_TOGGLE flag in .env file" );
+        res.status( 403 ).json( {"error": "OpenAI API Restricted, Set the env variable OPENAI_TOGGLE to true"} );
     }
 };
 

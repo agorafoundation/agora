@@ -47,6 +47,7 @@ router.route( '/' )
         // check to see if this is an update
         if( req.body._method && req.body._method == "PATCH" ) {
             // update the user 
+            
             userController.updateUser( req, res );
 
         }

@@ -61,7 +61,11 @@ exports.getActiveUserById = async function( req, res ) {
 exports.verifyUsername = async function( req, res ) {
     res.setHeader( 'Content-Type', 'text/html' );
     var username = req.params.username;
-    userService.verifyUsername( username ).then( ( valid ) => {
+    // check if user is signed in (username is being verified for user update)
+    var userId;
+    if ( req.session?.authUser ) userId = req.session?.authUser.userId;
+        
+    userService.verifyUsername( username, userId ).then( ( valid ) => {
 
         res.setHeader( 'Content-Type', 'application/json' );
         res.send( valid );
