@@ -4,7 +4,8 @@
 
 .topic-body {
     transition: margin-left 0.5s;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
 .topic-content {
