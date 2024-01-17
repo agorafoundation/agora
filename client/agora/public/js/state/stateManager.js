@@ -56,6 +56,10 @@ const initializeWorkspace = async ( workspaceUuid ) => {
             workspaceDescription.readOnly = true;
             tagBox.readOnly = true;
         }
+
+        // Fix for the sidebar until we can find how to make it relative
+        // I'm convinced there's some absolute positioning somewhere causing this
+        document.querySelector( ".dashboard-content" ).style.marginLeft = "85px";
     }
     else {
         console.log( "workspace already initialized" );
