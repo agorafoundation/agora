@@ -66,7 +66,7 @@ window.addEventListener( "load", async () => {
     }
 
     // add the event listener for adding a new topic
-    //addTopicEvent();
+    // addTopicEvent();
     
 
     /**
@@ -80,14 +80,13 @@ window.addEventListener( "load", async () => {
         ( debug ) ? console.log( "Workspace Title Change: complete" ) : null;
     } );
 
-    const workspaceDescription = document.getElementById( "workspace-desc" );
+    /* const workspaceDescription = document.getElementById( "workspace-desc" );
     workspaceDescription.addEventListener( "change", async () => {
         ( debug ) ? console.log( "Workspace Description Change: start" ) : null;
         getCurrentWorkspace().workspaceDescription = workspaceDescription.value;
         await saveWorkspace( getCurrentWorkspace() );
         ( debug ) ? console.log( "Workspace Description Change: complete" ) : null;
-    } );
-
+    } ); */
 
     /**
      * Event listener for entering a tag
@@ -137,7 +136,7 @@ async function addTopicEvent() {
     await createTopicEditorGui();
 
     // add the event listener for adding a new topic
-    //addTopicEvent();   
+    // addTopicEvent();   
 
     // prompt the user to name the topic
     editTopicName( newTopic.topicId );

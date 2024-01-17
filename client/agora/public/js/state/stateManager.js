@@ -44,9 +44,9 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
 
         // get tags associated with the workspace
-        workspace.tags = [];
+        /* workspace.tags = [];
         const tags = await getTags( "workspace", workspaceUuid );
-        ( tags ) ? workspace.tags = tags: [];
+        ( tags ) ? workspace.tags = tags: []; */
 
         const workspaceTitle = document.getElementById( "workspace-title" );
         const workspaceDescription = document.getElementById( "workspace-desc" );
@@ -145,8 +145,8 @@ const addNewTopic = async function ( topicName ) {
         newTopic.topicName = topicName;
 
         // make sure the worspace fields are up to date
-        getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
-        getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
+        //getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
+        //getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
 
         // save the topic
         newTopic = await saveTopic( newTopic, null );
