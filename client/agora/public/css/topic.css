@@ -438,7 +438,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%;
+    width: 95%;
     height: auto;
 }
 
@@ -975,22 +975,22 @@
 
 .drawer-container {
     position: fixed;
-    bottom: 0;
-    width: 100%;
+    right: 0;
+    height: 100%;
     background-color: #1f1f1f;
-    height: 50px; /* Initial height */
-    border-top: 1px solid #dee2e6;
+    width: 50px; /* Initial width */
+    border-left: 1px solid #dee2e6;
     z-index: 10;
     overflow: hidden;
-    transition: height 0.5s; /* Animation for height change */
+    transition: width 0.5s; /* Animation for width change */
 }
 
 .drawer-header {
     position: relative;
-    height: 50px; /* Initial height */
+    height: 10%; /* Initial height */
     cursor: pointer;
     transition: height 0.5s; /* Animation for height change */
-    color: 1f1f1f;
+    color: #1f1f1f;
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
@@ -1017,7 +1017,7 @@
 }
 
 .drawer-container.open {
-    height: 40%; /* Height when open */
+    width: 30%; /* Width when open */
 }
 
 .drawer-content {
@@ -1028,6 +1028,39 @@
     padding-bottom: 50px; /* Adjust as needed to prevent drawer overlap */
 }
 
+.hidden-toggle {
+    display: none; /* Hide the switch by default */
+  }
+  
+.drawer-container.open .hidden-toggle {
+    display: block; /* Show the switch when the drawer is open */
+}
+
+.toggle-button {
+    width: 100%;
+    height: 30px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 50px;
+    transition: background-color .4s;
+}
+
+.toggle-button.active {
+    background-color: #F39845;
+}
+
+.toggle-button-text {
+    display: block;
+    width: 50%;
+    height: 100%;
+    background-color: white;
+    border-radius: 50px;
+    transition: transform .4s;
+}
+
+.toggle-button.active .toggle-button-text {
+    transform: translateX(100%);
+}
 
 /* agnes original */
 .agnes-button {

@@ -19,8 +19,28 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     console.log( 'agnes button clicked' );
     var drawer = document.getElementById( 'drawer' );
     drawer.classList.toggle( 'open' );
+    var resourcesZone = document.querySelector('.resources-zone');
+    // Check the current width and toggle between 70% and 100%
+    if (resourcesZone.style.width === '65%') {
+        resourcesZone.style.width = '95%';
+    } else {
+        resourcesZone.style.width = '65%';
+    }
+    
 } );
 
+document.querySelector('.toggle-button').addEventListener('click', function() {
+    console.log('toggle button clicked');
+    this.classList.toggle('active');
+    var toggleText = this.querySelector('.toggle-button-text');
+    if (this.classList.contains('active')) {
+        toggleText.style.transform = "translateX(100%)";
+        toggleText.textContent = "Suggestions";
+    } else {
+        toggleText.style.transform = "translateX(0)";
+        toggleText.textContent = "Articles";
+    }
+});
 
 if( document.getElementById( "agnesModal" ) ) {
     document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
