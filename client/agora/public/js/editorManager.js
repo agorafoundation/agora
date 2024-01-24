@@ -1268,7 +1268,7 @@ const createSunEditor = async( resource ) => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "40vh",
+        minHeight: "60vh",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
         katex: katex, 
