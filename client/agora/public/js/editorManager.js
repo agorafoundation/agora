@@ -643,9 +643,6 @@ function createTextArea( resource, position ) {
         if( resource ) {
 
             
-
-            
-            /*
             // title container
             let titleContainer = document.createElement( "div" );
             titleContainer.className = "title-container";
@@ -682,8 +679,6 @@ function createTextArea( resource, position ) {
             
             // create a drop zone for the resource
             createDropZone( resourceId, position );
-            
-            */
 
 
             
@@ -725,7 +720,7 @@ function createTextArea( resource, position ) {
             //resourcesZone.appendChild( title );
             // resourcesZone.appendChild( newTabIcon );
             // resourcesZone.appendChild( editIcon );
-            // titleContainer.appendChild( doneIcon );
+            titleContainer.appendChild( doneIcon );
             resourcesZone.appendChild( sunEditor );
             
 
