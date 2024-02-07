@@ -40,10 +40,24 @@
               }
             %>
 
-            <!--Workspace Title-->
-            <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
-                <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+            <div style="display: flex;">
+                  <!--Workspace Title-->
+                  <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0; width: 200%;">
+                      <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+                  </div>
+
+                  <label class="label">Tags:</label>
+                  <input
+                      type="text"
+                      id="mySearch"
+                      class="placeholder"
+                      placeholder="Start typing..."
+                  />
+                  <div id="curr-tags"></div>
+                  <div id="new-tag-element" class="tag-list-element">+</div>
             </div>
+
+          <ul class="tag-list"></ul>
         </div>
         <!--More Options-->
         <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
