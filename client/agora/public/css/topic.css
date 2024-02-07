@@ -1036,6 +1036,14 @@
     display: block; /* Show the switch when the drawer is open */
 }
 
+.drawer-container .toggle-button {
+    display: none; /* Hide the toggle button when the drawer is closed */
+}
+
+.drawer-container.open .toggle-button {
+    display: block; /* Show the toggle button when the drawer is open */
+}
+
 .toggle-button {
     width: 100%;
     height: 30px;
@@ -1043,25 +1051,56 @@
     border: none;
     border-radius: 50px;
     transition: background-color .4s;
-}
-
-.toggle-button.active {
-    background-color: #F39845;
+    position: relative;
+    overflow: hidden;
 }
 
 .toggle-button-text {
-    display: block;
+    /* ... other styles ... */
+    color: #fff; /* Default color when not selected */
+}
+
+.toggle-button.active .toggle-button-text.articles {
+    color: #000; /* Color when 'Articles' is selected */
+}
+
+.toggle-button:not(.active) .toggle-button-text.suggestions {
+    color: #000; /* Color when 'Suggestions' is not selected */
+}
+
+.toggle-button-slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
     width: 50%;
     height: 100%;
     background-color: white;
     border-radius: 50px;
     transition: transform .4s;
+    background-color: #F49A46;
 }
 
-.toggle-button.active .toggle-button-text {
+.toggle-button.active .toggle-button-slider {
     transform: translateX(100%);
 }
 
+.toggle-button-text {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+}
+
+.toggle-button-text.articles {
+    left: 0;
+}
+
+.toggle-button-text.suggestions {
+    right: 0;
+}
 /* agnes original */
 .agnes-button {
     position: fixed;

@@ -32,14 +32,7 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
 document.querySelector('.toggle-button').addEventListener('click', function() {
     console.log('toggle button clicked');
     this.classList.toggle('active');
-    var toggleText = this.querySelector('.toggle-button-text');
-    if (this.classList.contains('active')) {
-        toggleText.style.transform = "translateX(100%)";
-        toggleText.textContent = "Suggestions";
-    } else {
-        toggleText.style.transform = "translateX(0)";
-        toggleText.textContent = "Articles";
-    }
+   
 });
 
 if( document.getElementById( "agnesModal" ) ) {
