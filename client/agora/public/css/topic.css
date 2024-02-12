@@ -1244,7 +1244,7 @@
 
 .all-cards {
     overflow-y: scroll;
-    max-height: 240px;
+    max-height: 35vh;
 }
 
 .card-row-header {

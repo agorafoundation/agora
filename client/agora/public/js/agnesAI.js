@@ -19,21 +19,22 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     console.log( 'agnes button clicked' );
     var drawer = document.getElementById( 'drawer' );
     drawer.classList.toggle( 'open' );
-    var resourcesZone = document.querySelector('.resources-zone');
+    var resourcesZone = document.querySelector( '.resources-zone' );
     // Check the current width and toggle between 70% and 100%
-    if (resourcesZone.style.width === '65%') {
+    if ( resourcesZone.style.width === '65%' ) {
         resourcesZone.style.width = '95%';
-    } else {
+    }
+    else {
         resourcesZone.style.width = '65%';
     }
     
 } );
 
-document.querySelector('.toggle-button').addEventListener('click', function() {
-    console.log('toggle button clicked');
-    this.classList.toggle('active');
+document.querySelector( '.toggle-button' ).addEventListener( 'click', function() {
+    console.log( 'toggle button clicked' );
+    this.classList.toggle( 'active' );
    
-});
+} );
 
 if( document.getElementById( "agnesModal" ) ) {
     document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
@@ -265,6 +266,7 @@ function getFirstNameLastNames( authors ) {
 // Dropdown logic + Fetching data
 if( document.getElementById( 'doc-type' ) ) {
     document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+        
         await makeAPICall();
         
     } );

@@ -77,6 +77,7 @@
 
         <!-- AI - Agnes with Modal Trigger -->
         <% if( process.env.OPENAI_TOGGLE === 'true' ) { %>
+          <!--
           <div id="agnes-btn-container" class="agnes-btn-container">
             <span
             class="material-symbols-outlined agnes-button"
@@ -86,8 +87,9 @@
               robot_2
             </span>
           </div>
+          -->
         <% } %>
-        <%- include('./agnes-modal'); %>
+        <%- // include('./agnes-modal'); %>
         
       </div>
 
@@ -131,7 +133,73 @@
               <div class="toggle-button-text articles">Articles</div>
               <div class="toggle-button-text suggestions">Suggestions</div>
             </div>
+            
+            <br>
+
+            <div class="agnes-current-document"><em>Current Document: </em> <div id="current-document"></div></div> 
+        <!-- Use text-center to center the content -->
+
+        <label class="document-types-label" for="document-types"
+        >Document Type</label
+      >        <!-- dropdown for doc type -->
+        <select class="form-select form-select-sm" id="doc-type">
+          <option value="empty"></option>
+          <option value="notes">Notes</option>
+          <option value="paper">Paper</option>
+        </select>
+       
+        <!-- Citation Dropdown -->
+        <label class="citation-types-label" for="citation-types"
+          >Citation Type</label>
+        <select
+          name="citation-types"
+          class="form-select form-select-sm"
+          id="citations-dropdown"
+          autocomplete="off"
+        >
+          <option value="apa" selected>APA</option>
+          <option value="mla">MLA</option>
+          <option value="harvard">Harvard</option>
+          <option value="chicago">Chicago</option>
+        </select>
+
+        <div class="d-flex flex-column">
+          <!-- Agnes Header Data -->
+            <div class="d-flex justify-content-center ai-loading">
+              <div id="loadingSpinnerContainer" class="spinner-border" role="status" hidden>
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+          <div
+            id="citations-cont"
+            class="p-3 bg-primary text-white citations-btns-container"
+            hidden>
+            <p class="citations-title">Agnes suggests the following articles</p>
+
+            <div class="all-cards">
+            
+            </div>
+            
           </div>
+
+          <br>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="regenerate-button"
+          >
+            Regenerate
+            <span class="material-symbols-outlined ag-generate-icon"
+              >cached</span
+            >
+          </button>
+
+        </div>
+    
+      <!-- Container for the content -->
+      <div id="selectedContent" class="content-margin-top hidden">
+        </div>
+        </div>
 
           <!-- Toggle Button
           <button id="toggleDrawer" class="btn btn-primary">Toggle Drawer</button> -->
