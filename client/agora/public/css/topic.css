@@ -1028,21 +1028,6 @@
     padding-bottom: 50px; /* Adjust as needed to prevent drawer overlap */
 }
 
-.hidden-toggle {
-    display: none; /* Hide the switch by default */
-  }
-  
-.drawer-container.open .hidden-toggle {
-    display: block; /* Show the switch when the drawer is open */
-}
-
-.drawer-container .toggle-button {
-    display: none; /* Hide the toggle button when the drawer is closed */
-}
-
-.drawer-container.open .toggle-button {
-    display: block; /* Show the toggle button when the drawer is open */
-}
 
 .toggle-button {
     width: 100%;
@@ -1317,4 +1302,12 @@
 
 .ai-loading {
     margin: 5px;
+}
+
+.drawer-container .drawer-content {
+    display: none; /* Hide the drawer-content when the drawer is closed */
+}
+
+.drawer-container.open .drawer-content {
+    display: block; /* Show the drawer-content when the drawer is open */
 }

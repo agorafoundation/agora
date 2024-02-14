@@ -30,11 +30,20 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     
 } );
 
-document.querySelector( '.toggle-button' ).addEventListener( 'click', function() {
-    console.log( 'toggle button clicked' );
-    this.classList.toggle( 'active' );
-   
-} );
+document.querySelector('.toggle-button').addEventListener('click', function() {
+    this.classList.toggle('active');
+    // should be changed 
+    var elementsToToggle = document.querySelectorAll('.agnes-current-document, .document-types-label, .form-select.form-select-sm, .citation-types-label, .d-flex.flex-column, #regenerate-button, .d-flex.justify-content-center.ai-loading');
+    if (this.classList.contains('active')) {
+        elementsToToggle.forEach(function(element) {
+            element.style.display = 'none'; // hide elements when 'Suggestions' is selected
+        });
+    } else {
+        elementsToToggle.forEach(function(element) {
+            element.style.display = 'block'; // show elements when 'Articles' is selected
+        });
+    }
+});
 
 if( document.getElementById( "agnesModal" ) ) {
     document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
