@@ -41,24 +41,39 @@
             %>
 
             <div style="display: flex;">
-                  <!--Workspace Title-->
-                  <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0; width: 200%;">
-                      <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+              <!--Workspace Title-->
+              <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0; width: 200%;">
+                  <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+          
+                  <!-- Tags button -->
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#input-modal">
+                      Tags
+                  </button>
+              </div>
+          
+              <!-- Modal -->
+              <div class="modal fade" id="input-modal" tabindex="-1" aria-labelledby="inputModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="inputModalLabel">Tags:</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" class="form-control" id="mySearch">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">Close</button>
+                      <div id="curr-tags"></div>
+                      <div id="new-tag-element" class="tag-list-element">+</div>
+                      <ul class="tag-list"></ul>
+                    
+                    </div>
                   </div>
+                </div>
 
-                  <label class="label">Tags:</label>
-                  <input
-                      type="text"
-                      id="mySearch"
-                      class="placeholder"
-                      placeholder="Start typing..."
-                  />
-                  <div id="curr-tags"></div>
-                  <div id="new-tag-element" class="tag-list-element">+</div>
-            </div>
-
-          <ul class="tag-list"></ul>
-        </div>
+          
+          </div>
         <!--More Options-->
         <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
 
@@ -66,8 +81,12 @@
                 <!-- <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
                     forum
                 </span> -->
+
+                <!-- Button that triggers the modal -->
+                
+
                 <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
-                    share
+                  share
                 </span>
                 <%-include('./discussion-modal'); %>
                 <%-include('./comment-template'); %>
