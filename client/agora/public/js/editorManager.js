@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -15,7 +15,7 @@ import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResource
 
 // Controllers
 import { getPermission } from "./controllers/clientWorkspaceController.js";
-import { getResourceById } from "./controllers/clientResourceController.js";
+import { getResourceById, setResourceType } from "./controllers/clientResourceController.js";
 
 /**
  * DOM manipulation functions for the editor
@@ -682,10 +682,7 @@ function createTextArea( resource, position ) {
 
             
             // create a drop zone for the resource
-            createDropZone( resourceId, position );
-            
-
-
+            createDropZone( resourceId, position, resource.resourceType );
             
 
             // Edit icon
@@ -807,18 +804,19 @@ function getTabLocation( id ) {
     return location;
 }
 
-function createDropZone( resourceId, position ) {
+function createDropZone( resourceId, position, resourceType ) {
 
     // drop zone container
     let dropZoneContainer = document.createElement( "div" );
     dropZoneContainer.className = "drop-zone-container";
     dropZoneContainer.id = "drop-zone-container-" + resourceId;
 
-    // create a toggle for the resource title and meta data
+    // create a toggle for the resource title and meta data and the resource type
     if( resourceId != "drop-zone-end" ) {
         let titleToggle = document.createElement( "span" );
         titleToggle.setAttribute( "class", "resource-toggle" );
         titleToggle.innerHTML = "\u21A7";
+        titleToggle.title = "Show/Hide Resource Meta information / Title";
         titleToggle.setAttribute( "id", "title-toggle-" + resourceId );
         titleToggle.setAttribute( "alt", "Show/Hide Resource Meta information / Title" );
         titleToggle.addEventListener( "click", async () => {
@@ -837,12 +835,26 @@ function createDropZone( resourceId, position ) {
 
         dropZoneContainer.appendChild( titleToggle );
 
+        
+
     }
+
+    // document.querySelector( '.selected-value' ).addEventListener( 'click', function() {
+    //     this.nextElementSibling.style.display = 'block';
+    // } );
+    
+    document.querySelectorAll( '.option' ).forEach( function( item ) {
+        item.addEventListener( 'click', function() {
+            document.querySelector( '.selected-value' ).innerText = this.innerText;
+            this.parentElement.style.display = 'none';
+        } );
+    } );
 
 
     // Create drop zone
-    let newDropZone = document.createElement( "div" );
-    newDropZone.id = resourceId;
+    let newDropZone = document.createElement( "span" );
+    newDropZone.id = "create-resource-" + resourceId;
+    newDropZone.title = "Create Resource Here";
     newDropZone.className = "drop-zone-new";
     // URBG: TODO removed the icon for file upload for now until / if this function in brought back.
     //newDropZone.innerHTML = "+ | <i class=\"fas fa-upload\">";
@@ -866,7 +878,95 @@ function createDropZone( resourceId, position ) {
 
     dropZoneContainer.appendChild( newDropZone );
 
+    // Show an icon for the currently selected resource type that shows a div with the other options when the user hovers over it.
+    if( resourceId != "drop-zone-end" ) {
+        let resourceTypeList = document.createElement( "span" );
+        resourceTypeList.className = "resource-type-container";
+        resourceTypeList.title = "Select Resource Type";
+        resourceTypeList.id = "resource-type-" + resourceId;
+    
+        // Text label for the icon selection
+        let selectionLabel = document.createElement( "p" );
+        resourceTypeList.appendChild( selectionLabel );
+
+        // create the icon for the document type
+        let documentIcon = document.createElement( "i" );
+        documentIcon.className = "fa fa-file-alt fa-sm icon";
+        documentIcon.id = "document-icon-" + resourceId;
+        documentIcon.title = "Type: Document";
+        resourceTypeList.appendChild( documentIcon );
+       
+        
+
+        // creeate the icon for the research type
+        let researchIcon = document.createElement( "i" );
+        researchIcon.className = "fa fa-flask fa-sm icon selected";
+        researchIcon.id = "research-icon-" + resourceId;
+        researchIcon.title = "Type: Research";
+        
+        researchIcon.addEventListener( "click", async () => {
+            console.log( "2" );
+            setResourceType( resourceId, "research" );
+        
+        } );
+        resourceTypeList.appendChild( researchIcon );
+
+        // create the icon for the notes type
+        let notesIcon = document.createElement( "i" );
+        notesIcon.className = "fa fa-sticky-note fa-sm icon";
+        notesIcon.id = "notes-icon-" + resourceId;
+        notesIcon.title = "Type: Notes";
+        resourceTypeList.appendChild( notesIcon );
+        notesIcon.addEventListener( "click", async () => {
+            console.log( "3" );
+            setResourceType( resourceId, "note" );
+        
+        } );
+
+        // create the icon for the collection type
+        let collectionIcon = document.createElement( "i" );
+        collectionIcon.className = "fa fa-boxes fa-sm icon";
+        collectionIcon.id = "collection-icon-" + resourceId;
+        collectionIcon.title = "Type: Collection";
+        resourceTypeList.appendChild( collectionIcon );
+        collectionIcon.addEventListener( "click", async () => {
+            console.log( "4" );
+            setResourceType( resourceId, "collection" );
+        
+        } );
+
+        // add the resource type to the drop zone container
+        dropZoneContainer.appendChild( resourceTypeList );
+
+        resourceTypeList.addEventListener( "click", function( e ) {
+            if ( e.target && e.target.id === "document-icon-" + resourceId ) {
+                console.log( "1" );
+            }
+            if ( e.target && e.target.id === "research-icon-" + resourceId ) {
+                console.log( "2" );
+            }
+            if ( e.target && e.target.id === "notes-icon-" + resourceId ) {
+                console.log( "3" );
+            }
+            if ( e.target && e.target.id === "collection-icon-" + resourceId ) {
+                console.log( "4" );
+            }
+        } );
+        
+    }
+
+
     resourcesZone.appendChild( dropZoneContainer );
+
+    // mark the selected resource type
+    console.log( "resourceType: " + resourceType );
+    if ( resourceType && resourceId ) {
+        document.getElementById( "document-icon-" + resourceId ).classList.remove( "selected" );
+        document.getElementById( "research-icon-" + resourceId ).classList.remove( "selected" );
+        document.getElementById( "notes-icon-" + resourceId ).classList.remove( "selected" );
+        document.getElementById( "collection-icon-" + resourceId ).classList.remove( "selected" );
+        document.getElementById( resourceType + "-icon-" + resourceId ).classList.add( "selected" );
+    }
 }
 
 
@@ -1168,7 +1268,7 @@ const createSunEditor = async( resource ) => {
         charCounterLabel: "Char Count",
         width: "100%",
         height: "auto",
-        minHeight: "40vh",
+        minHeight: "60vh",
         defaultStyle: "font-size:15px;",
         // eslint-disable-next-line no-undef
         katex: katex, 

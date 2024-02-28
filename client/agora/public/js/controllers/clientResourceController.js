@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -18,7 +18,7 @@ import { uuidv4 } from "../util/editorUtil.js";
 function createNewResource() {
     return {
         resourceId: uuidv4(),
-        resourceType: 1,
+        resourceType: 'document',
         resourceName: "",
         resourceDescription: "",
         resourceContentHtml: "",
@@ -59,6 +59,29 @@ async function getResourceById( resourceId ) {
     }
 }
 
+async function setResourceType( resourceId, resourceType ) {
+    ( debug ) ? console.log( "setResourceType() : start" ) : null;
+    try {
+        const response = await fetch( "api/v1/auth/resources/saveType/" + resourceId + "/" + resourceType, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}
+        } );
+
+        if( response.ok ) {
+            const data = await response.json();
+            ( debug && dataDebug ) ? console.log( "setResourceType() resource retrieved : " + JSON.stringify( data ) ) : null;
+            ( debug ) ? console.log( "setResourceType() : resource retrieved" ) : null;
+            return data;
+        }
+    }
+    catch( err ) {
+        //alert( "Error Getting Resource - Connection lost" );
+        //window.location.reload();
+        throw new Error( 'Error Getting Resource - ' + err.message );
+    }
+
+}
+
 async function saveResource( resource ) {
     ( debug ) ? console.log( "saveResource() : start" ) : null;
     try {
@@ -67,7 +90,7 @@ async function saveResource( resource ) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify( {
                 "resourceId":  resource.resourceId,
-                "resourceType": resource.resourceType ? resource.resourceType : 1,
+                "resourceType": resource.resourceType ? resource.resourceType : 'document',
                 "resourceName": resource.resourceName ? resource.resourceName : "Untitled",
                 "resourceDescription": resource.resourceDescription,
                 "resourceContentHtml": resource.resourceContentHtml,
@@ -218,4 +241,4 @@ async function deleteResource( resourceId ) {
    
 // }
 
-export { saveResource, createNewResource, deleteResource, getResourceById };
+export { saveResource, createNewResource, deleteResource, getResourceById, setResourceType };

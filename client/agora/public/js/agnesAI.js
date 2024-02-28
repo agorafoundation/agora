@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -15,6 +15,36 @@ const allCardsContainer = document.querySelector( '.all-cards' );
 const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
 const citationsContainer = document.getElementById( 'citations-cont' );
 
+document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
+    console.log( 'agnes button clicked' );
+    var drawer = document.getElementById( 'drawer' );
+    drawer.classList.toggle( 'open' );
+    var resourcesZone = document.querySelector( '.resources-zone' );
+    // Check the current width and toggle between 70% and 100%
+    if ( resourcesZone.style.width === '65%' ) {
+        resourcesZone.style.width = '95%';
+    }
+    else {
+        resourcesZone.style.width = '65%';
+    }
+    
+} );
+
+document.querySelector( '.toggle-button' ).addEventListener( 'click', function() {
+    this.classList.toggle( 'active' );
+    // should be changed 
+    var elementsToToggle = document.querySelectorAll( '.agnes-current-document, .document-types-label, .form-select.form-select-sm, .citation-types-label, .d-flex.flex-column, #regenerate-button, .d-flex.justify-content-center.ai-loading' );
+    if ( this.classList.contains( 'active' ) ) {
+        elementsToToggle.forEach( function( element ) {
+            element.style.display = 'none'; // hide elements when 'Suggestions' is selected
+        } );
+    }
+    else {
+        elementsToToggle.forEach( function( element ) {
+            element.style.display = 'block'; // show elements when 'Articles' is selected
+        } );
+    }
+} );
 
 if( document.getElementById( "agnesModal" ) ) {
     document.getElementById( "agnesModal" ).addEventListener( "shown.bs.modal", ( e ) => {
@@ -246,6 +276,7 @@ function getFirstNameLastNames( authors ) {
 // Dropdown logic + Fetching data
 if( document.getElementById( 'doc-type' ) ) {
     document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
+        
         await makeAPICall();
         
     } );

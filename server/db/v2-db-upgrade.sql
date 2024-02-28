@@ -59,3 +59,9 @@ alter table workspaces drop column lastmodified;
 alter table topics drop column lastmodified;
 alter table workspaces add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 alter table topics add column modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- #532 Modify resource_type 
+CREATE TYPE resource_types AS ENUM ('document', 'research', 'notes', 'collection');
+ALTER TABLE resources DROP COLUMN resource_type;
+ALTER TABLE resources ADD COLUMN resource_type resource_types NOT NULL DEFAULT 'document';
+

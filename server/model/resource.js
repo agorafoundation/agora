@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require( "uuid" );
 
 function resource() {
     this.resourceId = uuidv4();
-    this.resourceType = 1;
+    this.resourceType = 'document';
     this.resourceName = "";
     this.resourceDescription = "";
     this.resourceContentHtml = "";

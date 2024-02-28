@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -764,20 +764,20 @@ window.addEventListener( 'load', () => {
 /**
  * When toggling resource types set the correct editor in the UI
  */
-function toggleQuillEditor() {
-    if( document.getElementById( 'resourceType' ).value == "3" ) {
-        document.getElementById( 'quillWrapper' ).style.display = 'none';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'block';
-    }
-    else if( document.getElementById( 'resourceType' ).value == "2" ) {
-        document.getElementById( 'quillWrapper' ).style.display = 'none';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
-    }
-    else {
-        document.getElementById( 'quillWrapper' ).style.display = 'block';
-        document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
-    }
-}
+// function toggleQuillEditor() {
+//     if( document.getElementById( 'resourceType' ).value == "3" ) {
+//         document.getElementById( 'quillWrapper' ).style.display = 'none';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'block';
+//     }
+//     else if( document.getElementById( 'resourceType' ).value == "2" ) {
+//         document.getElementById( 'quillWrapper' ).style.display = 'none';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
+//     }
+//     else {
+//         document.getElementById( 'quillWrapper' ).style.display = 'block';
+//         document.getElementById( 'embedded_submission_text_resource' ).style.display = 'none';
+//     }
+// }
 
 
 /**

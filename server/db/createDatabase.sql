@@ -397,9 +397,11 @@ GRANT USAGE, SELECT ON SEQUENCE user_topics_user_topic_id_seq TO agora;
 CREATE INDEX IF NOT EXISTS idx_user_topics_topic_id ON user_topics (topic_id);
 CREATE INDEX IF NOT EXISTS idx_user_topics_user_id ON user_topics (user_id);
 
+CREATE TYPE resource_types AS ENUM ('document', 'research', 'notes', 'collection');
+
 CREATE TABLE IF NOT EXISTS agora.resources (
     resource_id uuid PRIMARY KEY,
-    resource_type INTEGER, -- ?? 1-html, 2-link, 3.. etc
+    resource_type resource_types NOT NULL, -- ?? 1-html, 2-link, 3.. etc
     resource_name VARCHAR,
     resource_description VARCHAR,
     resource_content_html VARCHAR,
