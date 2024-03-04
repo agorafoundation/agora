@@ -66,24 +66,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 18rem;
-  margin-top: 20px; /* Adjust as needed */
+  margin-top: -40px; /* Adjust as needed */
+  margin-left: auto;
 }
 
 .add-button {
-  border-radius: 50%; /* Makes the button circular */
-  width: 50px; /* Adjust size as needed */
+  border-radius: 10px; /* Makes the button circular */
+  width: 100px; /* Adjust size as needed */
   height: 50px; /* Adjust size as needed */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px; /* Adjust icon size as needed */
+  font-size: 20px; /* Adjust icon size as needed */
+
+  background-color: #ffffff; 
+  color: #000000;
 }
 
 /* Optional: Add hover effect */
 .add-button:hover {
-  background-color: #007bff; /* Darker shade of primary color */
-  color: white;
+  background-color: #826131; /* Darker shade of primary color */
+  color: #ffffff;
 }
 
 /* Drop-down option */
