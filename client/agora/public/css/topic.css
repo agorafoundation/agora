@@ -14,30 +14,49 @@
     background-color: white;
 }
 
-.drop-zone-container {
-  width: 100%;
+/* icon dropdown selector */
+.custom-select {
+    width: 200px;
+    position: relative;
 }
 
+.options-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.option {
+    padding: 10px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.option:hover {
+    background-color: #f1f1f1;
+}
+
+.selected-value {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
 #topic-background {
+    position: relative;
     background-color: #f1f1f1;
     padding-bottom: 50px;
 }
 
-.resource-toggle {
-    text-align: center;
-    font-weight: bolder;
-    outline: orange solid 3px;
-    min-width: 6%;
-    padding-left: 2%;
-    padding-right: 2%;
-    font-size: 20px;
-    color: black;
-    cursor: pointer;
-    flex-direction: column;
 
-   
-
-}
 
 .title-container {
   display: none;
@@ -419,7 +438,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%;
+    width: 95%;
     height: auto;
 }
 
@@ -449,14 +468,68 @@
     display: none;
   }
 
-  .drop-zone-new {
-    margin: 0 auto;
+
+
+
+
+
+
+/* .resource-selector {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.resource-selector .options {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 50px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.resource-selector:hover .options {
+    display: block;
+}
+
+.resource-selector i {
+    margin: 5px;
+    font-size: 20px;
+} */
+
+.drop-zone-container {
+    display: flex;
+    width: 100%;
+}
+  
+  
+.resource-toggle {
+      text-align: center;
+      font-weight: bolder;
+      outline: orange solid 3px;
+      min-width: 6%;
+      padding-left: 2%;
+      padding-right: 2%;
+      font-size: 20px;
+      color: black;
+      cursor: pointer;
+      flex-direction: column;
+      max-width: 10%;
+  }
+
+
+
+.drop-zone-new {
+    /* margin: 0 auto; */
+
     float: right;
     height: inherit;
     line-height: inherit;
     text-align: center;
     vertical-align: middle;
-    width: 94%;
+    flex-grow: 1;
     border-radius: 15px;
     text-align: center;
     box-shadow: inset 0 0 0 0 #54b3d6;
@@ -470,9 +543,9 @@
 .drop-zone-new:hover {
     box-shadow: inset 200vh 0 0 0 #64cc5b;
     color: white;
-  }
+}
     
-  .drop-zone--over {
+.drop-zone--over {
     padding-bottom: 20px;
     border-radius: 20px;
     border: 2px solid #2c3e50;
@@ -517,6 +590,33 @@
     background: rgba(0, 0, 0, 0.75);
     font-size: large;
     text-align: center;
+}
+
+
+.resource-type-container {
+    float: right;   
+    border: 1px solid #ccc;
+    width:120px;
+    height: 30px;
+}
+
+.icon {
+    position:relative;
+    top:-10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.icon:hover {
+    color: blue; /* Example hover effect */
+    transform: scale(1.2); /* Slightly enlarge on hover */
+}
+
+.selected {
+    color: green;
+    transform: scale(1.4);
+    
 }
 /* End drag and drop -------------------------------------*/
 
@@ -872,6 +972,121 @@
 }
 
 /* Syles for Agnes    */
+
+.drawer-container {
+    position: fixed;
+    right: 0;
+    height: 100%;
+    background-color: #1f1f1f;
+    width: 50px; /* Initial width */
+    border-left: 1px solid #dee2e6;
+    z-index: 10;
+    overflow: hidden;
+    transition: width 0.5s; /* Animation for width change */
+}
+
+.drawer-header {
+    position: relative;
+    height: 10%; /* Initial height */
+    cursor: pointer;
+    transition: height 0.5s; /* Animation for height change */
+    color: #1f1f1f;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 20px; /* Adjust as needed */
+}
+
+.drawer-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 160%; /* Full width of the parent */
+    height: 160%; /* Full height of the parent */
+    background: radial-gradient(circle, rgba(255, 165, 0, 0.5) 10%, transparent 70%);
+    /* Radial gradient with fading edges */
+    border-radius: 50%; /* Make it circular */
+    transform: translate(-50%, -50%) scale(0); /* Center and scale down */
+    transition: transform 0.3s ease-in-out;
+    z-index: -1; /* Place it behind the content */
+}
+
+.drawer-header:hover::after {
+    transform: translate(-50%, -50%) scale(1); /* Scale up on hover */
+}
+
+.drawer-container.open {
+    width: 30%; /* Width when open */
+}
+
+.drawer-content {
+    padding: 20px;
+}
+
+.editor-container {
+    padding-bottom: 50px; /* Adjust as needed to prevent drawer overlap */
+}
+
+
+.toggle-button {
+    width: 100%;
+    height: 30px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 50px;
+    transition: background-color .4s;
+    position: relative;
+    overflow: hidden;
+}
+
+.toggle-button-text {
+    /* ... other styles ... */
+    color: #fff; /* Default color when not selected */
+}
+
+.toggle-button.active .toggle-button-text.articles {
+    color: #000; /* Color when 'Articles' is selected */
+}
+
+.toggle-button:not(.active) .toggle-button-text.suggestions {
+    color: #000; /* Color when 'Suggestions' is not selected */
+}
+
+.toggle-button-slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    background-color: white;
+    border-radius: 50px;
+    transition: transform .4s;
+    background-color: #F49A46;
+}
+
+.toggle-button.active .toggle-button-slider {
+    transform: translateX(100%);
+}
+
+.toggle-button-text {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+}
+
+.toggle-button-text.articles {
+    left: 0;
+}
+
+.toggle-button-text.suggestions {
+    right: 0;
+}
+/* agnes original */
 .agnes-button {
     position: fixed;
     right: 20px;
@@ -935,6 +1150,7 @@
 
 .agnes-modal-pos {
     right: 0vw;
+    width:100%;
     display: none;
     position: fixed;
     z-index: 200; 
@@ -1013,7 +1229,7 @@
 
 .all-cards {
     overflow-y: scroll;
-    max-height: 240px;
+    max-height: 35vh;
 }
 
 .card-row-header {
@@ -1086,4 +1302,13 @@
 
 .ai-loading {
     margin: 5px;
+    color: #ffffff;
+}
+
+.drawer-container .drawer-content {
+    display: none; /* Hide the drawer-content when the drawer is closed */
+}
+
+.drawer-container.open .drawer-content {
+    display: block; /* Show the drawer-content when the drawer is open */
 }

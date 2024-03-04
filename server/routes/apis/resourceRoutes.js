@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -58,9 +58,16 @@ router.route( '/:resourceId' )
 
 
  
-router.route( '/resource/completed' )
+router.route( '/completed' )
     .post( async ( req, res ) => {
         resourceController.saveCompletedResource( req, res );
+    }
+    );
+
+// save the resource type /api/v1/auth/resources/saveType/:resourceId/:resourceType
+router.route( '/saveType/:resourceId/:resourceType' )
+    .post( async ( req, res ) => {
+        resourceController.saveResourceType( req, res );
     }
     );
  

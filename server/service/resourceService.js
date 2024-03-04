@@ -1,6 +1,6 @@
 /**
  * Agora - Close the loop
- * © 2021-2023 Brian Gormanly
+ * © 2021-2024 Brian Gormanly
  * BSD 3-Clause License
  * see included LICENSE or https://opensource.org/licenses/BSD-3-Clause 
  */
@@ -288,6 +288,18 @@ exports.updateResourceImage = async ( resourceId, filename ) => {
         // invalid db response!
         return false;
     }
+};
+
+exports.saveResourceType = async ( resourceId, resourceType ) => {
+
+    // get the resource (required to exist)
+    let resource = await exports.getResourceById( resourceId );
+
+    // set the resource type
+    resource.resourceType = resourceType;
+
+    // save the resource
+    return await exports.saveResource( resource );
 };
 
 

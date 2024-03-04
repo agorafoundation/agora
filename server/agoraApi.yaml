@@ -1074,6 +1074,43 @@ paths:
           $ref: "#/components/responses/ForbiddenError"
         "404":
           $ref: "#/components/responses/NotFoundError"
+  # /resources/saveType/:resourceId/:resourceType:
+  #   post:
+  #     tags:
+  #       - Resources
+  #     summary: "Update a resource type by the resource ID"
+  #     parameters:
+  #       - in: path
+  #         name: id
+  #         schema:
+  #           type: integer
+  #         description: id of the workspace
+
+  #     responses:
+  #       "200":
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               $ref: "#/components/schemas/Discussions"
+  #         headers:
+  #           x-agora-message-title:
+  #             schema:
+  #               type: string
+  #             description: Title of Agora API message
+  #           x-agora-message-message:
+  #             schema:
+  #               type: string
+  #             description: Message of Agora API message
+  #       "400":
+  #         $ref: "#/components/responses/BadRequest"
+  #       "401":
+  #         $ref: "#/components/responses/UnauthorizedError"
+  #       "403":
+  #         $ref: "#/components/responses/ForbiddenError"
+  #       "404":
+  #         $ref: "#/components/responses/NotFoundError"
   /discussions/workspace/{id}:
     get:
       tags:
@@ -2776,7 +2813,7 @@ components:
           description: Assigned automatically for new resources, used to update existing resource if provided
           uniqueItems: true
         resourceType:
-          type: string
+          type: ENUM
           description: The type
         resourceName:
           type: string
@@ -2812,7 +2849,7 @@ components:
           description: Id of the user that first generated the tag
       example:
         id: 1
-        resourceType: 1
+        resourceType: 'document'
         resourceName: "Dashboard Screenshot"
         resourceDescription: "The included screenshot shows the prototype Agora Dashboard"
         resourceContentHtml: '<div><img src="myImage.png" width="500" height="500"></div>'
