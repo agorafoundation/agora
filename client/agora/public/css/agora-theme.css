@@ -2145,12 +2145,12 @@ input:checked+.slider:after {
     padding-left: 25%;
 }
 
-
-. {
+/* 
+.{
     transition: margin-left .5s;
 }
 
-/* .friends-content {
+.friends-content {
     transition: margin-left .5s;
 } */
 
