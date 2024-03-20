@@ -27,7 +27,7 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     }
     else {
         resourcesZone.style.width = '65%';
-        document.getElementById( 'black-bar ').style.width = '30%'; // For continuity with the drawer - otherwise there's a big white gap
+        document.getElementById( 'black-bar' ).style.width = '30%'; // For continuity with the drawer - otherwise there's a big white gap
     }
     
 } );
