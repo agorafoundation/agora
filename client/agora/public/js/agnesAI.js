@@ -23,9 +23,11 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     // Check the current width and toggle between 70% and 100%
     if ( resourcesZone.style.width === '65%' ) {
         resourcesZone.style.width = '95%';
+        document.getElementById("black-bar").style.width = '50px'; // For continuity with the drawer - otherwise there's a big white gap
     }
     else {
         resourcesZone.style.width = '65%';
+        document.getElementById("black-bar").style.width = '30%'; // For continuity with the drawer - otherwise there's a big white gap
     }
     
 } );
