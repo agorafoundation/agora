@@ -58,7 +58,7 @@ const updateWorkspaceDom = function ( ) {
     ( debug ) ? console.log( "updateWorkspaceDom() : start" ) : null;
     ( debug && dataDebug ) ? console.log( "using workspace: " + JSON.stringify( getCurrentWorkspace() ) ) : null;
     document.getElementById( "workspace-title" ).value = getCurrentWorkspace().workspaceName;
-    document.getElementById( "workspace-desc" ).value = getCurrentWorkspace().workspaceDescription;
+    //document.getElementById( "workspace-desc" ).value = getCurrentWorkspace().workspaceDescription;
     ( debug ) ? console.log( "updateWorkspaceDom() : complete" ) : null;
 };
 
@@ -643,9 +643,6 @@ function createTextArea( resource, position ) {
         if( resource ) {
 
             
-
-            
-
             // title container
             let titleContainer = document.createElement( "div" );
             titleContainer.className = "title-container";
@@ -663,7 +660,6 @@ function createTextArea( resource, position ) {
             else{
                 title.value = "Untitled";
             }
-
             
             // add the change listener for the title
             title.addEventListener( "change", async () => {

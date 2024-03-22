@@ -11,10 +11,10 @@
         <!-- <input type="file" name="resourceImageField" class="drop-zone__input" /> -->
         
     <div class="topic-body">
-        
+  
 
       <!--Side Nav-->
-      <%- include('../../side-menu/side-menu');%> 
+      <%- include('../../side-menu/editor-side-menu');%> 
       
       <!--Workspace Manager Modal-->
       <%- include('./workspace-manager-modal');%>
@@ -39,42 +39,58 @@
       }
       %>
 
-      <!--Workspace Title-->
-      <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0;">
-        <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
-      </div>
-      <div class="header-div" style="height: 8vh; background-color: #17191a; border-bottom: solid;border-color: #818181;">
+            <div style="display: flex;">
+              <!--Workspace Title-->
+              <div class="header" id="title-div" style="background-color: #17191a; margin-bottom:0; width: 200%;">
+                  <input class="placeholder" id="workspace-title" type="text" placeholder="Untitled">
+          
+                  <!-- Tags button -->
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#input-modal">
+                      Tags
+                  </button>
+              </div>
+          
+              <!-- Modal -->
+              <div class="modal fade" id="input-modal" tabindex="-1" aria-labelledby="inputModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="inputModalLabel">Tags:</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" class="form-control" id="mySearch">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">Close</button>
+                      <div id="curr-tags"></div>
+                      <div id="new-tag-element" class="tag-list-element">+</div>
+                      <ul class="tag-list"></ul>
+                    
+                    </div>
+                  </div>
+                </div>
 
-        <!--Workspace Description-->
-        <div class="header" id="tag-div">
-          <label class="label">Description:</label>
-          <!--<textarea class="descriptionTA" id="workspace-desc" ></textarea>-->
-          <input type="text" id="workspace-desc" class="placeholder" placeholder=" Add description...">
+          
+          </div>
+        <!--More Options-->
+        <!-- <i id="ellipsis" class="fa fa-ellipsis-h" onclick="toggleMoreOptions()"></i> -->
 
-          <label class="label">Tags:</label>
-          <input
-            type="text"
-            id="mySearch"
-            class="placeholder"
-            placeholder="Start typing..."
-          />
-          <div id="curr-tags"></div>
-          <div id="new-tag-element" class="tag-list-element">+</div>
+                <!--Discussions-->
+                <!-- <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
+                    forum
+                </span> -->
 
-          <ul class="tag-list"></ul>
-        </div>
+                <!-- Button that triggers the modal -->
+                
 
-        <!--Discussions-->
-        <!-- <span class="material-symbols-outlined discussion-button" title="Discussons" data-bs-toggle="modal" data-bs-target="#discussion-modal"  style="color:rgb(255, 255, 255)">
-            forum
-        </span> -->
-        <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
-            share
-        </span>
-        <%-include('./discussion-modal'); %>
-        <%-include('./comment-template'); %>
-        <%-include('./share-modal'); %>
-
+                <span class="material-symbols-outlined share-button" title="Sharing" data-bs-toggle="modal" data-bs-target="#share-modal"  style="color:rgb(255, 255, 255)">
+                  share
+                </span>
+                <%-include('./discussion-modal'); %>
+                <%-include('./comment-template'); %>
+                <%-include('./share-modal'); %>
+        
         <!-- AI - Agnes with Modal Trigger -->
         <% if( process.env.OPENAI_TOGGLE === 'true' ) { %>
           <!--
@@ -92,6 +108,7 @@
         <%- // include('./agnes-modal'); %>
         
       </div>
+      <div id="black-bar"></div>
 
       <div id="topic-background" style="background-color:#17191a">
         <!-- Tabs -->
@@ -124,7 +141,7 @@
         <div id="drawer" class="drawer-container">
           <!-- Content for suggestions -->
           <div id="drawer-header" class="drawer-header">
-            <img src="/assets/img/buttons/Agnes.png" width="40" height="31">
+            <img src="/assets/img/buttons/Agnes.png" width="40">
           </div>
           <div id="drawer-content" class="drawer-content">
             <!-- Suggestions go here -->

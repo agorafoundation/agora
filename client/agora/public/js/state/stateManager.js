@@ -44,9 +44,9 @@ const initializeWorkspace = async ( workspaceUuid ) => {
         workspaceSharedUsers = await getAllSharedUsersForWorkspace( workspaceUuid );
 
         // get tags associated with the workspace
-        workspace.tags = [];
+        /* workspace.tags = [];
         const tags = await getTags( "workspace", workspaceUuid );
-        ( tags ) ? workspace.tags = tags: [];
+        ( tags ) ? workspace.tags = tags: []; */
 
         const workspaceTitle = document.getElementById( "workspace-title" );
         const workspaceDescription = document.getElementById( "workspace-desc" );
@@ -56,6 +56,10 @@ const initializeWorkspace = async ( workspaceUuid ) => {
             workspaceDescription.readOnly = true;
             tagBox.readOnly = true;
         }
+
+        // Fix for the sidebar until we can find how to make it relative
+        // I'm convinced there's some absolute positioning somewhere causing this
+        document.querySelector( ".dashboard-content" ).style.marginLeft = "85px";
     }
     else {
         console.log( "workspace already initialized" );
@@ -141,8 +145,8 @@ const addNewTopic = async function ( topicName ) {
         newTopic.topicName = topicName;
 
         // make sure the worspace fields are up to date
-        getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
-        getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
+        //getCurrentWorkspace().name = document.getElementById( "workspace-title" ).value;
+        //getCurrentWorkspace().description = document.getElementById( "workspace-desc" ).value;
 
         // save the topic
         newTopic = await saveTopic( newTopic, null );
@@ -239,7 +243,7 @@ function saveTextResource( resource, content ) {
     ( debug ) ? console.log( "textEditorUpdate() : Start" ) : null;
     if ( resource ) {
         // update the resource title
-        resource.resourceName = document.getElementById( "input-title-" + resource.resourceId ).value;
+        // resource.resourceName = document.getElementById( "input-title-" + resource.resourceId ).value;
 
         // update the resource content
         if( content != null ) {
