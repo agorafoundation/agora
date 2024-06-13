@@ -87,7 +87,7 @@ exports.callOpenAI = async ( req, res ) => {
                     //console.log( "prompt: " + prompt );
 
                     const completion = await openai.createChatCompletion( {
-                        model: "gpt-4-1106-preview",
+                        model: "gpt-4o",
                         temperature: 0, // variance in the response - play with this for different results
                         response_format: { "type": "json_object" },
                         max_tokens: 2000,
