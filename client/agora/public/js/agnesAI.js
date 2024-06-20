@@ -279,6 +279,7 @@ function getFirstNameLastNames( authors ) {
 
 // Dynamic listening
 async function dynamicListening() {
+    console.log("in dynamicListening")
     let intervalActive;
     let isFetching = false;  // checks for concurrent API calls
     if ( getCurrentActiveTopic() && getCurrentActiveTopic.resources ) {
