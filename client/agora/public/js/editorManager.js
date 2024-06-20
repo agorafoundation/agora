@@ -353,7 +353,7 @@ const createTopicEditorGui = async function ( ) {
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].setContents( currentResource.resourceContentHtml );
                     }       
-                    
+
                     document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
                         lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
                         let resourceName = currentResource.resourceName;
@@ -554,6 +554,7 @@ const createTopicEditorGui = async function ( ) {
 
     
 };
+
 
 /**
  * Makes the tab (topic) name editable by replacing the text with an input field

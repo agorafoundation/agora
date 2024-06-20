@@ -81,12 +81,14 @@ if( citationsDropdown ) {
     } );
 }
 
+/*
 if( document.getElementById( "regenerate-button" ) ) {
     document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
         allCardsContainer.innerHTML = ""; // Clear the current cards.
         await makeAPICall();
     } );
 }
+*/
 
 // Copy Button Logic
 function enableCiteButtons() {
@@ -275,16 +277,49 @@ function getFirstNameLastNames( authors ) {
 
 }
 
+// Dynamic listening
+async function dynamicListening() {
+    let intervalActive;
+    let isFetching = false;  // checks for concurrent API calls
+    if ( getCurrentActiveTopic() && getCurrentActiveTopic.resources ) {
+        console.log("getCurrentActiveTopic & resources active")
+        for ( let i=0; i < getCurrentActiveTopic.resources.length; i++ ) {
+
+            let currentResource = getCurrentActiveTopic().resources[i];
+            let editor = "sunEditor-" + ( currentResource.resourceId );
+            if( document.getElementById( "suneditor_" + editor ) ) {
+                console.log("suneditor_" + editor + " inside if block")
+                // Listen for typing
+                document.getElementById( "suneditor_" + editor ).addEventListener( 'input', async function () {
+                    console.log("event listener added")
+                    if ( !intervalActive ) {
+
+                        intervalActive = setInterval(async function() {
+                            console.log("inside interval")
+                            if ( !isFetching ) {
+
+                                ifFetching = true;
+
+                                allCardsContainer.innerHTML = ""; // Clear the current cards
+                                await makeAPICall();
+                                console.log("makeAPICall() called")
+                                ifFetching = false;
+
+                            } // if
+
+                        }, 10000)
+
+                    } // if
+                });
+            } // if
+        } // for 
+    } // if
+
+} // dynamicListening()
+
+export { dynamicListening }
+
 // Dropdown logic + Fetching data
-if( document.getElementById( 'doc-type' ) ) {
-    document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
-        
-        await makeAPICall();
-        
-    } );
-}
-
-
 async function makeAPICall() {
     loadingSpinnerContainer.hidden = false;
     citationsContainer.hidden = true;
@@ -301,7 +336,7 @@ async function makeAPICall() {
         resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
         removedArticles: JSON.parse( localStorage.getItem( 'removed' ) ) ?? []
     };
-
+    
     try {
         // Make the fetch call to the "aiController.js" API
         const response = await fetch( 'api/v1/auth/ai/suggest', {
