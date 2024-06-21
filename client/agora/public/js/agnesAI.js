@@ -277,49 +277,6 @@ function getFirstNameLastNames( authors ) {
 
 }
 
-// Dynamic listening
-async function dynamicListening() {
-    console.log("in dynamicListening")
-    let intervalActive;
-    let isFetching = false;  // checks for concurrent API calls
-    if ( getCurrentActiveTopic() && getCurrentActiveTopic.resources ) {
-        console.log("getCurrentActiveTopic & resources active")
-        for ( let i=0; i < getCurrentActiveTopic.resources.length; i++ ) {
-
-            let currentResource = getCurrentActiveTopic().resources[i];
-            let editor = "sunEditor-" + ( currentResource.resourceId );
-            if( document.getElementById( "suneditor_" + editor ) ) {
-                console.log("suneditor_" + editor + " inside if block")
-                // Listen for typing
-                document.getElementById( "suneditor_" + editor ).addEventListener( 'input', async function () {
-                    console.log("event listener added")
-                    if ( !intervalActive ) {
-
-                        intervalActive = setInterval(async function() {
-                            console.log("inside interval")
-                            if ( !isFetching ) {
-
-                                ifFetching = true;
-
-                                allCardsContainer.innerHTML = ""; // Clear the current cards
-                                await makeAPICall();
-                                console.log("makeAPICall() called")
-                                ifFetching = false;
-
-                            } // if
-
-                        }, 10000)
-
-                    } // if
-                });
-            } // if
-        } // for 
-    } // if
-
-} // dynamicListening()
-
-export { dynamicListening }
-
 // Dropdown logic + Fetching data
 async function makeAPICall() {
     loadingSpinnerContainer.hidden = false;
@@ -426,6 +383,8 @@ async function makeAPICall() {
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
 }
+
+export { makeAPICall }
 
 // Preparing Articles for formatting
 function processJsonData( articlesObj ) {

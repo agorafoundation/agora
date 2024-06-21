@@ -24,8 +24,6 @@ import { deleteResource } from "./controllers/clientResourceController.js";
 import { updateWorkspaceDom, createTopicEditorGui, editTopicName, addTagToWorkspace } from "./editorManager.js";
 import { saveWorkspace, getPermission } from "./controllers/clientWorkspaceController.js";
 
-// Get function for dynamic listening
-import { dynamicListening } from "./agnesAI.js";
 
 
 /**
@@ -66,12 +64,6 @@ window.addEventListener( "load", async () => {
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
         createTopicEditorGui();
     }
-
-    // Add dynamic listening to created editors
-    console.log("Before dynamicListening()")
-    await dynamicListening();
-    console.log("After dynamicListening()")
-
 
     // add the event listener for adding a new topic
     // addTopicEvent();
