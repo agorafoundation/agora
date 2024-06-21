@@ -371,7 +371,7 @@ const createTopicEditorGui = async function ( ) {
                     let intervalActive;
                     let isFetching = false;  // checks for concurrent API calls
                     const allCardsContainer = document.querySelector( '.all-cards' );
-                    document.getElementById( "suneditor_" + editor ).addEventListener( 'input', async function () {
+                    document.getElementById( "suneditor_" + editor ).addEventListener( 'focusin', async function () {
                         console.log("event listener added")
                         if ( !intervalActive ) {
         
