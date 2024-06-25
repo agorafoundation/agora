@@ -16,6 +16,7 @@ const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContaine
 const citationsContainer = document.getElementById( 'citations-cont' );
 const headerImage = document.getElementById('drawer-header');
 
+// Notification visibility
 let modalState = false;
 
 document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
@@ -25,14 +26,15 @@ document.getElementById( 'drawer-header' ).addEventListener( 'click', function()
     var drawer = document.getElementById( 'drawer' );
     drawer.classList.toggle( 'open' );
     modalState = drawer.classList.contains('open');  // checks if it is open or not
-    console.log("event listener modal state:" + modalState);
     if ( modalState ) {
-
+        
+        // Hide notification if present
         if (headerImage) {
-            headerImage.src = '/assets/img/buttons/Agnes.png'; 
+            headerImage.classList.remove('show-notification');
         } // if
 
     } // if
+
     // Check the current width and toggle between 70% and 100%
     var resourcesZone = document.querySelector( '.resources-zone' );
     if ( resourcesZone.style.width === '65%' ) {
@@ -291,6 +293,23 @@ function getFirstNameLastNames( authors ) {
 
 }
 
+/**
+ * Helper function to be used inside makeAPICall() to notify user that
+ * there are changes inside the Agnes modal if it is closed
+ */
+function notifyUser() {
+
+    // Give notification if modal is closed
+    if (!modalState) {
+        if (headerImage) {
+
+            headerImage.classList.add('show-notification');
+        
+        } // if
+    } // if
+
+} // notifyUser
+
 // Dropdown logic + Fetching data
 async function makeAPICall() {
     loadingSpinnerContainer.hidden = false;
@@ -397,16 +416,10 @@ async function makeAPICall() {
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
 
-    // Give notification if modal is closed
-    console.log(modalState);
-    if (!modalState) {
-        console.log("headerImage: " + headerImage)
-        if (headerImage) {
-            headerImage.src = '/assets/img/buttons/folder.png'; 
-        } // if
+    // Notify the user of changes
+    notifyUser();
 
-    } // if
-}
+} // makeAPICall
 
 export { makeAPICall }
 
