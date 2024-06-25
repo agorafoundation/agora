@@ -81,14 +81,14 @@ if( citationsDropdown ) {
     } );
 }
 
-/*
+
 if( document.getElementById( "regenerate-button" ) ) {
     document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
         allCardsContainer.innerHTML = ""; // Clear the current cards.
         await makeAPICall();
     } );
 }
-*/
+
 
 // Copy Button Logic
 function enableCiteButtons() {

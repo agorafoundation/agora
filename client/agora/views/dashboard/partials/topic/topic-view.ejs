@@ -141,8 +141,21 @@
         <div id="drawer" class="drawer-container">
           <!-- Content for suggestions -->
           <div id="drawer-header" class="drawer-header">
-            <img src="/assets/img/buttons/Agnes.png" width="40">
+            <div class="image-container">
+              <img src="/assets/img/buttons/Agnes.png" width="40" id="agnesImage">
+            </div>
           </div>
+          
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              const drawerHeader = document.getElementById('drawer-header');
+              const agnesImage = document.getElementById('agnesImage');
+          
+              agnesImage.addEventListener('click', function() {
+                drawerHeader.classList.toggle('hide-notification');
+              });
+            });
+          </script>
           <div id="drawer-content" class="drawer-content">
             <!-- Suggestions go here -->
             <div class="toggle-button">
@@ -160,8 +173,8 @@
         >Document Type</label
       >        <!-- dropdown for doc type -->
         <select class="form-select form-select-sm" id="doc-type">
-          <option value="default" selected disabled hidden>Document Type</option>
-          <option value="notes">Notes</option>
+          <option value="notes" selected>Notes</option>
+          
           <option value="paper">Paper</option>
         </select>
        
