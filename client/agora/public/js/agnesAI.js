@@ -14,13 +14,27 @@ const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
 const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
 const citationsContainer = document.getElementById( 'citations-cont' );
+const headerImage = document.getElementById('drawer-header');
+
+let modalState = false;
 
 document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
     console.log( 'agnes button clicked' );
+
+    // Check modal state
     var drawer = document.getElementById( 'drawer' );
     drawer.classList.toggle( 'open' );
-    var resourcesZone = document.querySelector( '.resources-zone' );
+    modalState = drawer.classList.contains('open');  // checks if it is open or not
+    console.log("event listener modal state:" + modalState);
+    if ( modalState ) {
+
+        if (headerImage) {
+            headerImage.src = '/assets/img/buttons/Agnes.png'; 
+        } // if
+
+    } // if
     // Check the current width and toggle between 70% and 100%
+    var resourcesZone = document.querySelector( '.resources-zone' );
     if ( resourcesZone.style.width === '65%' ) {
         resourcesZone.style.width = '95%';
         document.getElementById( 'black-bar' ).style.width = '50px'; // For continuity with the drawer - otherwise there's a big white gap
@@ -81,14 +95,14 @@ if( citationsDropdown ) {
     } );
 }
 
-/*
+
 if( document.getElementById( "regenerate-button" ) ) {
     document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
         allCardsContainer.innerHTML = ""; // Clear the current cards.
         await makeAPICall();
     } );
 }
-*/
+
 
 // Copy Button Logic
 function enableCiteButtons() {
@@ -382,6 +396,16 @@ async function makeAPICall() {
         citationsContainer.hidden = false;
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
+
+    // Give notification if modal is closed
+    console.log(modalState);
+    if (!modalState) {
+        console.log("headerImage: " + headerImage)
+        if (headerImage) {
+            headerImage.src = '/assets/img/buttons/folder.png'; 
+        } // if
+
+    } // if
 }
 
 export { makeAPICall }
