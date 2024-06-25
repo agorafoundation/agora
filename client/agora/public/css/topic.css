@@ -995,6 +995,7 @@
     transition: width 0.5s; /* Animation for width change */
 }
 
+
 .drawer-header {
     position: relative;
     height: 10%; /* Initial height */
@@ -1025,6 +1026,33 @@
 .drawer-header:hover::after {
     transform: translate(-50%, -50%) scale(1); /* Scale up on hover */
 }
+
+.drawer-header::before {
+    content: '!';
+    position: absolute;
+    top: 15px; /* Adjust the position as needed */
+    right: 4px; /* Adjust the position as needed */
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 14px; 
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px; 
+    height: 20px; 
+    z-index: 1; 
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.drawer-header.hide-notification::before {
+    opacity: 0;
+}
+
+
 
 .drawer-container.open {
     width: 30%; /* Width when open */
