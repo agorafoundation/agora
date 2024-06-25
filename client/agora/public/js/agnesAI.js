@@ -304,6 +304,12 @@ function notifyUser() {
         if (headerImage) {
 
             headerImage.classList.add('show-notification');
+            headerImage.classList.add('vibrate');
+
+            // Remove vibration after a second
+            setTimeout(() => {
+                headerImage.classList.remove('vibrate');
+            }, 1000);
         
         } // if
     } // if

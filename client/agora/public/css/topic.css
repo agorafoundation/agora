@@ -1027,7 +1027,14 @@
     transform: translate(-50%, -50%) scale(1); /* Scale up on hover */
 }
 
-
+/* For notification syling */
+@keyframes vibrate {
+    0% { transform: translate(0); }
+    25% { transform: translate(-2px, 2px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, -2px); }
+    100% { transform: translate(2px, 2px); }
+}
 .drawer-header::before {
     content: '!';
     position: absolute;
@@ -1048,9 +1055,11 @@
     opacity: 0;
     transition: opacity 1s ease-out;
 }
-
 .drawer-header.show-notification::before {
     opacity: 1;
+}
+.drawer-header.vibrate::before {
+    animation: vibrate 0.3s linear infinite;
 }
 
 .drawer-container.open {
