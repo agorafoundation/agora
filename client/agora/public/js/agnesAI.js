@@ -14,13 +14,29 @@ const citationsDropdown = document.getElementById( 'citations-dropdown' );
 const allCardsContainer = document.querySelector( '.all-cards' );
 const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
 const citationsContainer = document.getElementById( 'citations-cont' );
+const headerImage = document.getElementById('drawer-header');
+
+// Notification visibility
+let modalState = false;
 
 document.getElementById( 'drawer-header' ).addEventListener( 'click', function() {
     console.log( 'agnes button clicked' );
+
+    // Check modal state
     var drawer = document.getElementById( 'drawer' );
     drawer.classList.toggle( 'open' );
-    var resourcesZone = document.querySelector( '.resources-zone' );
+    modalState = drawer.classList.contains('open');  // checks if it is open or not
+    if ( modalState ) {
+        
+        // Hide notification if present
+        if (headerImage) {
+            headerImage.classList.remove('show-notification');
+        } // if
+
+    } // if
+
     // Check the current width and toggle between 70% and 100%
+    var resourcesZone = document.querySelector( '.resources-zone' );
     if ( resourcesZone.style.width === '65%' ) {
         resourcesZone.style.width = '95%';
         document.getElementById( 'black-bar' ).style.width = '50px'; // For continuity with the drawer - otherwise there's a big white gap
@@ -81,12 +97,14 @@ if( citationsDropdown ) {
     } );
 }
 
+
 if( document.getElementById( "regenerate-button" ) ) {
     document.getElementById( "regenerate-button" ).addEventListener( "click", async function () {
         allCardsContainer.innerHTML = ""; // Clear the current cards.
         await makeAPICall();
     } );
 }
+
 
 // Copy Button Logic
 function enableCiteButtons() {
@@ -275,16 +293,30 @@ function getFirstNameLastNames( authors ) {
 
 }
 
+/**
+ * Helper function to be used inside makeAPICall() to notify user that
+ * there are changes inside the Agnes modal if it is closed
+ */
+function notifyUser() {
+
+    // Give notification if modal is closed
+    if (!modalState) {
+        if (headerImage) {
+
+            headerImage.classList.add('show-notification');
+            headerImage.classList.add('vibrate');
+
+            // Remove vibration after a second
+            setTimeout(() => {
+                headerImage.classList.remove('vibrate');
+            }, 1000);
+        
+        } // if
+    } // if
+
+} // notifyUser
+
 // Dropdown logic + Fetching data
-if( document.getElementById( 'doc-type' ) ) {
-    document.getElementById( 'doc-type' ).addEventListener( 'change', async function () {
-        
-        await makeAPICall();
-        
-    } );
-}
-
-
 async function makeAPICall() {
     loadingSpinnerContainer.hidden = false;
     citationsContainer.hidden = true;
@@ -301,7 +333,7 @@ async function makeAPICall() {
         resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
         removedArticles: JSON.parse( localStorage.getItem( 'removed' ) ) ?? []
     };
-
+    
     try {
         // Make the fetch call to the "aiController.js" API
         const response = await fetch( 'api/v1/auth/ai/suggest', {
@@ -389,7 +421,13 @@ async function makeAPICall() {
         citationsContainer.hidden = false;
         console.error( 'Fetch request failed: - Network or other errors', error );
     }
-}
+
+    // Notify the user of changes
+    notifyUser();
+
+} // makeAPICall
+
+export { makeAPICall }
 
 // Preparing Articles for formatting
 function processJsonData( articlesObj ) {

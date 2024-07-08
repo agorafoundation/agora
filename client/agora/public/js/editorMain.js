@@ -60,7 +60,7 @@ window.addEventListener( "load", async () => {
     //update the workspace information in the GUI
     updateWorkspaceDom();
     
-    // render the topics for the workspace
+    // render the topics for the workspace 
     if( getCurrentWorkspace().topics && getCurrentWorkspace().topics.length > 0 ) {
         createTopicEditorGui();
     }
