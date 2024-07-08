@@ -19,6 +19,7 @@ import { getResourceById, setResourceType } from "./controllers/clientResourceCo
 
 // AI API Call
 import { makeAPICall } from "./agnesAI.js"
+import { getDecisionEngine } from "./decisionEngine.js";
 
 /**
  * DOM manipulation functions for the editor
@@ -381,14 +382,14 @@ const createTopicEditorGui = async function ( ) {
                                     isFetching = true;
         
                                     allCardsContainer.innerHTML = ""; // Clear the current cards
-                                    await makeAPICall();
-                                    console.log("makeAPICall() called")
+                                    await getDecisionEngine(currentResource);
+                                    console.log("getDecisionEngine() called")
 
                                     isFetching = false;
         
                                 } // if
         
-                            }, 120000) // every 2 minutes
+                            }, 10000) // every 2 minutes
         
                         } // if
                     });
