@@ -1163,10 +1163,9 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin: 20px;
-    width: calc(100% - 30px); /* Adjust as necessary */
-    opacity: 1;
-    transition: opacity 0.5s ease;
+    margin: 0px;
+    width: flex;
+    
 }
 
 

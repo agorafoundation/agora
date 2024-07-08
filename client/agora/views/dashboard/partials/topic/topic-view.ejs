@@ -228,12 +228,24 @@
             >
           </button>
 
+          <br>
+          <!-- This is the card where we will put the analysis for the tone, card will need to be changed -->
+          <div id="tone-card" class="hidden">
+            <h2>Card Title</h2>
+            <p>This is a simple card where you can put your content.</p>
+          </div>
+          <script>
+            // FOR THE FUTURE WILL ADD WHEN TONE ANALYSIS WORKS
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    const toneCard = document.getElementById('tone-card');
+                    toneCard.classList.remove('hidden'); // Remove the 'hidden' class to show the card
+                }, 4000); // 4000 milliseconds = 4 seconds
+            });
+        </script>
+
         </div>
-        <!-- This is the card where we will put the analysis fo rthe tone, card will need to be changed -->
-        <div id="tone-card" tabindex="0">
-          <h2>Card Title</h2>
-          <p>This is a simple card where you can put your content.</p>
-      </div>
+       
         
       
     
