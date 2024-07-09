@@ -38,7 +38,8 @@ async function getDecisionEngine( resource ) {
 
     if ( resource ) {
 
-        let parsedResourceText = cleanHtml(resource.resourceContentHtml);
+        let resourceID = resource.resourceId
+        let parsedResourceText = extractText(resource.resourceContentHtml);
         let resourceTextLength = parsedResourceText.length;
 
         // Paper References
@@ -52,7 +53,7 @@ async function getDecisionEngine( resource ) {
         // Tone Analysis
         if ( apiCalled ) {
 
-            setInterval(getToneAnalysis(parsedResourceText), 
+            setInterval(getToneAnalysis(parsedResourceText, resourceID), 
                         120000); // every 2 minutes
 
         } // if
@@ -67,20 +68,20 @@ async function getDecisionEngine( resource ) {
  * 
  * @param {*} resourceText text within the resource to be passed to API
  */
-async function getToneAnalysis( resourceText ) {
+async function getToneAnalysis( resourceText, id ) {
 
     // Variables
     let paragraphs = []
 
     // Full text tone analysis
-    callToneAnalysisAPI(resourceText);
+    callToneAnalysisAPI(resourceText, id);
 
     // Parsed text tone analysis
     if ( resourceText.length > minWordsTone ) {
 
         paragraphs = parseText(resourceText);
         for (i; i < paragraphs.length; i++)
-            callToneAnalysisAPI(paragraphs[i]);
+            callToneAnalysisAPI(paragraphs[i], id);
 
     } // if
 
@@ -91,8 +92,9 @@ async function getToneAnalysis( resourceText ) {
 
 /**
  * Function similar to makeAPICall() that calls the endpoint for tone analysis
+ * @param {*} text raw text from resource to be given to tone analysis
  */
-async function callToneAnalysisAPI( text ) {
+async function callToneAnalysisAPI( text, identifier ) {
 
     // Variables
 
@@ -101,14 +103,14 @@ async function callToneAnalysisAPI( text ) {
     // citationsContainer.hidden = true;
 
     let requestData = {
-        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
+        resourceId: identifier,
         resourceText: text
     }
 
     try {
 
         // Make fetch call to "aiController.js" API
-        const response = await fetch( 'API PATH', {
+        const response = await fetch( 'api/v1/auth/ai/tone-analysis', {
             method: 'POST',
             headers: {'Content-Type': 'application/json',},
             body: JSON.stringify(requestData)
@@ -116,8 +118,18 @@ async function callToneAnalysisAPI( text ) {
 
         // More visibily - might be changed/altered later
         //allCardsContainer.innerHTML = ""; // Clear the current cards.
-        
         //selectedContent.classList.remove( 'hidden' );
+
+        if ( response.ok ) {
+
+            // logic to deal with API response
+            // build other side of endpoint first and see how data comes back
+
+            // Visibility
+            //loadingSpinnerContainer.hidden = true;
+            //citationsContainer.hidden = false;
+
+        } // if
 
     } // try
     catch ( error ) {
@@ -130,6 +142,31 @@ async function callToneAnalysisAPI( text ) {
     } // catch
 
 } // callToneAnalysisAPI()
+
+// Helper Functions
+
+/**
+ * Function that takes raw HTML to get the raw text within
+ * 
+ * @param {*} htmlString raw HTML from resource
+ * @returns raw text from resource
+ */
+function extractText( htmlString ) {
+    // Replace <br> and <br /> with \n
+    htmlString = htmlString.replace( /<br\s*\/?>/gi, '\n' );
+
+    // Replace <p> with \n\n
+    htmlString = htmlString.replace( /<p>/gi, '\n\n' );
+
+    // Remove all other HTML tags
+    htmlString = htmlString.replace( /<|>/g, "" );
+
+    // Optional: Clean up extra whitespaces/newlines
+    //htmlString = htmlString.replace( /\n\s*\n/g, '\n\n' ); // Remove extra newlines
+
+    return htmlString;
+
+} // extractText()
 
 // Exports
 export { getDecisionEngine }

@@ -143,6 +143,13 @@ exports.callOpenAI = async ( req, res ) => {
     }
 };
 
+exports.callToneAnalysis = async ( req, res ) => {
+
+    // Otherside of API endpoint - use hugging face as failsafe incase
+    // watsonx doesn't work out
+
+}; // exports.callToneAnalysis()
+
 // helper logic
 
 function createPaperPrompt( abstract, ignoredArticles ) {
@@ -205,8 +212,6 @@ function cleanHtml( htmlString ) {
 
     return htmlString;
 }
-
-export { cleanHtml }
 
 /** 
  * Validate all the sources in the specified JSON.
