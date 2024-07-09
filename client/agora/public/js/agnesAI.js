@@ -325,7 +325,8 @@ async function makeAPICall() {
     var selectedValue = document.getElementById( 'doc-type' ).value;
     var selectedContent = document.getElementById( 'selectedContent' );
 
-    if ( selectedValue != 'notes' && selectedValue != 'paper' ) return;
+    if ( selectedValue != 'notes' && selectedValue != 'paper' ) 
+        return;
 
     // Define the data you want to send in the request body
     let requestData = {

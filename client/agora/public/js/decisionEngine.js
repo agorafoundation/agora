@@ -16,47 +16,122 @@
  */
 
 // Imports
-
-// state manager
-import { getCurrentWorkspace, getCurrentActiveTopic, addTab, activeTab, setActiveTab, debug, dataDebug, addNewTextResource, updateTopicName, getCurrentWorkspaceOwner, getCurrentWorkspaceSharedUsers, updateUserPermission, addNewTag } from "./state/stateManager.js";
-// DOM event functions (eg. 
-import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResourceEvent, addTopicEvent, deleteTagEvent } from "./editorMain.js";
-
-// Controllers
-import { getPermission } from "./controllers/clientWorkspaceController.js";
-import { getResourceById, setResourceType } from "./controllers/clientResourceController.js";
-
-// AI API Call
+import { getCurrentActiveTopic } from "./state/stateManager.js";
+import { lastEditedResourceId } from "./editorManager.js";
 import { makeAPICall } from "./agnesAI.js"
+import { cleanHtml } from "../../../../server/controller/apis/aiController.js";
 
 // Variables
 const minWordsRef = 50  // arbitrary value for paper references, can be changed
+const minWordsTone = 250  // arbitrary value for parsed tone analysis
 
+/**
+ * Main function that directs input to different events such as paper references
+ * and tone analysis
+ * 
+ * @param {*} resource current resource to send content to AI API
+ */
 async function getDecisionEngine( resource ) {
 
     // Variables
     let apiCalled = false;
-    let resourceTextLength = resource.resourceContentHtml.length;
 
-    // Paper References
-    if ( resourceTextLength >= minWordsRef ) {
+    if ( resource ) {
 
-        await makeAPICall();
-        apiCalled = true;
+        let parsedResourceText = cleanHtml(resource.resourceContentHtml);
+        let resourceTextLength = parsedResourceText.length;
 
-    } // if
+        // Paper References
+        if ( resourceTextLength >= minWordsRef ) {
 
-    // Tone Analysis
-    if ( apiCalled ) {
+            await makeAPICall();
+            apiCalled = true;
 
-        console.log('stuff is working!');
-        setInterval(getToneAnalysis(), 120000); // every 2 minutes
+        } // if
+
+        // Tone Analysis
+        if ( apiCalled ) {
+
+            setInterval(getToneAnalysis(parsedResourceText), 
+                        120000); // every 2 minutes
+
+        } // if
 
     } // if
 
 
 } // getDecisionEngine
 
+/**
+ * Function that deals with the tone analysis component of the decision engine.
+ * 
+ * @param {*} resourceText text within the resource to be passed to API
+ */
+async function getToneAnalysis( resourceText ) {
+
+    // Variables
+    let paragraphs = []
+
+    // Full text tone analysis
+    callToneAnalysisAPI(resourceText);
+
+    // Parsed text tone analysis
+    if ( resourceText.length > minWordsTone ) {
+
+        paragraphs = parseText(resourceText);
+        for (i; i < paragraphs.length; i++)
+            callToneAnalysisAPI(paragraphs[i]);
+
+    } // if
+
+} // getToneAnalysis()
+
+// TODO: make parseText() & callToneAnalysisAPI()
+// TODO: make API endpoint for tone analysis (going to need new file)
+
+/**
+ * Function similar to makeAPICall() that calls the endpoint for tone analysis
+ */
+async function callToneAnalysisAPI( text ) {
+
+    // Variables
+
+    // Put any visibily variables here
+    // loadingSpinnerContainer.hidden = false;
+    // citationsContainer.hidden = true;
+
+    let requestData = {
+        resourceId: ( lastEditedResourceId != null ) ? lastEditedResourceId : getCurrentActiveTopic().resources[0].resourceId, // get the first one if none are selected
+        resourceText: text
+    }
+
+    try {
+
+        // Make fetch call to "aiController.js" API
+        const response = await fetch( 'API PATH', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify(requestData)
+        });
+
+        // More visibily - might be changed/altered later
+        //allCardsContainer.innerHTML = ""; // Clear the current cards.
+        
+        //selectedContent.classList.remove( 'hidden' );
+
+    } // try
+    catch ( error ) {
+
+        // Handle network or other errors here
+        loadingSpinnerContainer.hidden = true;
+        citationsContainer.hidden = false;
+        console.error( 'Fetch request failed: - Network or other errors', error );
+    
+    } // catch
+
+} // callToneAnalysisAPI()
+
+// Exports
 export { getDecisionEngine }
 
 

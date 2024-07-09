@@ -206,6 +206,7 @@ function cleanHtml( htmlString ) {
     return htmlString;
 }
 
+export { cleanHtml }
 
 /** 
  * Validate all the sources in the specified JSON.
