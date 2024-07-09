@@ -19,7 +19,7 @@
 import { getCurrentActiveTopic } from "./state/stateManager.js";
 import { lastEditedResourceId } from "./editorManager.js";
 import { makeAPICall } from "./agnesAI.js"
-import { cleanHtml } from "../../../../server/controller/apis/aiController.js";
+
 
 // Variables
 const minWordsRef = 50  // arbitrary value for paper references, can be changed
@@ -61,7 +61,13 @@ async function getDecisionEngine( resource ) {
     } // if
 
 
-} // getDecisionEngine
+} 
+
+
+
+
+
+// getDecisionEngine
 
 /**
  * Function that deals with the tone analysis component of the decision engine.
@@ -85,7 +91,26 @@ async function getToneAnalysis( resourceText, id ) {
 
     } // if
 
-} // getToneAnalysis()
+}
+// parseText()
+// Takes in whole reosurce text and breaks it down into paragraphs or tone analysis of each paragraph
+function parseText(text) {
+    // Split the text by two or more consecutive line breaks to get paragraphs
+    let paragraphs = []
+    paragraphs = text.split(/\n\s*\n/);
+    
+    // Trim leading and trailing whitespace from each paragraph
+    paragraphs = paragraphs.map(paragraph => paragraph.trim());
+
+    return paragraphs;
+}
+
+
+
+
+
+
+// getToneAnalysis()
 
 // TODO: make parseText() & callToneAnalysisAPI()
 // TODO: make API endpoint for tone analysis (going to need new file)

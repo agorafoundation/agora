@@ -213,6 +213,7 @@ function cleanHtml( htmlString ) {
     return htmlString;
 }
 
+
 /** 
  * Validate all the sources in the specified JSON.
  * 
