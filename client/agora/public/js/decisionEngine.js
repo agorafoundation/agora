@@ -123,7 +123,9 @@ async function callToneAnalysisAPI( text, identifier ) {
         if ( response.ok ) {
 
             // logic to deal with API response
-            // build other side of endpoint first and see how data comes back
+            let toneAnalysisKeywords = await response.json();
+            console.log( "Keywords returned: " + toneAnalysisKeywords);
+
 
             // Visibility
             //loadingSpinnerContainer.hidden = true;
