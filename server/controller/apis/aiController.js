@@ -8,6 +8,7 @@
 // dependencies
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
+const spellchecker = require( 'simple-spellchecker' );
 
 // services
 const resourceService = require( '../../service/resourceService' );
@@ -19,6 +20,11 @@ const MIN_CONTENT_LENGTH = 650;
 const OPENAI_CONFIG = new openAi.Configuration( {
     apiKey: process.env.OPENAI_API_KEY,
 } );
+
+// Configuration for HuggingFace
+const { HfInference } = require('@huggingface/inference');
+const inference = new HfInference(process.env.HF_USER_TOKEN);
+const granite7B = inference.endpoint('https://brdcvmgjhivmp6i6.us-east-1.aws.endpoints.huggingface.cloud');
 
 exports.generateAvatar = async ( req, res ) => {
 
@@ -147,6 +153,68 @@ exports.callToneAnalysis = async ( req, res ) => {
 
     // Otherside of API endpoint - use hugging face as failsafe incase
     // watsonx doesn't work out
+    if ( process.env.HF_TOGGLE === 'true' ) {
+
+        // Incoming body values
+        let resourceID = req.body.resourceId;
+        let textInput = req.body.resourceText;
+
+        if ( textInput.length > 0 ) {
+
+            try {
+
+                // Get tone analysis for given input text
+                let graniteOutput = await granite7B.textGeneration({
+                    inputs: createToneAnalysisPrompt(textInput)
+                });
+                console.log('Tone analysis returned.')
+
+                // Get the keywords returned
+                let toneAnalysisOutput = graniteOutput.generated_text;
+                let returnedToneKeywords = toneAnalysisOutput.split(/\s+/);
+
+                // Ensure keywords returned are real words and are correctly spelled
+                let validatedKeywords = getSpellCheck(returnedToneKeywords);
+                console.log('Tone analysis keywords validated.');
+
+                // Create JSON object to return back to the user
+                let newJSONObject = {
+                    keywords: validatedKeywords
+                };
+
+                // Return to user
+                res.set( "x-agora-message-title", "Success" );
+                res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                res.status( 200 ).json( newJSONObject );
+
+
+            } // try
+            catch ( error ) {
+
+                console.log(error);
+                res.set( "x-agora-message-title", "Error" );
+                res.set( "x-agora-message-detail", "Failed to return response from HuggingFace" );
+                res.status( 500 ).json( {"error": "Failed to return response from HuggingFace"} );
+                
+            } // catch
+
+        } // if
+        else {
+
+            res.set( "x-agora-message-title", "Error" );
+            res.set( "x-agora-message-detail", "Content not long enough" );
+            res.status( 500 ).json( {"error": "You have not written enough to analyze tone. Please write something to give the model to work with."} );
+
+        } // else
+
+    } // if
+    else {
+
+        res.set( "x-agora-message-title", "HuggingFace API Restricted" );
+        res.set( "x-agora-message-detail", "API is not enabled see HF_TOGGLE flag in .env file" );
+        res.status( 403 ).json( {"error": "HuggingFace API Restricted, Set the env variable HF_TOGGLE to true"} );
+
+    } // else
 
 }; // exports.callToneAnalysis()
 
@@ -213,6 +281,70 @@ function cleanHtml( htmlString ) {
     return htmlString;
 }
 
+/**
+ * Function that creates the prompt for the tone analysis model.
+ * @param {*} input parsed text from the resource editor.
+ * @returns returns the final built prompt to pass along to the API.
+ */
+function createToneAnalysisPrompt( input ) {
+
+    let prompt = `Analyze the text for the tone of the entire text. Return 
+    the tone as a list of different keywords that encapsulate the tone. The ONLY 
+    output that should be returned is the keywords as a list, NOTHING ELSE. 
+    DO NOT return more than 5 keywords.`;
+
+    let example = `Example Text 1: Sorry for the last minute cancellation. I have 
+    a department meeting at IBM that I thought would be done before our meeting, 
+    but unfortunately, it won’t.  I talked to the Joint Study students earlier 
+    about yesterday’s event and thanked them for all of their help and 
+    participation, and got their feedback on the day as well.  If you have 
+    additional items that need to be discussed, please stop and talk to me 
+    tomorrow, slack me, or schedule a meeting.
+
+    Example Output 1: apologetic, professional, informative, grateful, accommodating`;
+
+    let fullPrompt = prompt + '\n\n' + example + '\n\n' + 'Text: ' + input + '\n\nOutput: ';
+
+    return fullPrompt;
+
+} // createToneAnalysisPrompt()
+
+/**
+ * Helper function that spellchecks returned keywords from Granite Model.
+ * @param {*} words the keywords returned from the Granite mode.
+ * @returns Returns the corrected list of words.
+ */
+function getSpellCheck( words ) {
+
+    spellchecker.getDictionary('en-US', function(error, dictionary) {
+
+        if( error ) {
+
+            console.log("Could not load spellchecker dictionary: ", error);
+            return;
+
+        } // if
+
+        // Check each returned word
+        for(i=0; i < words.length; i++) {
+
+            word = words[i];
+            if( !dictionary.spellCheck(word) ){
+
+                // Switch word to correct word
+                const suggestion = dictionary.getSuggestions(word, limit=1);
+                console.log(words[i] + " changed to " + suggestion[0] + ".");
+                words[i] = suggestion[0];
+
+            } // if
+
+        } // for
+
+    });
+
+    return words;
+
+} // getSpellCheck()
 
 /** 
  * Validate all the sources in the specified JSON.
