@@ -151,10 +151,12 @@ exports.callOpenAI = async ( req, res ) => {
 
 exports.callToneAnalysis = async ( req, res ) => {
 
-    // Otherside of API endpoint - use hugging face as failsafe incase
+    // Other side of API endpoint - use hugging face as failsafe incase
     // watsonx doesn't work out
+    console.log('Made it to server side code');
     if ( process.env.HF_TOGGLE === 'true' ) {
 
+        console.log('env variable is fine');
         // Incoming body values
         let resourceID = req.body.resourceId;
         let textInput = req.body.resourceText;
@@ -164,6 +166,7 @@ exports.callToneAnalysis = async ( req, res ) => {
             try {
 
                 // Get tone analysis for given input text
+                console.log('calling granite');
                 let graniteOutput = await granite7B.textGeneration({
                     inputs: createToneAnalysisPrompt(textInput)
                 });
@@ -316,6 +319,9 @@ function createToneAnalysisPrompt( input ) {
  */
 function getSpellCheck( words ) {
 
+    // Variables
+    let i = 0;
+
     spellchecker.getDictionary('en-US', function(error, dictionary) {
 
         if( error ) {
@@ -326,7 +332,7 @@ function getSpellCheck( words ) {
         } // if
 
         // Check each returned word
-        for(i=0; i < words.length; i++) {
+        for(i; i < words.length; i++) {
 
             word = words[i];
             if( !dictionary.spellCheck(word) ){

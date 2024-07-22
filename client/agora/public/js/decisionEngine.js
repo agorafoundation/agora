@@ -20,6 +20,10 @@ import { getCurrentActiveTopic } from "./state/stateManager.js";
 import { lastEditedResourceId } from "./editorManager.js";
 import { makeAPICall } from "./agnesAI.js"
 
+// Card visibility
+const allCardsContainer = document.querySelector( '.all-cards' );
+const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
+const citationsContainer = document.getElementById( 'citations-cont' );
 
 // Variables
 const minWordsRef = 50  // arbitrary value for paper references, can be changed
@@ -60,12 +64,7 @@ async function getDecisionEngine( resource ) {
 
     } // if
 
-
-} 
-
-
-
-
+}  // getDecisionEngine()
 
 // getDecisionEngine
 
@@ -78,6 +77,7 @@ async function getToneAnalysis( resourceText, id ) {
 
     // Variables
     let paragraphs = []
+    let i = 0;
 
     // Full text tone analysis
     callToneAnalysisAPI(resourceText, id);
@@ -91,10 +91,16 @@ async function getToneAnalysis( resourceText, id ) {
 
     } // if
 
-}
-// parseText()
-// Takes in whole reosurce text and breaks it down into paragraphs or tone analysis of each paragraph
+} // getToneAnalysis()
+
+/**
+ * Takes in whole reosurce text and breaks it down into paragraphs for 
+ * tone analysis of each paragraph.
+ * @param {*} text Text from resource to be parsed.
+ * @returns Returns a list of different text blocks to pass along to the API
+ */
 function parseText(text) {
+
     // Split the text by two or more consecutive line breaks to get paragraphs
     let paragraphs = []
     paragraphs = text.split(/\n\s*\n/);
@@ -103,12 +109,8 @@ function parseText(text) {
     paragraphs = paragraphs.map(paragraph => paragraph.trim());
 
     return paragraphs;
-}
 
-
-
-
-
+} // parseText()
 
 // getToneAnalysis()
 
@@ -122,16 +124,14 @@ function parseText(text) {
 async function callToneAnalysisAPI( text, identifier ) {
 
     // Variables
-
-    // Put any visibily variables here
-    // loadingSpinnerContainer.hidden = false;
-    // citationsContainer.hidden = true;
-
+    loadingSpinnerContainer.hidden = false;
+    citationsContainer.hidden = true;
     let requestData = {
         resourceId: identifier,
         resourceText: text
     }
 
+    // API call
     try {
 
         // Make fetch call to "aiController.js" API
@@ -140,23 +140,51 @@ async function callToneAnalysisAPI( text, identifier ) {
             headers: {'Content-Type': 'application/json',},
             body: JSON.stringify(requestData)
         });
-
-        // More visibily - might be changed/altered later
-        //allCardsContainer.innerHTML = ""; // Clear the current cards.
-        //selectedContent.classList.remove( 'hidden' );
+        console.log('attempted fetch');
+        // Card visibily
+        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        selectedContent.classList.remove( 'hidden' );
 
         if ( response.ok ) {
-
+            console.log('fetch successful');
             // logic to deal with API response
             let toneAnalysisKeywords = await response.json();
             console.log( "Keywords returned: " + toneAnalysisKeywords);
-
+            formatToneOutput(toneAnalysisKeywords.keywords);
 
             // Visibility
-            //loadingSpinnerContainer.hidden = true;
-            //citationsContainer.hidden = false;
+            loadingSpinnerContainer.hidden = true;
+            citationsContainer.hidden = false;
 
         } // if
+        else {
+            console.log('fetch not successful');
+            // Card visibility
+            selectedContent.classList.remove( 'hidden' );
+            loadingSpinnerContainer.hidden = true;
+            citationsContainer.hidden = false;
+            
+            // Error
+            let responseJSON = await response.json();
+
+            // Create card element
+            const toneCard = document.createElement( 'div' );
+            toneCard.classList.add('tone-card');
+
+            // Card template
+            toneCard.innerHTML = `
+                <div>
+                    <h2>Tone Analysis</h2>
+                    <div class="tone-text-center">
+                        <span class="tone-card-text">There was an error: ${responseJSON.error}.</span>
+                    </div>
+                </div>
+            `;
+
+            // Append the card to the container
+            allCardsContainer.appendChild(toneCard);
+
+        } // else
 
     } // try
     catch ( error ) {
@@ -194,6 +222,35 @@ function extractText( htmlString ) {
     return htmlString;
 
 } // extractText()
+
+/**
+ * Helper function that formats the HTML for the tone analysis card.
+ * @param {*} keywords tone analysis keywords.
+ */
+function formatToneOutput( keywords ) {
+
+    // Create card element
+    const toneCard = document.createElement( 'div' );
+    toneCard.classList.add('tone-card');
+
+    // Card template
+    toneCard.innerHTML = `
+        <div>
+            <h2>Tone Analysis</h2>
+            <div class="tone-text-center">
+                <span class="tone-card-text"></span>
+            </div>
+        </div>
+    `;
+
+    // Give the card the keywords
+    const cardKeywords = toneCard.querySelector( '.tone-card-text' );
+    cardKeywords.textContent = keywords;
+
+    // Add card to main container
+    allCardsContainer.appendChild( toneCard );
+
+} // formatToneOutput()
 
 // Exports
 export { getDecisionEngine }

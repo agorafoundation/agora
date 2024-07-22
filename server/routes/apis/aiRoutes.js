@@ -51,7 +51,7 @@ router.route( '/suggest' )
 // Tone analysis route
 router.route( '/tone-analysis' )
     .post( function( req, res ) {
-        aiController.callToneAnalysis( req, res )
+        aiController.callToneAnalysis( req, res );
     });
 
 const generateAvatarLimiter = ( () => {

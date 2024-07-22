@@ -1158,17 +1158,6 @@
     overflow-y: auto;
 }
 
-#tone-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 0px;
-    width: flex;
-    
-}
-
-
 #close-button {
     display: flex;
     align-items: center;
@@ -1367,4 +1356,25 @@
 
 .drawer-container.open .drawer-content {
     display: block; /* Show the drawer-content when the drawer is open */
+}
+
+.tone-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 0px;
+    width: flex;
+    
+}
+
+.tone-text-center{
+    width: 50%;
+    margin: 0 auto;
+}
+
+.tone-card-text {
+    color: black;
+    font-weight: normal;
+    font-size: 12px;
 }
