@@ -300,7 +300,7 @@ async function queryGranite(data) {
 		{
 			headers: { 
 				"Accept" : "application/json",
-				"Authorization": "Bearer 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",
+				"Authorization": "Bearer " + process.env.HF_USER_TOKEN,
 				"Content-Type": "application/json" 
 			},
 			method: "POST",
