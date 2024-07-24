@@ -12,18 +12,16 @@
  * 
  * Date Created: 7/8/2024
  * 
- * Last Updated: 7/8/2024
+ * Last Updated: 7/24/2024
  */
 
 // Imports
-import { getCurrentActiveTopic } from "./state/stateManager.js";
-import { lastEditedResourceId } from "./editorManager.js";
 import { makeAPICall } from "./agnesAI.js"
 
 // Card visibility
-const allCardsContainer = document.querySelector( '.all-cards' );
+const toneCardsContainer = document.querySelector( '.tone-cards' );
 const loadingSpinnerContainer = document.getElementById( 'loadingSpinnerContainer' );
-const citationsContainer = document.getElementById( 'citations-cont' );
+const toneAnalysisContainer = document.getElementById( 'tone-analysis-cont' );
 
 // Variables
 const minWordsRef = 50  // arbitrary value for paper references, can be changed
@@ -137,7 +135,7 @@ async function callToneAnalysisAPI( text, identifier ) {
 
     // Variables
     loadingSpinnerContainer.hidden = false;
-    citationsContainer.hidden = true;
+    toneAnalysisContainer.hidden = true;
     let requestData = {
         resourceId: identifier,
         resourceText: text
@@ -153,28 +151,30 @@ async function callToneAnalysisAPI( text, identifier ) {
             body: JSON.stringify(requestData)
         });
         console.log('attempted fetch');
+
         // Card visibily
-        allCardsContainer.innerHTML = ""; // Clear the current cards.
+        toneCardsContainer.innerHTML = ""; // Clear the current cards.
         selectedContent.classList.remove( 'hidden' );
 
         if ( response.ok ) {
             console.log('fetch successful');
+
             // logic to deal with API response
             let toneAnalysisKeywords = await response.json();
-            console.log( "Keywords returned: " + toneAnalysisKeywords);
             formatToneOutput(toneAnalysisKeywords.keywords);
-
+            // TODO: cards for tone only output if endpoint is off??
             // Visibility
             loadingSpinnerContainer.hidden = true;
-            citationsContainer.hidden = false;
+            toneCardsContainer.hidden = false;
 
         } // if
         else {
             console.log('fetch not successful');
+
             // Card visibility
             selectedContent.classList.remove( 'hidden' );
             loadingSpinnerContainer.hidden = true;
-            citationsContainer.hidden = false;
+            toneAnalysisContainer.hidden = false;
             
             // Error
             let responseJSON = await response.json();
@@ -194,7 +194,7 @@ async function callToneAnalysisAPI( text, identifier ) {
             `;
 
             // Append the card to the container
-            allCardsContainer.appendChild(toneCard);
+            toneCardsContainer.appendChild(toneCard);
 
         } // else
 
@@ -203,7 +203,7 @@ async function callToneAnalysisAPI( text, identifier ) {
 
         // Handle network or other errors here
         loadingSpinnerContainer.hidden = true;
-        citationsContainer.hidden = false;
+        toneAnalysisContainer.hidden = false;
         console.error( 'Fetch request failed: - Network or other errors', error );
     
     } // catch
@@ -263,7 +263,7 @@ function formatToneOutput( keywords ) {
     cardKeywords.textContent = keywords;
 
     // Add card to main container
-    allCardsContainer.appendChild( toneCard );
+    toneCardsContainer.appendChild( toneCard );
 
 } // formatToneOutput()
 
