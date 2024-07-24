@@ -9,6 +9,7 @@
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
 const spellchecker = require( 'simple-spellchecker' );
+const { HfInference } = require('@huggingface/inference');
 
 // services
 const resourceService = require( '../../service/resourceService' );
@@ -22,8 +23,7 @@ const OPENAI_CONFIG = new openAi.Configuration( {
 } );
 
 // Configuration for HuggingFace
-const { HfInference } = require('@huggingface/inference');
-const inference = new HfInference(process.env.HF_USER_TOKEN);
+const inference = new HfInference('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'); //process.env.HF_USER_TOKEN
 const granite7B = inference.endpoint('https://brdcvmgjhivmp6i6.us-east-1.aws.endpoints.huggingface.cloud');
 
 exports.generateAvatar = async ( req, res ) => {
@@ -153,13 +153,15 @@ exports.callToneAnalysis = async ( req, res ) => {
 
     // Other side of API endpoint - use hugging face as failsafe incase
     // watsonx doesn't work out
-    console.log('Made it to server side code');
     if ( process.env.HF_TOGGLE === 'true' ) {
 
-        console.log('env variable is fine');
-        // Incoming body values
+        // Variables
         let resourceID = req.body.resourceId;
         let textInput = req.body.resourceText;
+        let parameters = {
+            "return_full_text": false, 
+            "max_new_tokens": 35
+        };
 
         if ( textInput.length > 0 ) {
 
@@ -167,29 +169,30 @@ exports.callToneAnalysis = async ( req, res ) => {
 
                 // Get tone analysis for given input text
                 console.log('calling granite');
-                let graniteOutput = await granite7B.textGeneration({
-                    inputs: createToneAnalysisPrompt(textInput)
-                });
-                console.log('Tone analysis returned.')
+                let temp = createToneAnalysisPrompt(textInput);
+                queryGranite({"inputs": temp, "parameters": parameters})
+                    .then((response) => {
+                            
+                        // Get the keywords returned
+                        console.log('Tone analysis returned.');
+                        const graniteOutput = response;
+                        let toneAnalysisOutput = graniteOutput[0].generated_text;
+                        let returnedToneKeywords = toneAnalysisOutput.split(',');
 
-                // Get the keywords returned
-                let toneAnalysisOutput = graniteOutput.generated_text;
-                let returnedToneKeywords = toneAnalysisOutput.split(/\s+/);
+                        // Clean up output from model to just be the correct words
+                        let validatedKeywords = validateToneKeywords(returnedToneKeywords);
+                        console.log('Tone analysis keywords validated.');
 
-                // Ensure keywords returned are real words and are correctly spelled
-                let validatedKeywords = getSpellCheck(returnedToneKeywords);
-                console.log('Tone analysis keywords validated.');
+                        // Create JSON object to return back to the user
+                        let newJSONObject = {
+                            keywords: validatedKeywords
+                        };
 
-                // Create JSON object to return back to the user
-                let newJSONObject = {
-                    keywords: validatedKeywords
-                };
-
-                // Return to user
-                res.set( "x-agora-message-title", "Success" );
-                res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
-                res.status( 200 ).json( newJSONObject );
-
+                        // Return to user
+                        res.set( "x-agora-message-title", "Success" );
+                        res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                        res.status( 200 ).json( newJSONObject );
+                        });
 
             } // try
             catch ( error ) {
@@ -285,43 +288,81 @@ function cleanHtml( htmlString ) {
 }
 
 /**
+ * Function pulled from Hugging Face documentation for calling the API 
+ * for a response.
+ * https://huggingface.co/docs/api-inference/en/detailed_parameters?code=js
+ * @param {*} data data to send through to the API
+ * @returns response from the API 
+ */
+async function queryGranite(data) {
+	const response = await fetch(
+		"https://brdcvmgjhivmp6i6.us-east-1.aws.endpoints.huggingface.cloud",
+		{
+			headers: { 
+				"Accept" : "application/json",
+				"Authorization": "Bearer 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",
+				"Content-Type": "application/json" 
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		}
+	);
+
+	const result = await response.json();
+	return result;
+
+} // queryGranite()
+
+/**
  * Function that creates the prompt for the tone analysis model.
  * @param {*} input parsed text from the resource editor.
  * @returns returns the final built prompt to pass along to the API.
  */
 function createToneAnalysisPrompt( input ) {
 
-    let prompt = `Analyze the text for the tone of the entire text. Return 
-    the tone as a list of different keywords that encapsulate the tone. The ONLY 
-    output that should be returned is the keywords as a list, NOTHING ELSE. 
-    DO NOT return more than 5 keywords.`;
+    let prompt = `Analyze the text for the tone of the entire text. Return the tone as a list of different keywords that encapsulate the tone. The ONLY output that should be returned is the keywords as a list, NOTHING ELSE. DO NOT return more than 5 keywords. NO MORE THAN FIVE KEYWORDS IN THE OUTPUT!!!`;
 
-    let example = `Example Text 1: Sorry for the last minute cancellation. I have 
-    a department meeting at IBM that I thought would be done before our meeting, 
-    but unfortunately, it won’t.  I talked to the Joint Study students earlier 
-    about yesterday’s event and thanked them for all of their help and 
-    participation, and got their feedback on the day as well.  If you have 
-    additional items that need to be discussed, please stop and talk to me 
-    tomorrow, slack me, or schedule a meeting.
+    let example1 = `Example Text 1: Sorry for the last minute cancellation. I have a department meeting at IBM that I thought would be done before our meeting, but unfortunately, it won’t.  I talked to the Joint Study students earlier about yesterday’s event and thanked them for all of their help and participation, and got their feedback on the day as well.  If you have additional items that need to be discussed, please stop and talk to me tomorrow, slack me, or schedule a meeting.
 
     Example Output 1: apologetic, professional, informative, grateful, accommodating`;
 
-    let fullPrompt = prompt + '\n\n' + example + '\n\n' + 'Text: ' + input + '\n\nOutput: ';
+    let example2 = `Example Text 2: William Butler Yeats, an Irish poet who has heavily contributed to the Irish Literary Revival, was very cultured and very well-versed in the arts. His extensive knowledge and interest in history and in the arts helped him write some impressively magnificent poems throughout the course of his career. In turn, he has become very well renowned for his writing, for his use of different things throught history, and in the arts to convey strong themes in the messages of his poems. Specifically, Yeats was interested in Irish mythology since he used it in a vast amount of his work. His use of Irish mythology has been a distinguishing factor for his work, reminding the Irish nation of their ancient roots through various inspirations and allusions to several Irish myths and legends. In the poems “The Song of Wandering Aengus,” “The Stolen Child,” and “To the Rose upon the Rood of Time,” W.B Yeats rekindles the connection between modern & ancient Irish culture through the use of Irish mythology to convey different themes among a plethora of his works, restoring a sense of Irish pride and identity by differing that part of their culture away from the Greek mythology and way of thinking.
+
+    Example Output 2: "Reverent,  Reflective, Celebratory, Inspirational, Scholarly"`
+
+    let fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ 'Text: ' + input + '\n\nOutput: ';
 
     return fullPrompt;
 
 } // createToneAnalysisPrompt()
 
 /**
- * Helper function that spellchecks returned keywords from Granite Model.
+ * Helper function that cleans the output from the model. Sometimes you get extra whitespace
+ * or newline characters that get generated.
  * @param {*} words the keywords returned from the Granite mode.
  * @returns Returns the corrected list of words.
  */
-function getSpellCheck( words ) {
+function validateToneKeywords( words ) {
 
     // Variables
     let i = 0;
+    let j = 0;
+    let cleanWords = [];
 
+    // Clean keywords (removing whitespace, newline characters, unwanted text, etc.)
+    cleanWords = words.map(entry => entry.trim().replace(/^"|"$/g, ''));
+    for (j; j < cleanWords.length; j++) {
+
+        let cleanWord = cleanWords[j];
+        let index = cleanWord.indexOf('"');
+        if ( index != -1 ) {
+            cleanWords[j] = cleanWord.substring(0, index);
+        } // if
+        
+    } // for
+    console.log(cleanWords);
+
+    /*
     spellchecker.getDictionary('en-US', function(error, dictionary) {
 
         if( error ) {
@@ -347,8 +388,9 @@ function getSpellCheck( words ) {
         } // for
 
     });
+    */
 
-    return words;
+    return cleanWords;
 
 } // getSpellCheck()
 

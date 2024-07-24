@@ -27,7 +27,7 @@ const citationsContainer = document.getElementById( 'citations-cont' );
 
 // Variables
 const minWordsRef = 50  // arbitrary value for paper references, can be changed
-const minWordsTone = 250  // arbitrary value for parsed tone analysis
+const minWordsTone = 150  // arbitrary value for parsed tone analysis
 
 /**
  * Main function that directs input to different events such as paper references
@@ -80,6 +80,8 @@ async function getToneAnalysis( resourceText, id ) {
     let i = 0;
 
     // Full text tone analysis
+    // TODO: need to have a condition where if input is long,
+    // dont pass the whole thing
     callToneAnalysisAPI(resourceText, id);
 
     // Parsed text tone analysis
@@ -208,13 +210,16 @@ async function callToneAnalysisAPI( text, identifier ) {
  */
 function extractText( htmlString ) {
     // Replace <br> and <br /> with \n
-    htmlString = htmlString.replace( /<br\s*\/?>/gi, '\n' );
+    htmlString = htmlString.replace(/<br\s*\/?>/gi, '\n');
 
     // Replace <p> with \n\n
-    htmlString = htmlString.replace( /<p>/gi, '\n\n' );
+    htmlString = htmlString.replace(/<p>/gi, '\n\n');
 
     // Remove all other HTML tags
-    htmlString = htmlString.replace( /<|>/g, "" );
+    htmlString = htmlString.replace(/<\/?[^>]+(>|$)/g, "");
+
+    // Remove specific inline styles
+    htmlString = htmlString.replace(/style="[^"]*"/gi, "");
 
     // Optional: Clean up extra whitespaces/newlines
     //htmlString = htmlString.replace( /\n\s*\n/g, '\n\n' ); // Remove extra newlines
