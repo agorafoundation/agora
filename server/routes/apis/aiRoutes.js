@@ -51,7 +51,6 @@ router.route( '/suggest' )
 // Tone analysis route
 router.route( '/tone-analysis' )
     .post( function( req, res ) {
-        console.log('at route');
         aiController.callToneAnalysis( req, res );
     });
 

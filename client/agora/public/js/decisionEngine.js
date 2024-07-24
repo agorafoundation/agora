@@ -54,6 +54,8 @@ async function getDecisionEngine( resource ) {
 
         } // if
 
+        // TODO: card output incase there aren't enough words
+
         // Tone Analysis
         if ( apiCalled ) {
 
@@ -63,6 +65,8 @@ async function getDecisionEngine( resource ) {
         } // if
 
     } // if
+
+    // TODO: card output incase there is an error with the resource
 
 }  // getDecisionEngine()
 
@@ -79,19 +83,22 @@ async function getToneAnalysis( resourceText, id ) {
     let paragraphs = []
     let i = 0;
 
-    // Full text tone analysis
-    // TODO: need to have a condition where if input is long,
-    // dont pass the whole thing
-    callToneAnalysisAPI(resourceText, id);
-
     // Parsed text tone analysis
     if ( resourceText.length > minWordsTone ) {
 
+        // Full text tone analysis
+        callToneAnalysisAPI(resourceText, id);
+
+        // Paragraph tone analysis
         paragraphs = parseText(resourceText);
-        for (i; i < paragraphs.length; i++)
-            callToneAnalysisAPI(paragraphs[i], id);
+        console.log("Paragraph length: " + paragraphs.length);
+        if ( paragraphs.length > 1 )
+            for (i; i < paragraphs.length; i++) 
+                callToneAnalysisAPI(paragraphs[i], id);
 
     } // if
+
+    // TODO: card output incase there aren't enough words
 
 } // getToneAnalysis()
 
@@ -109,6 +116,9 @@ function parseText(text) {
     
     // Trim leading and trailing whitespace from each paragraph
     paragraphs = paragraphs.map(paragraph => paragraph.trim());
+
+    // Filter out empty entries
+    paragraphs = paragraphs.filter(paragraph => paragraph.length > 0);
 
     return paragraphs;
 

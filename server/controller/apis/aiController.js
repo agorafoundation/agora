@@ -163,55 +163,45 @@ exports.callToneAnalysis = async ( req, res ) => {
             "max_new_tokens": 35
         };
 
-        if ( textInput.length > 0 ) {
+        try {
 
-            try {
+            // Get tone analysis for given input text
+            console.log('calling granite');
+            let prompt = createToneAnalysisPrompt(textInput);
+            queryGranite({"inputs": prompt, "parameters": parameters})
+                .then((response) => {
+                        
+                    // Get the keywords returned
+                    console.log('Tone analysis returned.');
+                    const graniteOutput = response;
+                    let toneAnalysisOutput = graniteOutput[0].generated_text;
+                    let returnedToneKeywords = toneAnalysisOutput.split(',');
 
-                // Get tone analysis for given input text
-                console.log('calling granite');
-                let temp = createToneAnalysisPrompt(textInput);
-                queryGranite({"inputs": temp, "parameters": parameters})
-                    .then((response) => {
-                            
-                        // Get the keywords returned
-                        console.log('Tone analysis returned.');
-                        const graniteOutput = response;
-                        let toneAnalysisOutput = graniteOutput[0].generated_text;
-                        let returnedToneKeywords = toneAnalysisOutput.split(',');
+                    // Clean up output from model to just be the correct words
+                    let validatedKeywords = validateToneKeywords(returnedToneKeywords);
+                    console.log('Tone analysis keywords validated.');
 
-                        // Clean up output from model to just be the correct words
-                        let validatedKeywords = validateToneKeywords(returnedToneKeywords);
-                        console.log('Tone analysis keywords validated.');
+                    // Create JSON object to return back to the user
+                    let newJSONObject = {
+                        keywords: validatedKeywords,
+                        keywordsID: resourceID
+                    };
 
-                        // Create JSON object to return back to the user
-                        let newJSONObject = {
-                            keywords: validatedKeywords
-                        };
+                    // Return to user
+                    res.set( "x-agora-message-title", "Success" );
+                    res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                    res.status( 200 ).json( newJSONObject );
+                    });
 
-                        // Return to user
-                        res.set( "x-agora-message-title", "Success" );
-                        res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
-                        res.status( 200 ).json( newJSONObject );
-                        });
+        } // try
+        catch ( error ) {
 
-            } // try
-            catch ( error ) {
-
-                console.log(error);
-                res.set( "x-agora-message-title", "Error" );
-                res.set( "x-agora-message-detail", "Failed to return response from HuggingFace" );
-                res.status( 500 ).json( {"error": "Failed to return response from HuggingFace"} );
-                
-            } // catch
-
-        } // if
-        else {
-
+            console.log(error);
             res.set( "x-agora-message-title", "Error" );
-            res.set( "x-agora-message-detail", "Content not long enough" );
-            res.status( 500 ).json( {"error": "You have not written enough to analyze tone. Please write something to give the model to work with."} );
-
-        } // else
+            res.set( "x-agora-message-detail", "Failed to return response from HuggingFace" );
+            res.status( 500 ).json( {"error": "Failed to return response from HuggingFace"} );
+            
+        } // catch
 
     } // if
     else {
@@ -346,23 +336,28 @@ function validateToneKeywords( words ) {
 
     // Variables
     let i = 0;
-    let j = 0;
     let cleanWords = [];
 
     // Clean keywords (removing whitespace, newline characters, unwanted text, etc.)
     cleanWords = words.map(entry => entry.trim().replace(/^"|"$/g, ''));
-    for (j; j < cleanWords.length; j++) {
+    for (i; i < cleanWords.length; i++) {
 
-        let cleanWord = cleanWords[j];
+        let cleanWord = cleanWords[i];
         let index = cleanWord.indexOf('"');
         if ( index != -1 ) {
-            cleanWords[j] = cleanWord.substring(0, index);
+            cleanWords[i] = cleanWord.substring(0, index);
         } // if
         
     } // for
-    console.log(cleanWords);
+
+    return cleanWords;
 
     /*
+    // Spell checking function to make sure words are correctly outputted without missing 
+    // letters. Need to possibly change package since it will switch words that are correct.
+    // Might not be needed though since Granite Model spells things correctly for the most part.
+
+    let i = 0;
     spellchecker.getDictionary('en-US', function(error, dictionary) {
 
         if( error ) {
@@ -390,9 +385,7 @@ function validateToneKeywords( words ) {
     });
     */
 
-    return cleanWords;
-
-} // getSpellCheck()
+} // validateToneKeywords()
 
 /** 
  * Validate all the sources in the specified JSON.
