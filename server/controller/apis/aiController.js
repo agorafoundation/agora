@@ -22,9 +22,6 @@ const OPENAI_CONFIG = new openAi.Configuration( {
     apiKey: process.env.OPENAI_API_KEY,
 } );
 
-// Configuration for HuggingFace
-const inference = new HfInference(process.env.HF_USER_TOKEN); //process.env.HF_USER_TOKEN
-const granite7B = inference.endpoint('https://brdcvmgjhivmp6i6.us-east-1.aws.endpoints.huggingface.cloud');
 
 exports.generateAvatar = async ( req, res ) => {
 
