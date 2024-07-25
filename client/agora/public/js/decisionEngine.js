@@ -156,7 +156,7 @@ async function callToneAnalysisAPI( text, identifier ) {
 
             // logic to deal with API response
             let toneAnalysisKeywords = await response.json();
-            formatToneOutput(toneAnalysisKeywords.keywords);
+            formatToneOutput(toneAnalysisKeywords.keywords, text);
             
             // Visibility
             loadingSpinnerContainer.hidden = true;
@@ -235,9 +235,10 @@ function extractText( htmlString ) {
 
 /**
  * Helper function that formats the HTML for the tone analysis card.
- * @param {*} keywords tone analysis keywords.
+ * @param {*} keywords generated tone analysis keywords.
+ * @param {*} originalText text that comes from the text editor.
  */
-function formatToneOutput( keywords ) {
+function formatToneOutput( keywords, originalText ) {
 
     // Create card element
     const toneCard = document.createElement( 'div' );
@@ -246,15 +247,29 @@ function formatToneOutput( keywords ) {
     // Card template
     toneCard.innerHTML = `
         <div>
-            <h2>Tone Analysis</h2>
+            <!-- Text Content -->
+            <div class="tone-analyzed-text-cont">
+                <span class="tone-analyzed-text"></span>
+            </div>
             <div class="tone-text-center">
                 <span class="tone-card-text"></span>
             </div>
+
+            <!-- Info Bubble -->
+            <div class="info-bubble">
+                <span class="info-bubble-content">i</span>
+            </div>
+
         </div>
     `;
 
+    // Give snippet of original text
+    let content = '"' + originalText.substring(0, 39) + '..."';
+    const cardOriginalText = toneCard.querySelector('.tone-analyzed-text');
+    cardOriginalText.textContent = content;
+
     // Give the card the keywords
-    const cardKeywords = toneCard.querySelector( '.tone-card-text' );
+    const cardKeywords = toneCard.querySelector('.tone-card-text');
     cardKeywords.textContent = keywords;
 
     // Add card to main container

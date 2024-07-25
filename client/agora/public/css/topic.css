@@ -1359,12 +1359,13 @@
 }
 
 .tone-card {
-    background-color: white;
+    background-color: grey;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin: 0px;
     width: flex;
+    position: relative;
     
 }
 
@@ -1373,8 +1374,33 @@
     margin: 0 auto;
 }
 
+.tone-analyzed-text {
+    color: black;
+    font-weight: normal;
+    font-size: 18px;
+}
+
 .tone-card-text {
     color: black;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 16px;
+}
+
+.info-bubble {
+    position: absolute;
+    bottom: 10px; 
+    right: 10px;  
+    width: 20px; 
+    height: 20px; 
+    background-color: lightblue; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-bubble-content {
+    color: black;
+    text-align: center;
+    vertical-align: middle;
 }
