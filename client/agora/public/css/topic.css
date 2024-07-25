@@ -1388,19 +1388,53 @@
 
 .info-bubble {
     position: absolute;
+    cursor: pointer;
     bottom: 10px; 
     right: 10px;  
     width: 20px; 
     height: 20px; 
     background-color: lightblue; 
     border-radius: 50%;
-    display: flex;
+    display: inline-block;
     align-items: center;
     justify-content: center;
 }
 
-.info-bubble-content {
-    color: black;
+.tone-tooltip {
+    visibility: hidden;
+    width: 220px; /* Adjust as needed */
+    background-color: orange;
+    color: #fff;
     text-align: center;
-    vertical-align: middle;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: 150%; /* Position above the info bubble */
+    left: 10%;
+    margin-left: -60px; /* Center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tone-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Bottom of the tooltip */
+    right: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent; /* Arrow pointing down */
+}
+
+.info-bubble:hover .tone-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tone-analysis-explanation {
+    color: black;
+    font-weight: normal;
+    font-size: 18px;
 }

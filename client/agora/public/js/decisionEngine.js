@@ -258,6 +258,9 @@ function formatToneOutput( keywords, originalText ) {
             <!-- Info Bubble -->
             <div class="info-bubble">
                 <img src="tone-analysis-info-icon.png">
+                <div class="tone-tooltip">
+                    <span class="tone-analysis-explanation"></span>
+                </div>
             </div>
 
         </div>
@@ -272,6 +275,14 @@ function formatToneOutput( keywords, originalText ) {
     const cardKeywords = toneCard.querySelector('.tone-card-text');
     cardKeywords.textContent = keywords;
 
+    /*
+    TODO: waiting on tone analysis explanation to be developed;
+    once that is done, add "explanation" as a parameter to the function
+    
+    // Give the explanation to the tooltip
+    const cardExplanation = toneCard.querySelector('.tone-analysis-explanation');
+    cardExplanation.textContent = explanation;
+    */
     // Add card to main container
     toneCardsContainer.appendChild( toneCard );
 
