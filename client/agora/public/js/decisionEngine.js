@@ -257,7 +257,7 @@ function formatToneOutput( keywords, originalText ) {
 
             <!-- Info Bubble -->
             <div class="info-bubble">
-                <span class="info-bubble-content">i</span>
+                <img src="tone-analysis-info-icon.png">
             </div>
 
         </div>
