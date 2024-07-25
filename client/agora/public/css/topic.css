@@ -1370,8 +1370,7 @@
 }
 
 .tone-text-center{
-    width: 50%;
-    margin: 0 auto;
+    position: relative;
 }
 
 .tone-analyzed-text {
@@ -1388,16 +1387,15 @@
 
 .info-bubble {
     position: absolute;
-    cursor: pointer;
-    bottom: 10px; 
-    right: 10px;  
-    width: 20px; 
-    height: 20px; 
-    background-color: lightblue; 
-    border-radius: 50%;
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
+    bottom: 0;
+    right: 0;
+    /* Adjust positioning as needed */
+}
+
+.info-bubble-image {
+    width: 30px; /* Set the desired width */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Prevent the image from exceeding its container */
 }
 
 .tone-tooltip {
