@@ -122,11 +122,6 @@ function parseText(text) {
 
 } // parseText()
 
-// getToneAnalysis()
-
-// TODO: make parseText() & callToneAnalysisAPI()
-// TODO: make API endpoint for tone analysis (going to need new file)
-
 /**
  * Function similar to makeAPICall() that calls the endpoint for tone analysis
  * @param {*} text raw text from resource to be given to tone analysis
@@ -162,10 +157,10 @@ async function callToneAnalysisAPI( text, identifier ) {
             // logic to deal with API response
             let toneAnalysisKeywords = await response.json();
             formatToneOutput(toneAnalysisKeywords.keywords);
-            // TODO: cards for tone only output if endpoint is off??
+            
             // Visibility
             loadingSpinnerContainer.hidden = true;
-            toneCardsContainer.hidden = false;
+            toneAnalysisContainer.hidden = false;
 
         } // if
         else {

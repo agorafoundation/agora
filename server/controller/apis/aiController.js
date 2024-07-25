@@ -165,6 +165,7 @@ exports.callToneAnalysis = async ( req, res ) => {
 
         try {
 
+            /*
             // Get tone analysis for given input text
             console.log('calling granite');
             let prompt = createToneAnalysisPrompt(textInput);
@@ -192,7 +193,10 @@ exports.callToneAnalysis = async ( req, res ) => {
                     res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
                     res.status( 200 ).json( newJSONObject );
                     });
+            */
 
+            let tempObject = {keywords: ["marijuana", "hydro", "pussy", "hoe", "ass", "titties"]};
+            res.status( 200 ).json( tempObject );       
         } // try
         catch ( error ) {
 
