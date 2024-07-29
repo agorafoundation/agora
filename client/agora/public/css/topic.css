@@ -1366,6 +1366,7 @@
     margin: 0px;
     width: flex;
     position: relative;
+    margin-bottom: 20px;
     
 }
 
@@ -1397,6 +1398,7 @@
     height: auto; /* Maintain aspect ratio */
     max-width: 100%; /* Prevent the image from exceeding its container */
     margin-left: -10px;
+    margin-bottom: 5px;
 }
 
 .tone-tooltip {
