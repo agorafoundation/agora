@@ -239,7 +239,10 @@ function extractText( htmlString ) {
  * @param {*} originalText text that comes from the text editor.
  */
 function formatToneOutput( keywords, originalText ) {
-
+    if (!document.querySelector('.toggle-button').classList.contains('active')) {
+        return; // Exit if not in 'Suggestions' mode
+    }
+    
     // Create card element
     const toneCard = document.createElement( 'div' );
     toneCard.classList.add('tone-card');

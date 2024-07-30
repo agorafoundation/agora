@@ -192,7 +192,7 @@ exports.callToneAnalysis = async ( req, res ) => {
                     });
             */
 
-            let tempObject = {keywords: ["marijuana", "hydro", "pussy", "hoe", "ass", "titties"]};
+            let tempObject = {keywords: ["Gato", "hydro", "Pow", "Dog", "Fortnite", "cheese"]};
             res.status( 200 ).json( tempObject );       
         } // try
         catch ( error ) {
