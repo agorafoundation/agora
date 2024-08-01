@@ -261,9 +261,7 @@ function formatToneOutput( keywords, originalText ) {
             <!-- Info Bubble -->
             <div class="info-bubble">
                 <img src="/assets/img/buttons/info-bubble-orange.png" class="info-bubble-image">
-                <div class="tone-tooltip">
-                    <span class="tone-analysis-explanation"></span>
-                </div>
+                
             </div>
 
         </div>

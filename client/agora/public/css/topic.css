@@ -1401,39 +1401,6 @@
     margin-bottom: 5px;
 }
 
-.tone-tooltip {
-    visibility: hidden;
-    width: 220px; /* Adjust as needed */
-    background-color: orange;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    top: 150%; /* Position above the info bubble */
-    left: 10%;
-    margin-left: -60px; /* Center the tooltip */
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.tone-tooltip::after {
-    content: "";
-    position: absolute;
-    top: 100%; /* Bottom of the tooltip */
-    right: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: black transparent transparent transparent; /* Arrow pointing down */
-}
-
-.info-bubble:hover .tone-tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
 .tone-analysis-explanation {
     color: black;
     font-weight: normal;
