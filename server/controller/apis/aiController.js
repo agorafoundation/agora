@@ -146,63 +146,111 @@ exports.callOpenAI = async ( req, res ) => {
     }
 };
 
+// Server side API endpoint for tone analysis & explanation using IBM Granite-7B through Hugging Face
 exports.callToneAnalysis = async ( req, res ) => {
 
-    // Other side of API endpoint - use hugging face as failsafe incase
-    // watsonx doesn't work out
     if ( process.env.HF_TOGGLE === 'true' ) {
 
         // Variables
         let resourceID = req.body.resourceId;
         let textInput = req.body.resourceText;
-        let parameters = {
-            "return_full_text": false, 
-            "max_new_tokens": 35
-        };
-        let prompt = createToneAnalysisPrompt('initial-tone', textInput);
+        let validatedKeywords = '';
+        let newJSONObject = {};
 
+        // Full tone analysis & explanation process
         try {
-            
-            /*
-            // Get tone analysis for given input text
-            let validatedKeywords = await getToneAnalysisGeneration(textInput);
 
-            // Get keyword explanations
-            let explanations = await getToneExplanation(textInput, validatedKeywords);
-            
-            // Get tone highlights
-            let highlights = await getToneHighlights(textInput, validatedKeywords);
-            */
-           // Get tone analysis for given input text
-            queryGranite({"inputs": prompt, "parameters": parameters})
-            .then((response) => {
+            // Define initial tone analysis variables
+            let initialToneParameters = {
+                "return_full_text": false, 
+                "max_new_tokens": 35
+            };
+            let initialTonePrompt = createToneAnalysisPrompt('initial-tone', textInput);
+
+            // Get tone analysis for given input text
+            console.log('Calling Granite for Tone Analysis');
+            queryGranite({"inputs": initialTonePrompt, "parameters": initialToneParameters})
+                .then((response) => {
                     
-                // Get the keywords returned
+                // Get the keywords returned 
                 console.log('Tone analysis returned.');
-                const graniteOutput = response;
-                let toneAnalysisOutput = graniteOutput[0].generated_text;
+                let toneAnalysisOutput = response[0].generated_text;
                 let returnedToneKeywords = toneAnalysisOutput.split(',');
 
                 // Clean up output from model to just be the correct words
-                let validatedKeywords = validateToneKeywords(returnedToneKeywords);
+                validatedKeywords = validateToneKeywords(returnedToneKeywords);
                 console.log('Tone analysis keywords validated.');
 
-                // Create JSON object to return back to the user
-                let newJSONObject = {
-                    keywords: validatedKeywords,
-                    keywordsID: resourceID,
-                    keywordExplanations: explanations,
-                    toneHighlights: highlights
+                // Append to JSON object
+                newJSONObject["keywords"] = validatedKeywords;
+                console.log("Keywords appended to object.");
+
+                // Define keyword explanation variables
+                let explanationParameters = {
+                    "return_full_text": false, 
+                    "max_new_tokens": 260
                 };
+                let explantionPrompt = createToneAnalysisPrompt('keyword-explanation', textInput, validatedKeywords);
 
-                // Return to user
-                res.set( "x-agora-message-title", "Success" );
-                res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
-                res.status( 200 ).json( newJSONObject );
+                // Call Granite for keyword explanation
+                console.log('Calling Granite for Keyword Explanation');
+                queryGranite({"inputs": explantionPrompt, "parameters": explanationParameters})
+                    .then((response) => {
+                         
+                        // Get output
+                        console.log('Keyword Explanation returned.');
+                        let explanationOutput = response[0].generated_text;
+        
+                        // Make sure there is no trailing text besides JSON object
+                        const jsonString = explanationOutput.match(/\{[\s\S]*\}/)[0];
 
-                }); // then
+                        // Parse string for JSON object
+                        const explantionObject = JSON.parse(jsonString);
 
-            // Uncomment to test without having to connect to hugging face
+                        // Add to JSON object
+                        newJSONObject["keywordExplanations"] = explantionObject;
+                        console.log("Explanations appended to object.");
+
+                        // Define tone highlight parameters
+                        let highlightsParameters = {
+                            "return_full_text": false, 
+                            "max_new_tokens": 260
+                        };
+                        let highlightsPrompt = createToneAnalysisPrompt('tone-highlights', textInput, validatedKeywords);
+
+                        // Call Granite for keyword tone highlights
+                        console.log('Calling Granite for Keyword Tone Highlights');
+                        queryGranite({"inputs": highlightsPrompt, "parameters": highlightsParameters})
+                            .then((response) => {
+                                
+                                // Get output
+                                console.log('Tone Highlights returned.');
+                                let highlightOutput = response[0].generated_text;
+                
+                                // Make sure there is no trailing text besides JSON object
+                                const jsonString = highlightOutput.match(/\{[\s\S]*\}/)[0];
+
+                                // Parse string for JSON object
+                                const highlightsObject = JSON.parse(jsonString);
+
+                                // Add to JSON object
+                                newJSONObject["toneHighlights"] = highlightsObject;
+                                newJSONObject["keywordsID"] = resourceID;
+                                console.log("Highlights appended to object.");
+
+                                // Return to user
+                                res.set( "x-agora-message-title", "Success" );
+                                res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                                res.status( 200 ).json( newJSONObject );
+                                console.log("Tone Analysis process complete.");
+
+                            }); // then
+
+                    }); // then
+
+            }); // then
+
+            // Uncomment to test without having to connect to hugging face - just ensure format is up to date with current implementation
             //let tempObject = {keywords: ["Gato", "hydro", "Pow", "Dog", "Fortnite", "cheese"]};
             //res.status( 200 ).json( tempObject );       
         } // try
@@ -310,8 +358,7 @@ async function queryGranite( data ) {
 		}
 	);
 
-	const result = await response.json();
-    console.log("Query Response: " + result[0]);
+	const result = await response.json(); 
 	return result;
 
 } // queryGranite()
@@ -320,12 +367,18 @@ async function queryGranite( data ) {
  * Function that creates the prompt for the tone analysis model.
  * @param {*} promptType specifies which prompt to send to the API
  * @param {*} input parsed text from the resource editor.
- * @param {*} keywords keywords for tone analysis if needed for the prompt
+ * @param {*} keywords keywords for tone analysis if needed for the prompt. Defaults to null since the initial tone analysis 
+ * prompt generates those keywords and thus is not needed for the prompt.
  * @returns returns the final built prompt to pass along to the API.
  */
 function createToneAnalysisPrompt( promptType, input, keywords=null ) {
 
-    if ( promptType == 'inital-tone' ) {
+    // Variables
+    let fullPrompt = '';
+
+    // Prompt for initial tone analysis keyword generation
+    if ( promptType == 'initial-tone' ) {
+
         let prompt = `Analyze the text for the tone of the entire text. Return the tone as a list of different keywords that encapsulate the tone. The ONLY output that should be returned is the keywords as a list, NOTHING ELSE. DO NOT return more than 5 keywords. NO MORE THAN FIVE KEYWORDS IN THE OUTPUT!!!`;
 
         let example1 = `Example Text 1: Sorry for the last minute cancellation. I have a department meeting at IBM that I thought would be done before our meeting, but unfortunately, it won’t.  I talked to the Joint Study students earlier about yesterday’s event and thanked them for all of their help and participation, and got their feedback on the day as well.  If you have additional items that need to be discussed, please stop and talk to me tomorrow, slack me, or schedule a meeting.
@@ -336,12 +389,11 @@ function createToneAnalysisPrompt( promptType, input, keywords=null ) {
 
         Example Output 2: "Reverent,  Reflective, Celebratory, Inspirational, Scholarly"`
 
-        let fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ 'Text: ' + input + '\n\nOutput: ';
-
-        return fullPrompt;
+        fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ 'Text: ' + input + '\n\nOutput: ';
 
     } // if
 
+    // Prompt for explanation of generated tone keywords
     else if ( promptType == 'keyword-explanation' ) {
 
         let prompt = `For each keyword, please give an explanation on why the text can be classified into the given tone. Return a JSON object that has the keyword as the key and the explanation as the value. The ONLY output returned should be the JSON object, NOTHING ELSE.`
@@ -372,13 +424,12 @@ function createToneAnalysisPrompt( promptType, input, keywords=null ) {
         }
         `
 
-        let fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'
+        fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'
         + 'Text: ' + input + '\n\n'+ 'Keywords: ' + keywords + '\n\nOutput: ';
-
-        return fullPrompt
 
     } // else if
 
+    // Highlighting of inital input text to correspond text with generated tone keywords
     else if ( promptType == 'tone-highlights' ) {
 
         let prompt = `For each keyword, highlight specific portions of the text that pertain to that keyword. Return a JSON object where the key is the keyword and the value is the specific highlighted portion of the text. The ONLY output returned should be the JSON object, NOTHING ELSE.`
@@ -422,12 +473,11 @@ function createToneAnalysisPrompt( promptType, input, keywords=null ) {
         }
         ` 
 
-        let fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ example3 
+        fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ example3 
         + '\n\n' +'Text: ' + input + '\n\n'+ 'Keywords: ' + keywords + '\n\nOutput: ';
-
-        return fullPrompt
-
     } // else if
+
+    return fullPrompt;
 
 } // createToneAnalysisPrompt()
 
@@ -457,169 +507,7 @@ function validateToneKeywords( words ) {
 
     return cleanWords;
 
-    /*
-    // Spell checking function to make sure words are correctly outputted without missing 
-    // letters. Need to possibly change package since it will switch words that are correct.
-    // Might not be needed though since Granite Model spells things correctly for the most part.
-
-    let i = 0;
-    spellchecker.getDictionary('en-US', function(error, dictionary) {
-
-        if( error ) {
-
-            console.log("Could not load spellchecker dictionary: ", error);
-            return;
-
-        } // if
-
-        // Check each returned word
-        for(i; i < words.length; i++) {
-
-            word = words[i];
-            if( !dictionary.spellCheck(word) ){
-
-                // Switch word to correct word
-                const suggestion = dictionary.getSuggestions(word, limit=1);
-                console.log(words[i] + " changed to " + suggestion[0] + ".");
-                words[i] = suggestion[0];
-
-            } // if
-
-        } // for
-
-    });
-    */
-
 } // validateToneKeywords()
-
-async function getToneAnalysisGeneration( text ) {
-
-    // Parameters
-    let parameters = {
-        "return_full_text": false, 
-        "max_new_tokens": 35
-    };
-    let prompt = createToneAnalysisPrompt('initial-tone', text);
-
-    // Validate response
-    try {
-        
-        console.log('calling granite for initial tone analysis');
-
-        // Call Granite for tone explanation
-        const graniteOutput = await queryGranite({
-            "inputs": prompt, 
-            "parameters": parameters
-        });
-        console.log(graniteOutput);
-        console.log('Tone analysis returned.');
-        let toneAnalysisOutput = graniteOutput[0].generated_text;
-
-        // Clean up output from model to just be the correct words
-        let returnedToneKeywords = toneAnalysisOutput.split(',');
-        let keywords = validateToneKeywords(returnedToneKeywords);
-        console.log('Tone analysis keywords validated.');
-
-        return keywords;
-
-    } // try
-    catch ( error ) {
-
-        console.log(error);
-    
-    } // catch
-
-} // getToneAnalysisGeneration()
-
-/**
- * Function that calls the Granite model to get the explanation of why each tone keyword
- * was generated.
- * @param {*} text original text from text editor 
- * @param {*} returnedKeywords keywords that got generated for the corresponding text
- * @returns JSON object with the generated explanations
- */
-async function getToneExplanation( text, returnedKeywords ) {
-
-    // Parameters
-    let parameters = {
-        "return_full_text": false, 
-        "max_new_tokens": 260
-    };
-    let prompt = createToneAnalysisPrompt('keyword-explanation', text, returnedKeywords);
-    
-    // Validate response
-    try {
-
-        console.log('calling granite for tone explanation');
-        
-        // Call Granite for tone explanation
-        const graniteOutput = await queryGranite({
-            "inputs": prompt, 
-            "parameters": parameters
-        });
-        let explanationOutput = graniteOutput[0].generated_text;
-        
-        // Make sure there is no trailing text besides JSON object
-        const jsonString = explanationOutput.match(/\{[\s\S]*\}/)[0];
-
-        // Parse string for JSON object
-        const jsonObject = JSON.parse(jsonString);
-
-        return jsonObject;
-
-    } // try
-    catch ( error ) {
-
-        console.log(error);
-    
-    } // catch
-
-} // getToneExplanation()
-
-/**
- * Function that calls the Granite model to highlight specific portions of the text that
- * correspond with the given keywords.
- * @param {*} text original text from the text editor for the prompt
- * @param {*} returnedKeywords keywords returned in initial tone analysis generation
- * @returns JSON object with the highlighted text corresponding to its assigned keyword
- */
-async function getToneHighlights( text, returnedKeywords ) {
-
-    // Parameters
-    let parameters = {
-        "return_full_text": false, 
-        "max_new_tokens": 260
-    };
-    let prompt = createToneAnalysisPrompt('tone-highlights', text, returnedKeywords);
-    
-    // Validate response
-    try {
-
-        console.log('calling granite for tone highlights');
-        
-        // Call Granite for tone explanation
-        const graniteOutput = await queryGranite({
-            "inputs": prompt, 
-            "parameters": parameters
-        });
-        let explanationOutput = graniteOutput[0].generated_text;
-        
-        // Make sure there is no trailing text besides JSON object
-        const jsonString = explanationOutput.match(/\{[\s\S]*\}/)[0];
-
-        // Parse string for JSON object
-        const jsonObject = JSON.parse(jsonString);
-
-        return jsonObject;
-
-    } // try
-    catch ( error ) {
-
-        console.log(error);
-    
-    } // catch
-
-} // getToneHighlights()
 
 /** 
  * Validate all the sources in the specified JSON.
