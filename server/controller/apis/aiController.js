@@ -8,7 +8,7 @@
 // dependencies
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
-const spellchecker = require( 'simple-spellchecker' );
+const sw = require( 'stopword' );  // for text preprocessing
 const { HfInference } = require('@huggingface/inference');
 
 // services
@@ -163,7 +163,7 @@ exports.callToneAnalysis = async ( req, res ) => {
             // Define initial tone analysis variables
             let initialToneParameters = {
                 "return_full_text": false, 
-                "max_new_tokens": 35
+                "max_new_tokens": 95
             };
             let initialTonePrompt = createToneAnalysisPrompt('initial-tone', textInput);
 
@@ -172,45 +172,56 @@ exports.callToneAnalysis = async ( req, res ) => {
             queryGranite({"inputs": initialTonePrompt, "parameters": initialToneParameters})
                 .then((response) => {
                     
-                // Get the keywords returned 
+                // Get the explanation returned 
                 console.log('Tone analysis returned.');
                 let toneAnalysisOutput = response[0].generated_text;
-                let returnedToneKeywords = toneAnalysisOutput.split(',');
-
-                // Clean up output from model to just be the correct words
-                validatedKeywords = validateToneKeywords(returnedToneKeywords);
-                console.log('Tone analysis keywords validated.');
+                
+                // Get output quality
+                let explanationSemanticQuality = getSemanticComparison(textInput, toneAnalysisOutput, "explanation");
 
                 // Append to JSON object
-                newJSONObject["keywords"] = validatedKeywords;
-                console.log("Keywords appended to object.");
+                newJSONObject["tone_explanation"] = {"explanation": toneAnalysisOutput,
+                                                     "rating": explanationSemanticQuality};
+                console.log("Explanation appended to object.");
 
-                // Define keyword explanation variables
-                let explanationParameters = {
+                // Define keyword variables
+                let keywordsParameters = {
                     "return_full_text": false, 
-                    "max_new_tokens": 260
+                    "max_new_tokens": 30
                 };
-                let explantionPrompt = createToneAnalysisPrompt('keyword-explanation', textInput, validatedKeywords);
+                let keywordsPrompt = createToneAnalysisPrompt('keywords', textInput, toneAnalysisOutput);
 
                 // Call Granite for keyword explanation
-                console.log('Calling Granite for Keyword Explanation');
-                queryGranite({"inputs": explantionPrompt, "parameters": explanationParameters})
+                console.log('Calling Granite for Keyword Generation');
+                queryGranite({"inputs": keywordsPrompt, "parameters": keywordsParameters})
                     .then((response) => {
                          
                         // Get output
-                        console.log('Keyword Explanation returned.');
-                        let explanationOutput = response[0].generated_text;
+                        console.log('Keywords returned.');
+                        let keywordsOutput = response[0].generated_text;
+                        let returnedToneKeywords = keywordsOutput.split(',');
         
-                        // Make sure there is no trailing text besides JSON object
-                        const jsonString = explanationOutput.match(/\{[\s\S]*\}/)[0];
+                        // Clean up output from model to just be the correct words
+                        validatedKeywords = validateToneKeywords(returnedToneKeywords);
+                        console.log('Tone analysis keywords validated.');
 
-                        // Parse string for JSON object
-                        const explantionObject = JSON.parse(jsonString);
+                        // Get output quality
+                        let keywordsSemanticQuality = getSemanticComparison(textInput, validatedKeywords, "keywords");
 
-                        // Add to JSON object
-                        newJSONObject["keywordExplanations"] = explantionObject;
-                        console.log("Explanations appended to object.");
+                        // Append to JSON object
+                        newJSONObject["tone_keywords"] = {"keywords": validatedKeywords,
+                                                          "rating": keywordsSemanticQuality};
+                        console.log("Keywords appended to object.");
+                        
+                         // Return to user
+                         res.set( "x-agora-message-title", "Success" );
+                         res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                         res.status( 200 ).json( newJSONObject );
+                         console.log("Tone Analysis process complete.");
 
+                        /*
+                        // Tone Highlights
+                        // TODO: doesn't work properly -- needs more testing
                         // Define tone highlight parameters
                         let highlightsParameters = {
                             "return_full_text": false, 
@@ -245,7 +256,7 @@ exports.callToneAnalysis = async ( req, res ) => {
                                 console.log("Tone Analysis process complete.");
 
                             }); // then
-
+                        */
                     }); // then
 
             }); // then
@@ -371,7 +382,7 @@ async function queryGranite( data ) {
  * prompt generates those keywords and thus is not needed for the prompt.
  * @returns returns the final built prompt to pass along to the API.
  */
-function createToneAnalysisPrompt( promptType, input, keywords=null ) {
+function createToneAnalysisPrompt( promptType, input, explanation=null ) {
 
     // Variables
     let fullPrompt = '';
@@ -379,57 +390,47 @@ function createToneAnalysisPrompt( promptType, input, keywords=null ) {
     // Prompt for initial tone analysis keyword generation
     if ( promptType == 'initial-tone' ) {
 
-        let prompt = `Analyze the text for the tone of the entire text. Return the tone as a list of different keywords that encapsulate the tone. The ONLY output that should be returned is the keywords as a list, NOTHING ELSE. DO NOT return more than 5 keywords. NO MORE THAN FIVE KEYWORDS IN THE OUTPUT!!!`;
+        let prompt = `Analyze the given text. Please classify the overall tone of the given input text with one word. Please explain yourself first BEFORE providing an explanation. Please just give a descriptive but concise paragraph of text. Your last sentence should be the classification, with the classification being a single word; everything else before that should be the explanation for the classification.`;
 
         let example1 = `Example Text 1: Sorry for the last minute cancellation. I have a department meeting at IBM that I thought would be done before our meeting, but unfortunately, it won’t.  I talked to the Joint Study students earlier about yesterday’s event and thanked them for all of their help and participation, and got their feedback on the day as well.  If you have additional items that need to be discussed, please stop and talk to me tomorrow, slack me, or schedule a meeting.
 
-        Example Output 1: apologetic, professional, informative, grateful, accommodating`;
+        Example Output 1: The text expresses an apologetic and professional tone, beginning with an apology for a last-minute cancellation due to an unexpected overlap with a department meeting. It continues to communicate that the speaker has already engaged with the Joint Study students regarding a recent event, expressing gratitude and seeking feedback. The speaker provides multiple options for further communication, demonstrating a considerate and flexible attitude towards rescheduling or addressing any additional concerns. The overall tone is considerate.`;
 
-        let example2 = `Example Text 2: William Butler Yeats, an Irish poet who has heavily contributed to the Irish Literary Revival, was very cultured and very well-versed in the arts. His extensive knowledge and interest in history and in the arts helped him write some impressively magnificent poems throughout the course of his career. In turn, he has become very well renowned for his writing, for his use of different things throught history, and in the arts to convey strong themes in the messages of his poems. Specifically, Yeats was interested in Irish mythology since he used it in a vast amount of his work. His use of Irish mythology has been a distinguishing factor for his work, reminding the Irish nation of their ancient roots through various inspirations and allusions to several Irish myths and legends. In the poems “The Song of Wandering Aengus,” “The Stolen Child,” and “To the Rose upon the Rood of Time,” W.B Yeats rekindles the connection between modern & ancient Irish culture through the use of Irish mythology to convey different themes among a plethora of his works, restoring a sense of Irish pride and identity by differing that part of their culture away from the Greek mythology and way of thinking.
+        let example2 = `Example Text 2: Assistive technology for communication has made significant strides over the years, providing invaluable support to individuals with various disabilities. Traditional communication aids, such as augmentative and alternative communication (AAC) devices, have been instrumental in giving a voice to those who cannot speak. These devices range from simple picture boards to sophisticated speech-generating devices (SGDs) that can be customized to meet the specific needs of the user. However, the reliance on such devices often requires the presence of a computer or tablet, limiting the user's ability to communicate in situations where these tools are unavailable. This dependency underscores the need for innovative solutions that can bridge the gap when traditional assistive technologies are not accessible.
 
-        Example Output 2: "Reverent,  Reflective, Celebratory, Inspirational, Scholarly"`
+        Example Output 2: The text provides a detailed and balanced overview of the progress and impact of assistive technology for communication, emphasizing both the benefits and limitations of traditional AAC devices. It highlights the significant advancements in the field and the vital support these technologies offer to individuals with disabilities. At the same time, it points out the dependency on devices such as computers or tablets and the necessity for innovative solutions to overcome these limitations. The overall tone of the text is objective.`
 
         fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ 'Text: ' + input + '\n\nOutput: ';
 
     } // if
 
     // Prompt for explanation of generated tone keywords
-    else if ( promptType == 'keyword-explanation' ) {
+    else if ( promptType == 'keywords' ) {
 
-        let prompt = `For each keyword, please give an explanation on why the text can be classified into the given tone. Return a JSON object that has the keyword as the key and the explanation as the value. The ONLY output returned should be the JSON object, NOTHING ELSE.`
+        let prompt = `Using the input text and the explanation of the overall tone of the input text, generate different keywords that encapsulate the tone of the input text. A keyword can be defined as a word or two words that describes a part of the tone. For example, "Artificial Intelligence" can be ONE keyword. The ONLY output that should be returned is the keywords as a list, NOTHING ELSE. DO NOT return more than 5 keywords. NO MORE THAN FIVE KEYWORDS IN THE OUTPUT!!!`
         
-        let example1 = `Example Text 1: Sorry for the last minute cancellation. I have a department meeting at IBM that I thought would be done before our meeting, but unfortunately, it won’t.  I talked to the Joint Study students earlier about yesterday’s event and thanked them for all of their help and participation, and got their feedback on the day as well.  If you have additional items that need to be discussed, please stop and talk to me tomorrow, slack me, or schedule a meeting.
+        let example1 = `Example Text 1: Assistive technology for communication has made significant strides over the years, providing invaluable support to individuals with various disabilities. Traditional communication aids, such as augmentative and alternative communication (AAC) devices, have been instrumental in giving a voice to those who cannot speak. These devices range from simple picture boards to sophisticated speech-generating devices (SGDs) that can be customized to meet the specific needs of the user. However, the reliance on such devices often requires the presence of a computer or tablet, limiting the user's ability to communicate in situations where these tools are unavailable. This dependency underscores the need for innovative solutions that can bridge the gap when traditional assistive technologies are not accessible.
 
-        Example Keywords 1: apologetic, professional, informative, grateful, accommodating
+        Example Tone Explanation 1: The text provides a detailed and balanced overview of the progress and impact of assistive technology for communication, emphasizing both the benefits and limitations of traditional AAC devices. It highlights the significant advancements in the field and the vital support these technologies offer to individuals with disabilities. At the same time, it points out the dependency on devices such as computers or tablets and the necessity for innovative solutions to overcome these limitations. The overall tone of the text is objective.
 
-        Example Output 1: {
-        "apologetic": "The text begins with 'Sorry for the last minute cancellation,' expressing regret for the inconvenience caused.",
-        "professional": "The mention of a department meeting at IBM and the structured communication style reflects a professional tone.",
-        "informative": "The text provides specific details about the cancellation reason, the meeting with Joint Study students, and options for further discussion.",
-        "grateful": "The phrase 'thanked them for all of their help and participation' shows appreciation for the efforts of the Joint Study students.",
-        "accommodating": "The text offers multiple ways to follow up ('stop and talk to me tomorrow, slack me, or schedule a meeting'), showing a willingness to accommodate the reader's needs."
-        }
+        Example Output 1: "Progress", "Support", "Limitations", "Dependency", "Innovation"
         `
 
         let example2 =  `Example Text 2: William Butler Yeats, an Irish poet who has heavily contributed to the Irish Literary Revival, was very cultured and very well-versed in the arts. His extensive knowledge and interest in history and in the arts helped him write some impressively magnificent poems throughout the course of his career. In turn, he has become very well renowned for his writing, for his use of different things throught history, and in the arts to convey strong themes in the messages of his poems. Specifically, Yeats was interested in Irish mythology since he used it in a vast amount of his work. His use of Irish mythology has been a distinguishing factor for his work, reminding the Irish nation of their ancient roots through various inspirations and allusions to several Irish myths and legends. In the poems “The Song of Wandering Aengus,” “The Stolen Child,” and “To the Rose upon the Rood of Time,” W.B Yeats rekindles the connection between modern & ancient Irish culture through the use of Irish mythology to convey different themes among a plethora of his works, restoring a sense of Irish pride and identity by differing that part of their culture away from the Greek mythology and way of thinking.
 
-        Example Keywords 2: Reverent,  Reflective, Celebratory, Inspirational, Scholarly
+       Example Tone Explanation 2: The text discusses William Butler Yeats' contributions to the Irish Literary Revival, emphasizing his cultured background and extensive knowledge in history and the arts. It highlights how these attributes enabled him to create magnificent poems that convey strong themes through historical and artistic references. The text particularly focuses on Yeats' interest in Irish mythology, noting how his use of these myths distinguishes his work and reconnects the Irish nation with its ancient roots. By examining specific poems, the text illustrates how Yeats bridges modern and ancient Irish culture, restoring a sense of pride and identity. The overall tone is reverent.
 
-        Example Output 2: {
-        "Reverent": "The text describes Yeats' deep respect and admiration for Irish mythology and his efforts to remind the Irish nation of their ancient roots, showing a sense of reverence towards his cultural heritage.",
-        "Reflective": "The text highlights Yeats' use of history and arts to convey strong themes in his poems, indicating a reflective approach to his work and the cultural significance of his inspirations.",
-        "Celebratory": "Yeats' rekindling of the connection between modern and ancient Irish culture and his restoration of Irish pride and identity are portrayed as celebratory acts of cultural revival.",
-        "Inspirational": "Yeats' efforts to restore a sense of Irish pride and identity through his poetry, and his use of mythology to inspire and remind people of their heritage, reflect an inspirational tone.",
-        "Scholarly": "The text emphasizes Yeats' extensive knowledge, interest in history and the arts, and his well-versed background, indicating a scholarly approach to his writing and contributions to the Irish Literary Revival."
-        }
+       Example Output 2: "Contributions", "Knowledge", "Mythology", "Distinction", "Identity"
         `
 
         fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'
-        + 'Text: ' + input + '\n\n'+ 'Keywords: ' + keywords + '\n\nOutput: ';
+        + 'Text: ' + input + '\n\n'+ 'Explanation: ' + explanation + '\n\nOutput: ';
 
     } // else if
 
+    /*
     // Highlighting of inital input text to correspond text with generated tone keywords
+    // TODO: need to experiment with this prompt more; highlighting does not work the way we want it to
     else if ( promptType == 'tone-highlights' ) {
 
         let prompt = `For each keyword, highlight specific portions of the text that pertain to that keyword. Return a JSON object where the key is the keyword and the value is the specific highlighted portion of the text. The ONLY output returned should be the JSON object, NOTHING ELSE.`
@@ -476,6 +477,7 @@ function createToneAnalysisPrompt( promptType, input, keywords=null ) {
         fullPrompt = prompt + '\n\n' + example1 + '\n\n' + example2 + '\n\n'+ example3 
         + '\n\n' +'Text: ' + input + '\n\n'+ 'Keywords: ' + keywords + '\n\nOutput: ';
     } // else if
+     */
 
     return fullPrompt;
 
@@ -508,6 +510,20 @@ function validateToneKeywords( words ) {
     return cleanWords;
 
 } // validateToneKeywords()
+
+//TODO: find way to optimally do word embeddings with vectors in node.js
+function getSemanticComparison( input, generation, comparisonType ) {
+
+    // Preprocess input by removing stop words
+    const words = input.split(' ');
+    const filteredWords = sw.removeStopwords(words);
+    const preprocessedInput = filteredWords.join(' ')
+
+    if ( comparisonType == "explanation" ) {
+
+    } // if
+
+} // getSemanticComparison()
 
 /** 
  * Validate all the sources in the specified JSON.
