@@ -9,11 +9,11 @@
 const openAi = require( 'openai' ); 
 const fetch = require( 'node-fetch' );
 const sw = require( 'stopword' );  // for text preprocessing
+const { spawn } = require( 'child_process' );
 const { HfInference } = require('@huggingface/inference');
 
 // services
 const resourceService = require( '../../service/resourceService' );
-
 // min string length for resource content
 const MIN_CONTENT_LENGTH = 650;
 
@@ -514,15 +514,86 @@ function validateToneKeywords( words ) {
 //TODO: find way to optimally do word embeddings with vectors in node.js
 function getSemanticComparison( input, generation, comparisonType ) {
 
-    // Preprocess input by removing stop words
-    const words = input.split(' ');
-    const filteredWords = sw.removeStopwords(words);
-    const preprocessedInput = filteredWords.join(' ')
+    // Variables
+    const pythonProcess = spawn('python', ['server/controller/apis/semanticComparison.py']);
+    let filteredSentences = [];
+    let response = null;
+
+    // Preprocess input
+    const sentences = input.split('.');
+    for (let i=0; i < sentences.length; i++) {
+
+        // Filter out stopwords
+        const words = sentences[i].split(' ');
+        const filteredWords = sw.removeStopwords(words);
+
+        // Put back into a sentence and append to the list
+        const preprocessedSentence = filteredWords.join(' ');
+        filteredSentences.push(preprocessedSentence);
+
+    } // for
+    
 
     if ( comparisonType == "explanation" ) {
 
+
+        // TODO: filter stop words out of explanation paragraph
+        // Filter out stopwords
+        const words = generation.split(' ');
+        const filteredWords = sw.removeStopwords(words);
+        const preprocessedGeneration = filteredWords.join(' ');
+
+        // Package data & send to the python script
+        const inputData = JSON.stringify({
+            input: filteredSentences,
+            inputGeneration: preprocessedGeneration,
+            processType: comparisonType
+        });
+        pythonProcess.stdin.write(inputData);
+        pythonProcess.stdin.end()
+
+        // Get back result from python script
+        pythonProcess.stdout.on('data', (data) => {
+            response = JSON.parse(data.toString()).result;
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Error: ${data}`);
+        });
+
+        pythonProcess.on('close', (code) => {
+            console.log(`Python process exited with code ${code}`);
+        });
+
     } // if
 
+    else if ( comparisonType == "keywords" ) {
+
+        // Package data & send to the python script
+        const inputData = JSON.stringify({
+            input: filteredSentences,
+            inputGeneration: generation,
+            processType: comparisonType
+        });
+        pythonProcess.stdin.write(inputData);
+        pythonProcess.stdin.end()
+
+        // Get back result from python script
+        pythonProcess.stdout.on('data', (data) => {
+            response = JSON.parse(data.toString()).result;
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Error: ${data}`);
+        });
+
+        pythonProcess.on('close', (code) => {
+            console.log(`Python process exited with code ${code}`);
+        });
+
+    } // else if
+
+    return response;
 } // getSemanticComparison()
 
 /** 
