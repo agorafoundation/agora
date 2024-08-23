@@ -14,6 +14,7 @@ const { HfInference } = require('@huggingface/inference');
 
 // services
 const resourceService = require( '../../service/resourceService' );
+const { resolve } = require('path');
 // min string length for resource content
 const MIN_CONTENT_LENGTH = 650;
 
@@ -160,6 +161,7 @@ exports.callToneAnalysis = async ( req, res ) => {
         // Full tone analysis & explanation process
         try {
 
+            // Initial Tone Analysis - Explanation + Classification
             // Define initial tone analysis variables
             let initialToneParameters = {
                 "return_full_text": false, 
@@ -169,21 +171,19 @@ exports.callToneAnalysis = async ( req, res ) => {
 
             // Get tone analysis for given input text
             console.log('Calling Granite for Tone Analysis');
-            queryGranite({"inputs": initialTonePrompt, "parameters": initialToneParameters})
-                .then((response) => {
-                    
-                // Get the explanation returned 
-                console.log('Tone analysis returned.');
-                let toneAnalysisOutput = response[0].generated_text;
-                
-                // Get output quality
-                let explanationSemanticQuality = getSemanticComparison(textInput, toneAnalysisOutput, "explanation");
+            let responseInitial = await queryGranite({"inputs": initialTonePrompt, "parameters": initialToneParameters});
+            
+            // Get the explanation returned
+            let toneAnalysisOutput = responseInitial[0].generated_text;
+            
+            // Get output quality
+            getSemanticComparison(textInput, toneAnalysisOutput, "explanation").then((explanationSemanticQuality) => {
 
                 // Append to JSON object
                 newJSONObject["tone_explanation"] = {"explanation": toneAnalysisOutput,
                                                      "rating": explanationSemanticQuality};
-                console.log("Explanation appended to object.");
-
+                
+                // Tone Analysis Keyword Generation
                 // Define keyword variables
                 let keywordsParameters = {
                     "return_full_text": false, 
@@ -191,79 +191,85 @@ exports.callToneAnalysis = async ( req, res ) => {
                 };
                 let keywordsPrompt = createToneAnalysisPrompt('keywords', textInput, toneAnalysisOutput);
 
-                // Call Granite for keyword explanation
+                // Call Granite for keyword generation
                 console.log('Calling Granite for Keyword Generation');
-                queryGranite({"inputs": keywordsPrompt, "parameters": keywordsParameters})
-                    .then((response) => {
-                         
-                        // Get output
-                        console.log('Keywords returned.');
-                        let keywordsOutput = response[0].generated_text;
-                        let returnedToneKeywords = keywordsOutput.split(',');
-        
-                        // Clean up output from model to just be the correct words
-                        validatedKeywords = validateToneKeywords(returnedToneKeywords);
-                        console.log('Tone analysis keywords validated.');
+                queryGranite({"inputs": keywordsPrompt, "parameters": keywordsParameters}).then((responseKeywords) => {
 
-                        // Get output quality
-                        let keywordsSemanticQuality = getSemanticComparison(textInput, validatedKeywords, "keywords");
+                    // Get output
+                    let keywordsOutput = responseKeywords[0].generated_text;
+                    let returnedToneKeywords = keywordsOutput.split(',');
+
+                    // Clean up output from model to just be the correct words
+                    validatedKeywords = validateToneKeywords(returnedToneKeywords);
+
+                    // Get output quality
+                    getSemanticComparison(textInput, validatedKeywords, "keywords").then((keywordsSemanticQuality) => {
 
                         // Append to JSON object
                         newJSONObject["tone_keywords"] = {"keywords": validatedKeywords,
                                                           "rating": keywordsSemanticQuality};
-                        console.log("Keywords appended to object.");
-                        
-                         // Return to user
-                         res.set( "x-agora-message-title", "Success" );
-                         res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
-                         res.status( 200 ).json( newJSONObject );
-                         console.log("Tone Analysis process complete.");
 
-                        /*
-                        // Tone Highlights
-                        // TODO: doesn't work properly -- needs more testing
-                        // Define tone highlight parameters
-                        let highlightsParameters = {
-                            "return_full_text": false, 
-                            "max_new_tokens": 260
-                        };
-                        let highlightsPrompt = createToneAnalysisPrompt('tone-highlights', textInput, validatedKeywords);
+                        // Return to user
+                        res.set( "x-agora-message-title", "Success" );
+                        res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
+                        res.status( 200 ).json( newJSONObject );
+                        console.log(newJSONObject);
+                        console.log("Tone Analysis process complete.");
 
-                        // Call Granite for keyword tone highlights
-                        console.log('Calling Granite for Keyword Tone Highlights');
-                        queryGranite({"inputs": highlightsPrompt, "parameters": highlightsParameters})
-                            .then((response) => {
-                                
-                                // Get output
-                                console.log('Tone Highlights returned.');
-                                let highlightOutput = response[0].generated_text;
+                    }) // .then
+                    .catch((error) => {
+
+                        console.error("Error running Python script:", error);
+                        res.status(500).json({ error: "Semantic comparison failed" });
+
+                    }); // .catch
                 
-                                // Make sure there is no trailing text besides JSON object
-                                const jsonString = highlightOutput.match(/\{[\s\S]*\}/)[0];
+                }); // .then
 
-                                // Parse string for JSON object
-                                const highlightsObject = JSON.parse(jsonString);
+            })// .then
+            .catch((error) => {
 
-                                // Add to JSON object
-                                newJSONObject["toneHighlights"] = highlightsObject;
-                                newJSONObject["keywordsID"] = resourceID;
-                                console.log("Highlights appended to object.");
+                console.error("Error running Python script:", error);
+                res.status(500).json({ error: "Semantic comparison failed" });
+                
+            }); // .catch
 
-                                // Return to user
-                                res.set( "x-agora-message-title", "Success" );
-                                res.set( "x-agora-message-detail", "Returned response from HuggingFace" );
-                                res.status( 200 ).json( newJSONObject );
-                                console.log("Tone Analysis process complete.");
+            /*
+            // Tone Highlights
+            // TODO: doesn't work properly -- needs more testing
+            // Define tone highlight parameters
+            let highlightsParameters = {
+                "return_full_text": false, 
+                "max_new_tokens": 260
+            };
+            let highlightsPrompt = createToneAnalysisPrompt('tone-highlights', textInput, validatedKeywords);
 
-                            }); // then
-                        */
-                    }); // then
+            // Call Granite for keyword tone highlights
+            console.log('Calling Granite for Keyword Tone Highlights');
+            let responseHighlights = await queryGranite({"inputs": highlightsPrompt, "parameters": highlightsParameters});
+            
+            // Get output
+            console.log('Tone Highlights returned.');
+            let highlightOutput = responseHighlights[0].generated_text;
 
-            }); // then
+            // Make sure there is no trailing text besides JSON object
+            const jsonString = highlightOutput.match(/\{[\s\S]*\}/)[0];
 
+            // Parse string for JSON object
+            const highlightsObject = JSON.parse(jsonString);
+
+            // Add to JSON object
+            newJSONObject["toneHighlights"] = highlightsObject;
+            newJSONObject["keywordsID"] = resourceID;
+            console.log("Highlights appended to object.");
+            */
+
+            /*
             // Uncomment to test without having to connect to hugging face - just ensure format is up to date with current implementation
-            //let tempObject = {keywords: ["Gato", "hydro", "Pow", "Dog", "Fortnite", "cheese"]};
-            //res.status( 200 ).json( tempObject );       
+            let tempObject = {keywords: ["Gato", "hydro", "Pow", "Dog", "Fortnite", "cheese"]};
+            res.status( 200 ).json( tempObject );   
+            */
+           
         } // try
         catch ( error ) {
 
@@ -273,7 +279,7 @@ exports.callToneAnalysis = async ( req, res ) => {
             res.status( 500 ).json( {"error": "Failed to return response from HuggingFace"} );
             
         } // catch
-
+        
     } // if
     else {
 
@@ -511,13 +517,21 @@ function validateToneKeywords( words ) {
 
 } // validateToneKeywords()
 
-//TODO: find way to optimally do word embeddings with vectors in node.js
-function getSemanticComparison( input, generation, comparisonType ) {
+/**
+ * Helper function that talks to a Python script to get a similarity rating between the input and
+ * generation from the IBM Granite model.
+ * @param {*} input Input text coming directly from the text editor.
+ * @param {*} generation Generated output coming from Granite model.
+ * @param {*} comparisonType Process type - explanation of overall tone or keywords representing the tone.
+ * @returns JSON object that holds the similarity rating for the given process (explanation or keywords).
+ */
+async function getSemanticComparison( input, generation, comparisonType ) {
 
     // Variables
     const pythonProcess = spawn('python', ['server/controller/apis/semanticComparison.py']);
     let filteredSentences = [];
-    let response = null;
+    let response = "";
+    let inputData = {};
 
     // Preprocess input
     const sentences = input.split('.');
@@ -536,33 +550,16 @@ function getSemanticComparison( input, generation, comparisonType ) {
 
     if ( comparisonType == "explanation" ) {
 
-
-        // TODO: filter stop words out of explanation paragraph
         // Filter out stopwords
         const words = generation.split(' ');
         const filteredWords = sw.removeStopwords(words);
         const preprocessedGeneration = filteredWords.join(' ');
 
         // Package data & send to the python script
-        const inputData = JSON.stringify({
+        inputData = JSON.stringify({
             input: filteredSentences,
             inputGeneration: preprocessedGeneration,
             processType: comparisonType
-        });
-        pythonProcess.stdin.write(inputData);
-        pythonProcess.stdin.end()
-
-        // Get back result from python script
-        pythonProcess.stdout.on('data', (data) => {
-            response = JSON.parse(data.toString()).result;
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            console.error(`Error: ${data}`);
-        });
-
-        pythonProcess.on('close', (code) => {
-            console.log(`Python process exited with code ${code}`);
         });
 
     } // if
@@ -570,30 +567,61 @@ function getSemanticComparison( input, generation, comparisonType ) {
     else if ( comparisonType == "keywords" ) {
 
         // Package data & send to the python script
-        const inputData = JSON.stringify({
+        inputData = JSON.stringify({
             input: filteredSentences,
             inputGeneration: generation,
             processType: comparisonType
         });
-        pythonProcess.stdin.write(inputData);
-        pythonProcess.stdin.end()
 
-        // Get back result from python script
+    } // else if
+
+    // Send data to python script
+    pythonProcess.stdin.write(inputData);
+    pythonProcess.stdin.end();
+
+    // Get back result from python script & return
+    return new Promise((resolve, reject) => {
+
         pythonProcess.stdout.on('data', (data) => {
-            response = JSON.parse(data.toString()).result;
+            response += data.toString();
         });
 
         pythonProcess.stderr.on('data', (data) => {
             console.error(`Error: ${data}`);
+            reject(data.toString());
         });
 
         pythonProcess.on('close', (code) => {
+
             console.log(`Python process exited with code ${code}`);
+
+            if (response) {
+
+                try {
+
+                    const parsedResponse = JSON.parse(response);
+                    resolve(parsedResponse.result);
+
+                } // try
+                catch (err) {
+
+                    console.log("Something went wrong: " + err);
+                    reject("Failed to parse JSON response from Python.");
+
+                } // catch
+
+            } // if
+            else {
+
+                console.log("Something went wrong");
+                reject("No response from Python process.");
+
+            } // else
+
         });
 
-    } // else if
+    });
 
-    return response;
 } // getSemanticComparison()
 
 /** 

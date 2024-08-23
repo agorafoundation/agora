@@ -20,6 +20,17 @@ from transformers import BertModel, BertTokenizer
 import torch
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+import logging
+import warnings
+
+# Ignore Warnings
+loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+for logger in loggers:
+    if "transformers" in logger.name.lower():
+        logger.setLevel(logging.ERROR)
+        
+warnings.filterwarnings("ignore")
+
 
 # Load BERT & BERTTokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -29,15 +40,16 @@ model = BertModel.from_pretrained('bert-base-uncased')
 def getWordEmbeddings(text):
 
     # Tokenize inputs
-    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True)
+    inputs = tokenizer(text, 
+                       return_tensors='pt', 
+                       truncation=True, 
+                       padding=True,
+                       clean_up_tokenization_spaces=True)
 
     # Get embeddings
     with torch.no_grad():
         outputs = model(**inputs)
     embeddings = outputs.last_hidden_state
-
-    # Convert embedding to numpy array
-    embeddings = embeddings
 
     # Final embedding output
     finalEmbedding = embeddings[0][0]
@@ -56,12 +68,14 @@ def main():
     inputSentences = recievedData['input']
     generation = recievedData['inputGeneration']
     processType = recievedData['processType']
+    #print(f"Input Sentences: {inputSentences} \nGeneration: {generation} \nProcess Type: {processType}")
 
     # Semantic comparison for explanations
     if processType == "explanation":
 
         # Get embedding vector for generation
         generationEmbedding = np.array(getWordEmbeddings(generation).reshape(1,-1))
+        #print(f"Embedding: {generationEmbedding}")
 
         # Calculate an average similarity for the input text by sentence
         count = 0
@@ -76,9 +90,9 @@ def main():
             similaritySum += similarity[0][0]
 
         explanationAvgSimilarity = similaritySum / count
-
+        #print(f"Similarity: {explanationAvgSimilarity}")
         # Package into JSON object
-        finalJSON['overallRating'] = explanationAvgSimilarity
+        finalJSON['result'] = explanationAvgSimilarity
     
     # Semantic comparison for keywords
     elif processType == "keywords":
@@ -105,12 +119,12 @@ def main():
             keywordSimilarities[keyword] = avgSimilarity
 
         # Package into JSON object
-        finalJSON['keywordRatings'] = keywordSimilarities
+        finalJSON['result'] = keywordSimilarities
 
     # Return back to server process
+    #print(f"Final JSON: {finalJSON}")
     print(json.dumps(finalJSON))
-    # TODO: output comes back as null - check 
-
+    
 
 if __name__ == "__main__":
 
