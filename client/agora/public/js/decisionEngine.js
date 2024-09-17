@@ -155,8 +155,8 @@ async function callToneAnalysisAPI( text, identifier ) {
             console.log('fetch successful');
 
             // logic to deal with API response
-            let toneAnalysisKeywords = await response.json();
-            formatToneOutput(toneAnalysisKeywords.keywords, toneAnalysisKeywords.rating, text);
+            let toneAnalysis = await response.json();
+            formatToneOutput(toneAnalysis.tone_keywords.keywords, toneAnalysis.tone_keywords.rating, text);
             
             // Visibility
             loadingSpinnerContainer.hidden = true;
