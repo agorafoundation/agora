@@ -156,7 +156,7 @@ async function callToneAnalysisAPI( text, identifier ) {
 
             // logic to deal with API response
             let toneAnalysisKeywords = await response.json();
-            formatToneOutput(toneAnalysisKeywords.keywords, text);
+            formatToneOutput(toneAnalysisKeywords.keywords, toneAnalysisKeywords.rating, text);
             
             // Visibility
             loadingSpinnerContainer.hidden = true;
@@ -236,58 +236,68 @@ function extractText( htmlString ) {
 /**
  * Helper function that formats the HTML for the tone analysis card.
  * @param {*} keywords generated tone analysis keywords.
+ * @param {*} ratings rating value of key word that comes from granite
  * @param {*} originalText text that comes from the text editor.
  */
-function formatToneOutput( keywords, originalText ) {
+function formatToneOutput(keywords, ratings, originalText) {
     if (!document.querySelector('.toggle-button').classList.contains('active')) {
         return; // Exit if not in 'Suggestions' mode
     }
+
+    const toneCardsContainer = document.querySelector('.tone-cards');
     
-    // Create card element
-    const toneCard = document.createElement( 'div' );
+    if (!toneCardsContainer) {
+        console.error('tone-cards container not found!');
+        return;
+    }
+
+    // Do not clear previous cards; just add new ones
+    // toneCardsContainer.innerHTML = '';  // Comment out or remove this line
+
+    console.log('Keywords:', keywords);  // Check keywords are correct
+    console.log('Ratings:', ratings);    // Check ratings are correct
+
+    // Create card element (one card for all keywords and ratings)
+    const toneCard = document.createElement('div');
     toneCard.classList.add('tone-card');
 
-    // Card template
+    // Combine keywords and ratings into a single string
+    let keywordRatingsList = '';
+    keywords.forEach((keyword, index) => {
+        const rating = ratings[index];
+        if (rating !== undefined) {
+            keywordRatingsList += `<li>${keyword}: ${rating.toFixed(3)}</li>`;
+        } else {
+            keywordRatingsList += `<li>${keyword}: N/A</li>`;
+        }
+    });
+
+    // Card template with all keywords and their ratings
     toneCard.innerHTML = `
         <div>
             <!-- Text Content -->
             <div class="tone-analyzed-text-cont">
-                <span class="tone-analyzed-text"></span>
+                <span class="tone-analyzed-text">"${originalText.substring(0, 39)}..."</span>
             </div>
             <div class="tone-text-center">
-                <span class="tone-card-text"></span>
+                <ul class="tone-card-text">Keywords: <br>${keywordRatingsList}</ul>
             </div>
 
             <!-- Info Bubble -->
             <div class="info-bubble">
                 <img src="/assets/img/buttons/info-bubble-orange.png" class="info-bubble-image">
-                
             </div>
-
         </div>
     `;
 
-    // Give snippet of original text
-    let content = '"' + originalText.substring(0, 39) + '..."';
-    const cardOriginalText = toneCard.querySelector('.tone-analyzed-text');
-    cardOriginalText.textContent = content;
+    // Append the card to the main container
+    toneCardsContainer.appendChild(toneCard);
 
-    // Give the card the keywords
-    const cardKeywords = toneCard.querySelector('.tone-card-text');
-    cardKeywords.textContent = keywords;
+    console.log('Appended card with all keywords and ratings.');
+}
 
-    /*
-    TODO: waiting on tone analysis explanation to be developed;
-    once that is done, add "explanation" as a parameter to the function
 
-    // Give the explanation to the tooltip
-    const cardExplanation = toneCard.querySelector('.tone-analysis-explanation');
-    cardExplanation.textContent = explanation;
-    */
-    // Add card to main container
-    toneCardsContainer.appendChild( toneCard );
 
-} // formatToneOutput()
 
 // Exports
 export { getDecisionEngine }
