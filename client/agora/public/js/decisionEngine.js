@@ -156,7 +156,7 @@ async function callToneAnalysisAPI( text, identifier ) {
 
             // logic to deal with API response
             let toneAnalysis = await response.json();
-            formatToneOutput(toneAnalysis.tone_keywords.keywords, toneAnalysis.tone_keywords.rating, text);
+            formatToneOutput(toneAnalysis.tone_keywords.keywords, toneAnalysis.tone_keywords.rating, toneAnalysis.tone_explanation.explanation, toneAnalysis.tone_explanation.rating, text);
             
             // Visibility
             loadingSpinnerContainer.hidden = true;
@@ -237,9 +237,11 @@ function extractText( htmlString ) {
  * Helper function that formats the HTML for the tone analysis card.
  * @param {*} keywords generated tone analysis keywords.
  * @param {*} ratings rating value of key word that comes from granite
+ * @param {*} explanation explains why information was given
+ * @param {*} explanationRate rates the explanation 
  * @param {*} originalText text that comes from the text editor.
  */
-function formatToneOutput(keywords, ratings, originalText) {
+function formatToneOutput(keywords, ratings, explanation, explanationRate, originalText) {
     if (!document.querySelector('.toggle-button').classList.contains('active')) {
         return; // Exit if not in 'Suggestions' mode
     }
@@ -272,6 +274,16 @@ function formatToneOutput(keywords, ratings, originalText) {
         }
     });
 
+    let explanationdRatingsList = '';
+    explanation.forEach((explanation, index) => {
+        const explanations = explanation[index];
+        if (explanations !== undefined) {
+            explanationdRatingsList += `<li>${explanation}: ${explanationRate}</li>`;
+        } else {
+            explanationdRatingsList += `<li>${explanation}: N/A</li>`;
+        }
+    });
+
     // Card template with all keywords and their ratings
     toneCard.innerHTML = `
         <div>
@@ -281,6 +293,9 @@ function formatToneOutput(keywords, ratings, originalText) {
             </div>
             <div class="tone-text-center">
                 <ul class="tone-card-text">Keywords: <br>${keywordRatingsList}</ul>
+            </div>
+            <div class="tone-text-center">
+                <ul class="tone-card-text">Keywords: <br>${explanationdRatingsList}</ul>
             </div>
 
             <!-- Info Bubble -->
