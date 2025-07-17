@@ -184,7 +184,7 @@ const createTopicEditorGui = async function ( ) {
                 let tabBtnName = document.createElement( "span" );
                 tabBtnName.id = "tabTopicName-" + getCurrentWorkspace().topics[i].topicId;
                 if( getCurrentWorkspace().topics[i].topicName ){
-                    tabBtnName.innerHTML = getCurrentWorkspace().topics[i].topicName;
+                    tabBtnName.textContent = getCurrentWorkspace().topics[i].topicName;
                 }
                 else{
                     tabBtnName.innerHTML = "Untitled";
@@ -1528,7 +1528,7 @@ const renderTag = ( tag ) => {
     const currTags = document.getElementById( "curr-tags" );
     const newTag = document.createElement( "div" );
 
-    newTag.innerHTML = tag;
+    newTag.textContent = tag;
     newTag.setAttribute( "class", "styled-tags" );
     newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
         
