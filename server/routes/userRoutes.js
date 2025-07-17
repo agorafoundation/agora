@@ -11,7 +11,8 @@ const router = express.Router( );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const fileUpload = require( "express-fileupload" );
-
+const detect = require('detect-file-type');
+ 
 // controllers
 const userController = require( '../controller/userController' );
 
@@ -69,6 +70,11 @@ router.route( '/revalidate/:email' )
 router.route( '/uploadProfilePicture' )
     .post( async ( req, res ) => {
 
+        const allowedImageTypes = [
+            'image/png',
+            'image/jpeg',
+            'image/webp',
+        ];
 
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
@@ -80,6 +86,12 @@ router.route( '/uploadProfilePicture' )
             // files included
             const file = req.files.profileImage;
             const timeStamp = Date.now();
+            const result = detect.fromBuffer(file.data, function(err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+                return result;
+            });
 
             // check the file size
             if( file.size > maxSize ) {
@@ -88,6 +100,14 @@ router.route( '/uploadProfilePicture' )
                 req.session.messageType = "warn";
                 req.session.messageTitle = "Image too large!";
                 req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file.";
+                res.redirect( 303, '/profile/manageProfile' );
+            }
+            // check the file type
+            else if (!result || !allowedImageTypes.includes(result.mime)) {
+                
+                req.session.messageType = "warn";
+                req.session.messageTitle = "Unsupported filetype";
+                req.session.messageBody = "Filetype is unsupported, please use a .png, .jpeg, or .webp file"
                 res.redirect( 303, '/profile/manageProfile' );
             }
             else {
