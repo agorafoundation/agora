@@ -142,7 +142,7 @@ const createTopicEditorGui = async function ( ) {
             allUsers = [ ownerDetails, ...sharedUsers ];
 
             const profilesList = document.getElementById( "profiles-list" );
-            profilesList.innerHTML = "";
+            profilesList.textContent = "";
             allUsers.forEach( ( profile ) => {
                 const userProfileElement = createUserProfile( profile, getCurrentWorkspace() );
                 profilesList.appendChild( userProfileElement );
@@ -154,10 +154,10 @@ const createTopicEditorGui = async function ( ) {
             shareSearchButton.addEventListener( 'click', function () {
                 shareSearchUsers( ownerDetails, allUsers );
             } );
-        
+    
             // Clear old search results before displaying new ones
             const searchedUsersContainer = document.getElementById( "searched-users" );
-            searchedUsersContainer.innerHTML = "";
+            searchedUsersContainer.textContent = "";
         }
         else {
             console.error( "Unable to retrieve workspace owner." );
@@ -184,10 +184,10 @@ const createTopicEditorGui = async function ( ) {
                 let tabBtnName = document.createElement( "span" );
                 tabBtnName.id = "tabTopicName-" + getCurrentWorkspace().topics[i].topicId;
                 if( getCurrentWorkspace().topics[i].topicName ){
-                    tabBtnName.innerHTML = getCurrentWorkspace().topics[i].topicName;
+                    tabBtnName.textContent = getCurrentWorkspace().topics[i].topicName;
                 }
                 else{
-                    tabBtnName.innerHTML = "Untitled";
+                    tabBtnName.textContent = "Untitled";
                 }
                 tabBtn.appendChild( tabBtnName );
 
@@ -361,7 +361,7 @@ const createTopicEditorGui = async function ( ) {
                             resourceName = getCurrentActiveTopic().topicName;
                         }
 
-                        document.getElementById( "current-document" ).innerHTML = resourceName; // Set the name in the Modal
+                        document.getElementById( "current-document" ).textContent = resourceName; // Set the name in the Modal
                     } );
 
                 }
@@ -1178,7 +1178,7 @@ function updateThumbnail( dropZoneElement, file ) {
     // Set the title to the file name
     mydiv.appendChild( thumbnailElement );
     thumbnailElement.dataset.label = file.name;
-    inputTitle.innerHTML = file.name;
+    inputTitle.textContent = file.name;
   
     // Show thumbnail for image files
     if ( file.type.startsWith( "image/" ) ) {
@@ -1349,7 +1349,7 @@ const shareSearchUsers = ( workspaceOwner, allUsers ) => {
         .then( ( response ) => {
         // Clear old search results before displaying new ones
             const searchedUsersContainer = document.getElementById( "searched-users" );
-            searchedUsersContainer.innerHTML = "";
+            searchedUsersContainer.textContent = "";
 
             for ( let i = 0; i < response.length; i++ ) {
                 const data = response[i];
@@ -1383,19 +1383,40 @@ function createUserSearchCard( userData, workspace ) {
 
     console.log( "user.pfp: " + user.pfp );
 
-    // Create the HTML structure for the user card
-    card.innerHTML = `
-            <div class="profile-status-container">
-                <img class="shared-profile-picture" src="${user.pfp}">
-                <div class="profile-info">
-                    <span class="profile-name">${user.name}</span>
-                    <span class="profile-email">${user.email}</span>
-                </div>
-                <button class="add-user-button" style="margin-right: 10px;">Add</button>    
-            </div>
-        `;
+    // Create the HTML structure for the user card safely
+    card.innerHTML = "";
+    const profileContainer = document.createElement( 'div' );
+    profileContainer.className = 'profile-status-container';
+    
+    const profileImg = document.createElement( 'img' );
+    profileImg.className = 'shared-profile-picture';
+    profileImg.src = user.pfp;
+    profileContainer.appendChild( profileImg );
+    
+    const profileInfo = document.createElement( 'div' );
+    profileInfo.className = 'profile-info';
+    
+    const profileName = document.createElement( 'span' );
+    profileName.className = 'profile-name';
+    profileName.textContent = user.name;
+    profileInfo.appendChild( profileName );
+    
+    const profileEmail = document.createElement( 'span' );
+    profileEmail.className = 'profile-email';
+    profileEmail.textContent = user.email;
+    profileInfo.appendChild( profileEmail );
+    
+    profileContainer.appendChild( profileInfo );
+    
+    const addButton = document.createElement( 'button' );
+    addButton.className = 'add-user-button';
+    addButton.style.marginRight = '10px';
+    addButton.textContent = 'Add';
+    profileContainer.appendChild( addButton );
+    
+    card.appendChild( profileContainer );
 
-    const addUserButton = card.querySelector( ".add-user-button" );
+    const addUserButton = addButton;
     addUserButton.addEventListener( "click", async () => {
         await fetch( "/api/v1/auth/shared/shareworkspace/", {
             method: "POST",
@@ -1429,32 +1450,86 @@ function createUserProfile( profile, workspace ) {
         profile.pfp = "/assets/uploads/profile/" + profile.pfp;
     }
 
-    // Create only the necessary HTML elements based on the profile status
-    li.innerHTML = `
-        <div class="profile-status-container">
-            <img class="shared-profile-picture" src="${profile.pfp}">
-            <div class="profile-info">
-                <span class="profile-name">${profile.name}</span>
-                <span class="profile-email">${profile.email}</span>
-            </div>
-            <span class="profile-status">${profile.status}</span>
-            ${profile.status !== 'Owner' ? `
-            <button class="arrow down-arrow" id="toggle-button-${profile.userId}" style="margin-right: 10px;"></button>
-            <div class="permissions-box" id="permissions-box-${profile.userId}" style="display: none;">
-                <div class="permissions-col">
-                    <span class="permission-li">
-                        <button class="permission-button" data-permission="edit">Edit</button>
-                    </span>
-                    <span class="permission-li">  
-                        <button class="permission-button" data-permission="view">View</button>
-                    </span>
-                    <span class="permission-li removes">
-                        <button class="remove-button">Remove</button>
-                    </span>
-                </div> 
-            </div>` : ''}
-        </div>
-    `;
+    // Create only the necessary HTML elements based on the profile status safely
+    li.innerHTML = "";
+    const profileContainer = document.createElement( 'div' );
+    profileContainer.className = 'profile-status-container';
+    
+    const profileImg = document.createElement( 'img' );
+    profileImg.className = 'shared-profile-picture';
+    profileImg.src = profile.pfp;
+    profileContainer.appendChild( profileImg );
+    
+    const profileInfo = document.createElement( 'div' );
+    profileInfo.className = 'profile-info';
+    
+    const profileName = document.createElement( 'span' );
+    profileName.className = 'profile-name';
+    profileName.textContent = profile.name;
+    profileInfo.appendChild( profileName );
+    
+    const profileEmail = document.createElement( 'span' );
+    profileEmail.className = 'profile-email';
+    profileEmail.textContent = profile.email;
+    profileInfo.appendChild( profileEmail );
+    
+    profileContainer.appendChild( profileInfo );
+    
+    const profileStatus = document.createElement( 'span' );
+    profileStatus.className = 'profile-status';
+    profileStatus.textContent = profile.status;
+    profileContainer.appendChild( profileStatus );
+    
+    // Add permissions controls for non-Owner users
+    if ( profile.status !== 'Owner' ) {
+        const toggleButton = document.createElement( 'button' );
+        toggleButton.className = 'arrow down-arrow';
+        toggleButton.id = `toggle-button-${profile.userId}`;
+        toggleButton.style.marginRight = '10px';
+        profileContainer.appendChild( toggleButton );
+        
+        const permissionsBox = document.createElement( 'div' );
+        permissionsBox.className = 'permissions-box';
+        permissionsBox.id = `permissions-box-${profile.userId}`;
+        permissionsBox.style.display = 'none';
+        
+        const permissionsCol = document.createElement( 'div' );
+        permissionsCol.className = 'permissions-col';
+        
+        // Edit button
+        const editSpan = document.createElement( 'span' );
+        editSpan.className = 'permission-li';
+        const editButton = document.createElement( 'button' );
+        editButton.className = 'permission-button';
+        editButton.setAttribute( 'data-permission', 'edit' );
+        editButton.textContent = 'Edit';
+        editSpan.appendChild( editButton );
+        permissionsCol.appendChild( editSpan );
+        
+        // View button
+        const viewSpan = document.createElement( 'span' );
+        viewSpan.className = 'permission-li';
+        const viewButton = document.createElement( 'button' );
+        viewButton.className = 'permission-button';
+        viewButton.setAttribute( 'data-permission', 'view' );
+        viewButton.textContent = 'View';
+        viewSpan.appendChild( viewButton );
+        permissionsCol.appendChild( viewSpan );
+        
+        // Remove button
+        const removeSpan = document.createElement( 'span' );
+        removeSpan.className = 'permission-li removes';
+        const removeButton = document.createElement( 'button' );
+        removeButton.className = 'remove-button';
+        removeButton.textContent = 'Remove';
+        removeSpan.appendChild( removeButton );
+        permissionsCol.appendChild( removeSpan );
+        
+        permissionsBox.appendChild( permissionsCol );
+        profileContainer.appendChild( permissionsBox );
+    }
+    
+    li.appendChild( profileContainer );
 
     // Add event listeners only if the profile is not an 'Owner'
     if ( profile.status !== 'Owner' ) {
@@ -1511,7 +1586,7 @@ const renderTags = ( ) => {
     const currTags = document.getElementById( "curr-tags" );
 
     // clear the current tags
-    currTags.innerHTML = "";
+    currTags.textContent = "";
     
     ul.innerHTML = "";
     if( getCurrentWorkspace() && getCurrentWorkspace().tags ) {
@@ -1528,14 +1603,14 @@ const renderTag = ( tag ) => {
     const currTags = document.getElementById( "curr-tags" );
     const newTag = document.createElement( "div" );
 
-    newTag.innerHTML = tag;
+    newTag.textContent = tag;
     newTag.setAttribute( "class", "styled-tags" );
-    newTag.setAttribute( "id", "tag-" + newTag.innerHTML );
+    newTag.setAttribute( "id", "tag-" + tag );
         
     // Create remove tag button
     let removeTagBtn = document.createElement( "span" );
     removeTagBtn.className = "close-tag";
-    removeTagBtn.id = "close-tag-" + newTag.innerHTML;
+    removeTagBtn.id = "close-tag-" + tag;
     removeTagBtn.innerHTML = "&times;";
     removeTagBtn.style.color = "#aaa";
 

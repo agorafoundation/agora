@@ -98,12 +98,17 @@ function validateCheckExistsMain( email, username, runOnce ) {
                 //console.log("3: email returned: " + data);
                 if( data ) {
                     //console.log("data returned: " + data);
-                    document.getElementById( 'emailHelp' ).innerHTML = "<strong style='color:red'>Email is already in use";
+                    const emailHelp = document.getElementById( 'emailHelp' );
+                    emailHelp.innerHTML = "";
+                    const strongEl = document.createElement( 'strong' );
+                    strongEl.style.color = 'red';
+                    strongEl.textContent = "Email is already in use";
+                    emailHelp.appendChild( strongEl );
                     document.getElementById( 'userButton' ).disabled = true;
                 }
                 else {
                     
-                    document.getElementById( 'emailHelp' ).innerHTML = "Email is unique";
+                    document.getElementById( 'emailHelp' ).textContent = "Email is unique";
                     document.getElementById( 'userButton' ).disabled = false;
 
                     // recheck username before enabling
@@ -116,7 +121,12 @@ function validateCheckExistsMain( email, username, runOnce ) {
         } );
     }
     else {
-        document.getElementById( 'emailHelp' ).innerHTML = "<strong style='color:red'>Please enter a valid email address!</strong>";
+        const emailHelp = document.getElementById( 'emailHelp' );
+        emailHelp.innerHTML = "";
+        const strongEl = document.createElement( 'strong' );
+        strongEl.style.color = 'red';
+        strongEl.textContent = "Please enter a valid email address!";
+        emailHelp.appendChild( strongEl );
         document.getElementById( 'userButton' ).disabled = true;
     }
     
@@ -130,11 +140,16 @@ function validateCheckExistsUsername( username, email, runOnce ) {
                 if( data ) {
                     //console.log("data returned: " + data);
 
-                    document.getElementById( 'usernameHelp' ).innerHTML = "<strong style='color:red'>Username is already in use</strong>";
+                    const usernameHelp = document.getElementById( 'usernameHelp' );
+                    usernameHelp.innerHTML = "";
+                    const strongEl = document.createElement( 'strong' );
+                    strongEl.style.color = 'red';
+                    strongEl.textContent = "Username is already in use";
+                    usernameHelp.appendChild( strongEl );
                     document.getElementById( 'userButton' ).disabled = true;
                 }
                 else {
-                    document.getElementById( 'usernameHelp' ).innerHTML = "Username is Valid";
+                    document.getElementById( 'usernameHelp' ).textContent = "Username is Valid";
                     document.getElementById( 'userButton' ).disabled = false;
 
                     // recheck email before enabling
@@ -147,7 +162,12 @@ function validateCheckExistsUsername( username, email, runOnce ) {
         } );
     }
     else {
-        document.getElementById( 'usernameHelp' ).innerHTML = "<strong style='color:red'>Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _</strong>";
+        const usernameHelp = document.getElementById( 'usernameHelp' );
+        usernameHelp.innerHTML = "";
+        const strongEl = document.createElement( 'strong' );
+        strongEl.style.color = 'red';
+        strongEl.textContent = "Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _";
+        usernameHelp.appendChild( strongEl );
         document.getElementById( 'userButton' ).disabled = true;
     }
 }
@@ -159,18 +179,28 @@ function validateCheckExistsUsernameForUpdate( username ) {
             res.json().then( ( data ) => {
                 if( data ) {
                     // console.log( "user email: ", userEmail.value );
-                    document.getElementById( 'usernameUpdateHelp' ).innerHTML = "<strong style='color:red'>Username is already in use</strong>";
+                    const usernameUpdateHelp = document.getElementById( 'usernameUpdateHelp' );
+                    usernameUpdateHelp.innerHTML = "";
+                    const strongEl = document.createElement( 'strong' );
+                    strongEl.style.color = 'red';
+                    strongEl.textContent = "Username is already in use";
+                    usernameUpdateHelp.appendChild( strongEl );
                     document.getElementById( 'userManageButton' ).disabled = true;
                 }
                 else {
-                    document.getElementById( 'usernameUpdateHelp' ).innerHTML = "Username is Valid";
+                    document.getElementById( 'usernameUpdateHelp' ).textContent = "Username is Valid";
                     document.getElementById( 'userManageButton' ).disabled = false;
                 }
             } );
         } );
     }
     else {
-        document.getElementById( 'usernameUpdateHelp' ).innerHTML = "<strong style='color:red'>Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _</strong>";
+        const usernameUpdateHelp = document.getElementById( 'usernameUpdateHelp' );
+        usernameUpdateHelp.innerHTML = "";
+        const strongEl = document.createElement( 'strong' );
+        strongEl.style.color = 'red';
+        strongEl.textContent = "Username must be between 4 and 20 characters in length and may contain letters, numbers, . and _";
+        usernameUpdateHelp.appendChild( strongEl );
         document.getElementById( 'userManageButton' ).disabled = true;
     }
 }

@@ -7,6 +7,7 @@
     "bcrypt": "^5.0.1",
     "connect-pg-simple": "^7.0.0",
     "cors": "^2.8.5",
+    "detect-file-type": "^0.2.8",
     "device-detector-js": "^3.0.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.8",
