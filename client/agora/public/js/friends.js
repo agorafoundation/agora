@@ -70,7 +70,7 @@ if ( userSearch ) {
         } );
 
         //clear the dashboard
-        friendsDashboard.innerHTML = "";
+        friendsDashboard.textContent = "";
 
         if( response.status == 200 ){
             //console.log( "response.status == 200" );
@@ -123,7 +123,12 @@ async function createPendingUserCard( userData, friendshipStatus ){
     cardBodyDiv.className = "card-body d-flex flex-column";
     var username = document.createElement( "h5" );
     username.id = userData.userId;
-    username.innerHTML = "<h5>" + friendshipStatus + "</h5>" + userData.friend_first_name + " " + userData.friend_last_name + " (" + userData.friend_username + ") ";
+    username.innerHTML = "";
+    const statusHeader = document.createElement( 'h5' );
+    statusHeader.textContent = friendshipStatus;
+    username.appendChild( statusHeader );
+    const nameText = document.createTextNode( userData.friend_first_name + " " + userData.friend_last_name + " (" + userData.friend_username + ") " );
+    username.appendChild( nameText );
     let personname = document.createElement( "p" );
     personname.innerText = userData.friend_first_name + " " + userData.friend_last_name;
     let bioParagraph = document.createElement( "p" );

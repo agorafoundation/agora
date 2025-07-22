@@ -11,7 +11,7 @@ const router = express.Router( );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const fileUpload = require( "express-fileupload" );
-const detect = require('detect-file-type');
+const detect = require( 'detect-file-type' );
  
 // controllers
 const userController = require( '../controller/userController' );
@@ -79,58 +79,68 @@ router.route( '/uploadProfilePicture' )
         if ( !req.files || Object.keys( req.files ).length === 0 ) {
             // no files uploaded
             await userController.saveProfileImage( req, res, req.session.authUser.email, 'profile-default.png' );
-
+            return;
         }
-        else {
 
-            // files included
-            const file = req.files.profileImage;
-            const timeStamp = Date.now();
-            const result = detect.fromBuffer(file.data, function(err, result) {
-                if (err) {
-                    return console.log(err);
+        // files included
+        const file = req.files.profileImage;
+        const timeStamp = Date.now();
+
+        const processFileUpload = async () => {
+            await file.mv( imageUploadPath + timeStamp + file.name, async ( err ) => {
+                if ( err ) {
+                    console.error( "Error uploading profile picture for " + req.session.authUser.email + ": " + err );
+                    req.session.messageType = "error";
+                    req.session.messageTitle = "Error uploading image!";
+                    req.session.messageBody = "There was a error uploading your image for this profile.";
+                    res.redirect( 303, '/profile/manageProfile' );
+                    return;
                 }
-                return result;
-            });
+                else {
+                    console.log( "Profile image uploaded for: " + req.session.authUser.email );
+                    await userController.saveProfileImage( req, res, req.session.authUser.email, timeStamp + file.name );
+                    req.session.messageType = "success";
+                    req.session.messageTitle = "Image Saved";
+                    req.session.messageBody = "Profile image saved successfully!";
+                    res.redirect( 303, '/profile/manageProfile' );
+                }
+            } );
+        };
 
-            // check the file size
-            if( file.size > maxSize ) {
-                console.log( `Profile File ${file.name} size limit has been exceeded` );
+        // check the file size first
+        if( file.size > maxSize ) {
+            console.log( `Profile File ${file.name} size limit has been exceeded` );
 
-                req.session.messageType = "warn";
-                req.session.messageTitle = "Image too large!";
-                req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file.";
+            req.session.messageType = "warn";
+            req.session.messageTitle = "Image too large!";
+            req.session.messageBody = "Image size was larger then " + maxSizeText + ", please use a smaller file.";
+            res.redirect( 303, '/profile/manageProfile' );
+            return;
+        }
+
+        // check the file type asynchronously
+        detect.fromBuffer( file.data, function( err, result ) {
+            if ( err ) {
+                console.error( `File type detection error for ${file.name}: ${err}` );
+                req.session.messageType = "error";
+                req.session.messageTitle = "File validation error";
+                req.session.messageBody = "Unable to validate file type. Please try again.";
                 res.redirect( 303, '/profile/manageProfile' );
+                return;
             }
-            // check the file type
-            else if (!result || !allowedImageTypes.includes(result.mime)) {
-                
+
+            if ( !result || !allowedImageTypes.includes( result.mime ) ) {
+                console.warn( `Unsupported file type uploaded: ${file.name}, detected type: ${result ? result.mime : 'unknown'}` );
                 req.session.messageType = "warn";
                 req.session.messageTitle = "Unsupported filetype";
-                req.session.messageBody = "Filetype is unsupported, please use a .png, .jpeg, or .webp file"
+                req.session.messageBody = "Filetype is unsupported, please use a .png, .jpeg, or .webp file";
                 res.redirect( 303, '/profile/manageProfile' );
+                return;
             }
-            else {
-                await file.mv( imageUploadPath + timeStamp + file.name, async ( err ) => {
-                    if ( err ) {
-                        console.log( "Error uploading profile picture : " + err );
-                        req.session.messageType = "error";
-                        req.session.messageTitle = "Error uploading image!";
-                        req.session.messageBody = "There was a error uploading your image for this profile.";
-                        res.redirect( 303, '/profile/manageProfile' );
-                        return;
-                    }
-                    else {
-                        await userController.saveProfileImage( req, res, req.session.authUser.email, timeStamp + file.name );
-                        req.session.messageType = "success";
-                        req.session.messageTitle = "Image Saved";
-                        req.session.messageBody = "Profile image saved successfully!";
 
-                        res.redirect( 303, '/profile/manageProfile' );
-                    }
-                } );
-            }
-        }
+            // File type is valid, proceed with upload
+            processFileUpload();
+        } );
     }
     );
 

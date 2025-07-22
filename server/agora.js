@@ -38,6 +38,31 @@ app.use(
     } )
 );
 
+// Security headers including CSP for XSS protection
+app.use( ( req, res, next ) => {
+    // Content Security Policy - allows inline styles/scripts for compatibility but restricts external sources
+    res.setHeader( 'Content-Security-Policy', 
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
+        "https://use.fontawesome.com https://www.googletagmanager.com https://cdn.jsdelivr.net " +
+        "https://cdnjs.cloudflare.com https://cdn.quilljs.com; " +
+        "style-src 'self' 'unsafe-inline' " +
+        "https://fonts.googleapis.com https://cdn.jsdelivr.net https://use.fontawesome.com " +
+        "https://cdnjs.cloudflare.com https://cdn.quilljs.com; " +
+        "font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; " +
+        "img-src 'self' data: blob:; " +
+        "connect-src 'self';"
+    );
+    
+    // Additional security headers
+    res.setHeader( 'X-Content-Type-Options', 'nosniff' );
+    res.setHeader( 'X-Frame-Options', 'DENY' );
+    res.setHeader( 'X-XSS-Protection', '1; mode=block' );
+    res.setHeader( 'Referrer-Policy', 'strict-origin-when-cross-origin' );
+    
+    next();
+} );
+
 
 // get the port from the env file or set 4200 as default
 const PORT = process.env.SITE_PORT || 4200;
