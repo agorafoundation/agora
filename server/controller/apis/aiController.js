@@ -16,7 +16,7 @@ const resourceService = require( '../../service/resourceService' );
 const MIN_CONTENT_LENGTH = 650;
 
 // Configuration for OpenAI API
-const OPENAI_CONFIG = new openAi.Configuration( {
+const OPENAI_CONFIG = new openAi( {
     apiKey: process.env.OPENAI_API_KEY,
 } );
 
