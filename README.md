@@ -110,3 +110,6 @@ API docs are managed in swagger and can be seen [here](https://freeagora.org/api
 2. Discussions (At global, workspace and topic level)
 3. Recommendations regarding future work, literature to read.
 4. Document formatting and grammar recommendations.
+
+## Acknowledgements
+Special thank you to Msfv3n0m for contributing security fixes!
