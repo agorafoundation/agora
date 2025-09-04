@@ -17,6 +17,9 @@ import { textEditorUpdateEvent, tabClickEvent, tabLongClickEvent, deleteResource
 import { getPermission } from "./controllers/clientWorkspaceController.js";
 import { getResourceById, setResourceType } from "./controllers/clientResourceController.js";
 
+// AI API Call
+import { makeAPICall } from "./agnesAI.js"
+
 /**
  * DOM manipulation functions for the editor
  */
@@ -353,7 +356,7 @@ const createTopicEditorGui = async function ( ) {
                         ( debug ) ? console.log( sunEditor[editor] ) : null;
                         sunEditor[editor][1].setContents( currentResource.resourceContentHtml );
                     }       
-                    
+                    console.log("Current Editor: " + "suneditor_" + editor);
                     document.getElementById( "suneditor_" + editor ).addEventListener( 'click', () => {
                         lastEditedResourceId = currentResource.resourceId; // Set last edited resource ID for the API call
                         let resourceName = currentResource.resourceName;
@@ -363,6 +366,34 @@ const createTopicEditorGui = async function ( ) {
 
                         document.getElementById( "current-document" ).textContent = resourceName; // Set the name in the Modal
                     } );
+
+                    // Dynamic listening event listener for editor
+                    let intervalActive;
+                    let isFetching = false;  // checks for concurrent API calls
+                    const allCardsContainer = document.querySelector( '.all-cards' );
+                    document.getElementById( "suneditor_" + editor ).addEventListener( 'focusin', async function () {
+                        console.log("event listener added")
+                        if ( !intervalActive ) {
+        
+                            intervalActive = setInterval(async function() {
+                                if ( !isFetching ) {
+        
+                                    isFetching = true;
+        
+                                    allCardsContainer.innerHTML = ""; // Clear the current cards
+                                    await makeAPICall();
+                                    console.log("makeAPICall() called")
+
+                                    isFetching = false;
+        
+                                } // if
+        
+                            }, 120000) // every 2 minutes
+        
+                        } // if
+                    });
+
+
 
                 }
                 if ( getCurrentActiveTopic().resources.length === 0 ) {
@@ -554,6 +585,7 @@ const createTopicEditorGui = async function ( ) {
 
     
 };
+
 
 /**
  * Makes the tab (topic) name editable by replacing the text with an input field
